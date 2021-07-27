@@ -1,0 +1,118 @@
+body {
+  background: rgb(204,204,204); 
+}
+page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+}
+page[size="A4"] {  
+  width: 21cm;
+}
+page[size="A4"][layout="landscape"] {
+  width: 29.7cm; 
+}
+page[size="A3"] {
+  width: 29.7cm;
+  height: 42cm;
+}
+page[size="A3"][layout="landscape"] {
+  width: 42cm;
+  height: 29.7cm;  
+}
+page[size="A5"] {
+  width: 14.8cm;
+  height: 21cm;
+}
+page[size="A5"][layout="landscape"] {
+  width: 21cm;
+  height: 14.8cm;  
+}
+@media print {
+  body, page {
+    margin: 0;
+    box-shadow: 0;
+  }
+}
+
+.bouton {
+	color: #566473;
+	font-family: 'Lato', Arial, sans-serif;
+	background: #FFFFFF;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 14px 14px 14px;
+	transition: 0.3s;
+	font-size: 17px;
+}
+.bouton print {
+	 display: none;
+}
+
+.Picture{
+	text-align: center;
+	width: 50%;
+}
+.TitreDevis{
+	text-align: center;
+	width: 50%;
+}
+.CompanyContact{
+	text-align: left;
+	width: 50%;
+}
+.CustomersContact{
+	text-align: right;
+	width: 50%;
+}
+
+.content-table-entete,
+.content-table{
+	width: 19cm;
+	margin:auto;
+	margin-bottom:1cm;
+	border-collapse: collapse;
+	border-radius: 0px 5px 0 0;
+	overflow: hidden;
+}
+.content-table thead tr{
+	text-align: left;
+	font-weight: blod;
+}
+.content-table th,
+.content-table td{
+	padding : 12px 15px;
+}
+
+.content-table tbody tr{
+	border-bottom: 1px solid #dddddd;
+	background-color: #FFFFFF;
+}
+
+.content-table tbody tr:nth-of-type(even){
+	background-color: #f3f3f3;
+}
+.content-table tbody tr:last-of-type(even){
+	border-bottom: 2px solid #009879;
+	background-color: #FFFFFF;
+}
+.content-table tbody tr.active-row{
+	font-weight: blod;
+	color: #009879;
+}
+
+.content-table a {
+	color: #566473;
+	text-decoration: none;
+	outline: none;
+	font-weight: blod;
+	font-family: 'Lato', Arial, sans-serif;
+}
+.content-table a:hover {
+	color: #4f7bab;
+	font-weight: blod;
+	font-family: 'Lato', Arial, sans-serif;
+}

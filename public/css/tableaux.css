@@ -1,0 +1,57 @@
+/*--------------------------------------------*/
+/*-------------TABLEAU          --------------*/
+/*--------------------------------------------*/
+
+.content-table-Adding,
+.content-table{
+	margin:auto;
+	margin-bottom: 30px;
+	font-family: Arial, Helvetica, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+	background-color: white;
+}
+
+.content-table-Adding th,
+.content-table th{
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #04AA6D;
+	color: white;
+}
+.content-table-Adding th,
+.content-table-Adding td,
+.content-table th,
+.content-table td{
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+.clickable-row {
+    cursor: pointer;
+}
+
+.content-table tr:nth-child(even){
+	background-color: #f2f2f2;
+}
+
+.content-table  tr:hover {
+	background-color: #ddd;
+}
+
+.content-table  tr.active-row{
+	font-weight: blod;
+	color: #009879;
+}
+.content-table a {
+	color: #566473;
+	text-decoration: none;
+	outline: none;
+	font-weight: blod;
+	font-family: 'Lato', Arial, sans-serif;
+}
+.content-table a:hover {
+	color: #4f7bab;
+	font-weight: blod;
+	font-family: 'Lato', Arial, sans-serif;
+}
