@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCompaniesAddressesTable extends Migration {
 
@@ -14,19 +15,19 @@ class CreateCompaniesAddressesTable extends Migration {
 	{
 		Schema::create('companies_addresses', function(Blueprint $table)
 		{
-			$table->integer('id', true);
-			$table->integer('ID_COMPANY');
+			$table->id();
+			$table->integer('companies_id');
 			$table->integer('ORDRE');
 			$table->string('LABEL');
-			$table->string('ADRESSE')->nullable();
+			$table->string('ADRESS')->nullable();
 			$table->string('ZIPCODE')->nullable();
 			$table->string('CITY')->nullable();
 			$table->string('COUNTRY')->nullable();
 			$table->string('NUMBER')->nullable();
 			$table->string('MAIL')->nullable();
-			$table->integer('ADRESS_LIV');
-			$table->integer('ADRESS_FAC');
 			$table->timestamps();
+
+			$table->foreign('companies_id')->constrained();
 		});
 	}
 

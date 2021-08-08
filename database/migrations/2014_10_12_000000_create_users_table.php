@@ -21,6 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('user_name')->references('user_id')->on('companies');
         });
     }
 

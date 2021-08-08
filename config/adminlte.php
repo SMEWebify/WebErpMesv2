@@ -46,7 +46,7 @@ return [
     */
 
     'logo' => '<b>WEM</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+    'logo_img' => 'vendor/adminlte/dist/img/WEMLogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -87,8 +87,8 @@ return [
     'layout_boxed' => null,
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => true,
-    'layout_fixed_footer' => null,
-    'layout_dark_mode' => true,
+    'layout_fixed_footer' => true,
+    'layout_dark_mode' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -148,7 +148,7 @@ return [
     'sidebar_mini' => 'lg',
     'sidebar_collapse' => false,
     'sidebar_collapse_auto_size' => false,
-    'sidebar_collapse_remember' => false,
+    'sidebar_collapse_remember' => true,
     'sidebar_collapse_remember_no_transition' => true,
     'sidebar_scrollbar_theme' => 'os-theme-light',
     'sidebar_scrollbar_auto_hide' => 'l',
@@ -247,18 +247,9 @@ return [
             'icon'        => 'far fa-fw fa-file',
         ],
         [
-            'text'    => 'Companies',
-            'icon'    => 'far fa-fw fa-file',
-            'submenu' => [
-                [
-                    'text' => 'Companies list',
-                    'url'  => 'companies',
-                ],
-                [
-                    'text' => 'Companies new',
-                    'url'  => 'companiesnew',
-                ],
-            ]
+            'text'        => 'Companies',
+            'url'         => 'companies',
+            'icon'        => 'far fa-fw fa-file',
         ],
         ['header' => 'Sales'],
         [
@@ -312,7 +303,7 @@ return [
             ]
         ],
         [
-            'text'    => 'Planning',
+            'text'    => 'Production',
             'icon'    => 'far fa-fw fa-file',
             'submenu' => [
                 [
@@ -360,34 +351,53 @@ return [
         ],
         ['header' => 'Others'],
         [
-            'text'    => 'Item',
+            'text'    => 'Product',
             'icon'    => 'far fa-fw fa-file',
             'submenu' => [
                 [
-                    'text' => 'Purchase order list',
+                    'text' => 'Product list',
                     'url'  => '#',
                 ],
                 [
-                    'text' => 'New purchase order',
-                    'url'  => '#',
-                ],
-                ['header' => 'workflow'],
-                [
-                    'text' => 'PO reciept',
+                    'text' => 'New Product',
                     'url'  => '#',
                 ],
                 [
-                    'text' => 'Incoive supplier',
+                    'text' => 'Stock',
+                    'url'  => '#',
+                ],
+                [
+                    'text' => 'Inventory',
                     'url'  => '#',
                 ],
             ],
+        ],
+        [
+            
+            'text' => 'Quality',
+            'icon'    => 'far fa-fw fa-file',
+            'url'  => 'quality',
+        ],
+        [
+            'text' => 'Setting times',
+            'icon'    => 'far fa-fw fa-file',
+            'url'  => '#',
+        ],
+        [
+            'text' => 'Methods',
+            'icon'    => 'far fa-fw fa-file',
+            'url'  => 'methods',
+        ],
+        [
+            'text' => 'Accouting',
+            'icon'    => 'far fa-fw fa-file',
+            'url'  => 'accouting',
         ],
         [
             'text'        => 'User',
             'url'         => 'users',
             'icon'        => 'far fa-fw fa-file',
         ],
-        ['header' => 'account_settings'],
         [
             'text' => 'profile',
             'url'  => 'admin/settings',

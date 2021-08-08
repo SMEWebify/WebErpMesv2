@@ -40,4 +40,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function GetPrettyCreatedAttribute()
+    {
+        return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function companie()
+    {
+        return $this->belongsTo(Companies::class);
+    }
 }

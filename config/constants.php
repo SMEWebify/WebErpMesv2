@@ -18,7 +18,7 @@ return [
         'TABLE_ERP_ATTACHED_DOCUMENT' => 'attached_document',
         //DATA BASE COMPANIES
         'TABLE_ERP_COMPANES' => 'companies',
-        'TABLE_ERP_ADRESSE' => 'companies_addresses',
+        'TABLE_ERP_ADRESSE' => 'companiesAddresses',
         'TABLE_ERP_CONTACT' => 'companies_contact',
         //DATA BASE COMPANY
         'TABLE_ERP_ACTIVITY_SECTOR' => 'company_activity_sector',
