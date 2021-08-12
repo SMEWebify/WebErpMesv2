@@ -15,5 +15,10 @@ Laravel-AdminLTE
 I am unprofessional, any improvement discussion would be helpful (Help search for gantt planning creation).
 
 -----------------
-![image](https://user-images.githubusercontent.com/75578469/127155577-43752edd-243a-4c63-a557-0952f6a39d7a.png)
+Companies management
+![image](https://user-images.githubusercontent.com/75578469/129263637-f5a7d736-dfb1-46a8-939c-53ef4f8fd6db.png)
+
+Resources management 
+![image](https://user-images.githubusercontent.com/75578469/129263721-012841a5-ff4e-4db1-8310-074ff8df674b.png)
+
 
