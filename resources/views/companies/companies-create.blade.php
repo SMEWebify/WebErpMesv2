@@ -64,21 +64,14 @@
         <div class="col-3">
           <input type="text" class="form-control" name="TVA_INTRA" id="TVA_INTRA" placeholder="VAT number">
         </div>
-        <div class="col-3">
-            <select class="form-control" name="TVA_ID" id="TVA_ID">
-              @foreach ($VatSelect as $item)
-            <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-            @endforeach
-            </select>
-        </div>
       </div>
       
       <div class="row">
-        <label for="LOGO">Logo file</label>
+        <label for="PICTURE">Logo file</label>
         <div class="input-group">
           <div class="custom-file">
-            <input type="file" class="custom-file-input" id="LOGO">
-            <label class="custom-file-label" for="LOGO">Choose file</label>
+            <input type="file" class="custom-file-input" id="PICTURE">
+            <label class="custom-file-label" for="PICTURE">Choose file</label>
           </div>
           <div class="input-group-append">
             <span class="input-group-text">Upload</span>

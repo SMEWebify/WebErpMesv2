@@ -17,10 +17,10 @@ class CreateQualityControlDevicesTable extends Migration
             $table->id();
             $table->string('CODE');
 			$table->string('LABEL');
-			$table->integer('RESSOURCE_ID');
-			$table->integer('USER_ID');
+			$table->integer('service_id');
+			$table->integer('user_id');
 			$table->string('SERIAL_NUMBER');
-			$table->string('PICTURE_DEVICES');
+			$table->string('PICTURE');
             $table->timestamps();
         });
     }

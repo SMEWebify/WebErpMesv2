@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-# W.E.M. 
-##  Ressource and Manufacturing execution system  Web
-
-
-W.E.M. is a business management web application using Laravel 8 and bootstrap 4.6.
-=======
 
 
 <p align="center">
@@ -15,7 +8,6 @@ W.E.M. is a business management web application using Laravel 8 and bootstrap 4.
 ##  Ressource and Manufacturing execution system  Web
 
 WEM is a business management web application using Laravel 8 and bootstrap 4.6.
->>>>>>> 581a9b6736097ae0ce269e03d035646f6eaf7166
 
 This project is the continuation of https://github.com/billyboy35/WEB_MES but using a framework and the design https://github.com/jeroennoten/
 Laravel-AdminLTE

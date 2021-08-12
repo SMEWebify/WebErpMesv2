@@ -15,6 +15,16 @@ class CreateMethodsRessourcesTable extends Migration
     {
         Schema::create('methods_ressources', function (Blueprint $table) {
             $table->id();
+            $table->integer('ORDRE');
+            $table->string('CODE');
+			$table->string('LABEL');
+			$table->string('PICTURE')->nullable();
+			$table->integer('MASK_TIME');
+			$table->decimal('CAPACITY', 11, 0);
+			$table->integer('section_id');
+			$table->string('COLOR');
+			$table->integer('service_id');
+			$table->text('COMMENT', 65535)->nullable();
             $table->timestamps();
         });
     }

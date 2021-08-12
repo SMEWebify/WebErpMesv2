@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class QualityNonConformity extends Model
 {
     use HasFactory;
+    
+    public function UserManagement()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function GetPrettyCreatedAttribute()
     {

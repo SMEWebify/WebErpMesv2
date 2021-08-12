@@ -22,7 +22,6 @@ class Companies extends Model
                             'SIREN', 
                             'APE', 
                             'TVA_INTRA', 
-                            'TVA_ID', 
                             'STATU_CLIENT',
                             'DISCOUNT',
                             'user_id',
@@ -47,13 +46,9 @@ class Companies extends Model
 
     public function UserManagement()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
-    
-    public function Vat()
-    {
-        return $this->hasOne(acVat::class);
-    }
+
 
     public function GetPrettyCreatedAttribute()
     {

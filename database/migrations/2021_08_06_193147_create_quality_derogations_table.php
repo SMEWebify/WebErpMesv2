@@ -17,15 +17,14 @@ class CreateQualityDerogationsTable extends Migration
             $table->id();
             $table->string('CODE');
 			$table->string('LABEL');
-			$table->integer('CREATOR_ID');
 			$table->integer('TYPE');
-			$table->integer('ETAT');
-			$table->integer('RESP_ID');
+			$table->integer('STATU');
+			$table->integer('user_id');
 			$table->text('PB_DESCP', 65535);
 			$table->text('PROPOSAL', 65535);
 			$table->integer('REPLY');
 			$table->text('COMMENT', 65535);
-			$table->integer('NFC_ID');
+			$table->integer('quality_non_conformitie_id');
 			$table->text('DECISION', 65535);
             $table->timestamps();
         });

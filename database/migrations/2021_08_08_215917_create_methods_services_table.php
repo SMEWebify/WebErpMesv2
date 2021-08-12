@@ -15,6 +15,15 @@ class CreateMethodsServicesTable extends Migration
     {
         Schema::create('methods_services', function (Blueprint $table) {
             $table->id();
+            $table->string('CODE');
+			$table->integer('ORDRE');
+			$table->string('LABEL');
+			$table->integer('TYPE');
+			$table->integer('HOURLY_RATE');
+			$table->integer('MARGIN');
+			$table->string('COLOR');
+			$table->string('PICTURE')->nullable();
+			$table->string('compannie_id')->nullable();
             $table->timestamps();
         });
     }

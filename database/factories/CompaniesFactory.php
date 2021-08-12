@@ -32,7 +32,7 @@ class CompaniesFactory extends Factory
 			'APE'=> $this->faker->regexify('[0-4]{4}[A-Z]{1}'),
 			'TVA_INTRA' => $this->faker->vat(),
 			'TVA_ID' => $this->faker->randomElement([1, 2, 3]),
-			'LOGO'=> $this->faker->imageUrl(640, 480, 'Companies Logo', true),
+			'PICTURE'=> $this->faker->imageUrl(640, 480, 'Companies Logo', true),
 			'STATU_CLIENT' => $this->faker->randomElement([0, 1]),
 			'DISCOUNT'=> $this->faker->randomElement([0, 1, 5, 10]), 
 			'users_id' => $this->faker->randomElement([1, 2, 3]), 

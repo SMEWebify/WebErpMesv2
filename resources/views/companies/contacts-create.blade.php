@@ -31,7 +31,7 @@
       <div class="row">
         <div class="col-5">
           <label for="ORDRE">Sort order</label>
-          <input type="text" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+          <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
           <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
         </div>
         <div class="col-5">

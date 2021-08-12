@@ -197,7 +197,7 @@
          <div class="col-12 col-sm-4">
           <div class="text-muted">
            <p class="text-sm">customer manager
-             <b class="d-block"></b>
+             <b class="d-block">{{ $Companie->UserManagement['name'] }}</b>
            </p>
           </div>
          </div>

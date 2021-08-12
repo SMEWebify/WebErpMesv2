@@ -4,7 +4,7 @@ namespace App\Http\Requests\Quality;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreQualityCorrectionRequest extends FormRequest
+class StoreQualityCauseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class StoreQualityCorrectionRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required',
+            'CODE' =>'required|unique:quality_causes',
             'LABEL'=>'required',
         ];
     }

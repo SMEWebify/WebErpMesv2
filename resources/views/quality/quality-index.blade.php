@@ -40,8 +40,9 @@
   <div class="card-body">
     <div class="tab-content">
 
-      <div class="tab-pane" id="Action">
+      <div class="tab-pane active" id="Action">
         <form class="form-horizontal">
+          @csrf
           <div class="form-group row">
             <label for="inputName" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
@@ -65,6 +66,7 @@
 
       <div class="tab-pane" id="Derogations">
         <form class="form-horizontal">
+          @csrf
           <div class="form-group row">
             <label for="inputName" class="col-sm-2 col-form-label">Name</label>
             <div class="col-sm-10">
@@ -101,7 +103,7 @@
               </tr>
               </thead>
               <tbody>
-                @foreach ($QualityActions as $QualityAction)
+                @forelse ($QualityActions as $QualityAction)
                 <tr>
                   <td>{{ $QualityAction->CODE }}</td>
                   <td>{{ $QualityAction->LABEL }}</td>
@@ -110,7 +112,16 @@
                   <td>{{ $QualityAction->ETAT }}</td>
                   <td>{{ $QualityAction->GetPrettyCreatedAttribute() }}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                  <td>No Data</td>
+                  <td></td> 
+                  <td></td> 
+                  <td></td> 
+                  <td></td> 
+                  <td></td> 
+                </tr>
+                @endforelse
               </tbody>
               <tfoot>
                 <tr>
@@ -137,6 +148,7 @@
         <hr>
         <div class="card-body">
           <form method="POST" action="{{ route('quality.action.create')}}" >
+            @csrf
             <div class="form-group row">
               <div class="col-2">
                 <label for="CODE">External ID</label>
@@ -199,7 +211,7 @@
               </tr>
               </thead>
               <tbody>
-                @foreach ($QualityControlDevices as $QualityControlDevice)
+                @forelse ($QualityControlDevices as $QualityControlDevice)
                 <tr>
                   <td>{{ $QualityControlDevice->CODE }}</td>
                   <td>{{ $QualityControlDevice->LABEL }}</td>
@@ -208,7 +220,16 @@
                   <td>{{ $QualityControlDevice->SERIAL_NUMBER }}</td>
                   <td>{{ $QualityControlDevice->GetPrettyCreatedAttribute() }}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                  <td>No Data</td>
+                  <td></td> 
+                  <td></td> 
+                  <td></td> 
+                  <td></td> 
+                  <td></td> 
+                </tr>
+                @endforelse
               </tbody>
               <tfoot>
                 <tr>
@@ -230,64 +251,65 @@
             </div>
           <!-- /.row -->
           </div>
-      <!-- /.card-body -->
-      </div>
-      <hr>
-      <div class="card-body">
-        <form method="POST" action="{{ route('quality.device.create')}}" enctype="multipart/form-data">
-          <div class="row">
-            <div class="col-2">
-              <label for="CODE">External ID</label>
-              <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
-            </div>
-            <div class="col-2">
-              <label for="LABEL">Label</label>
-              <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
-            </div>
-            <div class="col-2">
-                <label for="user_id">Ressource</label>
+        <!-- /.card-body -->
+        </div>
+        <hr>
+        <div class="card-body">
+          <form method="POST" action="{{ route('quality.device.create')}}" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-2">
+                <label for="CODE">External ID</label>
+                <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+              </div>
+              <div class="col-2">
+                <label for="LABEL">Label</label>
+                <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+              </div>
+              <div class="col-2">
+                  <label for="user_id">Ressource</label>
+                  <select class="form-control" name="user_id" id="user_id">
+                  </select>
+              </div>
+              <div class="col-2">
+                <label for="user_id">User</label>
                 <select class="form-control" name="user_id" id="user_id">
+                  @foreach ($userSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
                 </select>
+              </div>
+              <div class="col-2">
+                <label for="LABEL">Serial number</label>
+                <input type="text" class="form-control"  name="SERIAL_NUMBER" id="SERIAL_NUMBER" placeholder="Serial number">
+              </div>
+            <!-- /.row -->
             </div>
-            <div class="col-2">
-              <label for="exampleInputFile">User</label>
-              <select class="form-control" name="user_id" id="user_id">
-                @foreach ($userSelect as $item)
-                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-2">
-              <label for="LABEL">Serial number</label>
-              <input type="text" class="form-control"  name="SERIAL_NUMBER" id="SERIAL_NUMBER" placeholder="Serial number">
-            </div>
-          <!-- /.row -->
-          </div>
-          <div class="form-group">
-            <div class="col-md-6">
-              <label for="exampleInputFile">Logo file</label>
-              <div class="input-group">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="LOGO">
-                  <label class="custom-file-label" for="LOGO">Choose file</label>
-                </div>
-                <div class="input-group-append">
-                  <span class="input-group-text">Upload</span>
+            <div class="form-group">
+              <div class="col-md-6">
+                <label for="LOGO">Logo file</label>
+                <div class="input-group">
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="LOGO">
+                    <label class="custom-file-label" for="LOGO">Choose file</label>
+                  </div>
+                  <div class="input-group-append">
+                    <span class="input-group-text">Upload</span>
+                  </div>
                 </div>
               </div>
+            <!-- /.form-group -->
             </div>
-          <!-- /.form-group -->
-          </div>
-          <div class="card-footer">
-            <button type="submit" class="btn btn-danger">Submit</button>
-          </div>
-        </form>
-      <!-- /.card-body -->
-       </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-danger">Submit</button>
+            </div>
+          </form>
+        <!-- /.card-body -->
+        </div>
       <!-- /.tab-pane -->
-       </div>
-      <div class="tab-pane" id="Settings">
+      </div>
 
+      <div class="tab-pane" id="Settings">
         <div class="card card-primary collapsed-card">
           <div class="card-header">
             <h3 class="card-title">Failing list</h3>
@@ -319,7 +341,7 @@
                     <tbody>
                       @forelse ($QualityFailures as $QualityFailure)
                       <tr>
-                        <td>{{ $QualityFailure->CODE }}
+                        <td>{{ $QualityFailure->CODE }}</td>
                         <td>{{ $QualityFailure->LABEL }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -400,7 +422,7 @@
                       <tbody>
                         @forelse ($QualityCauses as $QualityCause)
                         <tr>
-                          <td>{{ $QualityCause->CODE }}
+                          <td>{{ $QualityCause->CODE }}</td>
                           <td>{{ $QualityCause->LABEL }}</td>
                           <td class="text-right py-0 align-middle">
                             <div class="btn-group btn-group-sm">
@@ -482,7 +504,7 @@
                         <tbody>
                           @forelse ($QualityCorrections as $QualityCorrection)
                           <tr>
-                            <td>{{ $QualityCorrection->CODE }}
+                            <td>{{ $QualityCorrection->CODE }}</td>
                             <td>{{ $QualityCorrection->LABEL }}</td>
                             <td class="text-right py-0 align-middle">
                               <div class="btn-group btn-group-sm">
@@ -494,7 +516,7 @@
                           <tr>
                             <td>No Data</td>
                             <td></td> 
-                            <td></td> 
+                            <td></td>
                           </tr>
                           @endforelse
                         </tbody>

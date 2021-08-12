@@ -1,19 +1,21 @@
 <?php
 
-namespace App\Models\Quality;
+namespace App\Models\Methods;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class QualityDerogation extends Model
+class MethodsFamilies extends Model
 {
     use HasFactory;
 
-    public function UserManagement()
+    protected $fillable = ['CODE',  'LABEL',  'service_id'];
+
+    public function service()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(MethodsServices::class, 'service_id');
     }
-    
+
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

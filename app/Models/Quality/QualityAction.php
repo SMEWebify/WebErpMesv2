@@ -11,9 +11,9 @@ class QualityAction extends Model
 
     protected $fillable = ['CODE',  'LABEL','TYPE', 'ETAT' ];
 
-    public function User()
+    public function UserManagement()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function GetPrettyCreatedAttribute()

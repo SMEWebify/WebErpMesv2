@@ -24,7 +24,7 @@ class CreateQualityActionsTable extends Migration
 			$table->text('CAUSE', 65535)->nullable();
 			$table->text('ACTION', 65535)->nullable();
 			$table->string('COLOR');
-			$table->integer('NFC_ID')->nullable();
+			$table->integer('quality_non_conformitie_id')->nullable();
             $table->timestamps();
         });
     }

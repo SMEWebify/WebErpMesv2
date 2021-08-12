@@ -15,6 +15,11 @@ class CreateMethodsSectionsTable extends Migration
     {
         Schema::create('methods_sections', function (Blueprint $table) {
             $table->id();
+            $table->integer('ORDRE');
+			$table->string('CODE');
+			$table->string('LABEL');
+			$table->integer('user_id');
+			$table->string('COLOR');
             $table->timestamps();
         });
     }

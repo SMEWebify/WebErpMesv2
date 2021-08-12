@@ -14,5 +14,5 @@ We love your input! We want to make contributing to this project as easy and tra
 ## We Develop with Github
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
 
-## Report bugs using Github's [issues](https://github.com/billyboy35/WEB_MES/issues)
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/billyboy35/WEB_MES/issues/new/choose); it's that easy!
+## Report bugs using Github's [issues](https://github.com/billyboy35/WebErpMesv2/issues)
+We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/billyboy35/WebErpMesv2/issues/new); it's that easy!

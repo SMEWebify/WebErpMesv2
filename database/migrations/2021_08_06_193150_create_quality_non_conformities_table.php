@@ -19,19 +19,18 @@ class CreateQualityNonConformitiesTable extends Migration
 			$table->string('LABEL');
 			$table->integer('ETAT');
 			$table->integer('TYPE');
-			$table->integer('CREATOR_ID');
-			$table->integer('MODIFIED_ID');
+			$table->integer('user_id');
 			$table->integer('CAUSED_BY_ID');
-			$table->integer('SECTION_ID');
-			$table->integer('RESSOURCE_ID');
-			$table->integer('DEFAUT_ID');
+			$table->integer('section_id');
+			$table->integer('service_id');
+			$table->integer('failure_id');
 			$table->text('DEFAUT_COMMENT', 65535);
-			$table->integer('CAUSE_ID');
+			$table->integer('causes_id');
 			$table->text('CAUSE_COMMENT', 65535);
-			$table->integer('CORRECTION_ID');
+			$table->integer('correction_id');
 			$table->text('CORRECTION_COMMENT', 65535);
 			$table->text('COMMENT', 65535);
-			$table->integer('COMPANY_ID');
+			$table->integer('companie_id');
             $table->timestamps();
         });
     }

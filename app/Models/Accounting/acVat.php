@@ -10,8 +10,4 @@ class acVat extends Model
 {
     use HasFactory;
 
-    public function companie()
-    {
-        return $this->belongsTo(Companies::class);
-    }
 }

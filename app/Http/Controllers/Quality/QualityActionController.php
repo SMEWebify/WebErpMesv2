@@ -11,7 +11,7 @@ class QualityActionController extends Controller
     public function store(StoreQualityActionRequest $request)
     {
        
-        $adress = QualityAction::create($request->only('CODE', 'LABEL','TYPE', 'ETAT'));
+        $Action = QualityAction::create($request->only('CODE', 'LABEL','TYPE', 'ETAT'));
 
         return redirect()->route('quality')->with('success', 'Successfully created action.');
 

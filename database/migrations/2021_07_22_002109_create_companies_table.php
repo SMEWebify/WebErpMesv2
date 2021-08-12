@@ -24,8 +24,7 @@ class CreateCompaniesTable extends Migration
 			$table->string('SIREN')->nullable();
 			$table->string('APE')->nullable();
 			$table->string('TVA_INTRA')->nullable();
-			$table->integer('TVA_ID')->nullable();
-			$table->string('LOGO')->nullable();
+			$table->string('PICTURE')->nullable();
 			$table->integer('STATU_CLIENT')->default(0);
 			$table->integer('DISCOUNT')->nullable()->default(0);
 			$table->integer('users_id')->nullable()->default(0);

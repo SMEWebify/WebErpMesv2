@@ -244,17 +244,17 @@ return [
         [
             'text'        => 'Dashboard',
             'url'         => 'dashboard',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'fas fa-tachometer-alt',
         ],
         [
             'text'        => 'Companies',
             'url'         => 'companies',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'far fa-building',
         ],
         ['header' => 'Sales'],
         [
             'text'    => 'Quote',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-calculator',
             'submenu' => [
                 [
                     'text' => 'Quote list',
@@ -273,7 +273,7 @@ return [
         ['header' => 'Jobs'],
         [
             'text'    => 'Order',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-inbox',
             'submenu' => [
                 [
                     'text' => 'Order list',
@@ -299,16 +299,18 @@ return [
                 [
                     'text' => 'Invoince list',
                     'url'  => '#',
+                    
                 ],
             ]
         ],
         [
             'text'    => 'Production',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-industry',
             'submenu' => [
                 [
                     'text' => 'Task list',
                     'url'  => '#',
+                    'icon' => 'fas fa-tasks',
                 ],
                 [
                     'text' => 'Kanban',
@@ -317,6 +319,7 @@ return [
                 [
                     'text' => 'Calendar',
                     'url'  => '#',
+                    'icon' => 'fas fa-calendar-alt',
                 ],
             ]
         ],
@@ -324,7 +327,7 @@ return [
         [
             'text'        => 'Purchase request',
             'url'         => '#',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'fas fa-industry',
         ],
         [
             'text'    => 'Purchase order',
@@ -342,6 +345,7 @@ return [
                 [
                     'text' => 'PO reciept',
                     'url'  => '#',
+                    'icon' => 'fas fa-receipt',
                 ],
                 [
                     'text' => 'Incoive supplier',
@@ -352,7 +356,7 @@ return [
         ['header' => 'Others'],
         [
             'text'    => 'Product',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-barcode',
             'submenu' => [
                 [
                     'text' => 'Product list',
@@ -375,17 +379,17 @@ return [
         [
             
             'text' => 'Quality',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-ruler-combined',
             'url'  => 'quality',
         ],
         [
             'text' => 'Setting times',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-user-clock',
             'url'  => '#',
         ],
         [
             'text' => 'Methods',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'   => 'fas fa-cogs',
             'url'  => 'methods',
         ],
         [
@@ -396,7 +400,7 @@ return [
         [
             'text'        => 'User',
             'url'         => 'users',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'fas fa-users',
         ],
         [
             'text' => 'profile',

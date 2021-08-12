@@ -65,9 +65,9 @@ class CompaniesController extends Controller
                                                     'RECEPT_CONTROLE',
                                                     'COMMENT', ));
 
-        if($request->hasFile('LOGO')){
-            $path = $request->LOGO->store('public/companies/images');
-            $companie->update(['LOGO' => $path]);
+        if($request->hasFile('PICTURE')){
+            $path = $request->PICTURE->store('public/images/companies/');
+            $companie->update(['PICTURE' => $path]);
         }
 
         return redirect()->route('companies.show', ['id' => $companie->id])->with('success', 'Successfully created new company');

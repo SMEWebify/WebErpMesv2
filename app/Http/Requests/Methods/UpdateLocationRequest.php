@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Quality;
+namespace App\Http\Requests\Methods;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreQualityActionRequest extends FormRequest
+class UpdateLocationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StoreQualityActionRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -25,10 +25,6 @@ class StoreQualityActionRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required',
-            'LABEL'=>'required',
-            'TYPE'=>'required',
-            'ETAT'=>'required',
         ];
     }
 }
