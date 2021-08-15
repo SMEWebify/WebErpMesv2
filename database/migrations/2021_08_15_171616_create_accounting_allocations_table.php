@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAcVatsTable extends Migration
+class CreateAccountingAllocationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateAcVatsTable extends Migration
      */
     public function up()
     {
-        Schema::create('ac_vats', function (Blueprint $table) {
+        Schema::create('accounting_allocations', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
-			$table->decimal('RATE', 10, 3);
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ class CreateAcVatsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ac_vats');
+        Schema::dropIfExists('accounting_allocations');
     }
 }

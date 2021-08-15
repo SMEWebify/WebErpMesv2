@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQualityDerogationsTable extends Migration
+class CreateAccountingVatsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,11 @@ class CreateQualityDerogationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('quality_derogations', function (Blueprint $table) {
+        Schema::create('accounting_vats', function (Blueprint $table) {
             $table->id();
             $table->string('CODE');
 			$table->string('LABEL');
-            $table->integer('STATU');
-			$table->integer('TYPE');
-			$table->integer('user_id');
-			$table->text('PB_DESCP', 65535);
-			$table->text('PROPOSAL', 65535);
-			$table->text('REPLY', 65535);
-			$table->integer('quality_non_conformitie_id')->nullable();
-			$table->text('DECISION', 65535);
+			$table->decimal('RATE', 10, 3);
             $table->timestamps();
         });
     }
@@ -36,6 +29,6 @@ class CreateQualityDerogationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quality_derogations');
+        Schema::dropIfExists('ac_vats');
     }
 }

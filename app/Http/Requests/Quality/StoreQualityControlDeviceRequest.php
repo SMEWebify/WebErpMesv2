@@ -25,6 +25,9 @@ class StoreQualityControlDeviceRequest extends FormRequest
     {
         return [
             //
+            'CODE' =>'required|unique:quality_control_devices',
+            'LABEL'=>'required',
+            'SERIAL_NUMBER'=>'required|unique:quality_control_devices',
         ];
     }
 }

@@ -331,7 +331,7 @@ return [
         ],
         [
             'text'    => 'Purchase order',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-cash-register',
             'submenu' => [
                 [
                     'text' => 'Purchase order list',
@@ -394,7 +394,7 @@ return [
         ],
         [
             'text' => 'Accouting',
-            'icon'    => 'far fa-fw fa-file',
+            'icon'    => 'fas fa-piggy-bank',
             'url'  => 'accouting',
         ],
         [

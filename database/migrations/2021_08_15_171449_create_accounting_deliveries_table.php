@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQualityControlDevicesTable extends Migration
+class CreateAccountingDeliveriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,8 @@ class CreateQualityControlDevicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('quality_control_devices', function (Blueprint $table) {
+        Schema::create('accounting_deliveries', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
-			$table->integer('service_id');
-			$table->integer('user_id');
-			$table->string('SERIAL_NUMBER');
-			$table->string('PICTURE')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +26,6 @@ class CreateQualityControlDevicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quality_control_devices');
+        Schema::dropIfExists('accounting_deliveries');
     }
 }

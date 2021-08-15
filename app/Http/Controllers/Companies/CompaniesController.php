@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Companies\Companies;
 use App\Http\Requests\Companies\StoreCompanieRequest;
-use App\Models\Accounting\acVat;
 
 class CompaniesController extends Controller
 {
@@ -34,10 +33,8 @@ class CompaniesController extends Controller
     public function create()
     {
         $userSelect = User::select('id', 'name')->get();
-        $VatSelect = acVat::select('id', 'LABEL')->get();
         return view('companies/companies-create', [
             'userSelect' => $userSelect,
-            'VatSelect' => $VatSelect,
         ]);
     }
 
@@ -66,7 +63,7 @@ class CompaniesController extends Controller
                                                     'COMMENT', ));
 
         if($request->hasFile('PICTURE')){
-            $path = $request->PICTURE->store('public/images/companies/');
+            $path = $request->PICTURE->store('images/companies/','public');
             $companie->update(['PICTURE' => $path]);
         }
 

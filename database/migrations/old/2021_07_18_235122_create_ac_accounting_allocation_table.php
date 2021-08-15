@@ -15,7 +15,7 @@ class CreateAcAccountingAllocationTable extends Migration {
 		Schema::create('ac_accounting_allocation', function(Blueprint $table)
 		{
 			$table->id();
-			$table->string('CODE');
+			$table->string('ACCOUNT');
 			$table->string('LABEL');
 			$table->integer('TVA');
 			$table->integer('COMPTE_TVA');

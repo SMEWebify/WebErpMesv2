@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\acVatCondition;
+use App\Models\acPaymentConditions;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class acVatFactory extends Factory
+class AccountingPaymentConditionFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = acVatCondition::class;
+    protected $model = acPaymentConditions::class;
 
     /**
      * Define the model's default state.
@@ -21,13 +21,15 @@ class acVatFactory extends Factory
      */
     public function definition()
     {
-        $type = $this->faker->randomElements(['TVA0', 'TVA5', 'TVA10', 'TVA20']);
+        $type = $this->faker->randomElements(['NODEF', '30FDM15', '30FDM', '30NET', '45FDM']);
 
         return [
             //
             'CODE' => $this->$type,
             'LABEL' =>$this->$type,
-            'RATE' => $this->faker->randomElement([0, 5, 10, 20]),
+            'NUMBER_OF_MONTH' => $this->faker->randomDigitNotNull(),
+            'NUMBER_OF_DAY' => $this->faker->randomDigitNotNull(),
+            'MONTH_END' => $this->faker->randomElement([1, 2]),
         ];
     }
 }

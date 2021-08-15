@@ -27,8 +27,6 @@ class StoreQualityActionRequest extends FormRequest
             //
             'CODE' =>'required|unique:quality_actions',
             'LABEL'=>'required',
-            'TYPE'=>'required',
-            'ETAT'=>'required',
         ];
     }
 }

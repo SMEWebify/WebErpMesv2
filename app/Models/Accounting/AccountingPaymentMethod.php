@@ -2,12 +2,10 @@
 
 namespace App\Models\Accounting;
 
-use App\Models\Companies\Companies;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class acVat extends Model
+class AccountingPaymentMethod extends Model
 {
     use HasFactory;
-
 }

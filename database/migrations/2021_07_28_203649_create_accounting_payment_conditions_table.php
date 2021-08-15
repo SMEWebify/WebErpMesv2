@@ -13,7 +13,7 @@ class CreateAcPaymentConditionsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('ac_payment_conditions', function(Blueprint $table)
+		Schema::create('accounting_payment_conditions', function(Blueprint $table)
 		{
 			$table->id();
 			$table->string('CODE');

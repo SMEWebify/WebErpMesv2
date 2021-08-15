@@ -25,6 +25,8 @@ class StoreQualityDerogationRequest extends FormRequest
     {
         return [
             //
+            'CODE' =>'required|unique:quality_derogations',
+            'LABEL'=>'required',
         ];
     }
 }

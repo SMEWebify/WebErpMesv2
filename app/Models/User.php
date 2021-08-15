@@ -3,8 +3,12 @@
 namespace App\Models;
 
 use App\Models\Companies\Companies;
+use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Quality\QualityDerogation;
+use App\Models\Quality\QualityControlDevice;
+use App\Models\Quality\QualityNonConformity;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -57,4 +61,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(MethodsSection::class);
     }
+
+    public function quality_actions()
+    {
+        return $this->hasMany(QualityAction::class);
+    }
+
+    public function quality_control_device()
+    {
+        return $this->hasMany(QualityControlDevice::class);
+    }
+
+    public function quality_derogations()
+    {
+        return $this->hasMany(QualityDerogation::class);
+    }
+
+    public function quality_non_conformities()
+    {
+        return $this->hasMany(QualityNonConformity::class);
+    }
+
+
 }

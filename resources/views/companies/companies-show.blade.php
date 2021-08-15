@@ -201,16 +201,6 @@
            </p>
           </div>
          </div>
-        <hr>
-        <h5 class="mt-5 text-muted">Project files</h5>
-        <ul class="list-unstyled">
-          <li>
-            <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
-          </li>
-        </ul>
-        <div class="text-center mt-5 mb-3">
-          <a href="#" class="btn btn-sm btn-primary">Add files</a>
-        </div>
       <!-- /.div col-12 col-md-12 -->
       </div>
       <!-- /.div row -->

@@ -526,7 +526,6 @@
                       </tr>
                     </tfoot>
                   </table>
-                  </table>
                 </div>
               <!-- /.card secondary -->
               </div>
