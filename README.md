@@ -9,6 +9,12 @@
 
 WEM is a business management web application using Laravel 8 and bootstrap 4.6.
 
+#why MES?
+
+Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured.
+
+MES offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop.
+
 This project is the continuation of https://github.com/billyboy35/WEB_MES but using a framework and the design https://github.com/jeroennoten/
 Laravel-AdminLTE
 
@@ -21,4 +27,6 @@ Companies management
 Resources management 
 ![image](https://user-images.githubusercontent.com/75578469/129263721-012841a5-ff4e-4db1-8310-074ff8df674b.png)
 
+Quality management 
+![image](https://user-images.githubusercontent.com/75578469/129486002-763a1560-6a29-40fd-9707-2dbc756fc412.png)
 
