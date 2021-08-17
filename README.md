@@ -30,3 +30,7 @@ Resources management
 Quality management 
 ![image](https://user-images.githubusercontent.com/75578469/129486002-763a1560-6a29-40fd-9707-2dbc756fc412.png)
 
+Account management
+![image](https://user-images.githubusercontent.com/75578469/129790685-a4322932-641f-448d-a7ac-45115896d085.png)
+
+
