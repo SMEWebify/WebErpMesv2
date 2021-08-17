@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class AccountingDelivery extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['CODE',  'LABEL'];
 }

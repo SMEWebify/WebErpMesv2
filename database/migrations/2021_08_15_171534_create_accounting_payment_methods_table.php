@@ -15,6 +15,9 @@ class CreateAccountingPaymentMethodsTable extends Migration
     {
         Schema::create('accounting_payment_methods', function (Blueprint $table) {
             $table->id();
+            $table->string('CODE');
+			$table->string('LABEL');
+			$table->string('CODE_ACCOUNT');
             $table->timestamps();
         });
     }

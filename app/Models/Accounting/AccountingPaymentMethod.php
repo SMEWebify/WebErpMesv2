@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class AccountingPaymentMethod extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['CODE',  'LABEL',  'CODE_ACCOUNT'];
 }

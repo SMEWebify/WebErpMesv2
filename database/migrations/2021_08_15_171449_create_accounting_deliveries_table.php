@@ -15,6 +15,8 @@ class CreateAccountingDeliveriesTable extends Migration
     {
         Schema::create('accounting_deliveries', function (Blueprint $table) {
             $table->id();
+			$table->string('CODE');
+			$table->string('LABEL');
             $table->timestamps();
         });
     }

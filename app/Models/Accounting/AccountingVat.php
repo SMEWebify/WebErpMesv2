@@ -10,4 +10,6 @@ class AccountingVat extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['CODE',  'LABEL',  'RATE'];
+
 }
