@@ -433,7 +433,7 @@
                   <form  method="POST" action="{{ route('methods.section.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="ORDRE">External ID</label>
+                      <label for="ORDRE">Sort order</label>
                       <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="10">
                     </div>
                     <div class="form-group">

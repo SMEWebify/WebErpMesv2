@@ -82,5 +82,10 @@ class User extends Authenticatable
         return $this->hasMany(QualityNonConformity::class);
     }
 
+    public function absence_request()
+    {
+        return $this->hasMany(TimesAbsence::class);
+    }
+
 
 }
