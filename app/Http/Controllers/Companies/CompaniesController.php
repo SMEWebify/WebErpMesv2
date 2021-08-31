@@ -12,7 +12,7 @@ class CompaniesController extends Controller
     public function index()
     {
 
-        $Companies = Companies::orderBy('id')->paginate(10);
+        $Companies = Companies::All();
 
         return view('companies/companies-index', [
             'Companieslist' => $Companies

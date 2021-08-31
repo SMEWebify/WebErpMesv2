@@ -35,7 +35,7 @@
       <li class="nav-item"><a class="nav-link" href="#Location" data-toggle="tab">Location in workshop</a></li>
       <li class="nav-item"><a class="nav-link" href="#Units" data-toggle="tab">Units</a></li>
       <li class="nav-item"><a class="nav-link" href="#Families" data-toggle="tab">Families</a></li>
-   
+      <li class="nav-item"><a class="nav-link" href="#Tools" data-toggle="tab">Tools</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -703,6 +703,14 @@
                       </tr>
                       @endforelse
                     </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>External ID</th>
+                        <th>Desciption</th>
+                        <th>Service</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               <!-- /.card secondary -->
@@ -746,6 +754,139 @@
           </div>
       </div>
       <!-- /.tab-pane -->
+
+      <div class="tab-pane" id="Tools">
+        <div class="card card-primary">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title">Tools list</h3>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Picture</th>
+                        <th>External ID</th>
+                        <th>Desciption</th>
+                        <th>Etat</th>
+                        <th>Cost</th>
+                        <th>End Date</th>
+                        <th>Qty</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @forelse ($MethodsTools as $MethodsTool)
+                      <tr>
+                        <td> 
+                          @if($MethodsTool->PICTURE )
+                          <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsTool->PICTURE) }}">
+                          @endif
+                        </td>
+                        <td>{{ $MethodsTool->CODE }}</td>
+                        <td>{{ $MethodsTool->LABEL }}</td>
+                        <td>
+                          @if($MethodsTool->ETAT  == 1)Unsed @endif
+                          @if($MethodsTool->ETAT  == 2)Used @endif
+                        </td>
+                        <td>{{ $MethodsTool->COST }}</td>
+                        <td>{{ $MethodsTool->END_DATE }}</td>
+                        <td>{{ $MethodsTool->QTY }}</td>
+                        <td class="text-right py-0 align-middle">
+                          <div class="btn-group btn-group-sm">
+                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                          </div>
+                        </td>
+                      </tr>
+                      @empty
+                      <tr>
+                        <td>No Data</td>
+                        <td></td> 
+                        <td></td> 
+                        <td></td> 
+                      </tr>
+                      @endforelse
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Picture</th>
+                        <th>External ID</th>
+                        <th>Desciption</th>
+                        <th>Etat</th>
+                        <th>Cost</th>
+                        <th>End Date</th>
+                        <th>Qty</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              <!-- /.card secondary -->
+              </div>
+
+              <div class="col-md-6 card-secondary">
+                  <div class="card-header">
+                    <h3 class="card-title">New tool</h3>
+                  </div>
+                  <form  method="POST" action="{{ route('methods.tool.create') }}" class="form-horizontal" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                      <label for="CODE">External ID</label>
+                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                    </div>
+                    <div class="form-group">
+                      <label for="LABEL">Label</label>
+                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                    </div>
+                    <div class="form-group">
+                      <label for="ETAT">Statu</label>
+                      <select class="form-control" name="ETAT" id="ETAT">
+                        <option value="1">Unused</option>
+                        <option value="2">Used</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="COST">Cost</label>
+                      <input type="number" class="form-control" name="COST"  id="COST" placeholder="Cost" step=".001">
+                    </div>
+                    <div class="form-group">
+                      <label for="QTY">Quantity</label>
+                      <input type="numer" class="form-control" name="QTY"  id="QTY" placeholder="Qty" >
+                    </div>
+                    <div class="form-group">
+                      <label for="END_DATE">End date</label>
+                      <input type="date" class="form-control" name="END_DATE"  id="END_DATE" placeholder="Qty" >
+                    </div>
+                    <div class="form-group">
+                      <label for="PICTURE">Logo file</label>
+                      <div class="input-group">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
+                          <label class="custom-file-label" for="PICTURE">Choose file</label>
+                        </div>
+                        <div class="input-group-append">
+                          <span class="input-group-text">Upload</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                      <div class="offset-sm-2 col-sm-10">
+                        <button type="submit" class="btn btn-danger">Submit New</button>
+                      </div>
+                    </div>
+                  </form>
+                <!-- /.card secondary -->
+                </div>
+              <!-- /.row -->
+              </div>
+            <!-- /.card body -->
+            </div>
+          <!-- /.card primary -->
+          </div>
+      </div>
+      <!-- /.tab-pane -->
+
     </div>
     <!-- /.tab-content -->
   </div>

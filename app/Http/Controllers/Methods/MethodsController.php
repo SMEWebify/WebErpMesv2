@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Methods;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Companies\Companies;
+use App\Models\Methods\MethodsTools;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsSection;
 use App\Models\Methods\MethodsFamilies;
@@ -27,6 +28,7 @@ class MethodsController extends Controller
         $MethodsLocations = MethodsLocation::orderBy('id')->paginate(10);
         $MethodsUnits = MethodsUnits::orderBy('id')->paginate(10);
         $MethodsFamilies = MethodsFamilies::orderBy('id')->paginate(10);
+        $MethodsTools = MethodsTools::orderBy('CODE')->paginate(10);
 
         $userSelect = User::select('id', 'name')->get();
         $CompaniesSelect = Companies::select('id', 'LABEL')->orderBy('LABEL')->where('STATU_FOUR', 2)->get();
@@ -42,7 +44,8 @@ class MethodsController extends Controller
             'SectionsSelect' =>  $SectionsSelect,
             'MethodsLocations' =>  $MethodsLocations,
             'userSelect' => $userSelect,
-            'CompaniesSelect' => $CompaniesSelect
+            'CompaniesSelect' => $CompaniesSelect,
+            'MethodsTools' => $MethodsTools
             
         ]);
 

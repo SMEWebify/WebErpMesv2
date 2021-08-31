@@ -247,10 +247,19 @@ return [
             'icon'        => 'fas fa-tachometer-alt',
         ],
         [
-            'text'        => 'Companies',
-            'url'         => 'companies',
-            'icon'        => 'far fa-building',
-        ],
+            'text'    => 'Companies',
+            'icon'    => 'far fa-building',
+            'submenu' => [
+                [
+                    'text' => 'Companies list',
+                    'url'  => 'companies',
+                ],
+                [
+                    'text' => 'New companie',
+                    'url'  => 'companies/create',
+                ],
+             ]
+            ],
         ['header' => 'Sales'],
         [
             'text'    => 'Quote',
@@ -385,7 +394,7 @@ return [
         [
             'text' => 'Setting times',
             'icon'    => 'fas fa-user-clock',
-            'url'  => '#',
+            'url'  => 'times',
         ],
         [
             'text' => 'Methods',
@@ -450,21 +459,21 @@ return [
 
     'plugins' => [
         'Datatables' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
                 ],
                 [
                     'type' => 'js',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
                 ],
                 [
                     'type' => 'css',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
                 ],
             ],
@@ -485,11 +494,11 @@ return [
             ],
         ],
         'Chartjs' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js',
                 ],
             ],
