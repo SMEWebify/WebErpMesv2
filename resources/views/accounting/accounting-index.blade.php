@@ -303,7 +303,7 @@
                     </div>
                     <div class="form-group">
                       <label for="RATE">RATE</label>
-                      <input type="number" class="form-control" name="RATE"  id="RATE" placeholder="10 %">
+                      <input type="number" class="form-control" name="RATE"  id="RATE" placeholder="10 %" step=".01">
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">

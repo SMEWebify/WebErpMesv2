@@ -286,66 +286,30 @@
         <!-- /.card-header -->
         <div class="card-body p-0">
           <ul class="products-list product-list-in-card pl-2 pr-2">
+
+              
+            @foreach ($LastProducts as $LastProduct)
             <li class="item">
               <div class="product-img">
-                <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
+                <img src="{{ asset('storage/'.$LastProduct->PICTURE) }} alt="Product Image" class="img-size-50">
               </div>
               <div class="product-info">
-                <a href="javascript:void(0)" class="product-title">Samsung TV
-                  <span class="badge badge-warning float-right">$1800</span></a>
+                <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->LABEL }} {{ $LastProduct->IND }}
+                  <span class="badge badge-info float-right">{{ $LastProduct->purchased_price }}</span></a>
                 <span class="product-description">
-                  Samsung 32" 1080p 60Hz LED Smart HDTV.
+                  {{ $LastProduct->CODE }}
+                  
+                  <span class="badge badge-success float-right">{{ $LastProduct->selling_price }}</span>
                 </span>
               </div>
             </li>
             <!-- /.item -->
-            <li class="item">
-              <div class="product-img">
-                <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
-              </div>
-              <div class="product-info">
-                <a href="javascript:void(0)" class="product-title">Bicycle
-                  <span class="badge badge-info float-right">$700</span></a>
-                <span class="product-description">
-                  26" Mongoose Dolomite Men's 7-speed, Navy Blue.
-                </span>
-              </div>
-            </li>
-            <!-- /.item -->
-            <li class="item">
-              <div class="product-img">
-                <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
-              </div>
-              <div class="product-info">
-                <a href="javascript:void(0)" class="product-title">
-                  Xbox One <span class="badge badge-danger float-right">
-                  $350
-                </span>
-                </a>
-                <span class="product-description">
-                  Xbox One Console Bundle with Halo Master Chief Collection.
-                </span>
-              </div>
-            </li>
-            <!-- /.item -->
-            <li class="item">
-              <div class="product-img">
-                <img src="dist/img/default-150x150.png" alt="Product Image" class="img-size-50">
-              </div>
-              <div class="product-info">
-                <a href="javascript:void(0)" class="product-title">PlayStation 4
-                  <span class="badge badge-success float-right">$399</span></a>
-                <span class="product-description">
-                  PlayStation 4 500GB Console (PS4)
-                </span>
-              </div>
-            </li>
-            <!-- /.item -->
+            @endforeach
           </ul>
         </div>
         <!-- /.card-body -->
         <div class="card-footer text-center">
-          <a href="javascript:void(0)" class="uppercase">View All Products</a>
+          <a href="{{ route('products')}}" class="uppercase">View All Products</a>
         </div>
         <!-- /.card-footer -->
       </div>

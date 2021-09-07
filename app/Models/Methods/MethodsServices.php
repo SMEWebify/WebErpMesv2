@@ -2,6 +2,7 @@
 
 namespace App\Models\Methods;
 
+use App\Models\Products\Products;
 use App\Models\Methods\MethodsFamilies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Methods\MethodsRessources;
@@ -27,6 +28,11 @@ class MethodsServices extends Model
     public function quality_control_device()
     {
         return $this->hasMany(QualityControlDevice::class);
+    }
+
+    public function Product()
+    {
+        return $this->hasMany(Products::class);
     }
 
     public function GetPrettyCreatedAttribute()

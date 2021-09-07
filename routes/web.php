@@ -52,7 +52,23 @@ Route::group(['prefix' => 'times'], function () {
     Route::post('/BanckHoliday/create', 'App\Http\Controllers\Times\BanckHolidayController@store')->middleware(['auth'])->name('times.banckholiday.create');
     Route::post('/ImproductTime/create', 'App\Http\Controllers\Times\ImproductTimeController@store')->middleware(['auth'])->name('times.improducttime.create');
     Route::post('/MachineEvent/create', 'App\Http\Controllers\Times\MachineEventController@store')->middleware(['auth'])->name('times.machineevent.create');
-  });
+});
+
+Route::group(['prefix' => 'products'], function () {
+    Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->middleware(['auth'])->name('products'); 
+
+    Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->middleware(['auth'])->name('products.store');
+    Route::get('/create', 'App\Http\Controllers\Products\ProductsController@create')->middleware(['auth'])->name('products.create');
+
+    //stock route
+    Route::get('/stock', 'App\Http\Controllers\Products\StockController@index')->middleware(['auth'])->name('products.stock'); 
+    Route::post('/stock/create', 'App\Http\Controllers\Products\StockController@store')->middleware(['auth'])->name('products.stock.store');
+    Route::get('/stock/{id}', 'App\Http\Controllers\Products\StockController@show')->middleware(['auth'])->name('stocks.show');
+
+    Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->middleware(['auth'])->name('products.show');
+    
+
+});
 
 Route::group(['prefix' => 'quality'], function () {
     Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->middleware(['auth'])->name('quality');

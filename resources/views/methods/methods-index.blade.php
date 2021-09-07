@@ -167,11 +167,11 @@
                       </div>
                       <div class="form-group">
                         <label for="HOURLY_RATE">Hourly rate</label>
-                        <input type="number" class="form-control" name="HOURLY_RATE" id="HOURLY_RATE" placeholder="110 €/H">
+                        <input type="number" class="form-control" name="HOURLY_RATE" id="HOURLY_RATE" placeholder="110 €/H" step=".001">
                       </div>
                       <div class="form-group">
                         <label for="MARGIN">Margin :</label>
-                        <input type="number" class="form-control" name="MARGIN" id="MARGIN" placeholder="10%">
+                        <input type="number" class="form-control" name="MARGIN" id="MARGIN" placeholder="10%" step=".001">
                       </div>
                       <div class="form-group">
                         <label for="COLOR">Color</label>

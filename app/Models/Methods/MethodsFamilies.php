@@ -2,8 +2,9 @@
 
 namespace App\Models\Methods;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MethodsFamilies extends Model
 {
@@ -15,6 +16,12 @@ class MethodsFamilies extends Model
     {
         return $this->belongsTo(MethodsServices::class, 'service_id');
     }
+
+    public function Product()
+    {
+        return $this->hasMany(Products::class);
+    }
+
 
     public function GetPrettyCreatedAttribute()
     {
