@@ -369,15 +369,15 @@ return [
             'submenu' => [
                 [
                     'text' => 'Product list',
-                    'url'  => '#',
+                    'url'  => 'products',
                 ],
                 [
                     'text' => 'New Product',
-                    'url'  => '#',
+                    'url'  => 'products/create',
                 ],
                 [
                     'text' => 'Stock',
-                    'url'  => '#',
+                    'url'  => 'products/Stock',
                 ],
                 [
                     'text' => 'Inventory',

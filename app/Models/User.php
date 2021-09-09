@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
+use App\Models\Products\StockLocation;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Quality\QualityDerogation;
 use App\Models\Quality\QualityControlDevice;
 use App\Models\Quality\QualityNonConformity;
+use App\Models\Products\StockLocationProducts;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -87,5 +89,15 @@ class User extends Authenticatable
         return $this->hasMany(TimesAbsence::class);
     }
 
+    public function stock_location()
+    {
+        return $this->hasMany(StockLocation::class);
+    }
 
+    public function stock_location_product()
+    {
+        return $this->hasMany(StockLocationProducts::class);
+    }
+
+    
 }

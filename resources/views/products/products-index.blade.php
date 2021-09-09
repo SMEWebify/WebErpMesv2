@@ -11,11 +11,9 @@
 @section('content')
 
                 <div class="card">
-                   <!-- /.card-header -->
                   <div class="card-body">
                     <div  id="products_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                        
-                        <div class="col-sm-12">
+                      <div class="col-sm-12">
                           <table id="products" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
                             <thead>
                             <tr>
@@ -68,11 +66,13 @@
                               <th>Action</th>
                             </tr>
                             </tfoot>
+                          </table>
+                      <!-- /.col-sm-12 -->
                       </div>
-                      <!-- /.row -->
+                    <!-- /.dataTables_wrapper dt-bootstrap4 -->
                     </div>
-                  </div>
                   <!-- /.card-body -->
+                  </div>
                 </div>
                 <!-- /.card -->
 

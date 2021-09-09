@@ -127,7 +127,7 @@
             <div class="form-group row">
               <div class="col-2">
                 <label for="CODE">External ID</label>
-                <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID" value="ACT-{{ $LastAction->id ?? '0' }}  ">
+                <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID" value="ACT-{{ $LastAction->id ?? '0' }}">
               </div>
               <div class="col-2">
                 <label for="LABEL">Label</label>

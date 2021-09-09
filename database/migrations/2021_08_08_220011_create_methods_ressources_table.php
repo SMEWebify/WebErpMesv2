@@ -20,7 +20,7 @@ class CreateMethodsRessourcesTable extends Migration
 			$table->string('LABEL');
 			$table->string('PICTURE')->nullable();
 			$table->integer('MASK_TIME');
-			$table->decimal('CAPACITY', 11, 0);
+			$table->decimal('CAPACITY', 11, 3);
 			$table->integer('section_id');
 			$table->string('COLOR');
 			$table->integer('service_id');

@@ -33,7 +33,7 @@
             <div class="info-box bg-light">
               <div class="info-box-content">
                 <span class="info-box-text text-center ">Service </span>
-                <span class="info-box-number text-center  mb-0">{{ $Product->methods_services_id }}</span>
+                <span class="info-box-number text-center  mb-0">{{ $Product->service['LABEL'] }}</span>
               </div>
             </div>
           </div>
@@ -41,7 +41,7 @@
             <div class="info-box bg-light">
               <div class="info-box-content">
                 <span class="info-box-text text-center ">Familly</span>
-                <span class="info-box-number text-center  mb-0">{{ $Product->methods_families_id }}</span>
+                <span class="info-box-number text-center  mb-0">{{ $Product->family['LABEL'] }}</span>
               </div>
             </div>
           </div>
@@ -49,7 +49,11 @@
             <div class="info-box bg-light">
               <div class="info-box-content">
                 <span class="info-box-text text-center ">Tracability</span>
-                <span class="info-box-number text-center  mb-0">{{ $Product->tracability_type }}</span>
+                <span class="info-box-number text-center  mb-0">
+                  @if($Product->tracability_type  == 1)No traceability @endif
+                  @if($Product->tracability_type  == 2)With batch number @endif
+                  @if($Product->tracability_type  == 3)With serial number @endif
+                </span>
               </div>
             </div>
           </div>
@@ -173,7 +177,7 @@
           <div class="col-12 col-sm-4">
             <div class="text-muted">
             <p class="text-sm">Unit
-              <b class="d-block">{{ $Product->methods_units_id }}</b>
+              <b class="d-block">{{ $Product->Unit['LABEL'] }}</b>
             </p>
             </div>
           </div>

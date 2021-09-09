@@ -6,6 +6,7 @@ use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Products\StockLocationProducts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Products extends Model
@@ -53,6 +54,11 @@ class Products extends Model
     public function Unit()
     {
         return $this->belongsTo(MethodsUnits::class, 'methods_units_id');
+    }
+
+    public function Stock_location_product()
+    {
+        return $this->hasMany(StockLocationProducts::class, 'stock_location_products');
     }
 
     public function GetPrettyCreatedAttribute()

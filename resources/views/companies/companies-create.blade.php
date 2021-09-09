@@ -144,7 +144,7 @@
       <hr>
       <div class="row">
         <div class="form-group">
-          <label>Textarea</label>
+          <label>Comment</label>
           <textarea class="form-control" rows="3" name="COMMENT"  placeholder="Enter ..."></textarea>
         </div>
       </div>
