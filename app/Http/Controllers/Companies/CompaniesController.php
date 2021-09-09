@@ -13,9 +13,11 @@ class CompaniesController extends Controller
     {
 
         $Companies = Companies::All();
+        $userSelect = User::select('id', 'name')->get();
 
         return view('companies/companies-index', [
-            'Companieslist' => $Companies
+            'Companieslist' => $Companies,
+            'userSelect' => $userSelect,
         ]);
     }
 
@@ -30,13 +32,6 @@ class CompaniesController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        $userSelect = User::select('id', 'name')->get();
-        return view('companies/companies-create', [
-            'userSelect' => $userSelect,
-        ]);
-    }
 
     public function store(StoreCompanieRequest $request)
     {

@@ -3,7 +3,165 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Companies list</h1>
+    
+
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Companies list</h1>
+      </div>
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalCompanie">
+          New companie
+        </button>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="ModalCompanie" tabindex="-1" role="dialog" aria-labelledby="ModalCompanieTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalCompanieTitle">New companie</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="{{ route('companies.store')}}" enctype="multipart/form-data">
+              @csrf
+                <div class="form-group">
+                  <label for="CODE">External ID</label>
+                  <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                </div>
+                <div class="form-group">
+                  <label for="LABEL">Name of company</label>
+                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of company">
+                </div>
+                <hr>
+                <div class="row">
+                  <label for="InputWebSite">Site link</label>
+                </div>
+                <div class="row">
+                  <div class="col-3">
+                    <input type="text" class="form-control"  name="WEBSITE" id="WEBSITE" placeholder="Web site link">
+                  </div>
+                  <div class="col-3">
+                    <input type="text" class="form-control"  name="FBSITE" id="FBSITE" placeholder="Facebook link">
+                  </div>
+                  <div class="col-3">
+                    <input type="text" class="form-control"  name="TWITTERSITE" id="TWITTERSITE" placeholder="Twitter link">
+                  </div>
+                  <div class="col-3">
+                    <input type="text" class="form-control"  name="LKDSITE" id="LKDSITE" placeholder="Linkedin link">
+                  </div>
+                </div>
+                <div class="row">
+                  <label for="SIREN">Administrative information</label>
+                </div>
+                <div class="row">
+                  <div class="col-3">
+                    <input type="text" class="form-control" name="SIREN" id="SIREN" placeholder="Siren">
+                  </div>
+                  <div class="col-3">
+                    <input type="text" class="form-control" name="APE" id="APE" placeholder="APE code">
+                  </div>
+                  <div class="col-3">
+                    <input type="text" class="form-control" name="TVA_INTRA" id="TVA_INTRA" placeholder="VAT number">
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <label for="PICTURE">Logo file</label>
+                  <div class="input-group">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="PICTURE">
+                      <label class="custom-file-label" for="PICTURE">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                      <span class="input-group-text">Upload</span>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-5">
+                    <label for="user_id">Technical manager</label>
+                    <select class="form-control" name="user_id" id="user_id">
+                      @foreach ($userSelect as $item)
+                      <option value="{{ $item->id }}">{{ $item->name }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-3">
+                    <label for="STATU_CLIENT">Statu client</label>
+                    <select class="form-control" name="STATU_CLIENT" id="STATU_CLIENT">
+                      <option value="1">Inactive</option>
+                      <option value="2">Active</option>
+                      <option value="3">Prospect</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <label for="DISCOUNT">Sales and accounting</label>
+                </div>
+                <div class="row">
+                  <div class="col-3">
+                    <input type="number" class="form-control" name="DISCOUNT" id="DISCOUNT" placeholder="Discount">
+                  </div>
+                  <div class="col-3">
+                    <input type="number" class="form-control" name="COMPTE_GEN_CLIENT" id="COMPTE_GEN_CLIENT" placeholder="General Account">
+                  </div>
+                  <div class="col-3">
+                    <input type="number" class="form-control" name="COMPTE_AUX_CLIENT" id="COMPTE_AUX_CLIENT" placeholder="Auxiliary account">
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-3">
+                    <label for="STATU_FOUR">Statu supplier</label>
+                    <select class="form-control" name="STATU_FOUR" id="STATU_FOUR">
+                      <option value="1">Inactive</option>
+                      <option value="2">Active</option>
+                    </select>
+                  </div>
+                  <div class="col-3">
+                    <label for="STATU_FOUR">Reception control</label>
+                    <select class="form-control" name="RECEPT_CONTROLE" id="RECEPT_CONTROLE">
+                      <option value="1">Yes</option>
+                      <option value="2">No</option>
+                    </select>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-3">
+                    <input type="number" class="form-control" id="COMPTE_GEN_FOUR" name="COMPTE_GEN_FOUR" placeholder="General Account">
+                  </div>
+                  <div class="col-3">
+                    <input type="number" class="form-control" id="COMPTE_AUX_FOUR" name="COMPTE_AUX_FOUR"  placeholder="Auxiliary account">
+                  </div>
+                  
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="form-group">
+                    <label>Comment</label>
+                    <textarea class="form-control" rows="3" name="COMMENT"  placeholder="Enter ..."></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="Submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal -->
+
 @stop
 
 @section('right-sidebar')
@@ -11,10 +169,17 @@
 @section('content')
 
                 <div class="card">
-                   <!-- /.card-header -->
                   <div class="card-body">
+                    @if($errors->count())
+                    <div class="alert alert-danger">
+                      <ul>
+                      @foreach ( $errors->all() as $message)
+                       <li> {{ $message }}</li>
+                      @endforeach
+                      </ul>
+                    </div>
+                    @endif
                     <div  id="companies_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                        
                         <div class="col-sm-12">
                           <table id="companies" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
                             <thead>
@@ -50,19 +215,15 @@
                                   @endif
                                 </td>
                                 <td>
-                                  <button onclick="window.location='{{ route('companies.show', ['id' => $Companie->id])}}'" class="btn btn-xs btn-default text-teal mx-1 shadow"  type="button" title="Show">
-                                    <i class="fa fa-lg fa-fw fa-eye"></i> View
-                                  </button>
-                                  <!--<button  class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
-                                    <i class="fa fa-lg fa-fw fa-pen"></i>Edit
-                                  </button>-->
-                                  <button onclick="window.location='{{ route('addresses.create', ['id' => $Companie->id])}}'" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add adress">
-                                    <i class="fa fa-lg fa-fw fa-address-card"></i>Add adress
-                                  </button>
-                                  <button onclick="window.location='{{ route('contacts.create', ['id' => $Companie->id])}}'" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add contact">
-                                    <i class="fa fa-lg fa-fw fa-address-book"></i>Add contact
-                                  </button>
-                              </td>
+                                  <a class="btn btn-primary btn-sm" href="{{ route('companies.show', ['id' => $Companie->id])}}">
+                                    <i class="fas fa-folder"></i>
+                                    View
+                                  </a>
+                                  <a class="btn btn-info btn-sm" href="#">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    Edit
+                                  </a>
+                                </td>
                               </tr>
                               @endforeach
                             </tbody>

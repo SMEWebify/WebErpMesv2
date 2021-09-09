@@ -19,15 +19,12 @@ Route::group(['prefix' => 'companies'], function () {
     //companie route
     Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->middleware(['auth'])->name('companies'); 
     Route::post('/create', 'App\Http\Controllers\Companies\CompaniesController@store')->middleware(['auth'])->name('companies.store');
-    Route::get('/create', 'App\Http\Controllers\Companies\CompaniesController@create')->middleware(['auth'])->name('companies.create');
     //contact route
     Route::post('/contacts/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->middleware(['auth'])->name('contacts.store');
-    Route::get('/contacts/create/{id}', 'App\Http\Controllers\Companies\ContactsController@create')->middleware(['auth'])->name('contacts.create');
     Route::post('/contacts/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->middleware(['auth'])->name('contacts.update');
     Route::get('/contacts/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->middleware(['auth'])->name('contacts.edit');
     //adresses route
     Route::post('/addresses/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->middleware(['auth'])->name('addresses.store');
-    Route::get('/addresses/create/{id}', 'App\Http\Controllers\Companies\AddressesController@create')->middleware(['auth'])->name('addresses.create');
     Route::post('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->middleware(['auth'])->name('addresses.update');
     Route::get('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->middleware(['auth'])->name('addresses.edit');
 
@@ -58,7 +55,6 @@ Route::group(['prefix' => 'products'], function () {
     Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->middleware(['auth'])->name('products'); 
 
     Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->middleware(['auth'])->name('products.store');
-    Route::get('/create', 'App\Http\Controllers\Products\ProductsController@create')->middleware(['auth'])->name('products.create');
 
     //stock route
     Route::get('/Stock', 'App\Http\Controllers\Products\StockController@index')->middleware(['auth'])->name('products.stock'); 

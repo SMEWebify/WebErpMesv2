@@ -18,9 +18,18 @@ class ProductsController extends Controller
     {
 
         $Products = Products::All();
+        $userSelect = User::select('id', 'name')->get();
+        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $UnitsSelect = MethodsUnits::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $FamiliesSelect = MethodsFamilies::select('id', 'LABEL')->orderBy('LABEL')->get();
 
         return view('products/products-index', [
-            'Products' => $Products
+            'Products' => $Products,
+            'userSelect' => $userSelect,
+            'ServicesSelect' => $ServicesSelect,
+            'ServicesSelect' => $ServicesSelect,
+            'UnitsSelect' => $UnitsSelect,
+            'FamiliesSelect' => $FamiliesSelect
         ]);
     }
 
@@ -28,26 +37,11 @@ class ProductsController extends Controller
     {
 
         $Product = Products::findOrFail($id);
-        
+        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
 
         return view('products/products-show', [
-            'Product' => $Product
-        ]);
-    }
-
-    public function create()
-    {
-        $userSelect = User::select('id', 'name')->get();
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
-        $UnitsSelect = MethodsUnits::select('id', 'LABEL')->orderBy('LABEL')->get();
-        $FamiliesSelect = MethodsFamilies::select('id', 'LABEL')->orderBy('LABEL')->get();
-
-        return view('products/products-create', [
-            'userSelect' => $userSelect,
-            'ServicesSelect' => $ServicesSelect,
-            'ServicesSelect' => $ServicesSelect,
-            'UnitsSelect' => $UnitsSelect,
-            'FamiliesSelect' => $FamiliesSelect
+            'Product' => $Product,
+            'ServicesSelect' =>  $ServicesSelect
         ]);
     }
 

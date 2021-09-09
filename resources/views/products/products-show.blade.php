@@ -21,6 +21,15 @@
     </div>
   </div>
   <div class="card-body">
+    @if($errors->count())
+      <div class="alert alert-danger">
+        <ul>
+        @foreach ( $errors->all() as $message)
+         <li> {{ $message }}</li>
+        @endforeach
+        </ul>
+      </div>
+    @endif
     @if(session('success'))
     <div class="alert alert-success">
         {{ session('success')}}
@@ -253,8 +262,8 @@
   <div class="card-header">
     <h3 class="card-title">Technical cut</h3>
     <div class="card-tools">
-      <button onclick="window.location='{{ route('addresses.create', ['id' => $Product->id])}}'" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add address">
-        <i class="fa fa-lg fa-fw fa-address-card"></i>Add item to Technical cut
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#TechnicalCutModal">
+        Add item to Technical cut
       </button>
       <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
         <i class="fas fa-minus"></i>
@@ -264,6 +273,60 @@
       </button>
     </div>
   </div>
+  <!-- Modal -->
+  <div class="modal fade" id="TechnicalCutModal" tabindex="-1" role="dialog" aria-labelledby="TechnicalCutModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="TechnicalCutModalTitle">Add item to Technical cut</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="ORDRE">Sort order</label>
+            <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+          </div>
+          <div class="form-group">
+              <label for="service_id">Services</label>
+                <select class="form-control" name="service_id" id="service_id">
+                  @foreach ($ServicesSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  @endforeach
+                </select>
+          </div>
+          <div class="form-group">
+              <label for="LABEL">Label</label>
+              <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+          </div>
+          <div class="row">
+            <div class="col-3">
+              <label for="SETING_TIME">Setting time</label>
+              <input type="number" class="form-control" name="SETING_TIME"  id="SETING_TIME" placeholder="Setting time" step=".001">
+            </div>
+            <div class="col-3">
+              <label for="UNIT_TIME">Unit time</label>
+              <input type="number" class="form-control" name="UNIT_TIME"  id="UNIT_TIME" placeholder="Unit time" step=".001">
+            </div>
+            <div class="col-3">
+              <label for="UNIT_COST">Unit cost</label>
+              <input type="number" class="form-control" name="UNIT_COST"  id="UNIT_COST" placeholder="Unit cost" step=".001">
+            </div>
+            <div class="col-3">
+              <label for="UNIT_PRICE">Unit price</label>
+              <input type="number" class="form-control" name="UNIT_PRICE"  id="UNIT_PRICE" placeholder="Unit time" step=".001">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="Submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Modal -->
   <div class="card-body">
     <div class="row">
 
@@ -277,7 +340,7 @@
     <h3 class="card-title">Bill of materials</h3>
 
     <div class="card-tools">
-      <button onclick="window.location='{{ route('contacts.create', ['id' => $Product->id])}}'" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add contact">
+      <button onclick="window.location=''" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add contact">
         <i class="fa fa-lg fa-fw fa-address-book"></i>Add item to BOM
       </button>
       <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

@@ -10,15 +10,6 @@ use App\Http\Requests\Companies\UpdateContactRequest;
 
 class ContactsController extends Controller
 {
-    //
-    public function create($id)
-    {
-        $Companie = Companies::findOrFail($id);
-
-        return view('companies/contacts-create', [
-            'Companie' => $Companie
-        ]);
-    }
 
     //
     public function edit($id)

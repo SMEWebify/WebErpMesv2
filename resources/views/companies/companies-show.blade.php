@@ -21,6 +21,15 @@
     </div>
   </div>
   <div class="card-body">
+    @if($errors->count())
+      <div class="alert alert-danger">
+        <ul>
+        @foreach ( $errors->all() as $message)
+         <li> {{ $message }}</li>
+        @endforeach
+        </ul>
+      </div>
+    @endif
     @if(session('success'))
     <div class="alert alert-success">
         {{ session('success')}}
@@ -214,8 +223,8 @@
   <div class="card-header">
     <h3 class="card-title">Addresses</h3>
     <div class="card-tools">
-      <button onclick="window.location='{{ route('addresses.create', ['id' => $Companie->id])}}'" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add address">
-        <i class="fa fa-lg fa-fw fa-address-card"></i>Add adress
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAdress">
+        Add address
       </button>
       <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
         <i class="fas fa-minus"></i>
@@ -225,6 +234,74 @@
       </button>
     </div>
   </div>
+  <!-- Modal -->
+  <div class="modal fade" id="ModalAdress" tabindex="-1" role="dialog" aria-labelledby="ModalAdressTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalContactTitle">Add address</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{{ route('addresses.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-5">
+                <label for="ORDRE">Sort order</label>
+                <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
+              </div>
+              <div class="col-5">
+                <label for="LABEL">Label adresse</label>
+                <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-5">
+                <label for="ADRESS">Adress</label>
+                <input type="text" class="form-control" name="ADRESS"  id="ADRESS" placeholder="Adress">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5">
+                <label for="ZIPCODE">Zip code</label>
+                <input type="text" class="form-control" name="ZIPCODE"  id="ZIPCODE" placeholder="Zip code">
+              </div>
+              <div class="col-5">
+                <label for="CITY">City</label>
+                <input type="text" class="form-control" name="CITY"  id="CITY" placeholder="City">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5">
+                <label for="COUNTRY">Country</label>
+                <input type="text" class="form-control" name="COUNTRY"  id="COUNTRY" placeholder="Country">
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-5">
+                <label for="NUMBER">Phone number</label>
+                <input type="text" class="form-control" name="NUMBER"  id="NUMBER" placeholder="Phone number">
+              </div>
+              <div class="col-5">
+                <label for="MAIL">E-mail</label>
+                <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Modal -->
   <div class="card-body">
     <div class="row">
       @forelse($Companie->Addresses as $Address)
@@ -240,10 +317,9 @@
 <div class="card card-secondary">
   <div class="card-header">
     <h3 class="card-title">Contacts</h3>
-
     <div class="card-tools">
-      <button onclick="window.location='{{ route('contacts.create', ['id' => $Companie->id])}}'" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add contact">
-        <i class="fa fa-lg fa-fw fa-address-book"></i>Add contact
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalContact">
+        Add contact
       </button>
       <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
         <i class="fas fa-minus"></i>
@@ -253,6 +329,75 @@
       </button>
     </div>
   </div>
+  <!-- Modal -->
+  <div class="modal fade" id="ModalContact" tabindex="-1" role="dialog" aria-labelledby="ModalContactTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalContactTitle">Add address</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{{ route('contacts.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-5">
+                <label for="ORDRE">Sort order</label>
+                <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
+              </div>
+              <div class="col-5">
+                <label for="CIVILITY">Civility</label>
+                <select class="form-control" name="CIVILITY">
+                  <option value="Miss">Miss</option>
+                  <option value="Ms">Ms</option>
+                  <option value="Mr">Mr</option>
+                  <option value="Mrs">Mrs</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5">
+                <label for="FIRST_NAME">First Name</label>
+                <input type="text" class="form-control" name="FIRST_NAME"  id="FIRST_NAME" placeholder="First Name">
+              </div>
+              <div class="col-5">
+                <label for="NAME">Name</label>
+                <input type="text" class="form-control" name="NAME"  id="NAME" placeholder="Name">
+              </div>
+            </div>
+            <hr>
+            <div class="form-group">
+              <label for="FUNCTION">Function</label>
+              <input type="text" class="form-control" name="FUNCTION"  id="FUNCTION" placeholder="Function">
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-5">
+                <label for="NUMBER">Phone number</label>
+                <input type="text" class="form-control" name="NUMBER"  id="NUMBER" placeholder="Phone number">
+              </div>
+              <div class="col-5">
+                <label for="MOBILE">Mobile phone number</label>
+                <input type="text" class="form-control" name="MOBILE"  id="MOBILE" placeholder="Mobile phone number">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="MAIL">E-mail</label>
+              <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail">
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Modal -->
   <div class="card-body">
     <div class="row">
       @forelse($Companie->Contacts as $Contact)

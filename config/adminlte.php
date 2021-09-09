@@ -249,17 +249,8 @@ return [
         [
             'text'    => 'Companies',
             'icon'    => 'far fa-building',
-            'submenu' => [
-                [
-                    'text' => 'Companies list',
-                    'url'  => 'companies',
-                ],
-                [
-                    'text' => 'New companie',
-                    'url'  => 'companies/create',
-                ],
-             ]
-            ],
+            'url'  => 'companies',
+        ],
         ['header' => 'Sales'],
         [
             'text'    => 'Quote',
@@ -271,10 +262,6 @@ return [
                 ],
                 [
                     'text' => 'Quote lines list',
-                    'url'  => '#',
-                ],
-                [
-                    'text' => 'New quote',
                     'url'  => '#',
                 ],
             ]
@@ -290,10 +277,6 @@ return [
                 ],
                 [
                     'text' => 'Order lines list',
-                    'url'  => '#',
-                ],
-                [
-                    'text' => 'New Order',
                     'url'  => '#',
                 ],
                 ['header' => 'workflow'],
@@ -346,10 +329,6 @@ return [
                     'text' => 'Purchase order list',
                     'url'  => '#',
                 ],
-                [
-                    'text' => 'New purchase order',
-                    'url'  => '#',
-                ],
                 ['header' => 'workflow'],
                 [
                     'text' => 'PO reciept',
@@ -370,10 +349,6 @@ return [
                 [
                     'text' => 'Product list',
                     'url'  => 'products',
-                ],
-                [
-                    'text' => 'New Product',
-                    'url'  => 'products/create',
                 ],
                 [
                     'text' => 'Stock',

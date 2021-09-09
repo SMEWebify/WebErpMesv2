@@ -3,7 +3,195 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
+<div class="row mb-2">
+  <div class="col-sm-6">
     <h1>Products list</h1>
+  </div>
+  <div class="col-sm-6">
+    <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalProduct">
+      New product
+    </button>
+  </div>
+</div>
+ <!-- Modal -->
+ <div class="modal fade" id="ModalProduct" tabindex="-1" role="dialog" aria-labelledby="ModalProductTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalProductTitle">New product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ route('products.store')}}" enctype="multipart/form-data">
+          @csrf
+            <div class="row">
+              <div class="col-3">
+                <label for="CODE">External ID</label>
+                <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+              </div>
+              <div class="col-3">
+                <label for="LABEL">Description</label>
+                <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label/Desciption of product">
+              </div>
+              <div class="col-3">
+                <label for="IND">Index</label>
+                <input type="text" class="form-control" name="IND"  id="IND" placeholder="Index">
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-3">
+                <label for="methods_services_id">Services</label>
+                <select class="form-control" name="methods_services_id" id="methods_services_id">
+                  @foreach ($ServicesSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="methods_families_id">Family</label>
+                <select class="form-control" name="methods_families_id" id="methods_families_id">
+                  @foreach ($FamiliesSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="methods_units_id">Unit</label>
+                <select class="form-control" name="methods_units_id" id="methods_units_id">
+                  @foreach ($UnitsSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-3">
+                <label for="purchased">Purchased</label>
+                <select class="form-control" name="purchased" id="purchased">
+                  <option value="2">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="sold">Sold</label>
+                <select class="form-control" name="sold" id="sold">
+                  <option value="2">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="tracability_type">Tracability</label>
+                <select class="form-control" name="tracability_type" id="tracability_type">
+                  <option value="1">No traceability</option>
+                  <option value="2">With batch number</option>
+                  <option value="3">With serial number</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <input type="number" class="form-control" name="purchased_price" id="purchased_price" placeholder="Purchased price" step=".001">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="selling_price" id="selling_price" placeholder="Selling price" step=".001">
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <label for="material">Proprieties</label>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <input type="text" class="form-control" name="material" id="material" placeholder="Material">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="thickness" id="thickness" placeholder="Thickness" step=".001">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="weight" id="weight" placeholder="Weight" step=".001">
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-3">
+                <label for="x_size">X</label>
+                <input type="number" class="form-control" name="x_size" id="x_size" placeholder="X size" step=".001">
+              </div>
+              <div class="col-3">
+                <label for="y_size">Y</label>
+                <input type="number" class="form-control" name="y_size" id="y_size" placeholder="Y size" step=".001">
+              </div>
+              <div class="col-3">
+                <label for="z_size">Z</label>
+                <input type="number" class="form-control" name="z_size" id="z_size" placeholder="Z size" step=".001">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <input type="number" class="form-control" name="x_oversize" id="x_oversize" placeholder="X oversize" step=".001">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="y_oversize" id="y_oversize" placeholder="Y oversize" step=".001">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="z_oversize" id="z_oversize" placeholder="Z oversize" step=".001">
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-3">
+                <input type="number" class="form-control" name="diameter" id="diameter" placeholder="Diameter" step=".001">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="diameter_oversize" id="diameter_oversize" placeholder="Diameter_oversize" step=".001">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="section_size" id="section_size" placeholder="Section size" step=".001">
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <label for="qty_eco_min">Other information</label>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <input type="number" class="form-control" name="qty_eco_min" id="qty_eco_min" placeholder="Qty eco min" step=".001">
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control" name="qty_eco_max" id="qty_eco_max" placeholder="Qty eco max" step=".001">
+              </div>
+              <div class="col-3">
+                <textarea class="form-control" rows="3" name="comment"  placeholder="Comment ..."></textarea>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <label for="PICTURE">Logo file</label>
+              <div class="input-group">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="PICTURE">
+                  <label class="custom-file-label" for="PICTURE">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                  <span class="input-group-text">Upload</span>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="Submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Modal -->
 @stop
 
 @section('right-sidebar')
@@ -11,6 +199,15 @@
 @section('content')
 
                 <div class="card">
+                  @if($errors->count())
+                    <div class="alert alert-danger">
+                      <ul>
+                      @foreach ( $errors->all() as $message)
+                      <li> {{ $message }}</li>
+                      @endforeach
+                      </ul>
+                    </div>
+                  @endif
                   <div class="card-body">
                     <div  id="products_wrapper" class="dataTables_wrapper dt-bootstrap4">
                       <div class="col-sm-12">
@@ -46,12 +243,14 @@
                                   @endif
                                 </td>
                                 <td>
-                                  <button onclick="window.location='{{ route('products.show', ['id' => $Product->id])}}'" class="btn btn-xs btn-default text-teal mx-1 shadow"  type="button" title="Show">
-                                    <i class="fa fa-lg fa-fw fa-eye"></i> View
-                                  </button>
-                                  <!--<button  class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
-                                    <i class="fa fa-lg fa-fw fa-pen"></i>Edit
-                                  </button>-->
+                                  <a class="btn btn-primary btn-sm" href="{{ route('products.show', ['id' => $Product->id])}}">
+                                    <i class="fas fa-folder"></i>
+                                    View
+                                  </a>
+                                  <a class="btn btn-info btn-sm" href="#">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    Edit
+                                  </a>
                               </td>
                               </tr>
                               @endforeach

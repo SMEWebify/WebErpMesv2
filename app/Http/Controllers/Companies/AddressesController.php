@@ -11,16 +11,6 @@ use App\Http\Requests\Companies\UpdateAdressRequest;
 class AddressesController extends Controller
 {
     //
-    public function create($id)
-    {
-        $Companie = Companies::findOrFail($id);
-
-        return view('companies/addresses-create', [
-            'Companie' => $Companie
-        ]);
-    }
-
-    //
     public function edit($id)
     {
         $adress = companiesAddresses::findOrFail($id);
