@@ -263,7 +263,7 @@
     <h3 class="card-title">Technical cut</h3>
     <div class="card-tools">
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#TechnicalCutModal">
-        Add item to Technical cut
+        Add line to Technical cut
       </button>
       <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
         <i class="fas fa-minus"></i>
@@ -278,58 +278,122 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="TechnicalCutModalTitle">Add item to Technical cut</h5>
+          <h5 class="modal-title" id="TechnicalCutModalTitle">Add line to Technical cut</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="ORDRE">Sort order</label>
-            <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
-          </div>
-          <div class="form-group">
-              <label for="service_id">Services</label>
-                <select class="form-control" name="service_id" id="service_id">
-                  @foreach ($ServicesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                  @endforeach
-                </select>
-          </div>
-          <div class="form-group">
-              <label for="LABEL">Label</label>
-              <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
-          </div>
-          <div class="row">
-            <div class="col-3">
-              <label for="SETING_TIME">Setting time</label>
-              <input type="number" class="form-control" name="SETING_TIME"  id="SETING_TIME" placeholder="Setting time" step=".001">
+          <form method="POST" action="{{ route('task.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="row">
+              <div class="col-4">
+                <label for="ORDER">Sort order</label>
+                <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
+                <input type="hidden" class="form-control" name="products_id" value="{{ $Product->id }}">
+              </div>
+              <div class="col-4">
+                <label for="methods_services_id">Services</label>
+                  <select class="form-control" name="methods_services_id" id="methods_services_id">
+                    @foreach ($TechServicesSelect as $item)
+                    <option value="{{ $item->id }}"  data-type="{{ $item->TYPE }}" data-txt="{{ $item->LABEL }}">{{ $item->CODE }}</option>
+                    @endforeach
+                  </select>
+                  <input type="hidden" class="form-control" name="TYPE" id="TYPE">
+              </div>
+              <div class="col-4">
+                  <label for="LABEL">Label</label>
+                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+              </div>
             </div>
-            <div class="col-3">
-              <label for="UNIT_TIME">Unit time</label>
-              <input type="number" class="form-control" name="UNIT_TIME"  id="UNIT_TIME" placeholder="Unit time" step=".001">
-            </div>
-            <div class="col-3">
-              <label for="UNIT_COST">Unit cost</label>
-              <input type="number" class="form-control" name="UNIT_COST"  id="UNIT_COST" placeholder="Unit cost" step=".001">
-            </div>
-            <div class="col-3">
-              <label for="UNIT_PRICE">Unit price</label>
-              <input type="number" class="form-control" name="UNIT_PRICE"  id="UNIT_PRICE" placeholder="Unit time" step=".001">
+            <div class="row">
+              <div class="col-3">
+                <label for="SETING_TIME">Setting time</label>
+                <input type="number" class="form-control" name="SETING_TIME"  id="SETING_TIME" placeholder="Setting time" step=".001">
+              </div>
+              <div class="col-3">
+                <label for="UNIT_TIME">Unit time</label>
+                <input type="number" class="form-control" name="UNIT_TIME"  id="UNIT_TIME" placeholder="Unit time" step=".001">
+              </div>
+              <div class="col-3">
+                <label for="UNIT_COST">Unit cost</label>
+                <input type="number" class="form-control" name="UNIT_COST"  id="UNIT_COST" placeholder="Unit cost" step=".001">
+              </div>
+              <div class="col-3">
+                <label for="UNIT_PRICE">Unit price</label>
+                <input type="number" class="form-control" name="UNIT_PRICE"  id="UNIT_PRICE" placeholder="Unit time" step=".001">
+              </div>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="Submit" class="btn btn-primary">Submit</button>
-        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="Submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
   <!-- End Modal -->
   <div class="card-body">
     <div class="row">
-
+      <table id="example1" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Sort order</th>
+            <th>Label</th>
+            <th>Service</th>
+            <th>Setting time</th>
+            <th>Unit time</th>
+            <th>Unit cost</th>
+            <th>Unit price</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+          @forelse ($TechProductList as $TechProduct)
+          <tr>
+            <td>{{ $TechProduct->ORDER }}</td>
+            <td>{{ $TechProduct->LABEL }}</td>
+            <td>{{ $TechProduct->service['LABEL'] }}</td>
+            <td>{{ $TechProduct->SETING_TIME }}</td>
+            <td>{{ $TechProduct->UNIT_TIME }}</td>
+            <td>{{ $TechProduct->UNIT_COST }}</td>
+            <td>{{ $TechProduct->UNIT_PRICE }}</td>
+            <td class=" py-0 align-middle">
+              <div class="btn-group btn-group-sm">
+                <a href="#" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
+              </div>
+              <div class="btn-group btn-group-sm">
+                <a href="#" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
+              </div>
+            </td>
+          </tr>
+          @empty
+          <tr>
+            <td>No Data</td>
+            <td></td> 
+            <td></td> 
+            <td></td> 
+            <td></td> 
+            <td></td>
+            <td></td>
+            <td></td> 
+          </tr>
+          @endforelse
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Sort order</th>
+            <th>Label</th>
+            <th>Service</th>
+            <th>Setting time</th>
+            <th>Unit time</th>
+            <th>Unit cost</th>
+            <th>Unit price</th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   </div>
   <!-- /.card-body -->
@@ -340,8 +404,8 @@
     <h3 class="card-title">Bill of materials</h3>
 
     <div class="card-tools">
-      <button onclick="window.location=''" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Add contact">
-        <i class="fa fa-lg fa-fw fa-address-book"></i>Add item to BOM
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#BOMModal">
+        Add line to BOM
       </button>
       <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
         <i class="fas fa-minus"></i>
@@ -351,9 +415,132 @@
       </button>
     </div>
   </div>
+    <!-- Modal -->
+    <div class="modal fade" id="BOMModal" tabindex="-1" role="dialog" aria-labelledby="BOMModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="BOMModalTitle">Add line to BOM</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="{{ route('task.store') }}" enctype="multipart/form-data">
+              @csrf
+              <div class="row">
+                <div class="col-3">
+                  <label for="ORDER">Sort order</label>
+                  <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
+                  <input type="hidden" class="form-control" name="products_id" value="{{ $Product->id }}">
+                </div>
+                <div class="col-3">
+                    <label for="methods_services_id">Services</label>
+                      <select class="methods_services_id form-control" name="methods_services_id" id="methods_services_id_BOM">
+                        <option>Select Services</option>
+                        @foreach ($BOMServicesSelect as $item)
+                        <option value="{{ $item->id }}"  class="{{ $item->id }}" data-type="{{ $item->TYPE }}"  data-txt="{{ $item->LABEL }}">{{ $item->CODE }}</option>
+                        @endforeach
+                      </select>
+                      <input type="hidden" class="form-control" name="TYPE" id="TYPE_BOM">
+                </div>
+                <div class="col-3">
+                  <label for="component_id">Component</label>
+                    <select class="component_id form-control" name="component_id" id="component_id">
+                      <option>Select Component</option>
+                      @foreach ($ProductSelect as $item)
+                      <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->CODE }}</option>
+                      @endforeach
+                    </select>
+              </div>
+                <div class="col-3">
+                    <label for="LABEL">Label</label>
+                    <input type="text" class="form-control" name="LABEL"  id="LABEL_BOM" placeholder="Label">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <label for="QTY">Quantity</label>
+                  <input type="number" class="form-control" name="QTY"  id="QTY" placeholder="Quantity" step=".001">
+                </div>
+                <div class="col-3">
+                  <label for="UNIT_COST">Unit cost</label>
+                  <input type="number" class="form-control" name="UNIT_COST"  id="UNIT_COST" placeholder="Unit cost" step=".001">
+                </div>
+                <div class="col-3">
+                  <label for="UNIT_PRICE">Unit price</label>
+                  <input type="number" class="form-control" name="UNIT_PRICE"  id="UNIT_PRICE" placeholder="Unit time" step=".001">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="Submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal -->
   <div class="card-body">
     <div class="row">
- 
+      <table id="example1" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Sort order</th>
+            <th>Label</th>
+            <th>Service</th>
+            <th>Component</th>
+            <th>Quantity</th>
+            <th>Unit cost</th>
+            <th>Unit price</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+          @forelse ($BOMProductList as $BOMProduct)
+          <tr>
+            <td>{{ $BOMProduct->ORDER }}</td>
+            <td>{{ $BOMProduct->LABEL }}</td>
+            <td>{{ $BOMProduct->service['LABEL'] }}</td>
+            <td>{{ $BOMProduct->Component['CODE'] }}</td>
+            <td>{{ $BOMProduct->QTY }}</td>
+            <td>{{ $BOMProduct->UNIT_COST }}</td>
+            <td>{{ $BOMProduct->UNIT_PRICE }}</td>
+            <td class=" py-0 align-middle">
+              <div class="btn-group btn-group-sm">
+                <a href="#" class="btn btn-info"><i class="fa fa-lg fa-fw fa-edit"></i></a>
+              </div>
+              <div class="btn-group btn-group-sm">
+                <a href="#" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
+              </div>
+            </td>
+          </tr>
+          @empty
+          <tr>
+            <td>No Data</td>
+            <td></td> 
+            <td></td> 
+            <td></td> 
+            <td></td> 
+            <td></td>
+            <td></td>
+          </tr>
+          @endforelse
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Sort order</th>
+            <th>Label</th>
+            <th>Service</th>
+            <th>Component</th>
+            <th>Quantity</th>
+            <th>Unit cost</th>
+            <th>Unit price</th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   </div>
   <!-- /.card-body -->
@@ -367,5 +554,30 @@
             @stop
                              
            @section('js')
-             <script> console.log('Hi!'); </script>
+             <script > 
+             
+             $('#methods_services_id').on('change',function(){
+                var val = $(this).val();
+                var txt = $(this).find('option:selected').data('txt');
+                var type = $(this).find('option:selected').data('type');
+                $('#LABEL').val( txt );
+                $('#TYPE').val( type );
+            });
+
+            $('#methods_services_id_BOM').on('change',function(){
+                var val = $(this).val();
+                var txt = $(this).find('option:selected').data('txt');
+                var type = $(this).find('option:selected').data('type');
+                $('#LABEL_BOM').val( txt );
+                $('#TYPE_BOM').val( type );
+            });
+
+            $('.methods_services_id').change(function () {
+                var modelObj = $(this).parent().next().children(".component_id");
+                var selector = "option[class="+this.value.toLowerCase()+"]";
+                modelObj.children(":not("+selector+")").hide();
+                modelObj.children(selector).show();
+            });
+            </script>
+
            @stop

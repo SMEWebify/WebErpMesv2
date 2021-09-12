@@ -69,7 +69,7 @@
           @if($Companie->SIREN )
           <div class="col-12 col-sm-4">
             <div class="text-muted">
-            <p class="text-sm">APE code
+            <p class="text-sm">Siren
               <b class="d-block">{{ $Companie->SIREN }}</b>
             </p>
             </div>

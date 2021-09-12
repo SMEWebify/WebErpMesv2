@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Products;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Planning\Task;
 use App\Models\Products\Products;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsUnits;
@@ -19,8 +20,8 @@ class ProductsController extends Controller
 
         $Products = Products::All();
         $userSelect = User::select('id', 'name')->get();
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
-        $UnitsSelect = MethodsUnits::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('ORDRE')->get();
+        $UnitsSelect = MethodsUnits::select('id', 'LABEL', 'TYPE')->orderBy('LABEL')->get();
         $FamiliesSelect = MethodsFamilies::select('id', 'LABEL')->orderBy('LABEL')->get();
 
         return view('products/products-index', [
@@ -37,11 +38,34 @@ class ProductsController extends Controller
     {
 
         $Product = Products::findOrFail($id);
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
+        $TechProductList = Task::Where('products_id', '=', $id)->Where(function ($query) {
+                                                                                        $query->orwhere('TYPE', '=', 1)
+                                                                                                ->orWhere('TYPE', '=', 7);
+                                                                                        })->orderBy('ORDER')->get();;
+        $BOMProductList = Task::Where('products_id', '=', $id)->Where(function ($query) {
+                                                                                        $query->orWhere('TYPE', '=', 3)
+                                                                                            ->orWhere('TYPE', '=', 4)
+                                                                                            ->orWhere('TYPE', '=', 5)
+                                                                                            ->orWhere('TYPE', '=', 6)
+                                                                                            ->orWhere('TYPE', '=', 8);
+                                                                                        })->orderBy('ORDER')->get();
 
+        $TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
+        $BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
+                                                                            ->orWhere('TYPE', '=', 3)
+                                                                            ->orWhere('TYPE', '=', 4)
+                                                                            ->orWhere('TYPE', '=', 5)
+                                                                            ->orWhere('TYPE', '=', 6)
+                                                                            ->orWhere('TYPE', '=', 8)
+                                                                            ->orderBy('ORDRE')->get();
         return view('products/products-show', [
             'Product' => $Product,
-            'ServicesSelect' =>  $ServicesSelect
+            'TechProductList' => $TechProductList,
+            'BOMProductList' => $BOMProductList,
+            'ProductSelect' => $ProductSelect,
+            'TechServicesSelect' =>  $TechServicesSelect,
+            'BOMServicesSelect' =>  $BOMServicesSelect,
         ]);
     }
 

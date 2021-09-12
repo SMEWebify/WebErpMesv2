@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use App\Models\Planning\Task;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
@@ -59,6 +60,11 @@ class Products extends Model
     public function Stock_location_product()
     {
         return $this->hasMany(StockLocationProducts::class, 'stock_location_products');
+    }
+
+    public function Task()
+    {
+        return $this->hasMany(Task::class);
     }
 
     public function GetPrettyCreatedAttribute()

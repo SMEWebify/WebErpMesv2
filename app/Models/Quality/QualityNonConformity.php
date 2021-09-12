@@ -47,6 +47,11 @@ class QualityNonConformity extends Model
         return $this->hasMany(QualityDerogation::class, 'derogation_id');
     }
 
+    public function Task()
+    {
+        return $this->hasMany(Task::class);
+    }
+
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

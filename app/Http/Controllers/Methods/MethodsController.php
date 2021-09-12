@@ -20,7 +20,7 @@ class MethodsController extends Controller
     {
 
         $MethodsServices = MethodsServices::orderBy('ORDRE')->paginate(10);
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('ORDRE')->get();
         $MethodsRessources = MethodsRessources::orderBy('ORDRE')->paginate(10);
         $RessourcesSelect = MethodsRessources::select('id', 'LABEL')->orderBy('LABEL')->get();
         $MethodsSections = MethodsSection::orderBy('ORDRE')->paginate(10);
