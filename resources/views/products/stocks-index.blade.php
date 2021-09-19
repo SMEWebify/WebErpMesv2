@@ -116,7 +116,7 @@
 @stop
                   
  @section('css')
-   <link rel="stylesheet" href="/css/admin_custom.css">
+    
    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css">
  @stop

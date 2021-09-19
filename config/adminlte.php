@@ -258,11 +258,11 @@ return [
             'submenu' => [
                 [
                     'text' => 'Quote list',
-                    'url'  => '#',
+                    'url'  => 'quotes',
                 ],
                 [
                     'text' => 'Quote lines list',
-                    'url'  => '#',
+                    'url'  => 'quotes/lines',
                 ],
             ]
         ],
@@ -306,7 +306,7 @@ return [
                 ],
                 [
                     'text' => 'Kanban',
-                    'url'  => '#',
+                    'url'  => 'production/kanban',
                 ],
                 [
                     'text' => 'Calendar',
@@ -516,5 +516,5 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Other-Configuration
     */
 
-    'livewire' => false,
+    'livewire' => true,
 ];

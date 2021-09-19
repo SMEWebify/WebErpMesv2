@@ -348,7 +348,7 @@
                       <tr>
                         <td>{{ $Allocation->ACCOUNT }}</td>
                         <td>{{ $Allocation->LABEL }}</td>
-                        <td>{{ $Allocation->vat_id }}</td>
+                        <td>{{ $Allocation->VAT['LABEL'] }}</td>
                         <td>{{ $Allocation->VAT_ACCOUNT }}</td>
                         <td>{{ $Allocation->CODE_ACCOUNT }}</td>
                         <td>
@@ -540,7 +540,7 @@
 @stop
                   
  @section('css')
-   <link rel="stylesheet" href="/css/admin_custom.css">
+    
  @stop
                   
 @section('js')

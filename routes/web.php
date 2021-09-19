@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\QuoteLine;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,16 @@ Route::group(['prefix' => 'companies'], function () {
     
 });
 
+Route::group(['prefix' => 'quotes'], function () {
+    Route::get('/', 'App\Http\Controllers\workflow\QuotesController@index')->middleware(['auth'])->name('quotes'); 
+    Route::post('/create', 'App\Http\Controllers\workflow\QuotesController@store')->middleware(['auth'])->name('quote.store');
+    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\QuotesController@update')->middleware(['auth'])->name('quote.update');
+
+    Route::get('/lines', 'App\Http\Controllers\workflow\QuoteLinesController@index')->middleware(['auth'])->name('quotes.lines');
+    Route::get('/print/{id}', 'App\Http\Controllers\workflow\QuotesController@print')->middleware(['auth'])->name('quote.print');
+    Route::get('/{id}', 'App\Http\Controllers\workflow\QuotesController@show')->middleware(['auth'])->name('quote.show');
+});
+
 Route::group(['prefix' => 'accouting'], function () {
     Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
 
@@ -41,6 +52,8 @@ Route::group(['prefix' => 'accouting'], function () {
     Route::post('/PaymentMethod/create', 'App\Http\Controllers\Accounting\PaymentMethodController@store')->middleware(['auth'])->name('accouting.paymentMethod.create');
     Route::post('/VAT/create', 'App\Http\Controllers\Accounting\VatController@store')->middleware(['auth'])->name('accouting.vat.create');
 });
+
+
 
 Route::group(['prefix' => 'times'], function () {
     Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->middleware(['auth'])->name('times');
@@ -69,6 +82,15 @@ Route::group(['prefix' => 'products'], function () {
 Route::group(['prefix' => 'task'], function () {
     Route::post('/Task/create', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
 });
+
+Route::group(['prefix' => 'production'], function () {
+    Route::get("/kanban", function(){
+        return View::make("workflow/kanban-index");
+     });
+});
+
+
+
 
 Route::group(['prefix' => 'quality'], function () {
     Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->middleware(['auth'])->name('quality');

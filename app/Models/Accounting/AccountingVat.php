@@ -2,8 +2,9 @@
 
 namespace App\Models\Accounting;
 
-use App\Models\Companies\Companies;
+use App\Models\Workflow\QuoteLines;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Accounting\AccountingAllocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AccountingVat extends Model
@@ -12,4 +13,14 @@ class AccountingVat extends Model
 
     protected $fillable = ['CODE',  'LABEL',  'RATE'];
 
+
+    public function VAT()
+    {
+        return $this->hasMany(AccountingAllocation::class);
+    }
+
+    public function QuoteLines()
+    {
+        return $this->hasMany(QuoteLines::class);
+    }
 }

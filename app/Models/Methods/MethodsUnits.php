@@ -4,6 +4,7 @@ namespace App\Models\Methods;
 
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
+use App\Models\Workflow\QuoteLines;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,6 +17,11 @@ class MethodsUnits extends Model
     public function Product()
     {
         return $this->hasMany(Products::class);
+    }
+
+    public function QuoteLines()
+    {
+        return $this->hasMany(QuoteLines::class);
     }
 
     public function Task()

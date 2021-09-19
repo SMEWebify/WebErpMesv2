@@ -17,7 +17,7 @@ class CreateAccountingAllocationsTable extends Migration
             $table->id();
 			$table->string('ACCOUNT');
 			$table->string('LABEL');
-			$table->integer('vat_id');
+			$table->integer('accounting_vats_id');
 			$table->integer('VAT_ACCOUNT');
 			$table->integer('CODE_ACCOUNT');
 			$table->integer('TYPE_IMPUTATION');

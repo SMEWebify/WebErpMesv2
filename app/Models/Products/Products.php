@@ -3,6 +3,7 @@
 namespace App\Models\Products;
 
 use App\Models\Planning\Task;
+use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
@@ -65,6 +66,11 @@ class Products extends Model
     public function Task()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function Quotelines()
+    {
+        return $this->hasMany(QuoteLines::class);
     }
 
     public function GetPrettyCreatedAttribute()

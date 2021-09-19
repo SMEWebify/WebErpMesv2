@@ -28,13 +28,23 @@
           <div class="modal-body">
             <form method="POST" action="{{ route('companies.store')}}" enctype="multipart/form-data">
               @csrf
-                <div class="form-group">
-                  <label for="CODE">External ID</label>
-                  <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
-                </div>
-                <div class="form-group">
-                  <label for="LABEL">Name of company</label>
-                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of company">
+                <div class="row">
+                  <div class="col-4">
+                    <label for="CODE">External ID</label>
+                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                  </div>
+                  <div class="col-4">
+                    <label for="LABEL">Name of company</label>
+                    <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of company">
+                  </div>
+                  <div class="col-4">
+                    <label for="user_id">Technical manager</label>
+                    <select class="form-control" name="user_id" id="user_id">
+                      @foreach ($userSelect as $item)
+                      <option value="{{ $item->id }}">{{ $item->name }}</option>
+                      @endforeach
+                    </select>
+                  </div>
                 </div>
                 <hr>
                 <div class="row">
@@ -54,6 +64,7 @@
                     <input type="text" class="form-control"  name="LKDSITE" id="LKDSITE" placeholder="Linkedin link">
                   </div>
                 </div>
+                <hr>
                 <div class="row">
                   <label for="SIREN">Administrative information</label>
                 </div>
@@ -68,7 +79,7 @@
                     <input type="text" class="form-control" name="TVA_INTRA" id="TVA_INTRA" placeholder="VAT number">
                   </div>
                 </div>
-                
+                <hr>
                 <div class="row">
                   <label for="PICTURE">Logo file</label>
                   <div class="input-group">
@@ -83,17 +94,6 @@
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-5">
-                    <label for="user_id">Technical manager</label>
-                    <select class="form-control" name="user_id" id="user_id">
-                      @foreach ($userSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->name }}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
                   <div class="col-3">
                     <label for="STATU_CLIENT">Statu client</label>
                     <select class="form-control" name="STATU_CLIENT" id="STATU_CLIENT">
@@ -102,18 +102,16 @@
                       <option value="3">Prospect</option>
                     </select>
                   </div>
-                </div>
-                <div class="row">
-                  <label for="DISCOUNT">Sales and accounting</label>
-                </div>
-                <div class="row">
                   <div class="col-3">
+                    <label for="DISCOUNT">Discount</label>
                     <input type="number" class="form-control" name="DISCOUNT" id="DISCOUNT" placeholder="Discount">
                   </div>
                   <div class="col-3">
+                    <label for="COMPTE_GEN_CLIENT">General Account</label>
                     <input type="number" class="form-control" name="COMPTE_GEN_CLIENT" id="COMPTE_GEN_CLIENT" placeholder="General Account">
                   </div>
                   <div class="col-3">
+                    <label for="COMPTE_AUX_CLIENT">Auxiliary Account</label>
                     <input type="number" class="form-control" name="COMPTE_AUX_CLIENT" id="COMPTE_AUX_CLIENT" placeholder="Auxiliary account">
                   </div>
                 </div>
@@ -133,20 +131,19 @@
                       <option value="2">No</option>
                     </select>
                   </div>
-                </div>
-                <hr>
-                <div class="row">
                   <div class="col-3">
+                    <label for="COMPTE_GEN_FOUR">General Account</label>
                     <input type="number" class="form-control" id="COMPTE_GEN_FOUR" name="COMPTE_GEN_FOUR" placeholder="General Account">
                   </div>
                   <div class="col-3">
+                    <label for="COMPTE_AUX_FOUR">Auxiliary Account</label>
                     <input type="number" class="form-control" id="COMPTE_AUX_FOUR" name="COMPTE_AUX_FOUR"  placeholder="Auxiliary account">
                   </div>
                   
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="form-group">
+                  <div class="col-12">
                     <label>Comment</label>
                     <textarea class="form-control" rows="3" name="COMMENT"  placeholder="Enter ..."></textarea>
                   </div>
@@ -248,7 +245,7 @@
 @stop
                   
  @section('css')
-   <link rel="stylesheet" href="/css/admin_custom.css">
+    
    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css">
  @stop

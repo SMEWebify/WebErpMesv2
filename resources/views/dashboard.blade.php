@@ -217,18 +217,9 @@
           <div class="row">
             <div class="col-md-8">
               <div class="chart-responsive">
-                <canvas id="pieChart" height="150"></canvas>
+                <canvas id="QuoteRate"  height="200"></canvas>
               </div>
               <!-- ./chart-responsive -->
-            </div>
-            <!-- /.col -->
-            <div class="col-md-4">
-              <ul class="chart-legend clearfix">
-                <li><i class="far fa-circle text-danger"></i> Win</li>
-                <li><i class="far fa-circle text-success"></i> Loose</li>
-                <li><i class="far fa-circle text-warning"></i> For quoting product</li>
-                <li><i class="far fa-circle text-info"></i> In progress</li>
-              </ul>
             </div>
             <!-- /.col -->
           </div>
@@ -390,9 +381,47 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+
 @stop
 
 @section('js')
-
+<script>
+  var ctx = document.getElementById('QuoteRate');
+  var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['Open', 'Send', 'Win', 'Lost', 'Closed', 'Obselete'],
+          datasets: [{
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: [
+                  'rgba(23, 162, 184, 1)',
+                  'rgba(255, 193, 7, 1)',
+                  'rgba(40, 167, 69, 1)',
+                  'rgba(220, 53, 69, 1)',
+                  'rgba(108, 117, 125, 1)',
+                  'rgba(0, 123, 255, 1)',
+              ],
+              borderColor: [
+                  'rgba(23, 162, 184, 1)',
+                  'rgba(255, 193, 7, 1)',
+                  'rgba(40, 167, 69, 1)',
+                  'rgba(220, 53, 69, 1)',
+                  'rgba(108, 117, 125, 1)',
+                  'rgba(0, 123, 255, 1)',
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+        responsive: true,
+            legend: {
+                display: false,
+                labels: {
+                    boxWidth: 20,
+                    padding: 20
+                }
+            }
+      }
+  });
+  </script>
 @stop
