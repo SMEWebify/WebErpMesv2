@@ -18,22 +18,6 @@
 @section('content')
 
 <div class="card">
-  @if(session('success'))
-  <div class="alert alert-success">
-      {{ session('success')}}
-  </div>
-  @endif
-
-  @if($errors->count())
-    <div class="alert alert-danger">
-      <ul>
-      @foreach ( $errors->all() as $message)
-       <li> {{ $message }}</li>
-      @endforeach
-      </ul>
-    </div>
-  @endif
-
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">Quote info</a></li>
@@ -45,6 +29,21 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Quote">
+        @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success')}}
+        </div>
+        @endif
+
+        @if($errors->count())
+          <div class="alert alert-danger">
+            <ul>
+            @foreach ( $errors->all() as $message)
+            <li> {{ $message }}</li>
+            @endforeach
+            </ul>
+          </div>
+        @endif
         <form method="POST" action="{{ route('quote.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
           @csrf
             <div class="row">
@@ -174,7 +173,7 @@
               <div class="row">
                 <div class="col-12">
                   <h4>
-                    <i class="fas fa-globe"></i> AdminLTE, Inc.
+                    <i class="fas fa-globe"></i> WEM, Inc.
                     <small class="float-right">Date: {{ date('Y-m-d') }}</small>
                   </h4>
                 </div>

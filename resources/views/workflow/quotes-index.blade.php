@@ -144,46 +144,131 @@
 
 @section('content')
 
-                <div class="card">
-                  <div class="card-body">
-                    <div  id="quotes_wrapper" class="dataTables_wrapper dt-bootstrap4">
+
+<div class="card">
+  <div class="card-header p-2">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a class="nav-link active" href="#Quotes" data-toggle="tab">Quotes list</a></li>
+      <li class="nav-item"><a class="nav-link" href="#QuotesLine" data-toggle="tab">Quotes lines list</a></li>
+    </ul>
+  </div>
+  <!-- /.card-header -->
+  <div class="card-body">
+    <div class="tab-content">
+                    <div class="tab-pane active" id="Quotes">
+                        <div  id="quotes_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <div class="col-sm-12">
+                              <table id="quotes" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
+                                <thead>
+                                  <tr>
+                                    <th>Code</th>
+                                    <th>Label</th>
+                                    <th>Companie</th>
+                                    <th>Customer reference</th>.
+                                    <th>Statu</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                    @foreach ($Quoteslist as $Quote)
+                                    <tr>
+                                      <td>{{ $Quote->CODE }}</td>
+                                      <td>{{ $Quote->LABEL }}</td>
+                                      <td>{{ $Quote->companie['LABEL'] }}</td>
+                                      <td>{{ $Quote->customer_reference }}</td>
+                                      <td>
+                                        @if(1 == $Quote->STATU )   <span class="badge badge-info"> Open</span>@endif
+                                        @if(2 == $Quote->STATU )  <span class="badge badge-warning">Send</span>@endif
+                                        @if(3 == $Quote->STATU )  <span class="badge badge-success">Win</span>@endif
+                                        @if(4 == $Quote->STATU )  <span class="badge badge-danger">Lost</span>@endif
+                                        @if(5 == $Quote->STATU )  <span class="badge badge-secondary">Closed</span>@endif
+                                        @if(6 == $Quote->STATU )   <span class="badge badge-secondary">Obsolete</span>@endif
+                                      </td>
+                                      <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
+                                      <td>
+                                        <a class="btn btn-primary btn-sm" href="{{ route('quote.show', ['id' => $Quote->id])}}">
+                                          <i class="fas fa-folder"></i>
+                                          View
+                                        </a>
+                                        <a class="btn btn-success btn-sm" href="{{ route('quote.print', ['id' => $Quote->id])}}">
+                                          <i class="fas fa-print"></i>
+                                          Print
+                                        </a>
+                                      </td>
+                                    </tr>
+                                    @endforeach
+                                  </tbody>
+                                  <tfoot>
+                                  <tr>
+                                    <th>Code</th>
+                                    <th>Label</th>
+                                    <th>Companie</th>
+                                    <th>Customer reference</th>.
+                                    <th>Statu</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </tfoot>
+                              </table>
+
+                          <!-- /.row -->
+                          </div>
+                          
+                        <!-- /.dataTables_wrapper -->
+                        </div>
+                        
+                    <!-- /.tab-pane -->
+                    </div>
+                    
+
+                    <div class="tab-pane" id="QuotesLine">
+                      <div  id="quotes_wrapper" class="dataTables_wrapper dt-bootstrap4">
                         <div class="col-sm-12">
                           <table id="quotes" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
                             <thead>
                             <tr>
-                              <th>Code</th>
-                              <th>Label</th>
-                              <th>Companie</th>
-                              <th>Customer reference</th>.
+                              <th>Quote ID</th>
+                              <th>Sort</th>
+                              <th>External ID</th>
+                              <th>Product</th>
+                              <th>Description</th>
+                              <th>Qty</th>
+                              <th>Unit</th>
+                              <th>Selling price</th>
+                              <th>Discount</th>
+                              <th>VAT type</th>
+                              <th>Delivery date</th>
                               <th>Statu</th>
-                              <th>Created At</th>
                               <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
-                              @foreach ($Quoteslist as $Quote)
+                              @foreach ($QuoteLineslist as $QuoteLine)
                               <tr>
-                                <td>{{ $Quote->CODE }}</td>
-                                <td>{{ $Quote->LABEL }}</td>
-                                <td>{{ $Quote->companie['LABEL'] }}</td>
-                                <td>{{ $Quote->customer_reference }}</td>
+                                <td></td>
+                                <td>{{ $QuoteLine->ORDRE }}</td>
+                                <td>{{ $QuoteLine->CODE }}</td>
+                                <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif</td>
+                                <td>{{ $QuoteLine->LABEL }}</td>
+                                <td>{{ $QuoteLine->qty }}</td>
+                                <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
+                                <td>{{ $QuoteLine->selling_price }}</td>
+                                <td>{{ $QuoteLine->discount }}</td>
+                                <td>{{ $QuoteLine->VAT['LABEL'] }}</td>
+                                <td>{{ $QuoteLine->delivery_date }}</td>
                                 <td>
-                                  @if(1 == $Quote->STATU )   <span class="badge badge-info"> Open</span>@endif
-                                  @if(2 == $Quote->STATU )  <span class="badge badge-warning">Send</span>@endif
-                                  @if(3 == $Quote->STATU )  <span class="badge badge-success">Win</span>@endif
-                                  @if(4 == $Quote->STATU )  <span class="badge badge-danger">Lost</span>@endif
-                                  @if(5 == $Quote->STATU )  <span class="badge badge-secondary">Closed</span>@endif
-                                  @if(6 == $Quote->STATU )   <span class="badge badge-secondary">Obsolete</span>@endif
+                                  @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif
+                                  @if(2 == $QuoteLine->statu )  <span class="badge badge-warning">Send</span>@endif
+                                  @if(3 == $QuoteLine->statu )  <span class="badge badge-success">Win</span>@endif
+                                  @if(4 == $QuoteLine->statu )  <span class="badge badge-danger">Lost</span>@endif
+                                  @if(5 == $QuoteLine->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                                  @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                                 </td>
-                                <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
                                 <td>
-                                  <a class="btn btn-primary btn-sm" href="{{ route('quote.show', ['id' => $Quote->id])}}">
+                                  <a class="btn btn-primary btn-sm" href="{{ route('quote.show', ['id' => $QuoteLine->quotes_id])}}">
                                     <i class="fas fa-folder"></i>
                                     View
-                                  </a>
-                                  <a class="btn btn-success btn-sm" href="{{ route('quote.print', ['id' => $Quote->id])}}">
-                                    <i class="fas fa-print"></i>
-                                    Print
                                   </a>
                                 </td>
                               </tr>
@@ -191,22 +276,36 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                              <th>Code</th>
-                              <th>Label</th>
-                              <th>Companie</th>
-                              <th>Customer reference</th>.
+                              <th>Quote ID</th>
+                              <th>Sort</th>
+                              <th>External ID</th>
+                              <th>Product</th>
+                              <th>Description</th>
+                              <th>Qty</th>
+                              <th>Unit</th>
+                              <th>Selling price</th>
+                              <th>Discount</th>
+                              <th>VAT type</th>
+                              <th>Delivery date</th>
                               <th>Statu</th>
-                              <th>Created At</th>
                               <th>Action</th>
                             </tr>
-                            </tfoot>
+                          </tfoot>
+                        </table>
                       </div>
-                      <!-- /.row -->
                     </div>
-                  </div>
-                  <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
+
+
+
+                    <!-- /.tab-pane -->
+                    </div>
+                    
+    <!-- /.tab-content -->
+    </div>
+  <!-- /.card-body -->
+  </div>
+<!-- /.card -->
+</div>
 
 @stop
                   

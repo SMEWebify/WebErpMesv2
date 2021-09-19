@@ -38,7 +38,6 @@ Route::group(['prefix' => 'quotes'], function () {
     Route::post('/create', 'App\Http\Controllers\workflow\QuotesController@store')->middleware(['auth'])->name('quote.store');
     Route::post('/edit/{id}', 'App\Http\Controllers\workflow\QuotesController@update')->middleware(['auth'])->name('quote.update');
 
-    Route::get('/lines', 'App\Http\Controllers\workflow\QuoteLinesController@index')->middleware(['auth'])->name('quotes.lines');
     Route::get('/print/{id}', 'App\Http\Controllers\workflow\QuotesController@print')->middleware(['auth'])->name('quote.print');
     Route::get('/{id}', 'App\Http\Controllers\workflow\QuotesController@show')->middleware(['auth'])->name('quote.show');
 });

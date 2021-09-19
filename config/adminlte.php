@@ -255,16 +255,7 @@ return [
         [
             'text'    => 'Quote',
             'icon'    => 'fas fa-calculator',
-            'submenu' => [
-                [
-                    'text' => 'Quote list',
-                    'url'  => 'quotes',
-                ],
-                [
-                    'text' => 'Quote lines list',
-                    'url'  => 'quotes/lines',
-                ],
-            ]
+            'url'  => 'quotes',
         ],
         ['header' => 'Jobs'],
         [

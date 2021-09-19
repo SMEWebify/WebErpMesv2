@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Workflow\Quotes;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
@@ -21,9 +22,9 @@ class QuotesController extends Controller
     //
 
     public function index()
-    {
-
+    {    
         $Quotes = Quotes::All();
+        $QuoteLines = QuoteLines::All();
         $userSelect = User::select('id', 'name')->get();
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
         $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
@@ -36,6 +37,7 @@ class QuotesController extends Controller
 
         return view('workflow/quotes-index', [
             'Quoteslist' => $Quotes,
+            'QuoteLineslist' => $QuoteLines,
             'LastQuote' => $LastQuote,
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
@@ -95,8 +97,6 @@ class QuotesController extends Controller
                                                         'accounting_deliveries_id',  
                                                         'comment'
                                                 ));
-
-
 
         return redirect()->route('quote.show', ['id' => $Quote->id])->with('success', 'Successfully created new quote');
 

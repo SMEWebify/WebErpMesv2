@@ -11,6 +11,7 @@
 @section('content')
 
 <div class="card">
+
   @if(session('success'))
   <div class="alert alert-success">
       {{ session('success')}}
@@ -924,10 +925,10 @@
         </div>
         <!-- /.tab-pane -->
       </div>
-      <!-- /.tab-content -->
-
+      
+    <!-- /.tab-content -->
     </div>
-    <!-- /.card-body -->
+  <!-- /.card-body -->
   </div>
 <!-- /.card -->
 </div>
@@ -939,5 +940,4 @@
  @stop
                   
 @section('js')
-  <script> console.log('Hi!'); </script>
 @stop
