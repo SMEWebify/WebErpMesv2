@@ -7,9 +7,10 @@
 # WEB ERP MES
 ##  Ressource and Manufacturing execution system  Web
 
+
 WEM is a business management web application using Laravel 8 and bootstrap 4.6.
 
-# Why WEM ?
+# Why WEM ? :monocle_face:
 
 Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured.
 
@@ -17,7 +18,25 @@ MES offers a link between what the customer expects and a real-time status of th
 
 This project is the continuation of https://github.com/billyboy35/WEB_MES using a laravel, bootstrap and the design https://github.com/jeroennoten/Laravel-AdminLTE
 
-I am unprofessional, any improvement discussion would be helpful.
+I am unprofessional, any improvement discussion would be helpful. :hugs:
+
+
+# Current progress of the project :building_construction:
+
+| Features         | Implemented | To be done |
+|------------------|:-----------:|:----------:|
+| Customers        |      X      |      -     |
+| Quality          |      X      |      -     |
+| Products         |      X      |      -     |
+| Quote            |      -      |      X     |
+| Order            |      -      |      X     |
+| Order confirm    |      -      |      X     |
+| Delivery note    |      -      |      X     |
+| Invoices         |      -      |      X     |
+| Purchase Request |      -      |      X     |
+| Purchase order   |      -      |      X     |
+| Receipt          |      -      |      X     |
+
 
 -----------------
 Companies management
