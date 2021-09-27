@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Companies')
 
 @section('content_header')
     <h1>{{ $adress->LABEL }}</h1>

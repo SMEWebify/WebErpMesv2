@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Stock')
 
 @section('content_header')
     <h1> Stock location for {{ $Stock->LABEL }}</h1>
@@ -92,11 +92,16 @@
                 </div>
                 <div class="form-group">
                   <label for="user_id">User management</label>
-                  <select class="form-control" name="user_id" id="user_id">
-                    @foreach ($userSelect as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                    @endforeach
-                  </select>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    </div>
+                    <select class="form-control" name="user_id" id="user_id">
+                      @foreach ($userSelect as $item)
+                      <option value="{{ $item->id }}">{{ $item->name }}</option>
+                      @endforeach
+                    </select>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="END_DATE">End date</label>

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Companies')
 
 @section('content_header')
     <h1> {{ $Companie->LABEL }}</h1>
@@ -410,12 +410,13 @@
   <!-- /.card-body -->
 </div>
 <!-- /.card -->
-            @stop
-                  
-            @section('css')
-               
-            @stop
-                             
-           @section('js')
-             <script> console.log('Hi!'); </script>
-           @stop
+
+@stop
+
+@section('css')
+
+@stop
+
+@section('js')
+
+@stop

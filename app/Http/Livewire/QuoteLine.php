@@ -6,14 +6,14 @@ use Livewire\Component;
 use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Accounting\AccountingVat;
-use App\Models\workflow\Quotelines As QuoteLineslist;
+use App\Models\workflow\Quotelines;
 
 class QuoteLine extends Component
 {
     public $QuoteId;
 
     public $QuoteLineslist;
-    public $quotes_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
+    public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
     public $updateLines = false;
 
 
@@ -34,29 +34,34 @@ class QuoteLine extends Component
         'qty'=>'required',
         'methods_units_id'=>'required',
         'selling_price'=>'required',
+        'discount'=>'required',
         'accounting_vats_id'=>'required',
     ];
 
-    public function mount() 
+    public function mount($QuoteId) 
     {
-        $this->quotes_id = "1";
+        
+        $this->quotes_id = $QuoteId;
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
-        $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
         
     }
 
     public function render()
     {
-        $QuoteId = $this->QuoteId;
 
-        //$this->QuoteLineslist = QuoteLineslist::orderBy('ORDRE')->where('quotes_id', '=', $QuoteId);
-        $this->QuoteLineslist = QuoteLineslist::all();
-        return view('livewire.quote-lines');
+       
+        $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy('ORDRE')->where('quotes_id', '=', $this->quotes_id)->get();
+        
+        //$QuoteLineslist = $this->QuoteLineslist = Quotelines::;
+        return view('livewire.quote-lines', [
+            'QuoteLineslist' => $QuoteLineslist,
+        ]);
     }
 
     public function resetFields(){
-        $this->ORDRE = $this->ORDRE+10;
+        $this->ORDRE = $this->ORDRE+1;
         $this->CODE = '';
         $this->product_id = '';
         $this->LABEL = '';
@@ -69,7 +74,7 @@ class QuoteLine extends Component
         $this->validate();
 
             // Create Category
-            QuoteLineslist::create([
+            Quotelines::create([
                 'quotes_id'=>$this->quotes_id,
                 'ORDRE'=>$this->ORDRE,
                 'CODE'=>$this->CODE,
@@ -92,7 +97,8 @@ class QuoteLine extends Component
     }
 
     public function edit($id){
-        $Line = QuoteLineslist::findOrFail($id);
+        $Line = Quotelines::findOrFail($id);
+        $this->quote_lines_id = $id;
         $this->ORDRE = $Line->ORDRE;
         $this->CODE = $Line->CODE;
         $this->product_id = $Line->product_id;
@@ -118,10 +124,10 @@ class QuoteLine extends Component
         // Validate request
         $this->validate();
 
-        try{
+        //try{
 
             // Update line
-            QuoteLineslist::find($this->category_id)->fill([
+            Quotelines::find($this->quote_lines_id)->fill([
                 'ORDRE'=>$this->ORDRE,
                 'CODE'=>$this->CODE,
                 'product_id'=>$this->product_id,
@@ -137,17 +143,17 @@ class QuoteLine extends Component
 
             session()->flash('success','Line Updated Successfully');
     
-            $this->cancel();
-        }catch(\Exception $e){
+          //  $this->cancel();
+        //}catch(\Exception $e){
 
-            session()->flash('error','Something goes wrong while updating line');
-            $this->cancel();
-        }
+         //   session()->flash('error','Something goes wrong while updating line');
+         //   $this->cancel();
+        //}
     }
 
     public function destroy($id){
         try{
-            QuoteLineslist::find($id)->delete();
+            Quotelines::find($id)->delete();
             session()->flash('success',"Line deleted Successfully!!");
         }catch(\Exception $e){
             session()->flash('error',"Something goes wrong while deleting Line");

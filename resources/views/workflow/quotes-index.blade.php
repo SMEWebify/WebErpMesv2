@@ -35,15 +35,20 @@
                   </div>
                   <div class="col-3">
                     <label for="LABEL">Name of quote</label>
-                    <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote">
+                    <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote" required>
                   </div>
                   <div class="col-3">
                     <label for="user_id">User management</label>
-                    <select class="form-control" name="user_id" id="user_id">
-                      @foreach ($userSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->name }}</option>
-                      @endforeach
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                      </div>
+                      <select class="form-control" name="user_id" id="user_id">
+                        @foreach ($userSelect as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <hr>
@@ -228,7 +233,7 @@
                           <table id="quotes" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
                             <thead>
                             <tr>
-                              <th>Quote ID</th>
+                              <th>Quote</th>
                               <th>Sort</th>
                               <th>External ID</th>
                               <th>Product</th>
@@ -246,7 +251,7 @@
                             <tbody>
                               @foreach ($QuoteLineslist as $QuoteLine)
                               <tr>
-                                <td></td>
+                                <td>{{ $QuoteLine->quote['CODE'] }}</td>
                                 <td>{{ $QuoteLine->ORDRE }}</td>
                                 <td>{{ $QuoteLine->CODE }}</td>
                                 <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif</td>
@@ -276,7 +281,7 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                              <th>Quote ID</th>
+                              <th>Quote</th>
                               <th>Sort</th>
                               <th>External ID</th>
                               <th>Product</th>

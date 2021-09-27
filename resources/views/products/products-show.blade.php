@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Products')
 
 @section('content_header')
     <h1> {{ $Product->LABEL }} {{ $Product->IND }}</h1>

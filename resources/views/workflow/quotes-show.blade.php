@@ -20,6 +20,7 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
+      <li class="nav-item"><a class="nav-link" href="{{ route('quotes') }}">Back to lists</a></li>
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">Quote info</a></li>
       <li class="nav-item"><a class="nav-link" href="#QuoteLines" data-toggle="tab">Quote lines</a></li>
       <li class="nav-item"><a class="nav-link" href="#Print" data-toggle="tab">Print</a></li>
@@ -97,11 +98,16 @@
               </div>
               <div class="col-5">
                 <label for="companies_contacts_id">Contact</label>
-                <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
-                  @foreach ($ContactSelect as $item)
-                  <option value="{{ $item->id }}" @if($item->id == $Quote->companies_contacts_id ) Selected @endif >{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  </div>
+                  <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
+                    @foreach ($ContactSelect as $item)
+                    <option value="{{ $item->id }}" @if($item->id == $Quote->companies_contacts_id ) Selected @endif >{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
             </div>
             <hr>
@@ -195,17 +201,17 @@
                 <div class="col-sm-4 invoice-col">
                   To
                   <address>
-                    <strong>{{ $Quote->companie['LABEL'] }}</strong><br>
-                    795 Folsom Ave, Suite 600<br>
-                    San Francisco, CA 94107<br>
-                    Phone: (555) 539-1037<br>
-                    Email: john.doe@example.com
+                    <strong>{{ $Quote->companie['LABEL'] }}</strong> - <strong>{{ $Quote->contact['CIVILITY'] }} - {{ $Quote->contact['FIRST_NAME'] }}  {{ $Quote->contact['NAME'] }}</strong><br>
+                    {{ $Quote->adresse['ADRESS'] }}<br>
+                    {{ $Quote->adresse['ZIPCODE'] }}, {{ $Quote->adresse['CITY'] }}<br>
+                    {{ $Quote->adresse['COUNTRY'] }}<br>
+                    Phone: {{ $Quote->contact['NUMBER'] }}<br>
+                    Email: {{ $Quote->contact['MAIL'] }}
                   </address>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
                   <b>Qute #{{  $Quote->CODE }}</b><br>
-                  <br>
                   <b>Your Ref:</b> {{  $Quote->customer_reference }}<br>
                 </div>
                 <!-- /.col -->
@@ -237,7 +243,7 @@
                           <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
                           <td>{{ $QuoteLine->selling_price }}</td>
                           <td>{{ $QuoteLine->discount }}</td>
-                          <td>{{ $QuoteLine->VAT['LABEL'] }}</td>
+                          <td>{{ $QuoteLine->VAT['RATE'] }}</td>
                           <td>{{ $QuoteLine->delivery_date }}</td>
                         </tr>
                       @empty
@@ -273,8 +279,6 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-6">
-                  <p class="lead">Amount Due 2/22/2014</p>
-
                   <div class="table-responsive">
                     <table class="table">
                       <tr>

@@ -378,13 +378,18 @@ return [
             'icon'        => 'fas fa-users',
         ],
         [
+            'text' => 'Your companie',
+            'url'  => 'admin/factory',
+            'icon'    => 'fas fa-industry',
+        ],
+        [
             'text' => 'profile',
-            'url'  => 'admin/settings',
+            'url'  => '#',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
+            'text' => 'change password',
+            'url'  => '#',
             'icon' => 'fas fa-fw fa-lock',
         ],
     ],

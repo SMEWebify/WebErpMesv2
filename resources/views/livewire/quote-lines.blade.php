@@ -44,7 +44,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($QuoteLineslist as $QuoteLine)
+                            
+                            @forelse ($QuoteLineslist as $QuoteLine)
                             <tr>
                               <td>{{ $QuoteLine->ORDRE }}</td>
                               <td>{{ $QuoteLine->CODE }}</td>
@@ -54,7 +55,7 @@
                               <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
                               <td>{{ $QuoteLine->selling_price }}</td>
                               <td>{{ $QuoteLine->discount }}</td>
-                              <td>{{ $QuoteLine->VAT['LABEL'] }}</td>
+                              <td>{{ $QuoteLine->VAT['RATE'] }}</td>
                               <td>{{ $QuoteLine->delivery_date }}</td>
                               <td>
                                 @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif
@@ -69,7 +70,20 @@
                                 <button wire:click="destroy({{$QuoteLine->id}})" class="btn btn-sm btn-outline-danger py-0">Delete</button>
                               </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <th>No Lines</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            @endforelse
                         </tbody>
                         <tfoot>
                             <tr>

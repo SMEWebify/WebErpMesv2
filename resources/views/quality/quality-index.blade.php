@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Quality')
 
 @section('content_header')
     <h1>Quality</h1>
@@ -152,11 +152,16 @@
               </div>
               <div class="col-2">
                 <label for="user_id">User</label>
-                <select class="form-control" name="user_id" id="user_id">
-                  @foreach ($userSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  </div>
+                  <select class="form-control" name="user_id" id="user_id">
+                    @foreach ($userSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-3">
                 <label for="COLOR">Color</label>
@@ -310,11 +315,16 @@
               </div>
               <div class="col-2">
                 <label for="user_id">User</label>
-                <select class="form-control" name="user_id" id="user_id">
-                  @foreach ($userSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  </div>
+                  <select class="form-control" name="user_id" id="user_id">
+                    @foreach ($userSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-2">
                 <label for="quality_non_conformitie_id">Non conformitie link</label>
@@ -469,11 +479,16 @@
               </div>
               <div class="col-2">
                 <label for="user_id">User</label>
-                <select class="form-control" name="user_id" id="user_id">
-                  @foreach ($userSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  </div>
+                  <select class="form-control" name="user_id" id="user_id">
+                    @foreach ($userSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-2">
                 <label for="service_id">Service</label>
@@ -636,11 +651,16 @@
                       </div>
                       <div class="col-3">
                         <label for="user_id">User</label>
-                        <select class="form-control" name="user_id" id="user_id">
-                          @foreach ($userSelect as $item)
-                          <option value="{{ $item->id }}">{{ $item->name }}</option>
-                          @endforeach
-                        </select>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                          </div>
+                          <select class="form-control" name="user_id" id="user_id">
+                            @foreach ($userSelect as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                          </select>
+                        </div>
                       </div>
                       <div class="col-2">
                         <label for="LABEL">Serial number</label>

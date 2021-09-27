@@ -1,8 +1,8 @@
 <form wire:submit.prevent="update">
     <div class="row">
         <div class="col-1">
-            <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model="quotes_id" >
             <label for="ORDRE">Sort order:</label>
+            <input type="hidden" wire:model="quote_lines_id">
             <input type="number" class="form-control @error('ORDRE') is-invalid @enderror" id="ORDRE" placeholder="Enter order" wire:model="ORDRE">
             @error('ORDRE') <span class="text-danger">{{ $message }}</span>@enderror
         </div>
@@ -13,8 +13,10 @@
         </div>
         <div class="col-1">
             <label for="product_id">Product</label>
-            <select class="form-control" name="product_id" id="product_id"  wire:model="product_id">
-              <option value="1" >Test</option>
+            <select class="form-control" name="product_id" id="product_id"  wire:model="product_id" >
+                @foreach ($ProductsSelect as $item)
+                <option value="{{ $item->id }}" data-txt="{{ $item->CODE }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                @endforeach
             </select>
         </div>
         <div class="col-1">
@@ -30,23 +32,27 @@
         <div class="col-1">
             <label for="methods_units_id">Unit</label>
             <select class="form-control" name="methods_units_id" id="methods_units_id"  wire:model="methods_units_id">
-            <option value="1" >Test</option>
+                @foreach ($UnitsSelect as $item)
+                <option value="{{ $item->id }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                 @endforeach
             </select>
         </div>
         <div class="col-1">
             <label for="selling_price">Selling price :</label>
-            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price">
+            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001">
             @error('selling_price') <span class="text-danger">{{ $message }}</span>@enderror
         </div>
         <div class="col-1">
             <label for="discount">Discount :</label>
-            <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount">
+            <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount" step=".01">
             @error('discount') <span class="text-danger">{{ $message }}</span>@enderror
         </div>
         <div class="col-1">
             <label for="accounting_vats_id">VAT type</label>
             <select class="form-control" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
-            <option value="1" >Test</option>
+                @foreach ($VATSelect as $item)
+                <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
+                 @endforeach
             </select>
         </div>
 

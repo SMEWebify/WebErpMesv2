@@ -43,12 +43,12 @@
         </div>
         <div class="col-1">
             <label for="selling_price">Selling price :</label>
-            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price">
+            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001" value="0">
             @error('selling_price') <span class="text-danger">{{ $message }}</span>@enderror
         </div>
         <div class="col-1">
             <label for="discount">Discount :</label>
-            <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount">
+            <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount" step=".01" value="0">
             @error('discount') <span class="text-danger">{{ $message }}</span>@enderror
         </div>
         <div class="col-1">

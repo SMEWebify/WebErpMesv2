@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Contact')
 
 @section('content_header')
     <h1>{{ $contact->FIRST_NAME }} {{ $contact->NAME }}</h1>

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Companies')
 
 @section('content_header')
     
@@ -31,19 +31,34 @@
                 <div class="row">
                   <div class="col-4">
                     <label for="CODE">External ID</label>
-                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                      </div>
+                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                    </div>
                   </div>
                   <div class="col-4">
                     <label for="LABEL">Name of company</label>
-                    <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of company">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-building"></i></span>
+                      </div>
+                     <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of company">
+                    </div>
                   </div>
                   <div class="col-4">
                     <label for="user_id">Technical manager</label>
-                    <select class="form-control" name="user_id" id="user_id">
-                      @foreach ($userSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->name }}</option>
-                      @endforeach
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                     </div>
+                      <select class="form-control" name="user_id" id="user_id">
+                        @foreach ($userSelect as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <hr>
@@ -52,16 +67,36 @@
                 </div>
                 <div class="row">
                   <div class="col-3">
-                    <input type="text" class="form-control"  name="WEBSITE" id="WEBSITE" placeholder="Web site link">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                      </div>
+                      <input type="text" class="form-control"  name="WEBSITE" id="WEBSITE" placeholder="Web site link">
+                    </div>
                   </div>
                   <div class="col-3">
-                    <input type="text" class="form-control"  name="FBSITE" id="FBSITE" placeholder="Facebook link">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
+                      </div>
+                      <input type="text" class="form-control"  name="FBSITE" id="FBSITE" placeholder="Facebook link">
+                    </div>
                   </div>
                   <div class="col-3">
-                    <input type="text" class="form-control"  name="TWITTERSITE" id="TWITTERSITE" placeholder="Twitter link">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
+                      </div>
+                      <input type="text" class="form-control"  name="TWITTERSITE" id="TWITTERSITE" placeholder="Twitter link">
+                    </div>
                   </div>
                   <div class="col-3">
-                    <input type="text" class="form-control"  name="LKDSITE" id="LKDSITE" placeholder="Linkedin link">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
+                      </div>
+                     <input type="text" class="form-control"  name="LKDSITE" id="LKDSITE" placeholder="Linkedin link">
+                    </div>
                   </div>
                 </div>
                 <hr>
@@ -83,6 +118,9 @@
                 <div class="row">
                   <label for="PICTURE">Logo file</label>
                   <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="far fa-image"></i></span>
+                    </div>
                     <div class="custom-file">
                       <input type="file" class="custom-file-input" id="PICTURE">
                       <label class="custom-file-label" for="PICTURE">Choose file</label>
