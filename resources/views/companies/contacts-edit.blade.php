@@ -30,10 +30,15 @@
       @endif
       <div class="row">
         <div class="col-5">
-          <label for="ORDRE">Sort order</label>
-          <input type="text" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order" value="{{ $contact->ORDRE }}">
-          <input type="hidden" name="companies_id" value="{{ $contact->companies_id }}">
-          <input type="hidden" name="id" value="{{ $contact->id }}">
+          <label for="ORDRE">Sort order:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+            </div>
+            <input type="text" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order" value="{{ $contact->ORDRE }}">
+            <input type="hidden" name="companies_id" value="{{ $contact->companies_id }}">
+            <input type="hidden" name="id" value="{{ $contact->id }}">
+          </div>
         </div>
         <div class="col-5">
           <label for="CIVILITY">Civility</label>

@@ -249,13 +249,23 @@
             @csrf
             <div class="row">
               <div class="col-5">
-                <label for="ORDRE">Sort order</label>
-                <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                <label for="ORDRE">Sort order:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                    </div>
+                  <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                </div>
                 <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
               </div>
               <div class="col-5">
                 <label for="LABEL">Label adresse</label>
-                <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                  </div>
+                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                </div>
               </div>
             </div>
             <hr>
@@ -344,9 +354,14 @@
             @csrf
             <div class="row">
               <div class="col-5">
-                <label for="ORDRE">Sort order</label>
-                <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
-                <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
+                <label for="ORDRE">Sort order:</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                  <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
+                </div>
               </div>
               <div class="col-5">
                 <label for="CIVILITY">Civility</label>

@@ -29,11 +29,21 @@
             <div class="row">
               <div class="col-4">
                 <label for="CODE">External ID</label>
-                <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                  </div>
+                 <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                </div>
               </div>
               <div class="col-4">
                 <label for="LABEL">Description</label>
-                <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label/Desciption of product">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                  </div>
+                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label/Desciption of product">
+                </div>
               </div>
               <div class="col-4">
                 <label for="IND">Index</label>
@@ -44,44 +54,69 @@
             <div class="row">
               <div class="col-4">
                 <label for="methods_services_id">Services</label>
-                <select class="form-control" name="methods_services_id" id="methods_services_id">
-                  @foreach ($ServicesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                  </div>
+                  <select class="form-control" name="methods_services_id" id="methods_services_id">
+                    @foreach ($ServicesSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-4">
                 <label for="methods_families_id">Family</label>
-                <select class="form-control" name="methods_families_id" id="methods_families_id">
-                  @foreach ($FamiliesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-grip-horizontal"></i></span>
+                  </div>
+                  <select class="form-control" name="methods_families_id" id="methods_families_id">
+                    @foreach ($FamiliesSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-4">
                 <label for="methods_units_id">Unit</label>
-                <select class="form-control" name="methods_units_id" id="methods_units_id">
-                  @foreach ($UnitsSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                  </div>
+                  <select class="form-control" name="methods_units_id" id="methods_units_id">
+                    @foreach ($UnitsSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
             </div>
             <hr>
             <div class="row">
               <div class="col-4">
                 <label for="purchased">Purchased</label>
-                <select class="form-control" name="purchased" id="purchased">
-                  <option value="2">No</option>
-                  <option value="1">Yes</option>
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                  </div>
+                  <select class="form-control" name="purchased" id="purchased">
+                    <option value="2">No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
               </div>
               <div class="col-4">
                 <label for="sold">Sold</label>
-                <select class="form-control" name="sold" id="sold">
-                  <option value="2">No</option>
-                  <option value="1">Yes</option>
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                  </div>
+                  <select class="form-control" name="sold" id="sold">
+                    <option value="2">No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
               </div>
               <div class="col-4">
                 <label for="tracability_type">Tracability</label>
@@ -106,39 +141,84 @@
             </div>
             <div class="row">
               <div class="col-4">
-                <input type="text" class="form-control" name="material" id="material" placeholder="Material">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fab fa-mdb"></i></span>
+                  </div>
+                  <input type="text" class="form-control" name="material" id="material" placeholder="Material">
+                </div>
               </div>
               <div class="col-4">
-                <input type="number" class="form-control" name="thickness" id="thickness" placeholder="Thickness" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="thickness" id="thickness" placeholder="Thickness" step=".001">
+                </div>
               </div>
               <div class="col-4">
-                <input type="number" class="form-control" name="weight" id="weight" placeholder="Weight" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="weight" id="weight" placeholder="Weight" step=".001">
+                </div>
               </div>
             </div>
             <hr>
             <div class="row">
               <div class="col-4">
                 <label for="x_size">X</label>
-                <input type="number" class="form-control" name="x_size" id="x_size" placeholder="X size" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="x_size" id="x_size" placeholder="X size" step=".001">
+                </div>
               </div>
               <div class="col-4">
                 <label for="y_size">Y</label>
-                <input type="number" class="form-control" name="y_size" id="y_size" placeholder="Y size" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="y_size" id="y_size" placeholder="Y size" step=".001">
+                </div>
               </div>
               <div class="col-4">
                 <label for="z_size">Z</label>
-                <input type="number" class="form-control" name="z_size" id="z_size" placeholder="Z size" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="z_size" id="z_size" placeholder="Z size" step=".001">
+                </div>
               </div>
             </div>
             <div class="row">
               <div class="col-4">
-                <input type="number" class="form-control" name="x_oversize" id="x_oversize" placeholder="X oversize" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="x_oversize" id="x_oversize" placeholder="X oversize" step=".001">
+                </div>
               </div>
               <div class="col-4">
-                <input type="number" class="form-control" name="y_oversize" id="y_oversize" placeholder="Y oversize" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="y_oversize" id="y_oversize" placeholder="Y oversize" step=".001">
+                </div>
               </div>
               <div class="col-4">
-                <input type="number" class="form-control" name="z_oversize" id="z_oversize" placeholder="Z oversize" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="z_oversize" id="z_oversize" placeholder="Z oversize" step=".001">
+                </div>
               </div>
             </div>
             <hr>
@@ -172,6 +252,9 @@
             <div class="row">
               <label for="PICTURE">Logo file</label>
               <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="far fa-image"></i></span>
+                </div>
                 <div class="custom-file">
                   <input type="file" class="custom-file-input" id="PICTURE">
                   <label class="custom-file-label" for="PICTURE">Choose file</label>

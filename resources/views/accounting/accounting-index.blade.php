@@ -110,11 +110,21 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="NUMBER_OF_MONTH">Number of month</label>
@@ -208,11 +218,21 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                       <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="CODE_ACCOUNT">Code account</label>
@@ -295,15 +315,30 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="RATE">RATE</label>
-                      <input type="number" class="form-control" name="RATE"  id="RATE" placeholder="10 %" step=".01">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                        </div>
+                        <input type="number" class="form-control" name="RATE"  id="RATE" placeholder="10 %" step=".01">
+                      </div>
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
@@ -404,16 +439,25 @@
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
-                    
                     <div class="form-group">
                        <label for="vat_id">VAT</label>
-                      <select class="form-control" name="vat_id" id="vat_id">
-                        @foreach ($VATSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                        @endforeach
-                      </select>
+                       <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                        </div>
+                        <select class="form-control" name="vat_id" id="vat_id">
+                          @foreach ($VATSelect as $item)
+                          <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                          @endforeach
+                        </select>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="VAT_ACCOUNT">VAT account number</label>
@@ -507,11 +551,21 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                       <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">

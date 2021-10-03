@@ -142,28 +142,48 @@
                     @csrf
                       <div class="form-group">
                         <label for="CODE">External ID</label>
-                        <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                          </div>
+                          <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+                        </div>
                       </div>
                       <div class="form-group">
-                        <label for="ORDRE">Sort order</label>
-                        <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                        <label for="ORDRE">Sort order:</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                          </div>
+                          <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                        </div>
                       </div>
                       <div class="form-group">
                         <label for="LABEL">Label</label>
-                        <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                          </div>
+                         <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                        </div>
                       </div>
                       <div class="form-group">
                           <label for="TYPE">Type</label>
-                          <select class="form-control" name="TYPE" id="TYPE">
-                              <option value="1">Productive</option>
-                              <option value="2">Raw material</option>
-                              <option value="3">Raw material (Sheet)</option>
-                              <option value="4">Raw material (Profil)</option>
-                              <option value="5">Raw material (block)</option>
-                              <option value="6">Purchase</option>
-                              <option value="7">Sub-contracting</option>
-                              <option value="8">Composed component</option>
-                          </select>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                            </div>
+                            <select class="form-control" name="TYPE" id="TYPE">
+                                <option value="1">Productive</option>
+                                <option value="2">Raw material</option>
+                                <option value="3">Raw material (Sheet)</option>
+                                <option value="4">Raw material (Profil)</option>
+                                <option value="5">Raw material (block)</option>
+                                <option value="6">Purchase</option>
+                                <option value="7">Sub-contracting</option>
+                                <option value="8">Composed component</option>
+                            </select>
+                          </div>
                       </div>
                       <div class="form-group">
                         <label for="HOURLY_RATE">Hourly rate</label>
@@ -171,7 +191,12 @@
                       </div>
                       <div class="form-group">
                         <label for="MARGIN">Margin :</label>
-                        <input type="number" class="form-control" name="MARGIN" id="MARGIN" placeholder="10%" step=".001">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                          </div>
+                          <input type="number" class="form-control" name="MARGIN" id="MARGIN" placeholder="10%" step=".001">
+                        </div>
                       </div>
                       <div class="form-group">
                         <label for="COLOR">Color</label>
@@ -180,6 +205,9 @@
                       <div class="form-group">
                         <label for="PICTURE">Logo file</label>
                         <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="far fa-image"></i></span>
+                          </div>
                           <div class="custom-file">
                             <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
                             <label class="custom-file-label" for="PICTURE">Choose file</label>
@@ -307,26 +335,51 @@
                 @csrf
                   <div class="form-group">
                     <label for="CODE">External ID</label>
-                    <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                      </div>
+                      <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+                    </div>
                   </div>
                   <div class="form-group">
-                    <label for="ORDRE">Sort order</label>
-                    <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                    <label for="ORDRE">Sort order:</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                      </div>
+                      <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="LABEL">Label</label>
-                    <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                      </div>
+                      <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                    </div>
                   </div>
                   <div class="form-group">
                       <label for="MASK_TIME">Mask time ?</label>
-                      <select class="form-control" name="MASK_TIME" id="MASK_TIME">
-                          <option value="2">No</option>
-                          <option value="1">Yes</option>
-                      </select>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user-times"></i></span>
+                        </div>
+                        <select class="form-control" name="MASK_TIME" id="MASK_TIME">
+                            <option value="2">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                      </div>
                   </div>
                   <div class="form-group">
                     <label for="CAPACITY">Hour capacity by week</label>
-                    <input type="number" class="form-control" name="CAPACITY" id="CAPACITY" placeholder="110 h/week">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                      </div>
+                      <input type="number" class="form-control" name="CAPACITY" id="CAPACITY" placeholder="110 h/week">
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="COLOR">Color</label>
@@ -335,6 +388,9 @@
                   <div class="form-group">
                     <label for="PICTURE">Logo file</label>
                     <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-image"></i></span>
+                      </div>
                       <div class="custom-file">
                         <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
                         <label class="custom-file-label" for="PICTURE">Choose file</label>
@@ -345,19 +401,29 @@
                   </div>
                   <div class="form-group">
                     <label for="section_id">Section</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-industry"></i></span>
+                      </div>
                       <select class="form-control" name="section_id" id="section_id">
                         @foreach ($SectionsSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
                         @endforeach
                       </select>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="service_id">Services</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-list"></i></span>
+                      </div>
                       <select class="form-control" name="service_id" id="service_id">
                         @foreach ($ServicesSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
                         @endforeach
                       </select>
+                    </div>
                   </div>
                 <!-- /.form-group -->
                 </div>
@@ -433,16 +499,31 @@
                   <form  method="POST" action="{{ route('methods.section.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="ORDRE">Sort order</label>
-                      <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="10">
+                      <label for="ORDRE">Sort order:</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                        </div>
+                        <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="10">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="COLOR">Color</label>
@@ -543,11 +624,21 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="COLOR">Color</label>
@@ -636,21 +727,36 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                         <label for="TYPE">Type</label>
-                      <select class="form-control" name="TYPE" id="TYPE">
-                          <option value="1">Mass</option>
-                          <option value="2">Length</option>
-                          <option value="3">Aera</option>
-                          <option value="4">Volume</option>
-                          <option value="5">Other</option>
-                      </select>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                          </div>
+                          <select class="form-control" name="TYPE" id="TYPE">
+                              <option value="1">Mass</option>
+                              <option value="2">Length</option>
+                              <option value="3">Aera</option>
+                              <option value="4">Volume</option>
+                              <option value="5">Other</option>
+                          </select>
+                        </div>
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
@@ -729,19 +835,34 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                       <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="service_id">Services</label>
-                      <select class="form-control" name="service_id" id="service_id">
-                        @foreach ($ServicesSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                        @endforeach
-                      </select>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-list"></i></span>
+                        </div>
+                        <select class="form-control" name="service_id" id="service_id">
+                          @foreach ($ServicesSelect as $item)
+                          <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                          @endforeach
+                        </select>
+                      </div>
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
@@ -839,18 +960,33 @@
                     @csrf
                     <div class="form-group">
                       <label for="CODE">External ID</label>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="LABEL">Label</label>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                       <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="ETAT">Statu</label>
-                      <select class="form-control" name="ETAT" id="ETAT">
-                        <option value="1">Unused</option>
-                        <option value="2">Used</option>
-                      </select>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                        </div>
+                        <select class="form-control" name="ETAT" id="ETAT">
+                          <option value="1">Unused</option>
+                          <option value="2">Used</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="COST">Cost</label>
@@ -858,7 +994,12 @@
                     </div>
                     <div class="form-group">
                       <label for="QTY">Quantity</label>
-                      <input type="numer" class="form-control" name="QTY"  id="QTY" placeholder="Qty" >
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-times"></i></span>
+                        </div>
+                        <input type="numer" class="form-control" name="QTY"  id="QTY" placeholder="Qty" >
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="END_DATE">End date</label>
@@ -867,12 +1008,17 @@
                     <div class="form-group">
                       <label for="PICTURE">Logo file</label>
                       <div class="input-group">
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
-                          <label class="custom-file-label" for="PICTURE">Choose file</label>
-                        </div>
-                        <div class="input-group-append">
-                          <span class="input-group-text">Upload</span>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="far fa-image"></i></span>
+                          </div>
+                          <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
+                            <label class="custom-file-label" for="PICTURE">Choose file</label>
+                          </div>
+                          <div class="input-group-append">
+                            <span class="input-group-text">Upload</span>
+                          </div>
                         </div>
                     </div>
                     <div class="card-footer">

@@ -450,7 +450,7 @@
                                 <label for="vat_id">VAT type</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text">%</span>
+                                        <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                     </div>
                                     <select class="form-control"  name="vat_id" id="vat_id">
                                         <option value="" >Select VAT</option>

@@ -31,11 +31,21 @@
                 <div class="row">
                   <div class="col-3">
                     <label for="CODE">External ID</label>
-                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="QT-{{ $LastQuote->id ?? '0' }}">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                      </div>
+                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="QT-{{ $LastQuote->id ?? '0' }}">
+                    </div>
                   </div>
                   <div class="col-3">
                     <label for="LABEL">Name of quote</label>
-                    <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote" required>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                      </div>
+                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote" required>
+                    </div>
                   </div>
                   <div class="col-3">
                     <label for="user_id">User management</label>
@@ -59,33 +69,53 @@
                 <div class="row">
                   <div class="col-5">
                     <label for="companies_id">Companie</label>
-                    <select class="form-control" name="companies_id" id="companies_id">
-                      @foreach ($CompanieSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                      @endforeach
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                      </div>
+                      <select class="form-control" name="companies_id" id="companies_id">
+                        @foreach ($CompanieSelect as $item)
+                        <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                        @endforeach
+                      </select>
+                    </div>
                   </div>
                   <div class="col-5">
                     <label for="customer_reference">Customer reference</label>
-                    <input type="text" class="form-control" name="customer_reference"  id="customer_reference" placeholder="Customer reference">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                      </div>
+                      <input type="text" class="form-control" name="customer_reference"  id="customer_reference" placeholder="Customer reference">
+                    </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-5">
                     <label for="companies_addresses_id">Adress</label>
-                    <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
-                      @foreach ($AddressSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
-                      @endforeach
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                      </div>
+                      <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
+                        @foreach ($AddressSelect as $item)
+                        <option value="{{ $item->id }}">{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
+                        @endforeach
+                      </select>
+                    </div>
                   </div>
                   <div class="col-5">
                     <label for="companies_contacts_id">Contact</label>
-                    <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
-                      @foreach ($ContactSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
-                      @endforeach
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                      </div>
+                      <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
+                        @foreach ($ContactSelect as $item)
+                        <option value="{{ $item->id }}">{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
+                        @endforeach
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <hr>
@@ -114,11 +144,16 @@
                 <div class="row">
                   <div class="col-5">
                     <label for="accounting_deliveries_id">Delevery method</label>
-                    <select class="form-control" name="accounting_deliveries_id" id="accounting_deliveries_id">
-                      @foreach ($AccountingDeleveriesSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                      @endforeach
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                      </div>
+                      <select class="form-control" name="accounting_deliveries_id" id="accounting_deliveries_id">
+                        @foreach ($AccountingDeleveriesSelect as $item)
+                        <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                        @endforeach
+                      </select>
+                    </div>
                   </div>
                   <div class="col-5">
                     <label for="LABEL">Validity date</label>

@@ -289,31 +289,56 @@
             <div class="row">
               <div class="col-4">
                 <label for="ORDER">Sort order</label>
-                <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
-                <input type="hidden" class="form-control" name="products_id" value="{{ $Product->id }}">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                  </div>
+                   <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
+                  <input type="hidden" class="form-control" name="products_id" value="{{ $Product->id }}">
+                </div>
               </div>
               <div class="col-4">
                 <label for="methods_services_id">Services</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                  </div>
                   <select class="form-control" name="methods_services_id" id="methods_services_id">
                     @foreach ($TechServicesSelect as $item)
                     <option value="{{ $item->id }}"  data-type="{{ $item->TYPE }}" data-txt="{{ $item->LABEL }}">{{ $item->CODE }}</option>
                     @endforeach
                   </select>
                   <input type="hidden" class="form-control" name="TYPE" id="TYPE">
+                </div>
               </div>
               <div class="col-4">
                   <label for="LABEL">Label</label>
-                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                    </div>
+                   <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                  </div>
               </div>
             </div>
             <div class="row">
               <div class="col-3">
                 <label for="SETING_TIME">Setting time</label>
-                <input type="number" class="form-control" name="SETING_TIME"  id="SETING_TIME" placeholder="Setting time" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="SETING_TIME"  id="SETING_TIME" placeholder="Setting time" step=".001">
+                </div>
               </div>
               <div class="col-3">
                 <label for="UNIT_TIME">Unit time</label>
-                <input type="number" class="form-control" name="UNIT_TIME"  id="UNIT_TIME" placeholder="Unit time" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                  </div>
+                  <input type="number" class="form-control" name="UNIT_TIME"  id="UNIT_TIME" placeholder="Unit time" step=".001">
+                </div>
               </div>
               <div class="col-3">
                 <label for="UNIT_COST">Unit cost</label>
@@ -431,11 +456,20 @@
               <div class="row">
                 <div class="col-3">
                   <label for="ORDER">Sort order</label>
-                  <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
-                  <input type="hidden" class="form-control" name="products_id" value="{{ $Product->id }}">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                    </div>
+                    <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
+                    <input type="hidden" class="form-control" name="products_id" value="{{ $Product->id }}">
+                  </div>
                 </div>
                 <div class="col-3">
                     <label for="methods_services_id">Services</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-list"></i></span>
+                      </div>
                       <select class="methods_services_id form-control" name="methods_services_id" id="methods_services_id_BOM">
                         <option>Select Services</option>
                         @foreach ($BOMServicesSelect as $item)
@@ -443,25 +477,41 @@
                         @endforeach
                       </select>
                       <input type="hidden" class="form-control" name="TYPE" id="TYPE_BOM">
+                    </div>
                 </div>
                 <div class="col-3">
                   <label for="component_id">Component</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                    </div>
                     <select class="component_id form-control" name="component_id" id="component_id">
                       <option>Select Component</option>
                       @foreach ($ProductSelect as $item)
                       <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->CODE }}</option>
                       @endforeach
                     </select>
+                  </div>
               </div>
                 <div class="col-3">
                     <label for="LABEL">Label</label>
-                    <input type="text" class="form-control" name="LABEL"  id="LABEL_BOM" placeholder="Label">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                      </div>
+                     <input type="text" class="form-control" name="LABEL"  id="LABEL_BOM" placeholder="Label">
+                    </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-3">
                   <label for="QTY">Quantity</label>
-                  <input type="number" class="form-control" name="QTY"  id="QTY" placeholder="Quantity" step=".001">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-times"></i></span>
+                    </div>
+                   <input type="number" class="form-control" name="QTY"  id="QTY" placeholder="Quantity" step=".001">
+                  </div>
                 </div>
                 <div class="col-3">
                   <label for="UNIT_COST">Unit cost</label>

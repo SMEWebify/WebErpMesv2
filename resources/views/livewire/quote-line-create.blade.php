@@ -3,43 +3,73 @@
         <div class="col-1">
             <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model="quotes_id" >
             <label for="ORDRE">Sort order:</label>
-            <input type="number" class="form-control @error('ORDRE') is-invalid @enderror" id="ORDRE" placeholder="Enter order" wire:model="ORDRE">
-            @error('ORDRE') <span class="text-danger">{{ $message }}</span>@enderror
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                </div>
+                <input type="number" class="form-control @error('ORDRE') is-invalid @enderror" id="ORDRE" placeholder="Enter order" wire:model="ORDRE">
+                @error('ORDRE') <span class="text-danger">{{ $message }}</span>@enderror
+            </div>
         </div>
         <div class="col-1">
-            <label for="CODE">External ID:</label>
-            <input type="text" class="CODE form-control @error('CODE') is-invalid @enderror" id="CODE" placeholder="Enter external ID" wire:model="CODE">
-            @error('CODE') <span class="text-danger">{{ $message }}</span>@enderror
+            <label for="CODE">External ID</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                </div>
+                <input type="text" class="CODE form-control @error('CODE') is-invalid @enderror" id="CODE" placeholder="Enter external ID" wire:model="CODE">
+                @error('CODE') <span class="text-danger">{{ $message }}</span>@enderror
+            </div>
         </div>
         <div class="col-1">
             <label for="product_id">Product</label>
-            <select class="product_id form-control @error('product_id') is-invalid @enderror"  name="product_id" id="product_id"  wire:model="product_id">
-                <option value="" >Select Product</option>
-                @foreach ($ProductsSelect as $item)
-                  <option value="{{ $item->id }}" data-txt="{{ $item->CODE }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                @endforeach
-            </select>
-            @error('product_id') <span class="text-danger">{{ $message }}</span>@enderror
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                </div>
+                <select class="product_id form-control @error('product_id') is-invalid @enderror"  name="product_id" id="product_id"  wire:model="product_id">
+                    <option value="" >Select Product</option>
+                    @foreach ($ProductsSelect as $item)
+                    <option value="{{ $item->id }}" data-txt="{{ $item->CODE }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                    @endforeach
+                </select>
+                @error('product_id') <span class="text-danger">{{ $message }}</span>@enderror
+            </div>
         </div>
         <div class="col-1">
             <label for="LABEL">Description :</label>
-            <input type="text" class="form-control @error('LABEL') is-invalid @enderror" id="LABEL" placeholder="Description" wire:model="LABEL">
-            @error('LABEL') <span class="text-danger">{{ $message }}</span>@enderror
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                </div>
+                <input type="text" class="form-control @error('LABEL') is-invalid @enderror" id="LABEL" placeholder="Description" wire:model="LABEL">
+                 @error('LABEL') <span class="text-danger">{{ $message }}</span>@enderror
+            </div>
         </div>
         <div class="col-1">
             <label for="qty">Quantity :</label>
-            <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="Quantity" wire:model="qty">
-            @error('qty') <span class="text-danger">{{ $message }}</span>@enderror
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-times"></i></span>
+                </div>
+                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="Quantity" wire:model="qty">
+                @error('qty') <span class="text-danger">{{ $message }}</span>@enderror
+            </div>
         </div>
         <div class="col-1">
             <label for="methods_units_id">Unit</label>
-            <select class="form-control @error('methods_units_id') is-invalid @enderror" name="methods_units_id" id="methods_units_id"  wire:model="methods_units_id">
-                <option value="" >Select Unit</option>
-                @foreach ($UnitsSelect as $item)
-                  <option value="{{ $item->id }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                @endforeach
-            </select>
-            @error('methods_units_id') <span class="text-danger">{{ $message }}</span>@enderror
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                </div>
+                <select class="form-control @error('methods_units_id') is-invalid @enderror" name="methods_units_id" id="methods_units_id"  wire:model="methods_units_id">
+                    <option value="" >Select Unit</option>
+                    @foreach ($UnitsSelect as $item)
+                    <option value="{{ $item->id }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                    @endforeach
+                </select>
+                @error('methods_units_id') <span class="text-danger">{{ $message }}</span>@enderror
+            </div>
         </div>
         <div class="col-1">
             <label for="selling_price">Selling price :</label>
@@ -48,8 +78,13 @@
         </div>
         <div class="col-1">
             <label for="discount">Discount :</label>
-            <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount" step=".01" value="0">
-            @error('discount') <span class="text-danger">{{ $message }}</span>@enderror
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                </div>
+                <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount" step=".01" value="0">
+                @error('discount') <span class="text-danger">{{ $message }}</span>@enderror
+            </div>
         </div>
         <div class="col-1">
             <label for="accounting_vats_id">VAT type</label>

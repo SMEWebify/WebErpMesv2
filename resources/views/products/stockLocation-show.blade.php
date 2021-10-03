@@ -102,8 +102,13 @@
                 @csrf
                 <div class="form-group">
                   <label for="CODE">External ID</label>
-                  <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="STOCK-PRODUCT-{{ $LastStockLocationProduct->id ?? '0' }}">
-                  <input type="hidden" name="stock_locations_id" id="stock_locations_id" value="{{ $StockLocation->id }}">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                    </div>
+                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="STOCK-PRODUCT-{{ $LastStockLocationProduct->id ?? '0' }}">
+                    <input type="hidden" name="stock_locations_id" id="stock_locations_id" value="{{ $StockLocation->id }}">
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="user_id">User management</label>
@@ -120,15 +125,25 @@
                 </div>
                 <div class="form-group">
                   <label for="products_id">Product</label>
-                  <select class="form-control" name="products_id" id="products_id">
-                    @foreach ($ProductSelect as $item)
-                    <option value="{{ $item->id }}">{{ $item->CODE }}</option>
-                    @endforeach
-                  </select>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                    </div>
+                    <select class="form-control" name="products_id" id="products_id">
+                      @foreach ($ProductSelect as $item)
+                      <option value="{{ $item->id }}">{{ $item->CODE }}</option>
+                      @endforeach
+                    </select>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="mini_qty">Mini qty :</label>
-                  <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="Mini qty ex: 1.50" step=".001">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-times"></i></span>
+                    </div>
+                   <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="Mini qty ex: 1.50" step=".001">
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="end_date">End date</label>

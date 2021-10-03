@@ -30,14 +30,24 @@
       @endif
       <div class="row">
         <div class="col-5">
-          <label for="ORDRE">Sort order</label>
-          <input type="text" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order" value="{{ $adress->ORDRE }}">
-          <input type="hidden" name="id" value="{{ $adress->id }}">
-          <input type="hidden" name="companies_id" value="{{ $adress->companies_id }}">
+          <label for="ORDRE">Sort order:</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                </div>
+                <input type="text" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order" value="{{ $adress->ORDRE }}">
+                <input type="hidden" name="id" value="{{ $adress->id }}">
+                <input type="hidden" name="companies_id" value="{{ $adress->companies_id }}">
+            </div>
         </div>
         <div class="col-5">
           <label for="LABEL">Label adresse</label>
-          <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label" value="{{ $adress->LABEL }}">
+          <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+            </div>
+            <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label" value="{{ $adress->LABEL }}">
+          </div>
         </div>
       </div>
       <hr>

@@ -83,12 +83,22 @@
                 @csrf
                 <div class="form-group">
                   <label for="CODE">External ID</label>
-                  <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="STOCK-LOCATION-{{ $LastStockLocation->id ?? '0' }}">
-                  <input type="hidden" name="stocks_id" id="stocks_id" value="{{ $Stock->id }}">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                    </div>
+                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="STOCK-LOCATION-{{ $LastStockLocation->id ?? '0' }}">
+                    <input type="hidden" name="stocks_id" id="stocks_id" value="{{ $Stock->id }}">
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="LABEL">Description</label>
-                  <input type="text" class="form-control" name="LABEL" id="LABEL" placeholder="Description">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                    </div>
+                   <input type="text" class="form-control" name="LABEL" id="LABEL" placeholder="Description">
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="user_id">User management</label>

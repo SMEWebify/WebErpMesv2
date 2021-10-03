@@ -134,15 +134,25 @@
                 <div class="row">
                   <div class="col-3">
                     <label for="STATU_CLIENT">Statu client</label>
-                    <select class="form-control" name="STATU_CLIENT" id="STATU_CLIENT">
-                      <option value="1">Inactive</option>
-                      <option value="2">Active</option>
-                      <option value="3">Prospect</option>
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                      </div>
+                      <select class="form-control" name="STATU_CLIENT" id="STATU_CLIENT">
+                        <option value="1">Inactive</option>
+                        <option value="2">Active</option>
+                        <option value="3">Prospect</option>
+                      </select>
+                    </div>
                   </div>
                   <div class="col-3">
-                    <label for="DISCOUNT">Discount</label>
-                    <input type="number" class="form-control" name="DISCOUNT" id="DISCOUNT" placeholder="Discount">
+                    <label for="discount">Discount :</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                      </div>
+                      <input type="number" class="form-control" name="DISCOUNT" id="DISCOUNT" placeholder="Discount">
+                    </div>
                   </div>
                   <div class="col-3">
                     <label for="COMPTE_GEN_CLIENT">General Account</label>
@@ -157,10 +167,15 @@
                 <div class="row">
                   <div class="col-3">
                     <label for="STATU_FOUR">Statu supplier</label>
-                    <select class="form-control" name="STATU_FOUR" id="STATU_FOUR">
-                      <option value="1">Inactive</option>
-                      <option value="2">Active</option>
-                    </select>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                      </div>
+                      <select class="form-control" name="STATU_FOUR" id="STATU_FOUR">
+                        <option value="1">Inactive</option>
+                        <option value="2">Active</option>
+                      </select>
+                    </div>
                   </div>
                   <div class="col-3">
                     <label for="STATU_FOUR">Reception control</label>

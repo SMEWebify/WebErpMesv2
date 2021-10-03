@@ -53,19 +53,29 @@
               </div>
               <div class="col-3">
                 <label for="STATU">Statu :</label>
-                <select class="form-control" name="STATU" id="STATU">
-                  <option value="1" @if(1 == $Quote->STATU ) Selected @endif >Open</option>
-                  <option value="2" @if(2 == $Quote->STATU ) Selected @endif >Send</option>
-                  <option value="3" @if(3 == $Quote->STATU ) Selected @endif >Win</option>
-                  <option value="4" @if(4 == $Quote->STATU ) Selected @endif >Lost</option>
-                  <option value="5" @if(6 == $Quote->STATU ) Selected @endif >Closed</option>
-                  <option value="6" @if(7 == $Quote->STATU ) Selected @endif >Obsolete</option>
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                  </div>
+                  <select class="form-control" name="STATU" id="STATU">
+                    <option value="1" @if(1 == $Quote->STATU ) Selected @endif >Open</option>
+                    <option value="2" @if(2 == $Quote->STATU ) Selected @endif >Send</option>
+                    <option value="3" @if(3 == $Quote->STATU ) Selected @endif >Win</option>
+                    <option value="4" @if(4 == $Quote->STATU ) Selected @endif >Lost</option>
+                    <option value="5" @if(6 == $Quote->STATU ) Selected @endif >Closed</option>
+                    <option value="6" @if(7 == $Quote->STATU ) Selected @endif >Obsolete</option>
+                  </select>
+                </div>
               </div>
               
               <div class="col-3">
                 <label for="LABEL">Name of quote</label>
-                <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote" value="{{  $Quote->LABEL }}">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                  </div>
+                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote" value="{{  $Quote->LABEL }}">
+                </div>
               </div>
             </div>
             <hr>
@@ -76,25 +86,40 @@
             <div class="row">
               <div class="col-5">
                 <label for="companies_id">Companie</label>
-                <select class="form-control" name="companies_id" id="companies_id">
-                  @foreach ($CompanieSelect as $item)
-                  <option value="{{ $item->id }}"  @if($item->id == $Quote->companies_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                  </div>
+                  <select class="form-control" name="companies_id" id="companies_id">
+                    @foreach ($CompanieSelect as $item)
+                    <option value="{{ $item->id }}"  @if($item->id == $Quote->companies_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-5">
                 <label for="customer_reference">Customer reference</label>
-                <input type="text" class="form-control" name="customer_reference"  id="customer_reference" placeholder="Customer reference" value="{{  $Quote->customer_reference }}">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                  </div>
+                  <input type="text" class="form-control" name="customer_reference"  id="customer_reference" placeholder="Customer reference" value="{{  $Quote->customer_reference }}">
+                </div>
               </div>
             </div>
             <div class="row">
               <div class="col-5">
                 <label for="companies_addresses_id">Adress</label>
-                <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
-                  @foreach ($AddressSelect as $item)
-                  <option value="{{ $item->id }}" @if($item->id == $Quote->companies_addresses_id ) Selected @endif >{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                  </div>
+                  <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
+                    @foreach ($AddressSelect as $item)
+                    <option value="{{ $item->id }}" @if($item->id == $Quote->companies_addresses_id ) Selected @endif >{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-5">
                 <label for="companies_contacts_id">Contact</label>
@@ -136,11 +161,16 @@
             <div class="row">
               <div class="col-5">
                 <label for="accounting_deliveries_id">Delevery method</label>
-                <select class="form-control" name="accounting_deliveries_id" id="accounting_deliveries_id">
-                  @foreach ($AccountingDeleveriesSelect as $item)
-                  <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_deliveries_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                  @endforeach
-                </select>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                  </div>
+                  <select class="form-control" name="accounting_deliveries_id" id="accounting_deliveries_id">
+                    @foreach ($AccountingDeleveriesSelect as $item)
+                    <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_deliveries_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                    @endforeach
+                  </select>
+                </div>
               </div>
               <div class="col-5">
                 <label for="LABEL">Validity date</label>
