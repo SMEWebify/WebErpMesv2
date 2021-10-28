@@ -25,7 +25,7 @@ class CreateQuoteLinesTable extends Migration
 			$table->decimal('selling_price', 10, 3);
 			$table->decimal('discount', 10, 3);
 			$table->integer('accounting_vats_id');
-			$table->date('delivery_date');
+			$table->date('delivery_date')->nullable();
 			$table->integer('statu')->default(1);
             $table->timestamps();
         });

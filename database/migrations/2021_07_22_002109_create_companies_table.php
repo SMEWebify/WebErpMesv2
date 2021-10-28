@@ -27,7 +27,7 @@ class CreateCompaniesTable extends Migration
 			$table->string('PICTURE')->nullable();
 			$table->integer('STATU_CLIENT')->default(0);
 			$table->integer('DISCOUNT')->nullable()->default(0);
-			$table->integer('users_id')->nullable()->default(0);
+			$table->integer('user_id')->nullable()->default(0);
 			$table->integer('COMPTE_GEN_CLIENT')->nullable()->default(0);
 			$table->integer('COMPTE_AUX_CLIENT')->nullable()->default(0);
 			$table->integer('STATU_FOUR')->default(0);

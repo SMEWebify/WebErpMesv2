@@ -453,9 +453,11 @@
                           <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                         </div>
                         <select class="form-control" name="vat_id" id="vat_id">
-                          @foreach ($VATSelect as $item)
+                          @forelse ($VATSelect as $item)
                           <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                          @endforeach
+                          @empty
+                          <option value="">Not VAT, please add VAT before</option>
+                          @endforelse
                         </select>
                       </div>
                     </div>

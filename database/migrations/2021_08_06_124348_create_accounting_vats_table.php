@@ -18,7 +18,7 @@ class CreateAccountingVatsTable extends Migration
             $table->string('CODE');
 			$table->string('LABEL');
 			$table->decimal('RATE', 10, 3);
-            $table->timestamps();
+            $table->timestamps(); 
         });
     }
 

@@ -89,7 +89,8 @@ Route::group(['prefix' => 'production'], function () {
 });
 
 Route::group(['prefix' => 'admin'], function () {
-        Route::get('/factory', 'App\Http\Controllers\Admin\FactoryController@index')->middleware(['auth'])->name('factory');
+    Route::post('/factory', 'App\Http\Controllers\Admin\FactoryController@update')->middleware(['auth'])->name('admin.factory');
+    Route::get('/factory', 'App\Http\Controllers\Admin\FactoryController@index')->middleware(['auth'])->name('admin.factory');
 });
 
 Route::group(['prefix' => 'quality'], function () {

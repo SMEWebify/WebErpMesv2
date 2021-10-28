@@ -121,6 +121,7 @@
                 <strong>Goal Task Completion</strong>
               </p>
               @forelse ($ServiceGoals as $ServiceGoal)
+
               @php
                   $randomNum = rand(0, 99);
                   
@@ -264,7 +265,7 @@
             </tr>
             </thead>
             <tbody>
-              @foreach ($LastQuotes as $LastQuote)
+              @forelse ($LastQuotes as $LastQuote)
               <tr>
                 <td><a href="{{ route('quote.show', ['id' => $LastQuote->id])}}">{{ $LastQuote->CODE }}</a></td>
                 <td>{{ $LastQuote->companie['LABEL'] }}</td>
@@ -281,7 +282,11 @@
                 </td>
               </tr>
               <!-- /.item -->
-              @endforeach
+              @empty
+              <tr>
+                <td colspan="4">No quote, go quote page for add quote</td>
+              </tr>
+              @endforelse
             </tbody>
           </table>
         </div>
@@ -403,7 +408,7 @@
         <!-- /.card-header -->
         <div class="card-body p-0">
           <ul class="products-list product-list-in-card pl-2 pr-2">  
-            @foreach ($LastProducts as $LastProduct)
+            @forelse ($LastProducts as $LastProduct)
             <li class="item">
               <div class="product-img">
                 <img src="{{ asset('storage/'.$LastProduct->PICTURE) }} alt="Product Image" class="img-size-50">
@@ -413,13 +418,14 @@
                   <span class="badge badge-info float-right">{{ $LastProduct->purchased_price }}</span></a>
                 <span class="product-description">
                   {{ $LastProduct->CODE }}
-                  
                   <span class="badge badge-success float-right">{{ $LastProduct->selling_price }}</span>
                 </span>
               </div>
             </li>
             <!-- /.item -->
-            @endforeach
+            @empty
+             <li class="item">No product, go product page for add item</li>
+            @endforelse
           </ul>
         </div>
         <!-- /.card-body -->

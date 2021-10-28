@@ -1,6 +1,6 @@
 <form wire:submit.prevent="update">
     <div class="row">
-        <div class="col-1">
+        <div class="col-2">
             <label for="ORDRE">Sort order:</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -10,8 +10,6 @@
                 <input type="number" class="form-control @error('ORDRE') is-invalid @enderror" id="ORDRE" placeholder="Enter order" wire:model="ORDRE">
                 @error('ORDRE') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
-        </div>
-        <div class="col-1">
             <label for="CODE">External ID</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -21,7 +19,7 @@
                 @error('CODE') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <label for="product_id">Product</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -33,8 +31,6 @@
                     @endforeach
                 </select>
             </div>
-        </div>
-        <div class="col-1">
             <label for="LABEL">Description :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -44,7 +40,7 @@
                 @error('LABEL') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <label for="qty">Quantity :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -53,8 +49,6 @@
                 <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="Quantity" wire:model="qty">
                 @error('qty') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
-        </div>
-        <div class="col-1">
             <label for="methods_units_id">Unit</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -67,12 +61,10 @@
                 </select>
             </div>
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <label for="selling_price">Selling price :</label>
             <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001">
             @error('selling_price') <span class="text-danger">{{ $message }}</span>@enderror
-        </div>
-        <div class="col-1">
             <label for="discount">Discount :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -82,23 +74,21 @@
                 @error('discount') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <label for="accounting_vats_id">VAT type</label>
             <select class="form-control" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
                 @foreach ($VATSelect as $item)
                 <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
                  @endforeach
             </select>
-        </div>
-
-        <div class="col-1">
             <label for="delivery_date">Delevery date</label>
             <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model="delivery_date">
             @error('delivery_date') <span class="text-danger">{{ $message }}</span>@enderror
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <br/>
              <button type="submit" class="btn btn-success btn-block">Update</button>
+             <button onclick="location.reload();"  class="btn btn-primary btn-block">Refresh Page</button>
         </div>
     </div>
 </form>

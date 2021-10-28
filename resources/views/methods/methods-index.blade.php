@@ -419,9 +419,11 @@
                         <span class="input-group-text"><i class="fas fa-list"></i></span>
                       </div>
                       <select class="form-control" name="service_id" id="service_id">
-                        @foreach ($ServicesSelect as $item)
+                        @forelse ($ServicesSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                        @endforeach
+                        @empty
+                        <option value="">No service</option>
+                        @endforelse
                       </select>
                     </div>
                   </div>
@@ -858,9 +860,11 @@
                           <span class="input-group-text"><i class="fas fa-list"></i></span>
                         </div>
                         <select class="form-control" name="service_id" id="service_id">
-                          @foreach ($ServicesSelect as $item)
+                          @forelse ($ServicesSelect as $item)
                           <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                          @endforeach
+                          @empty
+                          <option value="">No service, please add one before</option>
+                           @endforelse
                         </select>
                       </div>
                     </div>

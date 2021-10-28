@@ -16,6 +16,12 @@ use App\Http\Requests\Workflow\StoreQuoteRequest;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+use App\Models\Admin\Factory;
+
+use App\ServiceS\QuoteCalculator;
+use App\Repositories\Currency;
+use App\Repositories\Money;
+use App\Repositories\MoneyConverter;
 
 class QuotesController extends Controller
 {
@@ -49,26 +55,46 @@ class QuotesController extends Controller
         ]);
     }
 
-    public function show($id)
-    {
+    /**
+     * Display the specified resource.
+     *
+     * @param Quotes $Quotes
+     * @return \Illuminate\Http\Response
+     */
 
-        $Quote = Quotes::findOrFail($id);
+    public function show(Quotes $id)
+    {
+        
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
         $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
         $ContactSelect = companiesContacts::select('id', 'FIRST_NAME','NAME')->get();
-
+        
+        $Factory = Factory::first();
+        if(!$Factory){
+            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+        }
+        
         $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'CODE','LABEL')->get();
         $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'CODE','LABEL')->get();
         $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'CODE','LABEL')->get();
+        
+        $QuoteCalculator = new QuoteCalculator($id);
+        $totalPrice = $QuoteCalculator->getTotalPrice();
+        $subPrice = $QuoteCalculator->getSubTotal();
+       // $vatPrice = $QuoteCalculator->getVatTotal();
 
         return view('workflow/quotes-show', [
-            'Quote' => $Quote,
+            'Quote' => $id,
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
+            'Factory' => $Factory,
+            'totalPrices' => $totalPrice,
+            'subPrice' => $subPrice, 
+            //'vatPrice' => $vatPrice,
         ]);
     }
 

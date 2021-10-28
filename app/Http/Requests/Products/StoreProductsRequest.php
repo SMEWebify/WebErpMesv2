@@ -27,6 +27,9 @@ class StoreProductsRequest extends FormRequest
             //
             'CODE' =>'required|unique:products',
             'LABEL'=>'required',
+            'methods_services_id'=>'required',
+            'methods_families_id'=>'required',
+            'methods_units_id'=>'required',
         ];
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFactoriesTable extends Migration
+class CreateFactoryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,24 +15,24 @@ class CreateFactoriesTable extends Migration
     {
         Schema::create('factory', function (Blueprint $table) {
             $table->id();
-            $table->string('NAME');
-			$table->string('ADDRESS');
-			$table->string('CITY');
-			$table->string('ZIPCODE');
+            $table->string('NAME')->default('Name of site');
+			$table->string('ADDRESS')->default('Address');
+			$table->string('CITY')->default('City');
+			$table->string('ZIPCODE')->default('Zip code');
 			$table->string('REGION')->nullable();
 			$table->string('COUNTRY')->nullable();
 			$table->string('PHONE_NUMBER')->nullable();
 			$table->string('MAIL')->nullable();
-			$table->string('WEB_SITE');
-			$table->string('PICTURE');
+			$table->string('WEB_SITE')->nullable();
+			$table->string('PICTURE')->nullable();
 			$table->string('SIREN')->nullable();
 			$table->string('nat_regis_num')->nullable();
-			$table->string('vat_num');
-			$table->integer('vat_id');
+			$table->string('vat_num')->nullable();
+			$table->integer('accounting_vats_id')->default(1);
 			$table->string('share_capital')->nullable();
             $table->string('curency')->nullable();
-            $table->string('add_day_validity_quote')->nullable();
-            $table->string('add_delivery_delay_order')->nullable();
+            $table->string('add_day_validity_quote')->nullable()->default(0);
+            $table->string('add_delivery_delay_order')->nullable()->default(0);
             $table->timestamps();
         });
     }
@@ -44,6 +44,6 @@ class CreateFactoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('factories');
+        Schema::dropIfExists('factory');
     }
 }

@@ -26,8 +26,6 @@ class CreateCompaniesContactsTable extends Migration {
 			$table->string('MOBILE')->nullable();
 			$table->string('MAIL')->nullable();
 			$table->timestamps();
-
-			$table->foreign('companies_id')->constrained();
 		});
 	}
 

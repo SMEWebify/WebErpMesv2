@@ -44,7 +44,7 @@
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-tags"></i></span>
                       </div>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote" required>
+                      <input type="text" class="form-control" name="LABEL"  id="LABEL" value="QT-{{ $LastQuote->id ?? '0' }}" placeholder="Name of quote" required>
                     </div>
                   </div>
                   <div class="col-3">
@@ -74,9 +74,11 @@
                         <span class="input-group-text"><i class="fas fa-building"></i></span>
                       </div>
                       <select class="form-control" name="companies_id" id="companies_id">
-                        @foreach ($CompanieSelect as $item)
+                        @forelse ($CompanieSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                        @endforeach
+                        @empty
+                        <option value="">No company, please add</option>
+                        @endforelse
                       </select>
                     </div>
                   </div>
@@ -98,9 +100,11 @@
                         <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                       </div>
                       <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
-                        @foreach ($AddressSelect as $item)
+                        @forelse ($AddressSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
-                        @endforeach
+                        @empty
+                        <option value="">No address, please add</option>
+                        @endforelse
                       </select>
                     </div>
                   </div>
@@ -111,9 +115,11 @@
                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                       </div>
                       <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
-                        @foreach ($ContactSelect as $item)
+                        @forelse ($ContactSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
-                        @endforeach
+                        @empty
+                        <option value="">No contact, please add</option>
+                        @endforelse
                       </select>
                     </div>
                   </div>
@@ -127,17 +133,21 @@
                   <div class="col-5">
                     <label for="accounting_payment_conditions_id">Payment condition</label>
                     <select class="form-control" name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
-                      @foreach ($AccountingConditionSelect as $item)
+                      @forelse ($AccountingConditionSelect as $item)
                       <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                      @endforeach
+                      @empty
+                      <option value="">No payment conditions, please add in accounting page</option>
+                      @endforelse
                     </select>
                   </div>
                   <div class="col-5">
                     <label for="accounting_payment_methods_id">Payment methods</label>
                     <select class="form-control" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
-                      @foreach ($AccountingMethodsSelect as $item)
+                      @forelse ($AccountingMethodsSelect as $item)
                       <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                      @endforeach
+                      @empty
+                      <option value="">No payment methods, please add in accounting page</option>
+                      @endforelse
                     </select>
                   </div>
                 </div>
@@ -149,9 +159,11 @@
                         <span class="input-group-text"><i class="fas fa-truck"></i></span>
                       </div>
                       <select class="form-control" name="accounting_deliveries_id" id="accounting_deliveries_id">
-                        @foreach ($AccountingDeleveriesSelect as $item)
+                        @forelse ($AccountingDeleveriesSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                        @endforeach
+                        @empty
+                        <option value="">No delivery type, please add in accounting page</option>
+                        @endforelse
                       </select>
                     </div>
                   </div>
@@ -195,7 +207,22 @@
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-                    <div class="tab-pane active" id="Quotes">
+      <div class="tab-pane active" id="Quotes">
+                      @if(session('success'))
+                      <div class="alert alert-success">
+                          {{ session('success')}}
+                      </div>
+                      @endif
+
+                      @if($errors->count())
+                        <div class="alert alert-danger">
+                          <ul>
+                          @foreach ( $errors->all() as $message)
+                          <li> {{ $message }}</li>
+                          @endforeach
+                          </ul>
+                        </div>
+                      @endif
                         <div  id="quotes_wrapper" class="dataTables_wrapper dt-bootstrap4">
                             <div class="col-sm-12">
                               <table id="quotes" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
@@ -263,9 +290,9 @@
                     
 
                     <div class="tab-pane" id="QuotesLine">
-                      <div  id="quotes_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                      <div  id="quotes_lines_wrapper" class="dataTables_wrapper dt-bootstrap4">
                         <div class="col-sm-12">
-                          <table id="quotes" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
+                          <table id="quotes_lines" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
                             <thead>
                             <tr>
                               <th>Quote</th>
@@ -374,6 +401,20 @@
             'copy', 'csv', 'excel', 'pdf', 'print'
         ]
     }).buttons().container().appendTo('#quotes_wrapper .col-md-6:eq(0)');
+  } );
+
+  
+  </script>
+
+<script> 
+
+  $(document).ready( function () {
+    $("#quotes_lines").DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    }).buttons().container().appendTo('#quotes_lines_wrapper .col-md-6:eq(0)');
   } );
 
   

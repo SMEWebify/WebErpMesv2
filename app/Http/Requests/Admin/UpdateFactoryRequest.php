@@ -13,7 +13,7 @@ class UpdateFactoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,15 @@ class UpdateFactoryRequest extends FormRequest
     {
         return [
             //
+            'NAME' =>'required', 
+            'ADDRESS' =>'required',
+            'CITY' =>'required',
+            'COUNTRY' =>'required',
+            'MAIL' =>'required',
+            'accounting_vats_id' =>'required',
+            'curency' =>'required',
+            'add_day_validity_quote' =>'required',
+            'add_delivery_delay_order'  =>'required',
         ];
     }
 }

@@ -59,9 +59,11 @@
                     <span class="input-group-text"><i class="fas fa-list"></i></span>
                   </div>
                   <select class="form-control" name="methods_services_id" id="methods_services_id">
-                    @foreach ($ServicesSelect as $item)
+                    @forelse ($ServicesSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                    @endforeach
+                    @empty
+                    <option value="">No service, go to methods page for add</option>
+                    @endforelse
                   </select>
                 </div>
               </div>
@@ -72,9 +74,11 @@
                     <span class="input-group-text"><i class="fas fa-grip-horizontal"></i></span>
                   </div>
                   <select class="form-control" name="methods_families_id" id="methods_families_id">
-                    @foreach ($FamiliesSelect as $item)
+                    @forelse ($FamiliesSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                    @endforeach
+                    @empty
+                    <option value="">No families, go to methods page for add</option>
+                    @endforelse
                   </select>
                 </div>
               </div>
@@ -85,9 +89,11 @@
                       <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                   </div>
                   <select class="form-control" name="methods_units_id" id="methods_units_id">
-                    @foreach ($UnitsSelect as $item)
+                    @forelse ($UnitsSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                    @endforeach
+                    @empty
+                    <option value="">No units, go to methods page for add</option>
+                    @endforelse
                   </select>
                 </div>
               </div>

@@ -27,6 +27,12 @@ class StoreQuoteRequest extends FormRequest
             //
             'CODE' =>'required|unique:quotes',
             'LABEL'=>'required',
+            'companies_id'=>'required',
+            'companies_contacts_id'=>'required',
+            'companies_addresses_id'=>'required',
+            'accounting_payment_conditions_id'=>'required',
+            'accounting_payment_methods_id'=>'required',
+            'accounting_deliveries_id'=>'required',
         ];
     }
 }

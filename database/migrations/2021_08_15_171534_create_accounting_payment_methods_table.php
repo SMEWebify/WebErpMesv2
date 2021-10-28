@@ -17,7 +17,7 @@ class CreateAccountingPaymentMethodsTable extends Migration
             $table->id();
             $table->string('CODE');
 			$table->string('LABEL');
-			$table->string('CODE_ACCOUNT');
+			$table->string('CODE_ACCOUNT')->nullable();
             $table->timestamps();
         });
     }

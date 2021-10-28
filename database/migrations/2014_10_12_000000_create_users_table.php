@@ -22,7 +22,6 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            $table->foreign('user_name')->references('user_id')->on('companies');
         });
     }
 

@@ -9,9 +9,6 @@
 
 
 @section('content')
-<form method="POST" action="{{ route('companies.store')}}" enctype="multipart/form-data">
-    @csrf
-
 <div class="card card-primary">
     <div class="card-header">
         <h3 class="card-title">General information</h3>
@@ -40,6 +37,8 @@
         </div>
         @endif
         <div class="row">
+            <form method="POST" action="{{ route('admin.factory') }}" >
+            @csrf
             <div class="col-12 col-md-12 ">
                 <div class="row">
                     <div class="col-12">
@@ -48,19 +47,19 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-building"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="NAME"  id="NAME" placeholder="Name of company">
+                            <input type="text" class="form-control" name="NAME"  id="NAME" value="{{ $Factory->NAME }}" placeholder="Name of company">
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="row">
                     <div class="col-12">
-                        <label for="ADRESS">Adress</label>
+                        <label for="ADDRESS">ADDRESS</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="ADRESS"  id="ADRESS" placeholder="Adress">
+                            <input type="text" class="form-control" name="ADDRESS"  id="ADDRESS" value="{{ $Factory->ADDRESS }}"  placeholder="ADDRESS">
                         </div>
                     </div>
                 </div>
@@ -72,7 +71,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-map"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="ZIPCODE"  id="ZIPCODE" placeholder="Zip code">
+                            <input type="text" class="form-control" name="ZIPCODE"  id="ZIPCODE"  value="{{ $Factory->ZIPCODE }}"  placeholder="Zip code">
                         </div>
 
                     </div>
@@ -82,7 +81,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-city"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="CITY"  id="CITY" placeholder="City">
+                            <input type="text" class="form-control" name="CITY"  id="CITY" value="{{ $Factory->CITY }}"  placeholder="City">
                         </div>
                     </div>
                     <div class="col-4">
@@ -348,7 +347,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-phone"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="PHONE_NUMBER"  id="PHONE_NUMBER" placeholder="Phone number">
+                            <input type="text" class="form-control" name="PHONE_NUMBER"  id="PHONE_NUMBER"  value="{{ $Factory->PHONE_NUMBER }}"  placeholder="Phone number">
                         </div>
                     </div>
                     <div class="col-4">
@@ -357,16 +356,16 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">@</span>
                             </div>
-                            <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail">
+                            <input type="email" class="form-control" name="MAIL"  id="MAIL" value="{{ $Factory->MAIL }}"  placeholder="E-mail">
                         </div>
                     </div>
                     <div class="col-4">
-                        <label for="WEBSITE">Web site</label>
+                        <label for="WEB_SITE">Web site</label>
                         <div class="input-group">
                              <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
                             </div>
-                          <input type="text" class="form-control"  name="WEBSITE" id="WEBSITE" placeholder="Web site link">
+                          <input type="text" class="form-control"  name="WEB_SITE" id="WEB_SITE" value="{{ $Factory->WEB_SITE }}" placeholder="Web site link">
                      </div>
                     </div>
                 </div>
@@ -389,16 +388,16 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-3">
-                                <input type="text" class="form-control" name="SIREN" id="SIREN" placeholder="Siren">
+                                <input type="text" class="form-control" name="SIREN" id="SIREN" value="{{ $Factory->SIREN }}" placeholder="Siren">
                             </div>
                             <div class="col-3">
-                                <input type="text" class="form-control" name="nat_regis_num" id="nat_regis_num" placeholder="Nat regis num">
+                                <input type="text" class="form-control" name="nat_regis_num" id="nat_regis_num" value="{{ $Factory->nat_regis_num }}" placeholder="Nat regis num">
                             </div>
                             <div class="col-3">
-                                <input type="text" class="form-control" name="vat_num" id="vat_num" placeholder="VAT number">
+                                <input type="text" class="form-control" name="vat_num" id="vat_num" value="{{ $Factory->vat_num }}" placeholder="VAT number">
                             </div>
                             <div class="col-3">
-                                <input type="text" class="form-control" name="share_capital" id="share_capital" placeholder="Share capital">
+                                <input type="text" class="form-control" name="share_capital" id="share_capital" value="{{ $Factory->share_capital }}" placeholder="Share capital">
                             </div>
                         </div>
                     </div>
@@ -424,7 +423,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">+</span>
                                     </div>
-                                    <input type="number" class="form-control" name="add_day_validity_quote" id="add_day_validity_quote">
+                                    <input type="number" class="form-control" name="add_day_validity_quote" id="add_day_validity_quote" value="{{ $Factory->add_day_validity_quote }}" >
                                     <div class="input-group-append">
                                         <span class="input-group-text">Day</span>
                                     </div>
@@ -437,7 +436,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">+</span>
                                     </div>
-                                    <input type="number" class="form-control" name="add_delivery_delay_order" id="add_delivery_delay_order">
+                                    <input type="number" class="form-control" name="add_delivery_delay_order" id="add_delivery_delay_order" value="{{ $Factory->add_delivery_delay_order }}" >
                                     <div class="input-group-append">
                                         <span class="input-group-text">Day</span>
                                     </div>
@@ -447,15 +446,15 @@
                         <hr>
                         <div class="row">
                             <div class="col-6">
-                                <label for="vat_id">VAT type</label>
+                                <label for="accounting_vats_id">VAT type</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                     </div>
-                                    <select class="form-control"  name="vat_id" id="vat_id">
+                                    <select class="form-control"  name="accounting_vats_id" id="accounting_vats_id">
                                         <option value="" >Select VAT</option>
                                         @foreach ($VATSelect as $item)
-                                        <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
+                                        <option value="{{ $item->id }}" @if($item->id == $Factory->accounting_vats_id ) Selected @endif >{{ $item->LABEL }}</option>
                                         @endforeach
                                     </select>
                                 </div>

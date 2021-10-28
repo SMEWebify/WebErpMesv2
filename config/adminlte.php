@@ -266,10 +266,6 @@ return [
                     'text' => 'Order list',
                     'url'  => '#',
                 ],
-                [
-                    'text' => 'Order lines list',
-                    'url'  => '#',
-                ],
                 ['header' => 'workflow'],
                 [
                     'text' => 'Order confirm list',
