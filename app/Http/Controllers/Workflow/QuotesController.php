@@ -19,9 +19,6 @@ use App\Models\Accounting\AccountingPaymentConditions;
 use App\Models\Admin\Factory;
 
 use App\ServiceS\QuoteCalculator;
-use App\Repositories\Currency;
-use App\Repositories\Money;
-use App\Repositories\MoneyConverter;
 
 class QuotesController extends Controller
 {

@@ -220,11 +220,11 @@
                 <div class="col-sm-4 invoice-col">
                   From
                   <address>
-                    <strong>Admin, Inc.</strong><br>
-                    795 Folsom Ave, Suite 600<br>
-                    San Francisco, CA 94107<br>
-                    Phone: (804) 123-5432<br>
-                    Email: info@almasaeedstudio.com
+                    <strong>{{ $Factory->NAME }}</strong><br>
+                    {{ $Factory->ADDRESS }}<br>
+                    {{ $Factory->ZIPCODE }}, {{ $Factory->CITY }}<br>
+                    Phone: {{ $Factory->PHONE_NUMBER }}<br>
+                    Email: {{ $Factory->MAIL }}
                   </address>
                 </div>
                 <!-- /.col -->
@@ -271,10 +271,15 @@
                           <td>{{ $QuoteLine->LABEL }}</td>
                           <td>{{ $QuoteLine->qty }}</td>
                           <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
-                          <td>{{ $QuoteLine->selling_price }}</td>
-                          <td>{{ $QuoteLine->discount }}</td>
-                          <td>{{ $QuoteLine->VAT['RATE'] }}</td>
+                          <td>{{ $QuoteLine->selling_price }}  {{ $Factory->curency }}</td>
+                          <td>{{ $QuoteLine->discount }} %</td>
+                          <td>{{ $QuoteLine->VAT['RATE'] }} %</td>
+                          @if($QuoteLine->delivery_date )
                           <td>{{ $QuoteLine->delivery_date }}</td>
+                          @else
+                          <td>No date</td>
+                          @endif
+                          
                         </tr>
                       @empty
                         <tr>
@@ -313,19 +318,15 @@
                     <table class="table">
                       <tr>
                         <th style="width:50%">Subtotal:</th>
-                        <td>$250.30</td>
+                        <td>{{ $subPrice }} {{ $Factory->curency }} </td>
                       </tr>
                       <tr>
                         <th>Tax (9.3%)</th>
                         <td>$10.34</td>
                       </tr>
                       <tr>
-                        <th>Shipping:</th>
-                        <td>$5.80</td>
-                      </tr>
-                      <tr>
                         <th>Total:</th>
-                        <td>$265.24</td>
+                        <td>{{ $totalPrices }} {{ $Factory->curency }}</td>
                       </tr>
                     </table>
                   </div>

@@ -68,6 +68,9 @@
         <div class="col-2">
             <label for="selling_price">Selling price :</label>
             <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">{{ $Factory->curency }}</span>
+                </div>
                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001" value="0">
              @error('selling_price') <span class="text-danger">{{ $message }}</span>@enderror
             </div>

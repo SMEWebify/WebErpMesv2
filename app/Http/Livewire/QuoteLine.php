@@ -7,6 +7,7 @@ use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Accounting\AccountingVat;
 use App\Models\workflow\Quotelines;
+use App\Models\Admin\Factory;
 
 class QuoteLine extends Component
 {
@@ -15,14 +16,10 @@ class QuoteLine extends Component
     public $QuoteLineslist;
     public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
     public $updateLines = false;
-
-
     public $ProductsSelect = [];
     public $UnitsSelect = [];
     public $VATSelect = [];
     
-
-
     protected $listeners = [
         'deleteCategory'=>'destroy'
     ];
@@ -45,7 +42,7 @@ class QuoteLine extends Component
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
-        
+        $this->Factory = Factory::first();
     }
 
     public function render()
