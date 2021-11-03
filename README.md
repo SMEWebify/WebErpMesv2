@@ -28,7 +28,7 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 | Customers        |      X      |      -     |
 | Quality          |      X      |      -     |
 | Products         |      X      |      -     |
-| Quote            |      -      |      X     |
+| Quote            |      X      |      -     |
 | Order            |      -      |      X     |
 | Order confirm    |      -      |      X     |
 | Delivery note    |      -      |      X     |
