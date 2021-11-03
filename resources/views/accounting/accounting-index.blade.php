@@ -258,6 +258,7 @@
       <div class="tab-pane" id="VAT">
         <div class="card card-primary">
           <div class="card-body">
+            <x-infocalloutComponent note="You can define as many tax rates as you want, depending on the types of the quoted or sold products / components."  />
             <div class="row">
               <div class="col-md-6 card-secondary">
                 <div class="card-header">

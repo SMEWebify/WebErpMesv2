@@ -197,12 +197,7 @@
       <div class="tab-pane " id="Print">
         <div class="row">
           <div class="col-12">
-            <div class="callout callout-info">
-              <h5><i class="fas fa-info"></i> Note:</h5>
-              This page has been enhanced for printing. Click the print button at the bottom of the invoice to test.
-            </div>
-
-
+            <x-infocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the invoice to test."  />
             <!-- Main content -->
             <div class="invoice p-3 mb-3">
               <!-- title row -->
@@ -303,10 +298,10 @@
               <div class="row">
                 <!-- accepted payments column -->
                 <div class="col-6">
-                  <p class="lead">Payment Methods: {{ $Quote->payment_condition['LABEL'] }}</p>
-                  <p class="lead">Payment Conditions: {{ $Quote->payment_method['LABEL'] }}</p>
+                  <p class="lead"><strong>Payment Methods:</strong> {{ $Quote->payment_condition['LABEL'] }}</p>
+                  <p class="lead"><strong>Payment Conditions:</strong> {{ $Quote->payment_method['LABEL'] }}</p>
                   @if($Quote->comment)
-                    <p class="lead">Comment :</p>
+                    <p class="lead"><strong>Comment :</strong></p>
                     <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
                       {{  $Quote->comment }}
                     </p>
@@ -320,10 +315,17 @@
                         <th style="width:50%">Subtotal:</th>
                         <td>{{ $subPrice }} {{ $Factory->curency }} </td>
                       </tr>
+                      @forelse($vatPrice as $key => $value)
                       <tr>
-                        <th>Tax (9.3%)</th>
-                        <td>$10.34</td>
+                        <td>Tax <?= $vatPrice[$key][0] ?> %</td>
+                        <td colspan="4"><?= $vatPrice[$key][1] ?> {{ $Factory->curency }}</td>
                       </tr>
+                      @empty
+                      <tr>
+                        <td>No Tax</td>
+                        <td> </td>
+                      </tr>
+                      @endforelse
                       <tr>
                         <th>Total:</th>
                         <td>{{ $totalPrices }} {{ $Factory->curency }}</td>
@@ -371,5 +373,30 @@
                 var txt = $(this).find('option:selected').data('txt');
                 $('#CODE').val( txt );
             });
-  </script>
-@stop
+
+           
+           $('#methods_services_id').on('change',function(){
+              var val = $(this).val();
+              var txt = $(this).find('option:selected').data('txt');
+              var type = $(this).find('option:selected').data('type');
+              $('#LABEL').val( txt );
+              $('#TYPE').val( type );
+          });
+
+          $('#methods_services_id_BOM').on('change',function(){
+              var val = $(this).val();
+              var txt = $(this).find('option:selected').data('txt');
+              var type = $(this).find('option:selected').data('type');
+              $('#LABEL_BOM').val( txt );
+              $('#TYPE_BOM').val( type );
+          });
+
+          $('.methods_services_id').change(function () {
+              var modelObj = $(this).parent().next().children(".component_id");
+              var selector = "option[class="+this.value.toLowerCase()+"]";
+              modelObj.children(":not("+selector+")").hide();
+              modelObj.children(selector).show();
+          });
+          </script>
+
+         @stop

@@ -2,6 +2,7 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\Planning\Task;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
@@ -45,6 +46,11 @@ class QuoteLines extends Model
     public function VAT()
     {
         return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
+    }
+
+    public function Task()
+    {
+        return $this->hasMany(Task::class);
     }
 
     public function GetPrettyCreatedAttribute()

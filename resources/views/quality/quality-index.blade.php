@@ -43,6 +43,7 @@
 
       <div class="tab-pane active" id="Actions">
         <div class="card-body">
+          <x-infocalloutComponent note="Actions are measures taken to prevent a problem from occurring (preventive actions), to solve an existing problem (corrective actions), or to improve a process or product (improvement requests)."  />
           <div class="row">
             <table id="example1" class="table table-bordered table-striped">
               <thead>
@@ -410,6 +411,7 @@
 
       <div class="tab-pane" id="NonConformities">
         <div class="card-body">
+          <x-infocalloutComponent note="Non-conformity sheets are documents summing up data related to a quality issue that arose within your company, with a customer, or with a supplier and the extra costs it generated.."  />
           <div class="row">
             <table id="example1" class="table table-bordered table-striped">
               <thead>
@@ -630,6 +632,7 @@
       <div class="tab-pane" id="MeasuringDevices">
           <div class="card card-primary">
             <div class="card-body">
+              <x-infocalloutComponent note="The measuring devices used to measure quality."  />
               <div class="row">
                 <div class="col-md-7 card-secondary">
                   <div class="card-header">
@@ -782,6 +785,8 @@
       <!-- /.tab-pane -->
 
       <div class="tab-pane" id="Settings">
+        <x-infocalloutComponent note="To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource."  />
+            
         <div class="card card-primary collapsed-card">
           <div class="card-header">
             <h3 class="card-title">Failing list</h3>

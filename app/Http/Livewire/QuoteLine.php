@@ -3,11 +3,13 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
-use App\Models\Products\Products;
-use App\Models\Methods\MethodsUnits;
-use App\Models\Accounting\AccountingVat;
-use App\Models\workflow\Quotelines;
 use App\Models\Admin\Factory;
+use App\Models\Planning\Task;
+use App\Models\Products\Products;
+use App\Models\workflow\Quotelines;
+use App\Models\Methods\MethodsUnits;
+use App\Models\Methods\MethodsServices;
+use App\Models\Accounting\AccountingVat;
 
 class QuoteLine extends Component
 {
@@ -19,7 +21,12 @@ class QuoteLine extends Component
     public $ProductsSelect = [];
     public $UnitsSelect = [];
     public $VATSelect = [];
-    
+    public $ProductSelect  = [];
+    public $TechServicesSelect = [];
+    public $BOMServicesSelect = [];
+    public $TechProductList = [];
+    public $BOMProductList = [];
+
     protected $listeners = [
         'deleteCategory'=>'destroy'
     ];
@@ -37,21 +44,28 @@ class QuoteLine extends Component
 
     public function mount($QuoteId) 
     {
-        
         $this->quotes_id = $QuoteId;
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
         $this->Factory = Factory::first();
+
+        $this->ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
+
+        $this->TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
+        $this->BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
+                                                                            ->orWhere('TYPE', '=', 3)
+                                                                            ->orWhere('TYPE', '=', 4)
+                                                                            ->orWhere('TYPE', '=', 5)
+                                                                            ->orWhere('TYPE', '=', 6)
+                                                                            ->orWhere('TYPE', '=', 8)
+                                                                            ->orderBy('ORDRE')->get();
     }
 
     public function render()
     {
-
-       
         $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy('ORDRE')->where('quotes_id', '=', $this->quotes_id)->get();
         
-        //$QuoteLineslist = $this->QuoteLineslist = Quotelines::;
         return view('livewire.quote-lines', [
             'QuoteLineslist' => $QuoteLineslist,
         ]);

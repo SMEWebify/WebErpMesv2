@@ -79,7 +79,7 @@ Route::group(['prefix' => 'products'], function () {
 });
 
 Route::group(['prefix' => 'task'], function () {
-    Route::post('/Task/create', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
+    Route::post('/Task/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
 });
 
 Route::group(['prefix' => 'production'], function () {

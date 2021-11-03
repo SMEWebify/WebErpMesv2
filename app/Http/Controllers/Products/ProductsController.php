@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Products;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
 use App\Http\Controllers\Controller;
@@ -24,13 +25,19 @@ class ProductsController extends Controller
         $UnitsSelect = MethodsUnits::select('id', 'LABEL', 'TYPE')->orderBy('LABEL')->get();
         $FamiliesSelect = MethodsFamilies::select('id', 'LABEL')->orderBy('LABEL')->get();
 
+        $Factory = Factory::first();
+        if(!$Factory){
+            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+        }
+        
         return view('products/products-index', [
             'Products' => $Products,
             'userSelect' => $userSelect,
             'ServicesSelect' => $ServicesSelect,
             'ServicesSelect' => $ServicesSelect,
             'UnitsSelect' => $UnitsSelect,
-            'FamiliesSelect' => $FamiliesSelect
+            'FamiliesSelect' => $FamiliesSelect,
+            'Factory' => $Factory,
         ]);
     }
 
@@ -39,17 +46,6 @@ class ProductsController extends Controller
 
         $Product = Products::findOrFail($id);
         $ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
-        $TechProductList = Task::Where('products_id', '=', $id)->Where(function ($query) {
-                                                                                        $query->orwhere('TYPE', '=', 1)
-                                                                                                ->orWhere('TYPE', '=', 7);
-                                                                                        })->orderBy('ORDER')->get();;
-        $BOMProductList = Task::Where('products_id', '=', $id)->Where(function ($query) {
-                                                                                        $query->orWhere('TYPE', '=', 3)
-                                                                                            ->orWhere('TYPE', '=', 4)
-                                                                                            ->orWhere('TYPE', '=', 5)
-                                                                                            ->orWhere('TYPE', '=', 6)
-                                                                                            ->orWhere('TYPE', '=', 8);
-                                                                                        })->orderBy('ORDER')->get();
 
         $TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
         $BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
@@ -59,13 +55,18 @@ class ProductsController extends Controller
                                                                             ->orWhere('TYPE', '=', 6)
                                                                             ->orWhere('TYPE', '=', 8)
                                                                             ->orderBy('ORDRE')->get();
+
+        $Factory = Factory::first();
+        if(!$Factory){
+            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+        }
+                                                                            
         return view('products/products-show', [
             'Product' => $Product,
-            'TechProductList' => $TechProductList,
-            'BOMProductList' => $BOMProductList,
             'ProductSelect' => $ProductSelect,
             'TechServicesSelect' =>  $TechServicesSelect,
             'BOMServicesSelect' =>  $BOMServicesSelect,
+            'Factory' => $Factory,
         ]);
     }
 

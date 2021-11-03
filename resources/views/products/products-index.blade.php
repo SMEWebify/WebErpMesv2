@@ -135,10 +135,20 @@
             </div>
             <div class="row">
               <div class="col-4">
-                <input type="number" class="form-control" name="purchased_price" id="purchased_price" placeholder="Purchased price" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text">{{ $Factory->curency }}</span>
+                  </div>
+                 <input type="number" class="form-control" name="purchased_price" id="purchased_price" placeholder="Purchased price" step=".001">
+                </div>
               </div>
               <div class="col-4">
-                <input type="number" class="form-control" name="selling_price" id="selling_price" placeholder="Selling price" step=".001">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text">{{ $Factory->curency }}</span>
+                  </div>
+                  <input type="number" class="form-control" name="selling_price" id="selling_price" placeholder="Selling price" step=".001">
+                </div>
               </div>
             </div>
             <hr>

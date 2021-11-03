@@ -22,7 +22,6 @@
                 @endif
             </div>
         </div>
-
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
@@ -44,7 +43,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
                             @forelse ($QuoteLineslist as $QuoteLine)
                             <tr>
                               <td>{{ $QuoteLine->ORDRE }}</td>
@@ -53,9 +51,9 @@
                               <td>{{ $QuoteLine->LABEL }}</td>
                               <td>{{ $QuoteLine->qty }}</td>
                               <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
-                              <td>{{ $QuoteLine->selling_price }}</td>
-                              <td>{{ $QuoteLine->discount }}</td>
-                              <td>{{ $QuoteLine->VAT['RATE'] }}</td>
+                              <td>{{ $QuoteLine->selling_price }} {{ $Factory->curency }}</td>
+                              <td>{{ $QuoteLine->discount }} %</td>
+                              <td>{{ $QuoteLine->VAT['RATE'] }} %</td>
                               <td>{{ $QuoteLine->delivery_date }}</td>
                               <td>
                                 @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif
@@ -66,8 +64,35 @@
                                 @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                               </td>
                               <td>
-                                <button wire:click="edit({{$QuoteLine->id}})" class="btn btn-sm btn-outline-danger py-0">Edit</button> | 
-                                <button wire:click="destroy({{$QuoteLine->id}})" class="btn btn-sm btn-outline-danger py-0">Delete</button>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="edit({{$QuoteLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
+                                </div>
+                                <div class="modal fade" id="MainProcessModal{{$QuoteLine->id}}" tabindex="-1" role="dialog" aria-labelledby="MainProcessModalTitle{{$QuoteLine->id}}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title" id="MainProcessModalTitle{{$QuoteLine->id}}">Add line to BOM</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $QuoteLine->quotes_id]),'id_type' => 'quote_lines_id', 'id' => $QuoteLine->id, 'task' => $QuoteLine->Task])
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="Submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" data-toggle="modal" data-target="#MainProcessModal{{$QuoteLine->id}}"  class="btn btn-secondary"><i class="fa fa-lg fa-fw  fas fa-list"></i></a>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="destroy({{$QuoteLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
+                                </div>
                               </td>
                             </tr>
                             @empty

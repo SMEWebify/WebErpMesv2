@@ -10,7 +10,7 @@ use App\Http\Requests\Planning\StoreTaskRequest;
 class TaskController extends Controller
 {
     //
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request, $id)
     {
        
         $Task = Task::create($request->only('LABEL', 
@@ -47,9 +47,13 @@ class TaskController extends Controller
                                             'weight', 
                                             'quality_non_conformities_id',
                                             'methods_tools_id'));
+        if(isset($request->products_id)){
 
+            return redirect()->route('products.show', ['id' => $id])->with('success', 'Successfully created new task');
+        }
+        elseif(isset($request->quote_lines_id)){
+            return redirect()->route('quote.show', ['id' => $id])->with('success', 'Successfully created new task');
 
-        return redirect()->route('products.show', ['id' => $Task->products_id])->with('success', 'Successfully created new task');
-
+        }
     }
 }

@@ -4,21 +4,24 @@ namespace App\Http\Controllers\Workflow;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Admin\Factory;
+use App\Models\Planning\Task;
 use App\Models\Workflow\Quotes;
+use App\Models\Products\Products;
+use App\ServiceS\QuoteCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
+use App\Models\Methods\MethodsServices;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
 use App\Models\Accounting\AccountingDelivery;
+
 use App\Http\Requests\Workflow\StoreQuoteRequest;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
-use App\Models\Admin\Factory;
-
-use App\ServiceS\QuoteCalculator;
 
 class QuotesController extends Controller
 {
@@ -78,7 +81,7 @@ class QuotesController extends Controller
         $QuoteCalculator = new QuoteCalculator($id);
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
-       // $vatPrice = $QuoteCalculator->getVatTotal();
+        $vatPrice = $QuoteCalculator->getVatTotal();
 
         return view('workflow/quotes-show', [
             'Quote' => $id,
@@ -91,7 +94,7 @@ class QuotesController extends Controller
             'Factory' => $Factory,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
-            //'vatPrice' => $vatPrice,
+            'vatPrice' => $vatPrice,
         ]);
     }
 

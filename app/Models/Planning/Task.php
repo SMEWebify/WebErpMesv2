@@ -3,6 +3,7 @@
 namespace App\Models\Planning;
 
 use App\Models\Products\Products;
+use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsTools;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
@@ -52,6 +53,11 @@ class Task extends Model
     public function service()
     {
         return $this->belongsTo(MethodsServices::class, 'methods_services_id');
+    }
+
+    public function QuoteLines()
+    {
+        return $this->belongsTo(QuoteLines::class, 'quote_lines_id');
     }
 
     public function Products()

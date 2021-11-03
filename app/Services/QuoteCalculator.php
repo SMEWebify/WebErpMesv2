@@ -13,6 +13,8 @@ class QuoteCalculator
     private $quote;
 
     public $TotalPrice;
+    public $SubTotal;
+    public $VatTotal;
 
     public function __construct(Quotes $quote)
     {
@@ -21,8 +23,25 @@ class QuoteCalculator
 
     public function getVatTotal()
     {
-        $VatTotal = $this->getSubTotal()->getTotalPrice();
-        return $VatTotal;
+        $tableauTVA = array();
+        $quoteLines = $this->quote->quoteLines;
+
+        foreach ($quoteLines as $quoteLine) {
+
+            $TotalLigneHTEnCours = ($quoteLine->qty*$quoteLine->selling_price)-($quoteLine->qty*$quoteLine->selling_price)*($quoteLine->discount/100);
+			$TotalLigneTVAEnCours =  $TotalLigneHTEnCours*($quoteLine->VAT['RATE']/100) ;
+
+            if(array_key_exists($quoteLine->accounting_vats_id, $tableauTVA)){
+                $tableauTVA[$quoteLine->accounting_vats_id][1] += $TotalLigneTVAEnCours;
+            }
+            else{
+                $tableauTVA[$quoteLine->accounting_vats_id] = array($quoteLine->VAT['RATE'], $TotalLigneTVAEnCours);
+            }
+        }
+
+        asort($tableauTVA);
+
+        return $tableauTVA;
     }
 
 
