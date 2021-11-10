@@ -27,6 +27,9 @@ class StoreTaskRequest extends FormRequest
             //
             'LABEL'=>'required',
             'ORDER'=>'required',
+            'methods_services_id'=>'required|numeric',
+            'component_id'=>'numeric',
+            'TYPE'=>'required|numeric',
             'UNIT_COST'=>'required',
             'UNIT_PRICE'=>'required',
         ];

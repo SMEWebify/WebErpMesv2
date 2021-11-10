@@ -1,4 +1,4 @@
-<div class="modal fade" id="TechnicalCutModal{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="TechnicalCutModalTitle" aria-hidden="true">
+  <div class="modal fade" id="#TechnicalCutUpdateModal{{ $TechProduct->id }}" tabindex="-1" role="dialog" aria-labelledby="TechnicalCutModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -12,7 +12,7 @@
                       <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                   </div>
                   <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
-                  <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $id }}">
+                  <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $id_line }}">
                 </div>
               </div>
               <div class="col-4">
@@ -21,7 +21,8 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-list"></i></span>
                   </div>
-                  <select class="form-control" name="methods_services_id" id="methods_services_id">
+                  <select class="methods_services_id form-control" name="methods_services_id" id="methods_services_id">
+                    <option>Select Services</option>
                     @foreach ($TechServicesSelect as $item)
                     <option value="{{ $item->id }}"  data-type="{{ $item->TYPE }}" data-txt="{{ $item->LABEL }}">{{ $item->CODE }}</option>
                     @endforeach
@@ -86,3 +87,4 @@
       </div>
     </div>
   </div>
+  

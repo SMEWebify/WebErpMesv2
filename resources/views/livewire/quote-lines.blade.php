@@ -15,10 +15,12 @@
                     </div>
                 @endif
 
-                @if($updateLines)
-                    @include('livewire.quote-line-update')
-                @else
-                    @include('livewire.quote-line-create')
+                @if($QuoteStatu == 1)
+                    @if($updateLines)
+                        @include('livewire.quote-line-update')
+                    @else
+                        @include('livewire.quote-line-create')
+                    @endif
                 @endif
             </div>
         </div>
@@ -47,7 +49,7 @@
                             <tr>
                               <td>{{ $QuoteLine->ORDRE }}</td>
                               <td>{{ $QuoteLine->CODE }}</td>
-                              <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif</td>
+                              <td>@if($QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif</td>
                               <td>{{ $QuoteLine->LABEL }}</td>
                               <td>{{ $QuoteLine->qty }}</td>
                               <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
@@ -64,6 +66,7 @@
                                 @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                               </td>
                               <td>
+                                @if($QuoteStatu == 1)
                                 <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="edit({{$QuoteLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
                                 </div>
@@ -77,7 +80,7 @@
                                             </button>
                                             </div>
                                             <div class="modal-body">
-                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $QuoteLine->quotes_id]),'id_type' => 'quote_lines_id', 'id' => $QuoteLine->id, 'task' => $QuoteLine->Task])
+                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $QuoteLine->quotes_id]),'id_page' => $QuoteLine->quotes_id, 'id_type' => 'quote_lines_id', 'id_line' => $QuoteLine->id, 'task' => $QuoteLine->Task])
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -93,21 +96,29 @@
                                 <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="destroy({{$QuoteLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
                                 </div>
+                                @else
+                                <div class="btn-group btn-group-sm btn-warning">
+                                    Quote statu is not open
+                                </div>
+                                    
+                                @endif
                               </td>
                             </tr>
                             @empty
-                            <th>No Lines</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <tr>
+                                <th>No Lines</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
                             @endforelse
                         </tbody>
                         <tfoot>

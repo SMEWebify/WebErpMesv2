@@ -17,6 +17,8 @@
 
 @section('content')
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
@@ -62,8 +64,8 @@
                     <option value="2" @if(2 == $Quote->STATU ) Selected @endif >Send</option>
                     <option value="3" @if(3 == $Quote->STATU ) Selected @endif >Win</option>
                     <option value="4" @if(4 == $Quote->STATU ) Selected @endif >Lost</option>
-                    <option value="5" @if(6 == $Quote->STATU ) Selected @endif >Closed</option>
-                    <option value="6" @if(7 == $Quote->STATU ) Selected @endif >Obsolete</option>
+                    <option value="5" @if(5 == $Quote->STATU ) Selected @endif >Closed</option>
+                    <option value="6" @if(6 == $Quote->STATU ) Selected @endif >Obsolete</option>
                   </select>
                 </div>
               </div>
@@ -191,7 +193,7 @@
 
       </div>   
       <div class="tab-pane " id="QuoteLines">
-        @livewire('quote-line', ['QuoteId' => $Quote->id])
+        @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->STATU])
       </div> 
 
       <div class="tab-pane " id="Print">
@@ -341,9 +343,6 @@
               <div class="row no-print">
                 <div class="col-12">
                   <a href="{{ route('quote.print', ['id' => $Quote->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-                  <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
-                    <i class="fas fa-download"></i> Generate PDF
-                  </button>
                 </div>
               </div>
             </div>
@@ -367,35 +366,21 @@
  @stop
                   
 @section('js')
-  <script> 
+          <script> 
             $('#product_id').on('change',function(){
                 var val = $(this).val();
                 var txt = $(this).find('option:selected').data('txt');
                 $('#CODE').val( txt );
             });
 
-           
-           $('#methods_services_id').on('change',function(){
-              var val = $(this).val();
-              var txt = $(this).find('option:selected').data('txt');
-              var type = $(this).find('option:selected').data('type');
-              $('#LABEL').val( txt );
-              $('#TYPE').val( type );
-          });
-
-          $('#methods_services_id_BOM').on('change',function(){
-              var val = $(this).val();
-              var txt = $(this).find('option:selected').data('txt');
-              var type = $(this).find('option:selected').data('type');
-              $('#LABEL_BOM').val( txt );
-              $('#TYPE_BOM').val( type );
-          });
-
-          $('.methods_services_id').change(function () {
-              var modelObj = $(this).parent().next().children(".component_id");
-              var selector = "option[class="+this.value.toLowerCase()+"]";
-              modelObj.children(":not("+selector+")").hide();
-              modelObj.children(selector).show();
+          $(function(){
+            var hash = window.location.hash;
+            hash && $('ul.nav.nav-pills a[href="' + hash + '"]').tab('show'); 
+            $('ul.nav.nav-pills a').click(function (e) {
+              $(this).tab('show');
+              var scrollmem = $('body').scrollTop();
+              window.location.hash = this.hash;
+            });
           });
           </script>
 

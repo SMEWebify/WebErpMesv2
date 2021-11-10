@@ -14,6 +14,7 @@ use App\Models\Accounting\AccountingVat;
 class QuoteLine extends Component
 {
     public $QuoteId;
+    public $QuoteStatu;
 
     public $QuoteLineslist;
     public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
@@ -42,9 +43,10 @@ class QuoteLine extends Component
         'accounting_vats_id'=>'required',
     ];
 
-    public function mount($QuoteId) 
+    public function mount($QuoteId, $QuoteStatu) 
     {
         $this->quotes_id = $QuoteId;
+        $this->quote_Statu = $QuoteStatu;
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
@@ -165,6 +167,7 @@ class QuoteLine extends Component
     public function destroy($id){
         try{
             Quotelines::find($id)->delete();
+            Task::where('quote_lines_id',$id)->delete();
             session()->flash('success',"Line deleted Successfully!!");
         }catch(\Exception $e){
             session()->flash('error',"Something goes wrong while deleting Line");

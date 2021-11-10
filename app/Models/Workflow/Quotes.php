@@ -43,7 +43,7 @@ class Quotes extends Model
 
     public function adresse()
     {
-        return $this->belongsTo(companiesAddresses::class, 'companies_contacts_id');
+        return $this->belongsTo(companiesAddresses::class, 'companies_addresses_id');
     }
 
     public function UserManagement()
@@ -68,7 +68,7 @@ class Quotes extends Model
 
     public function QuoteLines()
     {
-        return $this->hasMany(QuoteLines::class);
+        return $this->hasMany(QuoteLines::class)->orderBy('ORDRE');
     }
 
     public function GetPrettyCreatedAttribute()

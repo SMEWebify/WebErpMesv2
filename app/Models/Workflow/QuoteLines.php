@@ -50,7 +50,7 @@ class QuoteLines extends Model
 
     public function Task()
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class)->orderBy('ORDER');
     }
 
     public function GetPrettyCreatedAttribute()

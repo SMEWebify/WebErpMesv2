@@ -12,7 +12,6 @@ class TaskController extends Controller
     //
     public function store(StoreTaskRequest $request, $id)
     {
-       
         $Task = Task::create($request->only('LABEL', 
                                             'ORDER',
                                             'quote_lines_id',
@@ -48,12 +47,23 @@ class TaskController extends Controller
                                             'quality_non_conformities_id',
                                             'methods_tools_id'));
         if(isset($request->products_id)){
-
             return redirect()->route('products.show', ['id' => $id])->with('success', 'Successfully created new task');
         }
         elseif(isset($request->quote_lines_id)){
-            return redirect()->route('quote.show', ['id' => $id])->with('success', 'Successfully created new task');
+            return redirect()->to(route('quote.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully created new task');
+        }
+    }
 
+    public function delete($id_type, $id_page, $id_task)
+    {
+        $Task =  Task::find($id_task);
+        $Task->delete();
+
+        if($id_type == 'products_id'){
+            return redirect()->route('products.show', ['id' => $id_page])->with('success', 'Successfully delete task #'. $id_task);
+        }
+        elseif($id_type == 'quote_lines_id'){
+            return redirect()->route('quote.show', ['id' => $id_page])->with('success', 'Successfully delete task #'. $id_task);
         }
     }
 }

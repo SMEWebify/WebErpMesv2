@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\Workflow;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
-use App\Models\Planning\Task;
 use App\Models\Workflow\Quotes;
-use App\Models\Products\Products;
 use App\ServiceS\QuoteCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
-use App\Models\Methods\MethodsServices;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
 use App\Models\Accounting\AccountingDelivery;
@@ -98,11 +94,19 @@ class QuotesController extends Controller
         ]);
     }
 
-    public function print($id)
+    public function print(Quotes $id)
     {
-        $Quote = Quotes::findOrFail($id);
+        $QuoteCalculator = new QuoteCalculator($id);
+        $Factory = Factory::first();
+        $totalPrice = $QuoteCalculator->getTotalPrice();
+        $subPrice = $QuoteCalculator->getSubTotal();
+        $vatPrice = $QuoteCalculator->getVatTotal();
         return view('workflow/quotes-print', [
-            'Quote' => $Quote,
+            'Quote' => $id,
+            'Factory' => $Factory,
+            'totalPrices' => $totalPrice,
+            'subPrice' => $subPrice, 
+            'vatPrice' => $vatPrice,
         ]);
     }
 
@@ -144,6 +148,8 @@ class QuotesController extends Controller
         $Quote->accounting_deliveries_id=$request->accounting_deliveries_id;
         $Quote->comment=$request->comment;
         $Quote->save();
+
+        $QuoteLines = QuoteLines::where('quotes_id', $request->id)->update(['statu' => $request->STATU]);
 
         return redirect()->route('quote.show', ['id' =>  $Quote->id])->with('success', 'Successfully updated quote');
 

@@ -786,7 +786,7 @@
 
       <div class="tab-pane" id="Settings">
         <x-infocalloutComponent note="To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource."  />
-            
+       
         <div class="card card-primary collapsed-card">
           <div class="card-header">
             <h3 class="card-title">Failing list</h3>
@@ -800,7 +800,7 @@
               </button>
             </div>
           </div>
-          <div class="card-body" style="display: none;">
+          <div class="card-body" style="display: block;">
             <div class="row">
               <div class="col-md-6 card-secondary">
                 <div class="card-header">
@@ -891,7 +891,7 @@
                 </button>
               </div>
             </div>
-            <div class="card-body" style="display: none;">
+            <div class="card-body" style="display: block;">
               <div class="row">
                 <div class="col-md-6 card-secondary">
                   <div class="card-header">

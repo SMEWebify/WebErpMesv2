@@ -3,11 +3,9 @@
       <h3 class="card-title">Technical cut</h3>
       <div class="card-tools">
         <div class="btn-group btn-group-sm">
-          <a href="#" data-toggle="modal" data-target="#TechnicalCutModal{{ $id }}" class="btn btn-warning">Add Tech Cut</a>
+          <a href="#" data-toggle="modal" data-target="#TechnicalCutModal{{ $id_line }}" class="btn btn-warning">Add Tech Cut</a>
         </div>
-        <!-- Modal -->
-        @include('include.modal-TechCut')
-        <!-- End Modal -->
+        
         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
           <i class="fas fa-minus"></i>
         </button>
@@ -16,7 +14,9 @@
         </button>
       </div>
     </div>
-    
+    <!-- Modal -->
+    @include('include.modals.modal-TechCut-created')
+    <!-- End Modal -->
     <div class="card-body">
       <div class="row">
         <table id="example1" class="table table-bordered table-striped">
@@ -29,13 +29,14 @@
               <th>Unit time</th>
               <th>Unit cost</th>
               <th>Unit price</th>
+              <th>Statu</th>
               <th>Action</th>
           </tr>
           </thead>
           <tbody>
             @forelse ($task as $TechProduct)
               @if(preg_match('(1|7)', $TechProduct->TYPE) === 1)
-                @include('include.TechLine')
+                @include('include.subs.TechLine')
               @endif
             @empty
             <tr>
@@ -59,6 +60,7 @@
               <th>Unit time</th>
               <th>Unit cost</th>
               <th>Unit price</th>
+              <th>Statu</th>
               <th>Action</th>
             </tr>
           </tfoot>
@@ -71,13 +73,9 @@
   <div class="card card-secondary">
     <div class="card-header">
       <h3 class="card-title">Bill of materials</h3>
-  
       <div class="card-tools">
-        <!-- Modal -->
-      @include('include.modal-BOM')
-      <!-- End Modal -->
         <div class="btn-group btn-group-sm">
-            <a href="#" data-toggle="modal" data-target="#BOMModal{{ $id }}" class="btn btn-success">Add BOM</a>
+            <a href="#" data-toggle="modal" data-target="#BOMModal{{ $id_line }}" class="btn btn-success">Add BOM</a>
         </div>
         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
           <i class="fas fa-minus"></i>
@@ -87,6 +85,9 @@
         </button>
       </div>
     </div>
+    <!-- Modal -->
+    @include('include.modals.modal-BOM-created')
+    <!-- End Modal -->
     <div class="card-body">
       <div class="row">
         <table id="example1" class="table table-bordered table-striped">
@@ -99,13 +100,14 @@
               <th>Quantity</th>
               <th>Unit cost</th>
               <th>Unit price</th>
+              <th>Statu</th>
               <th>Action</th>
           </tr>
           </thead>
           <tbody>
             @forelse ($task as $BOMProduct)
               @if(preg_match('(3|4|5|6|8)', $BOMProduct->TYPE) === 1)
-                @include('include.BOMLine')
+                @include('include.subs.BOMLine')
               @endif
             @empty
             <tr>
@@ -114,6 +116,7 @@
               <td></td> 
               <td></td> 
               <td></td> 
+              <td></td>
               <td></td>
               <td></td>
             </tr>
@@ -128,6 +131,7 @@
               <th>Quantity</th>
               <th>Unit cost</th>
               <th>Unit price</th>
+              <th>Statu</th>
               <th>Action</th>
             </tr>
           </tfoot>
