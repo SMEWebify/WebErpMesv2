@@ -23,19 +23,19 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 
 # Current progress of the project :building_construction:
 
-| Features         | Implemented | To be done |
-|------------------|:-----------:|:----------:|
-| Customers        |      X      |      -     |
-| Quality          |      X      |      -     |
-| Products         |      X      |      -     |
-| Quote            |      X      |      -     |
-| Order            |      -      |      X     |
-| Order confirm    |      -      |      X     |
-| Delivery note    |      -      |      X     |
-| Invoices         |      -      |      X     |
-| Purchase Request |      -      |      X     |
-| Purchase order   |      -      |      X     |
-| Receipt          |      -      |      X     |
+| Features         | Implemented | To be done |     | Secondary Features         | Implemented | To be done |
+|------------------|:-----------:|:----------:|     |----------------------------|:-----------:|:----------:|
+| Customers        |      X      |      -     |     | Quote to Order Transfer    |      -      |      X     |
+| Quality          |      X      |      -     |     | Order to Delevery note Tr* |      -      |      X     |
+| Products         |      X      |      -     |     | Delevery  to Invoice Tr*   |      -      |      X     |
+| Quote            |      X      |      -     |     | Purchase to Pur Order Tr*  |      -      |      X     |
+| Order            |      X      |      -     |     |----------------------------|:-----------:|:----------:|
+| Order confirm    |      -      |      X     |     | User role                  |      -      |      X     |
+| Delivery note    |      -      |      X     |     | Document storage           |      -      |      X     |
+| Invoices         |      -      |      X     |     | E-mail management          |      -      |      X     |
+| Purchase Request |      -      |      X     |     |----------------------------|:-----------:|:----------:|
+| Purchase order   |      -      |      X     |     | Gant schedule              |      -      |      X     |
+| Receipt          |      -      |      X     |     | Notification system        |      -      |      X     |
 
 
 -----------------
