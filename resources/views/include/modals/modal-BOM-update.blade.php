@@ -1,9 +1,9 @@
   <div class="modal fade" id="BOMUpdateModal{{ $BOMProduct->id }}" tabindex="-1" role="dialog" aria-labelledby="BOMModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
       <div class="modal-content">
-        <div class="modal-body">
-          <form method="POST" action="{{ $route }}" enctype="multipart/form-data">
-            @csrf
+        <form method="POST" action="{{ route('task.update', ['id' => $id_page]) }}" enctype="multipart/form-data">
+          @csrf
+          <div class="modal-body">
             <div class="row">
               <div class="col-3">
                 <label for="ORDER">Sort order</label>
@@ -13,6 +13,7 @@
                   </div>
                   <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order" value="{{ $BOMProduct->ORDER }}">
                   <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $id_line }}">
+                  <input type="hidden" class="form-control" name="id" value="{{ $BOMProduct->id }}">
                 </div>
               </div>
               <div class="col-3">
@@ -27,7 +28,7 @@
                       <option value="{{ $item->id }}"  @if($item->id == $BOMProduct->methods_services_id ) Selected @endif class="{{ $item->id }}" data-type="{{ $item->TYPE }}"  data-txt="{{ $item->LABEL }}">{{ $item->CODE }}</option>
                       @endforeach
                     </select>
-                    <input type="hidden" class="form-control" name="TYPE" id="TYPE_BOM">
+                    <input type="hidden" class="form-control" name="TYPE" id="TYPE_BOM" value="{{ $BOMProduct->TYPE }}">
                   </div>
               </div>
               <div class="col-3">
@@ -43,7 +44,7 @@
                     @endforeach
                   </select>
                 </div>
-            </div>
+              </div>
               <div class="col-3">
                   <label for="LABEL">Label</label>
                   <div class="input-group">

@@ -59,7 +59,7 @@
           <p>Quotes</p>
         </div>
         <div class="icon">
-          <i class="ion ion-stats-bars"></i>
+          <i class="fas fa-calculator"></i>
         </div>
         <a href="{{ route('quotes') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
       </div>
@@ -69,13 +69,13 @@
       <!-- small box -->
       <div class="small-box bg-secondary">
         <div class="inner">
-          <h3>1</h3>
+          <h3>{{$data['orders_count']}}</h3>
           <p>Orders</p>
         </div>
         <div class="icon">
           <i class="ion ion-bag"></i>
         </div>
-        <a href="{{ route('quotes') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        <a href="{{ route('orders') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -83,13 +83,13 @@
       <!-- small box -->
       <div class="small-box bg-primary">
         <div class="inner">
-          <h3>1</h3>
-          <p>Other</p>
+          <h3>{{$data['quality_non_conformities_count']}}</h3>
+          <p>Non conformities</p>
         </div>
         <div class="icon">
-          <i class="ion ion-bag"></i>
+          <i class="fas fa-times-circle"></i>
         </div>
-        <a href="{{ route('quotes') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        <a href="{{ route('quality') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -134,7 +134,7 @@
 
               <div class="chart">
                 <!-- Sales Chart Canvas -->
-                <canvas id="salesChart" height="180" style="height: 180px;"></canvas>
+                  <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
               </div>
               <!-- /.chart-responsive -->
             </div>
@@ -357,47 +357,26 @@
               </tr>
               </thead>
               <tbody>
-      
+                @forelse ($LastOrders as $LastOrder)
+                <tr>
+                  <td><a href="{{ route('order.show', ['id' => $LastOrder->id])}}">{{ $LastOrder->CODE }}</a></td>
+                  <td>{{ $LastOrder->companie['LABEL'] }}</td>
+                  <td>
+                    @if(1 == $LastOrder->statu )  <span class="badge badge-info"> Open</span>@endif
+                    @if(2 == $LastOrder->statu )  <span class="badge badge-warning">In progress</span>@endif
+                    @if(3 == $LastOrder->statu )  <span class="badge badge-success">Delivered</span>@endif
+                    @if(4 == $LastOrder->statu )  <span class="badge badge-danger">Partly delivered</span>@endif
+                  </td>
+                  <td>
+                    <div class="sparkbar" data-color="#f56954" data-height="20">x €</div>
+                  </td>
+                </tr>
+                <!-- /.item -->
+                @empty
               <tr>
-                <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                <td>iPhone 6 Plus</td>
-                <td><span class="badge badge-danger">Delivered</span></td>
-                <td>
-                  <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                </td>
+                <td colspan="4">No order, go order page for add order</td>
               </tr>
-              <tr>
-                <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                <td>Samsung Smart TV</td>
-                <td><span class="badge badge-info">Processing</span></td>
-                <td>
-                  <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
-                </td>
-              </tr>
-              <tr>
-                <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                <td>Samsung Smart TV</td>
-                <td><span class="badge badge-warning">Pending</span></td>
-                <td>
-                  <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                </td>
-              </tr>
-              <tr>
-                <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                <td>iPhone 6 Plus</td>
-                <td><span class="badge badge-danger">Delivered</span></td>
-                <td>
-                  <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                </td>
-              </tr>
-              <tr>
-                <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                <td>Call of Duty IV</td>
-                <td><span class="badge badge-success">Shipped</span></td>
-                <td>
-                  <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                </td>
-              </tr>
+              @endforelse
               </tbody>
             </table>
           </div>
@@ -469,6 +448,9 @@
 
 @section('js')
 <script>
+  //-------------
+    //- BAR CHART -
+    //-------------
   var ctx = document.getElementById('QuoteRate');
   var myChart = new Chart(ctx, {
       type: 'bar',
@@ -506,5 +488,82 @@
             }
       }
   });
+
+
+  //--------------
+    //- AREA CHART -
+    //--------------
+
+    // Get context with jQuery - using jQuery's .get() method.
+    var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
+
+    var areaChartData = {
+      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        {
+          label               : 'Digital Goods',
+          backgroundColor     : 'rgba(60,141,188,0.9)',
+          borderColor         : 'rgba(60,141,188,0.8)',
+          pointRadius          : false,
+          pointColor          : '#3b8bba',
+          pointStrokeColor    : 'rgba(60,141,188,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data                : [28, 48, 40, 19, 86, 27, 90]
+        },
+        {
+          label               : 'Electronics',
+          backgroundColor     : 'rgba(210, 214, 222, 1)',
+          borderColor         : 'rgba(210, 214, 222, 1)',
+          pointRadius         : false,
+          pointColor          : 'rgba(210, 214, 222, 1)',
+          pointStrokeColor    : '#c1c7d1',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(220,220,220,1)',
+          data                : [65, 59, 80, 81, 56, 55, 40]
+        },
+      ]
+    }
+    var areaChartOptions = {
+      maintainAspectRatio : false,
+      responsive : true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          gridLines : {
+            display : false,
+          }
+        }],
+        yAxes: [{
+          gridLines : {
+            display : false,
+          }
+        }]
+      }
+    }
+
+    // This will get the first returned node in the jQuery collection.
+    new Chart(areaChartCanvas, {
+      type: 'line',
+      data: areaChartData,
+      options: areaChartOptions
+    })
+   //-------------
+    //- LINE CHART -
+    //--------------
+    var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
+    var lineChartOptions = $.extend(true, {}, areaChartOptions)
+    var lineChartData = $.extend(true, {}, areaChartData)
+    lineChartData.datasets[0].fill = false;
+    lineChartData.datasets[1].fill = false;
+    lineChartOptions.datasetFill = false
+
+    var lineChart = new Chart(lineChartCanvas, {
+      type: 'line',
+      data: lineChartData,
+      options: lineChartOptions
+    })
   </script>
 @stop

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Planning;
+namespace App\Http\Requests\workflow;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTaskRequest extends FormRequest
+class StoreOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +25,14 @@ class UpdateTaskRequest extends FormRequest
     {
         return [
             //
+            'CODE' =>'required|unique:orders',
             'LABEL'=>'required',
-            'ORDER'=>'required',
-            'methods_services_id'=>'required|numeric',
-            'component_id'=>'numeric',
-            'TYPE'=>'required|numeric',
-            'UNIT_COST'=>'required',
-            'UNIT_PRICE'=>'required',
+            'companies_id'=>'required',
+            'companies_contacts_id'=>'required',
+            'companies_addresses_id'=>'required',
+            'accounting_payment_conditions_id'=>'required',
+            'accounting_payment_methods_id'=>'required',
+            'accounting_deliveries_id'=>'required',
         ];
     }
 }

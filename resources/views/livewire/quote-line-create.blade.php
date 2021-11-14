@@ -8,16 +8,16 @@
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                 </div>
                 <input type="number" class="form-control @error('ORDRE') is-invalid @enderror" id="ORDRE" placeholder="Enter order" wire:model="ORDRE">
-                @error('ORDRE') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
+            @error('ORDRE') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="CODE">External ID</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </div>
                 <input type="text" class="CODE form-control @error('CODE') is-invalid @enderror" id="CODE" placeholder="Enter external ID" wire:model="CODE">
-                @error('CODE') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
+            @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="col-2">
             <label for="product_id">Product</label>
@@ -31,15 +31,16 @@
                     <option value="{{ $item->id }}" data-txt="{{ $item->CODE }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
                     @endforeach
                 </select>
-                @error('product_id') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
+            
+            @error('product_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="LABEL">Description :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
                 <input type="text" class="form-control @error('LABEL') is-invalid @enderror" id="LABEL" placeholder="Description" wire:model="LABEL">
-                 @error('LABEL') <span class="text-danger">{{ $message }}</span>@enderror
+                 @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
             </div>
         </div>
         <div class="col-2">
@@ -49,8 +50,8 @@
                     <span class="input-group-text"><i class="fas fa-times"></i></span>
                 </div>
                 <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="Quantity" wire:model="qty">
-                @error('qty') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
+            @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="methods_units_id">Unit</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -62,7 +63,7 @@
                     <option value="{{ $item->id }}" >{{ $item->CODE }} - {{ $item->LABEL }}</option>
                     @endforeach
                 </select>
-                @error('methods_units_id') <span class="text-danger">{{ $message }}</span>@enderror
+                @error('methods_units_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
             </div>
         </div>
         <div class="col-2">
@@ -71,30 +72,30 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">{{ $Factory->curency }}</span>
                 </div>
-               <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001" value="0">
-             @error('selling_price') <span class="text-danger">{{ $message }}</span>@enderror
+                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001" value="0">
             </div>
+            @error('selling_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="discount">Discount :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                 </div>
                 <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount" step=".01" value="0">
-                @error('discount') <span class="text-danger">{{ $message }}</span>@enderror
             </div>
+            @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="col-2">
             <label for="accounting_vats_id">VAT type</label>
             <select class="form-control @error('accounting_vats_id') is-invalid @enderror" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
                 <option value="" >Select VAT</option>
                 @foreach ($VATSelect as $item)
-                  <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
+                    <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
                 @endforeach
             </select>
-            @error('accounting_vats_id') <span class="text-danger">{{ $message }}</span>@enderror
+            @error('accounting_vats_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="delivery_date">Delevery date</label>
             <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model="delivery_date">
-            @error('delivery_date') <span class="text-danger">{{ $message }}</span>@enderror
+            @error('delivery_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="col-2">
             <br/>

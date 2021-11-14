@@ -259,28 +259,9 @@ return [
         ],
         ['header' => 'Jobs'],
         [
-            'text'    => 'Order',
-            'icon'    => 'fas fa-inbox',
-            'submenu' => [
-                [
-                    'text' => 'Order list',
-                    'url'  => '#',
-                ],
-                ['header' => 'workflow'],
-                [
-                    'text' => 'Order confirm list',
-                    'url'  => '#',
-                ],
-                [
-                    'text' => 'Delevery note list',
-                    'url'  => '#',
-                ],
-                [
-                    'text' => 'Invoince list',
-                    'url'  => '#',
-                    
-                ],
-            ]
+            'text'    => 'Orders',
+            'icon'    => 'fas fa-calculator',
+            'url'  => 'orders',
         ],
         [
             'text'    => 'Production',
@@ -302,6 +283,17 @@ return [
                 ],
             ]
         ],
+        [
+            'text'    => 'Delevery notes',
+            'icon'    => 'fas fa-calculator',
+            'url'  => '#',
+        ],
+        [
+            'text'    => 'Invoinces',
+            'icon'    => 'fas fa-calculator',
+            'url'  => '#',
+        ],
+       
         ['header' => 'Purchase'],
         [
             'text'        => 'Purchase request',

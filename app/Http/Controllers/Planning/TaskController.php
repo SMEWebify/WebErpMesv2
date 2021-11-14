@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Planning\StoreTaskRequest;
+use App\Http\Requests\Planning\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -52,6 +53,10 @@ class TaskController extends Controller
         elseif(isset($request->quote_lines_id)){
             return redirect()->to(route('quote.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully created new task');
         }
+        elseif(isset($request->order_lines_id)){
+            return redirect()->to(route('order.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully created new task');
+        }
+        
     }
 
     public function delete($id_type, $id_page, $id_task)
@@ -63,7 +68,40 @@ class TaskController extends Controller
             return redirect()->route('products.show', ['id' => $id_page])->with('success', 'Successfully delete task #'. $id_task);
         }
         elseif($id_type == 'quote_lines_id'){
-            return redirect()->route('quote.show', ['id' => $id_page])->with('success', 'Successfully delete task #'. $id_task);
+            return redirect()->route('quote.show', ['id' => $id_page].'#QuoteLines')->with('success', 'Successfully delete task #'. $id_task);
+        }
+        elseif($id_type == 'order_lines_id'){
+            return redirect()->route('quote.show', ['id' => $id_page].'#OrderLines')->with('success', 'Successfully delete task #'. $id_task);
+        }
+    }
+
+    public function update(UpdateTaskRequest $request, $id)
+    {
+
+        $task = Task::find($request->id);
+        $task->LABEL=$request->LABEL;
+        $task->ORDER=$request->ORDER;
+        $task->products_id=$request->products_id;
+        $task->methods_services_id=$request->methods_services_id;
+        $task->component_id=$request->component_id;
+        $task->SETING_TIME=$request->SETING_TIME;
+        $task->UNIT_TIME=$request->UNIT_TIME;
+        $task->TYPE=$request->TYPE;
+        $task->QTY=$request->QTY;
+        $task->UNIT_COST=$request->UNIT_COST;
+        $task->UNIT_PRICE=$request->UNIT_PRICE;
+        $task->methods_units_id=$request->methods_units_id;
+
+        $task->save();
+
+        if(isset($request->products_id)){
+            return redirect()->route('products.show', ['id' => $id])->with('success', 'Successfully updated task');
+        }
+        elseif(isset($request->quote_lines_id)){
+            return redirect()->to(route('quote.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully updated task');
+        }
+        elseif(isset($request->order_lines_id)){
+            return redirect()->to(route('order.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully updated task');
         }
     }
 }

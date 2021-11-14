@@ -6,18 +6,20 @@ use Livewire\Component;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
-use App\Models\workflow\Quotelines;
+use App\Models\workflow\Orderlines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 
-class QuoteLine extends Component
-{
-    public $QuoteId;
-    public $QuoteStatu;
 
-    public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
+class OrderLine extends Component
+{
+
+    public $OrderId;
+    public $OrderStatu;
+
+    public $OrderLineslist;
+    public $order_lines_id, $orders_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
     public $updateLines = false;
     public $ProductsSelect = [];
     public $UnitsSelect = [];
@@ -39,10 +41,10 @@ class QuoteLine extends Component
         'accounting_vats_id'=>'required',
     ];
 
-    public function mount($QuoteId, $QuoteStatu) 
+    public function mount($OrderId, $OrderStatu) 
     {
-        $this->quotes_id = $QuoteId;
-        $this->quote_Statu = $QuoteStatu;
+        $this->orders_id = $OrderId;
+        $this->order_Statu = $OrderStatu;
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
@@ -62,10 +64,10 @@ class QuoteLine extends Component
 
     public function render()
     {
-        $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy('ORDRE')->where('quotes_id', '=', $this->quotes_id)->get();
+        $OrderLineslist = $this->OrderLineslist = Orderlines::orderBy('ORDRE')->where('orders_id', '=', $this->orders_id)->get();
         
-        return view('livewire.quote-lines', [
-            'QuoteLineslist' => $QuoteLineslist,
+        return view('livewire.order-lines', [
+            'OrderLineslist' => $OrderLineslist,
         ]);
     }
 
@@ -78,13 +80,13 @@ class QuoteLine extends Component
         $this->selling_price = '';
     }
 
-    public function storeQuoteLine(){
+    public function storeOrderLine(){
 
         $this->validate();
 
             // Create Category
-            Quotelines::create([
-                'quotes_id'=>$this->quotes_id,
+            Orderlines::create([
+                'orders_id'=>$this->orders_id,
                 'ORDRE'=>$this->ORDRE,
                 'CODE'=>$this->CODE,
                 'product_id'=>$this->product_id,
@@ -106,8 +108,8 @@ class QuoteLine extends Component
     }
 
     public function edit($id){
-        $Line = Quotelines::findOrFail($id);
-        $this->quote_lines_id = $id;
+        $Line = Orderlines::findOrFail($id);
+        $this->order_lines_id = $id;
         $this->ORDRE = $Line->ORDRE;
         $this->CODE = $Line->CODE;
         $this->product_id = $Line->product_id;
@@ -136,7 +138,7 @@ class QuoteLine extends Component
         //try{
 
             // Update line
-            Quotelines::find($this->quote_lines_id)->fill([
+            Orderlines::find($this->order_lines_id)->fill([
                 'ORDRE'=>$this->ORDRE,
                 'CODE'=>$this->CODE,
                 'product_id'=>$this->product_id,
@@ -162,8 +164,8 @@ class QuoteLine extends Component
 
     public function destroy($id){
         try{
-            Quotelines::find($id)->delete();
-            Task::where('quote_lines_id',$id)->delete();
+            Orderlines::find($id)->delete();
+            Task::where('order_lines_id',$id)->delete();
             session()->flash('success',"Line deleted Successfully!!");
         }catch(\Exception $e){
             session()->flash('error',"Something goes wrong while deleting Line");

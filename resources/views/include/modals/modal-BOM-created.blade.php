@@ -61,14 +61,14 @@
                     @endforeach
                   </select>
                 </div>
-            </div>
+              </div>
               <div class="col-3">
                   <label for="LABEL">Label</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                   <input type="text" class="form-control" name="LABEL"  id="LABEL_BOM_{{ $id_line }}" placeholder="Label">
+                    <input type="text" class="form-control" name="LABEL"  id="LABEL_BOM_{{ $id_line }}" placeholder="Label">
                   </div>
               </div>
             </div>

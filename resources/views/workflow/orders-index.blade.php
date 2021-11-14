@@ -1,17 +1,17 @@
 @extends('adminlte::page')
 
-@section('title', 'Quotes list')
+@section('title', 'Orders list')
 
 @section('content_header')
     
 
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Quotes list</h1>
+        <h1>Orders list</h1>
       </div>
       <div class="col-sm-6">
         <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalCompanie">
-          New quote
+          New Order
         </button>
       </div>
     </div>
@@ -20,13 +20,13 @@
       <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="ModalCompanieTitle">New Quote</h5>
+            <h5 class="modal-title" id="ModalCompanieTitle">New Order</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <form method="POST" action="{{ route('quote.store')}}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('order.store')}}" enctype="multipart/form-data">
               @csrf
                 <div class="row">
                   <div class="col-3">
@@ -35,16 +35,16 @@
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                       </div>
-                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="QT-{{ $LastQuote->id ?? '0' }}">
+                      <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="OR-{{ $LastOrder->id ?? '0' }}">
                     </div>
                   </div>
                   <div class="col-3">
-                    <label for="LABEL">Name of quote</label>
+                    <label for="LABEL">Name of order</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-tags"></i></span>
                       </div>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL" value="QT-{{ $LastQuote->id ?? '0' }}" placeholder="Name of quote" required>
+                      <input type="text" class="form-control" name="LABEL"  id="LABEL" value="OR-{{ $LastOrder->id ?? '0' }}" placeholder="Name of order" required>
                     </div>
                   </div>
                   <div class="col-3">
@@ -200,14 +200,14 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Quotes" data-toggle="tab">Quotes list</a></li>
-      <li class="nav-item"><a class="nav-link" href="#QuotesLine" data-toggle="tab">Quotes lines list</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Orders" data-toggle="tab">Orders list</a></li>
+      <li class="nav-item"><a class="nav-link" href="#OrdersLine" data-toggle="tab">Orders lines list</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-      <div class="tab-pane active" id="Quotes">
+      <div class="tab-pane active" id="Orders">
                       @if(session('success'))
                       <div class="alert alert-success">
                           {{ session('success')}}
@@ -223,9 +223,9 @@
                           </ul>
                         </div>
                       @endif
-                        <div  id="quotes_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div  id="orders_wrapper" class="dataTables_wrapper dt-bootstrap4">
                             <div class="col-sm-12">
-                              <table id="quotes" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
+                              <table id="Orders" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
                                 <thead>
                                   <tr>
                                     <th>Code</th>
@@ -238,27 +238,27 @@
                                   </tr>
                                   </thead>
                                   <tbody>
-                                    @foreach ($Quoteslist as $Quote)
+                                    @foreach ($Orderslist as $Order)
                                     <tr>
-                                      <td>{{ $Quote->CODE }}</td>
-                                      <td>{{ $Quote->LABEL }}</td>
-                                      <td>{{ $Quote->companie['LABEL'] }}</td>
-                                      <td>{{ $Quote->customer_reference }}</td>
+                                      <td>{{ $Order->CODE }}</td>
+                                      <td>{{ $Order->LABEL }}</td>
+                                      <td>{{ $Order->companie['LABEL'] }}</td>
+                                      <td>{{ $Order->customer_reference }}</td>
                                       <td>
-                                        @if(1 == $Quote->STATU )   <span class="badge badge-info"> Open</span>@endif
-                                        @if(2 == $Quote->STATU )  <span class="badge badge-warning">Send</span>@endif
-                                        @if(3 == $Quote->STATU )  <span class="badge badge-success">Win</span>@endif
-                                        @if(4 == $Quote->STATU )  <span class="badge badge-danger">Lost</span>@endif
-                                        @if(5 == $Quote->STATU )  <span class="badge badge-secondary">Closed</span>@endif
-                                        @if(6 == $Quote->STATU )   <span class="badge badge-secondary">Obsolete</span>@endif
+                                        @if(1 == $Order->STATU )   <span class="badge badge-info"> Open</span>@endif
+                                        @if(2 == $Order->STATU )  <span class="badge badge-warning">Send</span>@endif
+                                        @if(3 == $Order->STATU )  <span class="badge badge-success">Win</span>@endif
+                                        @if(4 == $Order->STATU )  <span class="badge badge-danger">Lost</span>@endif
+                                        @if(5 == $Order->STATU )  <span class="badge badge-secondary">Closed</span>@endif
+                                        @if(6 == $Order->STATU )   <span class="badge badge-secondary">Obsolete</span>@endif
                                       </td>
-                                      <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
+                                      <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
                                       <td>
-                                        <a class="btn btn-primary btn-sm" href="{{ route('quote.show', ['id' => $Quote->id])}}">
+                                        <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $Order->id])}}">
                                           <i class="fas fa-folder"></i>
                                           View
                                         </a>
-                                        <a class="btn btn-success btn-sm" href="{{ route('quote.print', ['id' => $Quote->id])}}">
+                                        <a class="btn btn-success btn-sm" href="{{ route('order.print', ['id' => $Order->id])}}">
                                           <i class="fas fa-print"></i>
                                           Print
                                         </a>
@@ -289,51 +289,51 @@
                     </div>
                     
 
-                    <div class="tab-pane" id="QuotesLine">
-                      <div  id="quotes_lines_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div class="tab-pane" id="OrdersLine">
+                      <div  id="orders_lines_wrapper" class="dataTables_wrapper dt-bootstrap4">
                         <div class="col-sm-12">
-                          <table id="quotes_lines" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
+                          <table id="orders_lines" class="table table-bordered table-striped dataTable dtr-inline" role="grid">
                             <thead>
-                            <tr>
-                              <th>Quote</th>
-                              <th>Sort</th>
-                              <th>External ID</th>
-                              <th>Product</th>
-                              <th>Description</th>
-                              <th>Qty</th>
-                              <th>Unit</th>
-                              <th>Selling price</th>
-                              <th>Discount</th>
-                              <th>VAT type</th>
-                              <th>Delivery date</th>
-                              <th>Statu</th>
-                              <th>Action</th>
-                            </tr>
+                              <tr>
+                                <th>Order</th>
+                                <th>Sort</th>
+                                <th>External ID</th>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th>Qty</th>
+                                <th>Unit</th>
+                                <th>Selling price</th>
+                                <th>Discount</th>
+                                <th>VAT type</th>
+                                <th>Delivery date</th>
+                                <th>Statu</th>
+                                <th>Action</th>
+                              </tr>
                             </thead>
                             <tbody>
-                              @foreach ($QuoteLineslist as $QuoteLine)
+                              @foreach ($OrderLineslist as $OrderLine)
                               <tr>
-                                <td>{{ $QuoteLine->quote['CODE'] }}</td>
-                                <td>{{ $QuoteLine->ORDRE }}</td>
-                                <td>{{ $QuoteLine->CODE }}</td>
-                                <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif</td>
-                                <td>{{ $QuoteLine->LABEL }}</td>
-                                <td>{{ $QuoteLine->qty }}</td>
-                                <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
-                                <td>{{ $QuoteLine->selling_price }}</td>
-                                <td>{{ $QuoteLine->discount }}</td>
-                                <td>{{ $QuoteLine->VAT['LABEL'] }}</td>
-                                <td>{{ $QuoteLine->delivery_date }}</td>
+                                <td>{{ $OrderLine->order['CODE'] }}</td>
+                                <td>{{ $OrderLine->ORDRE }}</td>
+                                <td>{{ $OrderLine->CODE }}</td>
+                                <td>@if(1 == $OrderLine->product_id ) {{ $OrderLine->Product['LABEL'] }}@endif</td>
+                                <td>{{ $OrderLine->LABEL }}</td>
+                                <td>{{ $OrderLine->qty }}</td>
+                                <td>{{ $OrderLine->Unit['LABEL'] }}</td>
+                                <td>{{ $OrderLine->selling_price }}</td>
+                                <td>{{ $OrderLine->discount }}</td>
+                                <td>{{ $OrderLine->VAT['LABEL'] }}</td>
+                                <td>{{ $OrderLine->delivery_date }}</td>
                                 <td>
-                                  @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif
-                                  @if(2 == $QuoteLine->statu )  <span class="badge badge-warning">Send</span>@endif
-                                  @if(3 == $QuoteLine->statu )  <span class="badge badge-success">Win</span>@endif
-                                  @if(4 == $QuoteLine->statu )  <span class="badge badge-danger">Lost</span>@endif
-                                  @if(5 == $QuoteLine->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                                  @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                                  @if(1 == $OrderLine->statu )   <span class="badge badge-info"> Open</span>@endif
+                                  @if(2 == $OrderLine->statu )  <span class="badge badge-warning">Send</span>@endif
+                                  @if(3 == $OrderLine->statu )  <span class="badge badge-success">Win</span>@endif
+                                  @if(4 == $OrderLine->statu )  <span class="badge badge-danger">Lost</span>@endif
+                                  @if(5 == $OrderLine->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                                  @if(6 == $OrderLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                                 </td>
                                 <td>
-                                  <a class="btn btn-primary btn-sm" href="{{ route('quote.show', ['id' => $QuoteLine->quotes_id])}}">
+                                  <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $OrderLine->orders_id])}}">
                                     <i class="fas fa-folder"></i>
                                     View
                                   </a>
@@ -342,28 +342,25 @@
                               @endforeach
                             </tbody>
                             <tfoot>
-                            <tr>
-                              <th>Quote</th>
-                              <th>Sort</th>
-                              <th>External ID</th>
-                              <th>Product</th>
-                              <th>Description</th>
-                              <th>Qty</th>
-                              <th>Unit</th>
-                              <th>Selling price</th>
-                              <th>Discount</th>
-                              <th>VAT type</th>
-                              <th>Delivery date</th>
-                              <th>Statu</th>
-                              <th>Action</th>
-                            </tr>
-                          </tfoot>
-                        </table>
+                              <tr>
+                                <th>Order</th>
+                                <th>Sort</th>
+                                <th>External ID</th>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th>Qty</th>
+                                <th>Unit</th>
+                                <th>Selling price</th>
+                                <th>Discount</th>
+                                <th>VAT type</th>
+                                <th>Delivery date</th>
+                                <th>Statu</th>
+                                <th>Action</th>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
                       </div>
-                    </div>
-
-
-
                     <!-- /.tab-pane -->
                     </div>
                     
@@ -395,21 +392,21 @@
   <script> 
 
   $(document).ready( function () {
-    $("#quotes").DataTable({
+    $("#orders").DataTable({
       dom: 'Bfrtip',
       buttons: [
             'copy', 'csv', 'excel', 'pdf', 'print'
         ]
-    }).buttons().container().appendTo('#quotes_wrapper .col-md-6:eq(0)');
+    }).buttons().container().appendTo('#orders_wrapper .col-md-6:eq(0)');
   } );
 
   $(document).ready( function () {
-    $("#quotes_lines").DataTable({
+    $("#orders_lines").DataTable({
       dom: 'Bfrtip',
       buttons: [
             'copy', 'csv', 'excel', 'pdf', 'print'
         ]
-    }).buttons().container().appendTo('#quotes_lines_wrapper .col-md-6:eq(0)');
+    }).buttons().container().appendTo('#orders_lines_wrapper .col-md-6:eq(0)');
   } );
 
   

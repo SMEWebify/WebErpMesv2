@@ -60,6 +60,11 @@ class Task extends Model
         return $this->belongsTo(QuoteLines::class, 'quote_lines_id');
     }
 
+    public function OrderLines()
+    {
+        return $this->belongsTo(QuoteLines::class, 'order_lines_id');
+    }
+
     public function Products()
     {
         return $this->belongsTo(Products::class, 'products_id');

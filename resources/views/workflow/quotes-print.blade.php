@@ -48,7 +48,7 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-sm-4 invoice-col">
-                      <b>Qute #{{  $Quote->CODE }}</b><br>
+                      <b>Quote #{{  $Quote->CODE }}</b><br>
                       <b>Your Ref:</b> {{  $Quote->customer_reference }}<br>
                     </div>
                     <!-- /.col -->

@@ -42,9 +42,22 @@ Route::group(['prefix' => 'quotes'], function () {
     Route::get('/{id}', 'App\Http\Controllers\workflow\QuotesController@show')->middleware(['auth'])->name('quote.show');
 });
 
+Route::group(['prefix' => 'orders'], function () {
+
+    
+    Route::get('/', 'App\Http\Controllers\workflow\OrdersController@index')->middleware(['auth'])->name('orders'); 
+    Route::post('/create', 'App\Http\Controllers\workflow\OrdersController@store')->middleware(['auth'])->name('order.store');
+    
+    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\OrdersController@update')->middleware(['auth'])->name('order.update');
+
+    Route::get('/print/{id}', 'App\Http\Controllers\workflow\OrdersController@print')->middleware(['auth'])->name('order.print');
+    Route::get('/{id}', 'App\Http\Controllers\workflow\OrdersController@show')->middleware(['auth'])->name('order.show');
+    
+});
+
 Route::group(['prefix' => 'accouting'], function () {
     Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
-
+    
     Route::post('/Allocation/create', 'App\Http\Controllers\Accounting\AllocationController@store')->middleware(['auth'])->name('accouting.allocation.create');
     Route::post('/Delivery/create', 'App\Http\Controllers\Accounting\DeliveryController@store')->middleware(['auth'])->name('accouting.delivery.create');
     Route::post('/PaymentCondition/create', 'App\Http\Controllers\Accounting\PaymentConditionsController@store')->middleware(['auth'])->name('accouting.paymentCondition.create');
@@ -79,7 +92,9 @@ Route::group(['prefix' => 'products'], function () {
 });
 
 Route::group(['prefix' => 'task'], function () {
+    Route::get('/Task/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->middleware(['auth'])->name('task.delete');
     Route::post('/Task/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
+    Route::post('/Task/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->middleware(['auth'])->name('task.update');
 });
 
 Route::group(['prefix' => 'production'], function () {

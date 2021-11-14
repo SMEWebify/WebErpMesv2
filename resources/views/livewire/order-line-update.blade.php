@@ -6,7 +6,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                 </div>
-                <input type="hidden" wire:model="quote_lines_id">
+                <input type="hidden" wire:model="order_lines_id">
                 <input type="number" class="form-control @error('ORDRE') is-invalid @enderror" id="ORDRE" placeholder="Enter order" wire:model="ORDRE">
             </div>
             @error('ORDRE') <span class="text-danger">{{ $message }}<br/></span>@enderror
