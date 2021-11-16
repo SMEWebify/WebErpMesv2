@@ -84,7 +84,7 @@ class OrderLine extends Component
 
         $this->validate();
 
-            // Create Category
+            // Create Line
             Orderlines::create([
                 'orders_id'=>$this->orders_id,
                 'ORDRE'=>$this->ORDRE,

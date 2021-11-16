@@ -245,12 +245,12 @@
                                       <td>{{ $Quote->companie['LABEL'] }}</td>
                                       <td>{{ $Quote->customer_reference }}</td>
                                       <td>
-                                        @if(1 == $Quote->STATU )   <span class="badge badge-info"> Open</span>@endif
-                                        @if(2 == $Quote->STATU )  <span class="badge badge-warning">Send</span>@endif
-                                        @if(3 == $Quote->STATU )  <span class="badge badge-success">Win</span>@endif
-                                        @if(4 == $Quote->STATU )  <span class="badge badge-danger">Lost</span>@endif
-                                        @if(5 == $Quote->STATU )  <span class="badge badge-secondary">Closed</span>@endif
-                                        @if(6 == $Quote->STATU )   <span class="badge badge-secondary">Obsolete</span>@endif
+                                        @if(1 == $Quote->statu )   <span class="badge badge-info"> Open</span>@endif
+                                        @if(2 == $Quote->statu )  <span class="badge badge-warning">Send</span>@endif
+                                        @if(3 == $Quote->statu )  <span class="badge badge-success">Win</span>@endif
+                                        @if(4 == $Quote->statu )  <span class="badge badge-danger">Lost</span>@endif
+                                        @if(5 == $Quote->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                                        @if(6 == $Quote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                                       </td>
                                       <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
                                       <td>

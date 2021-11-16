@@ -24,13 +24,17 @@ class HomeController extends Controller
                             ->take(5)
                             ->get();*/
 
-        $data['customers_count'] = DB::table('companies')->where('STATU_CLIENT', 2)->count();
-        $data['suppliers_count'] = DB::table('companies')->where('STATU_FOUR', 2)->count();
+        $data['customers_count'] = DB::table('companies')->where('statu_CLIENT', 2)->count();
+        $data['suppliers_count'] = DB::table('companies')->where('statu_FOUR', 2)->count();
         $data['quotes_count'] = DB::table('quotes')->count();
         $data['orders_count'] = DB::table('orders')->count();
         $data['quality_non_conformities_count'] = DB::table('quality_non_conformities')->count();
         $data['user_count'] = DB::table('users')->count();
-
+        $data['quotesDataRate'] = DB::table('quotes')
+                                    ->select('statu', DB::raw('count(*) as QuoteCountRate'))
+                                    ->groupBy('statu')
+                                    ->get();
+        
         return view('dashboard', [
             'LastProducts' => $LastProducts,
             'LastQuotes' => $LastQuotes,

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
@@ -11,6 +13,8 @@ use App\Models\Quality\QualityDerogation;
 use App\Models\Quality\QualityControlDevice;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\Products\StockLocationProducts;
+use App\Models\workflow\Orders;
+use App\Models\Workflow\Quotes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -48,6 +52,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function adminlte_image()
+    {
+        if(empty($this->image_url)){
+            $this->image_url="img_avatar.png";
+        }
+
+        return asset('/storage/images/profiles/' . $this->image_url);
+    }
+  
+    public function adminlte_profile_url()
+    {
+        
+        return route('user.profile', $this->id);
+    }
+
+    public function adminlte_desc()
+    {
+        return $this->desc;
+    }
 
     public function GetPrettyCreatedAttribute()
     {
@@ -99,5 +123,53 @@ class User extends Authenticatable
         return $this->hasMany(StockLocationProducts::class);
     }
 
+    public function quotes()
+    {
+        return $this->hasMany(Quotes::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Orders::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            // Create default statuses
+            $user->statuses()->createMany([
+                [
+                    'title' => 'Backlog',
+                    'slug' => 'backlog',
+                    'order' => 1
+                ],
+                [
+                    'title' => 'Up Next',
+                    'slug' => 'up-next',
+                    'order' => 2
+                ],
+                [
+                    'title' => 'In Progress',
+                    'slug' => 'in-progress',
+                    'order' => 3
+                ],
+                [
+                    'title' => 'Done',
+                    'slug' => 'done',
+                    'order' => 4
+                ]
+            ]);
+        });
+    }
+
     
+    public function tasks()
+    {
+        return $this->hasMany(Task::class)->orderBy('ORDER')->whereNotNull('order_lines_id');
+    }
+
+    public function statuses()
+    {
+        return $this->hasMany(Status::class)->orderBy('order');
+    }
 }

@@ -22,7 +22,7 @@ class CreateQuotesTable extends Migration
 			$table->integer('companies_contacts_id');
 			$table->integer('companies_addresses_id');
 			$table->date('validity_date')->nullable();
-			$table->integer('STATU')->default(1);
+			$table->integer('statu')->default(1);
 			$table->integer('user_id');
 			$table->integer('accounting_payment_conditions_id');
 			$table->integer('accounting_payment_methods_id');

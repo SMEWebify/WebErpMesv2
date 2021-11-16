@@ -14,7 +14,7 @@ class QualityNonConformityController extends Controller
        
         $NonConformity =  QualityNonConformity::create($request->only('CODE',
                                                                 'LABEL', 
-                                                                'STATU',
+                                                                'statu',
                                                                 'TYPE', 
                                                                 'user_id',
                                                                 'service_id',  

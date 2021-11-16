@@ -42,12 +42,12 @@
                   </div>
                 </div>
                 <div class="col-4">
-                    <label for="LABEL">Label</label>
+                    <label for="label">Label</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-tags"></i></span>
                       </div>
-                      <input type="text" class="form-control" name="LABEL"  id="LABEL_TechnicalCut_{{ $id_line }}" placeholder="Label">
+                      <input type="text" class="form-control" name="label"  id="LABEL_TechnicalCut_{{ $id_line }}" placeholder="Label">
                     </div>
                 </div>
               </div>

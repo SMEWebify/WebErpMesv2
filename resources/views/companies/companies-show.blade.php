@@ -97,7 +97,7 @@
           @endif
         <!-- /.div row -->
         </div>
-        @if($Companie->STATU_CLIENT == 2 )
+        @if($Companie->statu_CLIENT == 2 )
         <hr>
         <div class="row">
           <h3 class="card-title">Customer informations</h3>
@@ -133,7 +133,7 @@
         
         @endif
 
-        @if($Companie->STATU_FOUR == 2 )
+        @if($Companie->statu_FOUR == 2 )
         <hr>
         <div class="row">
           <h3 class="card-title">Supplier informations</h3>

@@ -67,9 +67,9 @@ return [
     'usermenu_enabled' => true,
     'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
-    'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
+    'usermenu_image' => true,
+    'usermenu_desc' => true,
+    'usermenu_profile_url' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -88,7 +88,7 @@ return [
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => true,
     'layout_fixed_footer' => true,
-    'layout_dark_mode' => false,
+    'layout_dark_mode' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -271,6 +271,7 @@ return [
                     'text' => 'Task list',
                     'url'  => '#',
                     'icon' => 'fas fa-tasks',
+                    'url'  => 'production/Task',
                 ],
                 [
                     'text' => 'Kanban',
@@ -361,7 +362,7 @@ return [
             'url'  => 'accouting',
         ],
         [
-            'text'        => 'User',
+            'text'        => 'Users',
             'url'         => 'users',
             'icon'        => 'fas fa-users',
         ],
@@ -369,11 +370,6 @@ return [
             'text' => 'Your companie',
             'url'  => 'admin/factory',
             'icon'    => 'fas fa-industry',
-        ],
-        [
-            'text' => 'profile',
-            'url'  => '#',
-            'icon' => 'fas fa-fw fa-user',
         ],
         [
             'text' => 'change password',
@@ -434,6 +430,16 @@ return [
                     'type' => 'css',
                     'asset' => true,
                     'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => '//cdn.datatables.net/responsive/2.2.6/css/responsive.bootstrap4.min.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => '//cdn.datatables.net/buttons/1.6.4/css/buttons.bootstrap4.min.css',
                 ],
             ],
         ],

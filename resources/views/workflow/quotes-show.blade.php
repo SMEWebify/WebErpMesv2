@@ -54,18 +54,18 @@
                 <label for="CODE">External ID :</label>  {{  $Quote->CODE }}
               </div>
               <div class="col-3">
-                <label for="STATU">Statu :</label>
+                <label for="statu">Statu :</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="STATU" id="STATU">
-                    <option value="1" @if(1 == $Quote->STATU ) Selected @endif >Open</option>
-                    <option value="2" @if(2 == $Quote->STATU ) Selected @endif >Send</option>
-                    <option value="3" @if(3 == $Quote->STATU ) Selected @endif >Win</option>
-                    <option value="4" @if(4 == $Quote->STATU ) Selected @endif >Lost</option>
-                    <option value="5" @if(5 == $Quote->STATU ) Selected @endif >Closed</option>
-                    <option value="6" @if(6 == $Quote->STATU ) Selected @endif >Obsolete</option>
+                  <select class="form-control" name="statu" id="statu">
+                    <option value="1" @if(1 == $Quote->statu ) Selected @endif >Open</option>
+                    <option value="2" @if(2 == $Quote->statu ) Selected @endif >Send</option>
+                    <option value="3" @if(3 == $Quote->statu ) Selected @endif >Win</option>
+                    <option value="4" @if(4 == $Quote->statu ) Selected @endif >Lost</option>
+                    <option value="5" @if(5 == $Quote->statu ) Selected @endif >Closed</option>
+                    <option value="6" @if(6 == $Quote->statu ) Selected @endif >Obsolete</option>
                   </select>
                 </div>
               </div>
@@ -193,7 +193,7 @@
 
       </div>   
       <div class="tab-pane " id="QuoteLines">
-        @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->STATU])
+        @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu])
       </div> 
 
       <div class="tab-pane " id="Print">

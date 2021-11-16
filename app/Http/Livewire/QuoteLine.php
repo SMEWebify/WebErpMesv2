@@ -22,6 +22,7 @@ class QuoteLine extends Component
     public $ProductsSelect = [];
     public $UnitsSelect = [];
     public $VATSelect = [];
+    public $Factory = [];
     public $ProductSelect  = [];
     public $TechServicesSelect = [];
     public $BOMServicesSelect = [];
@@ -82,7 +83,7 @@ class QuoteLine extends Component
 
         $this->validate();
 
-            // Create Category
+            // Create Line
             Quotelines::create([
                 'quotes_id'=>$this->quotes_id,
                 'ORDRE'=>$this->ORDRE,

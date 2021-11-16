@@ -15,7 +15,7 @@ class CreateTasksTable extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('LABEL');
+            $table->string('label');
 			$table->integer('ORDER');
 			$table->integer('quote_lines_id')->nullable();
 			$table->integer('order_lines_id')->nullable();
@@ -26,12 +26,12 @@ class CreateTasksTable extends Migration
 			$table->decimal('UNIT_TIME', 10, 3)->nullable();
 			$table->decimal('REMAINING_TIME', 10, 3)->nullable();
 			$table->decimal('ADVANCEMENT', 10, 3)->nullable()->default(0.000);
-			$table->integer('STATU')->default(1);
+			$table->integer('statu')->default(1);
 			$table->integer('TYPE');
 			$table->date('DELAY')->nullable();
-			$table->integer('QTY')->nullable();
-			$table->integer('QTY_INIT')->nullable();
-			$table->integer('QTY_AVIABLE')->nullable();
+			$table->integer('qty')->nullable();
+			$table->integer('qty_init')->nullable();
+			$table->integer('qty_aviable')->nullable();
 			$table->decimal('UNIT_COST', 10, 3)->default(0.000);
 			$table->decimal('UNIT_PRICE', 10, 3)->default(0.000);
 			$table->integer('methods_units_id')->nullable();

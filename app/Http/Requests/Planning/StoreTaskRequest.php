@@ -25,7 +25,7 @@ class StoreTaskRequest extends FormRequest
     {
         return [
             //
-            'LABEL'=>'required',
+            'label'=>'required',
             'ORDER'=>'required',
             'methods_services_id'=>'required|numeric',
             'component_id'=>'numeric',

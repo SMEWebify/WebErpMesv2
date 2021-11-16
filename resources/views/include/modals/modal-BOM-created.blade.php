@@ -63,23 +63,23 @@
                 </div>
               </div>
               <div class="col-3">
-                  <label for="LABEL">Label</label>
+                  <label for="label">Label</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                    <input type="text" class="form-control" name="LABEL"  id="LABEL_BOM_{{ $id_line }}" placeholder="Label">
+                    <input type="text" class="form-control" name="label"  id="LABEL_BOM_{{ $id_line }}" placeholder="Label">
                   </div>
               </div>
             </div>
             <div class="row">
               <div class="col-3">
-                <label for="QTY">Quantity</label>
+                <label for="qty">Quantity</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-times"></i></span>
                   </div>
-                 <input type="number" class="form-control" name="QTY"  id="QTY" placeholder="Quantity" step=".001">
+                 <input type="number" class="form-control" name="qty"  id="qty" placeholder="Quantity" step=".001">
                 </div>
               </div>
               <div class="col-3">

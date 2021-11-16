@@ -120,7 +120,7 @@ class OrdersController extends Controller
                                                         'companies_contacts_id',   
                                                         'companies_addresses_id',  
                                                         'validity_date',  
-                                                        'STATU',  
+                                                        'statu',  
                                                         'user_id',  
                                                         'accounting_payment_conditions_id',  
                                                         'accounting_payment_methods_id',  
@@ -137,7 +137,7 @@ class OrdersController extends Controller
        
         $Order = Orders::find($request->id);
         $Order->LABEL=$request->LABEL;
-        $Order->STATU=$request->STATU;
+        $Order->statu=$request->statu;
         $Order->customer_reference=$request->customer_reference;
         $Order->companies_id=$request->companies_id;
         $Order->companies_contacts_id=$request->companies_contacts_id;
@@ -149,7 +149,7 @@ class OrdersController extends Controller
         $Order->comment=$request->comment;
         $Order->save();
 
-        $OrderLines = OrderLines::where('orders_id', $request->id)->update(['statu' => $request->STATU]);
+        $OrderLines = OrderLines::where('orders_id', $request->id)->update(['statu' => $request->statu]);
 
         return redirect()->route('order.show', ['id' =>  $Order->id])->with('success', 'Successfully updated Order');
 

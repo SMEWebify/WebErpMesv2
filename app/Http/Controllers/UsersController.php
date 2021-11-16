@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
@@ -14,6 +15,14 @@ class UsersController extends Controller
 
         return view('Users', [
             'Users' => $Users
+        ]);
+    }
+
+    public function profile()
+    {
+        $UserProfil = User::find(Auth::user()->id);
+        return view('profile', [
+            'UserProfil' => $UserProfil
         ]);
     }
 }

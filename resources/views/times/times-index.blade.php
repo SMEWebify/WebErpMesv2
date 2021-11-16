@@ -73,7 +73,7 @@
                           @if($TimesAbsence->absence_type_day  == 2)Workable day @endif
                           @if($TimesAbsence->absence_type_day  == 3)Worked day @endif
                         </td>
-                        <td>{{ $TimesAbsence->STATU }}</td>
+                        <td>{{ $TimesAbsence->statu }}</td>
                         <td>{{ $TimesAbsence->START_DATE }}</td>
                         <td>{{ $TimesAbsence->END_DATE }}</td>
                         <td class="text-right py-0 align-middle">
@@ -336,8 +336,8 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="MACHINE_STATUS">Machine status</label>
-                      <select class="form-control" name="MACHINE_STATUS" id="MACHINE_STATUS">
+                      <label for="MACHINE_statuS">Machine status</label>
+                      <select class="form-control" name="MACHINE_statuS" id="MACHINE_statuS">
                           @foreach ($TimesMachineEventsSelect as $item)
                           <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
                           @endforeach

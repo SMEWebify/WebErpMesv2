@@ -101,27 +101,35 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          <h5 class="card-title">Monthly Recap Report</h5>
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <div class="btn-group">
-              <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                <i class="fas fa-wrench"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-right" role="menu">
-                <a href="#" class="dropdown-item">Action</a>
-                <a href="#" class="dropdown-item">Another action</a>
-                <a href="#" class="dropdown-item">Something else here</a>
-                <a class="dropdown-divider"></a>
-                <a href="#" class="dropdown-item">Separated link</a>
+          <div class="row">
+            <div class="col-md-8">
+              <h5 class="card-title">Monthly Recap Report</h5>
+              <div class="card-tools">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                    <i class="fas fa-wrench"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right" role="menu">
+                    <a href="#" class="dropdown-item">Action</a>
+                    <a href="#" class="dropdown-item">Another action</a>
+                    <a href="#" class="dropdown-item">Something else here</a>
+                    <a class="dropdown-divider"></a>
+                    <a href="#" class="dropdown-item">Separated link</a>
+                  </div>
+                </div>
               </div>
             </div>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
+            <div class="col-md-4">
+              <h5 class="card-title">Monthly Recap Task</h5>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <!-- /.card-header -->
@@ -134,7 +142,7 @@
 
               <div class="chart">
                 <!-- Sales Chart Canvas -->
-                  <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  <canvas id="lineChart" style="min-height: 250px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
               </div>
               <!-- /.chart-responsive -->
             </div>
@@ -246,7 +254,7 @@
           <div class="row">
             <div class="col-md-8">
               <div class="chart-responsive">
-                <canvas id="QuoteRate"  height="200"></canvas>
+                <canvas id="QuoteRate"  style="min-height: 250px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
               </div>
               <!-- ./chart-responsive -->
             </div>
@@ -284,7 +292,8 @@
               <th>Quote ID</th>
               <th>Customer</th>
               <th>Status</th>
-              <th>Total cost</th>
+              <th>Created at</th>
+              <th>Assigned</th>
             </tr>
             </thead>
             <tbody>
@@ -293,16 +302,15 @@
                 <td><a href="{{ route('quote.show', ['id' => $LastQuote->id])}}">{{ $LastQuote->CODE }}</a></td>
                 <td>{{ $LastQuote->companie['LABEL'] }}</td>
                 <td>
-                  @if(1 == $LastQuote->STATU )   <span class="badge badge-info"> Open</span>@endif
-                  @if(2 == $LastQuote->STATU )  <span class="badge badge-warning">Send</span>@endif
-                  @if(3 == $LastQuote->STATU )  <span class="badge badge-success">Win</span>@endif
-                  @if(4 == $LastQuote->STATU )  <span class="badge badge-danger">Lost</span>@endif
-                  @if(5 == $LastQuote->STATU )  <span class="badge badge-secondary">Closed</span>@endif
-                  @if(6 == $LastQuote->STATU )   <span class="badge badge-secondary">Obsolete</span>@endif
+                  @if(1 == $LastQuote->statu )   <span class="badge badge-info"> Open</span>@endif
+                  @if(2 == $LastQuote->statu )  <span class="badge badge-warning">Send</span>@endif
+                  @if(3 == $LastQuote->statu )  <span class="badge badge-success">Win</span>@endif
+                  @if(4 == $LastQuote->statu )  <span class="badge badge-danger">Lost</span>@endif
+                  @if(5 == $LastQuote->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                  @if(6 == $LastQuote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                 </td>
-                <td>
-                  <div class="sparkbar" data-color="#f56954" data-height="20">x €</div>
-                </td>
+                <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
+                <td>{{ $LastQuote->user['name'] }}</td>
               </tr>
               <!-- /.item -->
               @empty
@@ -351,9 +359,10 @@
               <thead>
               <tr>
                 <th>Order ID</th>
-                <th>Item</th>
+                <th>Customer</th>
                 <th>Status</th>
-                <th>Popularity</th>
+                <th>Created at</th>
+                <th>Assigned</th>
               </tr>
               </thead>
               <tbody>
@@ -367,9 +376,8 @@
                     @if(3 == $LastOrder->statu )  <span class="badge badge-success">Delivered</span>@endif
                     @if(4 == $LastOrder->statu )  <span class="badge badge-danger">Partly delivered</span>@endif
                   </td>
-                  <td>
-                    <div class="sparkbar" data-color="#f56954" data-height="20">x €</div>
-                  </td>
+                  <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
+                  <td>{{ $LastOrder->user['name'] }}</td>
                 </tr>
                 <!-- /.item -->
                 @empty
@@ -413,7 +421,7 @@
             @forelse ($LastProducts as $LastProduct)
             <li class="item">
               <div class="product-img">
-                <img src="{{ asset('storage/'.$LastProduct->PICTURE) }} alt="Product Image" class="img-size-50">
+                <img src="{{ asset('/storage/images/products/'. $LastProduct->PICTURE) }} alt="Product Image" class="img-size-50">
               </div>
               <div class="product-info">
                 <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->LABEL }} {{ $LastProduct->IND }}
@@ -455,9 +463,22 @@
   var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-          labels: ['Open', 'Send', 'Win', 'Lost', 'Closed', 'Obselete'],
+          labels: [
+            @foreach ($data['quotesDataRate'] as $item)
+              @if(1 == $item->statu )  "Open", @endif
+              @if(2 == $item->statu )  "Send", @endif
+              @if(3 == $item->statu )  "Win", @endif
+              @if(4 == $item->statu )  "Lost", @endif
+              @if(5 == $item->statu )  "Closed", @endif
+              @if(6 == $item->statu )  "Obsolete", @endif
+            @endforeach
+            ],
           datasets: [{
-              data: [12, 19, 3, 5, 2, 3],
+              data: [
+                @foreach ($data['quotesDataRate'] as $item)
+                "{{ $item->QuoteCountRate }}",
+            @endforeach
+              ],
               backgroundColor: [
                   'rgba(23, 162, 184, 1)',
                   'rgba(255, 193, 7, 1)',
@@ -485,26 +506,33 @@
                     boxWidth: 20,
                     padding: 20
                 }
+            },
+            scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }]
             }
       }
   });
 
 
   //--------------
-    //- AREA CHART -
+    //- LINE CHART -
     //--------------
 
     // Get context with jQuery - using jQuery's .get() method.
-    var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
+    var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
 
     var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','September','December ' ],
       datasets: [
         {
-          label               : 'Digital Goods',
+          label               : 'Order revenues',
           backgroundColor     : 'rgba(60,141,188,0.9)',
           borderColor         : 'rgba(60,141,188,0.8)',
-          pointRadius          : false,
+          pointRadius          : 5,
           pointColor          : '#3b8bba',
           pointStrokeColor    : 'rgba(60,141,188,1)',
           pointHighlightFill  : '#fff',
@@ -512,10 +540,10 @@
           data                : [28, 48, 40, 19, 86, 27, 90]
         },
         {
-          label               : 'Electronics',
+          label               : 'Order targets ',
           backgroundColor     : 'rgba(210, 214, 222, 1)',
           borderColor         : 'rgba(210, 214, 222, 1)',
-          pointRadius         : false,
+          pointRadius         : 5,
           pointColor          : 'rgba(210, 214, 222, 1)',
           pointStrokeColor    : '#c1c7d1',
           pointHighlightFill  : '#fff',
@@ -528,17 +556,17 @@
       maintainAspectRatio : false,
       responsive : true,
       legend: {
-        display: false
+        display: true
       },
       scales: {
         xAxes: [{
           gridLines : {
-            display : false,
+            display : true,
           }
         }],
         yAxes: [{
           gridLines : {
-            display : false,
+            display : true,
           }
         }]
       }
@@ -550,13 +578,11 @@
       data: areaChartData,
       options: areaChartOptions
     })
-   //-------------
-    //- LINE CHART -
-    //--------------
+
     var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
     var lineChartOptions = $.extend(true, {}, areaChartOptions)
     var lineChartData = $.extend(true, {}, areaChartData)
-    lineChartData.datasets[0].fill = false;
+    lineChartData.datasets[0].fill = true;
     lineChartData.datasets[1].fill = false;
     lineChartOptions.datasetFill = false
 

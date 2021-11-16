@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Planning;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Planning\StoreTaskRequest;
@@ -11,9 +13,54 @@ use App\Http\Requests\Planning\UpdateTaskRequest;
 class TaskController extends Controller
 {
     //
+
+    public function index()
+    {
+        $Factory = Factory::first();
+        if(!$Factory){
+            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+        }
+
+        return view('workflow/task-index', [
+            'Factory' => $Factory
+        ]);
+    }
+
+    public function kanban()
+    {
+        $tasks = auth()->user()->statuses()->with('tasks')->get();
+
+        $Factory = Factory::first();
+        if(!$Factory){
+            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+        }
+
+        return view('workflow/kanban-index', compact('tasks', 'Factory'));
+    }
+
+    public function sync(Request $request)
+    {
+        $this->validate(request(), [
+            'columns' => ['required', 'array']
+        ]);
+
+        foreach ($request->columns as $status) {
+            foreach ($status['tasks'] as $i => $task) {
+                $order = $i + 1;
+                if ($task['status_id'] !== $status['id'] || $task['order'] !== $order) {
+                    request()->user()->tasks()
+                        ->find($task['id'])
+                        ->update(['status_id' => $status['id'], 'order' => $order]);
+                }
+            }
+        }
+
+        return $request->user()->statuses()->with('tasks')->get();
+    }
+
     public function store(StoreTaskRequest $request, $id)
     {
-        $Task = Task::create($request->only('LABEL', 
+        $Task = Task::create($request->only('label', 
                                             'ORDER',
                                             'quote_lines_id',
                                             'order_lines_id',
@@ -24,7 +71,7 @@ class TaskController extends Controller
                                             'UNIT_TIME', 
                                             'REMAINING_TIME', 
                                             'ADVANCEMENT', 
-                                            'STATU', 
+                                            'statu', 
                                             'TYPE',
                                             'DELAY',
                                             'QTY',
@@ -68,10 +115,10 @@ class TaskController extends Controller
             return redirect()->route('products.show', ['id' => $id_page])->with('success', 'Successfully delete task #'. $id_task);
         }
         elseif($id_type == 'quote_lines_id'){
-            return redirect()->route('quote.show', ['id' => $id_page].'#QuoteLines')->with('success', 'Successfully delete task #'. $id_task);
+            return redirect()->to(route('quote.show', ['id' => $id_page]).'#QuoteLines')->with('success', 'Successfully delete task #'. $id_task);
         }
         elseif($id_type == 'order_lines_id'){
-            return redirect()->route('quote.show', ['id' => $id_page].'#OrderLines')->with('success', 'Successfully delete task #'. $id_task);
+            return redirect()->to(route('order.show', ['id' => $id_page]).'#OrderLines')->with('success', 'Successfully delete task #'. $id_task);
         }
     }
 
@@ -79,7 +126,7 @@ class TaskController extends Controller
     {
 
         $task = Task::find($request->id);
-        $task->LABEL=$request->LABEL;
+        $task->label=$request->label;
         $task->ORDER=$request->ORDER;
         $task->products_id=$request->products_id;
         $task->methods_services_id=$request->methods_services_id;

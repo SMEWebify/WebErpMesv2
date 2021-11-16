@@ -245,12 +245,12 @@
                                       <td>{{ $Order->companie['LABEL'] }}</td>
                                       <td>{{ $Order->customer_reference }}</td>
                                       <td>
-                                        @if(1 == $Order->STATU )   <span class="badge badge-info"> Open</span>@endif
-                                        @if(2 == $Order->STATU )  <span class="badge badge-warning">Send</span>@endif
-                                        @if(3 == $Order->STATU )  <span class="badge badge-success">Win</span>@endif
-                                        @if(4 == $Order->STATU )  <span class="badge badge-danger">Lost</span>@endif
-                                        @if(5 == $Order->STATU )  <span class="badge badge-secondary">Closed</span>@endif
-                                        @if(6 == $Order->STATU )   <span class="badge badge-secondary">Obsolete</span>@endif
+                                        @if(1 == $Order->statu )   <span class="badge badge-info"> Open</span>@endif
+                                        @if(2 == $Order->statu )  <span class="badge badge-warning">Send</span>@endif
+                                        @if(3 == $Order->statu )  <span class="badge badge-success">Win</span>@endif
+                                        @if(4 == $Order->statu )  <span class="badge badge-danger">Lost</span>@endif
+                                        @if(5 == $Order->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                                        @if(6 == $Order->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                                       </td>
                                       <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
                                       <td>

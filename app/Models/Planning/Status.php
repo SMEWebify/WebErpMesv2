@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models\Planning;
+
+use App\Models\User;
+use App\Models\Planning\Task;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Status extends Model
+{
+    protected $fillable = ['title', 'slug', 'order'];
+
+    public $timestamps = false;
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class)->orderBy('ORDER')->whereNotNull('order_lines_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+}

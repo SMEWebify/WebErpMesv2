@@ -17,7 +17,7 @@ class QualityDerogationController extends Controller
        
         $Derogation =  QualityDerogation::create($request->only('CODE',
                                                                 'LABEL', 
-                                                                'STATU',
+                                                                'statu',
                                                                 'TYPE', 
                                                                 'user_id',
                                                                 'service_id',  

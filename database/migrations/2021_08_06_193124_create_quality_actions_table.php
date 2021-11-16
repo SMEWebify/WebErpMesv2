@@ -17,7 +17,7 @@ class CreateQualityActionsTable extends Migration
             $table->id();
             $table->string('CODE');
 			$table->string('LABEL');
-            $table->text('STATU');
+            $table->text('statu');
             $table->text('TYPE');
 			$table->integer('user_id');
 			$table->text('PB_DESCP', 65535)->nullable();

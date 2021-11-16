@@ -10,7 +10,7 @@ class TimesAbsence extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id',  'absence_type',  'absence_type_day',  'STATU',  'START_DATE',  'END_DATE'];
+    protected $fillable = ['user_id',  'absence_type',  'absence_type_day',  'statu',  'START_DATE',  'END_DATE'];
 
     public function User()
 {

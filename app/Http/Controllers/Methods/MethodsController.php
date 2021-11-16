@@ -31,7 +31,7 @@ class MethodsController extends Controller
         $MethodsTools = MethodsTools::orderBy('CODE')->paginate(10);
 
         $userSelect = User::select('id', 'name')->get();
-        $CompaniesSelect = Companies::select('id', 'LABEL')->orderBy('LABEL')->where('STATU_FOUR', 2)->get();
+        $CompaniesSelect = Companies::select('id', 'LABEL')->orderBy('LABEL')->where('statu_FOUR', 2)->get();
 
         return view('methods/methods-index', [
             'MethodsServices' => $MethodsServices,

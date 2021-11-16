@@ -13,7 +13,7 @@ class QualityActionController extends Controller
        
         $Action = QualityAction::create($request->only('CODE',
                                                         'LABEL', 
-                                                        'STATU',
+                                                        'statu',
                                                         'TYPE', 
                                                         'user_id',
                                                         'PB_DESCP',  

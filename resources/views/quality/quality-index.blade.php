@@ -146,12 +146,12 @@
                 </div>
               </div>
               <div class="col-2">
-                <label for="STATU">Statu</label>
+                <label for="statu">Statu</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="STATU" id="STATU">
+                  <select class="form-control" name="statu" id="statu">
                     <option value="1">In Progess</option>
                     <option value="2">Waiting Customer Data</option>
                     <option value="3">Validate</option>
@@ -329,12 +329,12 @@
                 </div>
               </div>
               <div class="col-2">
-                <label for="STATU">Statu</label>
+                <label for="statu">Statu</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="STATU" id="STATU">
+                  <select class="form-control" name="statu" id="statu">
                     <option value="1">In Progess</option>
                     <option value="2">Waiting Customer Data</option>
                     <option value="3">Validate</option>
@@ -514,12 +514,12 @@
                 </div>
               </div>
               <div class="col-2">
-                <label for="STATU">Statu</label>
+                <label for="statu">Statu</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="STATU" id="STATU">
+                  <select class="form-control" name="statu" id="statu">
                     <option value="1">In Progess</option>
                     <option value="2">Waiting Customer Data</option>
                     <option value="3">Validate</option>

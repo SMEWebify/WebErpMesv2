@@ -13,7 +13,7 @@ class QualityDerogation extends Model
 
     protected $fillable = ['CODE',
     'LABEL', 
-    'STATU',
+    'statu',
     'TYPE', 
     'user_id',
     'service_id',  

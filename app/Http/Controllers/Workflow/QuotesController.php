@@ -120,7 +120,7 @@ class QuotesController extends Controller
                                                         'companies_contacts_id',   
                                                         'companies_addresses_id',  
                                                         'validity_date',  
-                                                        'STATU',  
+                                                        'statu',  
                                                         'user_id',  
                                                         'accounting_payment_conditions_id',  
                                                         'accounting_payment_methods_id',  
@@ -137,7 +137,7 @@ class QuotesController extends Controller
        
         $Quote = Quotes::find($request->id);
         $Quote->LABEL=$request->LABEL;
-        $Quote->STATU=$request->STATU;
+        $Quote->statu=$request->statu;
         $Quote->customer_reference=$request->customer_reference;
         $Quote->companies_id=$request->companies_id;
         $Quote->companies_contacts_id=$request->companies_contacts_id;
@@ -149,7 +149,7 @@ class QuotesController extends Controller
         $Quote->comment=$request->comment;
         $Quote->save();
 
-        $QuoteLines = QuoteLines::where('quotes_id', $request->id)->update(['statu' => $request->STATU]);
+        $QuoteLines = QuoteLines::where('quotes_id', $request->id)->update(['statu' => $request->statu]);
 
         return redirect()->route('quote.show', ['id' =>  $Quote->id])->with('success', 'Successfully updated quote');
 

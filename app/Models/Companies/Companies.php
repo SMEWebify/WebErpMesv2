@@ -22,12 +22,12 @@ class Companies extends Model
                             'SIREN', 
                             'APE', 
                             'TVA_INTRA', 
-                            'STATU_CLIENT',
+                            'statu_CLIENT',
                             'DISCOUNT',
                             'user_id',
                             'COMPTE_GEN_CLIENT',
                             'COMPTE_AUX_CLIENT',
-                            'STATU_FOUR',
+                            'statu_FOUR',
                             'COMPTE_GEN_FOUR',
                             'COMPTE_AUX_FOUR',
                             'RECEPT_CONTROLE',
@@ -48,7 +48,6 @@ class Companies extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
 
     public function GetPrettyCreatedAttribute()
     {

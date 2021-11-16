@@ -24,7 +24,7 @@ class Quotes extends Model
                             'companies_contacts_id',   
                             'companies_addresses_id',  
                             'validity_date',  
-                            'STATU',  
+                            'statu',  
                             'user_id',  
                             'accounting_payment_conditions_id',  
                             'accounting_payment_methods_id',  
@@ -69,6 +69,11 @@ class Quotes extends Model
     public function QuoteLines()
     {
         return $this->hasMany(QuoteLines::class)->orderBy('ORDRE');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function GetPrettyCreatedAttribute()

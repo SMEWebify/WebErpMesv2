@@ -6,6 +6,7 @@ use App\Models\Products\Products;
 use App\Models\Methods\MethodsFamilies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Methods\MethodsRessources;
+use App\Models\Planning\Task;
 use App\Models\Quality\QualityControlDevice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -33,6 +34,11 @@ class MethodsServices extends Model
     public function Product()
     {
         return $this->hasMany(Products::class);
+    }
+
+    public function Tasks()
+    {
+        return $this->morphedByMany(Task::class, 'methods_services_id');
     }
 
     public function GetPrettyCreatedAttribute()

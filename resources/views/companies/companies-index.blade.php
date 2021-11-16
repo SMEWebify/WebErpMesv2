@@ -133,12 +133,12 @@
                 <hr>
                 <div class="row">
                   <div class="col-3">
-                    <label for="STATU_CLIENT">Statu client</label>
+                    <label for="statu_CLIENT">Statu client</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                       </div>
-                      <select class="form-control" name="STATU_CLIENT" id="STATU_CLIENT">
+                      <select class="form-control" name="statu_CLIENT" id="statu_CLIENT">
                         <option value="1">Inactive</option>
                         <option value="2">Active</option>
                         <option value="3">Prospect</option>
@@ -166,19 +166,19 @@
                 <hr>
                 <div class="row">
                   <div class="col-3">
-                    <label for="STATU_FOUR">Statu supplier</label>
+                    <label for="statu_FOUR">Statu supplier</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                       </div>
-                      <select class="form-control" name="STATU_FOUR" id="STATU_FOUR">
+                      <select class="form-control" name="statu_FOUR" id="statu_FOUR">
                         <option value="1">Inactive</option>
                         <option value="2">Active</option>
                       </select>
                     </div>
                   </div>
                   <div class="col-3">
-                    <label for="STATU_FOUR">Reception control</label>
+                    <label for="statu_FOUR">Reception control</label>
                     <select class="form-control" name="RECEPT_CONTROLE" id="RECEPT_CONTROLE">
                       <option value="1">Yes</option>
                       <option value="2">No</option>
@@ -249,16 +249,16 @@
                                 <td>{{ $Companie->LABEL }}</td>
                                 <td>{{ $Companie->GetPrettyCreatedAttribute() }}</td>
                                 <td>
-                                  @if($Companie->STATU_CLIENT == 2 )
+                                  @if($Companie->statu_CLIENT == 2 )
                                   <i class="fas fa-check-double"></i>
-                                  @elseif($Companie->STATU_CLIENT == 3 )
+                                  @elseif($Companie->statu_CLIENT == 3 )
                                   <i class="fas fa-check"></i>
                                   @else
                                   <i class="fas fa-times"></i>
                                   @endif
                                 </td>
                                 <td>
-                                  @if($Companie->STATU_FOUR == 2 )
+                                  @if($Companie->statu_FOUR == 2 )
                                   <i class="fas fa-check"></i>
                                   @else
                                   <i class="fas fa-times"></i>
@@ -298,9 +298,6 @@
 @stop
                   
  @section('css')
-    
-   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
-   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css">
  @stop
                   
 @section('js')

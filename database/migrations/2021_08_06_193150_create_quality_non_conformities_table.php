@@ -17,7 +17,7 @@ class CreateQualityNonConformitiesTable extends Migration
             $table->id();
             $table->string('CODE');
 			$table->string('LABEL');
-			$table->integer('STATU');
+			$table->integer('statu');
 			$table->integer('TYPE');
 			$table->integer('user_id');
 			$table->integer('service_id');

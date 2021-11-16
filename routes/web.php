@@ -95,12 +95,12 @@ Route::group(['prefix' => 'task'], function () {
     Route::get('/Task/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->middleware(['auth'])->name('task.delete');
     Route::post('/Task/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
     Route::post('/Task/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->middleware(['auth'])->name('task.update');
+    Route::put('/Task/sync', 'App\Http\Controllers\Planning\TaskController@sync')->name('tasks.sync');
 });
 
 Route::group(['prefix' => 'production'], function () {
-    Route::get("/kanban", function(){
-        return View::make("workflow/kanban-index");
-     });
+    Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->middleware(['auth'])->name('production.task');
+    Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->middleware(['auth'])->name('production.kanban');
 });
 
 Route::group(['prefix' => 'admin'], function () {
@@ -134,9 +134,14 @@ Route::group(['prefix' => 'methods'], function () {
 });
 
 
+Route::group(['prefix' => 'users'], function () {
 
+    Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
+    Route::get('/Profile', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');
+    Route::get('/Profile/Update', 'App\Http\Controllers\UsersController@update')->middleware(['auth'])->name('user.profile.update');
 
-Route::get('/users', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
+});
+
 
 require __DIR__.'/auth.php';
 

@@ -25,7 +25,8 @@
       <li class="nav-item"><a class="nav-link" href="{{ route('orders') }}">Back to lists</a></li>
       <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">Order info</a></li>
       <li class="nav-item"><a class="nav-link" href="#OrderLines" data-toggle="tab">Order lines</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Print" data-toggle="tab">Print</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Print" data-toggle="tab">Print order</a></li>
+      <li class="nav-item"><a class="nav-link" href="#PrintConfirm" data-toggle="tab">Print order confirm</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -54,12 +55,12 @@
                 <label for="CODE">External ID :</label>  {{  $Order->CODE }}
               </div>
               <div class="col-3">
-                <label for="STATU">Statu :</label>
+                <label for="statu">Statu :</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="STATU" id="STATU">
+                  <select class="form-control" name="statu" id="statu">
                     <option value="1" @if(1 == $Order->statu ) Selected @endif >Open</option>
                     <option value="2" @if(2 == $Order->statu ) Selected @endif >In progress</option>
                     <option value="3" @if(3 == $Order->statu ) Selected @endif >Delivered</option>
@@ -349,7 +350,164 @@
           <!-- /.col -->
         </div>
         <!-- /.row -->
-      </div>          
+      </div> 
+      
+      <div class="tab-pane " id="PrintConfirm">
+        <div class="row">
+          <div class="col-12">
+            <x-infocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the invoice to test."  />
+            <!-- Main content -->
+            <div class="invoice p-3 mb-3">
+              <!-- title row -->
+              <div class="row">
+                <div class="col-12">
+                  <h4>
+                    <i class="fas fa-globe"></i> WEM, Inc.
+                    <small class="float-right">Date: {{ date('Y-m-d') }}</small>
+                  </h4>
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- info row -->
+              <div class="row invoice-info">
+                <div class="col-sm-4 invoice-col">
+                  From
+                  <address>
+                    <strong>{{ $Factory->NAME }}</strong><br>
+                    {{ $Factory->ADDRESS }}<br>
+                    {{ $Factory->ZIPCODE }}, {{ $Factory->CITY }}<br>
+                    Phone: {{ $Factory->PHONE_NUMBER }}<br>
+                    Email: {{ $Factory->MAIL }}
+                  </address>
+                </div>
+                <!-- /.col -->
+                <div class="col-sm-4 invoice-col">
+                  To
+                  <address>
+                    <strong>{{ $Order->companie['LABEL'] }}</strong> - <strong>{{ $Order->contact['CIVILITY'] }} - {{ $Order->contact['FIRST_NAME'] }}  {{ $Order->contact['NAME'] }}</strong><br>
+                    {{ $Order->adresse['ADRESS'] }}<br>
+                    {{ $Order->adresse['ZIPCODE'] }}, {{ $Order->adresse['CITY'] }}<br>
+                    {{ $Order->adresse['COUNTRY'] }}<br>
+                    Phone: {{ $Order->contact['NUMBER'] }}<br>
+                    Email: {{ $Order->contact['MAIL'] }}
+                  </address>
+                </div>
+                <!-- /.col -->
+                <div class="col-sm-4 invoice-col">
+                  <b>Order Confirm #{{  $Order->CODE }}</b><br>
+                  <b>Your Ref:</b> {{  $Order->customer_reference }}<br>
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
+
+              <!-- Table row -->
+              <div class="row">
+                <div class="col-12 table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>External ID</th>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th>Unit</th>
+                        <th>Selling price</th>
+                        <th>Discount</th>
+                        <th>VAT</th>
+                        <th>Delivery date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($Order->OrderLines as $OrderLine)
+                        <tr>
+                          <td>{{ $OrderLine->CODE }}</td>
+                          <td>{{ $OrderLine->LABEL }}</td>
+                          <td>{{ $OrderLine->qty }}</td>
+                          <td>{{ $OrderLine->Unit['LABEL'] }}</td>
+                          <td>{{ $OrderLine->selling_price }}  {{ $Factory->curency }}</td>
+                          <td>{{ $OrderLine->discount }} %</td>
+                          <td>{{ $OrderLine->VAT['RATE'] }} %</td>
+                          @if($OrderLine->delivery_date )
+                          <td>{{ $OrderLine->delivery_date }}</td>
+                          @else
+                          <td>No date</td>
+                          @endif
+                          
+                        </tr>
+                      @empty
+                        <tr>
+                          <td>No Lines in this order</td>
+                          <td></td> 
+                          <td></td> 
+                          <td></td> 
+                          <td></td> 
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
+
+              <div class="row">
+                <!-- accepted payments column -->
+                <div class="col-6">
+                  <p class="lead"><strong>Payment Methods:</strong> {{ $Order->payment_condition['LABEL'] }}</p>
+                  <p class="lead"><strong>Payment Conditions:</strong> {{ $Order->payment_method['LABEL'] }}</p>
+                  @if($Order->comment)
+                    <p class="lead"><strong>Comment :</strong></p>
+                    <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                      {{  $Order->comment }}
+                    </p>
+                  @endif
+                </div>
+                <!-- /.col -->
+                <div class="col-6">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <tr>
+                        <th style="width:50%">Subtotal:</th>
+                        <td>{{ $subPrice }} {{ $Factory->curency }} </td>
+                      </tr>
+                      @forelse($vatPrice as $key => $value)
+                      <tr>
+                        <td>Tax <?= $vatPrice[$key][0] ?> %</td>
+                        <td colspan="4"><?= $vatPrice[$key][1] ?> {{ $Factory->curency }}</td>
+                      </tr>
+                      @empty
+                      <tr>
+                        <td>No Tax</td>
+                        <td> </td>
+                      </tr>
+                      @endforelse
+                      <tr>
+                        <th>Total:</th>
+                        <td>{{ $totalPrices }} {{ $Factory->curency }}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
+
+              <!-- this row will not appear when printing -->
+              <div class="row no-print">
+                <div class="col-12">
+                  <a href="{{ route('order.print', ['id' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.invoice -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div> 
   </div>
   <!-- /.card-body -->
 </div>

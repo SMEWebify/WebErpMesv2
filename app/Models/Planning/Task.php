@@ -2,6 +2,7 @@
 
 namespace App\Models\Planning;
 
+use App\Models\User;
 use App\Models\Products\Products;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsTools;
@@ -10,6 +11,7 @@ use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Planning\Status;
 
 class Task extends Model
 {
@@ -26,12 +28,12 @@ class Task extends Model
                             'UNIT_TIME', 
                             'REMAINING_TIME', 
                             'ADVANCEMENT', 
-                            'STATU', 
+                            'statu', 
                             'TYPE',
                             'DELAY',
-                            'QTY',
-                            'QTY_INIT',
-                            'QTY_AVIABLE',
+                            'qty',
+                            'qty_init',
+                            'qty_aviable',
                             'UNIT_COST',
                             'UNIT_PRICE',
                             'methods_units_id',
@@ -88,5 +90,20 @@ class Task extends Model
     public function MethodsTools()
     {
         return $this->belongsTo(MethodsTools::class, 'methods_tools_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function GetPrettyCreatedAttribute()
+    {
+        return date('d F Y', strtotime($this->created_at));
     }
 }
