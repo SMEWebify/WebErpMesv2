@@ -14,7 +14,7 @@ Often, management systems offer full CRM and billing management. But if a link i
 
 MES offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop.
 
-This project using Laravel 8 and bootstrap 4.6.
+This project using Laravel 8, Livewire and bootstrap 4.6.
 
  Admin LTE for laravel : https://github.com/jeroennoten/Laravel-AdminLTE
  Kanban : https://github.com/messerli90/jobhuntbuddy
@@ -52,9 +52,18 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 | Notification system        |      -      |      X     |
    
 -----------------
-Quote management (use Livewire)
+Dashboard
+![image](https://user-images.githubusercontent.com/75578469/142014236-95ee7d9a-1f7f-464f-8843-24617298e888.png)
+
+
+Quote & Order management with task
 ![image](https://user-images.githubusercontent.com/75578469/133943361-0b84e6d1-205a-4b65-8e1a-7ed7628ce513.png)
 ![image](https://user-images.githubusercontent.com/75578469/133943379-fc82f781-f806-4e05-82df-22b3091e4de8.png)
+![image](https://user-images.githubusercontent.com/75578469/142014346-09f2eb77-c6e8-49a5-bf76-d4111f867bda.png)
+
+Kanban 
+![image](https://user-images.githubusercontent.com/75578469/142014584-bb6751ea-51af-404f-9607-fc9f2999c6d4.png)
+
 
 Product management
 ![image](https://user-images.githubusercontent.com/75578469/133003240-b793df70-2088-43ea-9141-bf2b06f0c124.png)
