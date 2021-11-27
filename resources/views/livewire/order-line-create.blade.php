@@ -71,7 +71,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">{{ $Factory->curency }}</span>
                 </div>
-               <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001" value="0">
+                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001" value="0">
             </div>
             @error('selling_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="discount">Discount :</label>
@@ -88,7 +88,7 @@
             <select class="form-control @error('accounting_vats_id') is-invalid @enderror" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
                 <option value="" >Select VAT</option>
                 @foreach ($VATSelect as $item)
-                  <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
+                    <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
                 @endforeach
             </select>
             @error('accounting_vats_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -98,7 +98,7 @@
         </div>
         <div class="col-2">
             <br/>
-             <button type="submit" class="btn btn-success btn-block">Add</button>
+            <button type="submit" class="btn btn-success btn-block">Add</button>
         </div>
     </div>
 </form>

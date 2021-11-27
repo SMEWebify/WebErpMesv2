@@ -47,7 +47,6 @@ class UserProfile extends Component
                 'name'=>$this->name,
                 'email'=>$this->email,
             ])->save();
-
         session()->flash('success','Profile updated Successfully');
     }
 }

@@ -17,13 +17,11 @@
   <form method="POST" action="{{ route('contacts.edit', ['id' => $contact->id]) }}" >
     @csrf
     <div class="card-body">
-      
-
       @if($errors->count())
       <div class="alert alert-danger">
         <ul>
         @foreach ( $errors->all() as $message)
-         <li> {{ $message }}</li>
+          <li> {{ $message }}</li>
         @endforeach
         </ul>
       </div>
@@ -82,7 +80,6 @@
       </div>
     </div>
     <!-- /.card-body -->
-
     <div class="card-footer">
       <button type="reset" class="btn btn-danger pull-left">Reset</button>
       <button type="submit" class="btn btn-primary">Update</button>
@@ -90,11 +87,9 @@
   </form>
 </div>
 @stop
-                  
- @section('css')
-    
- @stop
-                  
+
+@section('css')
+@stop
+
 @section('js')
-  <script> console.log('Hi!'); </script>
 @stop

@@ -12,7 +12,7 @@
   <div class="alert alert-danger">
     <ul>
     @foreach ( $errors->all() as $message)
-     <li> {{ $message }}</li>
+      <li> {{ $message }}</li>
     @endforeach
     </ul>
   </div>
@@ -20,7 +20,7 @@
     <div class="card card-primary">
       <div class="card-body">
         <div class="row">
-          <div class="col-md-6 card-secondary">
+          <div class="col-md-6 card-primary">
             <div class="card-header">
                 <h3 class="card-title">Stocks location list</h3>
             </div>
@@ -74,7 +74,6 @@
             </div>
           <!-- /.card secondary -->
           </div>
-
           <div class="col-md-6 card-secondary">
               <div class="card-header">
                 <h3 class="card-title">New Stock location</h3>
@@ -97,7 +96,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                   <input type="text" class="form-control" name="LABEL" id="LABEL" placeholder="Description">
+                    <input type="text" class="form-control" name="LABEL" id="LABEL" placeholder="Description">
                   </div>
                 </div>
                 <div class="form-group">
@@ -135,17 +134,15 @@
         </div>
       <!-- /.card primary -->
       </div>
-     <!-- /.card --> 
+    <!-- /.card --> 
     </div>
 
 @stop
-   
-@section('css')
- 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css">
-@stop
-   
-@section('js')
 
+@section('css')
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css">
+@stop
+
+@section('js')
 @stop

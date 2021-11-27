@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Workflow;
+namespace App\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreQuoteLinesRequest extends FormRequest
+class StoreInventoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,10 +25,8 @@ class StoreQuoteLinesRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required',
-            'ORDRE'=>'required',
-            'qty'=>'required',
-            
+            'CODE' =>'required|unique:inventories',
+            'LABEL'=>'required',
         ];
     }
 }

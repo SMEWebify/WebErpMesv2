@@ -22,33 +22,9 @@ use App\Models\Accounting\AccountingPaymentConditions;
 class QuotesController extends Controller
 {
     //
-
     public function index()
     {    
-        $Quotes = Quotes::All();
-        $QuoteLines = QuoteLines::All();
-        $userSelect = User::select('id', 'name')->get();
-        $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = companiesContacts::select('id', 'FIRST_NAME','NAME')->get();
-        $LastQuote =  DB::table('quotes')->orderBy('id', 'desc')->first();
-
-        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'CODE','LABEL')->get();
-        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'CODE','LABEL')->get();
-        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'CODE','LABEL')->get();
-
-        return view('workflow/quotes-index', [
-            'Quoteslist' => $Quotes,
-            'QuoteLineslist' => $QuoteLines,
-            'LastQuote' => $LastQuote,
-            'CompanieSelect' => $CompanieSelect,
-            'AddressSelect' => $AddressSelect,
-            'ContactSelect' => $ContactSelect,
-            'userSelect' => $userSelect,
-            'AccountingConditionSelect' => $AccountingConditionSelect,
-            'AccountingMethodsSelect' => $AccountingMethodsSelect,
-            'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
-        ]);
+        return view('workflow/quotes-index');
     }
 
     /**
@@ -57,27 +33,23 @@ class QuotesController extends Controller
      * @param Quotes $Quotes
      * @return \Illuminate\Http\Response
      */
-
+    
     public function show(Quotes $id)
     {
-        
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
         $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
         $ContactSelect = companiesContacts::select('id', 'FIRST_NAME','NAME')->get();
-        
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
-        }
-        
         $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'CODE','LABEL')->get();
         $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'CODE','LABEL')->get();
         $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'CODE','LABEL')->get();
-        
         $QuoteCalculator = new QuoteCalculator($id);
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
         $vatPrice = $QuoteCalculator->getVatTotal();
+        $Factory = Factory::first();
+        if(!$Factory){
+            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+        }
 
         return view('workflow/quotes-show', [
             'Quote' => $id,
@@ -109,32 +81,9 @@ class QuotesController extends Controller
             'vatPrice' => $vatPrice,
         ]);
     }
-
-    public function store(StoreQuoteRequest $request)
-    {
-       
-        $Quote = Quotes::create($request->only('CODE', 
-                                                        'LABEL', 
-                                                        'customer_reference',
-                                                        'companies_id', 
-                                                        'companies_contacts_id',   
-                                                        'companies_addresses_id',  
-                                                        'validity_date',  
-                                                        'statu',  
-                                                        'user_id',  
-                                                        'accounting_payment_conditions_id',  
-                                                        'accounting_payment_methods_id',  
-                                                        'accounting_deliveries_id',  
-                                                        'comment'
-                                                ));
-
-        return redirect()->route('quote.show', ['id' => $Quote->id])->with('success', 'Successfully created new quote');
-
-    }
-
+    
     public function update(UpdateQuoteRequest $request)
     {
-       
         $Quote = Quotes::find($request->id);
         $Quote->LABEL=$request->LABEL;
         $Quote->statu=$request->statu;
@@ -148,10 +97,8 @@ class QuotesController extends Controller
         $Quote->accounting_deliveries_id=$request->accounting_deliveries_id;
         $Quote->comment=$request->comment;
         $Quote->save();
-
         $QuoteLines = QuoteLines::where('quotes_id', $request->id)->update(['statu' => $request->statu]);
-
+        
         return redirect()->route('quote.show', ['id' =>  $Quote->id])->with('success', 'Successfully updated quote');
-
     }
 }

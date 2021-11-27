@@ -25,22 +25,17 @@ class OrderCalculator
     {
         $tableauTVA = array();
         $orderLines = $this->order->orderLines;
-
         foreach ($orderLines as $orderLine) {
-
-            $TotalLigneHTEnCours = ($orderLine->qty*$orderLine->selling_price)-($orderLine->qty*$orderLine->selling_price)*($orderLine->discount/100);
-			$TotalLigneTVAEnCours =  $TotalLigneHTEnCours*($orderLine->VAT['RATE']/100) ;
-
+            $TotalCurentLine = ($orderLine->qty*$orderLine->selling_price)-($orderLine->qty*$orderLine->selling_price)*($orderLine->discount/100);
+			$TotalVATCurentLine =  $TotalCurentLine*($orderLine->VAT['RATE']/100) ;
             if(array_key_exists($orderLine->accounting_vats_id, $tableauTVA)){
-                $tableauTVA[$orderLine->accounting_vats_id][1] += $TotalLigneTVAEnCours;
+                $tableauTVA[$orderLine->accounting_vats_id][1] += $TotalVATCurentLine;
             }
             else{
-                $tableauTVA[$orderLine->accounting_vats_id] = array($orderLine->VAT['RATE'], $TotalLigneTVAEnCours);
+                $tableauTVA[$orderLine->accounting_vats_id] = array($orderLine->VAT['RATE'], $TotalVATCurentLine);
             }
         }
-
         asort($tableauTVA);
-
         return $tableauTVA;
     }
 
@@ -55,7 +50,6 @@ class OrderCalculator
             $TotalVATPrice = $TotalPriceLine*($orderLine->VAT['RATE']/100);
             $TotalPrice += $TotalPriceLine+$TotalVATPrice;
         }
-       
         return $TotalPrice;
     }
 
@@ -63,7 +57,6 @@ class OrderCalculator
     {
         $SubTotal = 0;
         $orderLines = $this->order->orderLines;
-
         foreach ($orderLines as $orderLine) {
             $SubTotal += ($orderLine->qty * $orderLine->selling_price)-($orderLine->qty * $orderLine->selling_price)*($orderLine->discount/100);
         }

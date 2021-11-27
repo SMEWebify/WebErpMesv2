@@ -19,7 +19,7 @@
     <!-- End Modal -->
     <div class="card-body">
       <div class="row">
-        <table id="example1" class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped">
           <thead>
           <tr>
               <th>Sort order</th>
@@ -90,7 +90,7 @@
     <!-- End Modal -->
     <div class="card-body">
       <div class="row">
-        <table id="example1" class="table table-bordered table-striped">
+        <table  class="table table-bordered table-striped">
           <thead>
           <tr>
               <th>Sort order</th>

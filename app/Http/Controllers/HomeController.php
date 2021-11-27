@@ -34,6 +34,13 @@ class HomeController extends Controller
                                     ->select('statu', DB::raw('count(*) as QuoteCountRate'))
                                     ->groupBy('statu')
                                     ->get();
+        $data['orderMonthlyRecap'] = DB::table('order_lines')
+                                    ->selectRaw('
+                                        MONTH(delivery_date) AS month,
+                                        SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
+                                    ')
+                                    ->groupByRaw('MONTH(delivery_date) ')
+                                    ->get();
         
         return view('dashboard', [
             'LastProducts' => $LastProducts,

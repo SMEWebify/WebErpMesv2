@@ -17,13 +17,11 @@
   <form method="POST" action="{{ route('addresses.edit', ['id' => $adress->id]) }}" >
     @csrf
     <div class="card-body">
-      
-
       @if($errors->count())
       <div class="alert alert-danger">
         <ul>
         @foreach ( $errors->all() as $message)
-         <li> {{ $message }}</li>
+          <li> {{ $message }}</li>
         @endforeach
         </ul>
       </div>
@@ -82,13 +80,12 @@
           <input type="text" class="form-control" name="NUMBER"  id="NUMBER" placeholder="Phone number" value="{{ $adress->NUMBER }}">
         </div>
         <div class="col-5">
-         <label for="MAIL">E-mail</label>
+          <label for="MAIL">E-mail</label>
           <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail" value="{{ $adress->MAIL }}">
-       </div>
+        </div>
       </div>
     </div>
     <!-- /.card-body -->
-
     <div class="card-footer">
       <button type="reset" class="btn btn-danger pull-left">Reset</button>
       <button type="submit" class="btn btn-primary">Update</button>
@@ -96,11 +93,9 @@
   </form>
 </div>
 @stop
-                  
- @section('css')
-    
- @stop
-                  
+
+@section('css')
+@stop
+
 @section('js')
-  <script> console.log('Hi!'); </script>
 @stop

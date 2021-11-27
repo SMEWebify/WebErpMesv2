@@ -21,7 +21,7 @@
     <div class="alert alert-danger">
       <ul>
       @foreach ( $errors->all() as $message)
-       <li> {{ $message }}</li>
+      <li> {{ $message }}</li>
       @endforeach
       </ul>
     </div>
@@ -41,19 +41,18 @@
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-
       <div class="tab-pane active" id="Services">
         <div class="card card-primary">
           <div class="card-body">
             <x-infocalloutComponent note="In the Type scrolling list, indicate whether the service is productive (manufacturing operation) or actually involves the procurement of raw materials or supplies, is a service completed externally, i.e. by a subcontractor, or is a composed component. The service type is then used to filter data when creating a list of tasks, a bill of materials, etc. 
             For raw materials, a distinction is also made between bars, plates and blocks. The screen used to detail raw materials may look different, depending on the raw material type."  />
             <div class="row">
-              <div class="col-md-8 card-secondary">
+              <div class="col-md-8 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Service type list</h3>
                 </div>
                 <div class="card-body p-0">
-                  <table id="example1" class="table table-bordered table-striped">
+                  <table  class="table table-bordered table-striped">
                     <thead>
                     <tr>
                       <th>Picture</th>
@@ -70,7 +69,6 @@
                     <tbody>
                       @forelse ($MethodsServices as $MethodsService)
                       <tr>
-                      
                         <td> 
                           @if($MethodsService->PICTURE )
                           <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsService->PICTURE) }}">
@@ -135,7 +133,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-  
               <div class="col-md-4 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New Service</h3>
@@ -166,7 +163,7 @@
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>
                           </div>
-                         <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                          <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
                         </div>
                       </div>
                       <div class="form-group">
@@ -243,19 +240,17 @@
         </div>
       </div>
       <!-- /.tab-pane -->
-
-
       <div class="tab-pane" id="Ressources">
         <div class="card card-primary">
           <div class="card-body">
             <x-infocalloutComponent note="Depending on your working method, resources may be employees or machines or a mixture of both. In any case, you must indicate for each of them the maximum number of working hours per day as well as the services that they can complete."  />
             <div class="row">
-              <div class="col-md-8 card-secondary">
+              <div class="col-md-8 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Ressources type list</h3>
                 </div>
                 <div class="card-body p-0">
-                  <table id="example1" class="table table-bordered table-striped">
+                  <table  class="table table-bordered table-striped">
                     <thead>
                     <tr>
                       <th>Picture</th>
@@ -329,7 +324,6 @@
               </div>
             <!-- /.card secondary -->
             </div>
-
             <div class="col-md-4 card-secondary">
               <div class="card-header">
                 <h3 class="card-title">New Ressource</h3>
@@ -446,13 +440,12 @@
         <!-- /.card primary -->
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="Section">
         <div class="card card-primary">
           <div class="card-body">
             <x-infocalloutComponent note="The Sections function allows you to define all the sections making up your company, i.e. the physical zones where work stations and operators are grouped together according to their job and cost."  />
             <div class="row">
-              <div class="col-md-8 card-secondary">
+              <div class="col-md-8 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Section type list</h3>
                 </div>
@@ -497,7 +490,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-4 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New Section</h3>
@@ -565,12 +557,11 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="Location">
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Location in workshop list</h3>
                 </div>
@@ -621,7 +612,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New location</h3>
@@ -674,13 +664,12 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="Units">
         <div class="card card-primary">
           <div class="card-body">
             <x-infocalloutComponent note="You must enter all units you may have to work with in your business. This may be Parts, Meters, Kilograms, etc."  />
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Units type list</h3>
                 </div>
@@ -725,7 +714,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New Units</h3>
@@ -781,14 +769,13 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="Families">
         <div class="card card-primary">
           <div class="card-body">
             <x-infocalloutComponent note="Defining subgroups per service allows filtering components at later stages."  />
             
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Famillies type list</h3>
                 </div>
@@ -835,7 +822,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New family</h3>
@@ -857,7 +843,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                       <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
@@ -871,7 +857,7 @@
                           <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
                           @empty
                           <option value="">No service, please add one before</option>
-                           @endforelse
+                          @endforelse
                         </select>
                       </div>
                     </div>
@@ -891,12 +877,11 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="Tools">
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Tools list</h3>
                 </div>
@@ -962,7 +947,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New tool</h3>
@@ -984,7 +968,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                       <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
@@ -1046,23 +1030,19 @@
             </div>
           <!-- /.card primary -->
           </div>
+        </div>
+        <!-- /.tab-pane -->
       </div>
-      <!-- /.tab-pane -->
-
+      <!-- /.tab-content -->
     </div>
-    <!-- /.tab-content -->
+    <!-- /.card-body -->
   </div>
-  <!-- /.card-body -->
+  <!-- /.card -->
 </div>
-<!-- /.card -->
-</div>
-
 @stop
-                  
- @section('css')
-    
- @stop
-                  
+
+@section('css')
+@stop
+
 @section('js')
-  <script> console.log('Hi!'); </script>
 @stop

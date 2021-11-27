@@ -12,10 +12,10 @@
 @section('content')
 <div class="card">
     <div class="card-header p-2">
-      <ul class="nav nav-pills">
-        <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Profile settings</a></li>
-        <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Kanban user settings</a></li>
-      </ul>
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Profile settings</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-toggle="tab">#</a></li>
+        </ul>
     </div>
     <!-- /.card-header -->
     <div class="card-body">
@@ -25,8 +25,7 @@
                     @livewire('user-profile')
                 </div>
             </div>
-            <div class="tab-pane " id="Kanban">
-
+            <div class="tab-pane " id="#">
             </div>
         </div>
     </div>
@@ -35,9 +34,7 @@
 @stop
 
 @section('css')
-     
 @stop
 
 @section('js')
-    <script> </script>
 @stop

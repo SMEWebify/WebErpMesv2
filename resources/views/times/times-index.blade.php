@@ -21,7 +21,7 @@
     <div class="alert alert-danger">
       <ul>
       @foreach ( $errors->all() as $message)
-       <li> {{ $message }}</li>
+        <li> {{ $message }}</li>
       @endforeach
       </ul>
     </div>
@@ -41,7 +41,7 @@
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Absence Request</h3>
                 </div>
@@ -109,7 +109,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New absence request</h3>
@@ -158,12 +157,11 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane " id="BanckHoliday">
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Banck Holidays list</h3>
                 </div>
@@ -213,7 +211,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New Banck Holiday</h3>
@@ -236,8 +233,8 @@
                           <option value="2">No</option>
                           <option value="1">Yes</option>
                       </select>
-                     </div>
-                     <div class="form-group">
+                    </div>
+                    <div class="form-group">
                       <label for="DATE">Date</label>
                       <input type="date" class="form-control" name="DATE"  id="DATE" >
                     </div>
@@ -257,12 +254,11 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="ImproductTime">
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Improduct time list</h3>
                 </div>
@@ -287,8 +283,8 @@
                           @if($TimesImproductTime->RESOURCE_REQUIRED  == 2)No @endif
                         </td>
                         <td>
-                           @if($TimesImproductTime->MASK_TIME  == 1)Yes @endif
-                           @if($TimesImproductTime->MASK_TIME  == 2)No @endif
+                          @if($TimesImproductTime->MASK_TIME  == 1)Yes @endif
+                          @if($TimesImproductTime->MASK_TIME  == 2)No @endif
                         </td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -319,7 +315,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New Improduct time</h3>
@@ -332,7 +327,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                       <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
@@ -343,14 +338,14 @@
                           @endforeach
                         </select>
                       </select>
-                     </div>
+                    </div>
                     <div class="form-group">
                       <label for="RESOURCE_REQUIRED">Ressource required</label>
                       <select class="form-control" name="RESOURCE_REQUIRED" id="RESOURCE_REQUIRED">
                           <option value="2">No</option>
                           <option value="1">Yes</option>
                       </select>
-                     </div>
+                    </div>
                     <div class="form-group">
                       <label for="MASK_TIME">Mask time</label>
                       <div class="input-group">
@@ -362,7 +357,7 @@
                             <option value="1">Yes</option>
                         </select>
                       </div>
-                     </div>
+                    </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
                         <button type="submit" class="btn btn-danger">Submit New</button>
@@ -379,12 +374,11 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="MachineEvent">
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Machine events list</h3>
                 </div>
@@ -451,7 +445,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New machine event type</h3>
@@ -473,7 +466,7 @@
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                         </div>
-                       <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="10">
+                        <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="10">
                       </div>
                     </div>
                     <div class="form-group">
@@ -496,8 +489,8 @@
                             <option value="1">Yes</option>
                         </select>
                       </div>
-                     </div>
-                     <div class="form-group">
+                    </div>
+                    <div class="form-group">
                       <label for="COLOR">Color</label>
                       <input type="color" class="form-control"  name="COLOR" id="COLOR" >
                     </div>
@@ -526,7 +519,6 @@
           </div>
       </div>
       <!-- /.tab-pane -->
-
     <!-- /.tab-content -->
   </div>
   <!-- /.card-body -->
@@ -535,11 +527,9 @@
 </div>
 
 @stop
-                  
- @section('css')
-    
- @stop
-                  
+
+@section('css')
+@stop
+
 @section('js')
-  <script> console.log('Hi!'); </script>
 @stop

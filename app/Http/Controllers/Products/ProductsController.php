@@ -18,35 +18,13 @@ class ProductsController extends Controller
     //
     public function index()
     {
-
-        $Products = Products::All();
-        $userSelect = User::select('id', 'name')->get();
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('ORDRE')->get();
-        $UnitsSelect = MethodsUnits::select('id', 'LABEL', 'TYPE')->orderBy('LABEL')->get();
-        $FamiliesSelect = MethodsFamilies::select('id', 'LABEL')->orderBy('LABEL')->get();
-
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
-        }
-        
-        return view('products/products-index', [
-            'Products' => $Products,
-            'userSelect' => $userSelect,
-            'ServicesSelect' => $ServicesSelect,
-            'ServicesSelect' => $ServicesSelect,
-            'UnitsSelect' => $UnitsSelect,
-            'FamiliesSelect' => $FamiliesSelect,
-            'Factory' => $Factory,
-        ]);
+        return view('products/products-index');
     }
-
+    
     public function show($id)
     {
-
         $Product = Products::findOrFail($id);
         $ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
-
         $TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
         $BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
                                                                             ->orWhere('TYPE', '=', 3)
@@ -55,12 +33,11 @@ class ProductsController extends Controller
                                                                             ->orWhere('TYPE', '=', 6)
                                                                             ->orWhere('TYPE', '=', 8)
                                                                             ->orderBy('ORDRE')->get();
-
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
         }
-                                                                            
+        
         return view('products/products-show', [
             'Product' => $Product,
             'ProductSelect' => $ProductSelect,
@@ -70,42 +47,13 @@ class ProductsController extends Controller
         ]);
     }
 
-    public function store(StoreProductsRequest $request)
+   /* public function store(StoreProductsRequest $request)
     {
-       
-        $Product = Products::create($request->only('CODE',
-                                                    'LABEL', 
-                                                    'IND',
-                                                    'methods_services_id', 
-                                                    'methods_families_id', 
-                                                    'purchased', 
-                                                    'purchased_price', 
-                                                    'sold', 
-                                                    'selling_price', 
-                                                    'methods_units_id', 
-                                                    'material', 
-                                                    'thickness', 
-                                                    'weight', 
-                                                    'x_size', 
-                                                    'Y_size', 
-                                                    'z_size', 
-                                                    'x_oversize',
-                                                    'y_oversize',
-                                                    'z_oversize',
-                                                    'comment',
-                                                    'tracability_type',
-                                                    'qty_eco_min',
-                                                    'qty_eco_max',
-                                                    'diameter',
-                                                    'diameter_oversize',
-                                                    'section_size'));
-
+        $Product = Products::create($request->only());
         if($request->hasFile('PICTURE')){
             $path = $request->PICTURE->store('images/products/','public');
             $Product->update(['PICTURE' => $path]);
         }
-
-        return redirect()->route('products.show', ['id' => $Product->id])->with('success', 'Successfully created new product');
-
-    }
+        
+    }*/
 }

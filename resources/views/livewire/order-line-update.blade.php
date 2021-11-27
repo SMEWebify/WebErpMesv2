@@ -83,8 +83,8 @@
             <label for="accounting_vats_id">VAT type</label>
             <select class="form-control" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
                 @foreach ($VATSelect as $item)
-                <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
-                 @endforeach
+                    <option value="{{ $item->id }}" >{{ $item->LABEL }}</option>
+                @endforeach
             </select>
             <label for="delivery_date">Delevery date</label>
             <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model="delivery_date">
@@ -92,8 +92,8 @@
         </div>
         <div class="col-2">
             <br/>
-             <button type="submit" class="btn btn-success btn-block">Update</button>
-             <button onclick="location.reload();"  class="btn btn-primary btn-block">Refresh Page</button>
+            <button type="submit" class="btn btn-success btn-block">Update</button>
+            <button onclick="location.reload();"  class="btn btn-primary btn-block">Refresh Page</button>
         </div>
     </div>
 </form>

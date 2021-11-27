@@ -13,7 +13,6 @@ class AllocationController extends Controller
 
     public function store(StoreAllocationRequest $request)
     {
-       
         $Allocation = AccountingAllocation::create($request->only('ACCOUNT',
                                                                 'LABEL', 
                                                                 'vat_id',

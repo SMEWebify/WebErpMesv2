@@ -10,10 +10,7 @@ class QualityFailureController extends Controller
 {
     public function store(StoreQualityFailureRequest $request)
     {
-       
         $Faillure = QualityFailure::create($request->only('CODE', 'LABEL'));
-
         return redirect()->route('quality')->with('success', 'Successfully created faillure type.');
-
     }
 }

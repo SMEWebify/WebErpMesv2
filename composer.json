@@ -1,8 +1,18 @@
 {
-    "name": "laravel/laravel",
+    "name": "billyboy35/WebErpMesv2",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "WEM - Web Ressource and Manufacturing execution system.",
+    "keywords": [
+        "laravel",
+        "Ressource management",
+        "Manufacturing management",
+        "WEB"
+    ],
+    "authors": [
+        {
+            "name": "Kévin NIGLAUT"
+        }
+    ],
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",

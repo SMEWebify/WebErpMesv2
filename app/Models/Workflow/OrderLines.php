@@ -30,32 +30,32 @@ class OrderLines extends Model
                             'statu'
                         ];
 
-public function order()
-{
-return $this->belongsTo(Orders::class, 'orders_id');
-}
+    public function order()
+    {
+        return $this->belongsTo(Orders::class, 'orders_id');
+    }
 
-public function Product()
-{
-return $this->belongsTo(Products::class, 'product_id');
-}
+    public function Product()
+    {
+        return $this->belongsTo(Products::class, 'product_id');
+    }
 
-public function Unit()
-{
-return $this->belongsTo(MethodsUnits::class, 'methods_units_id');
-}
-public function VAT()
-{
-return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
-}
+    public function Unit()
+    {
+        return $this->belongsTo(MethodsUnits::class, 'methods_units_id');
+    }
+    public function VAT()
+    {
+        return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
+    }
 
-public function Task()
-{
-return $this->hasMany(Task::class)->orderBy('ORDER');
-}
+    public function Task()
+    {
+        return $this->hasMany(Task::class)->orderBy('ORDER');
+    }
 
-public function GetPrettyCreatedAttribute()
-{
-return date('d F Y', strtotime($this->created_at));
-}
+    public function GetPrettyCreatedAttribute()
+    {
+        return date('d F Y', strtotime($this->created_at));
+    }
 }

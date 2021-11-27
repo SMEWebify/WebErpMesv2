@@ -9,4 +9,8 @@ use App\Http\Controllers\Controller;
 class QuoteLinesController extends Controller
 {
     //
+    public function index()
+    {    
+        return view('workflow/quotes-lines-index');
+    }
 }

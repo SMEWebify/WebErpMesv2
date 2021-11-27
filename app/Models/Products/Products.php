@@ -29,7 +29,7 @@ class Products extends Model
                            'thickness', 
                            'weight', 
                            'x_size', 
-                           'Y_size', 
+                           'y_size', 
                            'z_size', 
                            'x_oversize',
                            'y_oversize',

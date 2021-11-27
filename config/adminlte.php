@@ -251,39 +251,56 @@ return [
             'icon'    => 'far fa-building',
             'url'  => 'companies',
         ],
-        ['header' => 'Sales'],
         [
             'text'    => 'Quote',
             'icon'    => 'fas fa-calculator',
-            'url'  => 'quotes',
+            'submenu' => [
+                [
+                    'text' => 'Quotes list',
+                    'url'  => 'quotes',
+                ],
+                [
+                    'text' => 'Quotes lines list',
+                    'url'  => 'quotes/lines',
+                ],
+            ]
         ],
-        ['header' => 'Jobs'],
         [
             'text'    => 'Orders',
             'icon'    => 'fas fa-calculator',
             'url'  => 'orders',
-        ],
-        [
-            'text'    => 'Production',
-            'icon'    => 'fas fa-industry',
             'submenu' => [
                 [
-                    'text' => 'Task list',
-                    'url'  => '#',
-                    'icon' => 'fas fa-tasks',
+                    'text' => 'Orders list',
+                    'url'  => 'orders',
+                ],
+                [
+                    'text' => 'Orders lines list',
+                    'url'  => 'orders/lines',
+                ],
+            ]
+        ],
+        [
+            'text'    => 'Tasks',
+            'icon' => 'fas fa-tasks',
+            'submenu' => [
+                [
+                    'text' => 'Tasks list',
                     'url'  => 'production/Task',
                 ],
                 [
                     'text' => 'Kanban',
                     'url'  => 'production/kanban',
                 ],
-                [
-                    'text' => 'Calendar',
-                    'url'  => '#',
-                    'icon' => 'fas fa-calendar-alt',
-                ],
             ]
         ],
+        /* 
+            probably use https://github.com/acaronlex/laravel-calendar in future
+        [
+            'text' => 'Calendar',
+            'url'  => '#',
+            'icon' => 'fas fa-calendar-alt',
+        ],*/
         [
             'text'    => 'Delevery notes',
             'icon'    => 'fas fa-calculator',
@@ -294,8 +311,6 @@ return [
             'icon'    => 'fas fa-calculator',
             'url'  => '#',
         ],
-       
-        ['header' => 'Purchase'],
         [
             'text'        => 'Purchase request',
             'url'         => '#',
@@ -309,7 +324,6 @@ return [
                     'text' => 'Purchase order list',
                     'url'  => '#',
                 ],
-                ['header' => 'workflow'],
                 [
                     'text' => 'PO reciept',
                     'url'  => '#',
@@ -367,14 +381,9 @@ return [
             'icon'        => 'fas fa-users',
         ],
         [
-            'text' => 'Your companie',
+            'text' => 'Your company',
             'url'  => 'admin/factory',
             'icon'    => 'fas fa-industry',
-        ],
-        [
-            'text' => 'change password',
-            'url'  => '#',
-            'icon' => 'fas fa-fw fa-lock',
         ],
     ],
 

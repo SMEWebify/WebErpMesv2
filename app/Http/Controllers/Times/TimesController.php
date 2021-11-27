@@ -21,7 +21,7 @@ class TimesController extends Controller
         $TimesMachineEvents = TimesMachineEvent::All();
         $TimesMachineEventsSelect = TimesMachineEvent::select('id', 'LABEL')->orderBy('LABEL')->get();
         $user = Auth::user();
-
+        
         return view('times/times-index',[
             'TimesAbsences' => $TimesAbsences,
             'TimesBanckHolidays' => $TimesBanckHolidays,
@@ -29,6 +29,6 @@ class TimesController extends Controller
             'TimesMachineEvents' => $TimesMachineEvents,
             'TimesMachineEventsSelect' => $TimesMachineEventsSelect,
             'user' => $user 
-         ]);
+        ]);
     }
 }

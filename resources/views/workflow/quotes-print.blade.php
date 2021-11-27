@@ -54,7 +54,7 @@
                     <!-- /.col -->
                   </div>
                   <!-- /.row -->
-    
+                  
                   <!-- Table row -->
                   <div class="row">
                     <div class="col-12 table-responsive">
@@ -106,7 +106,7 @@
                     <!-- /.col -->
                   </div>
                   <!-- /.row -->
-    
+
                   <div class="row">
                     <!-- accepted payments column -->
                     <div class="col-6">
@@ -148,15 +148,14 @@
                     <!-- /.col -->
                   </div>
                   <!-- /.row -->
-      
-@stop
-                  
- @section('css')
     
- @stop
-                  
+@stop
+
+@section('css')
+@stop
+
 @section('js')
-<script>
-  window.addEventListener("load", window.print());
-</script>
+  <script>
+    window.addEventListener("load", window.print());
+  </script>
 @stop

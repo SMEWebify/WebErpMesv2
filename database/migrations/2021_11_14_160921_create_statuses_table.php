@@ -18,7 +18,6 @@ class CreateStatusesTable extends Migration
             $table->string('title');
             $table->string('slug');
             $table->smallInteger('order')->default(0);
-            $table->unsignedInteger('user_id');
         });
     }
 

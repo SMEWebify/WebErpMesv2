@@ -17,9 +17,4 @@ class Status extends Model
     {
         return $this->hasMany(Task::class)->orderBy('ORDER')->whereNotNull('order_lines_id');
     }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

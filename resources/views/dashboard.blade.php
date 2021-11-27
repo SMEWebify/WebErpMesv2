@@ -96,7 +96,6 @@
   </div>
   <!-- /.row -->
 
-
   <div class="row">
     <div class="col-md-12">
       <div class="card">
@@ -104,20 +103,6 @@
           <div class="row">
             <div class="col-md-8">
               <h5 class="card-title">Monthly Recap Report</h5>
-              <div class="card-tools">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-wrench"></i>
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right" role="menu">
-                    <a href="#" class="dropdown-item">Action</a>
-                    <a href="#" class="dropdown-item">Another action</a>
-                    <a href="#" class="dropdown-item">Something else here</a>
-                    <a class="dropdown-divider"></a>
-                    <a href="#" class="dropdown-item">Separated link</a>
-                  </div>
-                </div>
-              </div>
             </div>
             <div class="col-md-4">
               <h5 class="card-title">Monthly Recap Task</h5>
@@ -139,7 +124,6 @@
               <p class="text-center">
                 <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
               </p>
-
               <div class="chart">
                 <!-- Sales Chart Canvas -->
                   <canvas id="lineChart" style="min-height: 250px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
@@ -147,22 +131,18 @@
               <!-- /.chart-responsive -->
             </div>
             <!-- /.col -->
-            <div class="col-md-4">
+            <div class="col-md-4 card">
               <p class="text-center">
                 <strong>Goal Task Completion</strong>
               </p>
               @forelse ($ServiceGoals as $ServiceGoal)
-
-              @php
-                  $randomNum = rand(0, 99);
-                  
-                  if($randomNum < 100){ $class = 'bg-danger';}
-                  if($randomNum < 75){ $class = 'bg-warning';}
-                  if($randomNum < 50){ $class = 'bg-primary';}
-                  if($randomNum < 25){ $class = 'bg-success';}
-
-              @endphp
-
+                @php
+                    $randomNum = rand(0, 99);
+                    if($randomNum < 100){ $class = 'bg-danger';}
+                    if($randomNum < 75){ $class = 'bg-warning';}
+                    if($randomNum < 50){ $class = 'bg-primary';}
+                    if($randomNum < 25){ $class = 'bg-success';}
+                @endphp
               <div class="progress-group">
                 {{ $ServiceGoal->LABEL }}
                 <span class="float-right"> {{ $randomNum }}/100</span>
@@ -176,9 +156,7 @@
                 No service go to Methods for add.
               </div>
               <!-- /.progress-group -->
-
               @endforelse
-
             </div>
             <!-- /.col -->
           </div>
@@ -239,7 +217,6 @@
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">Quote transformation rate</h3>
-
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
@@ -267,13 +244,11 @@
       <!-- /.card -->
     </div>
 
-
   <div class="col-md-8">
     <!-- TABLE: LATEST ORDERS -->
     <div class="card">
       <div class="card-header border-transparent">
         <h3 class="card-title">Latest Quotes</h3>
-
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse">
             <i class="fas fa-minus"></i>
@@ -342,7 +317,6 @@
       <div class="card">
         <div class="card-header border-transparent">
           <h3 class="card-title">Latest Orders</h3>
-  
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
@@ -402,10 +376,9 @@
 
     <!-- PRODUCT LIST -->
     <div class="col-md-4">
-     <div class="card">
+      <div class="card">
         <div class="card-header">
           <h3 class="card-title">Recently Added Products</h3>
-
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
@@ -416,7 +389,7 @@
           </div>
         </div>
         <!-- /.card-header -->
-        <div class="card-body p-0">
+        <div class="card">
           <ul class="products-list product-list-in-card pl-2 pr-2">  
             @forelse ($LastProducts as $LastProduct)
             <li class="item">
@@ -434,7 +407,7 @@
             </li>
             <!-- /.item -->
             @empty
-             <li class="item">No product, go product page for add item</li>
+              <li class="item">No product, go product page for add item</li>
             @endforelse
           </ul>
         </div>
@@ -477,7 +450,7 @@
               data: [
                 @foreach ($data['quotesDataRate'] as $item)
                 "{{ $item->QuoteCountRate }}",
-            @endforeach
+                @endforeach
               ],
               backgroundColor: [
                   'rgba(23, 162, 184, 1)',
@@ -517,15 +490,12 @@
       }
   });
 
-
   //--------------
-    //- LINE CHART -
-    //--------------
-
-    // Get context with jQuery - using jQuery's .get() method.
-    var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
-
-    var areaChartData = {
+  //- LINE CHART -
+  //--------------
+  // Get context with jQuery - using jQuery's .get() method.
+  var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
+  var areaChartData = {
       labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','September','December ' ],
       datasets: [
         {
@@ -537,7 +507,22 @@
           pointStrokeColor    : 'rgba(60,141,188,1)',
           pointHighlightFill  : '#fff',
           pointHighlightStroke: 'rgba(60,141,188,1)',
-          data                : [28, 48, 40, 19, 86, 27, 90]
+          data                : [
+                              @php ($j = 1)
+                              @for($iM =1;$iM<=12;$iM++)
+                                @foreach ($data['orderMonthlyRecap'] as $key => $item)
+                                @php ($j = 1)
+                                  @if($iM  == $item->month) 
+                                  "{{ $item->orderSum }}",
+                                    @php ($j = 2)
+                                    @break
+                                  @endif
+                                @endforeach
+                                @if($j == 1) 
+                                  0,
+                                  @php ($j = 1)
+                                @endif
+                              @endfor ]
         },
         {
           label               : 'Order targets ',
@@ -548,7 +533,7 @@
           pointStrokeColor    : '#c1c7d1',
           pointHighlightFill  : '#fff',
           pointHighlightStroke: 'rgba(220,220,220,1)',
-          data                : [65, 59, 80, 81, 56, 55, 40]
+          data                : [650, 5900, 8000, 8100, 5600, 5500, 4000, 5900, 8000, 8100, 5600, 5500, 4000]
         },
       ]
     }
@@ -556,16 +541,18 @@
       maintainAspectRatio : false,
       responsive : true,
       legend: {
-        display: true
+        display: true,
       },
       scales: {
         xAxes: [{
           gridLines : {
+            color:'rgba(0,0,0,0.4)',
             display : true,
           }
         }],
         yAxes: [{
           gridLines : {
+            color:'rgba(0,0,0,0.4)',
             display : true,
           }
         }]

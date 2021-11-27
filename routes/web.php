@@ -17,47 +17,34 @@ use Illuminate\Support\Facades\Route;
 Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth'])->name('dashboard');
 
 Route::group(['prefix' => 'companies'], function () {
-    //companie route
-    Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->middleware(['auth'])->name('companies'); 
-    Route::post('/create', 'App\Http\Controllers\Companies\CompaniesController@store')->middleware(['auth'])->name('companies.store');
-    //contact route
+    Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->middleware(['auth'])->name('companies');
     Route::post('/contacts/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->middleware(['auth'])->name('contacts.store');
     Route::post('/contacts/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->middleware(['auth'])->name('contacts.update');
     Route::get('/contacts/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->middleware(['auth'])->name('contacts.edit');
-    //adresses route
     Route::post('/addresses/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->middleware(['auth'])->name('addresses.store');
     Route::post('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->middleware(['auth'])->name('addresses.update');
     Route::get('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->middleware(['auth'])->name('addresses.edit');
-
     Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->middleware(['auth'])->name('companies.show');
-    
 });
 
 Route::group(['prefix' => 'quotes'], function () {
     Route::get('/', 'App\Http\Controllers\workflow\QuotesController@index')->middleware(['auth'])->name('quotes'); 
-    Route::post('/create', 'App\Http\Controllers\workflow\QuotesController@store')->middleware(['auth'])->name('quote.store');
+    Route::get('/lines', 'App\Http\Controllers\workflow\QuoteLinesController@index')->middleware(['auth'])->name('quotes-lines'); 
     Route::post('/edit/{id}', 'App\Http\Controllers\workflow\QuotesController@update')->middleware(['auth'])->name('quote.update');
-
     Route::get('/print/{id}', 'App\Http\Controllers\workflow\QuotesController@print')->middleware(['auth'])->name('quote.print');
     Route::get('/{id}', 'App\Http\Controllers\workflow\QuotesController@show')->middleware(['auth'])->name('quote.show');
 });
 
 Route::group(['prefix' => 'orders'], function () {
-
-    
     Route::get('/', 'App\Http\Controllers\workflow\OrdersController@index')->middleware(['auth'])->name('orders'); 
-    Route::post('/create', 'App\Http\Controllers\workflow\OrdersController@store')->middleware(['auth'])->name('order.store');
-    
+    Route::get('/lines', 'App\Http\Controllers\workflow\OrderLinesController@index')->middleware(['auth'])->name('orders-lines'); 
     Route::post('/edit/{id}', 'App\Http\Controllers\workflow\OrdersController@update')->middleware(['auth'])->name('order.update');
-
     Route::get('/print/{id}', 'App\Http\Controllers\workflow\OrdersController@print')->middleware(['auth'])->name('order.print');
     Route::get('/{id}', 'App\Http\Controllers\workflow\OrdersController@show')->middleware(['auth'])->name('order.show');
-    
 });
 
 Route::group(['prefix' => 'accouting'], function () {
     Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
-    
     Route::post('/Allocation/create', 'App\Http\Controllers\Accounting\AllocationController@store')->middleware(['auth'])->name('accouting.allocation.create');
     Route::post('/Delivery/create', 'App\Http\Controllers\Accounting\DeliveryController@store')->middleware(['auth'])->name('accouting.delivery.create');
     Route::post('/PaymentCondition/create', 'App\Http\Controllers\Accounting\PaymentConditionsController@store')->middleware(['auth'])->name('accouting.paymentCondition.create');
@@ -65,11 +52,8 @@ Route::group(['prefix' => 'accouting'], function () {
     Route::post('/VAT/create', 'App\Http\Controllers\Accounting\VatController@store')->middleware(['auth'])->name('accouting.vat.create');
 });
 
-
-
 Route::group(['prefix' => 'times'], function () {
     Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->middleware(['auth'])->name('times');
-
     Route::post('/Absence/create', 'App\Http\Controllers\Times\AbsenceController@store')->middleware(['auth'])->name('times.absence.create');
     Route::post('/BanckHoliday/create', 'App\Http\Controllers\Times\BanckHolidayController@store')->middleware(['auth'])->name('times.banckholiday.create');
     Route::post('/ImproductTime/create', 'App\Http\Controllers\Times\ImproductTimeController@store')->middleware(['auth'])->name('times.improducttime.create');
@@ -79,7 +63,6 @@ Route::group(['prefix' => 'times'], function () {
 Route::group(['prefix' => 'products'], function () {
     Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->middleware(['auth'])->name('products'); 
     Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->middleware(['auth'])->name('products.store');
-
     //stock route
     Route::get('/Stock', 'App\Http\Controllers\Products\StockController@index')->middleware(['auth'])->name('products.stock'); 
     Route::post('/Stock/create', 'App\Http\Controllers\Products\StockController@store')->middleware(['auth'])->name('products.stock.store');
@@ -119,7 +102,6 @@ Route::group(['prefix' => 'quality'], function () {
     Route::post('/NonConformitie/create', 'App\Http\Controllers\Quality\QualityNonConformityController@store')->middleware(['auth'])->name('quality.nonConformitie.create');
     Route::post('/Derogation/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->middleware(['auth'])->name('quality.derogation.create');
     Route::post('/Action/create', 'App\Http\Controllers\Quality\QualityActionController@store')->middleware(['auth'])->name('quality.action.create');
-    
 });
 
 Route::group(['prefix' => 'methods'], function () {
@@ -135,13 +117,11 @@ Route::group(['prefix' => 'methods'], function () {
 
 
 Route::group(['prefix' => 'users'], function () {
-
     Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
     Route::get('/Profile', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');
     Route::get('/Profile/Update', 'App\Http\Controllers\UsersController@update')->middleware(['auth'])->name('user.profile.update');
 
 });
-
 
 require __DIR__.'/auth.php';
 

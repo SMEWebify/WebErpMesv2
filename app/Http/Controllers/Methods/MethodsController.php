@@ -18,7 +18,6 @@ class MethodsController extends Controller
     //
     public function index()
     {
-
         $MethodsServices = MethodsServices::orderBy('ORDRE')->paginate(10);
         $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('ORDRE')->get();
         $MethodsRessources = MethodsRessources::orderBy('ORDRE')->paginate(10);
@@ -29,10 +28,9 @@ class MethodsController extends Controller
         $MethodsUnits = MethodsUnits::orderBy('id')->paginate(10);
         $MethodsFamilies = MethodsFamilies::orderBy('id')->paginate(10);
         $MethodsTools = MethodsTools::orderBy('CODE')->paginate(10);
-
         $userSelect = User::select('id', 'name')->get();
         $CompaniesSelect = Companies::select('id', 'LABEL')->orderBy('LABEL')->where('statu_FOUR', 2)->get();
-
+        
         return view('methods/methods-index', [
             'MethodsServices' => $MethodsServices,
             'ServicesSelect' => $ServicesSelect,
@@ -48,6 +46,5 @@ class MethodsController extends Controller
             'MethodsTools' => $MethodsTools
             
         ]);
-
     }
 }

@@ -12,7 +12,6 @@ class AddressesController extends Controller
     public function edit($id)
     {
         $adress = companiesAddresses::findOrFail($id);
-
         return view('companies/addresses-edit', [
             'adress' => $adress
         ]);
@@ -20,16 +19,12 @@ class AddressesController extends Controller
 
     public function store(StoreAdressRequest $request)
     {
-       
         $adress = companiesAddresses::create($request->only('companies_id', 'ORDRE', 'LABEL', 'ADRESS','ZIPCODE','CITY','COUNTRY','NUMBER','MAIL'));
-
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully created adress');
-
     }
 
     public function update(UpdateAdressRequest $request)
     {
-       
         $adress = companiesAddresses::find($request->id);
         $adress->ORDRE=$request->ORDRE;
         $adress->LABEL=$request->LABEL;
@@ -40,8 +35,6 @@ class AddressesController extends Controller
         $adress->NUMBER=$request->NUMBER;
         $adress->MAIL=$request->MAIL;
         $adress->save();
-
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully updated adress');
-
     }
 }

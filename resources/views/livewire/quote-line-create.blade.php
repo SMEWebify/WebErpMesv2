@@ -40,7 +40,7 @@
                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
                 <input type="text" class="form-control @error('LABEL') is-invalid @enderror" id="LABEL" placeholder="Description" wire:model="LABEL">
-                 @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
             </div>
         </div>
         <div class="col-2">
@@ -99,7 +99,7 @@
         </div>
         <div class="col-2">
             <br/>
-             <button type="submit" class="btn btn-success btn-block">Add</button>
+            <button type="submit" class="btn btn-success btn-block">Add</button>
         </div>
     </div>
 </form>

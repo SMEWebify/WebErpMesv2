@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Workflow;
+namespace App\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateQuoteRequest extends FormRequest
+class StoreInventoryDetailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,6 @@ class UpdateQuoteRequest extends FormRequest
     {
         return [
             //
-            'LABEL'=>'required',
         ];
     }
 }

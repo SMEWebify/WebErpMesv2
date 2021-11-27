@@ -25,22 +25,17 @@ class QuoteCalculator
     {
         $tableauTVA = array();
         $quoteLines = $this->quote->quoteLines;
-
         foreach ($quoteLines as $quoteLine) {
-
-            $TotalLigneHTEnCours = ($quoteLine->qty*$quoteLine->selling_price)-($quoteLine->qty*$quoteLine->selling_price)*($quoteLine->discount/100);
-			$TotalLigneTVAEnCours =  $TotalLigneHTEnCours*($quoteLine->VAT['RATE']/100) ;
-
+            $TotalCurentLine = ($quoteLine->qty*$quoteLine->selling_price)-($quoteLine->qty*$quoteLine->selling_price)*($quoteLine->discount/100);
+			$TotalVATCurentLine =  $TotalCurentLine*($quoteLine->VAT['RATE']/100) ;
             if(array_key_exists($quoteLine->accounting_vats_id, $tableauTVA)){
-                $tableauTVA[$quoteLine->accounting_vats_id][1] += $TotalLigneTVAEnCours;
+                $tableauTVA[$quoteLine->accounting_vats_id][1] += $TotalVATCurentLine;
             }
             else{
-                $tableauTVA[$quoteLine->accounting_vats_id] = array($quoteLine->VAT['RATE'], $TotalLigneTVAEnCours);
+                $tableauTVA[$quoteLine->accounting_vats_id] = array($quoteLine->VAT['RATE'], $TotalVATCurentLine);
             }
         }
-
         asort($tableauTVA);
-
         return $tableauTVA;
     }
 
@@ -49,13 +44,11 @@ class QuoteCalculator
     {
         $TotalPrice = 0;
         $quoteLines = $this->quote->quoteLines;
-
         foreach ($quoteLines as $quoteLine) {
             $TotalPriceLine = ($quoteLine->qty * $quoteLine->selling_price)-($quoteLine->qty * $quoteLine->selling_price)*($quoteLine->discount/100);
             $TotalVATPrice = $TotalPriceLine*($quoteLine->VAT['RATE']/100);
             $TotalPrice += $TotalPriceLine+$TotalVATPrice;
         }
-       
         return $TotalPrice;
     }
 
@@ -63,7 +56,6 @@ class QuoteCalculator
     {
         $SubTotal = 0;
         $quoteLines = $this->quote->quoteLines;
-
         foreach ($quoteLines as $quoteLine) {
             $SubTotal += ($quoteLine->qty * $quoteLine->selling_price)-($quoteLine->qty * $quoteLine->selling_price)*($quoteLine->discount/100);
         }

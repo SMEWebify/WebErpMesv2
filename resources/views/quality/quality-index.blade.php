@@ -22,7 +22,7 @@
     <div class="alert alert-danger">
       <ul>
       @foreach ( $errors->all() as $message)
-       <li> {{ $message }}</li>
+        <li> {{ $message }}</li>
       @endforeach
       </ul>
     </div>
@@ -40,12 +40,11 @@
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-
       <div class="tab-pane active" id="Actions">
         <div class="card-body">
           <x-infocalloutComponent note="Actions are measures taken to prevent a problem from occurring (preventive actions), to solve an existing problem (corrective actions), or to improve a process or product (improvement requests)."  />
           <div class="row">
-            <table id="example1" class="table table-bordered table-striped">
+            <table  class="table table-bordered table-striped">
               <thead>
               <tr>
                 <th>External ID</th>
@@ -82,7 +81,7 @@
                     </div>
                     <div class="btn-group btn-group-sm">
                       <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                     </div>
+                    </div>
                   </td>
                 </tr>
                 @empty
@@ -113,7 +112,6 @@
             </table>
           <!-- /.row -->
           </div>
-          
           <div class="row">
             <div class="col-5">
             {{ $QualityActions->links() }}
@@ -123,7 +121,7 @@
         <!-- /.card-body -->
         </div>
         <hr>
-        <div class="card-body">
+        <div class="card card-body">
           <form method="POST" action="{{ route('quality.action.create')}}" >
             @csrf
             <div class="form-group row">
@@ -133,7 +131,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                 <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID" value="ACT-{{ $LastAction->id ?? '0' }}">
+                  <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID" value="ACT-{{ $LastAction->id ?? '0' }}">
                 </div>
               </div>
               <div class="col-2">
@@ -228,11 +226,10 @@
         </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="Derogations">
         <div class="card-body">
           <div class="row">
-            <table id="example1" class="table table-bordered table-striped">
+            <table  class="table table-bordered table-striped">
               <thead>
               <tr>
                 <th>External ID</th>
@@ -266,7 +263,7 @@
                     </div>
                     <div class="btn-group btn-group-sm">
                       <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                     </div>
+                    </div>
                   </td>
                 </tr>
                 @empty
@@ -296,7 +293,6 @@
             </table>
           <!-- /.row -->
           </div>
-          
           <div class="row">
             <div class="col-5">
             {{ $QualityDerogations->links() }}
@@ -306,7 +302,7 @@
         <!-- /.card-body -->
         </div>
         <hr>
-        <div class="card-body">
+        <div class="card card-body">
           <form method="POST" action="{{ route('quality.derogation.create')}}" >
             @csrf
             <div class="form-group row">
@@ -325,7 +321,7 @@
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                 <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                  <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
                 </div>
               </div>
               <div class="col-2">
@@ -408,12 +404,11 @@
         </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="NonConformities">
         <div class="card-body">
           <x-infocalloutComponent note="Non-conformity sheets are documents summing up data related to a quality issue that arose within your company, with a customer, or with a supplier and the extra costs it generated.."  />
           <div class="row">
-            <table id="example1" class="table table-bordered table-striped">
+            <table  class="table table-bordered table-striped">
               <thead>
               <tr>
                 <th>External ID</th>
@@ -450,7 +445,7 @@
                     </div>
                     <div class="btn-group btn-group-sm">
                       <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                     </div>
+                    </div>
                   </td>
                 </tr>
                 @empty
@@ -481,7 +476,6 @@
             </table>
           <!-- /.row -->
           </div>
-          
           <div class="row">
             <div class="col-5">
             {{ $QualityNonConformitys->links() }}
@@ -491,7 +485,7 @@
         <!-- /.card-body -->
         </div>
         <hr>
-        <div class="card-body">
+        <div class="card card-body">
           <form method="POST" action="{{ route('quality.nonConformitie.create')}}" >
             @csrf
             <div class="form-group row">
@@ -628,13 +622,12 @@
         </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="MeasuringDevices">
           <div class="card card-primary">
             <div class="card-body">
               <x-infocalloutComponent note="The measuring devices used to measure quality."  />
               <div class="row">
-                <div class="col-md-7 card-secondary">
+                <div class="col-md-7 card-primary">
                   <div class="card-header">
                       <h3 class="card-title">Measuring devices list</h3>
                   </div>
@@ -684,7 +677,6 @@
                     </table>
                   <!-- /.row -->
                   </div>
-          
                   <div class="row">
                     <div class="col-5">
                     {{ $QualityControlDevices->links() }}
@@ -693,7 +685,6 @@
                   </div>
                 <!-- /.card secondary -->
                 </div>
-
             <div class="col-md-5 card-secondary">
                 <div class="card-header">
                   <h3 class="card-title">New measuring devices</h3>
@@ -783,14 +774,11 @@
             </div>
       </div>
       <!-- /.tab-pane -->
-
       <div class="tab-pane" id="Settings">
         <x-infocalloutComponent note="To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource."  />
-       
         <div class="card card-primary collapsed-card">
           <div class="card-header">
             <h3 class="card-title">Failing list</h3>
-        
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                 <i class="fas fa-plus"></i>
@@ -838,7 +826,6 @@
                 </div>
               <!-- /.card secondary -->
               </div>
-
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
                     <h3 class="card-title">New Failling</h3>
@@ -877,11 +864,9 @@
             </div>
           <!-- /.card primary -->
           </div>
-
           <div class="card card-primary collapsed-card">
             <div class="card-header">
               <h3 class="card-title">Causes list</h3>
-          
               <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                   <i class="fas fa-plus"></i>
@@ -929,7 +914,6 @@
                   </div>
                 <!-- /.card secondary -->
                 </div>
-  
                 <div class="col-md-6 card-secondary">
                     <div class="card-header">
                       <h3 class="card-title">New Cause</h3>
@@ -968,12 +952,9 @@
               </div>
             <!-- /.card primary -->
             </div>
-
-            
             <div class="card card-primary collapsed-card">
               <div class="card-header">
                 <h3 class="card-title">Correction list</h3>
-            
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                     <i class="fas fa-plus"></i>
@@ -1021,7 +1002,6 @@
                     </div>
                   <!-- /.card secondary -->
                   </div>
-    
                   <div class="col-md-6 card-secondary">
                       <div class="card-header">
                         <h3 class="card-title">New Correction</h3>
@@ -1063,19 +1043,16 @@
         </div>
         <!-- /.tab-pane -->
       </div>
-      
     <!-- /.tab-content -->
     </div>
   <!-- /.card-body -->
   </div>
 <!-- /.card -->
 </div>
-
 @stop
-                  
- @section('css')
-    
- @stop
-                  
+
+@section('css')
+@stop
+
 @section('js')
 @stop

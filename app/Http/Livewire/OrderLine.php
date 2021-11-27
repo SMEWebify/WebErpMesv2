@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
@@ -14,7 +15,13 @@ use App\Models\Accounting\AccountingVat;
 
 class OrderLine extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
 
+    public $search = '';
+    public $sortField = 'ORDRE'; // default sorting field
+    public $sortAsc = true; // default sort direction
+    
     public $OrderId;
     public $OrderStatu;
 
@@ -41,6 +48,21 @@ class OrderLine extends Component
         'accounting_vats_id'=>'required',
     ];
 
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortAsc = !$this->sortAsc; 
+        } else {
+            $this->sortAsc = true; 
+        }
+        $this->sortField = $field;
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function mount($OrderId, $OrderStatu) 
     {
         $this->orders_id = $OrderId;
@@ -49,9 +71,7 @@ class OrderLine extends Component
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
         $this->Factory = Factory::first();
-
         $this->ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
-
         $this->TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
         $this->BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
                                                                             ->orWhere('TYPE', '=', 3)
@@ -64,7 +84,7 @@ class OrderLine extends Component
 
     public function render()
     {
-        $OrderLineslist = $this->OrderLineslist = Orderlines::orderBy('ORDRE')->where('orders_id', '=', $this->orders_id)->get();
+        $OrderLineslist = $this->OrderLineslist = Orderlines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('orders_id', '=', $this->orders_id)->where('LABEL','like', '%'.$this->search.'%')->get();
         
         return view('livewire.order-lines', [
             'OrderLineslist' => $OrderLineslist,
@@ -83,28 +103,24 @@ class OrderLine extends Component
     public function storeOrderLine(){
 
         $this->validate();
-
-            // Create Line
-            Orderlines::create([
-                'orders_id'=>$this->orders_id,
-                'ORDRE'=>$this->ORDRE,
-                'CODE'=>$this->CODE,
-                'product_id'=>$this->product_id,
-                'LABEL'=>$this->LABEL,
-                'qty'=>$this->qty,
-                'methods_units_id'=>$this->methods_units_id,
-                'selling_price'=>$this->selling_price,
-                'discount'=>$this->discount,
-                'accounting_vats_id'=>$this->accounting_vats_id,
-                'delivery_date'=>$this->delivery_date,
-            ]);
-    
-            // Set Flash Message
-            session()->flash('success','Line added Successfully');
-
-            // Reset Form Fields After Creating line
-            $this->resetFields();
-       
+        // Create Line
+        Orderlines::create([
+            'orders_id'=>$this->orders_id,
+            'ORDRE'=>$this->ORDRE,
+            'CODE'=>$this->CODE,
+            'product_id'=>$this->product_id,
+            'LABEL'=>$this->LABEL,
+            'qty'=>$this->qty,
+            'methods_units_id'=>$this->methods_units_id,
+            'selling_price'=>$this->selling_price,
+            'discount'=>$this->discount,
+            'accounting_vats_id'=>$this->accounting_vats_id,
+            'delivery_date'=>$this->delivery_date,
+        ]);
+        // Set Flash Message
+        session()->flash('success','Line added Successfully');
+        // Reset Form Fields After Creating line
+        $this->resetFields();
     }
 
     public function edit($id){
@@ -130,36 +146,36 @@ class OrderLine extends Component
         $this->resetFields();
     }
 
-    public function update(){
+    public function up($idStatu){
+        // Update line
+        Orderlines::find($idStatu)->increment('ORDRE',1);;
+        session()->flash('success','Line Updated Successfully');
+    }
 
+    public function down($idStatu){
+        // Update line
+        Orderlines::find($idStatu)->decrement('ORDRE',1);;
+        session()->flash('success','Line Updated Successfully');
+    }
+
+    public function update(){
         // Validate request
         $this->validate();
-
-        //try{
-
-            // Update line
-            Orderlines::find($this->order_lines_id)->fill([
-                'ORDRE'=>$this->ORDRE,
-                'CODE'=>$this->CODE,
-                'product_id'=>$this->product_id,
-                'LABEL'=>$this->LABEL,
-                'qty'=>$this->qty,
-                'methods_units_id'=>$this->methods_units_id,
-                'selling_price'=>$this->selling_price,
-                'discount'=>$this->discount,
-                'accounting_vats_id'=>$this->accounting_vats_id,
-                'delivery_date'=>$this->delivery_date,
-                'statu'=>$this->statu,
-            ])->save();
-
-            session()->flash('success','Line Updated Successfully');
-    
-          //  $this->cancel();
-        //}catch(\Exception $e){
-
-         //   session()->flash('error','Something goes wrong while updating line');
-         //   $this->cancel();
-        //}
+        // Update line
+        Orderlines::find($this->order_lines_id)->fill([
+            'ORDRE'=>$this->ORDRE,
+            'CODE'=>$this->CODE,
+            'product_id'=>$this->product_id,
+            'LABEL'=>$this->LABEL,
+            'qty'=>$this->qty,
+            'methods_units_id'=>$this->methods_units_id,
+            'selling_price'=>$this->selling_price,
+            'discount'=>$this->discount,
+            'accounting_vats_id'=>$this->accounting_vats_id,
+            'delivery_date'=>$this->delivery_date,
+            'statu'=>$this->statu,
+        ])->save();
+        session()->flash('success','Line Updated Successfully');
     }
 
     public function destroy($id){

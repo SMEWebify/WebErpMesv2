@@ -9,12 +9,8 @@ use App\Http\Requests\Quality\StoreQualityDerogationRequest;
 class QualityDerogationController extends Controller
 {
     //
-
-    
-
     public function store(StoreQualityDerogationRequest $request)
     {
-       
         $Derogation =  QualityDerogation::create($request->only('CODE',
                                                                 'LABEL', 
                                                                 'statu',
@@ -26,8 +22,6 @@ class QualityDerogationController extends Controller
                                                                 'REPLY', 
                                                                 'quality_non_conformitie_id',  
                                                                 'DECISION'));
-
         return redirect()->route('quality')->with('success', 'Successfully created derogation.');
-
     }
 }

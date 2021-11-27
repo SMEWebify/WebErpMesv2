@@ -25,7 +25,7 @@
       <div class="alert alert-danger">
         <ul>
         @foreach ( $errors->all() as $message)
-         <li> {{ $message }}</li>
+          <li> {{ $message }}</li>
         @endforeach
         </ul>
       </div>
@@ -178,10 +178,8 @@
         </div>
       <!-- /.div col-12 col-md-12 -->
       </div>
-     
       <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
         <p class="text-muted">External ID : {{ $Product->CODE }} </p>
-
         <div class="row"> 
           <div class="col-12 col-sm-4">
             <div class="text-muted">
@@ -192,7 +190,6 @@
           </div>
         <!-- /.div row -->
         </div>
-
         @if($Product->sold == 1 )
         <hr>
         <div class="row"> 
@@ -206,7 +203,6 @@
         <!-- /.div row -->
         </div>
         @endif
-
         @if($Product->purchased == 1 )
         <hr>
         <div class="row">
@@ -233,7 +229,6 @@
         <!-- /.div row -->
         </div>
         @endif
-
         @if($Product->qty_eco_max)
         <hr>
         <div class="row">
@@ -247,28 +242,26 @@
         <!-- /.div row -->
         </div>
         @endif
-
-         <!-- /.div mt-4 product-share -->
-        </div>
-      <!-- /.div col-12 col-md-12 -->
+      <!-- /.div mt-4 product-share -->
       </div>
-    <!-- /.div row -->
+    <!-- /.div col-12 col-md-12 -->
     </div>
-  <!-- /.card-body -->
+  <!-- /.div row -->
   </div>
+<!-- /.card-body -->
+</div>
 
-  @include('include.Main-procces', ['route' => route('task.store', ['id' => $Product->id]), 'id_page' => $Product->id,'id_type' => 'products_id', 'id_line' => $Product->id, 'task' => $Product->Task])])
+  @include('include.Main-procces', ['route' => route('task.store', ['id' => $Product->id]), 'id_page' => $Product->id,'id_type' => 'products_id', 'id_line' => $Product->id, 'task' => $Product->Task])
 <!-- /.card -->
+@stop
 
-            @stop
-                  
-            @section('css')
-            @stop
+@section('css')
+@stop
 
-           @section('js')
-             <script > 
-             
-             $('#methods_services_id').on('change',function(){
+@section('js')
+              <script > 
+              
+              $('#methods_services_id').on('change',function(){
                 var val = $(this).val();
                 var txt = $(this).find('option:selected').data('txt');
                 var type = $(this).find('option:selected').data('type');
@@ -291,5 +284,4 @@
                 modelObj.children(selector).show();
             });
             </script>
-
-           @stop
+@stop

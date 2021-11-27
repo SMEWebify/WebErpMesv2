@@ -11,7 +11,6 @@ class QualityNonConformityController extends Controller
     //
     public function store(StoreQualityNonConformityRequest $request)
     {
-       
         $NonConformity =  QualityNonConformity::create($request->only('CODE',
                                                                 'LABEL', 
                                                                 'statu',
@@ -26,8 +25,6 @@ class QualityNonConformityController extends Controller
                                                                 'correction_COMMENT', 
                                                                 'causes_COMMENT',  
                                                                 'companie_id'));
-
         return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
-
     }
 }

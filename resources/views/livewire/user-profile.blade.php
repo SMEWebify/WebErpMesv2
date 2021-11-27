@@ -4,10 +4,9 @@
             <label>Name</label>
             <input wire:model="name" type="text" class="form-control" />
             @error('name') <span class="text-danger">{{ $message }}<br/></span>@enderror
-
             <label>Email</label>
             <input wire:model="email" type="email" class="form-control" />
-             @error('email') <span class="text-danger">{{ $message }}<br/></span>@enderror
+            @error('email') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
     </div>
     <div class="row">

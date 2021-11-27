@@ -1,8 +1,6 @@
 
-<div>
-    <div class="card">
-        <div class="card-body">
-            @if(session()->has('success'))
+    <div class="card-body">
+        @if(session()->has('success'))
                 <div class="alert alert-success" role="alert">
                     {{ session()->get('success') }}
                 </div>
@@ -13,19 +11,28 @@
                     {{ session()->get('error') }}
                 </div>
             @endif
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
+        <div class="card">
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
+                    </div>
+                    <input type="text" class="form-control" wire:model="search" placeholder="Search Task">
+                </div>
+            </div>
             <div class="table-responsive">
-                <table id="example1" class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>Order</th>
                             <th>Sort</th>
-                            <th>Description</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                            </th>
                             <th>Product</th>
-                            <th>Service</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('methods_units_id')" role="button" href="#">Service @include('include.sort-icon', ['field' => 'methods_units_id'])</a>
+                            </th>
                             <th>Qty</th>
                             <th>Qty init</th>
                             <th>Qty aviable</th>
@@ -41,8 +48,8 @@
                     </thead>
                     <tbody>
                         @forelse ($Tasklist as $Task)
-                        <tr>
-                            <td></td>
+                        <tr @if($Task->methods_services_id ) style="color: {{ $Task->service['COLOR'] }};" @endif > 
+                            <td> {{-- $Task->Order['CODE'] --}}</td>
                             <td>{{ $Task->ORDER }}</td>
                             <td>#{{ $Task->id }} - {{ $Task->label }}</td>
                             <td>@if($Task->component_id ) {{ $Task->Component['LABEL'] }}@endif</td>
@@ -56,17 +63,7 @@
                             <td>{{ $Task->SETING_TIME }}</td>
                             <td>{{ $Task->UNIT_TIME }}</td>
                             <td>{{ $Task->REMAINING_TIME }}</td>
-                            <td>
-                                @if(1 == $Task->statu )   <span class="badge badge-info"> Open</span>@endif
-                                @if(2 == $Task->statu )  <span class="badge badge-warning">Started</span>@endif
-                                @if(3 == $Task->statu )  <span class="badge badge-success">In progress</span>@endif
-                                @if(4 == $Task->statu )   <span class="badge badge-info"> Finished</span>@endif
-                                @if(5 == $Task->statu )  <span class="badge badge-warning">Suspended</span>@endif
-                                @if(6 == $Task->statu )  <span class="badge badge-success">To RFQ</span>@endif
-                                @if(7 == $Task->statu )  <span class="badge badge-warning">RFQ in progress</span>@endif
-                                @if(8 == $Task->statu )  <span class="badge badge-success">Outsourced</span>@endif
-                                @if(9 == $Task->statu )  <span class="badge badge-success">Supplied</span>@endif
-                            </td>
+                            <td>{{ $Task->status['title'] }}</td>
                             <td></td>
                         </tr>
                         @empty
@@ -108,6 +105,6 @@
                     </tfoot>
                 </table>
             </div>
+            <!-- /.row -->
         </div>
     </div>
-</div>

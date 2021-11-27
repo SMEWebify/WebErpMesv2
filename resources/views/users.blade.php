@@ -9,11 +9,11 @@
 
 
 @section('content')
-     <div class="card">
+    <div class="card">
         <!-- /.card-header -->
         <div class="card-body">
           <div class="row">
-            <table id="example1" class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -49,7 +49,7 @@
           <!-- /.row -->
           <div class="row">
             <div class="col-5">
-             {{ $Users->links() }}
+              {{ $Users->links() }}
             </div>
           </div>
           <!-- /.row -->
@@ -60,9 +60,7 @@
 @stop
 
 @section('css')
-     
 @stop
 
 @section('js')
-    <script> </script>
 @stop

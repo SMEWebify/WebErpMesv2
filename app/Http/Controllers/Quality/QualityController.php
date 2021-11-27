@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Quality;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityCause;
@@ -19,7 +18,6 @@ class QualityController extends Controller
 {
     public function index()
     {
-
         $QualityActions = QualityAction::orderBy('id')->paginate(10);
         $LastAction =  DB::table('quality_actions')->orderBy('id', 'desc')->first();
         $QualityCauses = QualityCause::All();
@@ -35,12 +33,10 @@ class QualityController extends Controller
         $QualityControlDevices = QualityControlDevice::orderBy('id')->paginate(10);
         $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
         $LastDerogation =  DB::table('quality_derogations')->orderBy('id', 'desc')->first();
-
         $userSelect = User::select('id', 'name')->get();
         $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
-
         $CompaniesSelect = Companies::select('id', 'LABEL')->orderBy('LABEL')->get();
-
+        
         return view('quality/quality-index', [
             'QualityActions' => $QualityActions,
             'LastAction' => $LastAction,

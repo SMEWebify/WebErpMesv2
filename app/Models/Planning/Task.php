@@ -38,7 +38,7 @@ class Task extends Model
                             'UNIT_PRICE',
                             'methods_units_id',
                             'x_size', 
-                            'Y_size', 
+                            'y_size', 
                             'z_size', 
                             'x_oversize',
                             'y_oversize',
@@ -61,6 +61,12 @@ class Task extends Model
     {
         return $this->belongsTo(QuoteLines::class, 'quote_lines_id');
     }
+
+  /*  public function Order()
+    {
+        return $this->hasManyThrough('App\Models\Workflow\Orders', 'App\Models\Workflow\OrderLines');
+    }
+    */
 
     public function OrderLines()
     {
@@ -99,7 +105,7 @@ class Task extends Model
 
     public function status()
     {
-        return $this->belongsTo(Status::class);
+        return $this->belongsTo(Status::class, 'status_id');
     }
 
     public function GetPrettyCreatedAttribute()

@@ -14,7 +14,6 @@ use App\Http\Requests\Products\StoreStockLocationRequest;
 class StockLocationController extends Controller
 {
     //
-
     public function show($id)
     {
         $StockLocation = StockLocation::findOrFail($id);
@@ -34,7 +33,6 @@ class StockLocationController extends Controller
 
     public function store(StoreStockLocationRequest $request)
     {
-       
         $StockLocation = StockLocation::create($request->only('CODE',
                                                 'LABEL', 
                                                 'stocks_id',
@@ -44,7 +42,6 @@ class StockLocationController extends Controller
                                             ));
 
         return redirect()->route('products.stocklocation.show', ['id' => $StockLocation->id])->with('success', 'Successfully created new location stock');
-
     }
 
 }

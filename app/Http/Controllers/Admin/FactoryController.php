@@ -16,17 +16,14 @@ class FactoryController extends Controller
         $Factory  =  Factory::firstOrCreate(
                                     ['id' =>'1',],
                                 );
-
                         return view('admin/factory-index', [
                             'VATSelect' => $VATSelect,
                             'Factory' => $Factory,
                         ]);
     }
 
-
     public function update(UpdateFactoryRequest $request)
     {
-
             $Factory = Factory::first();
                         $Factory->NAME = $request->NAME;
                         $Factory->ADDRESS = $request->ADDRESS;
@@ -47,7 +44,6 @@ class FactoryController extends Controller
                         $Factory->add_day_validity_quote = $request->add_day_validity_quote;
                         $Factory->add_delivery_delay_order =  $request->add_delivery_delay_order;
                         $Factory->save();
-
         return redirect()->route('admin.factory')->with('success', 'Successfully updated factory inforamations');
     }
 }

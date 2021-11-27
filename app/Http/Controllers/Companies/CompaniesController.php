@@ -11,31 +11,19 @@ class CompaniesController extends Controller
 {
     public function index()
     {
-
-        $Companies = Companies::All();
-        $userSelect = User::select('id', 'name')->get();
-
-        return view('companies/companies-index', [
-            'Companieslist' => $Companies,
-            'userSelect' => $userSelect,
-        ]);
+        return view('companies/companies-index');
     }
 
     public function show($id)
     {
-
         $Companie = Companies::findOrFail($id);
-        
-
         return view('companies/companies-show', [
             'Companie' => $Companie
         ]);
     }
 
-
     public function store(StoreCompanieRequest $request)
     {
-       
         $companie = Companies::create($request->only('CODE', 
                                                     'LABEL',
                                                     'WEBSITE',
@@ -56,14 +44,10 @@ class CompaniesController extends Controller
                                                     'COMPTE_AUX_FOUR',
                                                     'RECEPT_CONTROLE',
                                                     'COMMENT', ));
-
         if($request->hasFile('PICTURE')){
             $path = $request->PICTURE->store('images/companies/','public');
             $companie->update(['PICTURE' => $path]);
         }
-
         return redirect()->route('companies.show', ['id' => $companie->id])->with('success', 'Successfully created new company');
-
     }
-
 }

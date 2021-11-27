@@ -9,13 +9,9 @@ use App\Http\Requests\Methods\StoreFamilyRequest;
 class FamiliesController extends Controller
 {
     //
-
     public function store(StoreFamilyRequest $request)
     {
-       
         $Family = MethodsFamilies::create($request->only('CODE', 'LABEL','service_id'));
-
         return redirect()->route('methods')->with('success', 'Successfully created family.');
-
     }
 }

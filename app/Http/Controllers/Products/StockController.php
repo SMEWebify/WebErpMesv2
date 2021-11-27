@@ -15,11 +15,9 @@ class StockController extends Controller
     //
     public function index()
     {
-
         $stocks = Stocks::All();
         $userSelect = User::select('id', 'name')->get();
         $LastStock =  DB::table('stocks')->orderBy('id', 'desc')->first();
-
         return view('products/stocks-index', [
             'stocks' => $stocks,
             'userSelect' => $userSelect,
@@ -29,13 +27,8 @@ class StockController extends Controller
 
     public function store(StoreStockRequest $request)
     {
-       
-        $Stock = Stocks::create($request->only('CODE',
-                                                'LABEL', 
-                                                'user_id'));
-
+        $Stock = Stocks::create($request->only('CODE','LABEL', 'user_id'));
         return redirect()->route('products.stock.show', ['id' => $Stock->id])->with('success', 'Successfully created new stock');
-
     }
 
     public function show($id)
@@ -44,7 +37,7 @@ class StockController extends Controller
         $StockLocations = StockLocation::where('stocks_id', '=', $id)->get();
         $userSelect = User::select('id', 'name')->get();
         $LastStockLocation =  DB::table('stock_locations')->orderBy('id', 'desc')->first();
-
+        
         return view('products/stock-show', [
             'Stock' => $Stock,
             'StockLocations' => $StockLocations,

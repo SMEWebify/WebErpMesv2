@@ -15,7 +15,7 @@
                   <div class="alert alert-danger">
                     <ul>
                     @foreach ( $errors->all() as $message)
-                     <li> {{ $message }}</li>
+                      <li> {{ $message }}</li>
                     @endforeach
                     </ul>
                   </div>
@@ -23,7 +23,7 @@
                     <div class="card card-primary">
                       <div class="card-body">
                         <div class="row">
-                          <div class="col-md-6 card-secondary">
+                          <div class="col-md-6 card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Stocks list</h3>
                             </div>

@@ -19,7 +19,7 @@ class CreateInventoriesTable extends Migration
 			$table->string('LABEL')->nullable();
             $table->date('START_DATE')->nullable();
             $table->date('END_DATE')->nullable();
-            $table->integer('STATU')->default(1);
+            $table->integer('statu')->default(1);
             $table->timestamps();
         });
     }

@@ -10,7 +10,6 @@ class QualityActionController extends Controller
 {
     public function store(StoreQualityActionRequest $request)
     {
-       
         $Action = QualityAction::create($request->only('CODE',
                                                         'LABEL', 
                                                         'statu',
@@ -21,8 +20,6 @@ class QualityActionController extends Controller
                                                         'ACTION', 
                                                         'COLOR', 
                                                         'quality_non_conformitie_id'));
-
         return redirect()->route('quality')->with('success', 'Successfully created action.');
-
     }
 }

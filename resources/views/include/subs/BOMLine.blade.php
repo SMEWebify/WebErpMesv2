@@ -8,15 +8,7 @@
     <td>{{ $BOMProduct->UNIT_PRICE }}</td>
     <td>
       @if($BOMProduct->order_lines_id)
-        @if(1 == $BOMProduct->statu )   <span class="badge badge-info"> Open</span>@endif
-        @if(2 == $BOMProduct->statu )  <span class="badge badge-warning">Started</span>@endif
-        @if(3 == $BOMProduct->statu )  <span class="badge badge-warning">In progress</span>@endif
-        @if(4 == $BOMProduct->statu )   <span class="badge badge-success"> Finished</span>@endif
-        @if(5 == $BOMProduct->statu )  <span class="badge badge-danger">Suspended</span>@endif
-        @if(6 == $BOMProduct->statu )  <span class="badge badge-danger">To RFQ</span>@endif
-        @if(7 == $BOMProduct->statu )  <span class="badge badge-danger">RFQ in progress</span>@endif
-        @if(8 == $BOMProduct->statu )  <span class="badge badge-warning">Outsourced</span>@endif
-        @if(9 == $BOMProduct->statu )  <span class="badge badge-warning">Supplied</span>@endif
+      {{ $BOMProduct->status['title'] }}
       @else
         Not for quote
       @endif
@@ -30,7 +22,7 @@
       </div>
       <div class="btn-group btn-group-sm">
         <a href="{{ route('task.delete', ['id_type'=> $id_type, 'id_page'=> $id_page, 'id_task' => $BOMProduct->id])}}" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
-     </div>
+      </div>
     </td>
   </tr>
   

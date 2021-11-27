@@ -79,7 +79,7 @@
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-times"></i></span>
                   </div>
-                 <input type="number" class="form-control" name="qty"  id="qty" placeholder="Quantity" step=".001">
+                  <input type="number" class="form-control" name="qty"  id="qty" placeholder="Quantity" step=".001">
                 </div>
               </div>
               <div class="col-3">

@@ -43,16 +43,6 @@ class Currency
      */
     protected $symbolPlacement;
     private static $currencies = [
-        'DKK' => [
-            'code'              => 'DKK',
-            'title'             => 'Danish Krone',
-            'symbol'            => 'kr.',
-            'precision'         => 2,
-            'thousandSeparator' => '.',
-            'decimalSeparator'  => ',',
-            'symbolPlacement'   => 'after',
-            'vatPercentage'     => 2500,
-        ],
         'USD' => [
             'title'             => 'US Dollar',
             'code'              => 'USD',

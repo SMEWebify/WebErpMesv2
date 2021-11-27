@@ -17,22 +17,14 @@
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 <div class="card">
-      @livewire('task-lines')
+  @livewire('task-lines')
 </div>
 <!-- /.card -->
-
 @stop
 
 @section('css')
-
-
 @stop
 
 @section('js')
-<script> 
-
-</script>
 @stop

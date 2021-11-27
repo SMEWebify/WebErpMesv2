@@ -25,7 +25,6 @@ class ConnexionController extends Controller
         );
 
         if(Auth::attempt($user_data)){
-
             return redirect('/SuccessLogin');
         }
         else{

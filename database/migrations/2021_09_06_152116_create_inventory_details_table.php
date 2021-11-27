@@ -20,7 +20,7 @@ class CreateInventoryDetailsTable extends Migration
             $table->decimal('start_qty', 11, 3)->nullable();
             $table->decimal('inv_qty', 11, 3)->nullable();
             $table->decimal('price', 11, 3)->nullable();
-            $table->integer('STATU')->default(1);
+            $table->integer('statu')->default(1);
             $table->timestamps();
         });
     }

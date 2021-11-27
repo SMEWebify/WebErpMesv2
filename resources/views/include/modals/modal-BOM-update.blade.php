@@ -51,7 +51,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                   <input type="text" class="form-control" name="label"  id="LABEL_BOM" placeholder="Label" value="{{ $BOMProduct->label }}">
+                    <input type="text" class="form-control" name="label"  id="LABEL_BOM" placeholder="Label" value="{{ $BOMProduct->label }}">
                   </div>
               </div>
             </div>
@@ -62,7 +62,7 @@
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-times"></i></span>
                   </div>
-                 <input type="number" class="form-control" name="qty"  id="qty" placeholder="Quantity" step=".001" value="{{ $BOMProduct->qty }}">
+                  <input type="number" class="form-control" name="qty"  id="qty" placeholder="Quantity" step=".001" value="{{ $BOMProduct->qty }}">
                 </div>
               </div>
               <div class="col-3">

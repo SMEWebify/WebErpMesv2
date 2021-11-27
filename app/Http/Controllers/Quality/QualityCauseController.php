@@ -10,10 +10,7 @@ class QualityCauseController extends Controller
 {
     public function store(StoreQualityCauseRequest $request)
     {
-       
         $Cause = QualityCause::create($request->only('CODE', 'LABEL'));
-
         return redirect()->route('quality')->with('success', 'Successfully created cause type.');
-
     }
 }

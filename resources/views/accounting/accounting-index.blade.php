@@ -43,7 +43,7 @@
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Payment condition type list</h3>
                 </div>
@@ -162,7 +162,7 @@
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Payment choice type list</h3>
                 </div>
@@ -260,7 +260,7 @@
           <div class="card-body">
             <x-infocalloutComponent note="You can define as many tax rates as you want, depending on the types of the quoted or sold products / components."  />
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">VAT type list</h3>
                 </div>
@@ -362,7 +362,7 @@
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Accouting Allocations type list</h3>
                 </div>
@@ -502,7 +502,7 @@
         <div class="card card-primary">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-6 card-secondary">
+              <div class="col-md-6 card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Delevery type list</h3>
                 </div>
@@ -593,13 +593,11 @@
 </div>
 <!-- /.card -->
 </div>
+@stop
+
+@section('css')
 
 @stop
-                  
- @section('css')
-    
- @stop
-                  
+
 @section('js')
-  <script> console.log('Hi!'); </script>
 @stop

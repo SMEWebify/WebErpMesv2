@@ -9,18 +9,17 @@ use App\Models\Planning\Task;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Planning\StoreTaskRequest;
 use App\Http\Requests\Planning\UpdateTaskRequest;
+use App\Models\Planning\Status;
 
 class TaskController extends Controller
 {
     //
-
     public function index()
     {
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
         }
-
         return view('workflow/task-index', [
             'Factory' => $Factory
         ]);
@@ -28,13 +27,12 @@ class TaskController extends Controller
 
     public function kanban()
     {
-        $tasks = auth()->user()->statuses()->with('tasks')->get();
-
+        //$tasks = auth()->user()->statuses()->with('tasks')->get();
+        $tasks = Status::orderBy('order', 'ASC')->with('tasks')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
         }
-
         return view('workflow/kanban-index', compact('tasks', 'Factory'));
     }
 
@@ -43,7 +41,6 @@ class TaskController extends Controller
         $this->validate(request(), [
             'columns' => ['required', 'array']
         ]);
-
         foreach ($request->columns as $status) {
             foreach ($status['tasks'] as $i => $task) {
                 $order = $i + 1;
@@ -54,7 +51,6 @@ class TaskController extends Controller
                 }
             }
         }
-
         return $request->user()->statuses()->with('tasks')->get();
     }
 
@@ -81,7 +77,7 @@ class TaskController extends Controller
                                             'UNIT_PRICE',
                                             'methods_units_id',
                                             'x_size', 
-                                            'Y_size', 
+                                            'y_size', 
                                             'z_size', 
                                             'x_oversize',
                                             'y_oversize',
@@ -103,7 +99,6 @@ class TaskController extends Controller
         elseif(isset($request->order_lines_id)){
             return redirect()->to(route('order.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully created new task');
         }
-        
     }
 
     public function delete($id_type, $id_page, $id_task)
@@ -124,7 +119,6 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, $id)
     {
-
         $task = Task::find($request->id);
         $task->label=$request->label;
         $task->ORDER=$request->ORDER;
@@ -138,9 +132,8 @@ class TaskController extends Controller
         $task->UNIT_COST=$request->UNIT_COST;
         $task->UNIT_PRICE=$request->UNIT_PRICE;
         $task->methods_units_id=$request->methods_units_id;
-
         $task->save();
-
+        
         if(isset($request->products_id)){
             return redirect()->route('products.show', ['id' => $id])->with('success', 'Successfully updated task');
         }
