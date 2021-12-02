@@ -1939,7 +1939,7 @@ __webpack_require__.r(__webpack_exports__);
       this.newTaskForStatus = 0;
     },
     handleTaskMoved: function handleTaskMoved(evt) {
-      axios.put("/Task/sync", {
+      axios.put("/task/sync", {
         columns: this.statuses
       })["catch"](function (err) {
         console.log(err.response);

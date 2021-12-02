@@ -27,7 +27,6 @@ class TaskController extends Controller
 
     public function kanban()
     {
-        //$tasks = auth()->user()->statuses()->with('tasks')->get();
         $tasks = Status::orderBy('order', 'ASC')->with('tasks')->get();
         $Factory = Factory::first();
         if(!$Factory){
@@ -41,17 +40,16 @@ class TaskController extends Controller
         $this->validate(request(), [
             'columns' => ['required', 'array']
         ]);
+
         foreach ($request->columns as $status) {
             foreach ($status['tasks'] as $i => $task) {
-                $order = $i + 1;
-                if ($task['status_id'] !== $status['id'] || $task['order'] !== $order) {
-                    request()->user()->tasks()
-                        ->find($task['id'])
-                        ->update(['status_id' => $status['id'], 'order' => $order]);
+                if ($task['status_id'] !== $status['id']) {
+                    Task::find($task['id'])->update(['status_id' => $status['id']]);
                 }
             }
         }
-        return $request->user()->statuses()->with('tasks')->get();
+
+        return $request->status()->with('tasks')->get();
     }
 
     public function store(StoreTaskRequest $request, $id)
@@ -67,7 +65,7 @@ class TaskController extends Controller
                                             'UNIT_TIME', 
                                             'REMAINING_TIME', 
                                             'ADVANCEMENT', 
-                                            'statu', 
+                                            'status_id', 
                                             'TYPE',
                                             'DELAY',
                                             'QTY',

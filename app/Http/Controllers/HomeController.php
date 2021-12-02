@@ -7,6 +7,7 @@ use App\Models\workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use Illuminate\Support\Facades\DB;
+use App\Models\Admin\EstimatedBudgets;
 use App\Models\Methods\MethodsServices;
 
 class HomeController extends Controller
@@ -41,6 +42,7 @@ class HomeController extends Controller
                                     ')
                                     ->groupByRaw('MONTH(delivery_date) ')
                                     ->get();
+        $data['estimatedBudget'] = EstimatedBudgets::where('year', '2021')->get();
         
         return view('dashboard', [
             'LastProducts' => $LastProducts,

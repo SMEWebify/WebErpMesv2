@@ -10,8 +10,9 @@
 <div class="card">
     <div class="card-header p-2">
         <ul class="nav nav-pills">
-        <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Factory settings</a></li>
-        <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Kanban settings</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Factory settings</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Kanban settings</a></li>
+            <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">Estimated Budget</a></li>
         </ul>
     </div>
     <div class="card-body">
@@ -519,6 +520,11 @@
                 <x-infocalloutComponent note="The first line will be used for the default status of new tasks."  />
                 @livewire('kanban-setting')
             </div>
+            <div class="tab-pane " id="EstimatedBudget">
+                <x-infocalloutComponent note="Used for dashboard chart."  />
+                @livewire('estimated-budget')
+            </div>
+            
         </div>
     </div>
 </div>

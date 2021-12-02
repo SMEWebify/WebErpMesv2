@@ -69,7 +69,7 @@ export default {
       this.newTaskForStatus = 0;
     },
     handleTaskMoved(evt) {
-      axios.put("/Task/sync", { columns: this.statuses }).catch(err => {
+      axios.put("/task/sync", { columns: this.statuses }).catch(err => {
         console.log(err.response);
       });
     }

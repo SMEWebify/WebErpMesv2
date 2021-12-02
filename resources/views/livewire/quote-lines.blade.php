@@ -77,16 +77,16 @@
                             <td>
                                 @if($QuoteStatu == 1)
                                 <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="edit({{$QuoteLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
+                                    <a href="#" wire:click="editQuoteLine({{$QuoteLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
                                 </div>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="destroy({{$QuoteLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
+                                    <a href="#" wire:click="destroyQuoteLine({{$QuoteLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
                                 </div>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="up({{ $QuoteLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
+                                    <a href="#" wire:click="upQuoteLine({{ $QuoteLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
                                 </div>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="down({{ $QuoteLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
+                                    <a href="#" wire:click="downQuoteLine({{ $QuoteLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
                                 </div>
                                 @endif
                                 <!-- Modal -->

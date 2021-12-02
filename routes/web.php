@@ -75,10 +75,10 @@ Route::group(['prefix' => 'products'], function () {
 });
 
 Route::group(['prefix' => 'task'], function () {
-    Route::get('/Task/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->middleware(['auth'])->name('task.delete');
-    Route::post('/Task/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
-    Route::post('/Task/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->middleware(['auth'])->name('task.update');
-    Route::put('/Task/sync', 'App\Http\Controllers\Planning\TaskController@sync')->name('tasks.sync');
+    Route::put('/sync', 'App\Http\Controllers\Planning\TaskController@sync')->name('task.sync');
+    Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->middleware(['auth'])->name('task.delete');
+    Route::post('/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
+    Route::post('/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->middleware(['auth'])->name('task.update');
 });
 
 Route::group(['prefix' => 'production'], function () {

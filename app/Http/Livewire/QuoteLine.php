@@ -123,7 +123,7 @@ class QuoteLine extends Component
         $this->resetFields();
     }
 
-    public function edit($id){
+    public function editQuoteLine($id){
         $Line = Quotelines::findOrFail($id);
         $this->quote_lines_id = $id;
         $this->ORDRE = $Line->ORDRE;
@@ -140,26 +140,7 @@ class QuoteLine extends Component
         $this->updateLines = true;
     }
 
-    public function cancel()
-    {
-        $this->updateLines = false;
-        $this->resetFields();
-    }
-
-    public function up($idStatu){
-        // Update line
-        Quotelines::find($idStatu)->increment('ORDRE',1);;
-        session()->flash('success','Line Updated Successfully');
-    }
-
-    public function down($idStatu){
-        // Update line
-        Quotelines::find($idStatu)->decrement('ORDRE',1);;
-        session()->flash('success','Line Updated Successfully');
-    }
-
-    public function update(){
-
+    public function updateQuoteLine(){
         // Validate request
         $this->validate();
         // Update line
@@ -179,7 +160,27 @@ class QuoteLine extends Component
         session()->flash('success','Line Updated Successfully');
     }
 
-    public function destroy($id){
+    public function cancel()
+    {
+        $this->updateLines = false;
+        $this->resetFields();
+    }
+
+    public function upQuoteLine($idStatu){
+        // Update line
+        Quotelines::find($idStatu)->increment('ORDRE',1);;
+        session()->flash('success','Line Updated Successfully');
+    }
+
+    public function downQuoteLine($idStatu){
+        // Update line
+        Quotelines::find($idStatu)->decrement('ORDRE',1);;
+        session()->flash('success','Line Updated Successfully');
+    }
+
+
+
+    public function destroyQuoteLine($id){
         try{
             Quotelines::find($id)->delete();
             Task::where('quote_lines_id',$id)->delete();

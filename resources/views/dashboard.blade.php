@@ -122,7 +122,7 @@
           <div class="row">
             <div class="col-md-8">
               <p class="text-center">
-                <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
+                <strong>Sales: 1 Jan, {{ now()->year }} - 30 Dec, {{ now()->year }}</strong>
               </p>
               <div class="chart">
                 <!-- Sales Chart Canvas -->
@@ -533,7 +533,22 @@
           pointStrokeColor    : '#c1c7d1',
           pointHighlightFill  : '#fff',
           pointHighlightStroke: 'rgba(220,220,220,1)',
-          data                : [650, 5900, 8000, 8100, 5600, 5500, 4000, 5900, 8000, 8100, 5600, 5500, 4000]
+          data                :  [
+                                @foreach ($data['estimatedBudget'] as $key => $item)
+                                  "{{ $item->amount1 }}",
+                                  "{{ $item->amount2 }}",
+                                  "{{ $item->amount3 }}",
+                                  "{{ $item->amount4 }}",
+                                  "{{ $item->amount5 }}",
+                                  "{{ $item->amount6 }}",
+                                  "{{ $item->amount7 }}",
+                                  "{{ $item->amount8 }}",
+                                  "{{ $item->amount9 }}",
+                                  "{{ $item->amount10 }}",
+                                  "{{ $item->amount11 }}",
+                                  "{{ $item->amount12 }}",
+                                @endforeach 
+                              ]
         },
       ]
     }

@@ -1,4 +1,4 @@
-<form wire:submit.prevent="update">
+<form wire:submit.prevent="updateQuoteLine">
     <div class="row">
         <div class="col-2">
             <label for="ORDRE">Sort order:</label>

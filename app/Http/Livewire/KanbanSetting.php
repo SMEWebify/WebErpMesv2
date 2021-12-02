@@ -44,19 +44,19 @@ class KanbanSetting extends Component
         $this->resetFields();
     }
 
-    public function up($idStatu){
+    public function upKanban($idStatu){
         // Update line
         Status::find($idStatu)->increment('order',1);;
         session()->flash('success','Line Updated Successfully');
     }
 
-    public function down($idStatu){
+    public function downKanban($idStatu){
         // Update line
         Status::find($idStatu)->decrement('order',1);;
         session()->flash('success','Line Updated Successfully');
     }
 
-    public function destroy($id){
+    public function destroyKanban($id){
         try{
             Status::find($id)->delete();
             session()->flash('success',"Line deleted Successfully!!");

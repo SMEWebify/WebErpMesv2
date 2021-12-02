@@ -17,7 +17,7 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['LABEL', 
+    protected $fillable = ['label', 
                             'ORDER',
                             'quote_lines_id',
                             'order_lines_id',
