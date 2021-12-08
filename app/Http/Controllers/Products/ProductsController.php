@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers\Products;
 
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
-use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Http\Controllers\Controller;
-use App\Models\Methods\MethodsUnits;
-use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
-use App\Http\Requests\Products\StoreProductsRequest;
 
 class ProductsController extends Controller
 {
@@ -24,6 +19,7 @@ class ProductsController extends Controller
     public function show($id)
     {
         $Product = Products::findOrFail($id);
+        $status_id = Status::select('id')->orderBy('order')->first();
         $ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
         $TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
         $BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
@@ -40,6 +36,7 @@ class ProductsController extends Controller
         
         return view('products/products-show', [
             'Product' => $Product,
+            'status_id' => $status_id,
             'ProductSelect' => $ProductSelect,
             'TechServicesSelect' =>  $TechServicesSelect,
             'BOMServicesSelect' =>  $BOMServicesSelect,

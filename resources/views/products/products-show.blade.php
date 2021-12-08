@@ -251,7 +251,7 @@
 <!-- /.card-body -->
 </div>
 
-  @include('include.Main-procces', ['route' => route('task.store', ['id' => $Product->id]), 'id_page' => $Product->id,'id_type' => 'products_id', 'id_line' => $Product->id, 'task' => $Product->Task])
+  @include('include.Main-procces', ['route' => route('task.store', ['id' => $Product->id]), 'id_page' => $Product->id,'id_type' => 'products_id', 'id_line' => $Product->id,'status_id'=>$status_id['id'] , 'task' => $Product->Task])
 <!-- /.card -->
 @stop
 

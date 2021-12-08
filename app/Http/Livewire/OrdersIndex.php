@@ -77,7 +77,7 @@ class OrdersIndex extends Component
 
     public function render()
     {
-        $Orders = Orders::where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $Orders = Orders::withCount('OrderLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         $userSelect = User::select('id', 'name')->get();
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
         $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();

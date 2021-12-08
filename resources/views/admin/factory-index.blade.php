@@ -517,7 +517,7 @@
                 </div>
             </div>
             <div class="tab-pane " id="Kanban">
-                <x-infocalloutComponent note="The first line will be used for the default status of new tasks."  />
+                <x-infocalloutComponent note="The first line will be used for the default status of new tasks. The last line is used for finished task, ready for delivery note"  />
                 @livewire('kanban-setting')
             </div>
             <div class="tab-pane " id="EstimatedBudget">

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\workflow;
+namespace App\Models\Workflow;
 
 use App\Models\User;
 use App\Models\Workflow\Quotes;
@@ -32,7 +32,7 @@ class Orders extends Model
                             'accounting_deliveries_id',  
                             'comment',
                             'quote_id',
-                         ];
+                        ];
 
     public function companie()
     {
@@ -64,7 +64,7 @@ class Orders extends Model
         return $this->belongsTo(AccountingPaymentMethod::class, 'accounting_payment_methods_id');
     }
 
-    public function delevery()
+    public function delevery_method()
     {
         return $this->belongsTo(AccountingDelivery::class, 'accounting_deliveries_id');
     }
@@ -77,11 +77,6 @@ class Orders extends Model
     public function OrderLines()
     {
         return $this->hasMany(OrderLines::class)->orderBy('ORDRE');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function GetPrettyCreatedAttribute()

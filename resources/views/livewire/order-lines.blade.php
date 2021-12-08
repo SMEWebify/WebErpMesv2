@@ -96,7 +96,7 @@
                                             </button>
                                             </div>
                                             <div class="modal-body">
-                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $OrderLine->orders_id]),'id_page' => $OrderLine->orders_id, 'id_type' => 'order_lines_id', 'id_line' => $OrderLine->id, 'task' => $OrderLine->Task])
+                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $OrderLine->orders_id]),'id_page' => $OrderLine->orders_id, 'id_type' => 'order_lines_id', 'id_line' => $OrderLine->id, 'status_id'=>$status_id['id'] ,'task' => $OrderLine->Task])
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

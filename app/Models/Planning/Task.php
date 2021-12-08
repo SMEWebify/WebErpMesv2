@@ -28,7 +28,7 @@ class Task extends Model
                             'UNIT_TIME', 
                             'REMAINING_TIME', 
                             'ADVANCEMENT', 
-                            'statu', 
+                            'status_id', 
                             'TYPE',
                             'DELAY',
                             'qty',

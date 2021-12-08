@@ -11,7 +11,7 @@ use App\Models\workflow\Orderlines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
-
+use App\Models\Planning\Status;
 
 class OrderLine extends Component
 {
@@ -24,6 +24,7 @@ class OrderLine extends Component
     
     public $OrderId;
     public $OrderStatu;
+    public $status_id;
 
     public $OrderLineslist;
     public $order_lines_id, $orders_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
@@ -67,6 +68,7 @@ class OrderLine extends Component
     {
         $this->orders_id = $OrderId;
         $this->order_Statu = $OrderStatu;
+        $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();

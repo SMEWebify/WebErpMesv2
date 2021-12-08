@@ -302,24 +302,41 @@ return [
             'icon' => 'fas fa-calendar-alt',
         ],*/
         [
-            'text'    => 'Delevery notes',
+            'text'    => 'Delivery notes',
             'icon'    => 'fas fa-calculator',
-            'url'  => '#',
+            'submenu' => [
+                [
+                    'text' => 'Deliverys notes request',
+                    'url'  => 'deliverys/request',
+                ],
+                [
+                    'text' => 'Deliverys notes list',
+                    'url'  => 'deliverys',
+                ],
+            ]
         ],
         [
             'text'    => 'Invoinces',
             'icon'    => 'fas fa-calculator',
-            'url'  => '#',
+            'submenu' => [
+                [
+                    'text' => 'Invoinces request',
+                    'url'  => '#',
+                ],
+                [
+                    'text' => 'Invoinces list',
+                    'url'  => '#',
+                ],
+            ]
         ],
         [
-            'text'        => 'Purchase request',
-            'url'         => '#',
-            'icon'        => 'fas fa-industry',
-        ],
-        [
-            'text'    => 'Purchase order',
+            'text'    => 'Purchase',
             'icon'    => 'fas fa-cash-register',
             'submenu' => [
+                [
+                    'text'        => 'Purchase request',
+                    'url'  => '#',
+                ],
                 [
                     'text' => 'Purchase order list',
                     'url'  => '#',
@@ -348,10 +365,10 @@ return [
                     'text' => 'Stock',
                     'url'  => 'products/Stock',
                 ],
-                [
+               /*  [
                     'text' => 'Inventory',
                     'url'  => '#',
-                ],
+                ],*/
             ],
         ],
         [

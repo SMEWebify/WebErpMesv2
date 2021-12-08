@@ -13,6 +13,8 @@
                     </div>
                     <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
                     <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $id_line }}">
+                    <input type="hidden" class="form-control" name="status_id" value="{{ $status_id }}">
+                    
                   </div>
                 </div>
                 <div class="col-4">

@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Models\workflow\Quotelines;
 use App\Models\Methods\MethodsUnits;
@@ -23,6 +24,7 @@ class QuoteLine extends Component
     
     public $QuoteId;
     public $QuoteStatu;
+    public $status_id;
 
     public $QuoteLineslist;
     public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
@@ -67,6 +69,7 @@ class QuoteLine extends Component
     {
         $this->quotes_id = $QuoteId;
         $this->quote_Statu = $QuoteStatu;
+        $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();

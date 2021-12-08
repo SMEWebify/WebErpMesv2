@@ -3,33 +3,33 @@
 namespace App\Models\Workflow;
 
 use App\Models\User;
+use App\Models\Workflow\Orders;
 use App\Models\Companies\Companies;
-use App\Models\Workflow\QuoteLines;
+use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
-use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Quotes extends Model
+class Deliverys extends Model
 {
     use HasFactory;
 
     protected $fillable = ['CODE', 
                             'LABEL', 
-                            'customer_reference',
                             'companies_id', 
                             'companies_contacts_id',   
                             'companies_addresses_id',  
-                            'validity_date',  
                             'statu',  
                             'user_id',  
                             'accounting_payment_conditions_id',  
                             'accounting_payment_methods_id',  
                             'accounting_deliveries_id',  
-                            'comment' ];
+                            'comment',
+                            'order_id',
+                        ];
 
     public function companie()
     {
@@ -60,21 +60,24 @@ class Quotes extends Model
     {
         return $this->belongsTo(AccountingPaymentMethod::class, 'accounting_payment_methods_id');
     }
-
+    
     public function delevery_method()
     {
         return $this->belongsTo(AccountingDelivery::class, 'accounting_deliveries_id');
     }
 
-    public function QuoteLines()
+    public function Orders()
     {
-        return $this->hasMany(QuoteLines::class)->orderBy('ORDRE');
+        return $this->belongsTo(Orders::class, 'order_id');
     }
 
+    public function OrderLines()
+    {
+        return $this->hasMany(OrderLines::class)->orderBy('ORDRE');
+    }
 
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
     }
-
 }

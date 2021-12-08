@@ -77,7 +77,7 @@ class QuotesIndex extends Component
 
     public function render()
     {
-        $Quotes = Quotes::where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $Quotes = Quotes::withCount('QuoteLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
         $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
         $ContactSelect = companiesContacts::select('id', 'FIRST_NAME','NAME')->get();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\workflow;
+namespace App\Models\Workflow;
 
 use App\Models\Planning\Task;
 use App\Models\workflow\Orders;

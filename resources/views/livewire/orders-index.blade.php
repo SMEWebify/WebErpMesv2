@@ -210,6 +210,7 @@
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
                         <th>Customer reference</th>
+                        <th>Lines count</th>
                         <th>Statu</th>
                         <th>Created At</th>
                         <th>Action</th>
@@ -222,6 +223,7 @@
                         <td>{{ $Order->LABEL }}</td>
                         <td>{{ $Order->companie['LABEL'] }}</td>
                         <td>{{ $Order->customer_reference }}</td>
+                        <td>{{ $Order->order_lines_count }}</td>
                         <td>
                             @if(1 == $Order->statu )   <span class="badge badge-info"> Open</span>@endif
                             @if(2 == $Order->statu )  <span class="badge badge-warning">Send</span>@endif
@@ -250,6 +252,7 @@
                         <th>Label</th>
                         <th>Companie</th>
                         <th>Customer reference</th>
+                        <th>Lines count</th>
                         <th>Statu</th>
                         <th>Created At</th>
                         <th>Action</th>

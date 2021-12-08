@@ -215,6 +215,7 @@
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
                         <th>Customer reference</th>
+                        <th>Lines count</th>
                         <th>Statu</th>
                         <th>Created At</th>
                         <th>Action</th>
@@ -227,13 +228,14 @@
                         <td>{{ $Quote->LABEL }}</td>
                         <td>{{ $Quote->companie['LABEL'] }}</td>
                         <td>{{ $Quote->customer_reference }}</td>
+                        <td>{{ $Quote->quote_lines_count }}</td>
                         <td>
-                        @if(1 == $Quote->statu )   <span class="badge badge-info"> Open</span>@endif
-                        @if(2 == $Quote->statu )  <span class="badge badge-warning">Send</span>@endif
-                        @if(3 == $Quote->statu )  <span class="badge badge-success">Win</span>@endif
-                        @if(4 == $Quote->statu )  <span class="badge badge-danger">Lost</span>@endif
-                        @if(5 == $Quote->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                        @if(6 == $Quote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                            @if(1 == $Quote->statu )   <span class="badge badge-info"> Open</span>@endif
+                            @if(2 == $Quote->statu )  <span class="badge badge-warning">Send</span>@endif
+                            @if(3 == $Quote->statu )  <span class="badge badge-success">Win</span>@endif
+                            @if(4 == $Quote->statu )  <span class="badge badge-danger">Lost</span>@endif
+                            @if(5 == $Quote->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                            @if(6 == $Quote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                         </td>
                         <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
                         <td>
@@ -255,6 +257,7 @@
                         <th>Label</th>
                         <th>Companie</th>
                         <th>Customer reference</th>
+                        <th>Lines count</th>
                         <th>Statu</th>
                         <th>Created At</th>
                         <th>Action</th>

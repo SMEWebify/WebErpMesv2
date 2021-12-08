@@ -44,6 +44,7 @@
                             <th>Remaining time</th>
                             <th>Statu</th>
                             <th>Action</th>
+                            <th>Created</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,6 +66,7 @@
                             <td>{{ $Task->REMAINING_TIME }}</td>
                             <td>{{ $Task->status['title'] }}</td>
                             <td></td>
+                            <td>{{ $Task->GetPrettyCreatedAttribute() }}</td>
                         </tr>
                         @empty
                         <tr>
@@ -80,6 +82,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            th></th>
                         </tr>
                         @endforelse
                     </tbody>
@@ -101,6 +104,7 @@
                             <th>Remaining time</th>
                             <th>Statu</th>
                             <th>Action</th>
+                            <th>Created</th>
                         </tr>
                     </tfoot>
                 </table>
