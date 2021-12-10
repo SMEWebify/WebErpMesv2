@@ -65,10 +65,10 @@
                             <td>{{ $OrderLine->VAT['RATE'] }} %</td>
                             <td>{{ $OrderLine->delivery_date }}</td>
                             <td>
-                                @if(1 == $OrderLine->statu )  <span class="badge badge-info"> Open</span>@endif
-                                @if(2 == $OrderLine->statu )  <span class="badge badge-warning">In progress</span>@endif
-                                @if(3 == $OrderLine->statu )  <span class="badge badge-success">Delivered</span>@endif
-                                @if(4 == $OrderLine->statu )  <span class="badge badge-danger">Partly delivered</span>@endif
+                                @if(1 == $OrderLine->statu )  <span class="badge badge-info"> None (no task created for that sales order line)</span>@endif
+                                @if(2 == $OrderLine->statu )  <span class="badge badge-warning">Created</span>@endif
+                                @if(3 == $OrderLine->statu )  <span class="badge badge-success">In progress</span>@endif
+                                @if(4 == $OrderLine->statu )  <span class="badge badge-danger">Finished (all the tasks are finished)</span>@endif
                             </td>
                             <td>
                                 @if($OrderStatu == 1)

@@ -285,7 +285,7 @@
                   @if(6 == $LastQuote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                 </td>
                 <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
-                <td>{{ $LastQuote->user['name'] }}</td>
+                <td>{{ $LastQuote->UserManagement['name'] }}</td>
               </tr>
               <!-- /.item -->
               @empty
@@ -351,7 +351,7 @@
                     @if(4 == $LastOrder->statu )  <span class="badge badge-danger">Partly delivered</span>@endif
                   </td>
                   <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
-                  <td>{{ $LastOrder->user['name'] }}</td>
+                  <td>{{ $LastOrder->UserManagement['name'] }}</td>
                 </tr>
                 <!-- /.item -->
                 @empty

@@ -50,6 +50,7 @@ class OrdersIndex extends Component
         'accounting_payment_conditions_id'=>'required',
         'accounting_payment_methods_id'=>'required',
         'accounting_deliveries_id'=>'required',
+        'user_id'=>'required',
     ];
 
     public function sortBy($field)
@@ -71,8 +72,14 @@ class OrdersIndex extends Component
     {
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastOrder =  Orders::latest()->first();
-        $this->CODE = "OR-". $this->LastOrder->id;
-        $this->LABEL = "OR-". $this->LastOrder->id;
+        if($this->LastOrder == Null){
+            $this->CODE = "OR-1";
+            $this->LABEL = "OR-1";
+        }
+        else{
+            $this->CODE = "OR-". $this->LastOrder->id;
+            $this->LABEL = "OR-". $this->LastOrder->id;
+        }
     }
 
     public function render()

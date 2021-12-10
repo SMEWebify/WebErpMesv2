@@ -17,6 +17,7 @@ MES offers a link between what the customer expects and a real-time status of th
 This project using Laravel 8, Livewire and bootstrap 4.6.
 
  Admin LTE for laravel : https://github.com/jeroennoten/Laravel-AdminLTE
+ 
  Kanban : https://github.com/messerli90/jobhuntbuddy
 
 I am unprofessional, any improvement discussion would be helpful. :hugs:

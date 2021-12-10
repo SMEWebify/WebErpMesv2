@@ -23,10 +23,7 @@ class Deliverys extends Model
                             'companies_contacts_id',   
                             'companies_addresses_id',  
                             'statu',  
-                            'user_id',  
-                            'accounting_payment_conditions_id',  
-                            'accounting_payment_methods_id',  
-                            'accounting_deliveries_id',  
+                            'user_id',
                             'comment',
                             'order_id',
                         ];

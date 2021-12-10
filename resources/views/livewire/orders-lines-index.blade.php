@@ -48,12 +48,10 @@
                         <td>{{ $OrderLine->VAT['LABEL'] }}</td>
                         <td>{{ $OrderLine->delivery_date }}</td>
                         <td>
-                            @if(1 == $OrderLine->statu )   <span class="badge badge-info"> Open</span>@endif
-                            @if(2 == $OrderLine->statu )  <span class="badge badge-warning">Send</span>@endif
-                            @if(3 == $OrderLine->statu )  <span class="badge badge-success">Win</span>@endif
-                            @if(4 == $OrderLine->statu )  <span class="badge badge-danger">Lost</span>@endif
-                            @if(5 == $OrderLine->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                            @if(6 == $OrderLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                            @if(1 == $OrderLine->statu )  <span class="badge badge-info"> None (no task created for that sales order line)</span>@endif
+                            @if(2 == $OrderLine->statu )  <span class="badge badge-warning">Created</span>@endif
+                            @if(3 == $OrderLine->statu )  <span class="badge badge-success">In progress</span>@endif
+                            @if(4 == $OrderLine->statu )  <span class="badge badge-danger">Finished (all the tasks are finished)</span>@endif
                         </td>
                         <td>
                             <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $OrderLine->orders_id])}}">

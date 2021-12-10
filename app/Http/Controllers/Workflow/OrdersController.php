@@ -96,7 +96,6 @@ class OrdersController extends Controller
         $Order->accounting_deliveries_id=$request->accounting_deliveries_id;
         $Order->comment=$request->comment;
         $Order->save();
-        $OrderLines = OrderLines::where('orders_id', $request->id)->update(['statu' => $request->statu]);
         return redirect()->route('order.show', ['id' =>  $Order->id])->with('success', 'Successfully updated Order');
     }
 }

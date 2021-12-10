@@ -50,6 +50,7 @@ class QuotesIndex extends Component
         'accounting_payment_conditions_id'=>'required',
         'accounting_payment_methods_id'=>'required',
         'accounting_deliveries_id'=>'required',
+        'user_id'=>'required',
     ];
 
     public function sortBy($field)
@@ -71,8 +72,14 @@ class QuotesIndex extends Component
     {
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastQuote =  Quotes::latest()->first();
-        $this->CODE = "QT-". $this->LastQuote->id;
-        $this->LABEL = "QT-". $this->LastQuote->id;
+        if($this->LastQuote == Null){
+            $this->CODE = "QT-1";
+            $this->LABEL = "QT-1";
+        }
+        else{
+            $this->CODE = "QT-". $this->LastQuote->id;
+            $this->LABEL = "QT-". $this->LastQuote->id;
+        }
     }
 
     public function render()

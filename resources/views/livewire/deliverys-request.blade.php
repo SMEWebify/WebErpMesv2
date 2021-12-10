@@ -1,3 +1,144 @@
-<div>
-    {{-- Stop trying to control. --}}
+<div class="card-body">
+    <div class="card">
+        <form>
+            @csrf
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3">
+                        <label for="companies_id">Sort Companie</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            </div>
+                            <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
+                                <option value="">Select company</option>
+                            @forelse ($CompaniesSelect as $item)
+                                <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                            @empty
+                                <option value="">No company, please add</option>
+                            @endforelse
+                            </select>
+                        </div>
+                        @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-3">
+                        <label for="CODE">External ID</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                            </div>
+                            <input type="text" class="form-control" wire:model="CODE" name="CODE" id="CODE" placeholder="External ID">
+                            @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <label for="LABEL">Name of Delivery note</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                            </div>
+                            <input type="text" class="form-control" wire:model="LABEL" name="LABEL"  id="LABEL"  placeholder="Name of quote" required>
+                        </div>
+                        @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-3">
+                        <label for="user_id">User management</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <select class="form-control" wire:model="user_id" name="user_id" id="user_id">
+                                <option value="">Select user management</option>
+                            @foreach ($userSelect as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                            </select>
+                        </div>
+                        @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <button type="Submit" wire:click.prevent="storeDeliveryNote()" class="btn btn-success">New delivery note</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">Quote @include('include.sort-icon', ['field' => 'orders_id'])</a>
+                            </th>
+                            <th>Sort</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                            </th>
+                            <th>Product</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                            </th>
+                            <th>Qty</th>
+                            <th>Scum qty</th>
+                            <th>Unit</th>
+                            <th>Selling price</th>
+                            <th>Discount</th>
+                            <th>VAT type</th>
+                            <th>Delivery date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($DeliverysRequestsLineslist as $DeliverysRequestsLine)
+                        <tr>
+                            <td>{{ $DeliverysRequestsLine->order['CODE'] }}</td>
+                            <td>{{ $DeliverysRequestsLine->ORDRE }}</td>
+                            <td>{{ $DeliverysRequestsLine->CODE }}</td>
+                            <td>@if(1 == $DeliverysRequestsLine->product_id ) {{ $DeliverysRequestsLine->Product['LABEL'] }}@endif</td>
+                            <td>{{ $DeliverysRequestsLine->LABEL }}</td>
+                            <td>{{ $DeliverysRequestsLine->qty }}</td>
+                            <td>
+                                <input type="number" class="form-control" id="scumQty" placeholder="Quantity" wire:model="scumQty">
+                            </td>
+                            <td>{{ $DeliverysRequestsLine->Unit['LABEL'] }}</td>
+                            <td>{{ $DeliverysRequestsLine->selling_price }}</td>
+                            <td>{{ $DeliverysRequestsLine->discount }}</td>
+                            <td>{{ $DeliverysRequestsLine->VAT['LABEL'] }}</td>
+                            <td>{{ $DeliverysRequestsLine->delivery_date }}</td>
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model="order_line_id" type="checkbox" id="id.{{ $DeliverysRequestsLine->id }}">
+                                    <label for="id.{{ $DeliverysRequestsLine->id }}" class="custom-control-label">Add to new delivery note</label>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="12">No data</td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Order</th>
+                            <th>Sort</th>
+                            <th>External ID</th>
+                            <th>Product</th>
+                            <th>Description</th>
+                            <th>Qty</th>
+                            <th>Scum qty</th>
+                            <th>Unit</th>
+                            <th>Selling price</th>
+                            <th>Discount</th>
+                            <th>VAT type</th>
+                            <th>Delivery date</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        <!-- /.card -->
+        </div>
+    </form>
+<!-- /.card-body -->
 </div>

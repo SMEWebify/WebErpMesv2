@@ -22,9 +22,6 @@ class CreateDeliverysTable extends Migration
 			$table->integer('companies_addresses_id');
 			$table->integer('statu')->default(1);
 			$table->integer('user_id');
-			$table->integer('accounting_payment_conditions_id');
-			$table->integer('accounting_payment_methods_id');
-			$table->integer('accounting_deliveries_id');
 			$table->text('comment', 65535)->nullable();
             $table->integer('order_id')->nullable();
             $table->timestamps();

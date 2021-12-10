@@ -18,10 +18,10 @@ class OrderLines extends Model
                             'product_id',
                             'LABEL',
                             'qty',
-
-
-
-                            
+                            'delivered_qty',
+                            'delivered_remaining_qty',
+                            'invoiced_qty',
+                            'invoiced_remaining_qty',
                             'methods_units_id',
                             'selling_price',
                             'discount',
