@@ -40,6 +40,7 @@
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                     </div>
                                     <select class="form-control" name="user_id" id="user_id" wire:model="user_id">
+                                        <option value="">Select user</option>
                                     @foreach ($userSelect as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
@@ -133,7 +134,8 @@
                                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                     </div>
                                     <select class="form-control" name="statu_CLIENT" id="statu_CLIENT" wire:model="statu_CLIENT">
-                                        <option value="1" selected>Inactive</option>
+                                        <option value="">Select statu</option>
+                                        <option value="1">Inactive</option>
                                         <option value="2">Active</option>
                                         <option value="3">Prospect</option>
                                     </select>
@@ -170,6 +172,7 @@
                                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                     </div>
                                     <select class="form-control" name="statu_FOUR" id="statu_FOUR"  wire:model="statu_FOUR">
+                                        <option value="">Select statu</option>
                                         <option value="1" selected>Inactive</option>
                                         <option value="2">Active</option>
                                     </select>
@@ -179,6 +182,7 @@
                             <div class="col-3">
                                 <label for="RECEPT_CONTROLE">Reception control</label>
                                 <select class="form-control" name="RECEPT_CONTROLE" id="RECEPT_CONTROLE" wire:model="RECEPT_CONTROLE">
+                                    <option value="">Select controle type</option>
                                     <option value="1">Yes</option>
                                     <option value="2">No</option>
                                 </select>
@@ -224,7 +228,7 @@
                     <input type="text" class="form-control" wire:model="search" placeholder="Search company">
                 </div>
             </div>
-            <table class="table table-bordered table-striped">
+            <table class="table">
                 <thead>
                     <tr>
                         <th >

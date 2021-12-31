@@ -42,9 +42,10 @@
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
                                         <select class="form-control" wire:model="user_id" name="user_id" id="user_id">
-                                        @foreach ($userSelect as $item)
+                                            <option value="">Select user management</option>
+                                            @foreach ($userSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
+                                            @endforeach
                                         </select>
                                     </div>
                                     @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -58,17 +59,18 @@
                             <hr>
                             <div class="row">
                                 <div class="col-5">
-                                    <label for="companies_id">Companie</label>
+                                    <label for="companies_id">Company</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-building"></i></span>
                                         </div>
                                         <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
-                                        @forelse ($CompanieSelect as $item)
+                                            <option value="">Select company</option>
+                                            @forelse ($CompanieSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
-                                        @empty
+                                            @empty
                                             <option value="">No company, please add</option>
-                                        @endforelse
+                                            @endforelse
                                         </select>
                                     </div>
                                     @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -86,17 +88,18 @@
                             </div>
                             <div class="row">
                                 <div class="col-5">
-                                    <label for="companies_addresses_id">Adress</label>
+                                    <label for="companies_addresses_id">Address</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                                         </div>
                                         <select class="form-control" wire:model="companies_addresses_id"  name="companies_addresses_id" id="companies_addresses_id">
-                                        @forelse ($AddressSelect as $item)
+                                            <option value="">Select address</option>
+                                            @forelse ($AddressSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
-                                        @empty
+                                            @empty
                                             <option value="">No address, please add</option>
-                                        @endforelse
+                                            @endforelse
                                         </select>
                                     </div>
                                     @error('companies_addresses_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -108,11 +111,12 @@
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
                                         <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
-                                        @forelse ($ContactSelect as $item)
+                                            <option value="">Select contact</option>
+                                            @forelse ($ContactSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
-                                        @empty
+                                            @empty
                                             <option value="">No contact, please add</option>
-                                        @endforelse
+                                            @endforelse
                                         </select>
                                     </div>
                                     @error('companies_contacts_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -128,8 +132,9 @@
                                 <div class="col-5">
                                     <label for="accounting_payment_conditions_id">Payment condition</label>
                                     <select class="form-control" wire:model="accounting_payment_conditions_id" name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
+                                        <option value="">Select payement condition</option>
                                         @forelse ($AccountingConditionSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
                                         @empty
                                             <option value="">No payment conditions, please add in accounting page</option>
                                         @endforelse
@@ -139,6 +144,7 @@
                                 <div class="col-5">
                                     <label for="accounting_payment_methods_id">Payment methods</label>
                                     <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
+                                        <option value="">Select payment methods</option>
                                         @forelse ($AccountingMethodsSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
                                         @empty
@@ -156,6 +162,7 @@
                                             <span class="input-group-text"><i class="fas fa-truck"></i></span>
                                         </div>
                                         <select class="form-control" wire:model="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id">
+                                            <option value="">Select deliveries</option>
                                         @forelse ($AccountingDeleveriesSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
                                         @empty
@@ -191,7 +198,6 @@
         </div>
     </div>
     <!-- End Modal -->
-
     <div class="card">
         <div class="card-body">
             <div class="input-group mb-3">
@@ -202,7 +208,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>
@@ -222,7 +228,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($Quoteslist as $Quote)
+                    @forelse ($Quoteslist as $Quote)
                     <tr>
                         <td>{{ $Quote->CODE }}</td>
                         <td>{{ $Quote->LABEL }}</td>
@@ -249,7 +255,15 @@
                         </a>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="8">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No quotes found ...</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
                 <tfoot>
                     <tr>

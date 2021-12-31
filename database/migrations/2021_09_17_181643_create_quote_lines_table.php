@@ -17,9 +17,9 @@ class CreateQuoteLinesTable extends Migration
             $table->id();
             $table->integer('quotes_id');
 			$table->integer('ORDRE');
-			$table->string('CODE');
+			$table->string('CODE')->nullable();
 			$table->string('product_id')->nullable();
-			$table->string('LABEL')->nullable();
+			$table->string('LABEL');
 			$table->integer('qty');
 			$table->integer('methods_units_id');
 			$table->decimal('selling_price', 10, 3);

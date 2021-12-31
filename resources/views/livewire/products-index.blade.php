@@ -48,11 +48,12 @@
                                         <span class="input-group-text"><i class="fas fa-list"></i></span>
                                     </div>
                                     <select class="form-control" wire:model="methods_services_id" name="methods_services_id" id="methods_services_id">
-                                    @forelse ($ServicesSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                                    @empty
-                                        <option value="">No service, go to methods page for add</option>
-                                    @endforelse
+                                        <option value="">Select service</option>
+                                        @forelse ($ServicesSelect as $item)
+                                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                                        @empty
+                                            <option value="">No service, go to methods page for add</option>
+                                        @endforelse
                                     </select>
                                 </div>
                                 @error('methods_services_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -64,11 +65,12 @@
                                         <span class="input-group-text"><i class="fas fa-grip-horizontal"></i></span>
                                     </div>
                                     <select class="form-control" wire:model="methods_families_id" name="methods_families_id" id="methods_families_id">
-                                    @forelse ($FamiliesSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                                    @empty
-                                        <option value="">No families, go to methods page for add</option>
-                                    @endforelse
+                                        <option value="">Select familie</option>
+                                        @forelse ($FamiliesSelect as $item)
+                                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                                        @empty
+                                            <option value="">No families, go to methods page for add</option>
+                                        @endforelse
                                     </select>
                                 </div>
                                 @error('methods_families_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -80,11 +82,12 @@
                                         <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                                     </div>
                                     <select class="form-control" wire:model="methods_units_id" name="methods_units_id" id="methods_units_id">
-                                    @forelse ($UnitsSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                                    @empty
-                                        <option value="">No units, go to methods page for add</option>
-                                    @endforelse
+                                        <option value="">Select unit</option>
+                                        @forelse ($UnitsSelect as $item)
+                                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                                        @empty
+                                            <option value="">No units, go to methods page for add</option>
+                                        @endforelse
                                     </select>
                                 </div>
                                 @error('methods_units_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -99,6 +102,7 @@
                                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                     </div>
                                     <select class="form-control" wire:model="purchased" name="purchased" id="purchased">
+                                        <option value="">Select statu</option>
                                         <option value="2">No</option>
                                         <option value="1">Yes</option>
                                     </select>
@@ -112,6 +116,7 @@
                                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                     </div>
                                     <select class="form-control" wire:model="sold" name="sold" id="sold">
+                                        <option value="">Select statu</option>
                                         <option value="2">No</option>
                                         <option value="1">Yes</option>
                                     </select>
@@ -121,6 +126,7 @@
                             <div class="col-4">
                                 <label for="tracability_type">Tracability</label>
                                 <select class="form-control" wire:model="tracability_type" name="tracability_type" id="tracability_type">
+                                    <option value="">Select type</option>
                                     <option value="1">No traceability</option>
                                     <option value="2">With batch number</option>
                                     <option value="3">With serial number</option>
@@ -313,7 +319,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>
@@ -329,7 +335,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach ($Products as $Product)
+                    @forelse ($Products as $Product)
                     <tr>
                         <td>{{ $Product->CODE }}</td>
                         <td>{{ $Product->LABEL }}</td>
@@ -359,7 +365,15 @@
                             </a>
                         </td>
                     </tr>
-                @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="6">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No product found ...</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
                 <tfoot>
                     <tr>

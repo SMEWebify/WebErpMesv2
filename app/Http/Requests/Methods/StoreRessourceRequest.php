@@ -29,6 +29,8 @@ class StoreRessourceRequest extends FormRequest
             'CODE' =>'required|unique:methods_ressources',
             'LABEL'=>'required',
             'CAPACITY'=>'required',
+            'section_id'=>'required',
+            'service_id'=>'required',
         ];
     }
 }

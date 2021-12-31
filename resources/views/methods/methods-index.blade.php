@@ -52,7 +52,7 @@
                     <h3 class="card-title">Service type list</h3>
                 </div>
                 <div class="card-body p-0">
-                  <table  class="table table-bordered table-striped">
+                  <table  class="table">
                     <thead>
                     <tr>
                       <th>Picture</th>
@@ -98,21 +98,17 @@
                       </tr>
                       @empty
                       <tr>
-                        <td></td>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td>
-                        <td></td>
+                        <td colspan="9">
+                          <div class="flex justify-center items-center">
+                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Service found ...</span>
+                          </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
                     <tfoot>
                       <tr>
-                        <th></th>
+                        <th>Picture</th>
                         <th>Order</th>
                         <th>External ID</th>
                         <th>Desciption</th>
@@ -250,7 +246,7 @@
                     <h3 class="card-title">Ressources type list</h3>
                 </div>
                 <div class="card-body p-0">
-                  <table  class="table table-bordered table-striped">
+                  <table  class="table">
                     <thead>
                     <tr>
                       <th>Picture</th>
@@ -289,15 +285,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td></td>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td>
-                        <td></td>
+                        <td colspan="9">
+                          <div class="flex justify-center items-center">
+                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Ressource found ...</span>
+                          </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -403,9 +395,11 @@
                           <span class="input-group-text"><i class="fas fa-industry"></i></span>
                       </div>
                       <select class="form-control" name="section_id" id="section_id">
-                        @foreach ($SectionsSelect as $item)
+                        @forelse ($SectionsSelect as $item)
                         <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
-                        @endforeach
+                        @empty
+                        <option value="">No section, please add before</option>
+                        @endforelse
                       </select>
                     </div>
                   </div>
@@ -477,15 +471,24 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td>
-                        <td></td>
+                        <td colspan="6">
+                          <div class="flex justify-center items-center">
+                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Section found ...</span>
+                          </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Sort</th>
+                        <th>External ID</th>
+                        <th>Description</th>
+                        <th>User</th>
+                        <th>Color</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               <!-- /.card secondary -->
@@ -592,10 +595,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="4">
+                          <div class="flex justify-center items-center">
+                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Location found ...</span>
+                          </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -703,13 +707,22 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="9">
+                          <div class="flex justify-center items-center">
+                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Unit found ...</span>
+                          </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>External ID</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               <!-- /.card secondary -->
@@ -803,10 +816,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="4">
+                          <div class="flex justify-center items-center">
+                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Families found ...</span>
+                          </div>
+                        </td> 
                       </tr>
                       @endforelse
                     </tbody>
@@ -924,10 +938,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="8">
+                          <div class="flex justify-center items-center">
+                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Tool found ...</span>
+                          </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>

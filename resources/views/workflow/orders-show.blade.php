@@ -192,7 +192,7 @@
         </form>
       </div>   
       <div class="tab-pane " id="OrderLines">
-        @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu])
+        @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date])
       </div> 
       <div class="tab-pane " id="Print">
         <div class="row">

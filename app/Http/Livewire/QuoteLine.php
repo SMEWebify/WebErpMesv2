@@ -27,7 +27,9 @@ class QuoteLine extends Component
     public $status_id;
 
     public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
+    public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $LABEL='';
+    public $discount= 0;
     public $updateLines = false;
     public $ProductsSelect = [];
     public $UnitsSelect = [];
@@ -41,8 +43,8 @@ class QuoteLine extends Component
 
     // Validation Rules
     protected $rules = [
-        'CODE' =>'required',
         'ORDRE'=>'required',
+        'LABEL'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
         'selling_price'=>'required',
@@ -104,7 +106,6 @@ class QuoteLine extends Component
     }
 
     public function storeQuoteLine(){
-
         $this->validate();
         // Create Line
         Quotelines::create([
@@ -180,8 +181,6 @@ class QuoteLine extends Component
         Quotelines::find($idStatu)->decrement('ORDRE',1);;
         session()->flash('success','Line Updated Successfully');
     }
-
-
 
     public function destroyQuoteLine($id){
         try{

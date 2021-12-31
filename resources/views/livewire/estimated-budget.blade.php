@@ -24,7 +24,8 @@
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
                             <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model="year">
-                                <option value="2021" selected>2021</option>
+                                <option value="" >Select Year</option>
+                                <option value="2021" >2021</option>
                                 <option value="2022" >2022</option>
                             </select>
                         </div>
@@ -60,7 +61,7 @@
                         </div>
                         @error('amount3') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount4">Amount 4 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -70,7 +71,7 @@
                         </div>
                         @error('amount4') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount5">Amount 5 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -80,7 +81,7 @@
                         </div>
                         @error('amount5') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount6">Amount 6 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -128,7 +129,7 @@
                         </div>
                         @error('amount9') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount10">Amount 10 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -138,7 +139,7 @@
                         </div>
                         @error('amount10') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount11">Amount 11 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -148,7 +149,7 @@
                         </div>
                         @error('amount11') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount12">Amount 12 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -174,6 +175,7 @@
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
                             <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model="year">
+                                <option value="" >Select Year</option>
                                 <option value="2021" selected>2021</option>
                                 <option value="2022" >2022</option>
                             </select>
@@ -210,7 +212,7 @@
                         </div>
                         @error('amount3') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount4">Amount 4 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -220,7 +222,7 @@
                         </div>
                         @error('amount4') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount5">Amount 5 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -230,7 +232,7 @@
                         </div>
                         @error('amount5') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount6">Amount 6 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -278,7 +280,7 @@
                         </div>
                         @error('amount9') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount10">Amount 10 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -288,7 +290,7 @@
                         </div>
                         @error('amount10') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount11">Amount 11 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -298,7 +300,7 @@
                         </div>
                         @error('amount11') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount12">Amount 12 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -326,7 +328,7 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Year</th>
@@ -372,20 +374,11 @@
                         </tr>
                         @empty
                         <tr>
-                            <th>No Lines</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <td colspan="14">
+                                <div class="flex justify-center items-center">
+                                    <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No line found ...</span>
+                                </div>
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>

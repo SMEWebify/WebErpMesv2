@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Status extends Model
 {
-    protected $fillable = ['title', 'slug', 'order'];
+    protected $fillable = ['title', 'order'];
 
     public $timestamps = false;
 

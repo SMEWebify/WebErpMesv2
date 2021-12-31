@@ -27,7 +27,9 @@ class OrderLine extends Component
     public $status_id;
 
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ORDRE, $CODE, $product_id, $LABEL, $qty, $methods_units_id, $selling_price, $discount, $accounting_vats_id, $delivery_date, $statu;
+    public $order_lines_id, $orders_id, $ORDRE, $CODE, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $LABEL='';
+    public $discount= 0;
     public $updateLines = false;
     public $ProductsSelect = [];
     public $UnitsSelect = [];
@@ -40,8 +42,8 @@ class OrderLine extends Component
 
     // Validation Rules
     protected $rules = [
-        'CODE' =>'required',
         'ORDRE'=>'required',
+        'LABEL'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
         'selling_price'=>'required',
@@ -64,10 +66,11 @@ class OrderLine extends Component
         $this->resetPage();
     }
 
-    public function mount($OrderId, $OrderStatu) 
+    public function mount($OrderId, $OrderStatu, $OrderDelay) 
     {
         $this->orders_id = $OrderId;
         $this->order_Statu = $OrderStatu;
+        $this->delivery_date = $OrderDelay;
         $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
@@ -98,8 +101,6 @@ class OrderLine extends Component
         $this->CODE = '';
         $this->product_id = '';
         $this->LABEL = '';
-        $this->qty = '';
-        $this->selling_price = '';
     }
 
     public function storeOrderLine(){

@@ -56,6 +56,9 @@ class ProductsIndex extends Component
         'methods_services_id'=>'required',
         'methods_families_id'=>'required',
         'methods_units_id'=>'required',
+        'sold'=>'required',
+        'purchased'=>'required',
+        'tracability_type'=>'required',
     ];
 
     public function sortBy($field)
@@ -89,11 +92,10 @@ class ProductsIndex extends Component
         if(!$Factory){
             return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
         }
-
+        
         return view('livewire.products-index', [
             'Products' => $Products,
             'userSelect' => $userSelect,
-            'ServicesSelect' => $ServicesSelect,
             'ServicesSelect' => $ServicesSelect,
             'UnitsSelect' => $UnitsSelect,
             'FamiliesSelect' => $FamiliesSelect,

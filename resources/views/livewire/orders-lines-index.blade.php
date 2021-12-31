@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>
@@ -34,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($OrderLineslist as $OrderLine)
+                    @forelse ($OrderLineslist as $OrderLine)
                     <tr>
                         <td>{{ $OrderLine->order['CODE'] }}</td>
                         <td>{{ $OrderLine->ORDRE }}</td>
@@ -60,7 +60,15 @@
                             </a>
                         </td>
                     </tr>
-                @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="13">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No order line found ...</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
                 <tfoot>
                     <tr>

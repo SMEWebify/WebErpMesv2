@@ -17,9 +17,9 @@ class CreateOrderLinesTable extends Migration
             $table->id();
             $table->integer('orders_id');
 			$table->integer('ORDRE');
-			$table->string('CODE');
+			$table->string('CODE')->nullable();
 			$table->string('product_id')->nullable();
-			$table->string('LABEL')->nullable();
+			$table->string('LABEL');
 			$table->integer('qty');
             $table->integer('delivered_qty')->default(0);
             $table->integer('delivered_remaining_qty')->default(0);

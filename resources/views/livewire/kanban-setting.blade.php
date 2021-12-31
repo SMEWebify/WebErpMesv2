@@ -21,7 +21,8 @@
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
                             <select class="form-control @error('title') is-invalid @enderror" name="title" id="title"  wire:model="title">
-                                <option value="Open" selected>Open</option>
+                                <option value="" selected>Select type</option>
+                                <option value="Open" >Open</option>
                                 <option value="Started" >Started</option>
                                 <option value="In progress" >In progress</option>
                                 <option value="Finished" >Finished</option>
@@ -55,7 +56,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Description</th>
@@ -82,9 +83,11 @@
                         </tr>
                         @empty
                         <tr>
-                            <th>No Lines</th>
-                            <th></th>
-                            <th></th>
+                            <td colspan="3">
+                                <div class="flex justify-center items-center">
+                                    <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No line found ...</span>
+                                </div>
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Planning;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Http\Controllers\Controller;
+use App\Models\Workflow\OrderLines;
 use App\Http\Requests\Planning\StoreTaskRequest;
 use App\Http\Requests\Planning\UpdateTaskRequest;
 use App\Models\Planning\Status;
@@ -95,6 +95,9 @@ class TaskController extends Controller
             return redirect()->to(route('quote.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully created new task');
         }
         elseif(isset($request->order_lines_id)){
+            $OrderLine = OrderLines::find($request->order_lines_id);
+            $OrderLine->statu = 2;
+            $OrderLine->save();
             return redirect()->to(route('order.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully created new task');
         }
     }

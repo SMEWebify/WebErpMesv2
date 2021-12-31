@@ -29,6 +29,6 @@ class CreateAccountingVatsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ac_vats');
+        Schema::dropIfExists('accounting_vats');
     }
 }

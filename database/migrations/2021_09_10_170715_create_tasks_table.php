@@ -26,7 +26,7 @@ class CreateTasksTable extends Migration
 			$table->decimal('UNIT_TIME', 10, 3)->nullable();
 			$table->decimal('REMAINING_TIME', 10, 3)->nullable();
 			$table->decimal('ADVANCEMENT', 10, 3)->nullable()->default(0.000);
-			$table->integer('statu')->default(1);
+			$table->integer('status_id')->default(1);
 			$table->integer('TYPE');
 			$table->date('DELAY')->nullable();
 			$table->integer('qty')->nullable();

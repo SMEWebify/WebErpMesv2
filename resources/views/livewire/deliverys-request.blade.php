@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>
@@ -112,11 +112,15 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
+                        @empty
                         <tr>
-                            <td colspan="12">No data</td>
+                            <td colspan="12">
+                                <div class="flex justify-center items-center">
+                                    <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No request found ...</span>
+                                </div>
+                            </td>
                         </tr>
-                    @endforelse
+                        @endforelse
                     </tbody>
                     <tfoot>
                         <tr>

@@ -19,7 +19,7 @@
     <!-- End Modal -->
     <div class="card-body">
       <div class="row">
-        <table class="table table-bordered table-striped">
+        <table class="table">
           <thead>
           <tr>
               <th>Sort order</th>
@@ -40,14 +40,11 @@
               @endif
             @empty
             <tr>
-              <td>No Data</td>
-              <td></td> 
-              <td></td> 
-              <td></td> 
-              <td></td> 
-              <td></td>
-              <td></td>
-              <td></td> 
+              <td colspan="9">
+                  <div class="flex justify-center items-center">
+                      <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                  </div>
+              </td>
             </tr>
             @endforelse
           </tbody>
@@ -90,7 +87,7 @@
     <!-- End Modal -->
     <div class="card-body">
       <div class="row">
-        <table  class="table table-bordered table-striped">
+        <table  class="table">
           <thead>
           <tr>
               <th>Sort order</th>
@@ -111,14 +108,11 @@
               @endif
             @empty
             <tr>
-              <td>No Data</td>
-              <td></td> 
-              <td></td> 
-              <td></td> 
-              <td></td> 
-              <td></td>
-              <td></td>
-              <td></td>
+              <td colspan="9">
+                  <div class="flex justify-center items-center">
+                      <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                  </div>
+              </td>
             </tr>
             @endforelse
           </tbody>

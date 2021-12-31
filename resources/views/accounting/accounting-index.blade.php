@@ -21,7 +21,7 @@
     <div class="alert alert-danger">
       <ul>
       @foreach ( $errors->all() as $message)
-       <li> {{ $message }}</li>
+        <li> {{ $message }}</li>
       @endforeach
       </ul>
     </div>
@@ -38,7 +38,6 @@
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-
       <div class="tab-pane active" id="PaymentCondition">
         <div class="card card-primary">
           <div class="card-body">
@@ -67,8 +66,8 @@
                         <td>{{ $PaymentCondition->NUMBER_OF_MONTH }}</td>
                         <td>{{ $PaymentCondition->NUMBER_OF_DAY }}</td>
                         <td>
-                           @if($PaymentCondition->MONTH_END  == 1) Yes @endif
-                           @if($PaymentCondition->MONTH_END  == 2) No @endif
+                          @if($PaymentCondition->MONTH_END  == 1) Yes @endif
+                          @if($PaymentCondition->MONTH_END  == 2) No @endif
                         </td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -78,12 +77,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="6">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -140,7 +138,7 @@
                           <option value="2">No</option>
                           <option value="1">Yes</option>
                       </select>
-                     </div>
+                    </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
                         <button type="submit" class="btn btn-danger">Submit New</button>
@@ -190,10 +188,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="4">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -222,7 +221,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                       <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
@@ -288,10 +287,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="4">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -403,12 +403,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td>
+                        <td colspan="7">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -448,8 +447,8 @@
                       </div>
                     </div>
                     <div class="form-group">
-                       <label for="vat_id">VAT</label>
-                       <div class="input-group">
+                      <label for="vat_id">VAT</label>
+                      <div class="input-group">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                         </div>
@@ -528,9 +527,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="3">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>

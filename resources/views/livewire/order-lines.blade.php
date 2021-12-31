@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Sort</th>
@@ -113,18 +113,11 @@
                         </tr>
                         @empty
                         <tr>
-                            <th>No Lines</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <td colspan="12">
+                                <div class="flex justify-center items-center">
+                                    <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                                </div>
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>

@@ -84,13 +84,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="7">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -192,10 +190,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
+                        <td colspan="4">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -294,11 +293,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td>
+                        <td colspan="5">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
@@ -420,13 +419,11 @@
                       </tr>
                       @empty
                       <tr>
-                        <td>No Data</td>
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td> 
-                        <td></td>
-                        <td></td>
+                        <td colspan="7">
+                            <div class="flex justify-center items-center">
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
+                            </div>
+                        </td>
                       </tr>
                       @endforelse
                     </tbody>
