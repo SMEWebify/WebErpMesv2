@@ -27,7 +27,9 @@ class OrderLines extends Model
                             'discount',
                             'accounting_vats_id',
                             'delivery_date',
-                            'statu'
+                            'tasks_status',
+                            'delivery_status',
+                            'invoice_status',
                         ];
 
     public function order()

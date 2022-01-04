@@ -195,7 +195,7 @@
         </form>
       </div>   
       <div class="tab-pane " id="QuoteLines">
-        @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu])
+        @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu, 'QuoteDelay' => $Quote->validity_date])
       </div> 
       <div class="tab-pane " id="Print">
         <div class="row">

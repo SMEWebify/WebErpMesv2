@@ -5,11 +5,11 @@ namespace App\Models\Workflow;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DeliverysLines extends Model
+class DeliveryLines extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['delivery_id', 
+    protected $fillable = ['deliverys_id', 
                             'order_line_id', 
                             'ORDRE',
                             'qty',
@@ -18,7 +18,7 @@ class DeliverysLines extends Model
 
     public function delivery()
     {
-    return $this->belongsTo(Deliverys::class, 'delivery_id');
+    return $this->belongsTo(Deliverys::class, 'deliverys_id');
     }
 
     public function orderLine()

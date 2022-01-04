@@ -73,8 +73,8 @@ class QuotesIndex extends Component
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastQuote =  Quotes::latest()->first();
         if($this->LastQuote == Null){
-            $this->CODE = "QT-1";
-            $this->LABEL = "QT-1";
+            $this->CODE = "QT-0";
+            $this->LABEL = "QT-0";
         }
         else{
             $this->CODE = "QT-". $this->LastQuote->id;

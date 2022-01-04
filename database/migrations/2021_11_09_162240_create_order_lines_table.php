@@ -31,7 +31,9 @@ class CreateOrderLinesTable extends Migration
 			$table->integer('accounting_vats_id');
             $table->date('internal_delay')->nullable();
 			$table->date('delivery_date')->nullable();
-			$table->integer('statu')->default(1);
+			$table->integer('tasks_status')->default(1);
+            $table->integer('delivery_status')->default(1);
+            $table->integer('invoice_status')->default(1);
             $table->timestamps();
         });
     }

@@ -41,7 +41,7 @@ class TaskLines extends Component
 
     public function render()
     {
-        $Tasklist = $this->Tasklist = Task::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->whereNotNull('order_lines_id')->where('LABEL','like', '%'.$this->search.'%')->get();
+        $Tasklist = $this->Tasklist = Task::with('OrderLines.order')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->whereNotNull('order_lines_id')->where('LABEL','like', '%'.$this->search.'%')->get();
         return view('livewire.task-lines', [
             'Tasklist' => $Tasklist,
         ]);

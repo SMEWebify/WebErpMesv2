@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Livewire\QuoteLine;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,9 +46,9 @@ Route::group(['prefix' => 'orders'], function () {
 Route::group(['prefix' => 'deliverys'], function () {
     Route::get('/', 'App\Http\Controllers\workflow\DeliverysController@index')->middleware(['auth'])->name('deliverys'); 
     Route::get('/request', 'App\Http\Controllers\workflow\DeliverysController@request')->middleware(['auth'])->name('deliverys-request'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\DeliverysController@update')->middleware(['auth'])->name('deliverys.update');
-    Route::get('/print/{id}', 'App\Http\Controllers\workflow\DeliverysController@print')->middleware(['auth'])->name('deliverys.print');
-    Route::get('/{id}', 'App\Http\Controllers\workflow\DeliverysController@show')->middleware(['auth'])->name('deliverys.show');
+    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\DeliverysController@update')->middleware(['auth'])->name('delivery.update');
+    Route::get('/print/{id}', 'App\Http\Controllers\workflow\DeliverysController@print')->middleware(['auth'])->name('delivery.print');
+    Route::get('/{id}', 'App\Http\Controllers\workflow\DeliverysController@show')->middleware(['auth'])->name('delivery.show');
 });
 
 Route::group(['prefix' => 'accouting'], function () {

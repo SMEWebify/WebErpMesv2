@@ -114,6 +114,8 @@ class OrderLine extends Component
             'product_id'=>$this->product_id,
             'LABEL'=>$this->LABEL,
             'qty'=>$this->qty,
+            'delivered_remaining_qty'=>$this->qty,
+            'invoiced_remaining_qty'=>$this->qty,
             'methods_units_id'=>$this->methods_units_id,
             'selling_price'=>$this->selling_price,
             'discount'=>$this->discount,
@@ -165,20 +167,39 @@ class OrderLine extends Component
         // Validate request
         $this->validate();
         // Update line
-        Orderlines::find($this->order_lines_id)->fill([
-            'ORDRE'=>$this->ORDRE,
-            'CODE'=>$this->CODE,
-            'product_id'=>$this->product_id,
-            'LABEL'=>$this->LABEL,
-            'qty'=>$this->qty,
-            'methods_units_id'=>$this->methods_units_id,
-            'selling_price'=>$this->selling_price,
-            'discount'=>$this->discount,
-            'accounting_vats_id'=>$this->accounting_vats_id,
-            'delivery_date'=>$this->delivery_date,
-            'statu'=>$this->statu,
-        ])->save();
-        session()->flash('success','Line Updated Successfully');
+        $OderLineToUpdate = Orderlines::find($this->order_lines_id);
+
+        //if we have already part delivered and new qty no match whit old qty
+        if($OderLineToUpdate->delivered_qty > $this->qty && $OderLineToUpdate->delivered_qty != 0){
+            session()->flash('error','Cant update if delivered remaining qty is superior to new quantity');
+        }
+        else{
+            //if new qty change statu because were have new part produce
+            // in future update task statu if they are finihed ?
+            if( $OderLineToUpdate->delivery_status > 1 && $OderLineToUpdate->qty != $this->qty && $OderLineToUpdate->delivered_qty != 0 ){
+                $OderLineToUpdate->delivery_status = 2;
+            }
+            /*
+            this is avaible only if we check if delevery not exist
+            if($OderLineToUpdate->delivered_qty == $this->qty ){
+                $OderLineToUpdate->delivery_status = 3;
+            }*/
+            $OderLineToUpdate->ORDRE = $this->ORDRE;
+            $OderLineToUpdate->CODE = $this->CODE;
+            $OderLineToUpdate->product_id = $this->product_id;
+            $OderLineToUpdate->LABEL = $this->LABEL;
+            $OderLineToUpdate->qty = $this->qty;
+            $OderLineToUpdate->delivered_remaining_qty = $this->qty;
+            $OderLineToUpdate->invoiced_remaining_qty = $this->qty;
+            $OderLineToUpdate->methods_units_id = $this->methods_units_id;
+            $OderLineToUpdate->selling_price = $this->selling_price;
+            $OderLineToUpdate->discount = $this->discount;
+            $OderLineToUpdate->accounting_vats_id = $this->accounting_vats_id;
+            $OderLineToUpdate->delivery_date = $this->delivery_date;
+            $OderLineToUpdate->save();
+    
+            session()->flash('success','Line Updated Successfully');
+        }
     }
 
     public function destroy($id){

@@ -6,7 +6,6 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Workflow\Orders;
-use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
@@ -73,8 +72,8 @@ class OrdersIndex extends Component
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastOrder =  Orders::latest()->first();
         if($this->LastOrder == Null){
-            $this->CODE = "OR-1";
-            $this->LABEL = "OR-1";
+            $this->CODE = "OR-0";
+            $this->LABEL = "OR-0";
         }
         else{
             $this->CODE = "OR-". $this->LastOrder->id;

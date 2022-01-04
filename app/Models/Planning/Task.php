@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Planning\Status;
+use App\Models\Workflow\OrderLines;
 
 class Task extends Model
 {
@@ -70,7 +71,7 @@ class Task extends Model
 
     public function OrderLines()
     {
-        return $this->belongsTo(QuoteLines::class, 'order_lines_id');
+        return $this->belongsTo(OrderLines::class, 'order_lines_id');
     }
 
     public function Products()

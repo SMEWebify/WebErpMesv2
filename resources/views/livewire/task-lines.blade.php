@@ -50,7 +50,7 @@
                     <tbody>
                         @forelse ($Tasklist as $Task)
                         <tr @if($Task->methods_services_id ) style="color: {{ $Task->service['COLOR'] }};" @endif > 
-                            <td> {{-- $Task->Order['CODE'] --}}</td>
+                            <td> {{ $Task->OrderLines->order->CODE }}</td>
                             <td>{{ $Task->ORDER }}</td>
                             <td>#{{ $Task->id }} - {{ $Task->label }}</td>
                             <td>@if($Task->component_id ) {{ $Task->Component['LABEL'] }}@endif</td>

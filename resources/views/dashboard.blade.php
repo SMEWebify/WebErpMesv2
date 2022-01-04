@@ -120,15 +120,50 @@
         <!-- /.card-header -->
         <div class="card-body">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
               <p class="text-center">
                 <strong>Sales: 1 Jan, {{ now()->year }} - 30 Dec, {{ now()->year }}</strong>
               </p>
               <div class="chart">
                 <!-- Sales Chart Canvas -->
-                  <canvas id="lineChart" style="min-height: 250px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
+                  <canvas id="lineChart" style="min-height: 300px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
               </div>
               <!-- /.chart-responsive -->
+            </div>
+            <!-- /.col -->
+            <!-- /.col -->
+            <div class="col-md-1">
+              <p class="text-center">
+                <strong><i class="icon fas fa-ban"></i> Incoming orders</strong>
+              </p>
+              @forelse ($incomingOrders as $incomingOrder)
+              <div class="progress-group alert alert-warning">
+                <a href="{{ route('order.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $incomingOrder->order['CODE'] }}<br/>
+                <i class="fas fa-calendar-alt"></i> {{ $incomingOrder->delivery_date }}
+              </div>
+              @empty
+              <div class="progress-group">
+                No coming order.
+              </div>
+              <!-- /.progress-group -->
+              @endforelse
+            </div>
+            <!-- /.col -->
+            <div class="col-md-1">
+              <p class="text-center">
+                <strong><i class="icon fas fa-ban"></i> Late orders</strong>
+              </p>
+              @forelse ($LateOrders as $LateOrder)
+              <div class="progress-group alert alert-danger">
+                <a href="{{ route('order.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $LateOrder->order['CODE'] }}<br/>
+                <i class="fas fa-calendar-alt"></i> {{ $LateOrder->delivery_date }}
+              </div>
+              @empty
+              <div class="progress-group">
+                No late order.
+              </div>
+              <!-- /.progress-group -->
+              @endforelse
             </div>
             <!-- /.col -->
             <div class="col-md-4 card">
@@ -137,17 +172,17 @@
               </p>
               @forelse ($ServiceGoals as $ServiceGoal)
                 @php
-                    $randomNum = rand(0, 99);
-                    if($randomNum < 100){ $class = 'bg-danger';}
-                    if($randomNum < 75){ $class = 'bg-warning';}
-                    if($randomNum < 50){ $class = 'bg-primary';}
-                    if($randomNum < 25){ $class = 'bg-success';}
+                    $tasksCount = $ServiceGoal->tasks_count;
+                    if($tasksCount < 100){ $class = 'bg-danger';}
+                    if($tasksCount < 75){ $class = 'bg-warning';}
+                    if($tasksCount < 50){ $class = 'bg-primary';}
+                    if($tasksCount < 25){ $class = 'bg-success';}
                 @endphp
               <div class="progress-group">
                 {{ $ServiceGoal->LABEL }}
-                <span class="float-right"> {{ $randomNum }}/100</span>
+                <span class="float-right"> {{ $tasksCount }}/100</span>
                 <div class="progress progress-sm">
-                  <div class="progress-bar  {{ $class }}" style="width: {{ $randomNum }}%"></div>
+                  <div class="progress-bar  {{ $class }}" style="width: {{ $tasksCount }}%"></div>
                 </div>
               </div>
               <!-- /.progress-group -->
@@ -159,6 +194,7 @@
               @endforelse
             </div>
             <!-- /.col -->
+            
           </div>
           <!-- /.row -->
         </div>

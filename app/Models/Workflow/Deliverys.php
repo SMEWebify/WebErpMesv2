@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Workflow\Orders;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
@@ -48,29 +49,14 @@ class Deliverys extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function payment_condition()
-    {
-        return $this->belongsTo(AccountingPaymentConditions::class, 'accounting_payment_conditions_id');
-    }
-
-    public function payment_method()
-    {
-        return $this->belongsTo(AccountingPaymentMethod::class, 'accounting_payment_methods_id');
-    }
-    
-    public function delevery_method()
-    {
-        return $this->belongsTo(AccountingDelivery::class, 'accounting_deliveries_id');
-    }
-
     public function Orders()
     {
         return $this->belongsTo(Orders::class, 'order_id');
     }
 
-    public function OrderLines()
+    public function DeliveryLines()
     {
-        return $this->hasMany(OrderLines::class)->orderBy('ORDRE');
+        return $this->hasMany(DeliveryLines::class)->orderBy('ORDRE');
     }
 
     public function GetPrettyCreatedAttribute()

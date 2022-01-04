@@ -3,11 +3,53 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\Workflow\Deliverys;
 
 class DeliverysIndex extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
+    public $search = '';
+    public $sortField = 'LABEL'; // default sorting field
+    public $sortAsc = true; // default sort direction
+
+    public $CODE; 
+    public $LABEL; 
+    public $customer_reference;
+    public $companies_id; 
+    public $companies_contacts_id;   
+    public $companies_addresses_id;  
+    public $user_id;  
+    public $order_id;  
+    public $comment;
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortAsc = !$this->sortAsc; 
+        } else {
+            $this->sortAsc = true; 
+        }
+        $this->sortField = $field;
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function mount() 
+    {
+
+    }
+
     public function render()
     {
-        return view('livewire.deliverys-index');
+        $Deliverys = Deliverys::withCount('DeliveryLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        return view('livewire.deliverys-index', [
+            'Deliveryslist' => $Deliverys,
+        ]);
     }
 }

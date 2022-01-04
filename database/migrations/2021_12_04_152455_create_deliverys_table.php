@@ -21,6 +21,7 @@ class CreateDeliverysTable extends Migration
 			$table->integer('companies_contacts_id');
 			$table->integer('companies_addresses_id');
 			$table->integer('statu')->default(1);
+            $table->integer('invoice_status')->default(1);
 			$table->integer('user_id');
 			$table->text('comment', 65535)->nullable();
             $table->integer('order_id')->nullable();

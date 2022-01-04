@@ -13,10 +13,20 @@
           <draggable class="flex-1 overflow-hidden" v-model="status.tasks" v-bind="taskDragOptions" @end="handleTaskMoved" >
             <transition-group class="flex-1 flex flex-col h-full overflow-x-hidden overflow-y-auto rounded shadow-xs" tag="div" >
               <div v-for="task in status.tasks" :key="task.id" class="card mb-5 bg-light" >
-                <div class="card-body p-3">
-                    <p>#{{ task.id }} - {{ task.label }}</p>
-                    <div class="float-right mt-n1">
-                      <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="">
+                <div class="card-body p-3 ">
+                    <p>#{{ task.id }} - <span class="font-weight-bold">Order {{ task.order_lines.order.CODE }}</span>  || <span class="font-weight-bold">{{ task.order_lines.LABEL }} || qty {{ task.order_lines.qty }}</span> - {{ task.label }}</p>
+                    <div class="float-right">
+                      <div class="row">
+                        <div class="col-6">
+                          <p>
+                            Setting Time : {{ task.SETING_TIME }}<br/>
+                            Unit Time :{{ task.UNIT_TIME }}
+                          </p>
+                        </div>
+                        <div class="col-6">
+                          <p>Advancement : {{ task.ADVANCEMENT }}</p>
+                        </div>
+                      </div>
                     </div>
                   <a class="btn btn-outline-primary btn-sm" href="#">View</a>
                 </div>

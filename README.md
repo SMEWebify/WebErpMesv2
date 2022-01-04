@@ -20,6 +20,8 @@ This project using Laravel 8, Livewire and bootstrap 4.6.
  
  Kanban : https://github.com/messerli90/jobhuntbuddy
 
+ Dont forget to make npm run dev for use kanban
+
 I am unprofessional, any improvement discussion would be helpful. :hugs:
 
 
@@ -33,7 +35,7 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 | Quote            |      X      |      -     |     
 | Order            |      X      |      -     |     
 | Order confirm    |      X      |      -     |    
-| Delivery note    |      -      |      X     |     
+| Delivery note    |      X      |      -     |     
 | Invoices         |      -      |      X     |     
 | Purchase Request |      -      |      X     |     
 | Purchase order   |      -      |      X     |     
@@ -43,7 +45,7 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 | Secondary Features         | Implemented | To be done |
 |----------------------------|:-----------:|:----------:|
 | Quote to Order Transfer    |      -      |      X     |
-| Order to Delevery note Tr* |      -      |      X     |
+| Order to Delevery note Tr* |      X      |      -     |
 | Delevery  to Invoice Tr*   |      -      |      X     |
 | Purchase to Pur Order Tr*  |      -      |      X     |
 | User role                  |      -      |      X     |

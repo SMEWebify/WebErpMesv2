@@ -1897,16 +1897,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -41649,10 +41639,10 @@ var render = function () {
     _vm._l(_vm.statuses, function (status) {
       return _c(
         "div",
-        { key: status.slug, staticClass: "col-12 col-lg-6 col-xl-3" },
+        { key: status.title, staticClass: "col-12 col-lg-6 col-xl-3" },
         [
           _c("div", { staticClass: "card card-row card-secondary" }, [
-            _c("div", { staticClass: "card-header" }, [
+            _c("div", { staticClass: "card card-primary" }, [
               _c("h5", { staticClass: "card-title" }, [
                 _vm._v("\n          " + _vm._s(status.title) + "\n        "),
               ]),
@@ -41693,22 +41683,60 @@ var render = function () {
                           "div",
                           { key: task.id, staticClass: "card mb-5 bg-light" },
                           [
-                            _c("div", { staticClass: "card-body p-3" }, [
+                            _c("div", { staticClass: "card-body p-3 " }, [
                               _c("p", [
-                                _vm._v(
-                                  "#" +
-                                    _vm._s(task.id) +
-                                    " - " +
-                                    _vm._s(task.label)
+                                _vm._v("#" + _vm._s(task.id) + " - "),
+                                _c(
+                                  "span",
+                                  { staticClass: "font-weight-bold" },
+                                  [
+                                    _vm._v(
+                                      "Order " +
+                                        _vm._s(task.order_lines.order.CODE)
+                                    ),
+                                  ]
                                 ),
+                                _vm._v("  || "),
+                                _c(
+                                  "span",
+                                  { staticClass: "font-weight-bold" },
+                                  [
+                                    _vm._v(
+                                      _vm._s(task.order_lines.LABEL) +
+                                        " || qty " +
+                                        _vm._s(task.order_lines.qty)
+                                    ),
+                                  ]
+                                ),
+                                _vm._v(" - " + _vm._s(task.label)),
                               ]),
                               _vm._v(" "),
-                              _c("div", { staticClass: "float-right mt-n1" }, [
-                                _c("img", {
-                                  staticClass:
-                                    "profile-user-img img-fluid img-circle",
-                                  attrs: { alt: "Avatar", src: "" },
-                                }),
+                              _c("div", { staticClass: "float-right" }, [
+                                _c("div", { staticClass: "row" }, [
+                                  _c("div", { staticClass: "col-6" }, [
+                                    _c("p", [
+                                      _vm._v(
+                                        "\n                          Setting Time : " +
+                                          _vm._s(task.SETING_TIME)
+                                      ),
+                                      _c("br"),
+                                      _vm._v(
+                                        "\n                          Unit Time :" +
+                                          _vm._s(task.UNIT_TIME) +
+                                          "\n                        "
+                                      ),
+                                    ]),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-6" }, [
+                                    _c("p", [
+                                      _vm._v(
+                                        "Advancement : " +
+                                          _vm._s(task.ADVANCEMENT)
+                                      ),
+                                    ]),
+                                  ]),
+                                ]),
                               ]),
                               _vm._v(" "),
                               _c(

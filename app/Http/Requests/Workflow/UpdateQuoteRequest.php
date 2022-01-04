@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\workflow;
+namespace App\Http\Requests\Workflow;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOrderLinesRequest extends FormRequest
+class UpdateQuoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,6 +25,7 @@ class UpdateOrderLinesRequest extends FormRequest
     {
         return [
             //
+            'LABEL'=>'required',
         ];
     }
 }

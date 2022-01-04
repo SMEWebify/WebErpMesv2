@@ -47,7 +47,9 @@
                             <th>Discount</th>
                             <th>VAT type</th>
                             <th>Delivery date</th>
-                            <th>Statu</th>
+                            <th>Tasks status</th>
+                            <th>Delivery status</th>
+                            <th>Invoice status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -58,17 +60,29 @@
                             <td>{{ $OrderLine->CODE }}</td>
                             <td>@if($OrderLine->product_id ) {{ $OrderLine->Product['LABEL'] }}@endif</td>
                             <td>{{ $OrderLine->LABEL }}</td>
-                            <td>{{ $OrderLine->qty }}</td>
+                            <td>
+                                <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Delivered qty : {{ $OrderLine->delivered_qty }} <br /> Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
+                            </td>
                             <td>{{ $OrderLine->Unit['LABEL'] }}</td>
                             <td>{{ $OrderLine->selling_price }} {{ $Factory->curency }}</td>
                             <td>{{ $OrderLine->discount }} %</td>
                             <td>{{ $OrderLine->VAT['RATE'] }} %</td>
                             <td>{{ $OrderLine->delivery_date }}</td>
                             <td>
-                                @if(1 == $OrderLine->statu )  <span class="badge badge-info"> None (no task created for that sales order line)</span>@endif
-                                @if(2 == $OrderLine->statu )  <span class="badge badge-warning">Created</span>@endif
-                                @if(3 == $OrderLine->statu )  <span class="badge badge-success">In progress</span>@endif
-                                @if(4 == $OrderLine->statu )  <span class="badge badge-danger">Finished (all the tasks are finished)</span>@endif
+                                @if(1 == $OrderLine->tasks_status )  <span class="badge badge-info">No task</span>@endif
+                                @if(2 == $OrderLine->tasks_status )  <span class="badge badge-warning">Created</span>@endif
+                                @if(3 == $OrderLine->tasks_status )  <span class="badge badge-success">In progress</span>@endif
+                                @if(4 == $OrderLine->tasks_status )  <span class="badge badge-danger">Finished (all the tasks are finished)</span>@endif
+                            </td>
+                            <td>
+                                @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">Not delivered</span>@endif
+                                @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">partly delivered</span>@endif
+                                @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">delivered</span>@endif
+                            </td>
+                            <td>
+                                @if(1 == $OrderLine->invoice_status )  <span class="badge badge-info">Not invoiced</span>@endif
+                                @if(2 == $OrderLine->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
+                                @if(3 == $OrderLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                             </td>
                             <td>
                                 @if($OrderStatu == 1)
@@ -133,7 +147,9 @@
                             <th>Discount</th>
                             <th>VAT type</th>
                             <th>Delivery date</th>
-                            <th>Statu</th>
+                            <th>Tasks status</th>
+                            <th>Delivery status</th>
+                            <th>Invoice status</th>
                             <th>Action</th>
                         </tr>
                     </tfoot>

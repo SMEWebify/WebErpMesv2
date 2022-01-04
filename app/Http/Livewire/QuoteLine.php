@@ -67,10 +67,11 @@ class QuoteLine extends Component
         $this->resetPage();
     }
 
-    public function mount($QuoteId, $QuoteStatu) 
+    public function mount($QuoteId, $QuoteStatu, $QuoteDelay) 
     {
         $this->quotes_id = $QuoteId;
         $this->quote_Statu = $QuoteStatu;
+        $this->delivery_date = $QuoteDelay;
         $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
         $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
@@ -101,8 +102,6 @@ class QuoteLine extends Component
         $this->CODE = '';
         $this->product_id = '';
         $this->LABEL = '';
-        $this->qty = '';
-        $this->selling_price = '';
     }
 
     public function storeQuoteLine(){

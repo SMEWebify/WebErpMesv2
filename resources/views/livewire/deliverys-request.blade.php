@@ -1,5 +1,16 @@
 <div class="card-body">
     <div class="card">
+        @if(session()->has('success'))
+                <div class="alert alert-success" role="alert">
+                    {{ session()->get('success') }}
+                </div>
+            @endif
+
+            @if(session()->has('error'))
+                <div class="alert alert-danger" role="alert">
+                    {{ session()->get('error') }}
+                </div>
+            @endif
         <form>
             @csrf
             <div class="card-body">
@@ -68,7 +79,7 @@
                     <thead>
                         <tr>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">Quote @include('include.sort-icon', ['field' => 'orders_id'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">Order @include('include.sort-icon', ['field' => 'orders_id'])</a>
                             </th>
                             <th>Sort</th>
                             <th>
@@ -91,14 +102,22 @@
                     <tbody>
                         @forelse ($DeliverysRequestsLineslist as $DeliverysRequestsLine)
                         <tr>
-                            <td>{{ $DeliverysRequestsLine->order['CODE'] }}</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $DeliverysRequestsLine->order['id']])}}">
+                                    <i class="fas fa-folder"></i>
+                                    View
+                                </a>
+                                {{ $DeliverysRequestsLine->order['CODE'] }}
+                            </td>
                             <td>{{ $DeliverysRequestsLine->ORDRE }}</td>
                             <td>{{ $DeliverysRequestsLine->CODE }}</td>
                             <td>@if(1 == $DeliverysRequestsLine->product_id ) {{ $DeliverysRequestsLine->Product['LABEL'] }}@endif</td>
                             <td>{{ $DeliverysRequestsLine->LABEL }}</td>
-                            <td>{{ $DeliverysRequestsLine->qty }}</td>
                             <td>
-                                <input type="number" class="form-control" id="scumQty" placeholder="Quantity" wire:model="scumQty">
+                                {{ $DeliverysRequestsLine->delivered_remaining_qty }}
+                            </td>
+                            <td>
+                                <input class="form-control" wire:model="data.{{ $DeliverysRequestsLine->id }}.scumQty" placeholder="Quantity" type="number">
                             </td>
                             <td>{{ $DeliverysRequestsLine->Unit['LABEL'] }}</td>
                             <td>{{ $DeliverysRequestsLine->selling_price }}</td>
@@ -107,8 +126,8 @@
                             <td>{{ $DeliverysRequestsLine->delivery_date }}</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model="order_line_id" type="checkbox" id="id.{{ $DeliverysRequestsLine->id }}">
-                                    <label for="id.{{ $DeliverysRequestsLine->id }}" class="custom-control-label">Add to new delivery note</label>
+                                    <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model="data.{{ $DeliverysRequestsLine->id }}.order_line_id" id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  type="checkbox">
+                                    <label for="data.{{ $DeliverysRequestsLine->id }}.order_line_id" class="custom-control-label">Add to new delivery note</label>
                                 </div>
                             </td>
                         </tr>

@@ -27,7 +27,7 @@ class TaskController extends Controller
 
     public function kanban()
     {
-        $tasks = Status::orderBy('order', 'ASC')->with('tasks')->get();
+        $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
@@ -96,7 +96,7 @@ class TaskController extends Controller
         }
         elseif(isset($request->order_lines_id)){
             $OrderLine = OrderLines::find($request->order_lines_id);
-            $OrderLine->statu = 2;
+            $OrderLine->tasks_status = 2;
             $OrderLine->save();
             return redirect()->to(route('order.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully created new task');
         }

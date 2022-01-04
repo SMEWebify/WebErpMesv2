@@ -38,7 +38,7 @@ class MethodsServices extends Model
 
     public function Tasks()
     {
-        return $this->morphedByMany(Task::class, 'methods_services_id');
+        return $this->hasMany(Task::class, 'methods_services_id');
     }
 
     public function GetPrettyCreatedAttribute()
