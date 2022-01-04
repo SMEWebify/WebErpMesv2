@@ -56,7 +56,7 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
    
 -----------------
 Dashboard
-![image](https://user-images.githubusercontent.com/75578469/142014236-95ee7d9a-1f7f-464f-8843-24617298e888.png)
+![image](https://user-images.githubusercontent.com/75578469/148135601-f10e8678-4b52-45f8-b444-5be8f7e90fa5.png)
 
 
 Quote & Order management with task
@@ -65,8 +65,10 @@ Quote & Order management with task
 ![image](https://user-images.githubusercontent.com/75578469/142014346-09f2eb77-c6e8-49a5-bf76-d4111f867bda.png)
 
 Kanban 
-![image](https://user-images.githubusercontent.com/75578469/142014584-bb6751ea-51af-404f-9607-fc9f2999c6d4.png)
+![image](https://user-images.githubusercontent.com/75578469/148135648-698c2315-1995-4b75-bbba-898c10646aeb.png)
 
+Delivery request
+![image](https://user-images.githubusercontent.com/75578469/148135741-eda41b1e-8598-47bc-a822-5d0ae9e6a61a.png)
 
 Product management
 ![image](https://user-images.githubusercontent.com/75578469/133003240-b793df70-2088-43ea-9141-bf2b06f0c124.png)
