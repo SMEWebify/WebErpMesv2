@@ -51,6 +51,14 @@ Route::group(['prefix' => 'deliverys'], function () {
     Route::get('/{id}', 'App\Http\Controllers\workflow\DeliverysController@show')->middleware(['auth'])->name('delivery.show');
 });
 
+Route::group(['prefix' => 'invoices'], function () {
+    Route::get('/', 'App\Http\Controllers\workflow\InvoicesController@index')->middleware(['auth'])->name('invoices'); 
+    Route::get('/request', 'App\Http\Controllers\workflow\InvoicesController@request')->middleware(['auth'])->name('invoices-request'); 
+    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\InvoicesController@update')->middleware(['auth'])->name('invoice.update');
+    Route::get('/print/{id}', 'App\Http\Controllers\workflow\InvoicesController@print')->middleware(['auth'])->name('invoice.print');
+    Route::get('/{id}', 'App\Http\Controllers\workflow\InvoicesController@show')->middleware(['auth'])->name('invoice.show');
+});
+
 Route::group(['prefix' => 'accouting'], function () {
     Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
     Route::post('/Allocation/create', 'App\Http\Controllers\Accounting\AllocationController@store')->middleware(['auth'])->name('accouting.allocation.create');

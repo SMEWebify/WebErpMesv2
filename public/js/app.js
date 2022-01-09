@@ -41708,7 +41708,12 @@ var render = function () {
                                     ),
                                   ]
                                 ),
-                                _vm._v(" - " + _vm._s(task.label)),
+                                _vm._v(
+                                  " - " +
+                                    _vm._s(task.label) +
+                                    " - " +
+                                    _vm._s(task.order_lines.delivery_date)
+                                ),
                               ]),
                               _vm._v(" "),
                               _c("div", { staticClass: "float-right" }, [
@@ -41738,15 +41743,6 @@ var render = function () {
                                   ]),
                                 ]),
                               ]),
-                              _vm._v(" "),
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "btn btn-outline-primary btn-sm",
-                                  attrs: { href: "#" },
-                                },
-                                [_vm._v("View")]
-                              ),
                             ]),
                           ]
                         )

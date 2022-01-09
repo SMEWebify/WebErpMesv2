@@ -48,7 +48,7 @@ class QuotesController extends Controller
         $vatPrice = $QuoteCalculator->getVatTotal();
         $Factory = Factory::first();
         if(!$Factory){
-            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
 
         return view('workflow/quotes-show', [

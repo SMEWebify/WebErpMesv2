@@ -4,7 +4,6 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
-use PhpParser\Node\Stmt\Else_;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
@@ -35,6 +34,7 @@ class DeliverysRequest extends Component
     // Validation Rules
     protected $rules = [
         'CODE' =>'required|unique:deliverys',
+        'LABEL' =>'required',
         'companies_id'=>'required',
         'user_id'=>'required',
         

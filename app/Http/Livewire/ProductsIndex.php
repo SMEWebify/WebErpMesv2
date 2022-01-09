@@ -90,7 +90,7 @@ class ProductsIndex extends Component
         $FamiliesSelect = MethodsFamilies::select('id', 'LABEL')->orderBy('LABEL')->get();
         $Factory = Factory::first();
         if(!$Factory){
-            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
         
         return view('livewire.products-index', [

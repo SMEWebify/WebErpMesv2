@@ -36,7 +36,7 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 | Order            |      X      |      -     |     
 | Order confirm    |      X      |      -     |    
 | Delivery note    |      X      |      -     |     
-| Invoices         |      -      |      X     |     
+| Invoices         |      X      |      -     |     
 | Purchase Request |      -      |      X     |     
 | Purchase order   |      -      |      X     |     
 | Receipt          |      -      |      X     |     
@@ -46,7 +46,7 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 |----------------------------|:-----------:|:----------:|
 | Quote to Order Transfer    |      -      |      X     |
 | Order to Delevery note Tr* |      X      |      -     |
-| Delevery  to Invoice Tr*   |      -      |      X     |
+| Delevery  to Invoice Tr*   |      X      |      -     |
 | Purchase to Pur Order Tr*  |      -      |      X     |
 | User role                  |      -      |      X     |
 | Document storage           |      -      |      X     |

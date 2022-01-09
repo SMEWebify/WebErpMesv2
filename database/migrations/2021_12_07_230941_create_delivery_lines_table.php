@@ -13,7 +13,7 @@ class CreateDeliveryLinesTable extends Migration
      */
     public function up()
     {
-        Schema::create('deliverys_lines', function (Blueprint $table) {
+        Schema::create('delivery_lines', function (Blueprint $table) {
             $table->id();
             $table->integer('deliverys_id');
             $table->integer('order_line_id');

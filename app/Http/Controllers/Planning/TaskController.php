@@ -18,7 +18,7 @@ class TaskController extends Controller
     {
         $Factory = Factory::first();
         if(!$Factory){
-            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
         return view('workflow/task-index', [
             'Factory' => $Factory
@@ -30,7 +30,7 @@ class TaskController extends Controller
         $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->get();
         $Factory = Factory::first();
         if(!$Factory){
-            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
         return view('workflow/kanban-index', compact('tasks', 'Factory'));
     }

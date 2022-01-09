@@ -56,7 +56,14 @@
                     <tbody>
                         @forelse ($OrderLineslist as $OrderLine)
                         <tr>
-                            <td>{{ $OrderLine->ORDRE }}</td>
+                            <td>{{ $OrderLine->ORDRE }} - 
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="up({{ $OrderLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="down({{ $OrderLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
+                                </div>
+                            </td>
                             <td>{{ $OrderLine->CODE }}</td>
                             <td>@if($OrderLine->product_id ) {{ $OrderLine->Product['LABEL'] }}@endif</td>
                             <td>{{ $OrderLine->LABEL }}</td>
@@ -85,19 +92,13 @@
                                 @if(3 == $OrderLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                             </td>
                             <td>
-                                @if($OrderStatu == 1)
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="edit({{$OrderLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="destroy({{$OrderLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="up({{ $OrderLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="down({{ $OrderLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
-                                </div>
+                                @if($OrderStatu == 1 && 1 == $OrderLine->delivery_status)
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="#" wire:click="edit({{$OrderLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
+                                    </div>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="#" wire:click="destroy({{$OrderLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
+                                    </div>
                                 @endif
                                 <!-- Modal -->
                                 <div class="modal fade" id="MainProcessModal{{$OrderLine->id}}" tabindex="-1" role="dialog" aria-labelledby="MainProcessModalTitle{{$OrderLine->id}}" aria-hidden="true">

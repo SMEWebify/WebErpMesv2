@@ -34,9 +34,19 @@ class HomeController extends Controller
                             ->take(5)
                             ->get();*/
 
-        //5 last produOrdersct add 
+        //5 lastest Orders add 
         $LastOrders = Orders::orderBy('id', 'desc')->take(5)->get();
         //incoming Order 
+        $incomingOrdersCount = OrderLines::orderBy('id', 'desc')
+                                            ->where([
+                                                ['delivery_date', '>', Carbon::now()],
+                                                ['delivery_date', '<', Carbon::now()->addDays(2)],
+                                            ])
+                                            ->where('delivery_status', '<', 3)
+                                            ->groupBy('orders_id')
+                                            ->get();
+        $incomingOrdersCount = count($incomingOrdersCount)-5;
+
         $incomingOrders = OrderLines::orderBy('id', 'desc')
                             ->where([
                                 ['delivery_date', '>', Carbon::now()],
@@ -45,12 +55,19 @@ class HomeController extends Controller
                             ->where('delivery_status', '<', 3)
                             ->groupBy('orders_id')
                             ->get();
-        //late Order 
-        
+        //late Order count
+        $LateOrdersCount = OrderLines::orderBy('id', 'desc')
+                            ->where('delivery_date', '<', Carbon::now())
+                            ->where('delivery_status', '<', 3)
+                            ->groupBy('orders_id')
+                            ->get();
+        $LateOrdersCount = count($LateOrdersCount)-5;
+
         $LateOrders = OrderLines::orderBy('id', 'desc')
                             ->where('delivery_date', '<', Carbon::now())
                             ->where('delivery_status', '<', 3)
                             ->groupBy('orders_id')
+                            ->take(5)
                             ->get();
         
         // Display total customers, suppliers, quotes, orders, NC 
@@ -83,7 +100,9 @@ class HomeController extends Controller
             'LastProducts' => $LastProducts,
             'LastQuotes' => $LastQuotes,
             'LastOrders' =>  $LastOrders,
+            'LateOrdersCount' =>  $LateOrdersCount,
             'incomingOrders' =>  $incomingOrders,
+            'incomingOrdersCount' => $incomingOrdersCount,
             'LateOrders' =>  $LateOrders,
             'ServiceGoals' => $ServiceGoals,
         ])->with('data',$data);

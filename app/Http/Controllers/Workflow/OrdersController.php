@@ -44,7 +44,7 @@ class OrdersController extends Controller
         $vatPrice = $OrderCalculator->getVatTotal();
         $Factory = Factory::first();
         if(!$Factory){
-            return redirect()->route('admin.factory')->with('danger', 'Please check factory information');
+            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
 
         return view('workflow/orders-show', [

@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Deliverys')
+@section('title', 'Invoice')
 
 @section('content_header')
     
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Deliverys</h1>
+        <h1>Invoice</h1>
       </div>
     </div>
 @stop
@@ -20,16 +20,15 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link" href="{{ route('deliverys') }}">Back to lists</a></li>
-      <li class="nav-item"><a class="nav-link active" href="#Delivery" data-toggle="tab">Delivery info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#DeliveryLines" data-toggle="tab">Delivery lines</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Print" data-toggle="tab">Print delivery</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ route('invoices') }}">Back to lists</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Invoice" data-toggle="tab">Invoice info</a></li>
+      <li class="nav-item"><a class="nav-link" href="#InvoiceLines" data-toggle="tab">Invoice lines</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-      <div class="tab-pane active" id="Delivery">
+      <div class="tab-pane active" id="Invoice">
         @if(session('success'))
         <div class="alert alert-success">
             {{ session('success')}}
@@ -44,12 +43,12 @@
             </ul>
           </div>
         @endif
-        <form method="POST" action="{{ route('delivery.update', ['id' => $Delivery->id]) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('delivery.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
           @csrf
             <div class="card card-body">
               <div class="row">
                 <div class="col-3">
-                  <label for="CODE">External ID :</label>  {{  $Delivery->CODE }}
+                  <label for="CODE">External ID :</label>  {{  $Invoice->CODE }}
                 </div>
                 <div class="col-3">
                   <label for="statu">Statu :</label>
@@ -58,8 +57,8 @@
                       <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                     </div>
                     <select class="form-control" name="statu" id="statu">
-                      <option value="1" @if(1 == $Delivery->statu ) Selected @endif >In progress</option>
-                      <option value="2" @if(2 == $Delivery->statu ) Selected @endif >Sent</option>
+                      <option value="1" @if(1 == $Invoice->statu ) Selected @endif >In progress</option>
+                      <option value="2" @if(2 == $Invoice->statu ) Selected @endif >Sent</option>
                     </select>
                   </div>
                 </div>
@@ -70,7 +69,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                    <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of order" value="{{  $Delivery->LABEL }}">
+                    <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of order" value="{{  $Invoice->LABEL }}">
                   </div>
                 </div>
               </div>
@@ -88,7 +87,7 @@
                     </div>
                     <select class="form-control" name="companies_id" id="companies_id">
                       @foreach ($CompanieSelect as $item)
-                      <option value="{{ $item->id }}"  @if($item->id == $Delivery->companies_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                      <option value="{{ $item->id }}"  @if($item->id == $Invoice->companies_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
                       @endforeach
                     </select>
                   </div>
@@ -103,7 +102,7 @@
                     </div>
                     <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
                       @foreach ($AddressSelect as $item)
-                      <option value="{{ $item->id }}" @if($item->id == $Delivery->companies_addresses_id ) Selected @endif >{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
+                      <option value="{{ $item->id }}" @if($item->id == $Invoice->companies_addresses_id ) Selected @endif >{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
                       @endforeach
                     </select>
                   </div>
@@ -116,7 +115,7 @@
                     </div>
                     <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
                       @foreach ($ContactSelect as $item)
-                      <option value="{{ $item->id }}" @if($item->id == $Delivery->companies_contacts_id ) Selected @endif >{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
+                      <option value="{{ $item->id }}" @if($item->id == $Invoice->companies_contacts_id ) Selected @endif >{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
                       @endforeach
                     </select>
                   </div>
@@ -127,7 +126,7 @@
               <div class="row">
                 <div class="col-10">
                   <label>Comment</label>
-                  <textarea class="form-control" rows="3" name="comment"  placeholder="Enter ..." >{{  $Delivery->comment }}</textarea>
+                  <textarea class="form-control" rows="3" name="comment"  placeholder="Enter ..." >{{  $Invoice->comment }}</textarea>
                 </div>
               </div>
             </div>
@@ -136,7 +135,7 @@
             </div>
         </form>
       </div>   
-      <div class="tab-pane " id="DeliveryLines">
+      <div class="tab-pane " id="InvoiceLines">
         <!-- Table row -->
         <div class="row">
           <div class="col-12 table-responsive">
@@ -153,19 +152,19 @@
                 </tr>
               </thead>
               <tbody>
-                  @forelse($Delivery->DeliveryLines as $DeliveryLine)
+                  @forelse($Invoice->InvoiceLines as $InvoiceLine)
                   <tr>
-                    <td>{{ $DeliveryLine->orderLine['CODE'] }}</td>
-                    <td>{{ $DeliveryLine->orderLine['LABEL'] }}</td>
-                    <td>{{ $DeliveryLine->orderLine['qty'] }}</td>
+                    <td>{{ $InvoiceLine->orderLine['CODE'] }}</td>
+                    <td>{{ $InvoiceLine->orderLine['LABEL'] }}</td>
+                    <td>{{ $InvoiceLine->orderLine['qty'] }}</td>
                     <td></td>
-                    <td>{{ $DeliveryLine->qty }}</td>
-                    <td>{{ $DeliveryLine->orderLine['delivered_remaining_qty'] }}</td>
+                    <td>{{ $InvoiceLine->qty }}</td>
+                    <td>{{ $InvoiceLine->orderLine['delivered_remaining_qty'] }}</td>
                     <td>
-                      @if(1 == $Delivery->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
-                      @if(2 == $Delivery->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
-                      @if(3 == $Delivery->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
-                      @if(4 == $Delivery->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
+                      @if(1 == $Invoice->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
+                      @if(2 == $Invoice->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
+                      @if(3 == $Invoice->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
+                      @if(4 == $Invoice->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                     </td>
                   </tr>
                 @empty
@@ -230,12 +229,12 @@
                 <div class="col-sm-4 invoice-col">
                   To
                   <address>
-                    <strong>{{ $Delivery->companie['LABEL'] }}</strong>
+                    <strong>{{ $Invoice->companie['LABEL'] }}</strong>
                   </address>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
-                  <b>Delivery #{{  $Delivery->CODE }}</b><br>
+                  <b>Invoice #{{  $Invoice->CODE }}</b><br>
                 </div>
                 <!-- /.col -->
               </div>
@@ -255,14 +254,14 @@
                       </tr>
                     </thead>
                     <tbody>
-                        @forelse($Delivery->DeliveryLines as $DeliveryLine)
+                        @forelse($Invoice->InvoiceLines as $InvoiceLine)
                         <tr>
-                          <td>{{ $DeliveryLine->orderLine['CODE'] }}</td>
-                          <td>{{ $DeliveryLine->orderLine['LABEL'] }}</td>
-                          <td>{{ $DeliveryLine->orderLine['qty'] }}</td>
+                          <td>{{ $InvoiceLine->orderLine['CODE'] }}</td>
+                          <td>{{ $InvoiceLine->orderLine['LABEL'] }}</td>
+                          <td>{{ $InvoiceLine->orderLine['qty'] }}</td>
                           <td></td>
-                          <td>{{ $DeliveryLine->qty }}</td>
-                          <td>{{ $DeliveryLine->orderLine['delivered_remaining_qty'] }}</td>
+                          <td>{{ $InvoiceLine->qty }}</td>
+                          <td>{{ $InvoiceLine->orderLine['delivered_remaining_qty'] }}</td>
                         </tr>
                       @empty
                         <tr>
@@ -295,10 +294,10 @@
               <div class="row">
                 <!-- accepted payments column -->
                 <div class="col-6">
-                  @if($Delivery->comment)
+                  @if($Invoice->comment)
                     <p class="lead"><strong>Comment :</strong></p>
                     <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
-                      {{  $Delivery->comment }}
+                      {{  $Invoice->comment }}
                     </p>
                   @endif
                 </div>
@@ -308,7 +307,7 @@
               <!-- this row will not appear when printing -->
               <div class="row no-print">
                 <div class="col-12">
-                  <a href="{{ route('order.print', ['id' => $Delivery->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                  <a href="{{ route('order.print', ['id' => $Invoice->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
                 </div>
               </div>
             </div>

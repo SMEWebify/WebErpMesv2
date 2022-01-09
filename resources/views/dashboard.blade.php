@@ -126,13 +126,13 @@
               </p>
               <div class="chart">
                 <!-- Sales Chart Canvas -->
-                  <canvas id="lineChart" style="min-height: 300px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
+                  <canvas id="lineChart" style="min-height: 400px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
               </div>
               <!-- /.chart-responsive -->
             </div>
             <!-- /.col -->
             <!-- /.col -->
-            <div class="col-md-1">
+            <div class="col-md-1 border-left">
               <p class="text-center">
                 <strong><i class="icon fas fa-ban"></i> Incoming orders</strong>
               </p>
@@ -147,9 +147,14 @@
               </div>
               <!-- /.progress-group -->
               @endforelse
+              @if ($incomingOrdersCount >= 1)
+              <div class="small-box bg-warning">
+                <a href="#" class="small-box-footer">+ {{ $incomingOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+              @endif
             </div>
             <!-- /.col -->
-            <div class="col-md-1">
+            <div class="col-md-1 border-left">
               <p class="text-center">
                 <strong><i class="icon fas fa-ban"></i> Late orders</strong>
               </p>
@@ -164,6 +169,11 @@
               </div>
               <!-- /.progress-group -->
               @endforelse
+              @if ($LateOrdersCount >= 1)
+              <div class="small-box bg-danger">
+                <a href="#" class="small-box-footer">+ {{ $LateOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+              @endif
             </div>
             <!-- /.col -->
             <div class="col-md-4 card">

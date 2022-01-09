@@ -4,10 +4,11 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\Invoices;
 
-class DeliverysIndex extends Component
+class InvoicesIndex extends Component
 {
+
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
@@ -21,8 +22,11 @@ class DeliverysIndex extends Component
     public $companies_id; 
     public $companies_contacts_id;   
     public $companies_addresses_id; 
-    public $statu; 
-    public $user_id;  
+    public $statu;
+    public $invoice_type;
+    public $accounting_status;
+    public $user_id;
+    public $bank_id ;
     public $order_id;  
     public $comment;
 
@@ -48,9 +52,10 @@ class DeliverysIndex extends Component
 
     public function render()
     {
-        $Deliverys = Deliverys::withCount('DeliveryLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
-        return view('livewire.deliverys-index', [
-            'Deliveryslist' => $Deliverys,
+        $Invoices = Invoices::withCount('InvoiceLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        
+        return view('livewire.invoices-index', [
+            'InvoicesList' => $Invoices,
         ]);
     }
 }

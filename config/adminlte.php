@@ -321,13 +321,32 @@ return [
             'submenu' => [
                 [
                     'text' => 'Invoinces request',
-                    'url'  => '#',
+                    'url'  => 'invoices/request',
                 ],
                 [
                     'text' => 'Invoinces list',
-                    'url'  => '#',
+                    'url'  => 'invoices',
                 ],
             ]
+        ],
+        ['header' => 'Others'],
+        [
+            'text'    => 'Product',
+            'icon'    => 'fas fa-barcode',
+            'submenu' => [
+                [
+                    'text' => 'Product list',
+                    'url'  => 'products',
+                ],
+                [
+                    'text' => 'Stock',
+                    'url'  => 'products/Stock',
+                ],
+                /*  [
+                    'text' => 'Inventory',
+                    'url'  => '#',
+                ],*/
+            ],
         ],
         [
             'text'    => 'Purchase',
@@ -352,31 +371,13 @@ return [
                 ],
             ],
         ],
-        ['header' => 'Others'],
-        [
-            'text'    => 'Product',
-            'icon'    => 'fas fa-barcode',
-            'submenu' => [
-                [
-                    'text' => 'Product list',
-                    'url'  => 'products',
-                ],
-                [
-                    'text' => 'Stock',
-                    'url'  => 'products/Stock',
-                ],
-               /*  [
-                    'text' => 'Inventory',
-                    'url'  => '#',
-                ],*/
-            ],
-        ],
         [
             
             'text' => 'Quality',
             'icon'    => 'fas fa-ruler-combined',
             'url'  => 'quality',
         ],
+        ['header' => 'Settings'],
         [
             'text' => 'Setting times',
             'icon'    => 'fas fa-user-clock',

@@ -1,30 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\workflow;
+namespace App\Http\Controllers\Workflow;
 
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
-use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\Invoices;
 use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
-use App\Http\Requests\Workflow\UpdateDeliveryRequest;
 
-class DeliverysController extends Controller
+class InvoicesController extends Controller
 {
     //
     public function index()
     {    
-        return view('workflow/deliverys-index');
+        return view('workflow/invoices-index');
     }
 
     public function request()
     {    
-        return view('workflow/deliverys-request');
+        return view('workflow/invoices-request');
     }
 
-    public function show(Deliverys $id)
+    public function show(Invoices $id)
     {
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
         $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
@@ -34,8 +33,8 @@ class DeliverysController extends Controller
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
 
-        return view('workflow/deliverys-show', [
-            'Delivery' => $id,
+        return view('workflow/invoices-show', [
+            'Invoice' => $id,
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
@@ -43,7 +42,7 @@ class DeliverysController extends Controller
         ]);
     }
 
-    public function print(Deliverys $id)
+    public function print(Invoices $id)
     {
         $Factory = Factory::first();
         return view('workflow/orders-print', [
@@ -52,18 +51,17 @@ class DeliverysController extends Controller
         ]);
     }
     
-    public function update(UpdateDeliveryRequest $request)
+    public function update(UpdateInvoiceRequest $request)
     {
-        $Delivery = Deliverys::find($request->id);
-        $Delivery->LABEL=$request->LABEL;
-        $Delivery->statu=$request->statu;
-        $Delivery->companies_id=$request->companies_id;
-        $Delivery->companies_contacts_id=$request->companies_contacts_id;
-        $Delivery->companies_addresses_id=$request->companies_addresses_id;
-        $Delivery->comment=$request->comment;
-        $Delivery->save();
+        $Invoice = Invoices::find($request->id);
+        $Invoice->LABEL=$request->LABEL;
+        $Invoice->statu=$request->statu;
+        $Invoice->companies_id=$request->companies_id;
+        $Invoice->companies_contacts_id=$request->companies_contacts_id;
+        $Invoice->companies_addresses_id=$request->companies_addresses_id;
+        $Invoice->comment=$request->comment;
+        $Invoice->save();
 
-        return redirect()->route('delivery.show', ['id' =>  $Delivery->id])->with('success', 'Successfully updated Delivery');
+        return redirect()->route('Invoice.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
     }
-
 }

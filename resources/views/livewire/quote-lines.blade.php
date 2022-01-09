@@ -54,7 +54,15 @@
                     <tbody>
                         @forelse ($QuoteLineslist as $QuoteLine)
                         <tr>
-                            <td>{{ $QuoteLine->ORDRE }}</td>
+                            <td>
+                                {{ $QuoteLine->ORDRE }} - 
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="upQuoteLine({{ $QuoteLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="downQuoteLine({{ $QuoteLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
+                                </div>
+                            </td>
                             <td>{{ $QuoteLine->CODE }}</td>
                             <td>
                                 @if($QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif
@@ -81,12 +89,6 @@
                                 </div>
                                 <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="destroyQuoteLine({{$QuoteLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="upQuoteLine({{ $QuoteLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="downQuoteLine({{ $QuoteLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
                                 </div>
                                 @endif
                                 <!-- Modal -->
