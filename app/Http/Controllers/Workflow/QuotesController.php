@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Quotes;
@@ -12,8 +13,8 @@ use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;
-use App\Models\Accounting\AccountingDelivery;
 
+use App\Models\Accounting\AccountingDelivery;
 use App\Http\Requests\Workflow\StoreQuoteRequest;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 use App\Models\Accounting\AccountingPaymentMethod;
@@ -23,8 +24,24 @@ class QuotesController extends Controller
 {
     //
     public function index()
-    {    
-        return view('workflow/quotes-index');
+    {
+        $CurentYear = Carbon::now()->format('Y');
+
+        //Quote data for chart
+        $data['quotesDataRate'] = DB::table('quotes')
+                                    ->select('statu', DB::raw('count(*) as QuoteCountRate'))
+                                    ->groupBy('statu')
+                                    ->get();
+        //Quote data for chart
+        $data['quoteMonthlyRecap'] = DB::table('quote_lines')->selectRaw('
+                                                                MONTH(delivery_date) AS month,
+                                                                SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS quoteSum
+                                                            ')
+                                                            ->whereYear('created_at', $CurentYear)
+                                                            ->groupByRaw('MONTH(delivery_date) ')
+                                                            ->get();
+
+        return view('workflow/quotes-index')->with('data',$data);
     }
 
     /**

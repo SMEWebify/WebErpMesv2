@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Invoices;
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\companiesContacts;
@@ -15,7 +17,23 @@ class InvoicesController extends Controller
     //
     public function index()
     {    
-        return view('workflow/invoices-index');
+        $CurentYear = Carbon::now()->format('Y');
+        //Invoices data for chart
+        $data['invoicesDataRate'] = DB::table('invoices')
+                                    ->select('statu', DB::raw('count(*) as InvoiceCountRate'))
+                                    ->groupBy('statu')
+                                    ->get();
+        //Invoices data for chart
+        $data['invoiceMonthlyRecap'] = DB::table('invoice_lines')
+                                                            ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+                                                            ->selectRaw('
+                                                                MONTH(invoice_lines.created_at) AS month,
+                                                                SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS orderSum
+                                                            ')
+                                                            ->whereYear('invoice_lines.created_at', $CurentYear)
+                                                            ->groupByRaw('MONTH(invoice_lines.created_at) ')
+                                                            ->get();
+        return view('workflow/invoices-index')->with('data',$data);
     }
 
     public function request()

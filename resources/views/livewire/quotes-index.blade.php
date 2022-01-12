@@ -223,7 +223,9 @@
                         <th>Customer reference</th>
                         <th>Lines count</th>
                         <th>Statu</th>
-                        <th>Created At</th>
+                        <th>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                        </th>
                         <th>Action</th>
                     </tr>
                 </thead>

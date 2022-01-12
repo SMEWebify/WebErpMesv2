@@ -13,8 +13,8 @@ class TaskLines extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
-    public $sortField = 'id'; // default sorting field
-    public $sortAsc = true; // default sort direction
+    public $sortField = 'created_at'; // default sorting field
+    public $sortAsc = false; // default sort direction
     
     public $Tasklist;
     public $Factory = [];
