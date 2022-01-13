@@ -22,6 +22,14 @@ class HomeController extends Controller
 
         //use for liste of tasks
         $ServiceGoals = MethodsServices::withCount('Tasks')->orderBy('ORDRE')->get();
+        $Tasks = DB::table('tasks')
+                    ->select('tasks.id','statuses.title', 'methods_services.id as methods_id', 'methods_services.LABEL', DB::raw('count(*) as total_task'))
+                    ->join('statuses', 'tasks.status_id', '=', 'statuses.id')
+                    ->join('methods_services', 'tasks.methods_services_id', '=', 'methods_services.id')
+                    ->groupBy('methods_services_id')
+                    ->groupBy('status_id')
+                    ->orderBy('statuses.order', 'asc')
+                    ->get();
         //5 last product add 
         $LastProducts = Products::orderBy('id', 'desc')->take(5)->get();
         //5 last Quotes add 
@@ -105,6 +113,7 @@ class HomeController extends Controller
             'incomingOrdersCount' => $incomingOrdersCount,
             'LateOrders' =>  $LateOrders,
             'ServiceGoals' => $ServiceGoals,
+            'Tasks' => $Tasks,
         ])->with('data',$data);
     }
 

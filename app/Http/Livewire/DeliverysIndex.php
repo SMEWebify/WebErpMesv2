@@ -12,8 +12,8 @@ class DeliverysIndex extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
-    public $sortField = 'LABEL'; // default sorting field
-    public $sortAsc = true; // default sort direction
+    public $sortField = 'created_at'; // default sorting field
+    public $sortAsc = false; // default sort direction
 
     public $CODE; 
     public $LABEL; 

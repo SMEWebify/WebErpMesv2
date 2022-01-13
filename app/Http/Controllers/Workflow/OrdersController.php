@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\workflow;
 
+use Carbon\Carbon;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\ServiceS\OrderCalculator;
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\companiesContacts;
@@ -18,8 +20,23 @@ class OrdersController extends Controller
 {
     //
     public function index()
-    {    
-        return view('workflow/orders-index');
+    {   
+        $CurentYear = Carbon::now()->format('Y');
+        //Order data for chart
+        $data['ordersDataRate'] = DB::table('orders')
+                                    ->select('statu', DB::raw('count(*) as OrderCountRate'))
+                                    ->groupBy('statu')
+                                    ->get();
+        //Order data for chart
+        $data['orderMonthlyRecap'] = DB::table('order_lines')->selectRaw('
+                                                                MONTH(delivery_date) AS month,
+                                                                SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
+                                                            ')
+                                                            ->whereYear('created_at', $CurentYear)
+                                                            ->groupByRaw('MONTH(delivery_date) ')
+                                                            ->get();
+
+        return view('workflow/orders-index')->with('data',$data);
     }
 
     /**

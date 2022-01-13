@@ -181,18 +181,24 @@
                 <strong>Goal Task Completion</strong>
               </p>
               @forelse ($ServiceGoals as $ServiceGoal)
-                @php
-                    $tasksCount = $ServiceGoal->tasks_count;
-                    if($tasksCount < 100){ $class = 'bg-danger';}
-                    if($tasksCount < 75){ $class = 'bg-warning';}
-                    if($tasksCount < 50){ $class = 'bg-primary';}
-                    if($tasksCount < 25){ $class = 'bg-success';}
-                @endphp
               <div class="progress-group">
                 {{ $ServiceGoal->LABEL }}
-                <span class="float-right"> {{ $tasksCount }}/100</span>
+                <span class="float-right">{{ $ServiceGoal->tasks_count }}</span>
                 <div class="progress progress-sm">
-                  <div class="progress-bar  {{ $class }}" style="width: {{ $tasksCount }}%"></div>
+                  @php
+                  foreach($Tasks as $Task){
+                  if($Task->methods_id == $ServiceGoal->id){
+                    $width = 100/($ServiceGoal->tasks_count/ $Task->total_task);
+                    
+                    if($Task->title == 'Open'){ $class = 'bg-danger';}
+                    elseif($Task->title == 'Started'){ $class = 'bg-warning';}
+                    elseif($Task->title == 'In Progress'){ $class = 'bg-primary';}
+                    elseif($Task->title == 'Finished'){ $class = 'bg-success';}
+                    else{ $class = 'bg-info';}
+                    echo '<div class="progress-bar '.   $class  .'" style="width: '.  $width  .'%">'. $Task->title .' - '. $Task->total_task .'</div>' ;
+                  }
+                }
+                @endphp
                 </div>
               </div>
               <!-- /.progress-group -->
@@ -476,8 +482,8 @@
 @section('js')
 <script>
   //-------------
-    //- BAR CHART -
-    //-------------
+  //- BAR CHART -
+  //-------------
   var ctx = document.getElementById('QuoteRate');
   var myChart = new Chart(ctx, {
       type: 'bar',

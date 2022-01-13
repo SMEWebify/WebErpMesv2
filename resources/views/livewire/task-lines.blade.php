@@ -44,7 +44,9 @@
                             <th>Remaining time</th>
                             <th>Statu</th>
                             <th>Action</th>
-                            <th>Created</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
