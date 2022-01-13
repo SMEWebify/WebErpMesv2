@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,6 +58,14 @@ Route::group(['prefix' => 'invoices'], function () {
     Route::post('/edit/{id}', 'App\Http\Controllers\workflow\InvoicesController@update')->middleware(['auth'])->name('invoice.update');
     Route::get('/print/{id}', 'App\Http\Controllers\workflow\InvoicesController@print')->middleware(['auth'])->name('invoice.print');
     Route::get('/{id}', 'App\Http\Controllers\workflow\InvoicesController@show')->middleware(['auth'])->name('invoice.show');
+});
+
+Route::group(['prefix' => 'purchases'], function () {
+    Route::get('/', 'App\Http\Controllers\workflow\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
+    Route::get('/request', 'App\Http\Controllers\workflow\PurchasesController@request')->middleware(['auth'])->name('purchases-request'); 
+    Route::get('/quotation', 'App\Http\Controllers\workflow\PurchasesController@quotation')->middleware(['auth'])->name('purchases-quotation'); 
+    Route::get('/reciept', 'App\Http\Controllers\workflow\PurchasesController@reciept')->middleware(['auth'])->name('purchases-reciept'); 
+    Route::get('/invoice', 'App\Http\Controllers\workflow\PurchasesController@invoice')->middleware(['auth'])->name('purchases-invoice'); 
 });
 
 Route::group(['prefix' => 'accouting'], function () {

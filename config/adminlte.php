@@ -267,7 +267,7 @@ return [
         ],
         [
             'text'    => 'Orders',
-            'icon'    => 'fas fa-calculator',
+            'icon'    => 'fas fa-shopping-cart',
             'url'  => 'orders',
             'submenu' => [
                 [
@@ -303,7 +303,7 @@ return [
         ],*/
         [
             'text'    => 'Delivery notes',
-            'icon'    => 'fas fa-calculator',
+            'icon'    => 'fas fa-receipt',
             'submenu' => [
                 [
                     'text' => 'Deliverys notes request',
@@ -353,21 +353,24 @@ return [
             'icon'    => 'fas fa-cash-register',
             'submenu' => [
                 [
-                    'text'        => 'Purchase request',
-                    'url'  => '#',
+                    'text' => 'Purchase request',
+                    'url'  => 'purchases/request',
                 ],
                 [
-                    'text' => 'Purchase order list',
-                    'url'  => '#',
+                    'text' => 'Requests for quotation list',
+                    'url'  => 'purchases/quotation',
+                ],
+                [
+                    'text' => 'Purchase list',
+                    'url'  => 'purchases',
                 ],
                 [
                     'text' => 'PO reciept',
-                    'url'  => '#',
-                    'icon' => 'fas fa-receipt',
+                    'url'  => 'purchases/reciept',
                 ],
                 [
-                    'text' => 'Incoive supplier',
-                    'url'  => '#',
+                    'text' => 'Invoice supplier',
+                    'url'  => 'purchases/invoice',
                 ],
             ],
         ],
