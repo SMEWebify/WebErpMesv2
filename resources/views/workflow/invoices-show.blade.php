@@ -200,7 +200,7 @@
       <div class="tab-pane " id="Print">
         <div class="row">
           <div class="col-12">
-            <x-infocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the delivery note to test."  />
+            <x-InfocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the delivery note to test."  />
             <!-- Main content -->
             <div class="invoice p-3 mb-3">
               <!-- title row -->

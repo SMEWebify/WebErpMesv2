@@ -16,7 +16,7 @@
 
 @section('content')
 
-    <x-infocalloutComponent note="The views are configured in the 'Your company' page."  />
+    <x-InfocalloutComponent note="The views are configured in the 'Your company' page."  />
     <div id="card" class="card">
         <kanban-board :initial-data="{{ $tasks }}"></kanban-board>
     </div>

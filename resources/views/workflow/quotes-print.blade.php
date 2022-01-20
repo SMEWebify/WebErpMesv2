@@ -6,7 +6,7 @@
             <div class="row">
               <!-- this row will not appear when printing -->
               <div class="row no-print">
-                <x-infocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the invoice to test."  />
+                <x-InfocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the invoice to test."  />
               </div>
               
               <div class="col-12">
