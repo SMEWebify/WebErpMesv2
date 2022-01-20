@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  wem-dev:
+    container_name: wem-dev
+    build: .
+    restart: unless-stopped
+    entrypoint: "php artisan serve --host=0.0.0.0 --port=8000"
+    depends_on:
+      - db-dev
+    ports:
+      - "127.0.0.1:45060:8000"
+    env_file: .env
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db-dev
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: root
+      DB_PASSWORD: wemdev
+    volumes:
+      - ./app:/app/app
+
+  db-dev:
+    container_name: db-dev
+    image: mariadb:10.3.32
+    environment:
+      MARIADB_DATABASE: laravel
+      MARIADB_ROOT_PASSWORD: wemdev
+    volumes:
+      - db-dev_data:/var/lib/mysql
+
+volumes:
+  db-dev_data:
