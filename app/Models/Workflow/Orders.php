@@ -5,7 +5,7 @@ namespace App\Models\Workflow;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
 use App\Models\Companies\Companies;
-use App\Models\workflow\OrderLines;
+use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\companiesContacts;
 use App\Models\Companies\companiesAddresses;

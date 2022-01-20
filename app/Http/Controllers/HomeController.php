@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\workflow\Orders;
+use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use Illuminate\Support\Facades\DB;

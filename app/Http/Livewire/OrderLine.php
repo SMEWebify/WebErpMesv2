@@ -7,7 +7,7 @@ use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
-use App\Models\workflow\Orderlines;
+use App\Models\Workflow\Orderlines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;

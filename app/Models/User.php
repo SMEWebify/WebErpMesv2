@@ -13,7 +13,7 @@ use App\Models\Quality\QualityDerogation;
 use App\Models\Quality\QualityControlDevice;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\Products\StockLocationProducts;
-use App\Models\workflow\Orders;
+use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

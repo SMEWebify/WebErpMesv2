@@ -4,7 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\workflow\OrderLines;
+use App\Models\Workflow\OrderLines;
 
 class OrdersLinesIndex extends Component
 {

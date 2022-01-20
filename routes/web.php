@@ -29,43 +29,43 @@ Route::group(['prefix' => 'companies'], function () {
 });
 
 Route::group(['prefix' => 'quotes'], function () {
-    Route::get('/', 'App\Http\Controllers\workflow\QuotesController@index')->middleware(['auth'])->name('quotes'); 
-    Route::get('/lines', 'App\Http\Controllers\workflow\QuoteLinesController@index')->middleware(['auth'])->name('quotes-lines'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\QuotesController@update')->middleware(['auth'])->name('quote.update');
-    Route::get('/print/{id}', 'App\Http\Controllers\workflow\QuotesController@print')->middleware(['auth'])->name('quote.print');
-    Route::get('/{id}', 'App\Http\Controllers\workflow\QuotesController@show')->middleware(['auth'])->name('quote.show');
+    Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->middleware(['auth'])->name('quotes'); 
+    Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->middleware(['auth'])->name('quotes-lines'); 
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->middleware(['auth'])->name('quote.update');
+    Route::get('/print/{id}', 'App\Http\Controllers\Workflow\QuotesController@print')->middleware(['auth'])->name('quote.print');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->middleware(['auth'])->name('quote.show');
 });
 
 Route::group(['prefix' => 'orders'], function () {
-    Route::get('/', 'App\Http\Controllers\workflow\OrdersController@index')->middleware(['auth'])->name('orders'); 
-    Route::get('/lines', 'App\Http\Controllers\workflow\OrderLinesController@index')->middleware(['auth'])->name('orders-lines'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\OrdersController@update')->middleware(['auth'])->name('order.update');
-    Route::get('/print/{id}', 'App\Http\Controllers\workflow\OrdersController@print')->middleware(['auth'])->name('order.print');
-    Route::get('/{id}', 'App\Http\Controllers\workflow\OrdersController@show')->middleware(['auth'])->name('order.show');
+    Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->middleware(['auth'])->name('orders'); 
+    Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->middleware(['auth'])->name('orders-lines'); 
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->middleware(['auth'])->name('order.update');
+    Route::get('/print/{id}', 'App\Http\Controllers\Workflow\OrdersController@print')->middleware(['auth'])->name('order.print');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->middleware(['auth'])->name('order.show');
 });
 
 Route::group(['prefix' => 'deliverys'], function () {
-    Route::get('/', 'App\Http\Controllers\workflow\DeliverysController@index')->middleware(['auth'])->name('deliverys'); 
-    Route::get('/request', 'App\Http\Controllers\workflow\DeliverysController@request')->middleware(['auth'])->name('deliverys-request'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\DeliverysController@update')->middleware(['auth'])->name('delivery.update');
-    Route::get('/print/{id}', 'App\Http\Controllers\workflow\DeliverysController@print')->middleware(['auth'])->name('delivery.print');
-    Route::get('/{id}', 'App\Http\Controllers\workflow\DeliverysController@show')->middleware(['auth'])->name('delivery.show');
+    Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->middleware(['auth'])->name('deliverys'); 
+    Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->middleware(['auth'])->name('deliverys-request'); 
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->middleware(['auth'])->name('delivery.update');
+    Route::get('/print/{id}', 'App\Http\Controllers\Workflow\DeliverysController@print')->middleware(['auth'])->name('delivery.print');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->middleware(['auth'])->name('delivery.show');
 });
 
 Route::group(['prefix' => 'invoices'], function () {
-    Route::get('/', 'App\Http\Controllers\workflow\InvoicesController@index')->middleware(['auth'])->name('invoices'); 
-    Route::get('/request', 'App\Http\Controllers\workflow\InvoicesController@request')->middleware(['auth'])->name('invoices-request'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\workflow\InvoicesController@update')->middleware(['auth'])->name('invoice.update');
-    Route::get('/print/{id}', 'App\Http\Controllers\workflow\InvoicesController@print')->middleware(['auth'])->name('invoice.print');
-    Route::get('/{id}', 'App\Http\Controllers\workflow\InvoicesController@show')->middleware(['auth'])->name('invoice.show');
+    Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->middleware(['auth'])->name('invoices'); 
+    Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->middleware(['auth'])->name('invoices-request'); 
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->middleware(['auth'])->name('invoice.update');
+    Route::get('/print/{id}', 'App\Http\Controllers\Workflow\InvoicesController@print')->middleware(['auth'])->name('invoice.print');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->middleware(['auth'])->name('invoice.show');
 });
 
 Route::group(['prefix' => 'purchases'], function () {
-    Route::get('/', 'App\Http\Controllers\workflow\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
-    Route::get('/request', 'App\Http\Controllers\workflow\PurchasesController@request')->middleware(['auth'])->name('purchases-request'); 
-    Route::get('/quotation', 'App\Http\Controllers\workflow\PurchasesController@quotation')->middleware(['auth'])->name('purchases-quotation'); 
-    Route::get('/reciept', 'App\Http\Controllers\workflow\PurchasesController@reciept')->middleware(['auth'])->name('purchases-reciept'); 
-    Route::get('/invoice', 'App\Http\Controllers\workflow\PurchasesController@invoice')->middleware(['auth'])->name('purchases-invoice'); 
+    Route::get('/', 'App\Http\Controllers\Workflow\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
+    Route::get('/request', 'App\Http\Controllers\Workflow\PurchasesController@request')->middleware(['auth'])->name('purchases-request'); 
+    Route::get('/quotation', 'App\Http\Controllers\Workflow\PurchasesController@quotation')->middleware(['auth'])->name('purchases-quotation'); 
+    Route::get('/reciept', 'App\Http\Controllers\Workflow\PurchasesController@reciept')->middleware(['auth'])->name('purchases-reciept'); 
+    Route::get('/invoice', 'App\Http\Controllers\Workflow\PurchasesController@invoice')->middleware(['auth'])->name('purchases-invoice'); 
 });
 
 Route::group(['prefix' => 'accouting'], function () {
