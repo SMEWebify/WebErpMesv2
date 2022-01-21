@@ -195,65 +195,11 @@
                   </div>
               </form>
             </div>
-<<<<<<< HEAD
           </div>
           <div class="col-md-3">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
-=======
-        </form>
-      </div>   
-      <div class="tab-pane " id="QuoteLines">
-        @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu, 'QuoteDelay' => $Quote->validity_date])
-      </div> 
-      <div class="tab-pane " id="Print">
-        <div class="row">
-          <div class="col-12">
-            <x-InfocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the invoice to test."  />
-            <!-- Main content -->
-            <div class="invoice p-3 mb-3">
-              <!-- title row -->
-              <div class="row">
-                <div class="col-12">
-                  <h4>
-                    <i class="fas fa-globe"></i> WEM, Inc.
-                    <small class="float-right">Date: {{ date('Y-m-d') }}</small>
-                  </h4>
-                </div>
-                <!-- /.col -->
-              </div>
-              <!-- info row -->
-              <div class="row invoice-info">
-                <div class="col-sm-4 invoice-col">
-                  From
-                  <address>
-                    <strong>{{ $Factory->NAME }}</strong><br>
-                    {{ $Factory->ADDRESS }}<br>
-                    {{ $Factory->ZIPCODE }}, {{ $Factory->CITY }}<br>
-                    Phone: {{ $Factory->PHONE_NUMBER }}<br>
-                    Email: {{ $Factory->MAIL }}
-                  </address>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  To
-                  <address>
-                    <strong>{{ $Quote->companie['LABEL'] }}</strong> - <strong>{{ $Quote->contact['CIVILITY'] }} - {{ $Quote->contact['FIRST_NAME'] }}  {{ $Quote->contact['NAME'] }}</strong><br>
-                    {{ $Quote->adresse['ADRESS'] }}<br>
-                    {{ $Quote->adresse['ZIPCODE'] }}, {{ $Quote->adresse['CITY'] }}<br>
-                    {{ $Quote->adresse['COUNTRY'] }}<br>
-                    Phone: {{ $Quote->contact['NUMBER'] }}<br>
-                    Email: {{ $Quote->contact['MAIL'] }}
-                  </address>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  <b>Quote #{{  $Quote->CODE }}</b><br>
-                  <b>Your Ref:</b> {{  $Quote->customer_reference }}<br>
-                </div>
-                <!-- /.col -->
->>>>>>> 9199ececfb1115f56353ae751b923167cbdbf847
               </div>
               <div class="card-body">
                 <div class="table-responsive">
