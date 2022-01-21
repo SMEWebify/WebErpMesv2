@@ -3,7 +3,7 @@
 namespace App\Models\Workflow;
 
 use App\Models\Planning\Task;
-use App\Models\workflow\Orders;
+use App\Models\Workflow\Orders;
 use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Database\Eloquent\Model;

@@ -5,6 +5,12 @@
 @section('content')
             <div class="row">
               <!-- this row will not appear when printing -->
+<<<<<<< HEAD
+=======
+              <div class="row no-print">
+                <x-InfocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the invoice to test."  />
+              </div>
+>>>>>>> 9199ececfb1115f56353ae751b923167cbdbf847
               
               <div class="col-12">
                 <!-- Main content -->

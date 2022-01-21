@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class infocalloutComponent extends Component
+class InfocalloutComponent extends Component
 {
     public $note;
 

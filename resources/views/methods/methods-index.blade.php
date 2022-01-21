@@ -44,7 +44,7 @@
       <div class="tab-pane active" id="Services">
         <div class="card card-primary">
           <div class="card-body">
-            <x-infocalloutComponent note="In the Type scrolling list, indicate whether the service is productive (manufacturing operation) or actually involves the procurement of raw materials or supplies, is a service completed externally, i.e. by a subcontractor, or is a composed component. The service type is then used to filter data when creating a list of tasks, a bill of materials, etc. 
+            <x-InfocalloutComponent note="In the Type scrolling list, indicate whether the service is productive (manufacturing operation) or actually involves the procurement of raw materials or supplies, is a service completed externally, i.e. by a subcontractor, or is a composed component. The service type is then used to filter data when creating a list of tasks, a bill of materials, etc. 
             For raw materials, a distinction is also made between bars, plates and blocks. The screen used to detail raw materials may look different, depending on the raw material type."  />
             <div class="row">
               <div class="col-md-8 card-primary">
@@ -239,7 +239,7 @@
       <div class="tab-pane" id="Ressources">
         <div class="card card-primary">
           <div class="card-body">
-            <x-infocalloutComponent note="Depending on your working method, resources may be employees or machines or a mixture of both. In any case, you must indicate for each of them the maximum number of working hours per day as well as the services that they can complete."  />
+            <x-InfocalloutComponent note="Depending on your working method, resources may be employees or machines or a mixture of both. In any case, you must indicate for each of them the maximum number of working hours per day as well as the services that they can complete."  />
             <div class="row">
               <div class="col-md-8 card-primary">
                 <div class="card-header">
@@ -437,7 +437,7 @@
       <div class="tab-pane" id="Section">
         <div class="card card-primary">
           <div class="card-body">
-            <x-infocalloutComponent note="The Sections function allows you to define all the sections making up your company, i.e. the physical zones where work stations and operators are grouped together according to their job and cost."  />
+            <x-InfocalloutComponent note="The Sections function allows you to define all the sections making up your company, i.e. the physical zones where work stations and operators are grouped together according to their job and cost."  />
             <div class="row">
               <div class="col-md-8 card-primary">
                 <div class="card-header">
@@ -671,7 +671,7 @@
       <div class="tab-pane" id="Units">
         <div class="card card-primary">
           <div class="card-body">
-            <x-infocalloutComponent note="You must enter all units you may have to work with in your business. This may be Parts, Meters, Kilograms, etc."  />
+            <x-InfocalloutComponent note="You must enter all units you may have to work with in your business. This may be Parts, Meters, Kilograms, etc."  />
             <div class="row">
               <div class="col-md-6 card-primary">
                 <div class="card-header">
@@ -785,7 +785,7 @@
       <div class="tab-pane" id="Families">
         <div class="card card-primary">
           <div class="card-body">
-            <x-infocalloutComponent note="Defining subgroups per service allows filtering components at later stages."  />
+            <x-InfocalloutComponent note="Defining subgroups per service allows filtering components at later stages."  />
             
             <div class="row">
               <div class="col-md-6 card-primary">

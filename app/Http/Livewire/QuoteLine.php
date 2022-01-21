@@ -8,7 +8,7 @@ use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
-use App\Models\workflow\Quotelines;
+use App\Models\Workflow\Quotelines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
