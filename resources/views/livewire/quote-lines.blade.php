@@ -16,9 +16,9 @@
 
             @if($QuoteStatu == 1)
                 @if($updateLines)
-                    @include('livewire.quote-line-update')
+                    @include('livewire.form.quote-line-update')
                 @else
-                    @include('livewire.quote-line-create')
+                    @include('livewire.form.quote-line-create')
                 @endif
             @endif
         </div>

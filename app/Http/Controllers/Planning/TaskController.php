@@ -68,9 +68,9 @@ class TaskController extends Controller
                                             'status_id', 
                                             'TYPE',
                                             'DELAY',
-                                            'QTY',
-                                            'QTY_INIT',
-                                            'QTY_AVIABLE',
+                                            'qty',
+                                            'qty_init',
+                                            'qty_aviable',
                                             'UNIT_COST',
                                             'UNIT_PRICE',
                                             'methods_units_id',
@@ -129,7 +129,7 @@ class TaskController extends Controller
         $task->SETING_TIME=$request->SETING_TIME;
         $task->UNIT_TIME=$request->UNIT_TIME;
         $task->TYPE=$request->TYPE;
-        $task->QTY=$request->QTY;
+        $task->qty=$request->qty;
         $task->UNIT_COST=$request->UNIT_COST;
         $task->UNIT_PRICE=$request->UNIT_PRICE;
         $task->methods_units_id=$request->methods_units_id;

@@ -16,9 +16,9 @@
 
             @if($OrderStatu == 1)
                 @if($updateLines)
-                    @include('livewire.order-line-update')
+                    @include('livewire.form.order-line-update')
                 @else
-                    @include('livewire.order-line-create')
+                    @include('livewire.form.order-line-create')
                 @endif
             @endif
         </div>

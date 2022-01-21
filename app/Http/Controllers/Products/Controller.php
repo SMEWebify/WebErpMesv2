@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Methods;
+namespace App\Http\Controllers\Products;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;

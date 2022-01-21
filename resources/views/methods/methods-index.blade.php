@@ -78,7 +78,7 @@
                         <td>{{ $MethodsService->CODE }}</td>
                         <td>{{ $MethodsService->LABEL }}</td>
                         <td>
-                          @if($MethodsService->TYPE  == 1) Productive @endif
+                          @if($MethodsService->TYPE  == 1)Productive @endif
                           @if($MethodsService->TYPE  == 2)Raw material @endif
                           @if($MethodsService->TYPE  == 3)Raw material (Sheet) @endif
                           @if($MethodsService->TYPE  == 4)Raw material (Profil) @endif

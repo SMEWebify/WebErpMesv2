@@ -19,6 +19,14 @@ class CreateMethodsServicesTable extends Migration
 			$table->integer('ORDRE');
 			$table->string('LABEL');
 			$table->integer('TYPE');
+            # 1 = Productive
+            # 2 = Raw material
+            # 3 = Raw material (Sheet)
+            # 4 = Raw material (Profil)
+            # 5 = Raw material (block)
+            # 6 = Supplies
+            # 7 = Sub-contracting
+            # 8 = Composed component
 			$table->decimal('HOURLY_RATE', 20, 2);
 			$table->decimal('MARGIN', 20, 2);
 			$table->string('COLOR');

@@ -39,8 +39,8 @@
                                 <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                             </div>
                             <input type="text" class="form-control" wire:model="CODE" name="CODE" id="CODE" placeholder="External ID">
-                            @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
+                        @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="col-3">
                         <label for="LABEL">Name of Delivery note</label>
@@ -48,7 +48,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model="LABEL" name="LABEL"  id="LABEL"  placeholder="Name of quote" required>
+                            <input type="text" class="form-control" wire:model="LABEL" name="LABEL"  id="LABEL"  placeholder="Name of delivery note" required>
                         </div>
                         @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>

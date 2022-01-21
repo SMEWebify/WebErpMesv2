@@ -46,6 +46,7 @@ class OrderLines extends Model
     {
         return $this->belongsTo(MethodsUnits::class, 'methods_units_id');
     }
+    
     public function VAT()
     {
         return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');

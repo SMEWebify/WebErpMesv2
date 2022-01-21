@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Quality;
+namespace App\Http\Controllers\Times;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;

@@ -61,11 +61,15 @@ Route::group(['prefix' => 'invoices'], function () {
 });
 
 Route::group(['prefix' => 'purchases'], function () {
-    Route::get('/', 'App\Http\Controllers\workflow\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
-    Route::get('/request', 'App\Http\Controllers\workflow\PurchasesController@request')->middleware(['auth'])->name('purchases-request'); 
-    Route::get('/quotation', 'App\Http\Controllers\workflow\PurchasesController@quotation')->middleware(['auth'])->name('purchases-quotation'); 
-    Route::get('/reciept', 'App\Http\Controllers\workflow\PurchasesController@reciept')->middleware(['auth'])->name('purchases-reciept'); 
-    Route::get('/invoice', 'App\Http\Controllers\workflow\PurchasesController@invoice')->middleware(['auth'])->name('purchases-invoice'); 
+    Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
+    Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->middleware(['auth'])->name('purchases-request'); 
+    Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->middleware(['auth'])->name('purchases-quotation'); 
+    Route::get('/reciept', 'App\Http\Controllers\Purchases\PurchasesController@reciept')->middleware(['auth'])->name('purchases-reciept'); 
+    Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases-invoice'); 
+
+    
+    Route::get('/{id}', 'App\Http\Controllers\workflow\PurchasesController@showPurchase')->middleware(['auth'])->name('purchase.show');
+    Route::get('/quotation/{id}', 'App\Http\Controllers\workflow\PurchasesController@showQuotation')->middleware(['auth'])->name('purchase.quotation.show');
 });
 
 Route::group(['prefix' => 'accouting'], function () {
