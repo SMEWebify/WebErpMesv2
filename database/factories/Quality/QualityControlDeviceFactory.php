@@ -1,18 +1,18 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Quality;
 
-use App\Models\QualityNonConformityController;
+use App\Models\QualityControlDeviceController;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class QualityNonConformityFactory extends Factory
+class QualityControlDeviceFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = QualityNonConformityController::class;
+    protected $model = QualityControlDeviceController::class;
 
     /**
      * Define the model's default state.

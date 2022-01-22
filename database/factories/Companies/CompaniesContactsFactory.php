@@ -1,19 +1,19 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Companies;
 
 use App\Models\Companies\Companies;
-use App\Models\Companies\companiesAddresses;
+use App\Models\Companies\CompaniesContacts;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class companiesAddressesFactory extends Factory
+class CompaniesContactsFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = companiesAddresses::class;
+    protected $model = CompaniesContacts::class;
 
     /**
      * Define the model's default state.
@@ -22,21 +22,17 @@ class companiesAddressesFactory extends Factory
      */
     public function definition()
     {
-        $City = $this->faker->city();
-
         return [
             //
             'companies_id' => $this->faker->factory(Companies::class),
             'ORDRE' => $this->faker->randomDigitNotNull(),
-            'LABEL' =>$City,
-            'ADRESS' => $this->faker->secondaryAddress(),
-            'ZIPCODE' => $this->faker->postcode(),
-            'CITY' => $City,
-            'COUNTRY' => $this->faker->country(),
+            'CIVILITY' =>$this->faker->randomElement(['Mr', 'Mrs ', 'Miss ', 'Ms']),
+            'FIRST_NAME' => $this->faker->firstName(),
+            'NAME' => $this->faker->name(),
+            'FUNCTION' => $this->faker->randomElement(['Director', 'Buyer ', 'Technician ', 'Storekeeper']),
             'NUMBER' => $this->faker->phoneNumber(),
+            'MOBILE' => $this->faker->safeEmail(),
             'MAIL' => $this->faker->safeEmail(),
-            'ADRESS_LIV' => $this->faker->numberBetween($min = 1, $max = 2),
-            'ADRESS_FAC' => $this->faker->numberBetween($min = 1, $max = 2),
         ];
     }
 }

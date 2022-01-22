@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\workflow;
+namespace App\Http\Requests\Workflow;
 
 use Illuminate\Foundation\Http\FormRequest;
 

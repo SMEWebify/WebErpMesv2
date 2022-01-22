@@ -2,8 +2,8 @@
 
 namespace App\Models\Companies;
 
-use App\Models\Companies\companiesContacts;
-use App\Models\Companies\companiesAddresses;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,12 +36,12 @@ class Companies extends Model
 
     public function Addresses()
     {
-        return $this->hasMany(companiesAddresses::class);
+        return $this->hasMany(CompaniesAddresses::class);
     }
 
     public function Contacts()
     {
-        return $this->hasMany(companiesContacts::class);
+        return $this->hasMany(CompaniesContacts::class);
     }
 
     public function UserManagement()

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\workflow;
+namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use App\Models\Admin\Factory;
@@ -9,8 +9,8 @@ use App\ServiceS\OrderCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
-use App\Models\Companies\companiesContacts;
-use App\Models\Companies\companiesAddresses;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
 use App\Models\Accounting\AccountingPaymentMethod;
@@ -50,8 +50,8 @@ class OrdersController extends Controller
     {
         
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = companiesContacts::select('id', 'FIRST_NAME','NAME')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'LABEL','ADRESS')->get();
+        $ContactSelect = CompaniesContacts::select('id', 'FIRST_NAME','NAME')->get();
         $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'CODE','LABEL')->get();
         $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'CODE','LABEL')->get();
         $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'CODE','LABEL')->get();

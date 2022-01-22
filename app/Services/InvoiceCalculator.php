@@ -5,10 +5,10 @@ use App\Models\Workflow\Invoices;
 use App\Repositories\Money;
 use App\Repositories\Tax;
 
-class OrderCalculator
+class InvoiceCalculator
 {
     /**
-     * @var Order
+     * @var invoices
      */
     private $invoices;
 

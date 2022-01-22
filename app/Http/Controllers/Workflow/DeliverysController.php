@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\workflow;
+namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -9,8 +9,8 @@ use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
-use App\Models\Companies\companiesContacts;
-use App\Models\Companies\companiesAddresses;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 use App\Http\Requests\Workflow\UpdateDeliveryRequest;
 
 class DeliverysController extends Controller
@@ -46,8 +46,8 @@ class DeliverysController extends Controller
     public function show(Deliverys $id)
     {
         $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = companiesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = companiesContacts::select('id', 'FIRST_NAME','NAME')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'LABEL','ADRESS')->get();
+        $ContactSelect = CompaniesContacts::select('id', 'FIRST_NAME','NAME')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');

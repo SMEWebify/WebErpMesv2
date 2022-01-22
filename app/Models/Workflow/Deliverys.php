@@ -8,8 +8,8 @@ use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Companies\companiesContacts;
-use App\Models\Companies\companiesAddresses;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,12 +36,12 @@ class Deliverys extends Model
 
     public function contact()
     {
-        return $this->belongsTo(companiesContacts::class, 'companies_contacts_id');
+        return $this->belongsTo(CompaniesContacts::class, 'companies_contacts_id');
     }
 
     public function adresse()
     {
-        return $this->belongsTo(companiesAddresses::class, 'companies_addresses_id');
+        return $this->belongsTo(CompaniesAddresses::class, 'companies_addresses_id');
     }
 
     public function UserManagement()

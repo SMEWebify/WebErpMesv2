@@ -10,7 +10,6 @@ use App\Http\Requests\Accounting\StoreAllocationRequest;
 class AllocationController extends Controller
 {
     //
-
     public function store(StoreAllocationRequest $request)
     {
         $Allocation = AccountingAllocation::create($request->only('ACCOUNT',

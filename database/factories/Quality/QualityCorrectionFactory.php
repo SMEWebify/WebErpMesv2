@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Quality;
 
 use App\Models\QualityCorrectionController;
 use Illuminate\Database\Eloquent\Factories\Factory;
