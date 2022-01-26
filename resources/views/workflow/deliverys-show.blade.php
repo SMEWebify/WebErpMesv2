@@ -31,21 +31,21 @@
     <div class="tab-content">
       <div class="tab-pane active" id="Delivery">
         <div class="row">
-          @if(session('success'))
-          <div class="alert alert-success">
-              {{ session('success')}}
-          </div>
-          @endif
-          @if($errors->count())
-            <div class="alert alert-danger">
-              <ul>
-              @foreach ( $errors->all() as $message)
-              <li> {{ $message }}</li>
-              @endforeach
-              </ul>
-            </div>
-          @endif
           <div class="col-md-9">
+            @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success')}}
+            </div>
+            @endif
+            @if($errors->count())
+              <div class="alert alert-danger">
+                <ul>
+                @foreach ( $errors->all() as $message)
+                <li> {{ $message }}</li>
+                @endforeach
+                </ul>
+              </div>
+            @endif
             <div class="card">
               <form method="POST" action="{{ route('delivery.update', ['id' => $Delivery->id]) }}" enctype="multipart/form-data">
                 @csrf
