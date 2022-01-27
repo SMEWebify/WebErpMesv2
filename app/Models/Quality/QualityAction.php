@@ -11,15 +11,15 @@ class QualityAction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',
-                            'LABEL', 
+    protected $fillable = ['code',
+                            'label', 
                             'statu',
-                            'TYPE', 
+                            'type', 
                             'user_id',
-                            'PB_DESCP',  
-                            'CAUSE',  
-                            'ACTION', 
-                            'COLOR', 
+                            'pb_descp',  
+                            'cause',  
+                            'action', 
+                            'color', 
                             'quality_non_conformitie_id'];
 
     public function UserManagement()

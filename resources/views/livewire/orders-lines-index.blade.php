@@ -17,11 +17,11 @@
                         </th>
                         <th>Sort</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>Product</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>Qty</th>
                         <th>Unit</th>
@@ -38,18 +38,18 @@
                 <tbody>
                     @forelse ($OrderLineslist as $OrderLine)
                     <tr>
-                        <td>{{ $OrderLine->order['CODE'] }}</td>
+                        <td>{{ $OrderLine->order['code'] }}</td>
                         <td>{{ $OrderLine->ORDRE }}</td>
-                        <td>{{ $OrderLine->CODE }}</td>
-                        <td>@if(1 == $OrderLine->product_id ) {{ $OrderLine->Product['LABEL'] }}@endif</td>
-                        <td>{{ $OrderLine->LABEL }}</td>
+                        <td>{{ $OrderLine->code }}</td>
+                        <td>@if(1 == $OrderLine->product_id ) {{ $OrderLine->Product['label'] }}@endif</td>
+                        <td>{{ $OrderLine->label }}</td>
                         <td>
                             <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Delivered qty : {{ $OrderLine->delivered_qty }} <br /> Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                         </td>
-                        <td>{{ $OrderLine->Unit['LABEL'] }}</td>
+                        <td>{{ $OrderLine->Unit['label'] }}</td>
                         <td>{{ $OrderLine->selling_price }}</td>
                         <td>{{ $OrderLine->discount }}</td>
-                        <td>{{ $OrderLine->VAT['LABEL'] }}</td>
+                        <td>{{ $OrderLine->VAT['label'] }}</td>
                         <td>{{ $OrderLine->delivery_date }}</td>
                         <td>
                             @if(1 == $OrderLine->tasks_status )  <span class="badge badge-info">No task</span>@endif
@@ -59,7 +59,7 @@
                         </td>
                         <td>
                             @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">Not delivered</span>@endif
-                            @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">partly delivered</span>@endif
+                            @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">Partly delivered</span>@endif
                             @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">delivered</span>@endif
                         </td>
                         <td>

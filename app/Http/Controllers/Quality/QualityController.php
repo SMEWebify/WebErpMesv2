@@ -21,21 +21,21 @@ class QualityController extends Controller
         $QualityActions = QualityAction::orderBy('id')->paginate(10);
         $LastAction =  DB::table('quality_actions')->orderBy('id', 'desc')->first();
         $QualityCauses = QualityCause::All();
-        $CausesSelect = QualityCause::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $CausesSelect = QualityCause::select('id', 'label')->orderBy('label')->get();
         $QualityFailures = QualityFailure::All();
-        $FailuresSelect = QualityFailure::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $FailuresSelect = QualityFailure::select('id', 'label')->orderBy('label')->get();
         $QualityCorrections = QualityCorrection::All();
-        $CorrectionsSelect = QualityCorrection::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $CorrectionsSelect = QualityCorrection::select('id', 'label')->orderBy('label')->get();
         $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
         $QualityNonConformitys = QualityNonConformity::orderBy('id')->paginate(10);
-        $NonConformitysSelect = QualityNonConformity::select('id', 'CODE')->orderBy('CODE')->get();
+        $NonConformitysSelect = QualityNonConformity::select('id', 'code')->orderBy('code')->get();
         $LastNonConformity =  DB::table('quality_non_conformities')->orderBy('id', 'desc')->first();
         $QualityControlDevices = QualityControlDevice::orderBy('id')->paginate(10);
         $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
         $LastDerogation =  DB::table('quality_derogations')->orderBy('id', 'desc')->first();
         $userSelect = User::select('id', 'name')->get();
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('LABEL')->get();
-        $CompaniesSelect = Companies::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('label')->get();
+        $CompaniesSelect = Companies::select('id', 'label')->orderBy('label')->get();
         
         return view('quality/quality-index', [
             'QualityActions' => $QualityActions,

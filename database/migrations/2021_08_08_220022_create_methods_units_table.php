@@ -15,9 +15,9 @@ class CreateMethodsUnitsTable extends Migration
     {
         Schema::create('methods_units', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
-			$table->integer('TYPE');
+            $table->string('code');
+			$table->string('label');
+			$table->integer('type');
             $table->timestamps();
         });
     }

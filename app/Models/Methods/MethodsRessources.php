@@ -12,7 +12,7 @@ class MethodsRessources extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ORDRE', 'CODE',  'LABEL',  'PICTURE', 'MASK_TIME', 'CAPACITY',  'section_id',  'COLOR',  'service_id',  'COMMENT'];
+    protected $fillable = ['ORDRE', 'code',  'label',  'picture', 'mask_time', 'capacity',  'section_id',  'color',  'service_id',  'comment'];
 
     public function service()
     {

@@ -27,12 +27,12 @@ class InvoiceCalculator
         $invoicesLines = $this->invoices->invoicesLines;
         foreach ($invoicesLines as $invoicesLine) {
             $TotalCurentLine = ($invoicesLine->qty*$invoicesLine->selling_price)-($invoicesLine->qty*$invoicesLine->selling_price)*($invoicesLine->discount/100);
-			$TotalVATCurentLine =  $TotalCurentLine*($invoicesLine->VAT['RATE']/100) ;
+			$TotalVATCurentLine =  $TotalCurentLine*($invoicesLine->VAT['rate']/100) ;
             if(array_key_exists($invoicesLine->accounting_vats_id, $tableauTVA)){
                 $tableauTVA[$invoicesLine->accounting_vats_id][1] += $TotalVATCurentLine;
             }
             else{
-                $tableauTVA[$invoicesLine->accounting_vats_id] = array($invoicesLine->VAT['RATE'], $TotalVATCurentLine);
+                $tableauTVA[$invoicesLine->accounting_vats_id] = array($invoicesLine->VAT['rate'], $TotalVATCurentLine);
             }
         }
         asort($tableauTVA);
@@ -47,7 +47,7 @@ class InvoiceCalculator
 
         foreach ($invoicesLines as $invoicesLine) {
             $TotalPriceLine = ($invoicesLine->qty * $invoicesLine->selling_price)-($invoicesLine->qty * $invoicesLine->selling_price)*($invoicesLine->discount/100);
-            $TotalVATPrice = $TotalPriceLine*($invoicesLine->VAT['RATE']/100);
+            $TotalVATPrice = $TotalPriceLine*($invoicesLine->VAT['rate']/100);
             $TotalPrice += $TotalPriceLine+$TotalVATPrice;
         }
         return $TotalPrice;

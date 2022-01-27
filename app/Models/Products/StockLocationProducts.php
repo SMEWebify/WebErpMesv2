@@ -11,7 +11,7 @@ class StockLocationProducts extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',
+    protected $fillable = ['code',
                             'user_id', 
                             'stock_locations_id',
                             'products_id', 

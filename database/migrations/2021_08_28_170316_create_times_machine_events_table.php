@@ -15,11 +15,11 @@ class CreateTimesMachineEventsTable extends Migration
     {
         Schema::create('times_machine_events', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
+            $table->string('code');
 			$table->integer('ORDRE');
-			$table->string('LABEL');
-			$table->integer('MASK_TIME');
-			$table->string('COLOR');
+			$table->string('label');
+			$table->integer('mask_time');
+			$table->string('color');
 			$table->integer('ETAT');
             $table->timestamps();
         });

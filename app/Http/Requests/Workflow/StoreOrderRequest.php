@@ -25,8 +25,8 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:orders',
-            'LABEL'=>'required',
+            'code' =>'required|unique:orders',
+            'label'=>'required',
             'companies_id'=>'required',
             'companies_contacts_id'=>'required',
             'companies_addresses_id'=>'required',

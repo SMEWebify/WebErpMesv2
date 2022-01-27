@@ -26,7 +26,7 @@ class PurchasesRequest extends Component
     public $document_type_label = 'PU';
 
     public $PurchasesRequestsLineslist;
-    public $CODE, $LABEL, $user_id; 
+    public $code, $label, $user_id; 
     public $updateLines = false;
     public $CompaniesSelect = [];
     public $data = [];
@@ -39,16 +39,16 @@ class PurchasesRequest extends Component
     { 
         if($this->document_type == 'PU'){  
             return [
-                'CODE' =>'required|unique:purchases',
-                'LABEL' =>'required',
+                'code' =>'required|unique:purchases',
+                'label' =>'required',
                 'companies_id'=>'required',
                 'user_id'=>'required',
             ];
         }
         elseif($this->document_type == 'PQ'){
             return [
-                'CODE' =>'required|unique:purchases_quotations',
-                'LABEL' =>'required',
+                'code' =>'required|unique:purchases_quotations',
+                'label' =>'required',
                 'companies_id'=>'required',
                 'user_id'=>'required',
             ];
@@ -69,13 +69,13 @@ class PurchasesRequest extends Component
     {
             $this->LastPurchase =  Purchases::latest()->first();
             if($this->LastPurchase == Null){
-                $this->CODE = $this->document_type ."-0";
-                $this->LABEL = $this->document_type ."-0";
+                $this->code = $this->document_type ."-0";
+                $this->label = $this->document_type ."-0";
             }
             else{
                 $this->LastPurchase = $this->LastPurchase->id;
-                $this->CODE = $this->document_type ."-". $this->LastPurchase;
-                $this->LABEL = $this->document_type ."-". $this->LastPurchase;
+                $this->code = $this->document_type ."-". $this->LastPurchase;
+                $this->label = $this->document_type ."-". $this->LastPurchase;
             }
 
             $this->LastPurchaseQuotation =  PurchasesQuotation::latest()->first();
@@ -86,18 +86,18 @@ class PurchasesRequest extends Component
                 $this->LastPurchaseQuotation = $this->LastPurchaseQuotation->id;
             }
 
-        $this->CompaniesSelect = Companies::select('id', 'LABEL', 'CODE')->where('statu_FOUR', '=', 2)->orderBy('CODE')->get();
+        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->where('statu_supplier', '=', 2)->orderBy('code')->get();
     }
     
     public function changeDocument() 
     {
         if($this->document_type == 'PU'){ 
-            $this->CODE = $this->document_type ."-". $this->LastPurchase;
-            $this->LABEL = $this->document_type ."-". $this->LastPurchase;
+            $this->code = $this->document_type ."-". $this->LastPurchase;
+            $this->label = $this->document_type ."-". $this->LastPurchase;
         }
         elseif($this->document_type == 'PQ'){
-            $this->CODE = $this->document_type ."-". $this->LastPurchaseQuotation;
-            $this->LABEL = $this->document_type ."-". $this->LastPurchaseQuotation;
+            $this->code = $this->document_type ."-". $this->LastPurchaseQuotation;
+            $this->label = $this->document_type ."-". $this->LastPurchaseQuotation;
         }
     }
 
@@ -111,13 +111,13 @@ class PurchasesRequest extends Component
                                                                         ->where(
                                                                             function($query) {
                                                                                 return $query
-                                                                                    ->where('TYPE', '=', '1')
-                                                                                    ->orWhere('TYPE', '=', '2')
-                                                                                    ->orWhere('TYPE', '=', '3')
-                                                                                    ->orWhere('TYPE', '=', '4')
-                                                                                    ->orWhere('TYPE', '=', '5')
-                                                                                    ->orWhere('TYPE', '=', '6')
-                                                                                    ->orWhere('TYPE', '=', '7');
+                                                                                    ->where('type', '=', '1')
+                                                                                    ->orWhere('type', '=', '2')
+                                                                                    ->orWhere('type', '=', '3')
+                                                                                    ->orWhere('type', '=', '4')
+                                                                                    ->orWhere('type', '=', '5')
+                                                                                    ->orWhere('type', '=', '6')
+                                                                                    ->orWhere('type', '=', '7');
                                                                             })->get();
         return view('livewire.purchases-request', [
             'PurchasesRequestsLineslist' => $PurchasesRequestsLineslist,
@@ -143,8 +143,8 @@ class PurchasesRequest extends Component
             // Create puchase order
             if($this->document_type == 'PU'){
                 $PurchaseOrderCreated = Purchases::create([
-                    'CODE'=>$this->CODE,  
-                    'LABEL'=>$this->LABEL, 
+                    'code'=>$this->code,  
+                    'label'=>$this->label, 
                     'companies_id'=>$this->companies_id,   
                     'user_id'=>$this->user_id,
                 ]);
@@ -195,8 +195,8 @@ class PurchasesRequest extends Component
             elseif($this->document_type == 'PQ'){
                 // Create puchase quotation
                 $PurchaseQuotationCreated = PurchasesQuotation::create([
-                    'CODE'=>$this->CODE,  
-                    'LABEL'=>$this->LABEL, 
+                    'code'=>$this->code,  
+                    'label'=>$this->label, 
                     'companies_id'=>$this->companies_id,   
                     'user_id'=>$this->user_id,
                 ]);

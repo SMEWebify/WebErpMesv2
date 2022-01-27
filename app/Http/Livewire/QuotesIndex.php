@@ -26,8 +26,8 @@ class QuotesIndex extends Component
     public $userSelect = [];
     public $LastQuote = '1';
 
-    public $CODE; 
-    public $LABEL; 
+    public $code; 
+    public $label; 
     public $customer_reference;
     public $companies_id; 
     public $companies_contacts_id;   
@@ -42,8 +42,8 @@ class QuotesIndex extends Component
 
     // Validation Rules
     protected $rules = [
-        'CODE' =>'required|unique:quotes',
-        'LABEL'=>'required',
+        'code' =>'required|unique:quotes',
+        'label'=>'required',
         'companies_id'=>'required',
         'companies_contacts_id'=>'required',
         'companies_addresses_id'=>'required',
@@ -73,24 +73,24 @@ class QuotesIndex extends Component
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastQuote =  Quotes::latest()->first();
         if($this->LastQuote == Null){
-            $this->CODE = "QT-0";
-            $this->LABEL = "QT-0";
+            $this->code = "QT-0";
+            $this->label = "QT-0";
         }
         else{
-            $this->CODE = "QT-". $this->LastQuote->id;
-            $this->LABEL = "QT-". $this->LastQuote->id;
+            $this->code = "QT-". $this->LastQuote->id;
+            $this->label = "QT-". $this->LastQuote->id;
         }
     }
 
     public function render()
     {
-        $Quotes = Quotes::withCount('QuoteLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
-        $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'FIRST_NAME','NAME')->get();
-        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'CODE','LABEL')->get();
-        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'CODE','LABEL')->get();
-        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'CODE','LABEL')->get();
+        $Quotes = Quotes::withCount('QuoteLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
+        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
+        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
         
         return view('livewire.quotes-index',[
             'Quoteslist' => $Quotes,
@@ -107,8 +107,8 @@ class QuotesIndex extends Component
         $this->validate();
             // Create Line
             $QuotesCreated = Quotes::create([
-                                            'CODE'=>$this->CODE,  
-                                            'LABEL'=>$this->LABEL,  
+                                            'code'=>$this->code,  
+                                            'label'=>$this->label,  
                                             'customer_reference'=>$this->customer_reference, 
                                             'companies_id'=>$this->companies_id,  
                                             'companies_contacts_id'=>$this->companies_contacts_id,    

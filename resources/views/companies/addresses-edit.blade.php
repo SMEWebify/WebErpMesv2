@@ -3,7 +3,7 @@
 @section('title', 'Companies')
 
 @section('content_header')
-    <h1>{{ $adress->LABEL }}</h1>
+    <h1>{{ $adress->label }}</h1>
 @stop
 
 @section('content')
@@ -39,49 +39,49 @@
             </div>
         </div>
         <div class="col-5">
-          <label for="LABEL">Label adresse</label>
+          <label for="label">Label adresse</label>
           <div class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
             </div>
-            <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label" value="{{ $adress->LABEL }}">
+            <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $adress->label }}">
           </div>
         </div>
       </div>
       <hr>
       <div class="row">
         <div class="col-5">
-          <label for="ADRESS">Adress</label>
-          <input type="text" class="form-control" name="ADRESS"  id="ADRESS" placeholder="Adress" value="{{ $adress->ADRESS }}">
+          <label for="adress">Adress</label>
+          <input type="text" class="form-control" name="adress"  id="adress" placeholder="Adress" value="{{ $adress->adress }}">
         </div>
       </div>
       <div class="row">
         <div class="col-5">
-          <label for="ZIPCODE">Zip code</label>
-          <input type="text" class="form-control" name="ZIPCODE"  id="ZIPCODE" placeholder="Zip code" value="{{ $adress->ZIPCODE }}">
+          <label for="zipcode">Zip code</label>
+          <input type="text" class="form-control" name="zipcode"  id="zipcode" placeholder="Zip code" value="{{ $adress->zipcode }}">
         </div>
       </div>
       <div class="row">
         <div class="col-5">
-          <label for="CITY">City</label>
-          <input type="text" class="form-control" name="CITY"  id="CITY" placeholder="City" value="{{ $adress->CITY }}">
+          <label for="city">City</label>
+          <input type="text" class="form-control" name="city"  id="city" placeholder="City" value="{{ $adress->city }}">
         </div>
       </div>
       <div class="row">
         <div class="col-5">
-          <label for="COUNTRY">Country</label>
-          <input type="text" class="form-control" name="COUNTRY"  id="COUNTRY" placeholder="Country" value="{{ $adress->COUNTRY }}">
+          <label for="country">Country</label>
+          <input type="text" class="form-control" name="country"  id="country" placeholder="Country" value="{{ $adress->country }}">
         </div>
       </div>
       <hr>
       <div class="row">
         <div class="col-5">
-          <label for="NUMBER">Phone number</label>
-          <input type="text" class="form-control" name="NUMBER"  id="NUMBER" placeholder="Phone number" value="{{ $adress->NUMBER }}">
+          <label for="number">Phone number</label>
+          <input type="text" class="form-control" name="number"  id="number" placeholder="Phone number" value="{{ $adress->number }}">
         </div>
         <div class="col-5">
-          <label for="MAIL">E-mail</label>
-          <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail" value="{{ $adress->MAIL }}">
+          <label for="mail">E-mail</label>
+          <input type="email" class="form-control" name="mail"  id="mail" placeholder="E-mail" value="{{ $adress->mail }}">
         </div>
       </div>
     </div>

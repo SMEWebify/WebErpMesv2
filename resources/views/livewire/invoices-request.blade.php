@@ -24,7 +24,7 @@
                             <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
                                 <option value="">Select company</option>
                             @forelse ($CompaniesSelect as $item)
-                                <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                                <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                             @empty
                                 <option value="">No company, please add</option>
                             @endforelse
@@ -33,24 +33,24 @@
                         @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="col-3">
-                        <label for="CODE">External ID</label>
+                        <label for="code">External ID</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model="CODE" name="CODE" id="CODE" placeholder="External ID">
-                            @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                            <input type="text" class="form-control" wire:model="code" name="code" id="code" placeholder="External ID">
+                            @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
                     </div>
                     <div class="col-3">
-                        <label for="LABEL">Name of Delivery note</label>
+                        <label for="label">Name of Delivery note</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model="LABEL" name="LABEL"  id="LABEL"  placeholder="Name of quote" required>
+                            <input type="text" class="form-control" wire:model="label" name="label"  id="label"  placeholder="Name of quote" required>
                         </div>
-                        @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                        @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="col-3">
                         <label for="user_id">User management</label>
@@ -85,10 +85,10 @@
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('deliverys_id')" role="button" href="#">Delivery @include('include.sort-icon', ['field' => 'orders_id'])</a>
                             </th>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                             </th>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                             </th>
                             <th>Qty</th>
                             <th>Unit</th>
@@ -106,24 +106,24 @@
                                     <i class="fas fa-folder"></i>
                                     View
                                 </a>
-                                {{ $InvoicesRequestsLine->orderLine->order['CODE'] }}
+                                {{ $InvoicesRequestsLine->orderLine->order['code'] }}
                             </td>
                             <td>
                                 <a class="btn btn-primary btn-sm" href="{{ route('delivery.show', ['id' => $InvoicesRequestsLine->deliverys_id ]) }}">
                                     <i class="fas fa-folder"></i>
                                     View
                                 </a>
-                                {{ $InvoicesRequestsLine->delivery['CODE'] }}
+                                {{ $InvoicesRequestsLine->delivery['code'] }}
                             </td>
-                            <td>{{ $InvoicesRequestsLine->orderLine['CODE'] }}</td>
-                            <td>{{ $InvoicesRequestsLine->orderLine['LABEL'] }}</td>
+                            <td>{{ $InvoicesRequestsLine->orderLine['code'] }}</td>
+                            <td>{{ $InvoicesRequestsLine->orderLine['label'] }}</td>
                             <td>
                                 {{ $InvoicesRequestsLine->qty }}
                             </td>
-                            <td>{{ $InvoicesRequestsLine->orderLine->Unit['LABEL'] }}</td>
+                            <td>{{ $InvoicesRequestsLine->orderLine->Unit['label'] }}</td>
                             <td>{{ $InvoicesRequestsLine->orderLine['selling_price'] }}</td>
                             <td>{{ $InvoicesRequestsLine->orderLine['discount'] }} %</td>
-                            <td>{{ $InvoicesRequestsLine->orderLine->VAT['LABEL'] }} %</td>
+                            <td>{{ $InvoicesRequestsLine->orderLine->VAT['label'] }} %</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input" value="{{ $InvoicesRequestsLine->id }}" wire:model="data.{{ $InvoicesRequestsLine->id }}.deliverys_id" id="data.{{ $InvoicesRequestsLine->id }}.deliverys_id"  type="checkbox">
@@ -145,8 +145,8 @@
                         <tr>
                             <th>Order</th>
                             <th>Delivery</th>
-                            <th>CODE</th>
-                            <th>LABEL</th>
+                            <th>code</th>
+                            <th>label</th>
                             <th>Qty</th>
                             <th>Unit</th>
                             <th>Selling price</th>

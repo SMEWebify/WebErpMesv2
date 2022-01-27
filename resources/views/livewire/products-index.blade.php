@@ -14,29 +14,29 @@
                         @csrf
                         <div class="row">
                             <div class="col-4">
-                                <label for="CODE">External ID</label>
+                                <label for="code">External ID</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model="CODE" name="CODE" id="CODE" placeholder="External ID">
+                                    <input type="text" class="form-control" wire:model="code" name="code" id="code" placeholder="External ID">
                                 </div>
-                                @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-4">
-                                <label for="LABEL">Description</label>
+                                <label for="label">Description</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model="LABEL" name="LABEL"  id="LABEL" placeholder="Label/Desciption of product">
+                                    <input type="text" class="form-control" wire:model="label" name="label"  id="label" placeholder="Label/Desciption of product">
                                 </div>
-                                @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-4">
-                                <label for="IND">Index</label>
-                                <input type="text" class="form-control"  wire:model="IND" name="IND"  id="IND" placeholder="Index">
-                                @error('IND') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                <label for="ind">Index</label>
+                                <input type="text" class="form-control"  wire:model="ind" name="ind"  id="ind" placeholder="Index">
+                                @error('ind') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                         </div>
                         <hr>
@@ -50,7 +50,7 @@
                                     <select class="form-control" wire:model="methods_services_id" name="methods_services_id" id="methods_services_id">
                                         <option value="">Select service</option>
                                         @forelse ($ServicesSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                                         @empty
                                             <option value="">No service, go to methods page for add</option>
                                         @endforelse
@@ -67,7 +67,7 @@
                                     <select class="form-control" wire:model="methods_families_id" name="methods_families_id" id="methods_families_id">
                                         <option value="">Select familie</option>
                                         @forelse ($FamiliesSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                                         @empty
                                             <option value="">No families, go to methods page for add</option>
                                         @endforelse
@@ -84,7 +84,7 @@
                                     <select class="form-control" wire:model="methods_units_id" name="methods_units_id" id="methods_units_id">
                                         <option value="">Select unit</option>
                                         @forelse ($UnitsSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                                         @empty
                                             <option value="">No units, go to methods page for add</option>
                                         @endforelse
@@ -283,14 +283,14 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <label for="PICTURE">Logo file</label>
+                            <label for="picture">Logo file</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="far fa-image"></i></span>
                                 </div>
                                 <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="PICTURE">
-                                    <label class="custom-file-label" for="PICTURE">Choose file</label>
+                                    <input type="file" class="custom-file-input" id="picture">
+                                    <label class="custom-file-label" for="picture">Choose file</label>
                                 </div>
                                 <div class="input-group-append">
                                     <span class="input-group-text">Upload</span>
@@ -323,10 +323,10 @@
                 <thead>
                     <tr>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>Created At</th>
                         <th>Sold</th>
@@ -337,8 +337,8 @@
                 <tbody>
                     @forelse ($Products as $Product)
                     <tr>
-                        <td>{{ $Product->CODE }}</td>
-                        <td>{{ $Product->LABEL }}</td>
+                        <td>{{ $Product->code }}</td>
+                        <td>{{ $Product->label }}</td>
                         <td>{{ $Product->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             @if($Product->sold == 1 )

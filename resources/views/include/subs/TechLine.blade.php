@@ -1,11 +1,11 @@
 <tr>
     <td>{{ $TechProduct->ORDER }}</td>
     <td>{{ $TechProduct->label }}</td>
-    <td>{{ $TechProduct->service['LABEL'] }}</td>
-    <td>{{ $TechProduct->SETING_TIME }}</td>
-    <td>{{ $TechProduct->UNIT_TIME }}</td>
-    <td>{{ $TechProduct->UNIT_COST }}</td>
-    <td>{{ $TechProduct->UNIT_PRICE }}</td>
+    <td>{{ $TechProduct->service['label'] }}</td>
+    <td>{{ $TechProduct->seting_time }}</td>
+    <td>{{ $TechProduct->unit_time }}</td>
+    <td>{{ $TechProduct->unit_cost }}</td>
+    <td>{{ $TechProduct->unit_price }}</td>
     <td>
       @if($TechProduct->order_lines_id)
         {{ $TechProduct->status['title'] }}

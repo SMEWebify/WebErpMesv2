@@ -13,7 +13,7 @@ class DeliveryController extends Controller
 
     public function store(StoreDeliveryRequest $request)
     {
-        $Delevery = AccountingDelivery::create($request->only('CODE','LABEL'));
+        $Delevery = AccountingDelivery::create($request->only('code','label'));
         return redirect()->route('accounting')->with('success', 'Successfully created delevery mode.');
     }
 }

@@ -15,12 +15,12 @@ class CreateAccountingAllocationsTable extends Migration
     {
         Schema::create('accounting_allocations', function (Blueprint $table) {
             $table->id();
-			$table->string('ACCOUNT');
-			$table->string('LABEL');
+			$table->string('account');
+			$table->string('label');
 			$table->integer('accounting_vats_id');
-			$table->integer('VAT_ACCOUNT');
-			$table->integer('CODE_ACCOUNT');
-			$table->integer('TYPE_IMPUTATION');
+			$table->integer('vat_account');
+			$table->integer('code_account');
+			$table->integer('type_imputation');
             $table->timestamps();
         });
     }

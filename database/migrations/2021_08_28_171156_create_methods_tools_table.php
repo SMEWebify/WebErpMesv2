@@ -15,14 +15,14 @@ class CreateMethodsToolsTable extends Migration
     {
         Schema::create('methods_tools', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL')->nullable();
+            $table->string('code');
+			$table->string('label')->nullable();
 			$table->integer('ETAT');
-            $table->decimal('COST', 11, 3)->nullable();
-			$table->string('PICTURE')->nullable();
-			$table->date('END_DATE')->nullable();
-			$table->text('COMMENT')->nullable();
-			$table->integer('QTY');
+            $table->decimal('cost', 11, 3)->nullable();
+			$table->string('picture')->nullable();
+			$table->date('end_date')->nullable();
+			$table->text('comment')->nullable();
+			$table->integer('qty');
             $table->timestamps();
         });
     }

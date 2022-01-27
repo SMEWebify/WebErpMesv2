@@ -12,12 +12,12 @@ class AllocationController extends Controller
     //
     public function store(StoreAllocationRequest $request)
     {
-        $Allocation = AccountingAllocation::create($request->only('ACCOUNT',
-                                                                'LABEL', 
+        $Allocation = AccountingAllocation::create($request->only('account',
+                                                                'label', 
                                                                 'vat_id',
-                                                                'VAT_ACCOUNT', 
-                                                                'CODE_ACCOUNT',
-                                                                'TYPE_IMPUTATION'));
+                                                                'vat_account', 
+                                                                'code_account',
+                                                                'type_imputation'));
 
         return redirect()->route('accounting')->with('success', 'Successfully created allocation.');
 

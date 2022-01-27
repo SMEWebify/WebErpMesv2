@@ -70,26 +70,26 @@
                       @forelse ($MethodsServices as $MethodsService)
                       <tr>
                         <td> 
-                          @if($MethodsService->PICTURE )
-                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsService->PICTURE) }}">
+                          @if($MethodsService->picture )
+                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsService->picture) }}">
                           @endif
                         </td>
                         <td>{{ $MethodsService->ORDRE }}</td>
-                        <td>{{ $MethodsService->CODE }}</td>
-                        <td>{{ $MethodsService->LABEL }}</td>
+                        <td>{{ $MethodsService->code }}</td>
+                        <td>{{ $MethodsService->label }}</td>
                         <td>
-                          @if($MethodsService->TYPE  == 1)Productive @endif
-                          @if($MethodsService->TYPE  == 2)Raw material @endif
-                          @if($MethodsService->TYPE  == 3)Raw material (Sheet) @endif
-                          @if($MethodsService->TYPE  == 4)Raw material (Profil) @endif
-                          @if($MethodsService->TYPE  == 5)Raw material (block) @endif
-                          @if($MethodsService->TYPE  == 6)Supplies @endif
-                          @if($MethodsService->TYPE  == 7)Sub-contracting @endif
-                          @if($MethodsService->TYPE  == 8)Composed component @endif
+                          @if($MethodsService->type  == 1)Productive @endif
+                          @if($MethodsService->type  == 2)Raw material @endif
+                          @if($MethodsService->type  == 3)Raw material (Sheet) @endif
+                          @if($MethodsService->type  == 4)Raw material (Profil) @endif
+                          @if($MethodsService->type  == 5)Raw material (block) @endif
+                          @if($MethodsService->type  == 6)Supplies @endif
+                          @if($MethodsService->type  == 7)Sub-contracting @endif
+                          @if($MethodsService->type  == 8)Composed component @endif
                         </td>
-                        <td>{{ $MethodsService->HOURLY_RATE }}</td>
-                        <td>{{ $MethodsService->MARGIN }}</td>
-                        <td><input type="color" class="form-control"  name="COLOR" id="COLOR" value="{{ $MethodsService->COLOR }}"></td>
+                        <td>{{ $MethodsService->hourly_rate }}</td>
+                        <td>{{ $MethodsService->margin }}</td>
+                        <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}"></td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -136,12 +136,12 @@
                   <form method="POST" action="{{ route('methods.service.create')}}" enctype="multipart/form-data">
                     @csrf
                       <div class="form-group">
-                        <label for="CODE">External ID</label>
+                        <label for="code">External ID</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                           </div>
-                          <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+                          <input type="text" class="form-control"  name="code" id="code" placeholder="External ID">
                         </div>
                       </div>
                       <div class="form-group">
@@ -154,21 +154,21 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="LABEL">Label</label>
+                        <label for="label">Label</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>
                           </div>
-                          <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                          <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
                         </div>
                       </div>
                       <div class="form-group">
-                          <label for="TYPE">Type</label>
+                          <label for="type">Type</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                             </div>
-                            <select class="form-control" name="TYPE" id="TYPE">
+                            <select class="form-control" name="type" id="type">
                                 <option value="1">Productive</option>
                                 <option value="2">Raw material</option>
                                 <option value="3">Raw material (Sheet)</option>
@@ -181,31 +181,31 @@
                           </div>
                       </div>
                       <div class="form-group">
-                        <label for="HOURLY_RATE">Hourly rate</label>
-                        <input type="number" class="form-control" name="HOURLY_RATE" id="HOURLY_RATE" placeholder="110 €/H" step=".001">
+                        <label for="hourly_rate">Hourly rate</label>
+                        <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001">
                       </div>
                       <div class="form-group">
-                        <label for="MARGIN">Margin :</label>
+                        <label for="margin">Margin :</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                           </div>
-                          <input type="number" class="form-control" name="MARGIN" id="MARGIN" placeholder="10%" step=".001">
+                          <input type="number" class="form-control" name="margin" id="margin" placeholder="10%" step=".001">
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="COLOR">Color</label>
-                        <input type="color" class="form-control"  name="COLOR" id="COLOR" >
+                        <label for="color">Color</label>
+                        <input type="color" class="form-control"  name="color" id="color" >
                       </div>
                       <div class="form-group">
-                        <label for="PICTURE">Logo file</label>
+                        <label for="picture">Logo file</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="far fa-image"></i></span>
                           </div>
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
-                            <label class="custom-file-label" for="PICTURE">Choose file</label>
+                            <input type="file" class="custom-file-input" name="picture"  id="picture">
+                            <label class="custom-file-label" for="picture">Choose file</label>
                           </div>
                           <div class="input-group-append">
                             <span class="input-group-text">Upload</span>
@@ -216,7 +216,7 @@
                           <select class="form-control" name="compannie_id" id="compannie_id">
                             <option value="NULL">None</option>
                             @foreach ($CompaniesSelect as $item)
-                            <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                            <option value="{{ $item->id }}">{{ $item->label }}</option>
                             @endforeach
                           </select>
                       </div>
@@ -265,18 +265,18 @@
                       <tr>
                       
                         <td> 
-                          @if($MethodsRessource->PICTURE )
-                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsRessource->PICTURE) }}">
+                          @if($MethodsRessource->picture )
+                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsRessource->picture) }}">
                           @endif
                         </td>
                         <td>{{ $MethodsRessource->ORDRE }}</td>
-                        <td>{{ $MethodsRessource->CODE }}</td>
-                        <td>{{ $MethodsRessource->LABEL }}</td>
-                        <td>{{ $MethodsRessource->MASK_TIME }}</td>
-                        <td>{{ $MethodsRessource->CAPACITY }} h/w</td>
-                        <td>{{ $MethodsRessource->section['LABEL'] }}</td>
-                        <td><input type="color" class="form-control"  name="COLOR" id="COLOR" value="{{ $MethodsRessource->COLOR }}"></td>
-                        <td>{{ $MethodsRessource->service['LABEL'] }}</td>
+                        <td>{{ $MethodsRessource->code }}</td>
+                        <td>{{ $MethodsRessource->label }}</td>
+                        <td>{{ $MethodsRessource->mask_time }}</td>
+                        <td>{{ $MethodsRessource->capacity }} h/w</td>
+                        <td>{{ $MethodsRessource->section['label'] }}</td>
+                        <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}"></td>
+                        <td>{{ $MethodsRessource->service['label'] }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -323,12 +323,12 @@
               <form method="POST" action="{{ route('methods.ressource.create')}}" enctype="multipart/form-data">
                 @csrf
                   <div class="form-group">
-                    <label for="CODE">External ID</label>
+                    <label for="code">External ID</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                       </div>
-                      <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+                      <input type="text" class="form-control"  name="code" id="code" placeholder="External ID">
                     </div>
                   </div>
                   <div class="form-group">
@@ -341,48 +341,48 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="LABEL">Label</label>
+                    <label for="label">Label</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-tags"></i></span>
                       </div>
-                      <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                      <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
                     </div>
                   </div>
                   <div class="form-group">
-                      <label for="MASK_TIME">Mask time ?</label>
+                      <label for="mask_time">Mask time ?</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                         </div>
-                        <select class="form-control" name="MASK_TIME" id="MASK_TIME">
+                        <select class="form-control" name="mask_time" id="mask_time">
                             <option value="2">No</option>
                             <option value="1">Yes</option>
                         </select>
                       </div>
                   </div>
                   <div class="form-group">
-                    <label for="CAPACITY">Hour capacity by week</label>
+                    <label for="capacity">Hour capacity by week</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
                       </div>
-                      <input type="number" class="form-control" name="CAPACITY" id="CAPACITY" placeholder="110 h/week">
+                      <input type="number" class="form-control" name="capacity" id="capacity" placeholder="110 h/week">
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="COLOR">Color</label>
-                    <input type="color" class="form-control"  name="COLOR" id="COLOR" >
+                    <label for="color">Color</label>
+                    <input type="color" class="form-control"  name="color" id="color" >
                   </div>
                   <div class="form-group">
-                    <label for="PICTURE">Logo file</label>
+                    <label for="picture">Logo file</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-image"></i></span>
                       </div>
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
-                        <label class="custom-file-label" for="PICTURE">Choose file</label>
+                        <input type="file" class="custom-file-input" name="picture"  id="picture">
+                        <label class="custom-file-label" for="picture">Choose file</label>
                       </div>
                       <div class="input-group-append">
                         <span class="input-group-text">Upload</span>
@@ -396,7 +396,7 @@
                       </div>
                       <select class="form-control" name="section_id" id="section_id">
                         @forelse ($SectionsSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                         @empty
                         <option value="">No section, please add before</option>
                         @endforelse
@@ -411,7 +411,7 @@
                       </div>
                       <select class="form-control" name="service_id" id="service_id">
                         @forelse ($ServicesSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                         @empty
                         <option value="">No service</option>
                         @endforelse
@@ -459,10 +459,10 @@
                       @forelse ($MethodsSections as $MethodsSection)
                       <tr>
                         <td>{{ $MethodsSection->ORDRE }}</td>
-                        <td>{{ $MethodsSection->CODE }}</td>
-                        <td>{{ $MethodsSection->LABEL }}</td>
+                        <td>{{ $MethodsSection->code }}</td>
+                        <td>{{ $MethodsSection->label }}</td>
                         <td>{{ $MethodsSection->UserManagement['name'] }}</td>
-                        <td><input type="color" class="form-control"  name="COLOR" id="COLOR" value="{{ $MethodsSection->COLOR }}"></td>
+                        <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsSection->color }}"></td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -509,26 +509,26 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="COLOR">Color</label>
-                      <input type="color" class="form-control"  name="COLOR" id="COLOR" >
+                      <label for="color">Color</label>
+                      <input type="color" class="form-control"  name="color" id="color" >
                     </div>
                     
                     <div class="form-group">
@@ -582,10 +582,10 @@
                     <tbody>
                       @forelse ($MethodsLocations as $MethodsLocation)
                       <tr>
-                        <td>{{ $MethodsLocation->CODE }}</td>
-                        <td>{{ $MethodsLocation->LABEL }}</td>
-                        <td>{{ $MethodsLocation->ressources['LABEL'] }}</td>
-                        <td><input type="color" class="form-control"  name="COLOR" id="COLOR" value="{{ $MethodsLocation->COLOR }}"></td>
+                        <td>{{ $MethodsLocation->code }}</td>
+                        <td>{{ $MethodsLocation->label }}</td>
+                        <td>{{ $MethodsLocation->ressources['label'] }}</td>
+                        <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsLocation->color }}"></td>
                         
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -623,32 +623,32 @@
                   <form  method="POST" action="{{ route('methods.location.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="COLOR">Color</label>
-                      <input type="color" class="form-control"  name="COLOR" id="COLOR" >
+                      <label for="color">Color</label>
+                      <input type="color" class="form-control"  name="color" id="color" >
                     </div>
                     <div class="form-group">
                       <label for="ressource_id">Ressource</label>
                       <select class="form-control" name="ressource_id" id="ressource_id">
                         @foreach ($RessourcesSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                         @endforeach
                       </select>
                     </div>
@@ -690,14 +690,14 @@
                     <tbody>
                       @forelse ($MethodsUnits as $MethodsUnit)
                       <tr>
-                        <td>{{ $MethodsUnit->CODE }}</td>
-                        <td>{{ $MethodsUnit->LABEL }}</td>
+                        <td>{{ $MethodsUnit->code }}</td>
+                        <td>{{ $MethodsUnit->label }}</td>
                         <td>
-                          @if($MethodsUnit->TYPE  == 1) Mass @endif
-                          @if($MethodsUnit->TYPE  == 2) Length @endif
-                          @if($MethodsUnit->TYPE  == 3) Aera @endif
-                          @if($MethodsUnit->TYPE  == 4) Volume @endif
-                          @if($MethodsUnit->TYPE  == 5) Other @endif
+                          @if($MethodsUnit->type  == 1) Mass @endif
+                          @if($MethodsUnit->type  == 2) Length @endif
+                          @if($MethodsUnit->type  == 3) Aera @endif
+                          @if($MethodsUnit->type  == 4) Volume @endif
+                          @if($MethodsUnit->type  == 5) Other @endif
                         </td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -734,30 +734,30 @@
                   <form  method="POST" action="{{ route('methods.unit.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                        <label for="TYPE">Type</label>
+                        <label for="type">Type</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                           </div>
-                          <select class="form-control" name="TYPE" id="TYPE">
+                          <select class="form-control" name="type" id="type">
                               <option value="1">Mass</option>
                               <option value="2">Length</option>
                               <option value="3">Aera</option>
@@ -805,9 +805,9 @@
                     <tbody>
                       @forelse ($MethodsFamilies as $MethodsFamilie)
                       <tr>
-                        <td>{{ $MethodsFamilie->CODE }}</td>
-                        <td>{{ $MethodsFamilie->LABEL }}</td>
-                        <td>{{ $MethodsFamilie->service['LABEL'] }}</td>
+                        <td>{{ $MethodsFamilie->code }}</td>
+                        <td>{{ $MethodsFamilie->label }}</td>
+                        <td>{{ $MethodsFamilie->service['label'] }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -843,21 +843,21 @@
                   <form  method="POST" action="{{ route('methods.family.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
@@ -868,7 +868,7 @@
                         </div>
                         <select class="form-control" name="service_id" id="service_id">
                           @forelse ($ServicesSelect as $item)
-                          <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                          <option value="{{ $item->id }}">{{ $item->label }}</option>
                           @empty
                           <option value="">No service, please add one before</option>
                           @endforelse
@@ -917,19 +917,19 @@
                       @forelse ($MethodsTools as $MethodsTool)
                       <tr>
                         <td> 
-                          @if($MethodsTool->PICTURE )
-                          <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsTool->PICTURE) }}">
+                          @if($MethodsTool->picture )
+                          <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsTool->picture) }}">
                           @endif
                         </td>
-                        <td>{{ $MethodsTool->CODE }}</td>
-                        <td>{{ $MethodsTool->LABEL }}</td>
+                        <td>{{ $MethodsTool->code }}</td>
+                        <td>{{ $MethodsTool->label }}</td>
                         <td>
                           @if($MethodsTool->ETAT  == 1)Unsed @endif
                           @if($MethodsTool->ETAT  == 2)Used @endif
                         </td>
-                        <td>{{ $MethodsTool->COST }}</td>
-                        <td>{{ $MethodsTool->END_DATE }}</td>
-                        <td>{{ $MethodsTool->QTY }}</td>
+                        <td>{{ $MethodsTool->cost }}</td>
+                        <td>{{ $MethodsTool->end_date }}</td>
+                        <td>{{ $MethodsTool->qty }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -969,21 +969,21 @@
                   <form  method="POST" action="{{ route('methods.tool.create') }}" class="form-horizontal" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
@@ -999,32 +999,32 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="COST">Cost</label>
-                      <input type="number" class="form-control" name="COST"  id="COST" placeholder="Cost" step=".001">
+                      <label for="cost">Cost</label>
+                      <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001">
                     </div>
                     <div class="form-group">
-                      <label for="QTY">Quantity</label>
+                      <label for="qty">Quantity</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-times"></i></span>
                         </div>
-                        <input type="numer" class="form-control" name="QTY"  id="QTY" placeholder="Qty" >
+                        <input type="numer" class="form-control" name="qty"  id="qty" placeholder="Qty" >
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="END_DATE">End date</label>
-                      <input type="date" class="form-control" name="END_DATE"  id="END_DATE" placeholder="Qty" >
+                      <label for="end_date">End date</label>
+                      <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="Qty" >
                     </div>
                     <div class="form-group">
-                      <label for="PICTURE">Logo file</label>
+                      <label for="picture">Logo file</label>
                       <div class="input-group">
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="far fa-image"></i></span>
                           </div>
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="PICTURE"  id="PICTURE">
-                            <label class="custom-file-label" for="PICTURE">Choose file</label>
+                            <input type="file" class="custom-file-input" name="picture"  id="picture">
+                            <label class="custom-file-label" for="picture">Choose file</label>
                           </div>
                           <div class="input-group-append">
                             <span class="input-group-text">Upload</span>

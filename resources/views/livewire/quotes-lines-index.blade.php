@@ -17,11 +17,11 @@
                         </th>
                         <th>Sort</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>Product</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>Qty</th>
                         <th>Unit</th>
@@ -36,16 +36,16 @@
                 <tbody>
                     @forelse ($QuoteLineslist as $QuoteLine)
                     <tr>
-                        <td>{{ $QuoteLine->quote['CODE'] }}</td>
+                        <td>{{ $QuoteLine->quote['code'] }}</td>
                         <td>{{ $QuoteLine->ORDRE }}</td>
-                        <td>{{ $QuoteLine->CODE }}</td>
-                        <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif</td>
-                        <td>{{ $QuoteLine->LABEL }}</td>
+                        <td>{{ $QuoteLine->code }}</td>
+                        <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['label'] }}@endif</td>
+                        <td>{{ $QuoteLine->label }}</td>
                         <td>{{ $QuoteLine->qty }}</td>
-                        <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
+                        <td>{{ $QuoteLine->Unit['label'] }}</td>
                         <td>{{ $QuoteLine->selling_price }}</td>
                         <td>{{ $QuoteLine->discount }}</td>
-                        <td>{{ $QuoteLine->VAT['LABEL'] }}</td>
+                        <td>{{ $QuoteLine->VAT['label'] }}</td>
                         <td>{{ $QuoteLine->delivery_date }}</td>
                         <td>
                             @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif

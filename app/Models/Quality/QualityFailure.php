@@ -9,6 +9,6 @@ class QualityFailure extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL'];
+    protected $fillable = ['code',  'label'];
 
 }

@@ -14,7 +14,7 @@ class MethodsServices extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE','ORDRE', 'LABEL','TYPE', 'HOURLY_RATE','MARGIN', 'COLOR','PICTURE', 'compannie_id'];
+    protected $fillable = ['code','ORDRE', 'label','type', 'hourly_rate','margin', 'color','picture', 'compannie_id'];
 
     public function Families()
     {

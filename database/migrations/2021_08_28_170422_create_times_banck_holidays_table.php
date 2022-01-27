@@ -15,9 +15,9 @@ class CreateTimesBanckHolidaysTable extends Migration
     {
         Schema::create('times_banck_holidays', function (Blueprint $table) {
             $table->id();
-            $table->integer('FIXED');
-			$table->date('DATE');
-			$table->string('LABEL');
+            $table->integer('fixed');
+			$table->date('date');
+			$table->string('label');
             $table->timestamps();
         });
     }

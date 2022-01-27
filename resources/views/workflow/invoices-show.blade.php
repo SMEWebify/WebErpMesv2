@@ -51,7 +51,7 @@
                   <div class="card card-body">
                     <div class="row">
                       <div class="col-3">
-                        <label for="CODE">External ID :</label>  {{  $Invoice->CODE }}
+                        <label for="code">External ID :</label>  {{  $Invoice->code }}
                       </div>
                       <div class="col-3">
                         <label for="statu">Statu :</label>
@@ -67,12 +67,12 @@
                       </div>
                       
                       <div class="col-3">
-                        <label for="LABEL">Name of delivery</label>
+                        <label for="label">Name of delivery</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>
                           </div>
-                          <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of order" value="{{  $Invoice->LABEL }}">
+                          <input type="text" class="form-control" name="label"  id="label" placeholder="Name of order" value="{{  $Invoice->label }}">
                         </div>
                       </div>
                     </div>
@@ -90,7 +90,7 @@
                           </div>
                           <select class="form-control" name="companies_id" id="companies_id">
                             @foreach ($CompanieSelect as $item)
-                            <option value="{{ $item->id }}"  @if($item->id == $Invoice->companies_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                            <option value="{{ $item->id }}"  @if($item->id == $Invoice->companies_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -105,7 +105,7 @@
                           </div>
                           <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
                             @foreach ($AddressSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Invoice->companies_addresses_id ) Selected @endif >{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
+                            <option value="{{ $item->id }}" @if($item->id == $Invoice->companies_addresses_id ) Selected @endif >{{ $item->label }} - {{ $item->adress }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -118,7 +118,7 @@
                           </div>
                           <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
                             @foreach ($ContactSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Invoice->companies_contacts_id ) Selected @endif >{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
+                            <option value="{{ $item->id }}" @if($item->id == $Invoice->companies_contacts_id ) Selected @endif >{{ $item->first_name }} - {{ $item->name }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -179,8 +179,8 @@
               <tbody>
                   @forelse($Invoice->InvoiceLines as $InvoiceLine)
                   <tr>
-                    <td>{{ $InvoiceLine->orderLine['CODE'] }}</td>
-                    <td>{{ $InvoiceLine->orderLine['LABEL'] }}</td>
+                    <td>{{ $InvoiceLine->orderLine['code'] }}</td>
+                    <td>{{ $InvoiceLine->orderLine['label'] }}</td>
                     <td>{{ $InvoiceLine->orderLine['qty'] }}</td>
                     <td></td>
                     <td>{{ $InvoiceLine->qty }}</td>
@@ -243,23 +243,23 @@
                 <div class="col-sm-4 invoice-col">
                   From
                   <address>
-                    <strong>{{ $Factory->NAME }}</strong><br>
+                    <strong>{{ $Factory->name }}</strong><br>
                     {{ $Factory->ADDRESS }}<br>
-                    {{ $Factory->ZIPCODE }}, {{ $Factory->CITY }}<br>
+                    {{ $Factory->zipcode }}, {{ $Factory->city }}<br>
                     Phone: {{ $Factory->PHONE_NUMBER }}<br>
-                    Email: {{ $Factory->MAIL }}
+                    Email: {{ $Factory->mail }}
                   </address>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
                   To
                   <address>
-                    <strong>{{ $Invoice->companie['LABEL'] }}</strong>
+                    <strong>{{ $Invoice->companie['label'] }}</strong>
                   </address>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
-                  <b>Invoice #{{  $Invoice->CODE }}</b><br>
+                  <b>Invoice #{{  $Invoice->code }}</b><br>
                 </div>
                 <!-- /.col -->
               </div>
@@ -281,8 +281,8 @@
                     <tbody>
                         @forelse($Invoice->InvoiceLines as $InvoiceLine)
                         <tr>
-                          <td>{{ $InvoiceLine->orderLine['CODE'] }}</td>
-                          <td>{{ $InvoiceLine->orderLine['LABEL'] }}</td>
+                          <td>{{ $InvoiceLine->orderLine['code'] }}</td>
+                          <td>{{ $InvoiceLine->orderLine['label'] }}</td>
                           <td>{{ $InvoiceLine->orderLine['qty'] }}</td>
                           <td></td>
                           <td>{{ $InvoiceLine->qty }}</td>

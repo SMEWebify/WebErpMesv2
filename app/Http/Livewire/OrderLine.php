@@ -27,8 +27,8 @@ class OrderLine extends Component
     public $status_id;
 
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ORDRE, $CODE, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
-    public $LABEL='';
+    public $order_lines_id, $orders_id, $ORDRE, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $label='';
     public $discount= 0;
     public $updateLines = false;
     public $ProductsSelect = [];
@@ -43,7 +43,7 @@ class OrderLine extends Component
     // Validation Rules
     protected $rules = [
         'ORDRE'=>'required',
-        'LABEL'=>'required',
+        'label'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
         'selling_price'=>'required',
@@ -72,24 +72,24 @@ class OrderLine extends Component
         $this->order_Statu = $OrderStatu;
         $this->delivery_date = $OrderDelay;
         $this->status_id = Status::select('id')->orderBy('order')->first();
-        $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
-        $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
-        $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
+        $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
+        $this->VATSelect = AccountingVat::select('id', 'label')->orderBy('rate')->get();
+        $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
         $this->Factory = Factory::first();
-        $this->ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
-        $this->TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
-        $this->BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
-                                                                            ->orWhere('TYPE', '=', 3)
-                                                                            ->orWhere('TYPE', '=', 4)
-                                                                            ->orWhere('TYPE', '=', 5)
-                                                                            ->orWhere('TYPE', '=', 6)
-                                                                            ->orWhere('TYPE', '=', 8)
+        $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
+        $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ORDRE')->get();
+        $this->BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
+                                                                            ->orWhere('type', '=', 3)
+                                                                            ->orWhere('type', '=', 4)
+                                                                            ->orWhere('type', '=', 5)
+                                                                            ->orWhere('type', '=', 6)
+                                                                            ->orWhere('type', '=', 8)
                                                                             ->orderBy('ORDRE')->get();
     }
 
     public function render()
     {
-        $OrderLineslist = $this->OrderLineslist = Orderlines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('orders_id', '=', $this->orders_id)->where('LABEL','like', '%'.$this->search.'%')->get();
+        $OrderLineslist = $this->OrderLineslist = Orderlines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('orders_id', '=', $this->orders_id)->where('label','like', '%'.$this->search.'%')->get();
         
         return view('livewire.order-lines', [
             'OrderLineslist' => $OrderLineslist,
@@ -98,9 +98,9 @@ class OrderLine extends Component
 
     public function resetFields(){
         $this->ORDRE = $this->ORDRE+1;
-        $this->CODE = '';
+        $this->code = '';
         $this->product_id = '';
-        $this->LABEL = '';
+        $this->label = '';
     }
 
     public function storeOrderLine(){
@@ -110,9 +110,9 @@ class OrderLine extends Component
         Orderlines::create([
             'orders_id'=>$this->orders_id,
             'ORDRE'=>$this->ORDRE,
-            'CODE'=>$this->CODE,
+            'code'=>$this->code,
             'product_id'=>$this->product_id,
-            'LABEL'=>$this->LABEL,
+            'label'=>$this->label,
             'qty'=>$this->qty,
             'delivered_remaining_qty'=>$this->qty,
             'invoiced_remaining_qty'=>$this->qty,
@@ -132,9 +132,9 @@ class OrderLine extends Component
         $Line = Orderlines::findOrFail($id);
         $this->order_lines_id = $id;
         $this->ORDRE = $Line->ORDRE;
-        $this->CODE = $Line->CODE;
+        $this->code = $Line->code;
         $this->product_id = $Line->product_id;
-        $this->LABEL = $Line->LABEL;
+        $this->label = $Line->label;
         $this->qty = $Line->qty;
         $this->methods_units_id = $Line->methods_units_id;
         $this->selling_price = $Line->selling_price;
@@ -185,9 +185,9 @@ class OrderLine extends Component
                 $OderLineToUpdate->delivery_status = 3;
             }*/
             $OderLineToUpdate->ORDRE = $this->ORDRE;
-            $OderLineToUpdate->CODE = $this->CODE;
+            $OderLineToUpdate->code = $this->code;
             $OderLineToUpdate->product_id = $this->product_id;
-            $OderLineToUpdate->LABEL = $this->LABEL;
+            $OderLineToUpdate->label = $this->label;
             $OderLineToUpdate->qty = $this->qty;
             $OderLineToUpdate->delivered_remaining_qty = $this->qty;
             $OderLineToUpdate->invoiced_remaining_qty = $this->qty;

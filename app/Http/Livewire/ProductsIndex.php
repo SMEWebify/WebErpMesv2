@@ -17,14 +17,14 @@ class ProductsIndex extends Component
     protected $paginationTheme = 'bootstrap';
     
     public $search = '';
-    public $sortField = 'LABEL'; // default sorting field
+    public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
     
     public $userSelect = [];
 
-    public $CODE;
-    public $LABEL;  
-    public $IND; 
+    public $code;
+    public $label;  
+    public $ind; 
     public $methods_services_id;  
     public $methods_families_id; 
     public $purchased; 
@@ -51,8 +51,8 @@ class ProductsIndex extends Component
     
      // Validation Rules
     protected $rules = [
-        'CODE' =>'required|unique:products',
-        'LABEL'=>'required',
+        'code' =>'required|unique:products',
+        'label'=>'required',
         'methods_services_id'=>'required',
         'methods_families_id'=>'required',
         'methods_units_id'=>'required',
@@ -83,11 +83,11 @@ class ProductsIndex extends Component
 
     public function render()
     {
-        $Products = Products::where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $Products = Products::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         $userSelect = User::select('id', 'name')->get();
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('ORDRE')->get();
-        $UnitsSelect = MethodsUnits::select('id', 'LABEL', 'TYPE')->orderBy('LABEL')->get();
-        $FamiliesSelect = MethodsFamilies::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ORDRE')->get();
+        $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
+        $FamiliesSelect = MethodsFamilies::select('id', 'label')->orderBy('label')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
@@ -107,9 +107,9 @@ class ProductsIndex extends Component
         $this->validate();
             // Create Line
             $ProductsCreated = Products::create([
-                                                    'CODE'=>$this->CODE, 
-                                                    'LABEL'=>$this->LABEL,  
-                                                    'IND'=>$this->IND, 
+                                                    'code'=>$this->code, 
+                                                    'label'=>$this->label,  
+                                                    'ind'=>$this->ind, 
                                                     'methods_services_id'=>$this->methods_services_id,  
                                                     'methods_families_id'=>$this->methods_families_id,  
                                                     'purchased'=>$this->purchased,  

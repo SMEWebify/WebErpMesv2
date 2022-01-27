@@ -61,13 +61,13 @@
                     <tbody>
                       @forelse ($PaymentConditions as $PaymentCondition)
                       <tr>
-                        <td>{{ $PaymentCondition->CODE }}</td>
-                        <td>{{ $PaymentCondition->LABEL }}</td>
-                        <td>{{ $PaymentCondition->NUMBER_OF_MONTH }}</td>
-                        <td>{{ $PaymentCondition->NUMBER_OF_DAY }}</td>
+                        <td>{{ $PaymentCondition->code }}</td>
+                        <td>{{ $PaymentCondition->label }}</td>
+                        <td>{{ $PaymentCondition->number_of_month }}</td>
+                        <td>{{ $PaymentCondition->number_of_day }}</td>
                         <td>
-                          @if($PaymentCondition->MONTH_END  == 1) Yes @endif
-                          @if($PaymentCondition->MONTH_END  == 2) No @endif
+                          @if($PaymentCondition->month_end  == 1) Yes @endif
+                          @if($PaymentCondition->month_end  == 2) No @endif
                         </td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -107,34 +107,34 @@
                   <form  method="POST" action="{{ route('accouting.paymentCondition.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="NUMBER_OF_MONTH">Number of month</label>
-                      <input type="number" class="form-control" name="NUMBER_OF_MONTH"  id="NUMBER_OF_MONTH" placeholder="Number of month">
+                      <label for="number_of_month">Number of month</label>
+                      <input type="number" class="form-control" name="number_of_month"  id="number_of_month" placeholder="Number of month">
                     </div>
                     <div class="form-group">
-                      <label for="NUMBER_OF_DAY">Number of day</label>
-                      <input type="number" class="form-control" name="NUMBER_OF_DAY"  id="NUMBER_OF_DAY" placeholder="Number of day">
+                      <label for="number_of_day">Number of day</label>
+                      <input type="number" class="form-control" name="number_of_day"  id="number_of_day" placeholder="Number of day">
                     </div>
                     <div class="form-group">
-                      <label for="MONTH_END">End of month</label>
-                      <select class="form-control" name="MONTH_END" id="MONTH_END">
+                      <label for="month_end">End of month</label>
+                      <select class="form-control" name="month_end" id="month_end">
                           <option value="2">No</option>
                           <option value="1">Yes</option>
                       </select>
@@ -177,9 +177,9 @@
                     <tbody>
                       @forelse ($PaymentMethods as $PaymentMethod)
                       <tr>
-                        <td>{{ $PaymentMethod->CODE }}</td>
-                        <td>{{ $PaymentMethod->LABEL }}</td>
-                        <td>{{ $PaymentMethod->CODE_ACCOUNT }}</td>
+                        <td>{{ $PaymentMethod->code }}</td>
+                        <td>{{ $PaymentMethod->label }}</td>
+                        <td>{{ $PaymentMethod->code_account }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -216,26 +216,26 @@
                   <form  method="POST" action="{{ route('accouting.paymentMethod.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="CODE_ACCOUNT">Code account</label>
-                      <input type="text" class="form-control" name="CODE_ACCOUNT"  id="CODE_ACCOUNT" placeholder="Code account">
+                      <label for="code_account">Code account</label>
+                      <input type="text" class="form-control" name="code_account"  id="code_account" placeholder="Code account">
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
@@ -276,9 +276,9 @@
                     <tbody>
                       @forelse ($VATs as $VAT)
                       <tr>
-                        <td>{{ $VAT->CODE }}</td>
-                        <td>{{ $VAT->LABEL }}</td>
-                        <td>{{ $VAT->RATE }}</td>
+                        <td>{{ $VAT->code }}</td>
+                        <td>{{ $VAT->label }}</td>
+                        <td>{{ $VAT->rate }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -315,30 +315,30 @@
                   <form  method="POST" action="{{ route('accouting.vat.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="RATE">RATE</label>
+                      <label for="rate">rate</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                         </div>
-                        <input type="number" class="form-control" name="RATE"  id="RATE" placeholder="10 %" step=".01">
+                        <input type="number" class="form-control" name="rate"  id="rate" placeholder="10 %" step=".01">
                       </div>
                     </div>
                     <div class="card-footer">
@@ -382,18 +382,18 @@
                     <tbody>
                       @forelse ($Allocations as $Allocation)
                       <tr>
-                        <td>{{ $Allocation->ACCOUNT }}</td>
-                        <td>{{ $Allocation->LABEL }}</td>
-                        <td>{{ $Allocation->VAT['LABEL'] }}</td>
-                        <td>{{ $Allocation->VAT_ACCOUNT }}</td>
-                        <td>{{ $Allocation->CODE_ACCOUNT }}</td>
+                        <td>{{ $Allocation->account }}</td>
+                        <td>{{ $Allocation->label }}</td>
+                        <td>{{ $Allocation->VAT['label'] }}</td>
+                        <td>{{ $Allocation->vat_account }}</td>
+                        <td>{{ $Allocation->code_account }}</td>
                         <td>
-                          @if($Allocation->TYPE_IMPUTATION  == 1) Purchase @endif
-                          @if($Allocation->TYPE_IMPUTATION  == 2) Purchase (stock) @endif
-                          @if($Allocation->TYPE_IMPUTATION  == 3) Advance payment @endif
-                          @if($Allocation->TYPE_IMPUTATION  == 4) Advance payment (with VAT) @endif
-                          @if($Allocation->TYPE_IMPUTATION  == 5) Other @endif
-                          @if($Allocation->TYPE_IMPUTATION  == 6) VAT @endif
+                          @if($Allocation->type_imputation  == 1) Purchase @endif
+                          @if($Allocation->type_imputation  == 2) Purchase (stock) @endif
+                          @if($Allocation->type_imputation  == 3) Advance payment @endif
+                          @if($Allocation->type_imputation  == 4) Advance payment (with VAT) @endif
+                          @if($Allocation->type_imputation  == 5) Other @endif
+                          @if($Allocation->type_imputation  == 6) VAT @endif
                         </td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -434,16 +434,16 @@
                   <form  method="POST" action="{{ route('accouting.allocation.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="ACCOUNT">Account (or external ID)</label>
-                      <input type="text" class="form-control" name="ACCOUNT" id="ACCOUNT" placeholder="Account">
+                      <label for="account">Account (or external ID)</label>
+                      <input type="text" class="form-control" name="account" id="account" placeholder="Account">
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
@@ -454,7 +454,7 @@
                         </div>
                         <select class="form-control" name="vat_id" id="vat_id">
                           @forelse ($VATSelect as $item)
-                          <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                          <option value="{{ $item->id }}">{{ $item->label }}</option>
                           @empty
                           <option value="">Not VAT, please add VAT before</option>
                           @endforelse
@@ -462,16 +462,16 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="VAT_ACCOUNT">VAT account number</label>
-                      <input type="number" class="form-control" name="VAT_ACCOUNT"  id="VAT_ACCOUNT" placeholder="VAT account number">
+                      <label for="vat_account">VAT account number</label>
+                      <input type="number" class="form-control" name="vat_account"  id="vat_account" placeholder="VAT account number">
                     </div>
                     <div class="form-group">
-                      <label for="CODE_ACCOUNT">Code account</label>
-                      <input type="number" class="form-control" name="CODE_ACCOUNT"  id="CODE_ACCOUNT" placeholder="Code account">
+                      <label for="code_account">Code account</label>
+                      <input type="number" class="form-control" name="code_account"  id="code_account" placeholder="Code account">
                     </div>
                     <div class="form-group">
-                      <label for="TYPE_IMPUTATION">End of month</label>
-                      <select class="form-control" name="TYPE_IMPUTATION" id="TYPE_IMPUTATION">
+                      <label for="type_imputation">End of month</label>
+                      <select class="form-control" name="type_imputation" id="type_imputation">
                           <option value="1">Purchase</option>
                           <option value="2">Purchase (stock)</option>
                           <option value="3">Advance payment</option>
@@ -517,8 +517,8 @@
                     <tbody>
                       @forelse ($Deleverys as $Delevery)
                       <tr>
-                        <td>{{ $Delevery->CODE }}</td>
-                        <td>{{ $Delevery->LABEL }}</td>
+                        <td>{{ $Delevery->code }}</td>
+                        <td>{{ $Delevery->label }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -554,21 +554,21 @@
                   <form  method="POST" action="{{ route('accouting.delivery.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                       <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                       <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="card-footer">

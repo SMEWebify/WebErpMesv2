@@ -35,7 +35,7 @@
           </thead>
           <tbody>
             @forelse ($task as $TechProduct)
-              @if(preg_match('(1|7)', $TechProduct->TYPE) === 1)
+              @if(preg_match('(1|7)', $TechProduct->type) === 1)
                 @include('include.subs.TechLine')
               @endif
             @empty
@@ -103,7 +103,7 @@
           </thead>
           <tbody>
             @forelse ($task as $BOMProduct)
-              @if(preg_match('(3|4|5|6|8)', $BOMProduct->TYPE) === 1)
+              @if(preg_match('(3|4|5|6|8)', $BOMProduct->type) === 1)
                 @include('include.subs.BOMLine')
               @endif
             @empty

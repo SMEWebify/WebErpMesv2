@@ -26,13 +26,13 @@ class CompaniesContactsFactory extends Factory
             //
             'companies_id' => $this->faker->factory(Companies::class),
             'ORDRE' => $this->faker->randomDigitNotNull(),
-            'CIVILITY' =>$this->faker->randomElement(['Mr', 'Mrs ', 'Miss ', 'Ms']),
-            'FIRST_NAME' => $this->faker->firstName(),
-            'NAME' => $this->faker->name(),
-            'FUNCTION' => $this->faker->randomElement(['Director', 'Buyer ', 'Technician ', 'Storekeeper']),
-            'NUMBER' => $this->faker->phoneNumber(),
-            'MOBILE' => $this->faker->safeEmail(),
-            'MAIL' => $this->faker->safeEmail(),
+            'civility' =>$this->faker->randomElement(['Mr', 'Mrs ', 'Miss ', 'Ms']),
+            'first_name' => $this->faker->firstName(),
+            'name' => $this->faker->name(),
+            'function' => $this->faker->randomElement(['Director', 'Buyer ', 'Technician ', 'Storekeeper']),
+            'number' => $this->faker->phoneNumber(),
+            'mobile' => $this->faker->safeEmail(),
+            'mail' => $this->faker->safeEmail(),
         ];
     }
 }

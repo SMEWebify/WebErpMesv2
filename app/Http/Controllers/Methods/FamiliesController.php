@@ -11,7 +11,7 @@ class FamiliesController extends Controller
     //
     public function store(StoreFamilyRequest $request)
     {
-        $Family = MethodsFamilies::create($request->only('CODE', 'LABEL','service_id'));
+        $Family = MethodsFamilies::create($request->only('code', 'label','service_id'));
         return redirect()->route('methods')->with('success', 'Successfully created family.');
     }
 }

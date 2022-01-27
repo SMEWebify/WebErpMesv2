@@ -12,7 +12,7 @@ class QuotesLinesIndex extends Component
     protected $paginationTheme = 'bootstrap';
     
     public $search = '';
-    public $sortField = 'LABEL'; // default sorting field
+    public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
 
     public function sortBy($field)
@@ -32,7 +32,7 @@ class QuotesLinesIndex extends Component
 
     public function render()
     {
-        $QuoteLines = QuoteLines::where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $QuoteLines = QuoteLines::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         
         return view('livewire.quotes-lines-index',[
             'QuoteLineslist' => $QuoteLines,

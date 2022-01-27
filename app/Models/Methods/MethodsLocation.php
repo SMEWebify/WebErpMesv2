@@ -10,7 +10,7 @@ class MethodsLocation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL',  'ressource_id', 'COLOR'];
+    protected $fillable = ['code',  'label',  'ressource_id', 'color'];
 
     public function ressources()
     {

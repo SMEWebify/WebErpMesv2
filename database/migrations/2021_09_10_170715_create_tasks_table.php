@@ -22,18 +22,26 @@ class CreateTasksTable extends Migration
 			$table->integer('products_id')->nullable();
 			$table->integer('methods_services_id');
 			$table->integer('component_id')->nullable(); // use for BOM link with product id
-			$table->decimal('SETING_TIME', 10, 3)->nullable();
-			$table->decimal('UNIT_TIME', 10, 3)->nullable();
-			$table->decimal('REMAINING_TIME', 10, 3)->nullable();
-			$table->decimal('ADVANCEMENT', 10, 3)->nullable()->default(0.000);
+			$table->decimal('seting_time', 10, 3)->nullable();
+			$table->decimal('unit_time', 10, 3)->nullable();
+			$table->decimal('remaining_time', 10, 3)->nullable();
+			$table->decimal('advancement', 10, 3)->nullable()->default(0.000);
 			$table->integer('status_id')->default(1);
-			$table->integer('TYPE');
-			$table->date('DELAY')->nullable();
+			$table->integer('type');
+            #1 = Productive
+            #2 = Raw material
+            #3 = Raw material (Sheet)
+            #4 = Raw material (Profil)
+            #5 = Raw material (block)
+            #6 = Supplies
+            #6 = Sub-contracting
+            #6 = Composed component
+			$table->date('delay')->nullable();
 			$table->integer('qty')->nullable();
 			$table->integer('qty_init')->nullable();
 			$table->integer('qty_aviable')->nullable();
-			$table->decimal('UNIT_COST', 10, 3)->default(0.000);
-			$table->decimal('UNIT_PRICE', 10, 3)->default(0.000);
+			$table->decimal('unit_cost', 10, 3)->default(0.000);
+			$table->decimal('unit_price', 10, 3)->default(0.000);
 			$table->integer('methods_units_id')->nullable();
 			$table->decimal('x_size', 10, 3)->nullable();
 			$table->decimal('y_size', 10, 3)->nullable();

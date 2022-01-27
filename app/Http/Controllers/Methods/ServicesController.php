@@ -11,10 +11,10 @@ class ServicesController extends Controller
     //
     public function store(StoreServicesRequest $request)
     {
-        $Service =  MethodsServices::create($request->only('CODE','ORDRE', 'LABEL','TYPE', 'HOURLY_RATE','MARGIN', 'COLOR','PICTURE', 'compannie_id'));
-        if($request->hasFile('PICTURE')){
-            $path = $request->PICTURE->store('images/methods','public');
-            $Service->update(['PICTURE' => $path]);
+        $Service =  MethodsServices::create($request->only('code','ORDRE', 'label','type', 'hourly_rate','margin', 'color','picture', 'compannie_id'));
+        if($request->hasFile('picture')){
+            $path = $request->picture->store('images/methods','public');
+            $Service->update(['picture' => $path]);
         }
         return redirect()->route('methods')->with('success', 'Successfully created service.');
     }

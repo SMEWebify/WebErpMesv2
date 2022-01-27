@@ -17,9 +17,9 @@ class QuoteLines extends Model
     
     protected $fillable = ['quotes_id', 
                             'ORDRE', 
-                            'CODE',
+                            'code',
                             'product_id',
-                            'LABEL',
+                            'label',
                             'qty',
                             'methods_units_id',
                             'selling_price',

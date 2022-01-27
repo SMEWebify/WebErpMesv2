@@ -10,7 +10,7 @@ class AccountingAllocation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ACCOUNT',  'LABEL',  'accounting_vats_id',  'VAT_ACCOUNT',  'CODE_ACCOUNT',  'TYPE_IMPUTATION'];
+    protected $fillable = ['account',  'label',  'accounting_vats_id',  'vat_account',  'code_account',  'type_imputation'];
 
     public function VAT()
     {

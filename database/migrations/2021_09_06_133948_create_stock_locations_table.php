@@ -15,12 +15,12 @@ class CreateStockLocationsTable extends Migration
     {
         Schema::create('stock_locations', function (Blueprint $table) {
             $table->id();
-			$table->string('CODE');
-			$table->string('LABEL');
+			$table->string('code');
+			$table->string('label');
 			$table->integer('stocks_id');
             $table->integer('user_id');
-			$table->date('END_DATE')->nullable();
-            $table->text('COMMENT', 65535)->nullable();
+			$table->date('end_date')->nullable();
+            $table->text('comment', 65535)->nullable();
             $table->timestamps();
         });
     }

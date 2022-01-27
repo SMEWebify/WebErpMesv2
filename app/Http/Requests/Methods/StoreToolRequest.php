@@ -25,9 +25,9 @@ class StoreToolRequest extends FormRequest
     {
         return [
             //
-                'CODE' =>'required|unique:methods_tools',
-                'LABEL'=>'required',
-                'QTY'=>'required',
+                'code' =>'required|unique:methods_tools',
+                'label'=>'required',
+                'qty'=>'required',
         ];
     }
 }

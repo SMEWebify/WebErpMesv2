@@ -15,16 +15,16 @@ class CreateQualityDerogationsTable extends Migration
     {
         Schema::create('quality_derogations', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
             $table->integer('statu');
-			$table->integer('TYPE');
+			$table->integer('type');
 			$table->integer('user_id');
-			$table->text('PB_DESCP', 65535);
-			$table->text('PROPOSAL', 65535);
-			$table->text('REPLY', 65535);
+			$table->text('pb_descp', 65535);
+			$table->text('proposal', 65535);
+			$table->text('reply', 65535);
 			$table->integer('quality_non_conformitie_id')->nullable();
-			$table->text('DECISION', 65535);
+			$table->text('decision', 65535);
             $table->timestamps();
         });
     }

@@ -43,9 +43,9 @@ class InvoicesController extends Controller
 
     public function show(Invoices $id)
     {
-        $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'FIRST_NAME','NAME')->get();
+        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
@@ -72,7 +72,7 @@ class InvoicesController extends Controller
     public function update(UpdateInvoiceRequest $request)
     {
         $Invoice = Invoices::find($request->id);
-        $Invoice->LABEL=$request->LABEL;
+        $Invoice->label=$request->label;
         $Invoice->statu=$request->statu;
         $Invoice->companies_id=$request->companies_id;
         $Invoice->companies_contacts_id=$request->companies_contacts_id;

@@ -12,7 +12,7 @@ class OrdersLinesIndex extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
-    public $sortField = 'LABEL'; // default sorting field
+    public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
     
     public function sortBy($field)
@@ -32,7 +32,7 @@ class OrdersLinesIndex extends Component
     
     public function render()
     {
-        $OrderLines = OrderLines::where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $OrderLines = OrderLines::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         return view('livewire.orders-lines-index', [
             'OrderLineslist' => $OrderLines,
         ]);

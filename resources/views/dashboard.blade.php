@@ -138,7 +138,7 @@
               </p>
               @forelse ($incomingOrders as $incomingOrder)
               <div class="progress-group alert alert-warning">
-                <a href="{{ route('order.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $incomingOrder->order['CODE'] }}<br/>
+                <a href="{{ route('order.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $incomingOrder->order['code'] }}<br/>
                 <i class="fas fa-calendar-alt"></i> {{ $incomingOrder->delivery_date }}
               </div>
               @empty
@@ -160,7 +160,7 @@
               </p>
               @forelse ($LateOrders as $LateOrder)
               <div class="progress-group alert alert-danger">
-                <a href="{{ route('order.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $LateOrder->order['CODE'] }}<br/>
+                <a href="{{ route('order.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $LateOrder->order['code'] }}<br/>
                 <i class="fas fa-calendar-alt"></i> {{ $LateOrder->delivery_date }}
               </div>
               @empty
@@ -182,7 +182,7 @@
               </p>
               @forelse ($ServiceGoals as $ServiceGoal)
               <div class="progress-group">
-                {{ $ServiceGoal->LABEL }}
+                {{ $ServiceGoal->label }}
                 <span class="float-right">{{ $ServiceGoal->tasks_count }}</span>
                 <div class="progress progress-sm">
                   @php
@@ -326,8 +326,8 @@
             <tbody>
               @forelse ($LastQuotes as $LastQuote)
               <tr>
-                <td><a href="{{ route('quote.show', ['id' => $LastQuote->id])}}">{{ $LastQuote->CODE }}</a></td>
-                <td>{{ $LastQuote->companie['LABEL'] }}</td>
+                <td><a href="{{ route('quote.show', ['id' => $LastQuote->id])}}">{{ $LastQuote->code }}</a></td>
+                <td>{{ $LastQuote->companie['label'] }}</td>
                 <td>
                   @if(1 == $LastQuote->statu )   <span class="badge badge-info"> Open</span>@endif
                   @if(2 == $LastQuote->statu )  <span class="badge badge-warning">Send</span>@endif
@@ -394,8 +394,8 @@
               <tbody>
                 @forelse ($LastOrders as $LastOrder)
                 <tr>
-                  <td><a href="{{ route('order.show', ['id' => $LastOrder->id])}}">{{ $LastOrder->CODE }}</a></td>
-                  <td>{{ $LastOrder->companie['LABEL'] }}</td>
+                  <td><a href="{{ route('order.show', ['id' => $LastOrder->id])}}">{{ $LastOrder->code }}</a></td>
+                  <td>{{ $LastOrder->companie['label'] }}</td>
                   <td>
                     @if(1 == $LastOrder->statu )  <span class="badge badge-info"> Open</span>@endif
                     @if(2 == $LastOrder->statu )  <span class="badge badge-warning">In progress</span>@endif
@@ -446,13 +446,13 @@
             @forelse ($LastProducts as $LastProduct)
             <li class="item">
               <div class="product-img">
-                <img src="{{ asset('/storage/images/products/'. $LastProduct->PICTURE) }} alt="Product Image" class="img-size-50">
+                <img src="{{ asset('/storage/images/products/'. $LastProduct->picture) }} alt="Product Image" class="img-size-50">
               </div>
               <div class="product-info">
-                <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->LABEL }} {{ $LastProduct->IND }}
+                <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->label }} {{ $LastProduct->ind }}
                   <span class="badge badge-info float-right">{{ $LastProduct->purchased_price }}</span></a>
                 <span class="product-description">
-                  {{ $LastProduct->CODE }}
+                  {{ $LastProduct->code }}
                   <span class="badge badge-success float-right">{{ $LastProduct->selling_price }}</span>
                 </span>
               </div>

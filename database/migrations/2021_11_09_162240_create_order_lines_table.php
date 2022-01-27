@@ -17,9 +17,9 @@ class CreateOrderLinesTable extends Migration
             $table->id();
             $table->integer('orders_id');
 			$table->integer('ORDRE');
-			$table->string('CODE')->nullable();
+			$table->string('code')->nullable();
 			$table->string('product_id')->nullable();
-			$table->string('LABEL');
+			$table->string('label');
 			$table->integer('qty');
             $table->integer('delivered_qty')->default(0);
             $table->integer('delivered_remaining_qty')->default(0);
@@ -32,8 +32,18 @@ class CreateOrderLinesTable extends Migration
             $table->date('internal_delay')->nullable();
 			$table->date('delivery_date')->nullable();
 			$table->integer('tasks_status')->default(1);
+            #1 = No task
+            #2 = Created
+            #3 = In progress
+            #4 = Finished (all the tasks are finished)
             $table->integer('delivery_status')->default(1);
+            #1 = Not delivered
+            #2 = Partly delivered
+            #3 = Delivered
             $table->integer('invoice_status')->default(1);
+            #1 = Not invoiced
+            #2 = Partly invoiced
+            #3 = Invoiced
             $table->timestamps();
         });
     }

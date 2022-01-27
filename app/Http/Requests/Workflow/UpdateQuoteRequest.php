@@ -25,7 +25,7 @@ class UpdateQuoteRequest extends FormRequest
     {
         return [
             //
-            'LABEL'=>'required',
+            'label'=>'required',
         ];
     }
 }

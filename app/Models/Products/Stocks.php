@@ -9,8 +9,8 @@ class Stocks extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',
-                            'LABEL', 
+    protected $fillable = ['code',
+                            'label', 
                             'user_id',];
 
     public function GetPrettyCreatedAttribute()

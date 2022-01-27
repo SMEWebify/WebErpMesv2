@@ -29,9 +29,9 @@ class StoreTaskRequest extends FormRequest
             'ORDER'=>'required',
             'methods_services_id'=>'required|numeric',
             'component_id'=>'numeric',
-            'TYPE'=>'required|numeric',
-            'UNIT_COST'=>'required',
-            'UNIT_PRICE'=>'required',
+            'type'=>'required|numeric',
+            'unit_cost'=>'required',
+            'unit_price'=>'required',
         ];
     }
 }

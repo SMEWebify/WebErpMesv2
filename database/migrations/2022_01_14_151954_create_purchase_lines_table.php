@@ -18,9 +18,9 @@ class CreatePurchaseLinesTable extends Migration
             $table->integer('purchases_id');
             $table->integer('tasks_id');
 			$table->integer('ORDRE');
-			$table->string('CODE')->nullable();
+			$table->string('code')->nullable();
 			$table->string('product_id')->nullable();
-			$table->string('LABEL');
+			$table->string('label');
             $table->string('supplier_ref')->nullable();
 			$table->integer('qty');
 			$table->decimal('selling_price', 10, 3);

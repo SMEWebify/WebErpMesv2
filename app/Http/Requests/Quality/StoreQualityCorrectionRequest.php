@@ -25,8 +25,8 @@ class StoreQualityCorrectionRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:quality_corrections',
-            'LABEL'=>'required',
+            'code' =>'required|unique:quality_corrections',
+            'label'=>'required',
         ];
     }
 }

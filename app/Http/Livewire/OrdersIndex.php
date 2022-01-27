@@ -25,8 +25,8 @@ class OrdersIndex extends Component
     public $userSelect = [];
     public $LastOrder = '1';
 
-    public $CODE; 
-    public $LABEL; 
+    public $code; 
+    public $label; 
     public $customer_reference;
     public $companies_id; 
     public $companies_contacts_id;   
@@ -41,8 +41,8 @@ class OrdersIndex extends Component
 
     // Validation Rules
     protected $rules = [
-        'CODE' =>'required|unique:orders',
-        'LABEL'=>'required',
+        'code' =>'required|unique:orders',
+        'label'=>'required',
         'companies_id'=>'required',
         'companies_contacts_id'=>'required',
         'companies_addresses_id'=>'required',
@@ -72,25 +72,25 @@ class OrdersIndex extends Component
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastOrder =  Orders::latest()->first();
         if($this->LastOrder == Null){
-            $this->CODE = "OR-0";
-            $this->LABEL = "OR-0";
+            $this->code = "OR-0";
+            $this->label = "OR-0";
         }
         else{
-            $this->CODE = "OR-". $this->LastOrder->id;
-            $this->LABEL = "OR-". $this->LastOrder->id;
+            $this->code = "OR-". $this->LastOrder->id;
+            $this->label = "OR-". $this->LastOrder->id;
         }
     }
 
     public function render()
     {
-        $Orders = Orders::withCount('OrderLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $Orders = Orders::withCount('OrderLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         $userSelect = User::select('id', 'name')->get();
-        $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'FIRST_NAME','NAME')->get();
-        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'CODE','LABEL')->get();
-        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'CODE','LABEL')->get();
-        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'CODE','LABEL')->get();
+        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
+        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
+        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
 
         return view('livewire.orders-index', [
             'Orderslist' => $Orders,
@@ -108,8 +108,8 @@ class OrdersIndex extends Component
         $this->validate();
             // Create Line
             $OrdersCreated = Orders::create([
-                                            'CODE'=>$this->CODE,  
-                                            'LABEL'=>$this->LABEL,  
+                                            'code'=>$this->code,  
+                                            'label'=>$this->label,  
                                             'customer_reference'=>$this->customer_reference, 
                                             'companies_id'=>$this->companies_id,  
                                             'companies_contacts_id'=>$this->companies_contacts_id,    

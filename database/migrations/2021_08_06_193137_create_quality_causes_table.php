@@ -15,8 +15,8 @@ class CreateQualityCausesTable extends Migration
     {
         Schema::create('quality_causes', function (Blueprint $table) {
             $table->id();
-			$table->string('CODE');
-			$table->string('LABEL');
+			$table->string('code');
+			$table->string('label');
             $table->timestamps();
         });
     }

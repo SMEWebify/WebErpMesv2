@@ -19,17 +19,17 @@ class MethodsController extends Controller
     public function index()
     {
         $MethodsServices = MethodsServices::orderBy('ORDRE')->paginate(10);
-        $ServicesSelect = MethodsServices::select('id', 'LABEL')->orderBy('ORDRE')->get();
+        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ORDRE')->get();
         $MethodsRessources = MethodsRessources::orderBy('ORDRE')->paginate(10);
-        $RessourcesSelect = MethodsRessources::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $RessourcesSelect = MethodsRessources::select('id', 'label')->orderBy('label')->get();
         $MethodsSections = MethodsSection::orderBy('ORDRE')->paginate(10);
-        $SectionsSelect = MethodsSection::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
         $MethodsLocations = MethodsLocation::orderBy('id')->paginate(10);
         $MethodsUnits = MethodsUnits::orderBy('id')->paginate(10);
         $MethodsFamilies = MethodsFamilies::orderBy('id')->paginate(10);
-        $MethodsTools = MethodsTools::orderBy('CODE')->paginate(10);
+        $MethodsTools = MethodsTools::orderBy('code')->paginate(10);
         $userSelect = User::select('id', 'name')->get();
-        $CompaniesSelect = Companies::select('id', 'LABEL')->orderBy('LABEL')->where('statu_FOUR', 2)->get();
+        $CompaniesSelect = Companies::select('id', 'label')->orderBy('label')->where('statu_supplier', 2)->get();
         
         return view('methods/methods-index', [
             'MethodsServices' => $MethodsServices,

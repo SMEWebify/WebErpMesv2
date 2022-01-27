@@ -19,7 +19,7 @@ class TimesController extends Controller
         $TimesBanckHolidays = TimesBanckHoliday::All();
         $TimesImproductTimes = TimesImproductTime::All();
         $TimesMachineEvents = TimesMachineEvent::All();
-        $TimesMachineEventsSelect = TimesMachineEvent::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $TimesMachineEventsSelect = TimesMachineEvent::select('id', 'label')->orderBy('label')->get();
         $user = Auth::user();
         
         return view('times/times-index',[

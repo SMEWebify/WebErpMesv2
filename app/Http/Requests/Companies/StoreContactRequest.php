@@ -25,8 +25,8 @@ class StoreContactRequest extends FormRequest
     {
         return [
             'ORDRE' =>'required',
-            'FIRST_NAME'=>'required',
-            'NAME'=>'required'
+            'first_name'=>'required',
+            'name'=>'required'
         ];
     }
 }

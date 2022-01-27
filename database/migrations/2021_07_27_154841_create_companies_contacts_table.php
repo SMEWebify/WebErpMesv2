@@ -18,13 +18,13 @@ class CreateCompaniesContactsTable extends Migration {
 			$table->id();
 			$table->integer('companies_id');
 			$table->integer('ORDRE');
-			$table->string('CIVILITY');
-			$table->string('FIRST_NAME');
-			$table->string('NAME');
-			$table->string('FUNCTION')->nullable();
-			$table->string('NUMBER')->nullable();
-			$table->string('MOBILE')->nullable();
-			$table->string('MAIL')->nullable();
+			$table->string('civility');
+			$table->string('first_name');
+			$table->string('name');
+			$table->string('function')->nullable();
+			$table->string('number')->nullable();
+			$table->string('mobile')->nullable();
+			$table->string('mail')->nullable();
 			$table->timestamps();
 		});
 	}

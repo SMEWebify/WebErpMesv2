@@ -12,19 +12,19 @@ class QualityNonConformity extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['CODE',
-                        'LABEL', 
+    protected $fillable = ['code',
+                        'label', 
                         'statu',
-                        'TYPE', 
+                        'type', 
                         'user_id',
                         'service_id',  
                         'failure_id',  
-                        'failure_COMMENT', 
+                        'failure_comment', 
                         'causes_id', 
-                        'causes_COMMENT',  
+                        'causes_comment',  
                         'correction_id',  
-                        'correction_COMMENT', 
-                        'causes_COMMENT',  
+                        'correction_comment', 
+                        'causes_comment',  
                         'companie_id'];
 
     public function service()

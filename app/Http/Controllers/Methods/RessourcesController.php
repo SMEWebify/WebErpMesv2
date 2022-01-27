@@ -11,10 +11,10 @@ class RessourcesController extends Controller
     //
     public function store(StoreRessourceRequest $request)
     {
-        $Ressource =  MethodsRessources::create($request->only('ORDRE','CODE', 'LABEL','MASK_TIME', 'CAPACITY','section_id', 'COLOR', 'service_id','COLOR'));
-        if($request->hasFile('PICTURE')){
-            $path = $request->PICTURE->store('images/methods','public');
-            $Ressource->update(['PICTURE' => $path]);
+        $Ressource =  MethodsRessources::create($request->only('ORDRE','code', 'label','mask_time', 'capacity','section_id', 'color', 'service_id','color'));
+        if($request->hasFile('picture')){
+            $path = $request->picture->store('images/methods','public');
+            $Ressource->update(['picture' => $path]);
         }
         return redirect()->route('methods')->with('success', 'Successfully created ressource.');
     }

@@ -26,11 +26,11 @@ class UpdateAdressRequest extends FormRequest
         return [
             //
             'ORDRE' =>'required',
-            'LABEL'=>'required',
-            'ADRESS'=>'required',
-            'ZIPCODE'=>'required',
-            'CITY'=>'required',
-            'COUNTRY'=>'required',
+            'label'=>'required',
+            'adress'=>'required',
+            'zipcode'=>'required',
+            'city'=>'required',
+            'country'=>'required',
         ];
     }
 }

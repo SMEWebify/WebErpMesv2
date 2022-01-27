@@ -15,10 +15,10 @@ class CreateTimesImproductTimesTable extends Migration
     {
         Schema::create('times_improduct_times', function (Blueprint $table) {
             $table->id();
-			$table->string('LABEL')->nullable();
+			$table->string('label')->nullable();
 			$table->integer('times_machine_events_id');
-			$table->integer('RESOURCE_REQUIRED')->nullable();
-			$table->integer('MASK_TIME')->nullable();
+			$table->integer('resources_required')->nullable();
+			$table->integer('mask_time')->nullable();
             $table->timestamps();
         });
     }

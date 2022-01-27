@@ -64,16 +64,16 @@
                                     <a href="#" wire:click="down({{ $OrderLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
                                 </div>
                             </td>
-                            <td>{{ $OrderLine->CODE }}</td>
-                            <td>@if($OrderLine->product_id ) {{ $OrderLine->Product['LABEL'] }}@endif</td>
-                            <td>{{ $OrderLine->LABEL }}</td>
+                            <td>{{ $OrderLine->code }}</td>
+                            <td>@if($OrderLine->product_id ) {{ $OrderLine->Product['label'] }}@endif</td>
+                            <td>{{ $OrderLine->label }}</td>
                             <td>
                                 <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Delivered qty : {{ $OrderLine->delivered_qty }} <br /> Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             </td>
-                            <td>{{ $OrderLine->Unit['LABEL'] }}</td>
+                            <td>{{ $OrderLine->Unit['label'] }}</td>
                             <td>{{ $OrderLine->selling_price }} {{ $Factory->curency }}</td>
                             <td>{{ $OrderLine->discount }} %</td>
-                            <td>{{ $OrderLine->VAT['RATE'] }} %</td>
+                            <td>{{ $OrderLine->VAT['rate'] }} %</td>
                             <td>{{ $OrderLine->delivery_date }}</td>
                             <td>
                                 @if(1 == $OrderLine->tasks_status )  <span class="badge badge-info">No task</span>@endif

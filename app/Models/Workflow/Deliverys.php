@@ -18,8 +18,8 @@ class Deliverys extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE', 
-                            'LABEL', 
+    protected $fillable = ['code', 
+                            'label', 
                             'companies_id', 
                             'companies_contacts_id',   
                             'companies_addresses_id',  

@@ -15,8 +15,8 @@ class CreateStocksTable extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-			$table->string('CODE');
-			$table->string('LABEL')->nullable();
+			$table->string('code');
+			$table->string('label')->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });

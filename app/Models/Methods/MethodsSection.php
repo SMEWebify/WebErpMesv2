@@ -11,7 +11,7 @@ class MethodsSection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ORDRE','CODE', 'LABEL', 'user_id','COLOR'];
+    protected $fillable = ['ORDRE','code', 'label', 'user_id','color'];
 
     public function UserManagement()
     {

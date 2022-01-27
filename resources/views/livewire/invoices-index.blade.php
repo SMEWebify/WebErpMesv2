@@ -14,10 +14,10 @@
                 <thead>
                     <tr>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
@@ -33,9 +33,9 @@
                 <tbody>
                     @forelse ($InvoicesList as $Invoice)
                     <tr>
-                        <td>{{ $Invoice->CODE }}</td>
-                        <td>{{ $Invoice->LABEL }}</td>
-                        <td>{{ $Invoice->companie['LABEL'] }}</td>
+                        <td>{{ $Invoice->code }}</td>
+                        <td>{{ $Invoice->label }}</td>
+                        <td>{{ $Invoice->companie['label'] }}</td>
                         <td>{{ $Invoice->invoice_lines_count }}</td>
                         <td>
                             @if(1 == $Invoice->statu )  <span class="badge badge-info">In progress</span>@endif

@@ -3,7 +3,7 @@
 @section('title', 'Stock')
 
 @section('content_header')
-    <h1> Stock location for {{ $Stock->LABEL }}</h1>
+    <h1> Stock location for {{ $Stock->label }}</h1>
 @stop
 
 @section('content')
@@ -38,9 +38,9 @@
                 <tbody>
                   @forelse ($StockLocations as $StockLocation)
                   <tr>
-                    <td>{{ $StockLocation->CODE }}</td>
-                    <td>{{ $StockLocation->LABEL }}</td>
-                    <td>{{ $StockLocation->END_DATE }}</td>
+                    <td>{{ $StockLocation->code }}</td>
+                    <td>{{ $StockLocation->label }}</td>
+                    <td>{{ $StockLocation->end_date }}</td>
                     <td>{{ $StockLocation->UserManagement['name'] }}</td>
                     <td class="text-right py-0 align-middle">
                       <div class="btn-group btn-group-sm">
@@ -81,22 +81,22 @@
               <form  method="POST" action="{{ route('products.stocklocation.store') }}" class="form-horizontal">
                 @csrf
                 <div class="form-group">
-                  <label for="CODE">External ID</label>
+                  <label for="code">External ID</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                     </div>
-                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="STOCK-LOCATION-{{ $LastStockLocation->id ?? '0' }}">
+                    <input type="text" class="form-control" name="code" id="code" placeholder="External ID" value="STOCK-LOCATION-{{ $LastStockLocation->id ?? '0' }}">
                     <input type="hidden" name="stocks_id" id="stocks_id" value="{{ $Stock->id }}">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="LABEL">Description</label>
+                  <label for="label">Description</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                    <input type="text" class="form-control" name="LABEL" id="LABEL" placeholder="Description">
+                    <input type="text" class="form-control" name="label" id="label" placeholder="Description">
                   </div>
                 </div>
                 <div class="form-group">
@@ -113,12 +113,12 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="END_DATE">End date</label>
-                  <input type="date" class="form-control" name="END_DATE"  id="END_DATE" >
+                  <label for="end_date">End date</label>
+                  <input type="date" class="form-control" name="end_date"  id="end_date" >
                 </div>
                 <div class="form-group">
                   <label>Comment</label>
-                  <textarea class="form-control" rows="3" name="COMMENT"  placeholder="Enter ..."></textarea>
+                  <textarea class="form-control" rows="3" name="comment"  placeholder="Enter ..."></textarea>
                 </div>
                 <div class="card-footer">
                   <div class="offset-sm-2 col-sm-10">

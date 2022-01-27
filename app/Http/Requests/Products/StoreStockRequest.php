@@ -25,8 +25,8 @@ class StoreStockRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:stocks',
-            'LABEL'=>'required',
+            'code' =>'required|unique:stocks',
+            'label'=>'required',
         ];
     }
 }

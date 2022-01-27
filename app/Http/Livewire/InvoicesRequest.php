@@ -19,7 +19,7 @@ class InvoicesRequest extends Component
     public $LastDelivery = '1';
 
     public $DeliverysRequestsLineslist;
-    public $CODE, $LABEL, $user_id; 
+    public $code, $label, $user_id; 
     public $updateLines = false;
     public $CompaniesSelect = [];
     public $data = [];
@@ -29,8 +29,8 @@ class InvoicesRequest extends Component
 
     // Validation Rules
     protected $rules = [
-        'CODE' =>'required|unique:invoices',
-        'LABEL' =>'required',
+        'code' =>'required|unique:invoices',
+        'label' =>'required',
         'companies_id'=>'required',
         'user_id'=>'required',
     ];
@@ -48,15 +48,15 @@ class InvoicesRequest extends Component
     {
         $this->LastInvoice =  Invoices::latest()->first();
         if($this->LastInvoice == Null){
-            $this->CODE = "IN-0";
-            $this->LABEL = "IN-0";
+            $this->code = "IN-0";
+            $this->label = "IN-0";
         }
         else{
-            $this->CODE = "IN-". $this->LastInvoice->id;
-            $this->LABEL = "IN-". $this->LastInvoice->id;
+            $this->code = "IN-". $this->LastInvoice->id;
+            $this->label = "IN-". $this->LastInvoice->id;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
+        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
     }
 
     public function render()
@@ -103,8 +103,8 @@ class InvoicesRequest extends Component
         if($i>0){
             // Create invoice
             $InvoiceCreated = Invoices::create([
-                                                'CODE'=>$this->CODE,  
-                                                'LABEL'=>$this->LABEL, 
+                                                'code'=>$this->code,  
+                                                'label'=>$this->label, 
                                                 'companies_id'=>$this->companies_id,   
                                                 'user_id'=>$this->user_id, 
             ]);

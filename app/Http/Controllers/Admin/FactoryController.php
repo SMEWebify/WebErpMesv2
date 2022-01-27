@@ -12,7 +12,7 @@ class FactoryController extends Controller
     //
     public function index()
     {
-        $VATSelect  =  AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
+        $VATSelect  =  AccountingVat::select('id', 'label')->orderBy('rate')->get();
         $Factory  =  Factory::firstOrCreate(
                                     ['id' =>'1',],
                                 );
@@ -25,16 +25,16 @@ class FactoryController extends Controller
     public function update(UpdateFactoryRequest $request)
     {
             $Factory = Factory::first();
-                        $Factory->NAME = $request->NAME;
+                        $Factory->name = $request->name;
                         $Factory->ADDRESS = $request->ADDRESS;
-                        $Factory->CITY = $request->CITY; 
-                        $Factory->ZIPCODE = $request->ZIPCODE;
+                        $Factory->city = $request->city; 
+                        $Factory->zipcode = $request->zipcode;
                         $Factory->REGION = $request->REGION;
-                        $Factory->COUNTRY = $request->COUNTRY;
+                        $Factory->country = $request->country;
                         $Factory->PHONE_NUMBER = $request->PHONE_NUMBER; 
-                        $Factory->MAIL = $request->MAIL;
+                        $Factory->mail = $request->mail;
                         $Factory->WEB_SITE = $request->WEB_SITE;
-                        $Factory->PICTURE = $request->PICTURE;
+                        $Factory->picture = $request->picture;
                         $Factory->SIREN = $request->SIREN; 
                         $Factory->nat_regis_num = $request->nat_regis_num;
                         $Factory->vat_num = $request->vat_num;

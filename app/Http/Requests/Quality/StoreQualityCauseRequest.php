@@ -25,8 +25,8 @@ class StoreQualityCauseRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:quality_causes',
-            'LABEL'=>'required',
+            'code' =>'required|unique:quality_causes',
+            'label'=>'required',
         ];
     }
 }

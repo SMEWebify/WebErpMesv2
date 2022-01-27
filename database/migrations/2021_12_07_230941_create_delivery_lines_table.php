@@ -21,6 +21,10 @@ class CreateDeliveryLinesTable extends Migration
 			$table->integer('qty');
             $table->integer('statu')->default(1);
             $table->integer('invoice_status')->default(1);
+            #1 = Chargeable
+            #2 = Not chargeable
+            #3 = Partly invoiced
+            #4 = Invoiced
             $table->timestamps();
         });
     }

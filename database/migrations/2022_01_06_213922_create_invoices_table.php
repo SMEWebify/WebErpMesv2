@@ -15,12 +15,16 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
 			$table->integer('companies_id');
 			$table->integer('companies_contacts_id');
 			$table->integer('companies_addresses_id');
 			$table->integer('statu')->default(1);
+            #1 = In progress
+            #2 = Sent
+            #3 = Invoiced
+            #4 = Partially invoiced
             $table->integer('invoice_type')->default(1);
             $table->integer('accounting_status')->default(1);
 			$table->integer('user_id');

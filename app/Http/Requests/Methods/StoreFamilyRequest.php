@@ -25,8 +25,8 @@ class StoreFamilyRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:methods_families',
-            'LABEL'=>'required',
+            'code' =>'required|unique:methods_families',
+            'label'=>'required',
             'service_id'=>'required',
         ];
     }

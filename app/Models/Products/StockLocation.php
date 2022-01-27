@@ -10,12 +10,12 @@ class StockLocation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',
-                        'LABEL', 
+    protected $fillable = ['code',
+                        'label', 
                         'stocks_id',
                         'user_id',
-                        'END_DATE',
-                        'COMMENT',];
+                        'end_date',
+                        'comment',];
 
     public function UserManagement()
     {

@@ -60,20 +60,20 @@
               <tbody>
                 @forelse ($QualityActions as $QualityAction)
                 <tr>
-                  <td>{{ $QualityAction->CODE }}</td>
-                  <td>{{ $QualityAction->LABEL }}</td>
+                  <td>{{ $QualityAction->code }}</td>
+                  <td>{{ $QualityAction->label }}</td>
                   <td>{{ $QualityAction->UserManagement['name'] }}</td>
                   <td>
-                    @if($QualityAction->TYPE  == 1) Internal @endif
-                    @if($QualityAction->TYPE  == 2) External @endif
+                    @if($QualityAction->type  == 1) Internal @endif
+                    @if($QualityAction->type  == 2) External @endif
                   </td>
                   <td>
-                    @if($QualityAction->TYPE  == 1) In Progess @endif
-                    @if($QualityAction->TYPE  == 2) Waiting Customer Data @endif
-                    @if($QualityAction->TYPE  == 2) Validate @endif
-                    @if($QualityAction->TYPE  == 2) Canceled @endif
+                    @if($QualityAction->type  == 1) In Progess @endif
+                    @if($QualityAction->type  == 2) Waiting Customer Data @endif
+                    @if($QualityAction->type  == 2) Validate @endif
+                    @if($QualityAction->type  == 2) Canceled @endif
                   </td>
-                  <td><input type="color" class="form-control"  name="COLOR" id="COLOR" value="{{ $QualityAction->COLOR }}"></td>
+                  <td><input type="color" class="form-control"  name="color" id="color" value="{{ $QualityAction->color }}"></td>
                   <td>{{ $QualityAction->GetPrettyCreatedAttribute() }}</td>
                   <td class=" py-0 align-middle">
                     <div class="btn-group btn-group-sm">
@@ -123,21 +123,21 @@
             @csrf
             <div class="form-group row">
               <div class="col-2">
-                <label for="CODE">External ID</label>
+                <label for="code">External ID</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID" value="ACT-{{ $LastAction->id ?? '0' }}">
+                  <input type="text" class="form-control"  name="code" id="code" placeholder="External ID" value="ACT-{{ $LastAction->id ?? '0' }}">
                 </div>
               </div>
               <div class="col-2">
-                <label for="LABEL">Label</label>
+                <label for="label">Label</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                  <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
                 </div>
               </div>
               <div class="col-2">
@@ -155,12 +155,12 @@
                 </div>
               </div>
               <div class="col-2">
-                <label for="TYPE">Type</label>
+                <label for="type">Type</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="TYPE" id="TYPE">
+                  <select class="form-control" name="type" id="type">
                     <option value="1">Internal</option>
                     <option value="2">External</option>
                   </select>
@@ -180,15 +180,15 @@
                 </div>
               </div>
               <div class="col-3">
-                <label for="COLOR">Color</label>
-                <input type="color" class="form-control"  name="COLOR" id="COLOR" >
+                <label for="color">Color</label>
+                <input type="color" class="form-control"  name="color" id="color" >
               </div>
               <div class="col-2">
                 <label for="quality_non_conformitie_id">Non conformitie link</label>
                 <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
                   <option value="null">None</option>
                   @foreach ($NonConformitysSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->CODE }}</option>
+                  <option value="{{ $item->id }}">{{ $item->code }}</option>
                   @endforeach
                 </select>
               </div>
@@ -197,15 +197,15 @@
             <div class="row">
               <div class="col-3">
                 <label>Problem description</label>
-                <textarea class="form-control" rows="3" name="PB_DESCP"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="pb_descp"  placeholder="Enter ..."></textarea>
               </div>
               <div class="col-3">
                 <label>Cause description</label>
-                <textarea class="form-control" rows="3" name="CAUSE"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="cause"  placeholder="Enter ..."></textarea>
               </div>
               <div class="col-3">
                 <label>Action description</label>
-                <textarea class="form-control" rows="3" name="ACTION"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="action"  placeholder="Enter ..."></textarea>
               </div>
               
             <!-- /.row -->
@@ -241,18 +241,18 @@
               <tbody>
                 @forelse ($QualityDerogations as $QualityDerogation)
                 <tr>
-                  <td>{{ $QualityDerogation->CODE }}</td>
-                  <td>{{ $QualityDerogation->LABEL }}</td>
+                  <td>{{ $QualityDerogation->code }}</td>
+                  <td>{{ $QualityDerogation->label }}</td>
                   <td>{{ $QualityDerogation->UserManagement['name'] }}</td>
                   <td>
-                    @if($QualityDerogation->TYPE  == 1) Internal @endif
-                    @if($QualityDerogation->TYPE  == 2) External @endif
+                    @if($QualityDerogation->type  == 1) Internal @endif
+                    @if($QualityDerogation->type  == 2) External @endif
                   </td>
                   <td>
-                    @if($QualityDerogation->TYPE  == 1) In Progess @endif
-                    @if($QualityDerogation->TYPE  == 2) Waiting Customer Data @endif
-                    @if($QualityDerogation->TYPE  == 2) Validate @endif
-                    @if($QualityDerogation->TYPE  == 2) Canceled @endif
+                    @if($QualityDerogation->type  == 1) In Progess @endif
+                    @if($QualityDerogation->type  == 2) Waiting Customer Data @endif
+                    @if($QualityDerogation->type  == 2) Validate @endif
+                    @if($QualityDerogation->type  == 2) Canceled @endif
                   </td><td>{{ $QualityDerogation->GetPrettyCreatedAttribute() }}</td>
                   <td class=" py-0 align-middle">
                     <div class="btn-group btn-group-sm">
@@ -301,21 +301,21 @@
             @csrf
             <div class="form-group row">
               <div class="col-2">
-                <label for="CODE">External ID</label>
+                <label for="code">External ID</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID" value="DER-{{ $LastDerogation->id ?? '0' }}  ">
+                  <input type="text" class="form-control"  name="code" id="code" placeholder="External ID" value="DER-{{ $LastDerogation->id ?? '0' }}  ">
                 </div>
               </div>
               <div class="col-2">
-                <label for="LABEL">Label</label>
+                <label for="label">Label</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                  <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
                 </div>
               </div>
               <div class="col-2">
@@ -333,12 +333,12 @@
                 </div>
               </div>
               <div class="col-2">
-                <label for="TYPE">Type</label>
+                <label for="type">Type</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="TYPE" id="TYPE">
+                  <select class="form-control" name="type" id="type">
                     <option value="1">Internal</option>
                     <option value="2">External</option>
                   </select>
@@ -362,25 +362,25 @@
                 <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
                   <option value="null">None</option>
                   @foreach ($NonConformitysSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->CODE }}</option>
+                  <option value="{{ $item->id }}">{{ $item->code }}</option>
                   @endforeach
                 </select>
               </div>
               <div class="col-2">
                 <label>Problem description</label>
-                <textarea class="form-control" rows="3" name="PB_DESCP"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="pb_descp"  placeholder="Enter ..."></textarea>
               </div>
               <div class="col-2">
                 <label>Proposal description</label>
-                <textarea class="form-control" rows="3" name="PROPOSAL"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="proposal"  placeholder="Enter ..."></textarea>
               </div>
               <div class="col-2">
                 <label>Customer reply description</label>
-                <textarea class="form-control" rows="3" name="REPLY"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="reply"  placeholder="Enter ..."></textarea>
               </div>
               <div class="col-2">
                 <label>Decision description</label>
-                <textarea class="form-control" rows="3" name="DECISION"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="decision"  placeholder="Enter ..."></textarea>
               </div>
               
             <!-- /.row -->
@@ -418,20 +418,20 @@
               <tbody>
                 @forelse ($QualityNonConformitys as $QualityNonConformity)
                 <tr>
-                  <td>{{ $QualityNonConformity->CODE }}</td>
-                  <td>{{ $QualityNonConformity->LABEL }}</td>
+                  <td>{{ $QualityNonConformity->code }}</td>
+                  <td>{{ $QualityNonConformity->label }}</td>
                   <td>{{ $QualityNonConformity->UserManagement['name'] }}</td>
                   <td>
-                    @if($QualityNonConformity->TYPE  == 1) Internal @endif
-                    @if($QualityNonConformity->TYPE  == 2) External @endif
+                    @if($QualityNonConformity->type  == 1) Internal @endif
+                    @if($QualityNonConformity->type  == 2) External @endif
                   </td>
                   <td>
-                    @if($QualityNonConformity->TYPE  == 1) In Progess @endif
-                    @if($QualityNonConformity->TYPE  == 2) Waiting Customer Data @endif
-                    @if($QualityNonConformity->TYPE  == 2) Validate @endif
-                    @if($QualityNonConformity->TYPE  == 2) Canceled @endif
+                    @if($QualityNonConformity->type  == 1) In Progess @endif
+                    @if($QualityNonConformity->type  == 2) Waiting Customer Data @endif
+                    @if($QualityNonConformity->type  == 2) Validate @endif
+                    @if($QualityNonConformity->type  == 2) Canceled @endif
                   </td>
-                  <td><input type="color" class="form-control"  name="COLOR" id="COLOR" value="{{ $QualityNonConformity->COLOR }}"></td>
+                  <td><input type="color" class="form-control"  name="color" id="color" value="{{ $QualityNonConformity->color }}"></td>
                   <td>{{ $QualityNonConformity->GetPrettyCreatedAttribute() }}</td>
                   <td class=" py-0 align-middle">
                     <div class="btn-group btn-group-sm">
@@ -481,21 +481,21 @@
             @csrf
             <div class="form-group row">
               <div class="col-2">
-                <label for="CODE">External ID</label>
+                <label for="code">External ID</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID" value="NC-{{ $LastNonConformity->id ?? '0' }}  ">
+                  <input type="text" class="form-control"  name="code" id="code" placeholder="External ID" value="NC-{{ $LastNonConformity->id ?? '0' }}  ">
                 </div>    
               </div>
               <div class="col-2">
-                <label for="LABEL">Label</label>
+                <label for="label">Label</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                  <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
                 </div>
               </div>
               <div class="col-2">
@@ -513,12 +513,12 @@
                 </div>
               </div>
               <div class="col-2">
-                <label for="TYPE">Type</label>
+                <label for="type">Type</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
-                  <select class="form-control" name="TYPE" id="TYPE">
+                  <select class="form-control" name="type" id="type">
                     <option value="1">Internal</option>
                     <option value="2">External</option>
                   </select>
@@ -545,7 +545,7 @@
                   </div>
                   <select class="form-control" name="service_id" id="service_id">
                     @foreach ($ServicesSelect as $item)
-                    <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                    <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @endforeach
                   </select>
                 </div>
@@ -554,7 +554,7 @@
                 <label for="failure_id">Failure type</label>
                 <select class="form-control" name="failure_id" id="failure_id">
                   @foreach ($FailuresSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
                   @endforeach
                 </select>
               </div>
@@ -562,7 +562,7 @@
                 <label for="causes_id">Cause type</label>
                 <select class="form-control" name="causes_id" id="causes_id">
                   @foreach ($CausesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
                   @endforeach
                 </select>
               </div>
@@ -570,7 +570,7 @@
                 <label for="correction_id">Correction type</label>
                 <select class="form-control" name="correction_id" id="correction_id">
                   @foreach ($CorrectionsSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
                   @endforeach
                 </select>
               </div>
@@ -578,25 +578,25 @@
                 <label for="companie_id">Companie concern</label>
                 <select class="form-control" name="companie_id" id="companie_id">
                   @foreach ($CompaniesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
                   @endforeach
                 </select>
               </div>
               <div class="col-3">
-                <label for="COLOR">Color</label>
-                <input type="color" class="form-control"  name="COLOR" id="COLOR" >
+                <label for="color">Color</label>
+                <input type="color" class="form-control"  name="color" id="color" >
               </div>
               <div class="col-2">
                 <label>Comment for failure</label>
-                <textarea class="form-control" rows="3" name="failure_COMMENT"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="failure_comment"  placeholder="Enter ..."></textarea>
               </div>
               <div class="col-2">
                 <label>Comment for cause</label>
-                <textarea class="form-control" rows="3" name="causes_COMMENT"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="causes_comment"  placeholder="Enter ..."></textarea>
               </div>
               <div class="col-2">
                 <label>Comment for correction</label>
-                <textarea class="form-control" rows="3" name="correction_COMMENT"  placeholder="Enter ..."></textarea>
+                <textarea class="form-control" rows="3" name="correction_comment"  placeholder="Enter ..."></textarea>
               </div>
             <!-- /.row -->
             </div>
@@ -637,11 +637,11 @@
                       <tbody>
                         @forelse ($QualityControlDevices as $QualityControlDevice)
                         <tr>
-                          <td>{{ $QualityControlDevice->CODE }}</td>
-                          <td>{{ $QualityControlDevice->LABEL }}</td>
-                          <td>{{ $QualityControlDevice->service['LABEL'] }}</td>
+                          <td>{{ $QualityControlDevice->code }}</td>
+                          <td>{{ $QualityControlDevice->label }}</td>
+                          <td>{{ $QualityControlDevice->service['label'] }}</td>
                           <td>{{ $QualityControlDevice->UserManagement['name'] }}</td>
-                          <td>{{ $QualityControlDevice->SERIAL_NUMBER }}</td>
+                          <td>{{ $QualityControlDevice->serial_number }}</td>
                           <td>{{ $QualityControlDevice->GetPrettyCreatedAttribute() }}</td>
                         </tr>
                         @empty
@@ -683,21 +683,21 @@
                     @csrf
                     <div class="row">
                       <div class="col-2">
-                        <label for="CODE">External ID</label>
+                        <label for="code">External ID</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                           </div>
-                          <input type="text" class="form-control"  name="CODE" id="CODE" placeholder="External ID">
+                          <input type="text" class="form-control"  name="code" id="code" placeholder="External ID">
                         </div>
                       </div>
                       <div class="col-2">
-                        <label for="LABEL">Label</label>
+                        <label for="label">Label</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>
                           </div>
-                          <input type="text" class="form-control"  name="LABEL" id="LABEL" placeholder="Label">
+                          <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
                         </div>
                       </div>
                       <div class="col-2">
@@ -708,7 +708,7 @@
                           </div>
                           <select class="form-control" name="service_id" id="service_id">
                             @foreach ($ServicesSelect as $item)
-                            <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                            <option value="{{ $item->id }}">{{ $item->label }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -727,21 +727,21 @@
                         </div>
                       </div>
                       <div class="col-2">
-                        <label for="LABEL">Serial number</label>
-                        <input type="text" class="form-control"  name="SERIAL_NUMBER" id="SERIAL_NUMBER" placeholder="Serial number">
+                        <label for="label">Serial number</label>
+                        <input type="text" class="form-control"  name="serial_number" id="serial_number" placeholder="Serial number">
                       </div>
                     <!-- /.row -->
                     </div>
                     <div class="form-group">
                       <div class="col-md-8">
-                        <label for="PICTURE">Logo file</label>
+                        <label for="picture">Logo file</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="far fa-image"></i></span>
                           </div>
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="PICTURE">
-                            <label class="custom-file-label" for="PICTURE">Choose file</label>
+                            <input type="file" class="custom-file-input" id="picture">
+                            <label class="custom-file-label" for="picture">Choose file</label>
                           </div>
                           <div class="input-group-append">
                             <span class="input-group-text">Upload</span>
@@ -796,8 +796,8 @@
                     <tbody>
                       @forelse ($QualityFailures as $QualityFailure)
                       <tr>
-                        <td>{{ $QualityFailure->CODE }}</td>
-                        <td>{{ $QualityFailure->LABEL }}</td>
+                        <td>{{ $QualityFailure->code }}</td>
+                        <td>{{ $QualityFailure->label }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -825,21 +825,21 @@
                   <form  method="POST" action="{{ route('quality.failling.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="card-footer">
@@ -886,8 +886,8 @@
                       <tbody>
                         @forelse ($QualityCauses as $QualityCause)
                         <tr>
-                          <td>{{ $QualityCause->CODE }}</td>
-                          <td>{{ $QualityCause->LABEL }}</td>
+                          <td>{{ $QualityCause->code }}</td>
+                          <td>{{ $QualityCause->label }}</td>
                           <td class="text-right py-0 align-middle">
                             <div class="btn-group btn-group-sm">
                               <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -915,21 +915,21 @@
                     <form  method="POST" action="{{ route('quality.cause.create') }}" class="form-horizontal">
                       @csrf
                       <div class="form-group">
-                        <label for="CODE">External ID</label>
+                        <label for="code">External ID</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                           </div>
-                          <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                          <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="LABEL">Label</label>
+                        <label for="label">Label</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>
                           </div>
-                          <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                          <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                         </div>
                       </div>
                       <div class="card-footer">
@@ -976,8 +976,8 @@
                         <tbody>
                           @forelse ($QualityCorrections as $QualityCorrection)
                           <tr>
-                            <td>{{ $QualityCorrection->CODE }}</td>
-                            <td>{{ $QualityCorrection->LABEL }}</td>
+                            <td>{{ $QualityCorrection->code }}</td>
+                            <td>{{ $QualityCorrection->label }}</td>
                             <td class="text-right py-0 align-middle">
                               <div class="btn-group btn-group-sm">
                                 <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -1005,21 +1005,21 @@
                       <form  method="POST" action="{{ route('quality.correction.create') }}" class="form-horizontal">
                         @csrf
                         <div class="form-group">
-                          <label for="CODE">External ID</label>
+                          <label for="code">External ID</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                            <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="LABEL">Label</label>
+                          <label for="label">Label</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                            <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                           </div>
                         </div>
                         <div class="card-footer">

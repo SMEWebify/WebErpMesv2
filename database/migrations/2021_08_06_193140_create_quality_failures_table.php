@@ -15,8 +15,8 @@ class CreateQualityFailuresTable extends Migration
     {
         Schema::create('quality_failures', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
             $table->timestamps();
         });
     }

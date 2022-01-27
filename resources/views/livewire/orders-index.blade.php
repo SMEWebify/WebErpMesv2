@@ -15,23 +15,23 @@
                         @csrf
                         <div class="row">
                             <div class="col-3">
-                                <label for="CODE">External ID</label>
+                                <label for="code">External ID</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model="CODE" name="CODE" id="CODE" placeholder="External ID">
-                                    @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                    <input type="text" class="form-control" wire:model="code" name="code" id="code" placeholder="External ID">
+                                    @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
                             <div class="col-3">
-                                <label for="LABEL">Name of order</label>
+                                <label for="label">Name of order</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model="LABEL" name="LABEL"  id="LABEL" placeholder="Name of order" required>
-                                    @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                    <input type="text" class="form-control" wire:model="label" name="label"  id="label" placeholder="Name of order" required>
+                                    @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
                             <div class="col-3">
@@ -65,7 +65,7 @@
                                     <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
                                         <option value="">Select company</option>
                                     @forelse ($CompanieSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                                     @empty
                                         <option value="">No company, please add</option>
                                     @endforelse
@@ -94,7 +94,7 @@
                                     <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
                                         <option value="">Select address</option>
                                     @forelse ($AddressSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
                                     @empty
                                         <option value="">No address, please add</option>
                                     @endforelse
@@ -111,7 +111,7 @@
                                     <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
                                         <option value="">Select contact</option>
                                     @forelse ($ContactSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
                                     @empty
                                         <option value="">No contact, please add</option>
                                     @endforelse
@@ -131,7 +131,7 @@
                                 <select class="form-control" wire:model="accounting_payment_conditions_id"  name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
                                     <option value="">Select payement condition</option>
                                 @forelse ($AccountingConditionSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                                    <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                                 @empty
                                     <option value="">No payment conditions, please add in accounting page</option>
                                 @endforelse
@@ -143,7 +143,7 @@
                                 <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
                                     <option value="">Select payment methods</option>
                                 @forelse ($AccountingMethodsSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                                    <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                                 @empty
                                     <option value="">No payment methods, please add in accounting page</option>
                                 @endforelse
@@ -161,7 +161,7 @@
                                     <select class="form-control" wire:model="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id">
                                         <option value="">Select deliveries</option>
                                     @forelse ($AccountingDeleveriesSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                                     @empty
                                         <option value="">No delivery type, please add in accounting page</option>
                                     @endforelse
@@ -170,7 +170,7 @@
                                 @error('accounting_deliveries_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-5">
-                                <label for="LABEL">Validity date</label>
+                                <label for="label">Validity date</label>
                                 <input type="date" class="form-control" wire:model="validity_date"  name="validity_date"  id="validity_date">
                                 @error('validity_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -208,10 +208,10 @@
                 <thead>
                     <tr>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
@@ -228,9 +228,9 @@
                 <tbody>
                     @forelse ($Orderslist as $Order)
                     <tr>
-                        <td>{{ $Order->CODE }}</td>
-                        <td>{{ $Order->LABEL }}</td>
-                        <td>{{ $Order->companie['LABEL'] }}</td>
+                        <td>{{ $Order->code }}</td>
+                        <td>{{ $Order->label }}</td>
+                        <td>{{ $Order->companie['label'] }}</td>
                         <td>{{ $Order->customer_reference }}</td>
                         <td>{{ $Order->order_lines_count }}</td>
                         <td>

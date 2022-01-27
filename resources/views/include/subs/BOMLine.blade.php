@@ -1,11 +1,11 @@
 <tr>
     <td>{{ $BOMProduct->ORDER }}</td>
     <td>{{ $BOMProduct->label }}</td>
-    <td>{{ $BOMProduct->service['LABEL'] }}</td>
-    <td>{{ $BOMProduct->Component['CODE'] }}</td>
+    <td>{{ $BOMProduct->service['label'] }}</td>
+    <td>{{ $BOMProduct->Component['code'] }}</td>
     <td>{{ $BOMProduct->qty }}</td>
-    <td>{{ $BOMProduct->UNIT_COST }}</td>
-    <td>{{ $BOMProduct->UNIT_PRICE }}</td>
+    <td>{{ $BOMProduct->unit_cost }}</td>
+    <td>{{ $BOMProduct->unit_price }}</td>
     <td>
       @if($BOMProduct->order_lines_id)
       {{ $BOMProduct->status['title'] }}

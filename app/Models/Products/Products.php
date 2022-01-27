@@ -15,9 +15,9 @@ class Products extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',
-                          'LABEL', 
-                           'IND',
+    protected $fillable = ['code',
+                          'label', 
+                           'ind',
                            'methods_services_id', 
                            'methods_families_id', 
                            'purchased', 
@@ -41,7 +41,7 @@ class Products extends Model
                            'diameter',
                            'diameter_oversize',
                            'section_size',
-                           'PICTURE',];
+                           'picture',];
 
     public function service()
     {

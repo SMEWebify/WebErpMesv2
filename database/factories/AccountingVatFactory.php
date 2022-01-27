@@ -25,9 +25,9 @@ class AccountingVatFactory extends Factory
 
         return [
             //
-            'CODE' => $this->$type,
-            'LABEL' =>$this->$type,
-            'RATE' => $this->faker->randomElement([0, 5, 10, 20]),
+            'code' => $this->$type,
+            'label' =>$this->$type,
+            'rate' => $this->faker->randomElement([0, 5, 10, 20]),
         ];
     }
 }

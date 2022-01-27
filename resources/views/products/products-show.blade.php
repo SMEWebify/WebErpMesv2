@@ -3,7 +3,7 @@
 @section('title', 'Products')
 
 @section('content_header')
-    <h1> {{ $Product->LABEL }} {{ $Product->IND }}</h1>
+    <h1> {{ $Product->label }} {{ $Product->ind }}</h1>
 @stop
 
 @section('content')
@@ -42,7 +42,7 @@
             <div class="info-box bg-light">
               <div class="info-box-content">
                 <span class="info-box-text text-center ">Service </span>
-                <span class="info-box-number text-center  mb-0">{{ $Product->service['LABEL'] }}</span>
+                <span class="info-box-number text-center  mb-0">{{ $Product->service['label'] }}</span>
               </div>
             </div>
           </div>
@@ -50,7 +50,7 @@
             <div class="info-box bg-light">
               <div class="info-box-content">
                 <span class="info-box-text text-center ">Familly</span>
-                <span class="info-box-number text-center  mb-0">{{ $Product->family['LABEL'] }}</span>
+                <span class="info-box-number text-center  mb-0">{{ $Product->family['label'] }}</span>
               </div>
             </div>
           </div>
@@ -179,12 +179,12 @@
       <!-- /.div col-12 col-md-12 -->
       </div>
       <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-        <p class="text-muted">External ID : {{ $Product->CODE }} </p>
+        <p class="text-muted">External ID : {{ $Product->code }} </p>
         <div class="row"> 
           <div class="col-12 col-sm-4">
             <div class="text-muted">
             <p class="text-sm">Unit
-              <b class="d-block">{{ $Product->Unit['LABEL'] }}</b>
+              <b class="d-block">{{ $Product->Unit['label'] }}</b>
             </p>
             </div>
           </div>
@@ -265,8 +265,8 @@
                 var val = $(this).val();
                 var txt = $(this).find('option:selected').data('txt');
                 var type = $(this).find('option:selected').data('type');
-                $('#LABEL').val( txt );
-                $('#TYPE').val( type );
+                $('#label').val( txt );
+                $('#type').val( type );
             });
 
             $('#methods_services_id_BOM').on('change',function(){
@@ -274,7 +274,7 @@
                 var txt = $(this).find('option:selected').data('txt');
                 var type = $(this).find('option:selected').data('type');
                 $('#LABEL_BOM').val( txt );
-                $('#TYPE_BOM').val( type );
+                $('#type_BOM').val( type );
             });
 
             $('.methods_services_id').change(function () {

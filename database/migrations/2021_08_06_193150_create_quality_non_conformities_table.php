@@ -15,18 +15,18 @@ class CreateQualityNonConformitiesTable extends Migration
     {
         Schema::create('quality_non_conformities', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
 			$table->integer('statu');
-			$table->integer('TYPE');
+			$table->integer('type');
 			$table->integer('user_id');
 			$table->integer('service_id');
 			$table->integer('failure_id');
-			$table->text('failure_COMMENT', 65535);
+			$table->text('failure_comment', 65535);
 			$table->integer('causes_id');
-			$table->text('causes_COMMENT', 65535);
+			$table->text('causes_comment', 65535);
 			$table->integer('correction_id');
-			$table->text('correction_COMMENT', 65535);
+			$table->text('correction_comment', 65535);
 			$table->integer('companie_id');
             $table->timestamps();
         });

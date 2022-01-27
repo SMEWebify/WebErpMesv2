@@ -11,9 +11,9 @@ class VatController extends Controller
     //
     public function store(StoreVatRequest $request)
     {
-        $VaT = AccountingVat::create($request->only('CODE',
-                                                    'LABEL',
-                                                    'RATE'));
+        $VaT = AccountingVat::create($request->only('code',
+                                                    'label',
+                                                    'rate'));
         return redirect()->route('accounting')->with('success', 'Successfully created VAT type.');
     }
 }

@@ -12,7 +12,7 @@ class AbsenceController extends Controller
     //
     public function store(StoreAbsenceRequest $request)
     {
-        $TimesAbsence = TimesAbsence::create($request->only('user_id', 'absence_type', 'absence_type_day', 'START_DATE', 'END_DATE'));
+        $TimesAbsence = TimesAbsence::create($request->only('user_id', 'absence_type', 'absence_type_day', 'START_DATE', 'end_date'));
         return redirect()->route('times')->with('success', 'Successfully created absence request.');
     }
 }

@@ -19,7 +19,7 @@ class StockLocationController extends Controller
         $StockLocation = StockLocation::findOrFail($id);
         $StockLocationsProducts = StockLocationProducts::where('stock_locations_id', '=', $id)->get();
         $userSelect = User::select('id', 'name')->get();
-        $ProductSelect = Products::select('id', 'CODE')->get();
+        $ProductSelect = Products::select('id', 'code')->get();
         $LastStockLocationProduct =  DB::table('stock_location_products')->orderBy('id', 'desc')->first();
 
         return view('products/stockLocation-show', [
@@ -33,12 +33,12 @@ class StockLocationController extends Controller
 
     public function store(StoreStockLocationRequest $request)
     {
-        $StockLocation = StockLocation::create($request->only('CODE',
-                                                'LABEL', 
+        $StockLocation = StockLocation::create($request->only('code',
+                                                'label', 
                                                 'stocks_id',
                                                 'user_id',
-                                                'END_DATE',
-                                                'COMMENT',
+                                                'end_date',
+                                                'comment',
                                             ));
 
         return redirect()->route('products.stocklocation.show', ['id' => $StockLocation->id])->with('success', 'Successfully created new location stock');

@@ -27,8 +27,8 @@ class QuoteLine extends Component
     public $status_id;
 
     public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ORDRE, $CODE, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
-    public $LABEL='';
+    public $quote_lines_id, $quotes_id, $ORDRE, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $label='';
     public $discount= 0;
     public $updateLines = false;
     public $ProductsSelect = [];
@@ -44,7 +44,7 @@ class QuoteLine extends Component
     // Validation Rules
     protected $rules = [
         'ORDRE'=>'required',
-        'LABEL'=>'required',
+        'label'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
         'selling_price'=>'required',
@@ -73,24 +73,24 @@ class QuoteLine extends Component
         $this->quote_Statu = $QuoteStatu;
         $this->delivery_date = $QuoteDelay;
         $this->status_id = Status::select('id')->orderBy('order')->first();
-        $this->ProductsSelect = Products::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
-        $this->VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('RATE')->get();
-        $this->UnitsSelect = MethodsUnits::select('id', 'LABEL', 'CODE')->orderBy('LABEL')->get();
+        $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
+        $this->VATSelect = AccountingVat::select('id', 'label')->orderBy('rate')->get();
+        $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
         $this->Factory = Factory::first();
-        $this->ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
-        $this->TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
-        $this->BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
-                                                                            ->orWhere('TYPE', '=', 3)
-                                                                            ->orWhere('TYPE', '=', 4)
-                                                                            ->orWhere('TYPE', '=', 5)
-                                                                            ->orWhere('TYPE', '=', 6)
-                                                                            ->orWhere('TYPE', '=', 8)
+        $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
+        $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ORDRE')->get();
+        $this->BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
+                                                                            ->orWhere('type', '=', 3)
+                                                                            ->orWhere('type', '=', 4)
+                                                                            ->orWhere('type', '=', 5)
+                                                                            ->orWhere('type', '=', 6)
+                                                                            ->orWhere('type', '=', 8)
                                                                             ->orderBy('ORDRE')->get();
     }
 
     public function render()
     {
-        $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('quotes_id', '=', $this->quotes_id)->where('LABEL','like', '%'.$this->search.'%')->get();
+        $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('quotes_id', '=', $this->quotes_id)->where('label','like', '%'.$this->search.'%')->get();
         
         return view('livewire.quote-lines', [
             'QuoteLineslist' => $QuoteLineslist,
@@ -99,9 +99,9 @@ class QuoteLine extends Component
 
     public function resetFields(){
         $this->ORDRE = $this->ORDRE+1;
-        $this->CODE = '';
+        $this->code = '';
         $this->product_id = '';
-        $this->LABEL = '';
+        $this->label = '';
     }
 
     public function storeQuoteLine(){
@@ -110,9 +110,9 @@ class QuoteLine extends Component
         Quotelines::create([
             'quotes_id'=>$this->quotes_id,
             'ORDRE'=>$this->ORDRE,
-            'CODE'=>$this->CODE,
+            'code'=>$this->code,
             'product_id'=>$this->product_id,
-            'LABEL'=>$this->LABEL,
+            'label'=>$this->label,
             'qty'=>$this->qty,
             'methods_units_id'=>$this->methods_units_id,
             'selling_price'=>$this->selling_price,
@@ -130,9 +130,9 @@ class QuoteLine extends Component
         $Line = Quotelines::findOrFail($id);
         $this->quote_lines_id = $id;
         $this->ORDRE = $Line->ORDRE;
-        $this->CODE = $Line->CODE;
+        $this->code = $Line->code;
         $this->product_id = $Line->product_id;
-        $this->LABEL = $Line->LABEL;
+        $this->label = $Line->label;
         $this->qty = $Line->qty;
         $this->methods_units_id = $Line->methods_units_id;
         $this->selling_price = $Line->selling_price;
@@ -149,9 +149,9 @@ class QuoteLine extends Component
         // Update line
         Quotelines::find($this->quote_lines_id)->fill([
             'ORDRE'=>$this->ORDRE,
-            'CODE'=>$this->CODE,
+            'code'=>$this->code,
             'product_id'=>$this->product_id,
-            'LABEL'=>$this->LABEL,
+            'label'=>$this->label,
             'qty'=>$this->qty,
             'methods_units_id'=>$this->methods_units_id,
             'selling_price'=>$this->selling_price,

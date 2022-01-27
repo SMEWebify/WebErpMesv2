@@ -15,11 +15,11 @@ class CreateAccountingPaymentConditionsTable extends Migration
     {
         Schema::create('accounting_payment_conditions', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
-			$table->integer('NUMBER_OF_MONTH');
-			$table->integer('NUMBER_OF_DAY');
-			$table->integer('MONTH_END');
+            $table->string('code');
+			$table->string('label');
+			$table->integer('number_of_month');
+			$table->integer('number_of_day');
+			$table->integer('month_end');
             $table->timestamps();
         });
     }

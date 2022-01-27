@@ -51,12 +51,12 @@
                             <div class="col-12">
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="NAME">Name of company</label>
+                                        <label for="name">Name of company</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-building"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" name="NAME"  id="NAME" value="{{ $Factory->NAME }}" placeholder="Name of company">
+                                            <input type="text" class="form-control" name="name"  id="name" value="{{ $Factory->name }}" placeholder="Name of company">
                                         </div>
                                     </div>
                                 </div>
@@ -75,31 +75,31 @@
                                 <hr>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label for="ZIPCODE">Zip code</label>
+                                        <label for="zipcode">Zip code</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-map"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" name="ZIPCODE"  id="ZIPCODE"  value="{{ $Factory->ZIPCODE }}"  placeholder="Zip code">
+                                            <input type="text" class="form-control" name="zipcode"  id="zipcode"  value="{{ $Factory->zipcode }}"  placeholder="Zip code">
                                         </div>
 
                                     </div>
                                     <div class="col-4">
-                                        <label for="CITY">City</label>
+                                        <label for="city">City</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-city"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" name="CITY"  id="CITY" value="{{ $Factory->CITY }}"  placeholder="City">
+                                            <input type="text" class="form-control" name="city"  id="city" value="{{ $Factory->city }}"  placeholder="City">
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <label for="COUNTRY">Country</label>
+                                        <label for="country">Country</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-globe-africa"></i></span>
                                             </div>
-                                            <select id="COUNTRY" name="COUNTRY" class="form-control">
+                                            <select id="country" name="country" class="form-control">
                                                 <option value="Afghanistan">Afghanistan</option>
                                                 <option value="Åland Islands">Åland Islands</option>
                                                 <option value="Albania">Albania</option>
@@ -360,12 +360,12 @@
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <label for="MAIL">E-mail</label>
+                                        <label for="mail">E-mail</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">@</span>
                                             </div>
-                                            <input type="email" class="form-control" name="MAIL"  id="MAIL" value="{{ $Factory->MAIL }}"  placeholder="E-mail">
+                                            <input type="email" class="form-control" name="mail"  id="mail" value="{{ $Factory->mail }}"  placeholder="E-mail">
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -459,7 +459,7 @@
                                                     <select class="form-control"  name="accounting_vats_id" id="accounting_vats_id">
                                                         <option value="" >Select VAT</option>
                                                         @foreach ($VATSelect as $item)
-                                                        <option value="{{ $item->id }}" @if($item->id == $Factory->accounting_vats_id ) Selected @endif >{{ $item->LABEL }}</option>
+                                                        <option value="{{ $item->id }}" @if($item->id == $Factory->accounting_vats_id ) Selected @endif >{{ $item->label }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -499,8 +499,8 @@
                                                     <span class="input-group-text"><i class="far fa-image"></i></span>
                                                 </div>
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="PICTURE">
-                                                    <label class="custom-file-label" for="PICTURE">Choose file</label>
+                                                    <input type="file" class="custom-file-input" id="picture">
+                                                    <label class="custom-file-label" for="picture">Choose file</label>
                                                 </div>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Upload</span>

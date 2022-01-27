@@ -18,7 +18,7 @@ class AccountingController extends Controller
         $PaymentConditions = AccountingPaymentConditions::All();
         $PaymentMethods = AccountingPaymentMethod::All();
         $VATs = AccountingVat::All();
-        $VATSelect = AccountingVat::select('id', 'LABEL')->orderBy('LABEL')->get();
+        $VATSelect = AccountingVat::select('id', 'label')->orderBy('label')->get();
 
         return view('accounting/accounting-index', [
             'Allocations' => $Allocations,

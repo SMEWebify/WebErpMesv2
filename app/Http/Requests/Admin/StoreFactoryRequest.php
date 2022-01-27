@@ -25,11 +25,11 @@ class StoreFactoryRequest extends FormRequest
     {
         return [
             //
-            'NAME' =>'required', 
+            'name' =>'required', 
             'ADDRESS' =>'required',
-            'CITY' =>'required',
-            'COUNTRY' =>'required',
-            'MAIL' =>'required',
+            'city' =>'required',
+            'country' =>'required',
+            'mail' =>'required',
             'accounting_vats_id' =>'required',
             'curency' =>'required',
             'add_day_validity_quote' =>'required',

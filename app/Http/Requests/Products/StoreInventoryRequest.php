@@ -25,8 +25,8 @@ class StoreInventoryRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:inventories',
-            'LABEL'=>'required',
+            'code' =>'required|unique:inventories',
+            'label'=>'required',
         ];
     }
 }

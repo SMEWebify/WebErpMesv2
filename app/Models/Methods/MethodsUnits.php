@@ -12,7 +12,7 @@ class MethodsUnits extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL',  'TYPE'];
+    protected $fillable = ['code',  'label',  'type'];
 
     public function Product()
     {

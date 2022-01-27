@@ -61,18 +61,18 @@ class TaskController extends Controller
                                             'products_id',
                                             'methods_services_id', 
                                             'component_id',
-                                            'SETING_TIME', 
-                                            'UNIT_TIME', 
-                                            'REMAINING_TIME', 
-                                            'ADVANCEMENT', 
+                                            'seting_time', 
+                                            'unit_time', 
+                                            'remaining_time', 
+                                            'advancement', 
                                             'status_id', 
-                                            'TYPE',
-                                            'DELAY',
+                                            'type',
+                                            'delay',
                                             'qty',
                                             'qty_init',
                                             'qty_aviable',
-                                            'UNIT_COST',
-                                            'UNIT_PRICE',
+                                            'unit_cost',
+                                            'unit_price',
                                             'methods_units_id',
                                             'x_size', 
                                             'y_size', 
@@ -126,12 +126,12 @@ class TaskController extends Controller
         $task->products_id=$request->products_id;
         $task->methods_services_id=$request->methods_services_id;
         $task->component_id=$request->component_id;
-        $task->SETING_TIME=$request->SETING_TIME;
-        $task->UNIT_TIME=$request->UNIT_TIME;
-        $task->TYPE=$request->TYPE;
+        $task->seting_time=$request->seting_time;
+        $task->unit_time=$request->unit_time;
+        $task->type=$request->type;
         $task->qty=$request->qty;
-        $task->UNIT_COST=$request->UNIT_COST;
-        $task->UNIT_PRICE=$request->UNIT_PRICE;
+        $task->unit_cost=$request->unit_cost;
+        $task->unit_price=$request->unit_price;
         $task->methods_units_id=$request->methods_units_id;
         $task->save();
         

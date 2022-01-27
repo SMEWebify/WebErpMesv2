@@ -15,8 +15,8 @@ class PurchasesQuotationIndex extends Component
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
 
-    public $CODE; 
-    public $LABEL; 
+    public $code; 
+    public $label; 
     public $customer_reference;
     public $companies_id; 
     public $companies_contacts_id;   
@@ -47,7 +47,7 @@ class PurchasesQuotationIndex extends Component
 
     public function render()
     {
-        $PurchasesQuotation = PurchasesQuotation::withCount('PurchaseQuotationLines')->where('LABEL','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $PurchasesQuotation = PurchasesQuotation::withCount('PurchaseQuotationLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         return view('livewire.purchases-quotation-index', [
             'PurchasesQuotationList' => $PurchasesQuotation,
         ]);

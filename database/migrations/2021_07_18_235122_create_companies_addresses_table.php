@@ -18,13 +18,13 @@ class CreateCompaniesAddressesTable extends Migration {
 			$table->id();
 			$table->integer('companies_id');
 			$table->integer('ORDRE');
-			$table->string('LABEL');
-			$table->string('ADRESS')->nullable();
-			$table->string('ZIPCODE')->nullable();
-			$table->string('CITY')->nullable();
-			$table->string('COUNTRY')->nullable();
-			$table->string('NUMBER')->nullable();
-			$table->string('MAIL')->nullable();
+			$table->string('label');
+			$table->string('adress')->nullable();
+			$table->string('zipcode')->nullable();
+			$table->string('city')->nullable();
+			$table->string('country')->nullable();
+			$table->string('number')->nullable();
+			$table->string('mail')->nullable();
 			$table->timestamps();
 });
 	}

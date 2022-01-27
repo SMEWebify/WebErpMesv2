@@ -45,9 +45,9 @@ class DeliverysController extends Controller
 
     public function show(Deliverys $id)
     {
-        $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'FIRST_NAME','NAME')->get();
+        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
@@ -74,7 +74,7 @@ class DeliverysController extends Controller
     public function update(UpdateDeliveryRequest $request)
     {
         $Delivery = Deliverys::find($request->id);
-        $Delivery->LABEL=$request->LABEL;
+        $Delivery->label=$request->label;
         $Delivery->statu=$request->statu;
         $Delivery->companies_id=$request->companies_id;
         $Delivery->companies_contacts_id=$request->companies_contacts_id;

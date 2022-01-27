@@ -36,7 +36,7 @@
                         @error('title') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="col-4">
-                        <label for="LABEL">Order :</label>
+                        <label for="label">Order :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>

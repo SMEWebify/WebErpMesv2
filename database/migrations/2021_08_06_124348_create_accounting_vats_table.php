@@ -15,9 +15,9 @@ class CreateAccountingVatsTable extends Migration
     {
         Schema::create('accounting_vats', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
-			$table->decimal('RATE', 10, 3);
+            $table->string('code');
+			$table->string('label');
+			$table->decimal('rate', 10, 3);
             $table->timestamps(); 
         });
     }

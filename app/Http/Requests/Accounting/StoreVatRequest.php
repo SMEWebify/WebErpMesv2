@@ -25,9 +25,9 @@ class StoreVatRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:accounting_vats',
-            'LABEL'=>'required',
-            'RATE'=>'required|unique:accounting_vats',
+            'code' =>'required|unique:accounting_vats',
+            'label'=>'required',
+            'rate'=>'required|unique:accounting_vats',
         ];
     }
 }

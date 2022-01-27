@@ -11,17 +11,17 @@ class QualityDerogationController extends Controller
     //
     public function store(StoreQualityDerogationRequest $request)
     {
-        $Derogation =  QualityDerogation::create($request->only('CODE',
-                                                                'LABEL', 
+        $Derogation =  QualityDerogation::create($request->only('code',
+                                                                'label', 
                                                                 'statu',
-                                                                'TYPE', 
+                                                                'type', 
                                                                 'user_id',
                                                                 'service_id',  
-                                                                'PB_DESCP',  
-                                                                'PROPOSAL', 
-                                                                'REPLY', 
+                                                                'pb_descp',  
+                                                                'proposal', 
+                                                                'reply', 
                                                                 'quality_non_conformitie_id',  
-                                                                'DECISION'));
+                                                                'decision'));
         return redirect()->route('quality')->with('success', 'Successfully created derogation.');
     }
 }

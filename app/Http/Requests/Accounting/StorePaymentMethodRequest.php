@@ -25,8 +25,8 @@ class StorePaymentMethodRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:accounting_payment_methods',
-            'LABEL'=>'required',
+            'code' =>'required|unique:accounting_payment_methods',
+            'label'=>'required',
         ];
     }
 }

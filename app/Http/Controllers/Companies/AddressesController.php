@@ -19,7 +19,7 @@ class AddressesController extends Controller
 
     public function store(StoreAdressRequest $request)
     {
-        $adress = CompaniesAddresses::create($request->only('companies_id', 'ORDRE', 'LABEL', 'ADRESS','ZIPCODE','CITY','COUNTRY','NUMBER','MAIL'));
+        $adress = CompaniesAddresses::create($request->only('companies_id', 'ORDRE', 'label', 'adress','zipcode','city','country','number','mail'));
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully created adress');
     }
 
@@ -27,13 +27,13 @@ class AddressesController extends Controller
     {
         $adress = CompaniesAddresses::find($request->id);
         $adress->ORDRE=$request->ORDRE;
-        $adress->LABEL=$request->LABEL;
-        $adress->ADRESS=$request->ADRESS;
-        $adress->ZIPCODE=$request->ZIPCODE;
-        $adress->CITY=$request->CITY;
-        $adress->COUNTRY=$request->COUNTRY;
-        $adress->NUMBER=$request->NUMBER;
-        $adress->MAIL=$request->MAIL;
+        $adress->label=$request->label;
+        $adress->adress=$request->adress;
+        $adress->zipcode=$request->zipcode;
+        $adress->city=$request->city;
+        $adress->country=$request->country;
+        $adress->number=$request->number;
+        $adress->mail=$request->mail;
         $adress->save();
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully updated adress');
     }

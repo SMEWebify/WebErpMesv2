@@ -15,10 +15,10 @@ class CreateInventoriesTable extends Migration
     {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL')->nullable();
-            $table->date('START_DATE')->nullable();
-            $table->date('END_DATE')->nullable();
+            $table->string('code');
+			$table->string('label')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->integer('statu')->default(1);
             $table->timestamps();
         });

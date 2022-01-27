@@ -15,10 +15,10 @@ class CreateMethodsLocationsTable extends Migration
     {
         Schema::create('methods_locations', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
 			$table->integer('ressource_id');
-			$table->string('COLOR');
+			$table->string('color');
             $table->timestamps();
         });
     }

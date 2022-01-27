@@ -17,13 +17,13 @@ class DeliverysRequest extends Component
     //protected $paginationTheme = 'bootstrap';
 
     public $companies_id = '';
-    public $sortField = 'LABEL'; // default sorting field
+    public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
     
     public $LastDelivery = '1';
 
     public $DeliverysRequestsLineslist;
-    public $CODE, $LABEL, $user_id; 
+    public $code, $label, $user_id; 
     public $updateLines = false;
     public $CompaniesSelect = [];
     public $data = [];
@@ -33,8 +33,8 @@ class DeliverysRequest extends Component
 
     // Validation Rules
     protected $rules = [
-        'CODE' =>'required|unique:deliverys',
-        'LABEL' =>'required',
+        'code' =>'required|unique:deliverys',
+        'label' =>'required',
         'companies_id'=>'required',
         'user_id'=>'required',
         
@@ -54,15 +54,15 @@ class DeliverysRequest extends Component
     {
         $this->LastDelivery =  Deliverys::latest()->first();
         if($this->LastDelivery == Null){
-            $this->CODE = "DN-0";
-            $this->LABEL = "DN-0";
+            $this->code = "DN-0";
+            $this->label = "DN-0";
         }
         else{
-            $this->CODE = "DN-". $this->LastDelivery->id;
-            $this->LABEL = "DN-". $this->LastDelivery->id;
+            $this->code = "DN-". $this->LastDelivery->id;
+            $this->label = "DN-". $this->LastDelivery->id;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'LABEL', 'CODE')->orderBy('CODE')->get();
+        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
     }
 
     public function render()
@@ -103,8 +103,8 @@ class DeliverysRequest extends Component
         if($i>0){
             // Create delivery note
             $DeliveryCreated = Deliverys::create([
-                                                'CODE'=>$this->CODE,  
-                                                'LABEL'=>$this->LABEL, 
+                                                'code'=>$this->code,  
+                                                'label'=>$this->label, 
                                                 'companies_id'=>$this->companies_id,   
                                                 'user_id'=>$this->user_id, 
             ]);

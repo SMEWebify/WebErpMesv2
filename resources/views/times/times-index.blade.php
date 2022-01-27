@@ -75,7 +75,7 @@
                         </td>
                         <td>{{ $TimesAbsence->statu }}</td>
                         <td>{{ $TimesAbsence->START_DATE }}</td>
-                        <td>{{ $TimesAbsence->END_DATE }}</td>
+                        <td>{{ $TimesAbsence->end_date }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -136,8 +136,8 @@
                       <input type="date" class="form-control" name="START_DATE"  id="START_DATE" >
                     </div>
                     <div class="form-group">
-                      <label for="END_DATE">End date</label>
-                      <input type="date" class="form-control" name="END_DATE"  id="END_DATE" >
+                      <label for="end_date">End date</label>
+                      <input type="date" class="form-control" name="end_date"  id="end_date" >
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
@@ -168,8 +168,8 @@
                     <thead>
                       <tr>
                         <th>Fixed</th>
-                        <th>DATE</th>
-                        <th>LABEL</th>
+                        <th>date</th>
+                        <th>label</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -177,11 +177,11 @@
                       @forelse ($TimesBanckHolidays as $TimesBanckHoliday)
                       <tr>
                         <td>
-                          @if($TimesBanckHoliday->FIXED  == 1)Yes @endif
-                          @if($TimesBanckHoliday->FIXED  == 2)No @endif
+                          @if($TimesBanckHoliday->fixed  == 1)Yes @endif
+                          @if($TimesBanckHoliday->fixed  == 2)No @endif
                         </td>
-                        <td>{{ $TimesBanckHoliday->DATE }}</td>
-                        <td>{{ $TimesBanckHoliday->LABEL }}</td>
+                        <td>{{ $TimesBanckHoliday->date }}</td>
+                        <td>{{ $TimesBanckHoliday->label }}</td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
                             <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
@@ -201,8 +201,8 @@
                     <tfoot>
                       <tr>
                         <th>Fixed</th>
-                        <th>DATE</th>
-                        <th>LABEL</th>
+                        <th>date</th>
+                        <th>label</th>
                         <th></th>
                       </tr>
                     </tfoot>
@@ -218,24 +218,24 @@
                     @csrf
                     
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="FIXED">Fixed</label>
-                      <select class="form-control" name="FIXED" id="FIXED">
+                      <label for="fixed">Fixed</label>
+                      <select class="form-control" name="fixed" id="fixed">
                           <option value="2">No</option>
                           <option value="1">Yes</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="DATE">Date</label>
-                      <input type="date" class="form-control" name="DATE"  id="DATE" >
+                      <label for="date">Date</label>
+                      <input type="date" class="form-control" name="date"  id="date" >
                     </div>
                     <div class="card-footer">
                       <div class="offset-sm-2 col-sm-10">
@@ -275,15 +275,15 @@
                     <tbody>
                       @forelse ($TimesImproductTimes as $TimesImproductTime)
                       <tr>
-                        <td>{{ $TimesImproductTime->LABEL }}</td>
-                        <td>{{ $TimesImproductTime->MachineEvent['LABEL'] }}</td>
+                        <td>{{ $TimesImproductTime->label }}</td>
+                        <td>{{ $TimesImproductTime->MachineEvent['label'] }}</td>
                         <td>
-                          @if($TimesImproductTime->RESOURCE_REQUIRED  == 1)Yes @endif
-                          @if($TimesImproductTime->RESOURCE_REQUIRED  == 2)No @endif
+                          @if($TimesImproductTime->resources_required  == 1)Yes @endif
+                          @if($TimesImproductTime->resources_required  == 2)No @endif
                         </td>
                         <td>
-                          @if($TimesImproductTime->MASK_TIME  == 1)Yes @endif
-                          @if($TimesImproductTime->MASK_TIME  == 2)No @endif
+                          @if($TimesImproductTime->mask_time  == 1)Yes @endif
+                          @if($TimesImproductTime->mask_time  == 2)No @endif
                         </td>
                         <td class="text-right py-0 align-middle">
                           <div class="btn-group btn-group-sm">
@@ -321,37 +321,37 @@
                   <form  method="POST" action="{{ route('times.improducttime.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="MACHINE_statuS">Machine status</label>
                       <select class="form-control" name="MACHINE_statuS" id="MACHINE_statuS">
                           @foreach ($TimesMachineEventsSelect as $item)
-                          <option value="{{ $item->id }}">{{ $item->LABEL }}</option>
+                          <option value="{{ $item->id }}">{{ $item->label }}</option>
                           @endforeach
                         </select>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="RESOURCE_REQUIRED">Ressource required</label>
-                      <select class="form-control" name="RESOURCE_REQUIRED" id="RESOURCE_REQUIRED">
+                      <label for="resources_required">Ressource required</label>
+                      <select class="form-control" name="resources_required" id="resources_required">
                           <option value="2">No</option>
                           <option value="1">Yes</option>
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="MASK_TIME">Mask time</label>
+                      <label for="mask_time">Mask time</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                         </div>
-                        <select class="form-control" name="MASK_TIME" id="MASK_TIME">
+                        <select class="form-control" name="mask_time" id="mask_time">
                             <option value="2">No</option>
                             <option value="1">Yes</option>
                         </select>
@@ -397,14 +397,14 @@
                     <tbody>
                       @forelse ($TimesMachineEvents as $TimesMachineEvent)
                       <tr>
-                        <td>{{ $TimesMachineEvent->CODE }}</td>
+                        <td>{{ $TimesMachineEvent->code }}</td>
                         <td>{{ $TimesMachineEvent->ORDRE }}</td>
-                        <td>{{ $TimesMachineEvent->LABEL }}</td>
+                        <td>{{ $TimesMachineEvent->label }}</td>
                         <td>
-                          @if($TimesMachineEvent->MASK_TIME  == 1)Yes @endif
-                          @if($TimesMachineEvent->MASK_TIME  == 2)No @endif
+                          @if($TimesMachineEvent->mask_time  == 1)Yes @endif
+                          @if($TimesMachineEvent->mask_time  == 2)No @endif
                         </td>
-                        <td>{{ $TimesMachineEvent->COLOR }}</td>
+                        <td>{{ $TimesMachineEvent->color }}</td>
                         <td>
                           @if($TimesMachineEvent->ETAT  == 1)Stop @endif
                           @if($TimesMachineEvent->ETAT  == 2)Setup @endif
@@ -449,12 +449,12 @@
                   <form  method="POST" action="{{ route('times.machineevent.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="CODE">External ID</label>
+                      <label for="code">External ID</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID">
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
                       </div>
                     </div>
                     <div class="form-group">
@@ -467,29 +467,29 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="LABEL">Label</label>
+                      <label for="label">Label</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="MASK_TIME">Mask time</label>
+                      <label for="mask_time">Mask time</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                         </div>
-                        <select class="form-control" name="MASK_TIME" id="MASK_TIME">
+                        <select class="form-control" name="mask_time" id="mask_time">
                             <option value="2">No</option>
                             <option value="1">Yes</option>
                         </select>
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="COLOR">Color</label>
-                      <input type="color" class="form-control"  name="COLOR" id="COLOR" >
+                      <label for="color">Color</label>
+                      <input type="color" class="form-control"  name="color" id="color" >
                     </div>
                     <div class="form-group">
                       <label for="ETAT">Status</label>

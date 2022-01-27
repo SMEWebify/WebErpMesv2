@@ -25,10 +25,10 @@
                     <select class="methods_services_id form-control" name="methods_services_id" id="methods_services_id">
                       <option>Select Services</option>
                       @foreach ($TechServicesSelect as $item)
-                      <option value="{{ $item->id }}"  data-type="{{ $item->TYPE }}" data-txt="{{ $item->LABEL }}">{{ $item->CODE }}</option>
+                      <option value="{{ $item->id }}"  data-type="{{ $item->type }}" data-txt="{{ $item->label }}">{{ $item->code }}</option>
                       @endforeach
                     </select>
-                    <input type="hidden" class="form-control" name="TYPE" id="TYPE" value="{{ $TechProduct->TYPE }}">
+                    <input type="hidden" class="form-control" name="type" id="type" value="{{ $TechProduct->type }}">
                   </div>
                 </div>
                 <div class="col-4">
@@ -37,45 +37,45 @@
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-tags"></i></span>
                       </div>
-                    <input type="text" class="form-control" name="label"  id="LABEL" placeholder="Label">
+                    <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                     </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-3">
-                  <label for="SETING_TIME">Setting time</label>
+                  <label for="seting_time">Setting time</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
                     </div>
-                    <input type="number" class="form-control" name="SETING_TIME"  id="SETING_TIME" placeholder="Setting time" step=".001">
+                    <input type="number" class="form-control" name="seting_time"  id="seting_time" placeholder="Setting time" step=".001">
                   </div>
                 </div>
                 <div class="col-3">
-                  <label for="UNIT_TIME">Unit time</label>
+                  <label for="unit_time">Unit time</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
                     </div>
-                    <input type="number" class="form-control" name="UNIT_TIME"  id="UNIT_TIME" placeholder="Unit time" step=".001">
+                    <input type="number" class="form-control" name="unit_time"  id="unit_time" placeholder="Unit time" step=".001">
                   </div>
                 </div>
                 <div class="col-3">
-                  <label for="UNIT_COST">Unit cost</label>
+                  <label for="unit_cost">Unit cost</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">{{ $Factory->curency }}</span>
                     </div>
-                    <input type="number" class="form-control" name="UNIT_COST"  id="UNIT_COST" placeholder="Unit cost" step=".001">
+                    <input type="number" class="form-control" name="unit_cost"  id="unit_cost" placeholder="Unit cost" step=".001">
                   </div>
                 </div>
                 <div class="col-3">
-                  <label for="UNIT_PRICE">Unit price</label>
+                  <label for="unit_price">Unit price</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">{{ $Factory->curency }}</span>
                     </div>
-                    <input type="number" class="form-control" name="UNIT_PRICE"  id="UNIT_PRICE" placeholder="Unit time" step=".001">
+                    <input type="number" class="form-control" name="unit_price"  id="unit_price" placeholder="Unit time" step=".001">
                   </div>
                 </div>
               </div>

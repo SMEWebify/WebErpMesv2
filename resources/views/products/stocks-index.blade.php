@@ -40,8 +40,8 @@
                                 <tbody>
                                   @forelse ($stocks as $stock)
                                   <tr>
-                                    <td>{{ $stock->CODE }}</td>
-                                    <td>{{ $stock->LABEL }}</td>
+                                    <td>{{ $stock->code }}</td>
+                                    <td>{{ $stock->label }}</td>
                                     <td>{{ $stock->GetPrettyCreatedAttribute() }}</td>
                                     <td class="text-right py-0 align-middle">
                                       <div class="btn-group btn-group-sm">
@@ -81,21 +81,21 @@
                               <form  method="POST" action="{{ route('products.stock.store') }}" class="form-horizontal">
                                 @csrf
                                 <div class="form-group">
-                                  <label for="CODE">External ID</label>
+                                  <label for="code">External ID</label>
                                   <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="STOCK-{{ $LastStock->id ?? '0' }}">
+                                    <input type="text" class="form-control" name="code" id="code" placeholder="External ID" value="STOCK-{{ $LastStock->id ?? '0' }}">
                                   </div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="LABEL">Description</label>
+                                  <label for="label">Description</label>
                                   <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                     </div>
-                                   <input type="text" class="form-control" name="LABEL" id="LABEL" placeholder="Description">
+                                   <input type="text" class="form-control" name="label" id="label" placeholder="Description">
                                   </div>
                                 </div>
                                 <div class="form-group">

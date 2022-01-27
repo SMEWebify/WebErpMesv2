@@ -12,7 +12,7 @@ class StockLocationProductsController extends Controller
     //
     public function store(StoreStockLocationProductsRequest $request)
     {
-        $StockLocationProduct = StockLocationProducts::create($request->only('CODE',
+        $StockLocationProduct = StockLocationProducts::create($request->only('code',
                                                                 'user_id', 
                                                                 'stock_locations_id',
                                                                 'products_id', 

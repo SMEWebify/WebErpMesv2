@@ -10,7 +10,7 @@ class MethodsFamilies extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL',  'service_id'];
+    protected $fillable = ['code',  'label',  'service_id'];
 
     public function service()
     {

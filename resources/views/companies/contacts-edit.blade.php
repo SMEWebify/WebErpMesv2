@@ -3,7 +3,7 @@
 @section('title', 'Contact')
 
 @section('content_header')
-    <h1>{{ $contact->FIRST_NAME }} {{ $contact->NAME }}</h1>
+    <h1>{{ $contact->first_name }} {{ $contact->name }}</h1>
 @stop
 
 @section('content')
@@ -39,44 +39,44 @@
           </div>
         </div>
         <div class="col-5">
-          <label for="CIVILITY">Civility</label>
-          <select class="form-control" name="CIVILITY">
-            <option value="Miss" @if( $contact->CIVILITY =="Miss") Selected @endIf >Miss</option>
-            <option value="Ms" @if( $contact->CIVILITY =="Ms") Selected @endIf >Ms</option>
-            <option value="Mr" @if( $contact->CIVILITY =="Mr") Selected @endIf >Mr</option>
-            <option value="Mrs" @if( $contact->CIVILITY =="Mrs") Selected @endIf >Mrs</option>
+          <label for="civility">Civility</label>
+          <select class="form-control" name="civility">
+            <option value="Miss" @if( $contact->civility =="Miss") Selected @endIf >Miss</option>
+            <option value="Ms" @if( $contact->civility =="Ms") Selected @endIf >Ms</option>
+            <option value="Mr" @if( $contact->civility =="Mr") Selected @endIf >Mr</option>
+            <option value="Mrs" @if( $contact->civility =="Mrs") Selected @endIf >Mrs</option>
           </select>
         </div>
       </div>
       <div class="row">
         <div class="col-5">
-          <label for="FIRST_NAME">First Name</label>
-          <input type="text" class="form-control" name="FIRST_NAME"  id="FIRST_NAME" placeholder="First Name" value="{{ $contact->FIRST_NAME }}">
+          <label for="first_name">First Name</label>
+          <input type="text" class="form-control" name="first_name"  id="first_name" placeholder="First Name" value="{{ $contact->first_name }}">
         </div>
         <div class="col-5">
-          <label for="NAME">Name</label>
-          <input type="text" class="form-control" name="NAME"  id="NAME" placeholder="Name" value="{{ $contact->NAME }}">
+          <label for="name">Name</label>
+          <input type="text" class="form-control" name="name"  id="name" placeholder="Name" value="{{ $contact->name }}">
         </div>
       </div>
       <hr>
       <div class="form-group">
-        <label for="FUNCTION">Function</label>
-        <input type="text" class="form-control" name="FUNCTION"  id="FUNCTION" placeholder="Function" value="{{ $contact->FUNCTION }}">
+        <label for="function">Function</label>
+        <input type="text" class="form-control" name="function"  id="function" placeholder="Function" value="{{ $contact->function }}">
       </div>
       <hr>
       <div class="row">
         <div class="col-5">
-          <label for="NUMBER">Phone number</label>
-          <input type="text" class="form-control" name="NUMBER"  id="NUMBER" placeholder="Phone number"  value="{{ $contact->NUMBER }}">
+          <label for="number">Phone number</label>
+          <input type="text" class="form-control" name="number"  id="number" placeholder="Phone number"  value="{{ $contact->number }}">
         </div>
         <div class="col-5">
-          <label for="MOBILE">Mobile phone number</label>
-          <input type="text" class="form-control" name="MOBILE"  id="MOBILE" placeholder="Mobile phone number"  value="{{ $contact->MOBILE }}">
+          <label for="mobile">Mobile phone number</label>
+          <input type="text" class="form-control" name="mobile"  id="mobile" placeholder="Mobile phone number"  value="{{ $contact->mobile }}">
         </div>
       </div>
       <div class="form-group">
-        <label for="MAIL">E-mail</label>
-        <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail"  value="{{ $contact->MAIL }}">
+        <label for="mail">E-mail</label>
+        <input type="email" class="form-control" name="mail"  id="mail" placeholder="E-mail"  value="{{ $contact->mail }}">
       </div>
     </div>
     <!-- /.card-body -->

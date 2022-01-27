@@ -11,7 +11,7 @@ class UnitsController extends Controller
     //
     public function store(StoreUnitRequest $request)
     {
-        $Unit = MethodsUnits::create($request->only('CODE', 'LABEL','TYPE'));
+        $Unit = MethodsUnits::create($request->only('code', 'label','type'));
         return redirect()->route('methods')->with('success', 'Successfully created unit.');
     }
 }

@@ -25,8 +25,8 @@ class StoreBanckHolidayRequest extends FormRequest
     {
         return [
             //
-            'DATE' =>'required|unique:times_banck_holidays',
-            'LABEL'=>'required',
+            'date' =>'required|unique:times_banck_holidays',
+            'label'=>'required',
         ];
     }
 }

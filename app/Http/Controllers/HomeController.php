@@ -23,7 +23,7 @@ class HomeController extends Controller
         //use for liste of tasks
         $ServiceGoals = MethodsServices::withCount('Tasks')->orderBy('ORDRE')->get();
         $Tasks = DB::table('tasks')
-                    ->select('tasks.id','statuses.title', 'methods_services.id as methods_id', 'methods_services.LABEL', DB::raw('count(*) as total_task'))
+                    ->select('tasks.id','statuses.title', 'methods_services.id as methods_id', 'methods_services.label', DB::raw('count(*) as total_task'))
                     ->join('statuses', 'tasks.status_id', '=', 'statuses.id')
                     ->join('methods_services', 'tasks.methods_services_id', '=', 'methods_services.id')
                     ->groupBy('methods_services_id')
@@ -79,8 +79,8 @@ class HomeController extends Controller
                             ->get();
         
         // Display total customers, suppliers, quotes, orders, NC 
-        $data['customers_count'] = DB::table('companies')->where('statu_CLIENT', 2)->count();
-        $data['suppliers_count'] = DB::table('companies')->where('statu_FOUR', 2)->count();
+        $data['customers_count'] = DB::table('companies')->where('statu_customer', '=', '2')->count();
+        $data['suppliers_count'] = DB::table('companies')->where('statu_supplier', '=', '2')->count();
         $data['quotes_count'] = DB::table('quotes')->count();
         $data['orders_count'] = DB::table('orders')->count();
         $data['quality_non_conformities_count'] = DB::table('quality_non_conformities')->count();

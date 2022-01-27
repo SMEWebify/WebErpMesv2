@@ -30,28 +30,28 @@
                     <div class="col-sm-4 invoice-col">
                       From
                       <address>
-                        <strong>{{ $Factory->NAME }}</strong><br>
+                        <strong>{{ $Factory->name }}</strong><br>
                         {{ $Factory->ADDRESS }}<br>
-                        {{ $Factory->ZIPCODE }}, {{ $Factory->CITY }}<br>
+                        {{ $Factory->zipcode }}, {{ $Factory->city }}<br>
                         Phone: {{ $Factory->PHONE_NUMBER }}<br>
-                        Email: {{ $Factory->MAIL }}
+                        Email: {{ $Factory->mail }}
                       </address>
                     </div>
                     <!-- /.col -->
                     <div class="col-sm-4 invoice-col">
                       To
                       <address>
-                        <strong>{{ $Quote->companie['LABEL'] }}</strong> - <strong>{{ $Quote->contact['CIVILITY'] }} - {{ $Quote->contact['FIRST_NAME'] }}  {{ $Quote->contact['NAME'] }}</strong><br>
-                        {{ $Quote->adresse['ADRESS'] }}<br>
-                        {{ $Quote->adresse['ZIPCODE'] }}, {{ $Quote->adresse['CITY'] }}<br>
-                        {{ $Quote->adresse['COUNTRY'] }}<br>
-                        Phone: {{ $Quote->contact['NUMBER'] }}<br>
-                        Email: {{ $Quote->contact['MAIL'] }}
+                        <strong>{{ $Quote->companie['label'] }}</strong> - <strong>{{ $Quote->contact['civility'] }} - {{ $Quote->contact['first_name'] }}  {{ $Quote->contact['name'] }}</strong><br>
+                        {{ $Quote->adresse['adress'] }}<br>
+                        {{ $Quote->adresse['zipcode'] }}, {{ $Quote->adresse['city'] }}<br>
+                        {{ $Quote->adresse['country'] }}<br>
+                        Phone: {{ $Quote->contact['number'] }}<br>
+                        Email: {{ $Quote->contact['mail'] }}
                       </address>
                     </div>
                     <!-- /.col -->
                     <div class="col-sm-4 invoice-col">
-                      <b>Quote #{{  $Quote->CODE }}</b><br>
+                      <b>Quote #{{  $Quote->code }}</b><br>
                       <b>Your Ref:</b> {{  $Quote->customer_reference }}<br>
                     </div>
                     <!-- /.col -->
@@ -77,13 +77,13 @@
                         <tbody>
                             @forelse($Quote->QuoteLines as $QuoteLine)
                             <tr>
-                              <td>{{ $QuoteLine->CODE }}</td>
-                              <td>{{ $QuoteLine->LABEL }}</td>
+                              <td>{{ $QuoteLine->code }}</td>
+                              <td>{{ $QuoteLine->label }}</td>
                               <td>{{ $QuoteLine->qty }}</td>
-                              <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
+                              <td>{{ $QuoteLine->Unit['label'] }}</td>
                               <td>{{ $QuoteLine->selling_price }}  {{ $Factory->curency }}</td>
                               <td>{{ $QuoteLine->discount }} %</td>
-                              <td>{{ $QuoteLine->VAT['RATE'] }} %</td>
+                              <td>{{ $QuoteLine->VAT['rate'] }} %</td>
                               @if($QuoteLine->delivery_date )
                               <td>{{ $QuoteLine->delivery_date }}</td>
                               @else
@@ -113,8 +113,8 @@
                   <div class="row">
                     <!-- accepted payments column -->
                     <div class="col-6">
-                      <p class="lead"><strong>Payment Methods:</strong> {{ $Quote->payment_condition['LABEL'] }}</p>
-                      <p class="lead"><strong>Payment Conditions:</strong> {{ $Quote->payment_method['LABEL'] }}</p>
+                      <p class="lead"><strong>Payment Methods:</strong> {{ $Quote->payment_condition['label'] }}</p>
+                      <p class="lead"><strong>Payment Conditions:</strong> {{ $Quote->payment_method['label'] }}</p>
                       @if($Quote->comment)
                         <p class="lead"><strong>Comment :</strong></p>
                         <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">

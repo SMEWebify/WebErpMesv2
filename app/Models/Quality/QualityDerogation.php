@@ -11,17 +11,17 @@ class QualityDerogation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',
-    'LABEL', 
+    protected $fillable = ['code',
+    'label', 
     'statu',
-    'TYPE', 
+    'type', 
     'user_id',
     'service_id',  
-    'PB_DESCP',  
-    'PROPOSAL', 
-    'REPLY', 
+    'pb_descp',  
+    'proposal', 
+    'reply', 
     'quality_non_conformitie_id',  
-    'DECISION'];
+    'decision'];
 
     public function UserManagement()
     {

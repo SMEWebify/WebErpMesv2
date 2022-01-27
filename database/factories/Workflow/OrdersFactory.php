@@ -28,12 +28,12 @@ class OrdersFactory extends Factory
      */
     public function definition()
     {
-        $CODE = $this->faker->unique()->numerify('OR-####');
+        $code = $this->faker->unique()->numerify('OR-####');
 
         return [
             //
-            'CODE' => $this->$CODE,
-			'LABEL' => $this->$CODE,
+            'code' => $this->$code,
+			'label' => $this->$code,
 			'customer_reference' => $this->faker->word,
 			'companies_id' => $this->faker->factory(Companies::class),
 			'companies_contacts_id' => $this->faker->factory(CompaniesContacts::class),

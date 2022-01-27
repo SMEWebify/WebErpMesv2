@@ -15,8 +15,8 @@ class CreateMethodsFamiliesTable extends Migration
     {
         Schema::create('methods_families', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
 			$table->integer('service_id');
             $table->timestamps();
         });

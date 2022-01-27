@@ -15,12 +15,14 @@ class CreateDeliverysTable extends Migration
     {
         Schema::create('deliverys', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
 			$table->integer('companies_id');
 			$table->integer('companies_contacts_id');
 			$table->integer('companies_addresses_id');
 			$table->integer('statu')->default(1);
+            #1 = In progress
+            #2 = Sent
             $table->integer('invoice_status')->default(1);
 			$table->integer('user_id');
 			$table->text('comment', 65535)->nullable();

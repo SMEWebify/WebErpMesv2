@@ -25,8 +25,8 @@ class StorePaymentConditionRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:accounting_payment_conditions',
-            'LABEL'=>'required',
+            'code' =>'required|unique:accounting_payment_conditions',
+            'label'=>'required',
         ];
     }
 }

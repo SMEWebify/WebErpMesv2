@@ -15,8 +15,8 @@ class CreateQualityCorrectionsTable extends Migration
     {
         Schema::create('quality_corrections', function (Blueprint $table) {
             $table->id();
-			$table->string('CODE');
-			$table->string('LABEL');
+			$table->string('code');
+			$table->string('label');
             $table->timestamps();
         });
     }

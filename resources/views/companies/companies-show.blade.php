@@ -3,7 +3,7 @@
 @section('title', 'Companies')
 
 @section('content_header')
-    <h1> {{ $Companie->LABEL }}</h1>
+    <h1> {{ $Companie->label }}</h1>
 @stop
 
 @section('content')
@@ -74,27 +74,27 @@
             </div>
           </div>
           @endif
-          @if($Companie->APE )
+          @if($Companie->naf_code )
           <div class="col-12 col-sm-4">
             <div class="text-muted">
-            <p class="text-sm">APE code
-              <b class="d-block">{{ $Companie->APE }}</b>
+            <p class="text-sm">naf_code code
+              <b class="d-block">{{ $Companie->naf_code }}</b>
             </p>
             </div>
           </div>
           @endif
-          @if($Companie->TVA_INTRA )
+          @if($Companie->intra_community_vat )
           <div class="col-12 col-sm-4">
             <div class="text-muted">
             <p class="text-sm">VAT number
-              <b class="d-block">{{ $Companie->TVA_INTRA }}</b>
+              <b class="d-block">{{ $Companie->intra_community_vat }}</b>
             </p>
             </div>
           </div>
           @endif
         <!-- /.div row -->
         </div>
-        @if($Companie->statu_CLIENT == 2 )
+        @if($Companie->statu_customer == 2 )
         <hr>
         <div class="row">
           <h3 class="card-title">Customer informations</h3>
@@ -105,28 +105,28 @@
           <div class="col-12 col-sm-4">
             <div class="text-muted">
               <p class="text-sm">Discount default
-                <b class="d-block">{{ $Companie->DISCOUNT }} %</b>
+                <b class="d-block">{{ $Companie->discount }} %</b>
               </p>
             </div>
           </div>
           <div class="col-12 col-sm-4">
             <div class="text-muted">
               <p class="text-sm">General Account
-                <b class="d-block">{{ $Companie->COMPTE_GEN_CLIENT }}</b>
+                <b class="d-block">{{ $Companie->account_general_customer }}</b>
               </p>
             </div>
           </div>
           <div class="col-12 col-sm-4">
             <div class="text-muted">
               <p class="text-sm">Auxiliary account
-                <b class="d-block">{{ $Companie->COMPTE_AUX_CLIENT }}</b>
+                <b class="d-block">{{ $Companie->account_auxiliary_customer }}</b>
               </p>
             </div>
           </div>
         <!-- /.div row -->
         </div>
         @endif
-        @if($Companie->statu_FOUR == 2 )
+        @if($Companie->statu_supplier == 2 )
         <hr>
         <div class="row">
           <h3 class="card-title">Supplier informations</h3>
@@ -137,21 +137,21 @@
           <div class="col-12 col-sm-4">
             <div class="text-muted">
               <p class="text-sm">General Account
-                <b class="d-block">{{ $Companie->COMPTE_GEN_FOUR }}</b>
+                <b class="d-block">{{ $Companie->account_general_supplier }}</b>
               </p>
             </div>
           </div>
           <div class="col-12 col-sm-4">
             <div class="text-muted">
               <p class="text-sm">Auxiliary account
-                <b class="d-block">{{ $Companie->COMPTE_AUX_FOUR }}</b>
+                <b class="d-block">{{ $Companie->account_auxiliary_supplier }}</b>
               </p>
             </div>
           </div>
           <div class="col-12 col-sm-4">
             <div class="text-muted">
               <p class="text-sm">Reception control
-                <b class="d-block">{{ $Companie->RECEPT_CONTROLE }} %</b>
+                <b class="d-block">{{ $Companie->recept_controle }} %</b>
               </p>
             </div>
           </div>
@@ -161,26 +161,26 @@
       <!-- /.div col-12 col-md-12 -->
       </div>
       <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-        <p class="text-muted">External ID : {{ $Companie->CODE }} </p>
+        <p class="text-muted">External ID : {{ $Companie->code }} </p>
         <hr>
         <div class="mt-4 product-share">
-          @if($Companie->WEBSITE )
-          <a href="{{ $Companie->WEBSITE }}" class="text-gray">
+          @if($Companie->website )
+          <a href="{{ $Companie->website }}" class="text-gray">
             <i class="fab fa-internet-explorer fa-2x"></i>
           </a>
           @endif
-          @if($Companie->FBSITE )
-          <a href="{{ $Companie->FBSITE }}" class="text-gray">
+          @if($Companie->fbsite )
+          <a href="{{ $Companie->fbsite }}" class="text-gray">
             <i class="fab fa-facebook-square fa-2x"></i>
           </a>
           @endif
-          @if($Companie->TWITTERSITE )
-          <a href="{{ $Companie->TWITTERSITE }}" class="text-gray">
+          @if($Companie->twittersite )
+          <a href="{{ $Companie->twittersite }}" class="text-gray">
             <i class="fab fa-twitter-square fa-2x"></i>
           </a>
           @endif
-          @if($Companie->LKDSITE )
-          <a href="{{ $Companie->LKDSITE }}" class="text-gray">
+          @if($Companie->lkdsite )
+          <a href="{{ $Companie->lkdsite }}" class="text-gray">
             <i class="fab fa-linkedin fa-2x"></i>
           </a>
           @endif
@@ -242,47 +242,47 @@
                 <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
               </div>
               <div class="col-5">
-                <label for="LABEL">Label adresse</label>
+                <label for="label">Label adresse</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Label">
+                  <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
                 </div>
               </div>
             </div>
             <hr>
             <div class="row">
               <div class="col-5">
-                <label for="ADRESS">Adress</label>
-                <input type="text" class="form-control" name="ADRESS"  id="ADRESS" placeholder="Adress">
+                <label for="adress">Adress</label>
+                <input type="text" class="form-control" name="adress"  id="adress" placeholder="Adress">
               </div>
             </div>
             <div class="row">
               <div class="col-5">
-                <label for="ZIPCODE">Zip code</label>
-                <input type="text" class="form-control" name="ZIPCODE"  id="ZIPCODE" placeholder="Zip code">
+                <label for="zipcode">Zip code</label>
+                <input type="text" class="form-control" name="zipcode"  id="zipcode" placeholder="Zip code">
               </div>
               <div class="col-5">
-                <label for="CITY">City</label>
-                <input type="text" class="form-control" name="CITY"  id="CITY" placeholder="City">
+                <label for="city">City</label>
+                <input type="text" class="form-control" name="city"  id="city" placeholder="City">
               </div>
             </div>
             <div class="row">
               <div class="col-5">
-                <label for="COUNTRY">Country</label>
-                <input type="text" class="form-control" name="COUNTRY"  id="COUNTRY" placeholder="Country">
+                <label for="country">Country</label>
+                <input type="text" class="form-control" name="country"  id="country" placeholder="Country">
               </div>
             </div>
             <hr>
             <div class="row">
               <div class="col-5">
-                <label for="NUMBER">Phone number</label>
-                <input type="text" class="form-control" name="NUMBER"  id="NUMBER" placeholder="Phone number">
+                <label for="number">Phone number</label>
+                <input type="text" class="form-control" name="number"  id="number" placeholder="Phone number">
               </div>
               <div class="col-5">
-                <label for="MAIL">E-mail</label>
-                <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail">
+                <label for="mail">E-mail</label>
+                <input type="email" class="form-control" name="mail"  id="mail" placeholder="E-mail">
               </div>
             </div>
             <div class="modal-footer">
@@ -298,7 +298,7 @@
   <div class="card-body">
     <div class="row">
       @forelse($Companie->Addresses as $Address)
-        <x-AddressComponent :id="$Address->id" :label="$Address->LABEL" :adress="$Address->ADRESS" :zipcode="$Address->ZIPCODE" :city="$Address->CITY" :county="$Address->COUNTRY"  />
+        <x-AddressComponent :id="$Address->id" :label="$Address->label" :adress="$Address->adress" :zipcode="$Address->zipcode" :city="$Address->city" :county="$Address->country"  />
       @empty
         No address
       @endforelse
@@ -347,8 +347,8 @@
                 </div>
               </div>
               <div class="col-5">
-                <label for="CIVILITY">Civility</label>
-                <select class="form-control" name="CIVILITY">
+                <label for="civility">Civility</label>
+                <select class="form-control" name="civility">
                   <option value="Miss">Miss</option>
                   <option value="Ms">Ms</option>
                   <option value="Mr">Mr</option>
@@ -358,33 +358,33 @@
             </div>
             <div class="row">
               <div class="col-5">
-                <label for="FIRST_NAME">First Name</label>
-                <input type="text" class="form-control" name="FIRST_NAME"  id="FIRST_NAME" placeholder="First Name">
+                <label for="first_name">First Name</label>
+                <input type="text" class="form-control" name="first_name"  id="first_name" placeholder="First Name">
               </div>
               <div class="col-5">
-                <label for="NAME">Name</label>
-                <input type="text" class="form-control" name="NAME"  id="NAME" placeholder="Name">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" name="name"  id="name" placeholder="Name">
               </div>
             </div>
             <hr>
             <div class="form-group">
-              <label for="FUNCTION">Function</label>
-              <input type="text" class="form-control" name="FUNCTION"  id="FUNCTION" placeholder="Function">
+              <label for="function">Function</label>
+              <input type="text" class="form-control" name="function"  id="function" placeholder="Function">
             </div>
             <hr>
             <div class="row">
               <div class="col-5">
-                <label for="NUMBER">Phone number</label>
-                <input type="text" class="form-control" name="NUMBER"  id="NUMBER" placeholder="Phone number">
+                <label for="number">Phone number</label>
+                <input type="text" class="form-control" name="number"  id="number" placeholder="Phone number">
               </div>
               <div class="col-5">
-                <label for="MOBILE">Mobile phone number</label>
-                <input type="text" class="form-control" name="MOBILE"  id="MOBILE" placeholder="Mobile phone number">
+                <label for="mobile">Mobile phone number</label>
+                <input type="text" class="form-control" name="mobile"  id="mobile" placeholder="Mobile phone number">
               </div>
             </div>
             <div class="form-group">
-              <label for="MAIL">E-mail</label>
-              <input type="email" class="form-control" name="MAIL"  id="MAIL" placeholder="E-mail">
+              <label for="mail">E-mail</label>
+              <input type="email" class="form-control" name="mail"  id="mail" placeholder="E-mail">
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -399,7 +399,7 @@
   <div class="card-body">
     <div class="row">
       @forelse($Companie->Contacts as $Contact)
-          <x-ContactComponent :id="$Contact->id" :function="$Contact->FUNCTION" :name="$Contact->NAME" :firstname="$Contact->FIRST_NAME" :mail="$Contact->MAIL" :number="$Contact->NUMBER"  :mobile="$Contact->MOBILE" />
+          <x-ContactComponent :id="$Contact->id" :function="$Contact->function" :name="$Contact->name" :firstname="$Contact->first_name" :mail="$Contact->mail" :number="$Contact->number"  :mobile="$Contact->mobile" />
       @empty
         No Contact
       @endforelse   

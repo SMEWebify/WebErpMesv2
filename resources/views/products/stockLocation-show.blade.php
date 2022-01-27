@@ -3,7 +3,7 @@
 @section('title', 'Stock')
 
 @section('content_header')
-    <h1> Stock location Product for {{ $StockLocation->LABEL }}</h1>
+    <h1> Stock location Product for {{ $StockLocation->label }}</h1>
 @stop
 
 @section('content')
@@ -44,9 +44,9 @@
                     <tbody>
                       @forelse ($StockLocationsProducts as $StockLocationsProduct)
                       <tr>
-                        <td>{{ $StockLocationsProduct->CODE }}</td>
+                        <td>{{ $StockLocationsProduct->code }}</td>
                         <td>{{ $StockLocationsProduct->UserManagement['name'] }}</td>
-                        <td>{{ $StockLocationsProduct->Product['LABEL'] }}</td>
+                        <td>{{ $StockLocationsProduct->Product['label'] }}</td>
                         <td>{{ $StockLocationsProduct->stock_qty }}</td>
                         <td>{{ $StockLocationsProduct->reserve_qty }}</td>
                         <td>{{ $StockLocationsProduct->mini_qty }}</td>
@@ -100,12 +100,12 @@
               <form  method="POST" action="{{ route('products.stockline.store') }}" class="form-horizontal">
                 @csrf
                 <div class="form-group">
-                  <label for="CODE">External ID</label>
+                  <label for="code">External ID</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                     </div>
-                    <input type="text" class="form-control" name="CODE" id="CODE" placeholder="External ID" value="STOCK-PRODUCT-{{ $LastStockLocationProduct->id ?? '0' }}">
+                    <input type="text" class="form-control" name="code" id="code" placeholder="External ID" value="STOCK-PRODUCT-{{ $LastStockLocationProduct->id ?? '0' }}">
                     <input type="hidden" name="stock_locations_id" id="stock_locations_id" value="{{ $StockLocation->id }}">
                   </div>
                 </div>
@@ -130,7 +130,7 @@
                     </div>
                     <select class="form-control" name="products_id" id="products_id">
                       @foreach ($ProductSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->CODE }}</option>
+                      <option value="{{ $item->id }}">{{ $item->code }}</option>
                       @endforeach
                     </select>
                   </div>

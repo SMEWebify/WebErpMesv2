@@ -63,16 +63,16 @@
                                     <a href="#" wire:click="downQuoteLine({{ $QuoteLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
                                 </div>
                             </td>
-                            <td>{{ $QuoteLine->CODE }}</td>
+                            <td>{{ $QuoteLine->code }}</td>
                             <td>
-                                @if($QuoteLine->product_id ) {{ $QuoteLine->Product['LABEL'] }}@endif
+                                @if($QuoteLine->product_id ) {{ $QuoteLine->Product['label'] }}@endif
                             </td>
-                            <td>{{ $QuoteLine->LABEL }}</td>
+                            <td>{{ $QuoteLine->label }}</td>
                             <td>{{ $QuoteLine->qty }}</td>
-                            <td>{{ $QuoteLine->Unit['LABEL'] }}</td>
+                            <td>{{ $QuoteLine->Unit['label'] }}</td>
                             <td>{{ $QuoteLine->selling_price }} {{ $Factory->curency }}</td>
                             <td>{{ $QuoteLine->discount }} %</td>
-                            <td>{{ $QuoteLine->VAT['RATE'] }} %</td>
+                            <td>{{ $QuoteLine->VAT['rate'] }} %</td>
                             <td>{{ $QuoteLine->delivery_date }}</td>
                             <td>
                                 @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif

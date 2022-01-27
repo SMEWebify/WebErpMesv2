@@ -12,9 +12,9 @@ class PaymentMethodController extends Controller
     //
     public function store(StorePaymentMethodRequest $request)
     {
-        $PaymentMethode = AccountingPaymentMethod::create($request->only('CODE',
-                                                                        'LABEL',
-                                                                        'CODE_ACCOUNT'));
+        $PaymentMethode = AccountingPaymentMethod::create($request->only('code',
+                                                                        'label',
+                                                                        'code_account'));
         return redirect()->route('accounting')->with('success', 'Successfully created payment method mode.');
     }
 }

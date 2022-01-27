@@ -15,9 +15,9 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-			$table->string('CODE');
-			$table->string('LABEL');
-			$table->string('IND')->nullable();
+			$table->string('code');
+			$table->string('label');
+			$table->string('ind')->nullable();
 			$table->integer('methods_services_id');
 			$table->integer('methods_families_id');
 			$table->integer('purchased');
@@ -41,7 +41,7 @@ class CreateProductsTable extends Migration
             $table->decimal('diameter', 10, 3)->nullable();
             $table->decimal('diameter_oversize', 10, 3)->nullable();
             $table->decimal('section_size', 10, 3)->nullable();
-			$table->string('PICTURE')->nullable();
+			$table->string('picture')->nullable();
             $table->timestamps();
         });
     }

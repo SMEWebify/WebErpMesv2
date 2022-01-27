@@ -25,8 +25,8 @@ class StoreDeliveryRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:accounting_deliveries',
-            'LABEL'=>'required',
+            'code' =>'required|unique:accounting_deliveries',
+            'label'=>'required',
         ];
     }
 }

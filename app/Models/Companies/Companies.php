@@ -13,25 +13,25 @@ class Companies extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE', 
-                            'LABEL',
-                            'WEBSITE',
-                            'FBSITE',
-                            'TWITTERSITE', 
-                            'LKDSITE', 
+    protected $fillable = ['code', 
+                            'label',
+                            'website',
+                            'fbsite',
+                            'twittersite', 
+                            'lkdsite', 
                             'SIREN', 
-                            'APE', 
-                            'TVA_INTRA', 
-                            'statu_CLIENT',
-                            'DISCOUNT',
+                            'naf_code', 
+                            'intra_community_vat', 
+                            'statu_customer',
+                            'discount',
                             'user_id',
-                            'COMPTE_GEN_CLIENT',
-                            'COMPTE_AUX_CLIENT',
-                            'statu_FOUR',
-                            'COMPTE_GEN_FOUR',
-                            'COMPTE_AUX_FOUR',
-                            'RECEPT_CONTROLE',
-                            'COMMENT'
+                            'account_general_customer',
+                            'account_auxiliary_customer',
+                            'statu_supplier',
+                            'account_general_supplier',
+                            'account_auxiliary_supplier',
+                            'recept_controle',
+                            'comment'
                         ];
 
     public function Addresses()

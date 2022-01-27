@@ -11,7 +11,7 @@ class AccountingVat extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL',  'RATE'];
+    protected $fillable = ['code',  'label',  'rate'];
 
 
     public function VAT()

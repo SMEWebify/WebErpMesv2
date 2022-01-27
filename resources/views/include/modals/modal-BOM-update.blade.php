@@ -25,10 +25,10 @@
                     <select class="methods_services_id form-control" name="methods_services_id" id="methods_services_id_BOM">
                       <option>Select Services</option>
                       @foreach ($BOMServicesSelect as $item)
-                      <option value="{{ $item->id }}"  @if($item->id == $BOMProduct->methods_services_id ) Selected @endif class="{{ $item->id }}" data-type="{{ $item->TYPE }}"  data-txt="{{ $item->LABEL }}">{{ $item->CODE }}</option>
+                      <option value="{{ $item->id }}"  @if($item->id == $BOMProduct->methods_services_id ) Selected @endif class="{{ $item->id }}" data-type="{{ $item->type }}"  data-txt="{{ $item->label }}">{{ $item->code }}</option>
                       @endforeach
                     </select>
-                    <input type="hidden" class="form-control" name="TYPE" id="TYPE_BOM" value="{{ $BOMProduct->TYPE }}">
+                    <input type="hidden" class="form-control" name="type" id="type_BOM" value="{{ $BOMProduct->type }}">
                   </div>
               </div>
               <div class="col-3">
@@ -40,7 +40,7 @@
                   <select class="component_id form-control" name="component_id" id="component_id">
                     <option>Select Component</option>
                     @foreach ($ProductSelect as $item)
-                    <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}" @if($item->id == $BOMProduct->component_id ) Selected @endif>{{ $item->CODE }}</option>
+                    <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}" @if($item->id == $BOMProduct->component_id ) Selected @endif>{{ $item->code }}</option>
                     @endforeach
                   </select>
                 </div>
@@ -66,21 +66,21 @@
                 </div>
               </div>
               <div class="col-3">
-                <label for="UNIT_COST">Unit cost</label>
+                <label for="unit_cost">Unit cost</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text">{{ $Factory->curency }}</span>
                   </div>
-                  <input type="number" class="form-control" name="UNIT_COST"  id="UNIT_COST" placeholder="Unit cost" step=".001" value="{{ $BOMProduct->UNIT_COST }}">
+                  <input type="number" class="form-control" name="unit_cost"  id="unit_cost" placeholder="Unit cost" step=".001" value="{{ $BOMProduct->unit_cost }}">
                 </div>
               </div>
               <div class="col-3">
-                <label for="UNIT_PRICE">Unit price</label>
+                <label for="unit_price">Unit price</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text">{{ $Factory->curency }}</span>
                   </div>
-                  <input type="number" class="form-control" name="UNIT_PRICE"  id="UNIT_PRICE" placeholder="Unit time" step=".001" value="{{ $BOMProduct->UNIT_PRICE }}">
+                  <input type="number" class="form-control" name="unit_price"  id="unit_price" placeholder="Unit time" step=".001" value="{{ $BOMProduct->unit_price }}">
                 </div>
               </div>
             </div>

@@ -17,9 +17,9 @@ class CreateQuoteLinesTable extends Migration
             $table->id();
             $table->integer('quotes_id');
 			$table->integer('ORDRE');
-			$table->string('CODE')->nullable();
+			$table->string('code')->nullable();
 			$table->string('product_id')->nullable();
-			$table->string('LABEL');
+			$table->string('label');
 			$table->integer('qty');
 			$table->integer('methods_units_id');
 			$table->decimal('selling_price', 10, 3);
@@ -27,6 +27,12 @@ class CreateQuoteLinesTable extends Migration
 			$table->integer('accounting_vats_id');
 			$table->date('delivery_date')->nullable();
 			$table->integer('statu')->default(1);
+            #1 = Open
+            #2 = Send
+            #3 = Win
+            #4 = Lost
+            #5 = Closed
+            #6 = Obsolete
             $table->timestamps();
         });
     }

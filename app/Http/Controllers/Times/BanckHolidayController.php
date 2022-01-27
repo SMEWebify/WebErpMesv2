@@ -12,7 +12,7 @@ class BanckHolidayController extends Controller
     //
     public function store(StoreBanckHolidayRequest $request)
     {
-        $TimesBanckHoliday = TimesBanckHoliday::create($request->only('FIXED', 'DATE', 'LABEL'));
+        $TimesBanckHoliday = TimesBanckHoliday::create($request->only('fixed', 'date', 'label'));
         return redirect()->route('times')->with('success', 'Successfully created Banck Holiday.');
     }
 }

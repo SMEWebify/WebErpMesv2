@@ -25,8 +25,8 @@ class StoreAllocationRequest extends FormRequest
     {
         return [
             //
-            'ACCOUNT' =>'required|unique:accounting_allocations',
-            'LABEL'=>'required',
+            'account' =>'required|unique:accounting_allocations',
+            'label'=>'required',
             'vat_id'=>'required',
         ];
     }

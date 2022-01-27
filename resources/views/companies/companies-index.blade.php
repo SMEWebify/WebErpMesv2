@@ -38,16 +38,16 @@
               <table class="table m-0">
                 <thead>
                 <tr>
-                  <th>CODE</th>
-                  <th>LABEL</th>
+                  <th>code</th>
+                  <th>label</th>
                   <th></th>
                 </tr>
                 </thead>
                 <tbody>
                   @forelse ($LastComapnies as $LastComapnie)
                   <tr>
-                    <td>{{ $LastComapnie->CODE }}</td>
-                    <td>{{ $LastComapnie->LABEL }}</td>
+                    <td>{{ $LastComapnie->code }}</td>
+                    <td>{{ $LastComapnie->label }}</td>
                     <td>
                       <a class="btn btn-primary btn-sm" href="{{ route('companies.show', ['id' => $LastComapnie->id])}}">
                         <i class="fas fa-folder"></i>

@@ -52,7 +52,7 @@
                 <div class="card card-body">
                   <div class="row">
                       <div class="col-3">
-                        <label for="CODE">External ID :</label>  {{  $Quote->CODE }}
+                        <label for="code">External ID :</label>  {{  $Quote->code }}
                       </div>
                       <div class="col-3">
                         <label for="statu">Statu :</label>
@@ -71,12 +71,12 @@
                         </div>
                       </div>
                       <div class="col-3">
-                        <label for="LABEL">Name of quote</label>
+                        <label for="label">Name of quote</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>
                           </div>
-                          <input type="text" class="form-control" name="LABEL"  id="LABEL" placeholder="Name of quote" value="{{  $Quote->LABEL }}">
+                          <input type="text" class="form-control" name="label"  id="label" placeholder="Name of quote" value="{{  $Quote->label }}">
                         </div>
                       </div>
                     </div>
@@ -95,7 +95,7 @@
                           </div>
                           <select class="form-control" name="companies_id" id="companies_id">
                             @foreach ($CompanieSelect as $item)
-                            <option value="{{ $item->id }}"  @if($item->id == $Quote->companies_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                            <option value="{{ $item->id }}"  @if($item->id == $Quote->companies_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -119,7 +119,7 @@
                           </div>
                           <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
                             @foreach ($AddressSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Quote->companies_addresses_id ) Selected @endif >{{ $item->LABEL }} - {{ $item->ADRESS }}</option>
+                            <option value="{{ $item->id }}" @if($item->id == $Quote->companies_addresses_id ) Selected @endif >{{ $item->label }} - {{ $item->adress }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -132,7 +132,7 @@
                           </div>
                           <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
                             @foreach ($ContactSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Quote->companies_contacts_id ) Selected @endif >{{ $item->FIRST_NAME }} - {{ $item->NAME }}</option>
+                            <option value="{{ $item->id }}" @if($item->id == $Quote->companies_contacts_id ) Selected @endif >{{ $item->first_name }} - {{ $item->name }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -149,7 +149,7 @@
                         <label for="accounting_payment_conditions_id">Payment condition</label>
                         <select class="form-control" name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
                           @foreach ($AccountingConditionSelect as $item)
-                          <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_payment_conditions_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                          <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_payment_conditions_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
                           @endforeach
                         </select>
                       </div>
@@ -157,7 +157,7 @@
                         <label for="accounting_payment_methods_id">Payment methods</label>
                         <select class="form-control" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
                           @foreach ($AccountingMethodsSelect as $item)
-                          <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_payment_methods_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                          <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_payment_methods_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
                           @endforeach
                         </select>
                       </div>
@@ -171,13 +171,13 @@
                           </div>
                           <select class="form-control" name="accounting_deliveries_id" id="accounting_deliveries_id">
                             @foreach ($AccountingDeleveriesSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_deliveries_id ) Selected @endif >{{ $item->CODE }} - {{ $item->LABEL }}</option>
+                            <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_deliveries_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                           </select>
                         </div>
                       </div>
                       <div class="col-5">
-                        <label for="LABEL">Validity date</label>
+                        <label for="label">Validity date</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Quote->validity_date }}">
                       </div>
                     </div>
@@ -256,7 +256,7 @@
             $('#product_id').on('change',function(){
                 var val = $(this).val();
                 var txt = $(this).find('option:selected').data('txt');
-                $('#CODE').val( txt );
+                $('#code').val( txt );
             });
 
           $(function(){

@@ -11,10 +11,10 @@ class QualityControlDeviceController extends Controller
     //
     public function store(StoreQualityControlDeviceRequest $request)
     {
-        $Service =  QualityControlDevice::create($request->only('CODE', 'LABEL','service_id', 'user_id','SERIAL_NUMBER', 'PICTURE'));
-        if($request->hasFile('PICTURE')){
-            $path = $request->PICTURE->store('images/quality','public');
-            $Service->update(['PICTURE' => $path]);
+        $Service =  QualityControlDevice::create($request->only('code', 'label','service_id', 'user_id','serial_number', 'picture'));
+        if($request->hasFile('picture')){
+            $path = $request->picture->store('images/quality','public');
+            $Service->update(['picture' => $path]);
         }
         return redirect()->route('quality')->with('success', 'Successfully created device.');
     }

@@ -20,14 +20,14 @@ class ProductsController extends Controller
     {
         $Product = Products::findOrFail($id);
         $status_id = Status::select('id')->orderBy('order')->first();
-        $ProductSelect = Products::select('id', 'CODE','LABEL', 'methods_services_id')->get();
-        $TechServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 1)->orWhere('TYPE', '=', 7)->orderBy('ORDRE')->get();
-        $BOMServicesSelect = MethodsServices::select('id', 'CODE','LABEL', 'TYPE')->where('TYPE', '=', 2)
-                                                                            ->orWhere('TYPE', '=', 3)
-                                                                            ->orWhere('TYPE', '=', 4)
-                                                                            ->orWhere('TYPE', '=', 5)
-                                                                            ->orWhere('TYPE', '=', 6)
-                                                                            ->orWhere('TYPE', '=', 8)
+        $ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
+        $TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ORDRE')->get();
+        $BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
+                                                                            ->orWhere('type', '=', 3)
+                                                                            ->orWhere('type', '=', 4)
+                                                                            ->orWhere('type', '=', 5)
+                                                                            ->orWhere('type', '=', 6)
+                                                                            ->orWhere('type', '=', 8)
                                                                             ->orderBy('ORDRE')->get();
         $Factory = Factory::first();
         if(!$Factory){
@@ -47,9 +47,9 @@ class ProductsController extends Controller
    /* public function store(StoreProductsRequest $request)
     {
         $Product = Products::create($request->only());
-        if($request->hasFile('PICTURE')){
-            $path = $request->PICTURE->store('images/products/','public');
-            $Product->update(['PICTURE' => $path]);
+        if($request->hasFile('picture')){
+            $path = $request->picture->store('images/products/','public');
+            $Product->update(['picture' => $path]);
         }
         
     }*/

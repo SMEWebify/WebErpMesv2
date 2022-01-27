@@ -25,9 +25,9 @@ class StoreMachineEventRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:times_machine_events',
+            'code' =>'required|unique:times_machine_events',
             'ORDRE'=>'required',
-            'LABEL'=>'required',
+            'label'=>'required',
         ];
     }
 }

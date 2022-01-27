@@ -27,7 +27,7 @@ class StockController extends Controller
 
     public function store(StoreStockRequest $request)
     {
-        $Stock = Stocks::create($request->only('CODE','LABEL', 'user_id'));
+        $Stock = Stocks::create($request->only('code','label', 'user_id'));
         return redirect()->route('products.stock.show', ['id' => $Stock->id])->with('success', 'Successfully created new stock');
     }
 

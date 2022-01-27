@@ -9,5 +9,5 @@ class AccountingDelivery extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL'];
+    protected $fillable = ['code',  'label'];
 }

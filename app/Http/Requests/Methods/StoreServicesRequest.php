@@ -25,11 +25,11 @@ class StoreServicesRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:methods_services',
+            'code' =>'required|unique:methods_services',
             'ORDRE' =>'required',
-            'LABEL'=>'required',
-            'HOURLY_RATE'=>'required',
-            'MARGIN'=>'required',
+            'label'=>'required',
+            'hourly_rate'=>'required',
+            'margin'=>'required',
         ];
     }
 }

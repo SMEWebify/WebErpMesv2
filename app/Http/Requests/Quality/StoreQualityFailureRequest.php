@@ -25,8 +25,8 @@ class StoreQualityFailureRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:quality_failures',
-            'LABEL'=>'required',
+            'code' =>'required|unique:quality_failures',
+            'label'=>'required',
         ];
     }
 }

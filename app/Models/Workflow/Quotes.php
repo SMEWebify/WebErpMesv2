@@ -17,8 +17,8 @@ class Quotes extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE', 
-                            'LABEL', 
+    protected $fillable = ['code', 
+                            'label', 
                             'customer_reference',
                             'companies_id', 
                             'companies_contacts_id',   

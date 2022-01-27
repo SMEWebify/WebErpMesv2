@@ -9,11 +9,11 @@ class Inventory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',
-                          'LABEL', 
+    protected $fillable = ['code',
+                          'label', 
                           'START_DATE',
-                          'END_DATE',
-                          'LABEL'];
+                          'end_date',
+                          'label'];
   
     public function GetPrettyCreatedAttribute()
     {

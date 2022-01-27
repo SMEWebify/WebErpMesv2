@@ -26,7 +26,7 @@ class StoreAbsenceRequest extends FormRequest
         return [
             //
             'START_DATE'=>'required',
-            'END_DATE'=>'required',
+            'end_date'=>'required',
         ];
     }
 }

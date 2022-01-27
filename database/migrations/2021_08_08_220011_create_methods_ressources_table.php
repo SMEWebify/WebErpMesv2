@@ -16,15 +16,15 @@ class CreateMethodsRessourcesTable extends Migration
         Schema::create('methods_ressources', function (Blueprint $table) {
             $table->id();
             $table->integer('ORDRE');
-            $table->string('CODE');
-			$table->string('LABEL');
-			$table->string('PICTURE')->nullable();
-			$table->integer('MASK_TIME');
-			$table->decimal('CAPACITY', 11, 3);
+            $table->string('code');
+			$table->string('label');
+			$table->string('picture')->nullable();
+			$table->integer('mask_time');
+			$table->decimal('capacity', 11, 3);
 			$table->integer('section_id');
-			$table->string('COLOR');
+			$table->string('color');
 			$table->integer('service_id');
-			$table->text('COMMENT', 65535)->nullable();
+			$table->text('comment', 65535)->nullable();
             $table->timestamps();
         });
     }

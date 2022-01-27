@@ -9,5 +9,5 @@ class TimesBanckHoliday extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['FIXED',  'DATE',  'LABEL'];
+    protected $fillable = ['fixed',  'date',  'label'];
 }

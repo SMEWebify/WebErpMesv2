@@ -15,12 +15,12 @@ class CreateQualityControlDevicesTable extends Migration
     {
         Schema::create('quality_control_devices', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
 			$table->integer('service_id');
 			$table->integer('user_id');
-			$table->string('SERIAL_NUMBER');
-			$table->string('PICTURE')->nullable();
+			$table->string('serial_number');
+			$table->string('picture')->nullable();
             $table->timestamps();
         });
     }

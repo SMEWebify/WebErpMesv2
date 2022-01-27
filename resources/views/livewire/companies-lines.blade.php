@@ -14,24 +14,24 @@
                                         @csrf
                                         <div class="row">
                                             <div class="col-4">
-                                                <label for="CODE">External ID</label>
+                                                <label for="code">External ID</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control @error('CODE') is-invalid @enderror" wire:model="CODE" name="CODE" id="CODE" placeholder="External ID">
+                                                    <input type="text" class="form-control @error('code') is-invalid @enderror" wire:model="code" name="code" id="code" placeholder="External ID">
                                                 </div>
-                                                @error('CODE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-4">
-                                                <label for="LABEL">Name of company</label>
+                                                <label for="label">Name of company</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-building"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control @error('LABEL') is-invalid @enderror" wire:model="LABEL" name="LABEL"  id="LABEL" placeholder="Name of company">
+                                                    <input type="text" class="form-control @error('label') is-invalid @enderror" wire:model="label" name="label"  id="label" placeholder="Name of company">
                                                 </div>
-                                                @error('LABEL') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-4">
                                                 <label for="user_id">Technical manager</label>
@@ -59,36 +59,36 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control"  name="WEBSITE" id="WEBSITE" wire:model="WEBSITE" placeholder="Web site link">
+                                                    <input type="text" class="form-control"  name="website" id="website" wire:model="website" placeholder="Web site link">
                                                 </div>
-                                                @error('WEBSITE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('website') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control"  name="FBSITE" id="FBSITE" wire:model="FBSITE"  placeholder="Facebook link">
+                                                    <input type="text" class="form-control"  name="fbsite" id="fbsite" wire:model="fbsite"  placeholder="Facebook link">
                                                 </div>
-                                                @error('FBSITE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('fbsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control"  name="TWITTERSITE" id="TWITTERSITE" wire:model="TWITTERSITE" placeholder="Twitter link">
+                                                    <input type="text" class="form-control"  name="twittersite" id="twittersite" wire:model="twittersite" placeholder="Twitter link">
                                                 </div>
-                                                @error('TWITTERSITE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('twittersite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
                                                     </div>
-                                                <input type="text" class="form-control"  name="LKDSITE" id="LKDSITE" wire:model="LKDSITE" placeholder="Linkedin link">
+                                                <input type="text" class="form-control"  name="lkdsite" id="lkdsite" wire:model="lkdsite" placeholder="Linkedin link">
                                                 </div>
-                                                @error('LKDSITE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('lkdsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
                                         <hr>
@@ -101,24 +101,24 @@
                                                 @error('SIREN') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
-                                                <input type="text" class="form-control" name="APE" id="APE" wire:model="APE" placeholder="APE code">
-                                                @error('APE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="naf_code code">
+                                                @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
-                                                <input type="text" class="form-control" name="TVA_INTRA" id="TVA_INTRA" wire:model="TVA_INTRA" placeholder="VAT number">
-                                                @error('TVA_INTRA') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat" wire:model="intra_community_vat" placeholder="VAT number">
+                                                @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
                                         <hr>
                                         <div class="row">
-                                            <label for="PICTURE">Logo file</label>
+                                            <label for="picture">Logo file</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="far fa-image"></i></span>
                                                 </div>
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="PICTURE">
-                                                    <label class="custom-file-label" for="PICTURE">Choose file</label>
+                                                    <input type="file" class="custom-file-input" id="picture">
+                                                    <label class="custom-file-label" for="picture">Choose file</label>
                                                 </div>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">Upload</span>
@@ -128,18 +128,18 @@
                                         <hr>
                                         <div class="row">
                                             <div class="col-3">
-                                                <label for="statu_CLIENT">Statu client</label>
+                                                <label for="statu_customer">Statu client</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                                     </div>
-                                                    <select class="form-control" name="statu_CLIENT" id="statu_CLIENT" wire:model="statu_CLIENT">
+                                                    <select class="form-control" name="statu_customer" id="statu_customer" wire:model="statu_customer">
                                                         <option value="">Select statu</option>
                                                         <option value="1">Inactive</option>
                                                         <option value="2">Active</option>
                                                         <option value="3">Prospect</option>
                                                     </select>
-                                                    @error('statu_CLIENT') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                    @error('statu_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
                                             </div>
                                             <div class="col-3">
@@ -148,63 +148,63 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                                     </div>
-                                                    <input type="number" class="form-control" name="DISCOUNT" id="DISCOUNT" wire:model="DISCOUNT" placeholder="Discount">
+                                                    <input type="number" class="form-control" name="discount" id="discount" wire:model="discount" placeholder="Discount">
                                                 </div>
-                                                @error('DISCOUNT') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
-                                                <label for="COMPTE_GEN_CLIENT">General Account</label>
-                                                <input type="number" class="form-control" name="COMPTE_GEN_CLIENT" id="COMPTE_GEN_CLIENT" wire:model="COMPTE_GEN_CLIENT" placeholder="General Account">
-                                                @error('COMPTE_GEN_CLIENT') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <label for="account_general_customer">General Account</label>
+                                                <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" wire:model="account_general_customer" placeholder="General Account">
+                                                @error('account_general_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
-                                                <label for="COMPTE_AUX_CLIENT">Auxiliary Account</label>
-                                                <input type="number" class="form-control" name="COMPTE_AUX_CLIENT" id="COMPTE_AUX_CLIENT" wire:model="COMPTE_AUX_CLIENT" placeholder="Auxiliary account">
-                                                @error('COMPTE_AUX_CLIENT') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <label for="account_auxiliary_customer">Auxiliary Account</label>
+                                                <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" wire:model="account_auxiliary_customer" placeholder="Auxiliary account">
+                                                @error('account_auxiliary_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
                                         <hr>
                                         <div class="row">
                                             <div class="col-3">
-                                                <label for="statu_FOUR">Statu supplier</label>
+                                                <label for="statu_supplier">Statu supplier</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                                     </div>
-                                                    <select class="form-control" name="statu_FOUR" id="statu_FOUR"  wire:model="statu_FOUR">
+                                                    <select class="form-control" name="statu_supplier" id="statu_supplier"  wire:model="statu_supplier">
                                                         <option value="">Select statu</option>
                                                         <option value="1" selected>Inactive</option>
                                                         <option value="2">Active</option>
                                                     </select>
-                                                @error('statu_FOUR') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('statu_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
                                             </div>
                                             <div class="col-3">
-                                                <label for="RECEPT_CONTROLE">Reception control</label>
-                                                <select class="form-control" name="RECEPT_CONTROLE" id="RECEPT_CONTROLE" wire:model="RECEPT_CONTROLE">
+                                                <label for="recept_controle">Reception control</label>
+                                                <select class="form-control" name="recept_controle" id="recept_controle" wire:model="recept_controle">
                                                     <option value="">Select controle type</option>
                                                     <option value="1">Yes</option>
                                                     <option value="2">No</option>
                                                 </select>
-                                                @error('RECEPT_CONTROLE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                @error('recept_controle') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
-                                                <label for="COMPTE_GEN_FOUR">General Account</label>
-                                                <input type="number" class="form-control" id="COMPTE_GEN_FOUR" name="COMPTE_GEN_FOUR"  wire:model="COMPTE_GEN_FOUR" placeholder="General Account">
-                                                @error('COMPTE_GEN_FOUR') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <label for="account_general_supplier">General Account</label>
+                                                <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  wire:model="account_general_supplier" placeholder="General Account">
+                                                @error('account_general_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
-                                                <label for="COMPTE_AUX_FOUR">Auxiliary Account</label>
-                                                <input type="number" class="form-control" id="COMPTE_AUX_FOUR" name="COMPTE_AUX_FOUR"  wire:model="COMPTE_AUX_FOUR" placeholder="Auxiliary account">
-                                                @error('COMPTE_AUX_FOUR') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <label for="account_auxiliary_supplier">Auxiliary Account</label>
+                                                <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  wire:model="account_auxiliary_supplier" placeholder="Auxiliary account">
+                                                @error('account_auxiliary_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
                                         <hr>
                                         <div class="row">
                                             <div class="col-12">
                                                 <label>Comment</label>
-                                                <textarea class="form-control" rows="3" name="COMMENT"  wire:model="COMMENT" placeholder="Enter ..."></textarea>
-                                                @error('COMMENT') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <textarea class="form-control" rows="3" name="comment"  wire:model="comment" placeholder="Enter ..."></textarea>
+                                                @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -232,10 +232,10 @@
                                 <thead>
                                     <tr>
                                         <th >
-                                            <a class="btn btn-secondary" wire:click.prevent="sortBy('CODE')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'CODE'])</a>
+                                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                                         </th>
                                         <th>
-                                            <a class="btn btn-secondary" wire:click.prevent="sortBy('LABEL')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'LABEL'])</a>
+                                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                                         </th>
                                         <th>
                                             <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
@@ -248,20 +248,20 @@
                                 <tbody>
                                 @forelse ($Companieslist as $Companie)
                                 <tr>
-                                    <td>{{ $Companie->CODE }}</td>
-                                    <td>{{ $Companie->LABEL }}</td>
+                                    <td>{{ $Companie->code }}</td>
+                                    <td>{{ $Companie->label }}</td>
                                     <td>{{ $Companie->GetPrettyCreatedAttribute() }}</td>
                                     <td>
-                                        @if($Companie->statu_CLIENT == 2 )
+                                        @if($Companie->statu_customer == 2 )
                                         <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check-double"></i></span>
-                                        @elseif($Companie->statu_CLIENT == 3 )
+                                        @elseif($Companie->statu_customer == 3 )
                                         <span class="badge badge-warning"><i class="fa fa-lg fa-fw  fa-check"></i></span>
                                         @else
                                         <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
                                         @endif
                                     </td>
                                     <td>
-                                        @if($Companie->statu_FOUR == 2 )
+                                        @if($Companie->statu_supplier == 2 )
                                         <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
                                         @else
                                         <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>

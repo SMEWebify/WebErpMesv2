@@ -10,7 +10,7 @@ class MethodsTools extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL',  'ETAT', 'COST' , 'PICTURE',  'END_DATE',  'COMMENT',  'QTY'];
+    protected $fillable = ['code',  'label',  'ETAT', 'cost' , 'picture',  'end_date',  'comment',  'qty'];
 
     public function Task()
     {

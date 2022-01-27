@@ -14,9 +14,9 @@ class OrderLines extends Model
 {
     protected $fillable = ['orders_id', 
                             'ORDRE', 
-                            'CODE',
+                            'code',
                             'product_id',
-                            'LABEL',
+                            'label',
                             'qty',
                             'delivered_qty',
                             'delivered_remaining_qty',

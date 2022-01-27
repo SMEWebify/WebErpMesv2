@@ -25,11 +25,11 @@ class AccountingPaymentConditionFactory extends Factory
 
         return [
             //
-            'CODE' => $this->$type,
-            'LABEL' =>$this->$type,
-            'NUMBER_OF_MONTH' => $this->faker->randomDigitNotNull(),
-            'NUMBER_OF_DAY' => $this->faker->randomDigitNotNull(),
-            'MONTH_END' => $this->faker->randomElement([1, 2]),
+            'code' => $this->$type,
+            'label' =>$this->$type,
+            'number_of_month' => $this->faker->randomDigitNotNull(),
+            'number_of_day' => $this->faker->randomDigitNotNull(),
+            'month_end' => $this->faker->randomElement([1, 2]),
         ];
     }
 }

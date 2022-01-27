@@ -41692,7 +41692,7 @@ var render = function () {
                                   [
                                     _vm._v(
                                       "Order " +
-                                        _vm._s(task.order_lines.order.CODE)
+                                        _vm._s(task.order_lines.order.code)
                                     ),
                                   ]
                                 ),
@@ -41702,7 +41702,7 @@ var render = function () {
                                   { staticClass: "font-weight-bold" },
                                   [
                                     _vm._v(
-                                      _vm._s(task.order_lines.LABEL) +
+                                      _vm._s(task.order_lines.label) +
                                         " || qty " +
                                         _vm._s(task.order_lines.qty)
                                     ),
@@ -41722,12 +41722,12 @@ var render = function () {
                                     _c("p", [
                                       _vm._v(
                                         "\n                          Setting Time : " +
-                                          _vm._s(task.SETING_TIME)
+                                          _vm._s(task.seting_time)
                                       ),
                                       _c("br"),
                                       _vm._v(
                                         "\n                          Unit Time :" +
-                                          _vm._s(task.UNIT_TIME) +
+                                          _vm._s(task.unit_time) +
                                           "\n                        "
                                       ),
                                     ]),
@@ -41737,7 +41737,7 @@ var render = function () {
                                     _c("p", [
                                       _vm._v(
                                         "Advancement : " +
-                                          _vm._s(task.ADVANCEMENT)
+                                          _vm._s(task.advancement)
                                       ),
                                     ]),
                                   ]),

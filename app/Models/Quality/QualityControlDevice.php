@@ -11,7 +11,7 @@ class QualityControlDevice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['CODE',  'LABEL',  'service_id',  'user_id',  'SERIAL_NUMBER',  'PICTURE'];
+    protected $fillable = ['code',  'label',  'service_id',  'user_id',  'serial_number',  'picture'];
 
     public function UserManagement()
     {

@@ -13,11 +13,11 @@ class PaymentConditionsController extends Controller
 
     public function store(StorePaymentConditionRequest $request)
     {
-        $PaymentCondition = AccountingPaymentConditions::create($request->only('CODE',
-                                                            'LABEL',
-                                                            'NUMBER_OF_MONTH',
-                                                            'NUMBER_OF_DAY',
-                                                            'MONTH_END'));
+        $PaymentCondition = AccountingPaymentConditions::create($request->only('code',
+                                                            'label',
+                                                            'number_of_month',
+                                                            'number_of_day',
+                                                            'month_end'));
         return redirect()->route('accounting')->with('success', 'Successfully created payment condition mode.');
     }
 }

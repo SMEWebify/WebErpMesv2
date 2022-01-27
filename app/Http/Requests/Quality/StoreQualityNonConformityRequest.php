@@ -25,8 +25,8 @@ class StoreQualityNonConformityRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:quality_non_conformities',
-            'LABEL'=>'required',
+            'code' =>'required|unique:quality_non_conformities',
+            'label'=>'required',
         ];
     }
 }

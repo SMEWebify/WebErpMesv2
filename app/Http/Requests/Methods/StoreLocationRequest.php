@@ -25,8 +25,8 @@ class StoreLocationRequest extends FormRequest
     {
         return [
             //
-            'CODE' =>'required|unique:methods_locations',
-            'LABEL'=>'required',
+            'code' =>'required|unique:methods_locations',
+            'label'=>'required',
         ];
     }
 }

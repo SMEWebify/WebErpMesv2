@@ -15,15 +15,15 @@ class CreateQualityActionsTable extends Migration
     {
         Schema::create('quality_actions', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
-			$table->string('LABEL');
+            $table->string('code');
+			$table->string('label');
             $table->text('statu');
-            $table->text('TYPE');
+            $table->text('type');
 			$table->integer('user_id');
-			$table->text('PB_DESCP', 65535)->nullable();
-			$table->text('CAUSE', 65535)->nullable();
-			$table->text('ACTION', 65535)->nullable();
-			$table->string('COLOR');
+			$table->text('pb_descp', 65535)->nullable();
+			$table->text('cause', 65535)->nullable();
+			$table->text('action', 65535)->nullable();
+			$table->string('color');
 			$table->integer('quality_non_conformitie_id')->nullable();
             $table->timestamps();
         });

@@ -53,12 +53,12 @@ class QuotesController extends Controller
     
     public function show(Quotes $id)
     {
-        $CompanieSelect = Companies::select('id', 'CODE','LABEL')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'LABEL','ADRESS')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'FIRST_NAME','NAME')->get();
-        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'CODE','LABEL')->get();
-        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'CODE','LABEL')->get();
-        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'CODE','LABEL')->get();
+        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
+        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
+        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
         $QuoteCalculator = new QuoteCalculator($id);
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
@@ -102,7 +102,7 @@ class QuotesController extends Controller
     public function update(UpdateQuoteRequest $request)
     {
         $Quote = Quotes::find($request->id);
-        $Quote->LABEL=$request->LABEL;
+        $Quote->label=$request->label;
         $Quote->statu=$request->statu;
         $Quote->customer_reference=$request->customer_reference;
         $Quote->companies_id=$request->companies_id;

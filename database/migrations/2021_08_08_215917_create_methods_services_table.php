@@ -15,10 +15,10 @@ class CreateMethodsServicesTable extends Migration
     {
         Schema::create('methods_services', function (Blueprint $table) {
             $table->id();
-            $table->string('CODE');
+            $table->string('code');
 			$table->integer('ORDRE');
-			$table->string('LABEL');
-			$table->integer('TYPE');
+			$table->string('label');
+			$table->integer('type');
             # 1 = Productive
             # 2 = Raw material
             # 3 = Raw material (Sheet)
@@ -27,10 +27,10 @@ class CreateMethodsServicesTable extends Migration
             # 6 = Supplies
             # 7 = Sub-contracting
             # 8 = Composed component
-			$table->decimal('HOURLY_RATE', 20, 2);
-			$table->decimal('MARGIN', 20, 2);
-			$table->string('COLOR');
-			$table->string('PICTURE')->nullable();
+			$table->decimal('hourly_rate', 20, 2);
+			$table->decimal('margin', 20, 2);
+			$table->string('color');
+			$table->string('picture')->nullable();
 			$table->string('compannie_id')->nullable();
             $table->timestamps();
         });
