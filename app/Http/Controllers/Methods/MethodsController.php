@@ -18,11 +18,11 @@ class MethodsController extends Controller
     //
     public function index()
     {
-        $MethodsServices = MethodsServices::orderBy('ORDRE')->paginate(10);
-        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ORDRE')->get();
-        $MethodsRessources = MethodsRessources::orderBy('ORDRE')->paginate(10);
+        $MethodsServices = MethodsServices::orderBy('ordre')->paginate(10);
+        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
+        $MethodsRessources = MethodsRessources::orderBy('ordre')->paginate(10);
         $RessourcesSelect = MethodsRessources::select('id', 'label')->orderBy('label')->get();
-        $MethodsSections = MethodsSection::orderBy('ORDRE')->paginate(10);
+        $MethodsSections = MethodsSection::orderBy('ordre')->paginate(10);
         $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
         $MethodsLocations = MethodsLocation::orderBy('id')->paginate(10);
         $MethodsUnits = MethodsUnits::orderBy('id')->paginate(10);

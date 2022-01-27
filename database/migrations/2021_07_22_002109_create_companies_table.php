@@ -21,7 +21,7 @@ class CreateCompaniesTable extends Migration
 			$table->string('fbsite')->nullable();
 			$table->string('twittersite')->nullable();
 			$table->string('lkdsite')->nullable();
-			$table->string('SIREN')->nullable();
+			$table->string('siren')->nullable();
 			$table->string('naf_code')->nullable();
 			$table->string('intra_community_vat')->nullable();
 			$table->string('picture')->nullable();

@@ -25,7 +25,7 @@ class InvoicesRequest extends Component
     public $data = [];
     public $qty = [];
 
-    private $ORDRE = 10;
+    private $ordre = 10;
 
     // Validation Rules
     protected $rules = [
@@ -123,7 +123,7 @@ class InvoicesRequest extends Component
                             'invoices_id' => $InvoiceCreated->id,
                             'order_line_id' => $DeliveryLine->order_line_id, 
                             'delivery_line_id' => $this->data[$key]['deliverys_id'], 
-                            'ORDRE' => $this->ORDRE,
+                            'ordre' => $this->ordre,
                             'qty' => $DeliveryLine->qty,
                             'statu' => 1
                         ]); 
@@ -146,7 +146,7 @@ class InvoicesRequest extends Component
                         }
                         $OrderLine->save();
 
-                        $this->ORDRE= $this->ORDRE+10;
+                        $this->ordre= $this->ordre+10;
                     }
                 }  
             }

@@ -17,7 +17,7 @@ class CreateCompaniesContactsTable extends Migration {
 		{
 			$table->id();
 			$table->integer('companies_id');
-			$table->integer('ORDRE');
+			$table->integer('ordre');
 			$table->string('civility');
 			$table->string('first_name');
 			$table->string('name');

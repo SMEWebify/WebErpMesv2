@@ -21,14 +21,14 @@ class ContactsController extends Controller
 
     public function store(StoreContactRequest $request)
     {
-        $contact = CompaniesContacts::create($request->only('companies_id', 'ORDRE', 'civility', 'first_name','name','function','number','mobile','mail'));
+        $contact = CompaniesContacts::create($request->only('companies_id', 'ordre', 'civility', 'first_name','name','function','number','mobile','mail'));
         return redirect()->route('companies.show', ['id' => $request->companies_id])->with('success', 'Successfully created contact');
     }
 
     public function update(UpdateContactRequest $request)
     {
         $contact = CompaniesContacts::find($request->id);
-        $contact->ORDRE=$request->ORDRE;
+        $contact->ordre=$request->ordre;
         $contact->civility=$request->civility;
         $contact->first_name=$request->first_name;
         $contact->name=$request->name;

@@ -46,7 +46,7 @@ class PurchasesQuotation extends Model
 
     public function PurchaseQuotationLines()
     {
-        return $this->hasMany(PurchaseQuotationLines::class)->orderBy('ORDRE');
+        return $this->hasMany(PurchaseQuotationLines::class)->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

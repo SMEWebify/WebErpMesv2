@@ -2,14 +2,14 @@
     <div class="row">
         <div class="col-2">
             <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model="quotes_id" >
-            <label for="ORDRE">Sort order:</label>
+            <label for="ordre">Sort order:</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                 </div>
-                <input type="number" class="form-control @error('ORDRE') is-invalid @enderror" id="ORDRE" placeholder="Enter order" wire:model="ORDRE">
+                <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="Enter order" wire:model="ordre">
             </div>
-            @error('ORDRE') <span class="text-danger">{{ $message }}<br/></span>@enderror
+            @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="code">External ID</label>
             <div class="input-group">
                 <div class="input-group-prepend">

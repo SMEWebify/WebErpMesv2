@@ -17,7 +17,7 @@ class CreateDeliveryLinesTable extends Migration
             $table->id();
             $table->integer('deliverys_id');
             $table->integer('order_line_id');
-            $table->integer('ORDRE');
+            $table->integer('ordre');
 			$table->integer('qty');
             $table->integer('statu')->default(1);
             $table->integer('invoice_status')->default(1);

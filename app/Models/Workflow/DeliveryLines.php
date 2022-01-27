@@ -11,7 +11,7 @@ class DeliveryLines extends Model
 
     protected $fillable = ['deliverys_id', 
                             'order_line_id', 
-                            'ORDRE',
+                            'ordre',
                             'qty',
                             'statu'
     ];

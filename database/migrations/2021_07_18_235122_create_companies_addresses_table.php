@@ -17,7 +17,7 @@ class CreateCompaniesAddressesTable extends Migration {
 		{
 			$table->id();
 			$table->integer('companies_id');
-			$table->integer('ORDRE');
+			$table->integer('ordre');
 			$table->string('label');
 			$table->string('adress')->nullable();
 			$table->string('zipcode')->nullable();

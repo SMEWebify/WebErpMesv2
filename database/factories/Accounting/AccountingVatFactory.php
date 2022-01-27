@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Accounting;
 
-use App\Models\AccountingVat;
+use App\Models\Accounting\AccountingVat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AccountingVatFactory extends Factory
@@ -19,14 +19,17 @@ class AccountingVatFactory extends Factory
      *
      * @return array
      */
+
+    private $type = [];
+
     public function definition()
     {
-        $type = $this->faker->randomElements(['TVA0', 'TVA5', 'TVA10', 'TVA20']);
+        $this->type = $this->faker->unique()->randomElement(['TVA0', 'TVA5', 'TVA10', 'TVA20']);
 
         return [
             //
-            'code' => $this->$type,
-            'label' =>$this->$type,
+            'code' => $this->type,
+            'label' =>$this->type,
             'rate' => $this->faker->randomElement([0, 5, 10, 20]),
         ];
     }

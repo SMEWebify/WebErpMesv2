@@ -116,7 +116,7 @@ Route::group(['prefix' => 'production'], function () {
 });
 
 Route::group(['prefix' => 'admin'], function () {
-    Route::post('/factory', 'App\Http\Controllers\Admin\FactoryController@update')->middleware(['auth'])->name('admin.factory');
+    Route::post('/factory/update', 'App\Http\Controllers\Admin\FactoryController@update')->middleware(['auth'])->name('admin.factory.update');
     Route::get('/factory', 'App\Http\Controllers\Admin\FactoryController@index')->middleware(['auth'])->name('admin.factory');
 });
 

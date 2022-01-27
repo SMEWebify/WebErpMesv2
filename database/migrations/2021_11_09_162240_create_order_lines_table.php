@@ -16,7 +16,7 @@ class CreateOrderLinesTable extends Migration
         Schema::create('order_lines', function (Blueprint $table) {
             $table->id();
             $table->integer('orders_id');
-			$table->integer('ORDRE');
+			$table->integer('ordre');
 			$table->string('code')->nullable();
 			$table->string('product_id')->nullable();
 			$table->string('label');

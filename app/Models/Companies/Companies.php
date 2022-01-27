@@ -19,7 +19,7 @@ class Companies extends Model
                             'fbsite',
                             'twittersite', 
                             'lkdsite', 
-                            'SIREN', 
+                            'siren', 
                             'naf_code', 
                             'intra_community_vat', 
                             'statu_customer',

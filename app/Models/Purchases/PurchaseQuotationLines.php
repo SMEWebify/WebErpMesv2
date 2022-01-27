@@ -12,7 +12,7 @@ class PurchaseQuotationLines extends Model
 
     protected $fillable = ['purchases_quotation_id', 
         'tasks_id', 
-        'ORDRE',
+        'ordre',
         'qty_to_order',
         'unit_price',
         'total_price',

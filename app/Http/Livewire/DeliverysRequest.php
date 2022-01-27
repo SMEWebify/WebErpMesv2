@@ -29,7 +29,7 @@ class DeliverysRequest extends Component
     public $data = [];
     public $qty = [];
 
-    private $ORDRE = 10;
+    private $ordre = 10;
 
     // Validation Rules
     protected $rules = [
@@ -118,7 +118,7 @@ class DeliverysRequest extends Component
                         $DeliveryLines = DeliveryLines::create([
                             'deliverys_id' => $DeliveryCreated->id,
                             'order_line_id' => $this->data[$key]['order_line_id'], 
-                            'ORDRE' => $this->ORDRE,
+                            'ordre' => $this->ordre,
                             'qty' => $this->data[$key]['scumQty'],
                             'statu' => 1
                         ]); 
@@ -141,7 +141,7 @@ class DeliverysRequest extends Component
                         }
                         $OrderLine->save();
 
-                        $this->ORDRE= $this->ORDRE+10;
+                        $this->ordre= $this->ordre+10;
                     }
                 }  
             }

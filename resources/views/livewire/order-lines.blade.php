@@ -56,7 +56,7 @@
                     <tbody>
                         @forelse ($OrderLineslist as $OrderLine)
                         <tr>
-                            <td>{{ $OrderLine->ORDRE }} - 
+                            <td>{{ $OrderLine->ordre }} - 
                                 <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="up({{ $OrderLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
                                 </div>

@@ -85,7 +85,7 @@ class ProductsIndex extends Component
     {
         $Products = Products::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
         $userSelect = User::select('id', 'name')->get();
-        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ORDRE')->get();
+        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
         $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
         $FamiliesSelect = MethodsFamilies::select('id', 'label')->orderBy('label')->get();
         $Factory = Factory::first();

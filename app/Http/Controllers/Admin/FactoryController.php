@@ -35,7 +35,7 @@ class FactoryController extends Controller
                         $Factory->mail = $request->mail;
                         $Factory->WEB_SITE = $request->WEB_SITE;
                         $Factory->picture = $request->picture;
-                        $Factory->SIREN = $request->SIREN; 
+                        $Factory->siren = $request->siren; 
                         $Factory->nat_regis_num = $request->nat_regis_num;
                         $Factory->vat_num = $request->vat_num;
                         $Factory->accounting_vats_id = $request->accounting_vats_id;

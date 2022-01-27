@@ -46,7 +46,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <form method="POST" action="{{ route('admin.factory') }}" >
+                            <form method="POST" action="{{ route('admin.factory.update') }}" >
                             @csrf
                             <div class="col-12">
                                 <div class="row">
@@ -395,7 +395,7 @@
                             <div class="card-body">
                                         <div class="row">
                                             <div class="col-3">
-                                                <input type="text" class="form-control" name="SIREN" id="SIREN" value="{{ $Factory->SIREN }}" placeholder="Siren">
+                                                <input type="text" class="form-control" name="siren" id="siren" value="{{ $Factory->siren }}" placeholder="Siren">
                                             </div>
                                             <div class="col-3">
                                                 <input type="text" class="form-control" name="nat_regis_num" id="nat_regis_num" value="{{ $Factory->nat_regis_num }}" placeholder="Nat regis num">

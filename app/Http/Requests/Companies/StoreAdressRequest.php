@@ -25,7 +25,7 @@ class StoreAdressRequest extends FormRequest
     {
         return [
             //
-            'ORDRE' =>'required',
+            'ordre' =>'required',
             'label'=>'required',
             'adress'=>'required',
             'zipcode'=>'required',

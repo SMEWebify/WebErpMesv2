@@ -10,7 +10,7 @@ class CompaniesAddresses extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['companies_id', 'ORDRE', 'label', 'adress','zipcode','city','country','number','mail'];
+    protected $fillable = ['companies_id', 'ordre', 'label', 'adress','zipcode','city','country','number','mail'];
     
     public $timestamps = false;
 

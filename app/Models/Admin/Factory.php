@@ -21,7 +21,7 @@ class Factory extends Model
                             'mail',
                             'WEB_SITE',
                             'picture',
-                            'SIREN', 
+                            'siren', 
                             'nat_regis_num',
                             'vat_num',
                             'accounting_vats_id',

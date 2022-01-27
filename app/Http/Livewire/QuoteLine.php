@@ -19,7 +19,7 @@ class QuoteLine extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
-    public $sortField = 'ORDRE'; // default sorting field
+    public $sortField = 'ordre'; // default sorting field
     public $sortAsc = true; // default sort direction
     
     public $QuoteId;
@@ -27,7 +27,7 @@ class QuoteLine extends Component
     public $status_id;
 
     public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ORDRE, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $quote_lines_id, $quotes_id, $ordre, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $label='';
     public $discount= 0;
     public $updateLines = false;
@@ -43,7 +43,7 @@ class QuoteLine extends Component
 
     // Validation Rules
     protected $rules = [
-        'ORDRE'=>'required',
+        'ordre'=>'required',
         'label'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
@@ -78,14 +78,14 @@ class QuoteLine extends Component
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
         $this->Factory = Factory::first();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
-        $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ORDRE')->get();
+        $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
         $this->BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
                                                                             ->orWhere('type', '=', 3)
                                                                             ->orWhere('type', '=', 4)
                                                                             ->orWhere('type', '=', 5)
                                                                             ->orWhere('type', '=', 6)
                                                                             ->orWhere('type', '=', 8)
-                                                                            ->orderBy('ORDRE')->get();
+                                                                            ->orderBy('ordre')->get();
     }
 
     public function render()
@@ -98,7 +98,7 @@ class QuoteLine extends Component
     }
 
     public function resetFields(){
-        $this->ORDRE = $this->ORDRE+1;
+        $this->ordre = $this->ordre+1;
         $this->code = '';
         $this->product_id = '';
         $this->label = '';
@@ -109,7 +109,7 @@ class QuoteLine extends Component
         // Create Line
         Quotelines::create([
             'quotes_id'=>$this->quotes_id,
-            'ORDRE'=>$this->ORDRE,
+            'ordre'=>$this->ordre,
             'code'=>$this->code,
             'product_id'=>$this->product_id,
             'label'=>$this->label,
@@ -129,7 +129,7 @@ class QuoteLine extends Component
     public function editQuoteLine($id){
         $Line = Quotelines::findOrFail($id);
         $this->quote_lines_id = $id;
-        $this->ORDRE = $Line->ORDRE;
+        $this->ordre = $Line->ordre;
         $this->code = $Line->code;
         $this->product_id = $Line->product_id;
         $this->label = $Line->label;
@@ -148,7 +148,7 @@ class QuoteLine extends Component
         $this->validate();
         // Update line
         Quotelines::find($this->quote_lines_id)->fill([
-            'ORDRE'=>$this->ORDRE,
+            'ordre'=>$this->ordre,
             'code'=>$this->code,
             'product_id'=>$this->product_id,
             'label'=>$this->label,
@@ -171,13 +171,13 @@ class QuoteLine extends Component
 
     public function upQuoteLine($idStatu){
         // Update line
-        Quotelines::find($idStatu)->increment('ORDRE',1);;
+        Quotelines::find($idStatu)->increment('ordre',1);;
         session()->flash('success','Line Updated Successfully');
     }
 
     public function downQuoteLine($idStatu){
         // Update line
-        Quotelines::find($idStatu)->decrement('ORDRE',1);;
+        Quotelines::find($idStatu)->decrement('ordre',1);;
         session()->flash('success','Line Updated Successfully');
     }
 

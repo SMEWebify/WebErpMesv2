@@ -17,7 +17,7 @@ class CreatePurchaseQuotationLinesTable extends Migration
             $table->id();
             $table->integer('purchases_quotation_id');
             $table->integer('tasks_id');
-			$table->integer('ORDRE');
+			$table->integer('ordre');
 			$table->decimal('qty_to_order', 10, 3);
 			$table->decimal('unit_price', 10, 3);
 			$table->decimal('total_price', 10, 3);

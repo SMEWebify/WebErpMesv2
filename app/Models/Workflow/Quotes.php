@@ -68,7 +68,7 @@ class Quotes extends Model
 
     public function QuoteLines()
     {
-        return $this->hasMany(QuoteLines::class)->orderBy('ORDRE');
+        return $this->hasMany(QuoteLines::class)->orderBy('ordre');
     }
 
 

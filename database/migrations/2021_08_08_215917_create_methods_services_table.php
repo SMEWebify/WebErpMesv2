@@ -16,7 +16,7 @@ class CreateMethodsServicesTable extends Migration
         Schema::create('methods_services', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-			$table->integer('ORDRE');
+			$table->integer('ordre');
 			$table->string('label');
 			$table->integer('type');
             # 1 = Productive

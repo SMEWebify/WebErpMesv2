@@ -76,7 +76,7 @@ class Orders extends Model
 
     public function OrderLines()
     {
-        return $this->hasMany(OrderLines::class)->orderBy('ORDRE');
+        return $this->hasMany(OrderLines::class)->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

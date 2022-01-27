@@ -398,7 +398,7 @@
                       @forelse ($TimesMachineEvents as $TimesMachineEvent)
                       <tr>
                         <td>{{ $TimesMachineEvent->code }}</td>
-                        <td>{{ $TimesMachineEvent->ORDRE }}</td>
+                        <td>{{ $TimesMachineEvent->ordre }}</td>
                         <td>{{ $TimesMachineEvent->label }}</td>
                         <td>
                           @if($TimesMachineEvent->mask_time  == 1)Yes @endif
@@ -458,12 +458,12 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="ORDRE">Sort order:</label>
+                      <label for="ordre">Sort order:</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                         </div>
-                        <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="10">
+                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10">
                       </div>
                     </div>
                     <div class="form-group">

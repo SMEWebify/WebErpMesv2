@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Accounting;
 
 use App\Models\acPaymentConditions;
 use Illuminate\Database\Eloquent\Factories\Factory;

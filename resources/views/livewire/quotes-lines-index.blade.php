@@ -37,7 +37,7 @@
                     @forelse ($QuoteLineslist as $QuoteLine)
                     <tr>
                         <td>{{ $QuoteLine->quote['code'] }}</td>
-                        <td>{{ $QuoteLine->ORDRE }}</td>
+                        <td>{{ $QuoteLine->ordre }}</td>
                         <td>{{ $QuoteLine->code }}</td>
                         <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['label'] }}@endif</td>
                         <td>{{ $QuoteLine->label }}</td>

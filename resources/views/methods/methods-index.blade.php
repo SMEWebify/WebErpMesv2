@@ -74,7 +74,7 @@
                           <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsService->picture) }}">
                           @endif
                         </td>
-                        <td>{{ $MethodsService->ORDRE }}</td>
+                        <td>{{ $MethodsService->ordre }}</td>
                         <td>{{ $MethodsService->code }}</td>
                         <td>{{ $MethodsService->label }}</td>
                         <td>
@@ -145,12 +145,12 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <label for="ORDRE">Sort order:</label>
+                        <label for="ordre">Sort order:</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                           </div>
-                          <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                          <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
                         </div>
                       </div>
                       <div class="form-group">
@@ -269,7 +269,7 @@
                           <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsRessource->picture) }}">
                           @endif
                         </td>
-                        <td>{{ $MethodsRessource->ORDRE }}</td>
+                        <td>{{ $MethodsRessource->ordre }}</td>
                         <td>{{ $MethodsRessource->code }}</td>
                         <td>{{ $MethodsRessource->label }}</td>
                         <td>{{ $MethodsRessource->mask_time }}</td>
@@ -332,12 +332,12 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="ORDRE">Sort order:</label>
+                    <label for="ordre">Sort order:</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                       </div>
-                      <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                      <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
                     </div>
                   </div>
                   <div class="form-group">
@@ -458,7 +458,7 @@
                     <tbody>
                       @forelse ($MethodsSections as $MethodsSection)
                       <tr>
-                        <td>{{ $MethodsSection->ORDRE }}</td>
+                        <td>{{ $MethodsSection->ordre }}</td>
                         <td>{{ $MethodsSection->code }}</td>
                         <td>{{ $MethodsSection->label }}</td>
                         <td>{{ $MethodsSection->UserManagement['name'] }}</td>
@@ -500,12 +500,12 @@
                   <form  method="POST" action="{{ route('methods.section.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
-                      <label for="ORDRE">Sort order:</label>
+                      <label for="ordre">Sort order:</label>
                       <div class="input-group">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                         </div>
-                        <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="10">
+                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10">
                       </div>
                     </div>
                     <div class="form-group">

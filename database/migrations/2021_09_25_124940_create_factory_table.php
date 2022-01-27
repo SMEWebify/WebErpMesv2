@@ -25,7 +25,7 @@ class CreateFactoryTable extends Migration
 			$table->string('mail')->nullable();
 			$table->string('WEB_SITE')->nullable();
 			$table->string('picture')->nullable();
-			$table->string('SIREN')->nullable();
+			$table->string('siren')->nullable();
 			$table->string('nat_regis_num')->nullable();
 			$table->string('vat_num')->nullable();
 			$table->integer('accounting_vats_id')->default(1);

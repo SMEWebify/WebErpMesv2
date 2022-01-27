@@ -16,7 +16,7 @@ class CreateTimesMachineEventsTable extends Migration
         Schema::create('times_machine_events', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-			$table->integer('ORDRE');
+			$table->integer('ordre');
 			$table->string('label');
 			$table->integer('mask_time');
 			$table->string('color');

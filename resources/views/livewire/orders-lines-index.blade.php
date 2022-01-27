@@ -39,7 +39,7 @@
                     @forelse ($OrderLineslist as $OrderLine)
                     <tr>
                         <td>{{ $OrderLine->order['code'] }}</td>
-                        <td>{{ $OrderLine->ORDRE }}</td>
+                        <td>{{ $OrderLine->ordre }}</td>
                         <td>{{ $OrderLine->code }}</td>
                         <td>@if(1 == $OrderLine->product_id ) {{ $OrderLine->Product['label'] }}@endif</td>
                         <td>{{ $OrderLine->label }}</td>

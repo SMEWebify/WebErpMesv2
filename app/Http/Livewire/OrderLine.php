@@ -19,7 +19,7 @@ class OrderLine extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
-    public $sortField = 'ORDRE'; // default sorting field
+    public $sortField = 'ordre'; // default sorting field
     public $sortAsc = true; // default sort direction
     
     public $OrderId;
@@ -27,7 +27,7 @@ class OrderLine extends Component
     public $status_id;
 
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ORDRE, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $order_lines_id, $orders_id, $ordre, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $label='';
     public $discount= 0;
     public $updateLines = false;
@@ -42,7 +42,7 @@ class OrderLine extends Component
 
     // Validation Rules
     protected $rules = [
-        'ORDRE'=>'required',
+        'ordre'=>'required',
         'label'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
@@ -77,14 +77,14 @@ class OrderLine extends Component
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
         $this->Factory = Factory::first();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
-        $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ORDRE')->get();
+        $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
         $this->BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
                                                                             ->orWhere('type', '=', 3)
                                                                             ->orWhere('type', '=', 4)
                                                                             ->orWhere('type', '=', 5)
                                                                             ->orWhere('type', '=', 6)
                                                                             ->orWhere('type', '=', 8)
-                                                                            ->orderBy('ORDRE')->get();
+                                                                            ->orderBy('ordre')->get();
     }
 
     public function render()
@@ -97,7 +97,7 @@ class OrderLine extends Component
     }
 
     public function resetFields(){
-        $this->ORDRE = $this->ORDRE+1;
+        $this->ordre = $this->ordre+1;
         $this->code = '';
         $this->product_id = '';
         $this->label = '';
@@ -109,7 +109,7 @@ class OrderLine extends Component
         // Create Line
         Orderlines::create([
             'orders_id'=>$this->orders_id,
-            'ORDRE'=>$this->ORDRE,
+            'ordre'=>$this->ordre,
             'code'=>$this->code,
             'product_id'=>$this->product_id,
             'label'=>$this->label,
@@ -131,7 +131,7 @@ class OrderLine extends Component
     public function edit($id){
         $Line = Orderlines::findOrFail($id);
         $this->order_lines_id = $id;
-        $this->ORDRE = $Line->ORDRE;
+        $this->ordre = $Line->ordre;
         $this->code = $Line->code;
         $this->product_id = $Line->product_id;
         $this->label = $Line->label;
@@ -153,13 +153,13 @@ class OrderLine extends Component
 
     public function up($idStatu){
         // Update line
-        Orderlines::find($idStatu)->increment('ORDRE',1);;
+        Orderlines::find($idStatu)->increment('ordre',1);;
         session()->flash('success','Line Updated Successfully');
     }
 
     public function down($idStatu){
         // Update line
-        Orderlines::find($idStatu)->decrement('ORDRE',1);;
+        Orderlines::find($idStatu)->decrement('ordre',1);;
         session()->flash('success','Line Updated Successfully');
     }
 
@@ -184,7 +184,7 @@ class OrderLine extends Component
             if($OderLineToUpdate->delivered_qty == $this->qty ){
                 $OderLineToUpdate->delivery_status = 3;
             }*/
-            $OderLineToUpdate->ORDRE = $this->ORDRE;
+            $OderLineToUpdate->ordre = $this->ordre;
             $OderLineToUpdate->code = $this->code;
             $OderLineToUpdate->product_id = $this->product_id;
             $OderLineToUpdate->label = $this->label;

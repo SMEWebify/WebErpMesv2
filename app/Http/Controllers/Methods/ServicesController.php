@@ -11,7 +11,7 @@ class ServicesController extends Controller
     //
     public function store(StoreServicesRequest $request)
     {
-        $Service =  MethodsServices::create($request->only('code','ORDRE', 'label','type', 'hourly_rate','margin', 'color','picture', 'compannie_id'));
+        $Service =  MethodsServices::create($request->only('code','ordre', 'label','type', 'hourly_rate','margin', 'color','picture', 'compannie_id'));
         if($request->hasFile('picture')){
             $path = $request->picture->store('images/methods','public');
             $Service->update(['picture' => $path]);

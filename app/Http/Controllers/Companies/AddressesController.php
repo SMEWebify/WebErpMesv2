@@ -19,14 +19,14 @@ class AddressesController extends Controller
 
     public function store(StoreAdressRequest $request)
     {
-        $adress = CompaniesAddresses::create($request->only('companies_id', 'ORDRE', 'label', 'adress','zipcode','city','country','number','mail'));
+        $adress = CompaniesAddresses::create($request->only('companies_id', 'ordre', 'label', 'adress','zipcode','city','country','number','mail'));
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully created adress');
     }
 
     public function update(UpdateAdressRequest $request)
     {
         $adress = CompaniesAddresses::find($request->id);
-        $adress->ORDRE=$request->ORDRE;
+        $adress->ordre=$request->ordre;
         $adress->label=$request->label;
         $adress->adress=$request->adress;
         $adress->zipcode=$request->zipcode;

@@ -55,7 +55,7 @@
                         @forelse ($QuoteLineslist as $QuoteLine)
                         <tr>
                             <td>
-                                {{ $QuoteLine->ORDRE }} - 
+                                {{ $QuoteLine->ordre }} - 
                                 <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="upQuoteLine({{ $QuoteLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
                                 </div>

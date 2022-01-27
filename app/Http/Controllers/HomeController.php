@@ -21,7 +21,7 @@ class HomeController extends Controller
         $CurentYear = Carbon::now()->format('Y');
 
         //use for liste of tasks
-        $ServiceGoals = MethodsServices::withCount('Tasks')->orderBy('ORDRE')->get();
+        $ServiceGoals = MethodsServices::withCount('Tasks')->orderBy('ordre')->get();
         $Tasks = DB::table('tasks')
                     ->select('tasks.id','statuses.title', 'methods_services.id as methods_id', 'methods_services.label', DB::raw('count(*) as total_task'))
                     ->join('statuses', 'tasks.status_id', '=', 'statuses.id')

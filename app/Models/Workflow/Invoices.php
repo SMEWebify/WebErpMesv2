@@ -51,7 +51,7 @@ class Invoices extends Model
 
     public function InvoiceLines()
     {
-        return $this->hasMany(InvoiceLines::class)->orderBy('ORDRE');
+        return $this->hasMany(InvoiceLines::class)->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

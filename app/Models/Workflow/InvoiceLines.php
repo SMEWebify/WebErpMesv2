@@ -14,7 +14,7 @@ class InvoiceLines extends Model
     protected $fillable = ['invoices_id',
                             'order_line_id', 
                             'delivery_line_id',
-                            'ORDRE',
+                            'ordre',
                             'qty',
                             'accounting_allocation_id',
                             'invoice_status'

@@ -32,7 +32,7 @@ class PurchasesRequest extends Component
     public $data = [];
     public $qty = [];
 
-    private $ORDRE = 10;
+    private $ordre = 10;
 
     // Validation Rules
     protected function rules()
@@ -163,7 +163,7 @@ class PurchasesRequest extends Component
                                 'purchases_id' => $PurchaseOrderCreated->id,
                                 'order_line_id' => $PurchaseOrderCreated->order_line_id, 
                                 'delivery_line_id' => $this->data[$key]['deliverys_id'], 
-                                'ORDRE' => $this->ORDRE,
+                                'ordre' => $this->ordre,
                                 'qty' => $PurchaseOrderCreated->qty,
                                 'statu' => 1
                             ]); 
@@ -186,7 +186,7 @@ class PurchasesRequest extends Component
                             }
                             $OrderLine->save();*/
 
-                            $this->ORDRE= $this->ORDRE+10;
+                            $this->ordre= $this->ordre+10;
                         }
                     }  
                 }

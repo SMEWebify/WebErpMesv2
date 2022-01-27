@@ -11,7 +11,7 @@ class RessourcesController extends Controller
     //
     public function store(StoreRessourceRequest $request)
     {
-        $Ressource =  MethodsRessources::create($request->only('ORDRE','code', 'label','mask_time', 'capacity','section_id', 'color', 'service_id','color'));
+        $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label','mask_time', 'capacity','section_id', 'color', 'service_id','color'));
         if($request->hasFile('picture')){
             $path = $request->picture->store('images/methods','public');
             $Ressource->update(['picture' => $path]);

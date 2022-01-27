@@ -11,7 +11,7 @@ class SectionsController extends Controller
     //
     public function store(StoreSectionRequest $request)
     {
-        $Section = MethodsSection::create($request->only('ORDRE','code', 'label','user_id','color'));
+        $Section = MethodsSection::create($request->only('ordre','code', 'label','user_id','color'));
         return redirect()->route('methods')->with('success', 'Successfully created section.');
     }
 }

@@ -16,7 +16,7 @@ class PurchaseLines extends Model
 
     protected $fillable = ['purchases_id', 
         'tasks_id', 
-        'ORDRE',
+        'ordre',
         'code',
         'product_id',
         'label',

@@ -21,7 +21,7 @@ class CompaniesLines extends Component
     public $userSelect = [];
     public $code, $label;
     public $website, $fbsite, $twittersite, $lkdsite;
-    public $SIREN, $naf_code, $intra_community_vat, $TVA_ID;
+    public $siren, $naf_code, $intra_community_vat, $TVA_ID;
     public $statu_customer;
     public $statu_supplier;
     public $user_id;
@@ -85,7 +85,7 @@ class CompaniesLines extends Component
                 'fbsite'=>$this->fbsite,
                 'twittersite'=>$this->twittersite, 
                 'lkdsite'=>$this->lkdsite, 
-                'SIREN'=>$this->SIREN, 
+                'siren'=>$this->siren, 
                 'naf_code'=>$this->naf_code, 
                 'intra_community_vat'=>$this->intra_community_vat, 
                 'TVA_ID'=>$this->TVA_ID, 

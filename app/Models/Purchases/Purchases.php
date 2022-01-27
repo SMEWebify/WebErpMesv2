@@ -46,7 +46,7 @@ class Purchases extends Model
 
     public function PurchaseLines()
     {
-        return $this->hasMany(PurchaseLines::class)->orderBy('ORDRE');
+        return $this->hasMany(PurchaseLines::class)->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

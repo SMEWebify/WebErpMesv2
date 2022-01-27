@@ -65,11 +65,11 @@
         </div>
         <hr>
         <div class="row">
-          @if($Companie->SIREN )
+          @if($Companie->siren )
           <div class="col-12 col-sm-4">
             <div class="text-muted">
             <p class="text-sm">Siren
-              <b class="d-block">{{ $Companie->SIREN }}</b>
+              <b class="d-block">{{ $Companie->siren }}</b>
             </p>
             </div>
           </div>
@@ -232,12 +232,12 @@
             @csrf
             <div class="row">
               <div class="col-5">
-                <label for="ORDRE">Sort order:</label>
+                <label for="ordre">Sort order:</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                     </div>
-                  <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                  <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
                 </div>
                 <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
               </div>
@@ -337,12 +337,12 @@
             @csrf
             <div class="row">
               <div class="col-5">
-                <label for="ORDRE">Sort order:</label>
+                <label for="ordre">Sort order:</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                   </div>
-                  <input type="number" class="form-control" name="ORDRE" id="ORDRE" placeholder="Order">
+                  <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
                   <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
                 </div>
               </div>

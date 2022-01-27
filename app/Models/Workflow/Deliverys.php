@@ -56,7 +56,7 @@ class Deliverys extends Model
 
     public function DeliveryLines()
     {
-        return $this->hasMany(DeliveryLines::class)->orderBy('ORDRE');
+        return $this->hasMany(DeliveryLines::class)->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

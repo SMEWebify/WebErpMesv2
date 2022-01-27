@@ -109,7 +109,7 @@
                                 </a>
                                 {{ $DeliverysRequestsLine->order['code'] }}
                             </td>
-                            <td>{{ $DeliverysRequestsLine->ORDRE }}</td>
+                            <td>{{ $DeliverysRequestsLine->ordre }}</td>
                             <td>{{ $DeliverysRequestsLine->code }}</td>
                             <td>@if(1 == $DeliverysRequestsLine->product_id ) {{ $DeliverysRequestsLine->Product['label'] }}@endif</td>
                             <td>{{ $DeliverysRequestsLine->label }}</td>

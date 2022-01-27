@@ -21,14 +21,14 @@ class ProductsController extends Controller
         $Product = Products::findOrFail($id);
         $status_id = Status::select('id')->orderBy('order')->first();
         $ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
-        $TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ORDRE')->get();
+        $TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
         $BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
                                                                             ->orWhere('type', '=', 3)
                                                                             ->orWhere('type', '=', 4)
                                                                             ->orWhere('type', '=', 5)
                                                                             ->orWhere('type', '=', 6)
                                                                             ->orWhere('type', '=', 8)
-                                                                            ->orderBy('ORDRE')->get();
+                                                                            ->orderBy('ordre')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');

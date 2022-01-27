@@ -93,12 +93,12 @@
                                         </div>
                                         <hr>
                                         <div class="row">
-                                            <label for="SIREN">Administrative information</label>
+                                            <label for="siren">Administrative information</label>
                                         </div>
                                         <div class="row">
                                             <div class="col-3">
-                                                <input type="text" class="form-control" name="SIREN" id="SIREN" wire:model="SIREN" placeholder="Siren">
-                                                @error('SIREN') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                <input type="text" class="form-control" name="siren" id="siren" wire:model="siren" placeholder="Siren">
+                                                @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
                                                 <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="naf_code code">
