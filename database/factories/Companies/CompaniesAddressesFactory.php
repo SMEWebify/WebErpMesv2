@@ -34,9 +34,7 @@ class CompaniesAddressesFactory extends Factory
             'city' => $City,
             'country' => $this->faker->country(),
             'number' => $this->faker->phoneNumber(),
-            'mail' => $this->faker->safeEmail(),
-            'ADRESS_LIV' => $this->faker->numberBetween($min = 1, $max = 2),
-            'ADRESS_FAC' => $this->faker->numberBetween($min = 1, $max = 2),
+            'mail' => $this->faker->unique()->safeEmail(),
         ];
     }
 }
