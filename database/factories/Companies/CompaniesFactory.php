@@ -35,7 +35,7 @@ class CompaniesFactory extends Factory
 			'picture'=> $this->faker->imageUrl(640, 480, 'Companies Logo', true),
 			'statu_customer' => $this->faker->randomElement([1, 2, 3]),
 			'discount'=> $this->faker->randomElement([0, 1, 5, 10]), 
-			'user_id' => User::factory(),
+			'user_id' => User::all()->random()->id,
 			'account_general_customer' => $this->faker->randomElement([1, 2, 3]), 
 			'account_auxiliary_customer' => $this->faker->randomElement([1, 2, 3]),  
 			'statu_supplier' => $this->faker->randomElement([1, 2]), 

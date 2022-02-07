@@ -24,7 +24,7 @@ class CompaniesContactsFactory extends Factory
     {
         return [
             //
-            'companies_id' => Companies::factory(),
+            'companies_id' => Companies::all()->random()->id,
             'ordre' => $this->faker->randomDigitNotNull(),
             'civility' =>$this->faker->randomElement(['Mr', 'Mrs ', 'Miss ', 'Ms']),
             'first_name' => $this->faker->firstName(),

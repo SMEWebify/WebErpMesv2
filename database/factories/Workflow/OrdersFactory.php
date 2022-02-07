@@ -26,25 +26,27 @@ class OrdersFactory extends Factory
      *
      * @return array
      */
+    private $code = '';
+
     public function definition()
     {
-        $code = $this->faker->unique()->numerify('OR-####');
+        $this->code = $this->faker->unique()->numerify('OR-####');
 
         return [
             //
-            'code' => $this->$code,
-			'label' => $this->$code,
-			'customer_reference' => $this->faker->word,
-			'companies_id' => $this->faker->factory(Companies::class),
-			'companies_contacts_id' => CompaniesContacts::factory(),
-			'companies_addresses_id' => CompaniesAddresses::factory(),
+            'code' => $this->code,
+			'label' => $this->code,
+			'customer_reference' => $this->faker->words(7,true) ,
+			'companies_id' => Companies::all()->random()->id,
+			'companies_contacts_id' => CompaniesContacts::all()->random()->id,
+			'companies_addresses_id' => CompaniesAddresses::all()->random()->id,
 			'validity_date' => $this->faker->dateTimeInInterval('+1 week', '+41 week'),
-			'statu' => $this->faker->randomElement([1, 2, 3]),
-			'user_id' => User::factory(),
-			'accounting_payment_conditions_id' => AccountingPaymentConditions::factory(),
-			'accounting_payment_methods_id' => AccountingPaymentMethod::factory(),
-			'accounting_deliveries_id'=> AccountingDelivery::factory(),
-			'comment'=> $this->faker->paragraphs,
+			'statu' => $this->faker->numberBetween($min = 1, $max = 3),
+			'user_id' => User::all()->random()->id,
+			'accounting_payment_conditions_id' => AccountingPaymentConditions::all()->random()->id,
+			'accounting_payment_methods_id' => AccountingPaymentMethod::all()->random()->id,
+			'accounting_deliveries_id'=> AccountingDelivery::all()->random()->id,
+			'comment'=> $this->faker->paragraphs(2, true),
         ];
     }
 }

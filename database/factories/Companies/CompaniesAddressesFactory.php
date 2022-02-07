@@ -26,7 +26,7 @@ class CompaniesAddressesFactory extends Factory
 
         return [
             //
-            'companies_id' => Companies::factory(),
+            'companies_id' => Companies::all()->random()->id,
             'ordre' => $this->faker->randomDigitNotNull(),
             'label' =>$City,
             'adress' => $this->faker->secondaryAddress(),
