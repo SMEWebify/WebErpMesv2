@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use App\Models\Admin\Factory;
+use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\ServiceS\OrderCalculator;
 use Illuminate\Support\Facades\DB;
@@ -59,9 +60,15 @@ class OrdersController extends Controller
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
+
+        //DB information mustn't be empty.
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
+        }
+        $Status = Status::select('id')->orderBy('order')->first();
+        if(!$Status){
+            return redirect()->route('admin.factory')->with('error', 'Please check kanban statu');
         }
 
         return view('workflow/orders-show', [

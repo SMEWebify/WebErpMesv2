@@ -548,7 +548,7 @@
   // Get context with jQuery - using jQuery's .get() method.
   var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
   var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','September','December ' ],
+      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','November','December' ],
       datasets: [
         {
           label               : 'Order revenues',

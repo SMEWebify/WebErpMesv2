@@ -168,23 +168,7 @@ class PurchasesRequest extends Component
                                 'statu' => 1
                             ]); 
 
-                        /* // update order line info
-                            $OrderLine = OrderLines::find($this->data[$key]['order_line_id']);
-                            $OrderLine->delivered_qty =  $OrderLine->delivered_qty + $this->data[$key]['scumQty'];
-                            $OrderLine->delivered_remaining_qty = $OrderLine->delivered_remaining_qty - $this->data[$key]['scumQty'];
-                            //if we are delivered all part
-                            if($OrderLine->delivered_remaining_qty == 0){
-                                $OrderLine->delivery_status = 3;
-                                // update order statu info
-                                // we must be check if all entry are delivered
-                                //Orders::where('id',$OrderLine->orders_id)->update(['statu'=>2]);
-                            }
-                            else{
-                                $OrderLine->delivery_status = 2;
-                                // update order statu info
-                                Orders::where('id',$OrderLine->orders_id)->update(['statu'=>3]);
-                            }
-                            $OrderLine->save();*/
+                        /* // update task statu line info*/
 
                             $this->ordre= $this->ordre+10;
                         }

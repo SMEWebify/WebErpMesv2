@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Workflow;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Admin\Factory;
+use App\Models\Planning\Status;
 use App\Models\Workflow\Quotes;
 use App\ServiceS\QuoteCalculator;
 use Illuminate\Support\Facades\DB;
@@ -12,8 +13,8 @@ use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
-use App\Models\Companies\CompaniesAddresses;
 
+use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Http\Requests\Workflow\StoreQuoteRequest;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
@@ -63,9 +64,16 @@ class QuotesController extends Controller
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
         $vatPrice = $QuoteCalculator->getVatTotal();
+        
+        //DB information mustn't be empty.
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
+        }
+        
+        $Status = Status::select('id')->orderBy('order')->first();
+        if(!$Status){
+            return redirect()->route('admin.factory')->with('error', 'Please check kanban statu');
         }
 
         return view('workflow/quotes-show', [
