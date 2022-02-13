@@ -6,12 +6,15 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\Orders;
 use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
+
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderLines extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['orders_id', 
                             'ordre', 
                             'code',

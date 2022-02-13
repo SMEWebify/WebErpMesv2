@@ -6,12 +6,13 @@ use App\Models\User;
 use App\Models\Workflow\Quotes;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Orders extends Model

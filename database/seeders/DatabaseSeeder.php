@@ -3,11 +3,17 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Workflow\Orders;
+use App\Models\Workflow\Quotes;
 use Illuminate\Database\Seeder;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use Database\Seeders\MethodsUnitTableSeeder;
 use App\Models\Accounting\AccountingDelivery;
+use Database\Seeders\MethodsSectionTableSeeder;
+use Database\Seeders\MethodsServicesTableSeeder;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Database\Factories\Accounting\AccountingVatFactory;
@@ -37,23 +43,34 @@ class DatabaseSeeder extends Seeder
         AccountingPaymentMethod::factory()->count(3)->create();
         AccountingDelivery::factory()->count(3)->create();
         /*
-        *Accouting allocation
+        *Accouting allocation seeder
         */
 
         //Methodes informations 
+        $this->call([
+            MethodsServicesTableSeeder::class,
+            MethodsUnitTableSeeder::class,
+            MethodsSectionTableSeeder::class,
+        ]);
         /*
-        *Services
-        *Famillies
-        *Section
-        *Ressources
-        *Location
-        *Units
+        *Famillies  seeder
+        *Section  seeder
+        *Ressources  seeder
+        *Location  seeder
         */
 
         //Products 
+        /*          
+        *Products  seeder
+        */
 
         //Quotes
+        Quotes::factory()->count(500)->create();
         
         //Orders 
+        Orders::factory()->count(1000)->create();
+        OrderLines::factory()->count(5000)->create();
+
+        //Task
     }
 }

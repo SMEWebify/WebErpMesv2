@@ -6,14 +6,14 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
+
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuoteLines extends Model
 {
     use HasFactory;
-
     
     protected $fillable = ['quotes_id', 
                             'ordre', 
