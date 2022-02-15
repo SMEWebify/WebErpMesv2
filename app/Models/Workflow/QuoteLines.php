@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class QuoteLines extends Model
 {
     use HasFactory;
-
     
     protected $fillable = ['quotes_id', 
                             'ordre', 

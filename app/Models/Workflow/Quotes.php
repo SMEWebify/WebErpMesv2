@@ -5,12 +5,13 @@ namespace App\Models\Workflow;
 use App\Models\User;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Quotes extends Model

@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderLines extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['orders_id', 
                             'ordre', 
                             'code',
