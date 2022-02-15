@@ -127,8 +127,8 @@
                             <td>@if($PurchasesRequestsLines->methods_services_id ) {{ $PurchasesRequestsLines->service['label'] }}@endif</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $PurchasesRequestsLines->id }}" wire:model="data.{{ $PurchasesRequestsLines->id }}.order_line_id" id="data.{{ $PurchasesRequestsLines->id }}.order_line_id"  type="checkbox">
-                                    <label for="data.{{ $PurchasesRequestsLines->id }}.order_line_id" class="custom-control-label">Add to new document </label>
+                                    <input class="custom-control-input" value="{{ $PurchasesRequestsLines->id }}" wire:model="data.{{ $PurchasesRequestsLines->id }}.task_id" id="data.{{ $PurchasesRequestsLines->id }}.task_id"  type="checkbox">
+                                    <label for="data.{{ $PurchasesRequestsLines->id }}.task_id" class="custom-control-label">Add to new document </label>
                                 </div>
                             </td>
                         </tr>

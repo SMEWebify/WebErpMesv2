@@ -90,7 +90,6 @@ class OrderLine extends Component
     public function render()
     {
         $OrderLineslist = $this->OrderLineslist = Orderlines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('orders_id', '=', $this->orders_id)->where('label','like', '%'.$this->search.'%')->get();
-        
         return view('livewire.order-lines', [
             'OrderLineslist' => $OrderLineslist,
         ]);

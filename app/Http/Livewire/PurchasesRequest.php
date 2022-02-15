@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use App\Models\Purchases\PurchaseLines;
@@ -67,11 +68,15 @@ class PurchasesRequest extends Component
 
     public function mount() 
     {
+            // get last id
             $this->LastPurchase =  Purchases::latest()->first();
+            //if we have no id, define 0 
             if($this->LastPurchase == Null){
+                $this->LastPurchase = 0;
                 $this->code = $this->document_type ."-0";
                 $this->label = $this->document_type ."-0";
             }
+            // else we use is from db
             else{
                 $this->LastPurchase = $this->LastPurchase->id;
                 $this->code = $this->document_type ."-". $this->LastPurchase;
@@ -104,10 +109,12 @@ class PurchasesRequest extends Component
     public function render()
     {
         $userSelect = User::select('id', 'name')->get();
+        $Status = Status::select('id')->orderBy('order')->first();
 
         //Select task where statu is open and only purchase type
         $PurchasesRequestsLineslist = $this->PurchasesRequestsLineslist = Task::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                                                                        ->where('status_id', '=', '6')
+                                                                        ->where('status_id', '=', $Status->id)
+                                                                        ->whereNotNull('order_lines_id')
                                                                         ->where(
                                                                             function($query) {
                                                                                 return $query
@@ -128,12 +135,14 @@ class PurchasesRequest extends Component
     public function storePurchase(){
         //check rules
         $this->validate(); 
+
+        $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();;
         
         //check if line exist
         $i = 0;
         foreach ($this->data as $key => $item) {
-            if(array_key_exists("order_line_id",$this->data[$key])){
-                if($this->data[$key]['order_line_id'] != false ){
+            if(array_key_exists("task_id",$this->data[$key])){
+                if($this->data[$key]['task_id'] != false ){
                     $i++;
                 }
             }
@@ -149,32 +158,48 @@ class PurchasesRequest extends Component
                     'user_id'=>$this->user_id,
                 ]);
 
-                // Create lines
-                foreach ($this->data as $key => $item) {
-                    //check if add line to new delivery note is aviable
-                    if(array_key_exists("order_line_id",$this->data[$key])){
-                        if($this->data[$key]['order_line_id'] != false ){
-                            //if not best to find request value, but we cant send hidden data with livewire
-                            //How pass all information from task information ?
-                           // $Task = Task::find($this->data[$key]['deliverys_id']);
-                            // Create delivery line
-                            
-                            $PurchaseLines = PurchaseLines::create([
-                                'purchases_id' => $PurchaseOrderCreated->id,
-                                'order_line_id' => $PurchaseOrderCreated->order_line_id, 
-                                'delivery_line_id' => $this->data[$key]['deliverys_id'], 
-                                'ordre' => $this->ordre,
-                                'qty' => $PurchaseOrderCreated->qty,
-                                'statu' => 1
-                            ]); 
+                if($PurchaseOrderCreated){
+                    // Create lines
+                    foreach ($this->data as $key => $item) {
+                        //check if add line to new delivery note is aviable
+                        if(array_key_exists("task_id",$this->data[$key])){
+                            if($this->data[$key]['task_id'] != false ){
+                                //if not best to find request value, but we cant send hidden data with livewire
+                                //How pass all information from task information ?
+                                $Task = Task::find($this->data[$key]['task_id']);
+                                // Create delivery line
+                                $PurchaseLines = PurchaseLines::create([
+                                        'purchases_id' => $PurchaseOrderCreated->id,
+                                        'tasks_id' => $this->data[$key]['task_id'], 
+                                        'ordre' => $this->ordre, 
+                                        //'code' => , can be null
+                                        'product_id' =>$Task->products_id,
+                                        'label' => $Task->label,
+                                        //'supplier_ref' => , can be null
+                                        'qty' => $Task->qty,
+                                        'selling_price' => $Task->unit_cost,
+                                        'discount' => 0,
+                                        'unit_price_after_discount' => $Task->unit_cost,
+                                        'total_selling_price' => $Task->unit_cost * $Task->qty,
+                                        //'receipt_qty' =>, defaut to 0
+                                        //'invoiced_qty' =>, defaut to 0
+                                        'methods_units_id' => $Task->methods_units_id,
+                                        //'accounting_allocation_id' => , can be null
+                                        //'stock_location_id' => , can be null
+                                        'statu' => 1
+                                    ]); 
 
-                        /* // update task statu line info*/
-
-                            $this->ordre= $this->ordre+10;
+                                /* // up order line for next record*/
+                                $this->ordre= $this->ordre+10;
+                                /* // update task statu Supplied on Kanban*/
+                                if($StatusUpdate->id){
+                                    $Task = Task::where('id',$this->data[$key]['task_id'])->update(['statu'=>$StatusUpdate->id]);
+                                }
+                            }
                         }
-                    }  
+                    } 
+                    return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
                 }
-                return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
             }
             elseif($this->document_type == 'PQ'){
                 // Create puchase quotation
@@ -185,7 +210,34 @@ class PurchasesRequest extends Component
                     'user_id'=>$this->user_id,
                 ]);
 
-                return redirect()->route('purchase.quotation.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
+                if($PurchaseQuotationCreated){
+                    // Create lines
+                    foreach ($this->data as $key => $item) {
+                        //check if add line to new delivery note is aviable
+                        if(array_key_exists("task_id",$this->data[$key])){
+                            if($this->data[$key]['task_id'] != false ){
+                                //if not best to find request value, but we cant send hidden data with livewire
+                                //How pass all information from task information ?
+                                $Task = Task::find($this->data[$key]['task_id']);
+                                // Create delivery line
+                                $PurchaseQuotationLines = PurchaseQuotationLines::create([
+                                        'purchases_quotation_id' => $PurchaseQuotationCreated->id,
+                                        'tasks_id' => $this->data[$key]['task_id'], 
+                                        'ordre' => $this->ordre, 
+                                        //'supplier_ref' => , can be null
+                                        'qty_to_order' => $Task->qty,
+                                        'unit_price' => $Task->unit_cost,
+                                        'total_price' => $Task->unit_cost * $Task->qty,
+                                        //'qty_accepted' =>, defaut to 0
+                                        //'canceled_qty' =>, defaut to 0
+                                    ]); 
+                                /* // up order line for next record*/
+                                $this->ordre= $this->ordre+10;
+                            }
+                        }
+                    } 
+                    return redirect()->route('purchase.quotation.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
+                }
             }
             else{
                 return redirect()->route('purchases-request')->with('error', 'no document type');

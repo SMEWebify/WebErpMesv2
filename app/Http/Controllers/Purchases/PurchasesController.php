@@ -10,6 +10,8 @@ use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Purchases\Purchases;
+use App\Models\Purchases\PurchasesQuotation;
 
 class PurchasesController extends Controller
 {
@@ -34,12 +36,12 @@ class PurchasesController extends Controller
                                                             ->groupByRaw('MONTH(purchase_lines.created_at) ')
                                                             ->get();
                                                             
-        return view('workflow/purchases-index')->with('data',$data);
+        return view('purchases/purchases-index')->with('data',$data);
     }
 
     public function request()
     {    
-        return view('workflow/purchases-request');
+        return view('purchases/purchases-request');
     }
 
     public function quotation()
@@ -52,26 +54,28 @@ class PurchasesController extends Controller
                                     ->get();
 
                                                             
-        return view('workflow/purchases-quotation')->with('data',$data);
+        return view('purchases/purchases-quotation')->with('data',$data);
+    }
+
+    public function showQuotation(PurchasesQuotation $id)
+    {    
+        return view('purchases/purchases-quotation-show', [
+            'PurchasesQuotation' => $id,
+        ]);
+    }
+
+    public function showPurchase(Purchases $id)
+    {    
+        return view('purchases/purchases-show');
     }
 
     public function reciept()
     {    
-        return view('workflow/purchases-reciept');
+        return view('purchases/purchases-reciept');
     }
 
     public function invoice()
     {    
-        return view('workflow/purchases-invoice');
-    }
-
-    public function showPurchase()
-    {    
-        return view('workflow/purchases-invoice');
-    }
-
-    public function showQuotation()
-    {    
-        return view('workflow/purchases-invoice');
+        return view('purchases/purchases-invoice');
     }
 }

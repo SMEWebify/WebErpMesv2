@@ -12,7 +12,7 @@
                       <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                   </div>
                   <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order" value="{{ $BOMProduct->ORDER }}">
-                  <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $id_line }}">
+                  <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $infoLine['id_line']  }}">
                   <input type="hidden" class="form-control" name="id" value="{{ $BOMProduct->id }}">
                 </div>
               </div>

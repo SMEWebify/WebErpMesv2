@@ -102,7 +102,7 @@
                                             </button>
                                             </div>
                                             <div class="modal-body">
-                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $QuoteLine->quotes_id]),'id_page' => $QuoteLine->quotes_id, 'id_type' => 'quote_lines_id', 'id_line' => $QuoteLine->id, 'status_id'=>$status_id['id'] , 'task' => $QuoteLine->Task])
+                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $QuoteLine->quotes_id]),'id_page' => $QuoteLine->quotes_id, 'id_type' => 'quote_lines_id', 'infoLine' => ['id_line' => $QuoteLine->id, 'qty_line' => $QuoteLine->qty], 'status_id'=>$status_id['id'] ,'TechnicalCut' => $QuoteLine->TechnicalCut,'BOM' => $QuoteLine->BOM])
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

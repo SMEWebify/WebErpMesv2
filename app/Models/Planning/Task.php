@@ -63,12 +63,6 @@ class Task extends Model
         return $this->belongsTo(QuoteLines::class, 'quote_lines_id');
     }
 
-  /*  public function Order()
-    {
-        return $this->hasManyThrough('App\Models\Workflow\Orders', 'App\Models\Workflow\OrderLines');
-    }
-    */
-
     public function OrderLines()
     {
         return $this->belongsTo(OrderLines::class, 'order_lines_id');

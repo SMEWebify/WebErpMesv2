@@ -21,8 +21,8 @@ class CreatePurchaseQuotationLinesTable extends Migration
 			$table->decimal('qty_to_order', 10, 3);
 			$table->decimal('unit_price', 10, 3);
 			$table->decimal('total_price', 10, 3);
-            $table->decimal('qty_accepted', 10, 3);
-            $table->decimal('canceled_qty', 10, 3);
+            $table->decimal('qty_accepted', 10, 3)->default(0);
+            $table->decimal('canceled_qty', 10, 3)->default(0);
             $table->timestamps();
         });
     }

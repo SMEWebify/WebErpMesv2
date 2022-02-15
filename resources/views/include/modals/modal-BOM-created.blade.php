@@ -1,4 +1,4 @@
-<div class="modal fade" id="BOMModal{{ $id_line }}" tabindex="-1" role="dialog" aria-labelledby="BOMModalTitle" aria-hidden="true">
+<div class="modal fade" id="BOMModal{{ $infoLine['id_line']  }}" tabindex="-1" role="dialog" aria-labelledby="BOMModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-body">
@@ -12,7 +12,7 @@
                       <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                   </div>
                   <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
-                  <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $id_line }}">
+                  <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $infoLine['id_line']  }}">
                   <input type="hidden" class="form-control" name="status_id" value="{{ $status_id }}">
                 </div>
               </div>
@@ -22,31 +22,31 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-list"></i></span>
                     </div>
-                    <select class="methods_services_id form-control" name="methods_services_id" id="methods_services_id_BOM_{{ $id_line }}">
+                    <select class="methods_services_id form-control" name="methods_services_id" id="methods_services_id_BOM_{{ $infoLine['id_line']  }}">
                       <option>Select Services</option>
                       @foreach ($BOMServicesSelect as $item)
-                      <option value="{{ $item->id }}"  class="{{ $item->id }}" data-type-{{ $id_line }}="{{ $item->type }}" data-txt-{{ $id_line }}="{{ $item->label }}">{{ $item->code }}</option>
+                      <option value="{{ $item->id }}"  class="{{ $item->id }}" data-type-{{ $infoLine['id_line'] }}="{{ $item->type }}" data-txt-{{ $infoLine['id_line']  }}="{{ $item->label }}">{{ $item->code }}</option>
                       @endforeach
                     </select>
                     <!-- script or change label -->
                     <script>
-                      $("#methods_services_id_BOM_" + {{ $id_line }}).on('change',function(){
+                      $("#methods_services_id_BOM_" + {{ $infoLine['id_line']  }}).on('change',function(){
                         var val = $(this).val();
-                        var txt = $(this).find('option:selected').data("txt-" + {{ $id_line }});
-                        var type = $(this).find('option:selected').data("type-" + {{ $id_line }});
-                        $("#LABEL_BOM_" + {{ $id_line }}).val( txt );
-                        $("#type_BOM_" + {{ $id_line }}).val( type );
+                        var txt = $(this).find('option:selected').data("txt-" + {{ $infoLine['id_line']  }});
+                        var type = $(this).find('option:selected').data("type-" + {{ $infoLine['id_line']  }});
+                        $("#LABEL_BOM_" + {{ $infoLine['id_line']  }}).val( txt );
+                        $("#type_BOM_" + {{ $infoLine['id_line']  }}).val( type );
                     });
                     
-                    $("#methods_services_id_BOM_" + {{ $id_line }}).change(function () {
-                        var modelObj = $(this).parent().next().children(".component_id_" + {{ $id_line }});
+                    $("#methods_services_id_BOM_" + {{ $infoLine['id_line']  }}).change(function () {
+                        var modelObj = $(this).parent().next().children(".component_id_" + {{$infoLine['id_line']  }});
                         var selector = "option[class="+this.value.toLowerCase()+"]";
                         modelObj.children(":not("+selector+")").hide();
                         modelObj.children(selector).show();
                     });
                     </script>
                     <!-- end -->
-                    <input type="hidden" class="form-control" name="type" id="type_BOM_{{ $id_line }}">
+                    <input type="hidden" class="form-control" name="type" id="type_BOM_{{ $infoLine['id_line']  }}">
                   </div>
               </div>
               <div class="col-3">
@@ -55,7 +55,7 @@
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                   </div>
-                  <select class="component_id form-control" name="component_id" id="component_id_{{ $id_line }}"">
+                  <select class="component_id form-control" name="component_id" id="component_id_{{ $infoLine['id_line']  }}"">
                     <option>Select Component</option>
                     @foreach ($ProductSelect as $item)
                     <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->code }}</option>
@@ -69,7 +69,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                    <input type="text" class="form-control" name="label"  id="LABEL_BOM_{{ $id_line }}" placeholder="Label">
+                    <input type="text" class="form-control" name="label"  id="LABEL_BOM_{{ $infoLine['id_line']  }}" placeholder="Label">
                   </div>
               </div>
             </div>
@@ -80,7 +80,7 @@
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-times"></i></span>
                   </div>
-                  <input type="number" class="form-control" name="qty"  id="qty" placeholder="Quantity" step=".001">
+                  <input type="number" class="form-control" name="qty"  id="qty" value="{{ $infoLine['qty_line']  }}" placeholder="Quantity" step=".001">
                 </div>
               </div>
               <div class="col-3">

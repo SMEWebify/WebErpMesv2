@@ -8,6 +8,7 @@ use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuoteLines extends Model
@@ -50,7 +51,30 @@ class QuoteLines extends Model
 
     public function Task()
     {
-        return $this->hasMany(Task::class)->orderBy('ORDER');
+        return $this->hasMany(Task::class, 'quote_lines_id')->orderBy('ORDER');
+    }
+
+    public function TechnicalCut()
+    {
+        return $this->hasMany(Task::class, 'quote_lines_id')
+                    ->where(function (Builder $query) {
+                        return $query->where('type', 1)
+                                    ->orWhere('type', 7);
+                    })
+                    ->orderBy('ORDER');
+    }
+
+    public function BOM()
+    {
+        return $this->hasMany(Task::class, 'quote_lines_id')
+                    ->where(function (Builder $query) {
+                        return $query->where('type', 3)
+                                    ->orWhere('type','=', 4)
+                                    ->orWhere('type','=', 5)
+                                    ->orWhere('type','=', 6)
+                                    ->orWhere('type','=', 8);
+                    })
+                    ->orderBy('ORDER');
     }
 
     public function GetPrettyCreatedAttribute()

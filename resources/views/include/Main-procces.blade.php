@@ -3,7 +3,7 @@
       <h3 class="card-title">Technical cut</h3>
       <div class="card-tools">
         <div class="btn-group btn-group-sm">
-          <a href="#" data-toggle="modal" data-target="#TechnicalCutModal{{ $id_line }}" class="btn btn-warning">Add Tech Cut</a>
+          <a href="#" data-toggle="modal" data-target="#TechnicalCutModal{{ $infoLine['id_line'] }}" class="btn btn-warning">Add Tech Cut</a>
         </div>
         
         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -34,10 +34,8 @@
           </tr>
           </thead>
           <tbody>
-            @forelse ($task as $TechProduct)
-              @if(preg_match('(1|7)', $TechProduct->type) === 1)
+            @forelse ($TechnicalCut as $TechProduct)
                 @include('include.subs.TechLine')
-              @endif
             @empty
             <tr>
               <td colspan="9">
@@ -72,7 +70,7 @@
       <h3 class="card-title">Bill of materials</h3>
       <div class="card-tools">
         <div class="btn-group btn-group-sm">
-            <a href="#" data-toggle="modal" data-target="#BOMModal{{ $id_line }}" class="btn btn-success">Add BOM</a>
+            <a href="#" data-toggle="modal" data-target="#BOMModal{{ $infoLine['id_line'] }}" class="btn btn-success">Add BOM</a>
         </div>
         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
           <i class="fas fa-minus"></i>
@@ -102,10 +100,8 @@
           </tr>
           </thead>
           <tbody>
-            @forelse ($task as $BOMProduct)
-              @if(preg_match('(3|4|5|6|8)', $BOMProduct->type) === 1)
+            @forelse ($BOM as $BOMProduct)
                 @include('include.subs.BOMLine')
-              @endif
             @empty
             <tr>
               <td colspan="9">

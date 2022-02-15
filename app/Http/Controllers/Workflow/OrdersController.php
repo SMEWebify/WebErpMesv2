@@ -49,7 +49,6 @@ class OrdersController extends Controller
 
     public function show(Orders $id)
     {
-        
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
