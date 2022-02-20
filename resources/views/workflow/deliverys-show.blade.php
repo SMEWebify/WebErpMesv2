@@ -180,12 +180,17 @@
               <tbody>
                   @forelse($Delivery->DeliveryLines as $DeliveryLine)
                   <tr>
-                    <td>{{ $DeliveryLine->orderLine['code'] }}</td>
-                    <td>{{ $DeliveryLine->orderLine['label'] }}</td>
-                    <td>{{ $DeliveryLine->orderLine['qty'] }}</td>
-                    <td></td>
+                    <td>
+                      <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $DeliveryLine->OrderLine['orders_id'] ])}}">
+                          <i class="fas fa-folder"></i>
+                          {{ $DeliveryLine->OrderLine['code'] }}
+                      </a>
+                    </td>
+                    <td>{{ $DeliveryLine->OrderLine['label'] }}</td>
+                    <td>{{ $DeliveryLine->OrderLine['qty'] }}</td>
+                    <td>{{ $DeliveryLine->OrderLine->Unit['label'] }}</td>
                     <td>{{ $DeliveryLine->qty }}</td>
-                    <td>{{ $DeliveryLine->orderLine['delivered_remaining_qty'] }}</td>
+                    <td>{{ $DeliveryLine->OrderLine['delivered_remaining_qty'] }}</td>
                     <td>
                       @if(1 == $Delivery->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
                       @if(2 == $Delivery->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
@@ -282,12 +287,12 @@
                     <tbody>
                         @forelse($Delivery->DeliveryLines as $DeliveryLine)
                         <tr>
-                          <td>{{ $DeliveryLine->orderLine['code'] }}</td>
-                          <td>{{ $DeliveryLine->orderLine['label'] }}</td>
-                          <td>{{ $DeliveryLine->orderLine['qty'] }}</td>
+                          <td>{{ $DeliveryLine->OrderLine['code'] }}</td>
+                          <td>{{ $DeliveryLine->OrderLine['label'] }}</td>
+                          <td>{{ $DeliveryLine->OrderLine['qty'] }}</td>
                           <td></td>
                           <td>{{ $DeliveryLine->qty }}</td>
-                          <td>{{ $DeliveryLine->orderLine['delivered_remaining_qty'] }}</td>
+                          <td>{{ $DeliveryLine->OrderLine['delivered_remaining_qty'] }}</td>
                         </tr>
                       @empty
                         <tr>

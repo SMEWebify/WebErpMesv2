@@ -283,7 +283,7 @@
           <div class="row">
             <div class="col-md-8">
               <div class="chart-responsive">
-                <canvas id="QuoteRate"  style="min-height: 250px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
+                <canvas id="QuoteRate"  style="min-height: 310px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
               </div>
               <!-- ./chart-responsive -->
             </div>

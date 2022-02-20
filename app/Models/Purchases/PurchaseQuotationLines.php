@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use App\Models\Planning\Task;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchasesQuotation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

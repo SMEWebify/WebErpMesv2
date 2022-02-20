@@ -21,7 +21,7 @@ class DeliveryLines extends Model
     return $this->belongsTo(Deliverys::class, 'deliverys_id');
     }
 
-    public function orderLine()
+    public function OrderLine()
     {
     return $this->belongsTo(OrderLines::class, 'order_line_id');
     }

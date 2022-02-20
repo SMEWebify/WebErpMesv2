@@ -29,7 +29,7 @@ class CreatePurchaseLinesTable extends Migration
             $table->decimal('total_selling_price', 10, 3);
             $table->integer('receipt_qty')->default(0);
             $table->integer('invoiced_qty')->default(0);
-			$table->integer('methods_units_id');
+			$table->integer('methods_units_id')->nullable();
             $table->integer('accounting_allocation_id')->nullable();
             $table->integer('stock_location_id')->nullable();
             $table->timestamps();

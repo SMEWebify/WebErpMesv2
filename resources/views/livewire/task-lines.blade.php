@@ -34,41 +34,36 @@
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('methods_units_id')" role="button" href="#">Service @include('include.sort-icon', ['field' => 'methods_units_id'])</a>
                             </th>
                             <th>Qty</th>
-                            <th>Qty init</th>
-                            <th>Qty aviable</th>
                             <th>Unit</th>
                             <th>Unit cost</th>
                             <th>Unit price</th>
                             <th>Setting time</th>
                             <th>Unit time</th>
-                            <th>Remaining time</th>
                             <th>Statu</th>
                             <th>Action</th>
-                            <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
-                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($Tasklist as $Task)
                         <tr @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif > 
-                            <td> {{ $Task->OrderLines->order->code }}</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $Task->OrderLines->orders_id])}}">
+                                    <i class="fas fa-folder"></i>
+                                    {{ $Task->OrderLines->order->code }}
+                                </a>
+                            </td>
                             <td>{{ $Task->ORDER }}</td>
                             <td>#{{ $Task->id }} - {{ $Task->label }}</td>
                             <td>@if($Task->component_id ) {{ $Task->Component['label'] }}@endif</td>
                             <td>@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
                             <td>{{ $Task->qty }}</td>
-                            <td>{{ $Task->qty_init }}</td>
-                            <td>{{ $Task->qty_aviable }}</td>
                             <td>@if($Task->methods_units_id ) {{ $Task->Unit['label'] }}@endif</td>
                             <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
                             <td>{{ $Task->seting_time }}</td>
                             <td>{{ $Task->unit_time }}</td>
-                            <td>{{ $Task->remaining_time }}</td>
                             <td>{{ $Task->status['title'] }}</td>
                             <td></td>
-                            <td>{{ $Task->GetPrettyCreatedAttribute() }}</td>
                         </tr>
                         @empty
                         <tr>
@@ -88,17 +83,13 @@
                             <th>Product</th>
                             <th>Service</th>
                             <th>Qty</th>
-                            <th>Qty init</th>
-                            <th>Qty aviable</th>
                             <th>Unit</th>
                             <th>Unit cost</th>
                             <th>Unit price</th>
                             <th>Setting time</th>
                             <th>Unit time</th>
-                            <th>Remaining time</th>
                             <th>Statu</th>
                             <th>Action</th>
-                            <th>Created</th>
                         </tr>
                     </tfoot>
                 </table>

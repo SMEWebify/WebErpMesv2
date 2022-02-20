@@ -23,6 +23,7 @@ This project using Laravel 8, Livewire and bootstrap 4.6.
 
 I am unprofessional, any improvement discussion would be helpful. :hugs:
 
+for instal, test or help to devellop follow wiki page : https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps
 
 # Current progress of the project :building_construction:
 
@@ -37,15 +38,17 @@ I am unprofessional, any improvement discussion would be helpful. :hugs:
 | Kanban             |      X      |      -     |
 | Delivery note      |      X      |      -     | Delevery  to Invoice Tr*    |      X      |      -     |    
 | Invoices           |      X      |      -     |     
-| Purchase Request   |      -      |      X     | Purchase to Pur quote Tr*   |      -      |      X     | 
+| Purchase Request   |      X      |      -     | Purchase Req to Pur quote Tr* |      X      |      -     | 
 | Purchase quotation |      -      |      X     | Pur quote to Pur Order Tr*  |      -      |      X     |   
-| Purchase order     |      -      |      X     |     
-| Receipt            |      -      |      X     |     
-| User role                  |      -      |      X     |
+| Purchase order     |      X      |      -     |     
+| Receipt            |      -      |      X     |
+| Printed document           |      -      |      X     | 
+| Notification system        |      -      |      X     |  
 | Document storage           |      -      |      X     |
 | E-mail management          |      -      |      X     |
+| E-mail send document       |      -      |      X     | 
 | Gant schedule              |      -      |      X     |
-| Notification system        |      -      |      X     |
+| User role                  |      -      |      X     |
    
 -----------------
 Dashboard
@@ -62,13 +65,6 @@ Kanban
 
 Delivery request
 ![image](https://user-images.githubusercontent.com/75578469/148135741-eda41b1e-8598-47bc-a822-5d0ae9e6a61a.png)
-
-Product management
-![image](https://user-images.githubusercontent.com/75578469/133003240-b793df70-2088-43ea-9141-bf2b06f0c124.png)
-
-
-Quality management 
-![image](https://user-images.githubusercontent.com/75578469/129486002-763a1560-6a29-40fd-9707-2dbc756fc412.png)
 
 
 

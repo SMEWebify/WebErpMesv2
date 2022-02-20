@@ -62,14 +62,19 @@ Route::group(['prefix' => 'invoices'], function () {
 
 Route::group(['prefix' => 'purchases'], function () {
     Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
-    Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->middleware(['auth'])->name('purchases-request'); 
-    Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->middleware(['auth'])->name('purchases-quotation'); 
-    Route::get('/reciept', 'App\Http\Controllers\Purchases\PurchasesController@reciept')->middleware(['auth'])->name('purchases-reciept'); 
-    Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases-invoice'); 
+    Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->middleware(['auth'])->name('purchases.request'); 
+    Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->middleware(['auth'])->name('purchases.quotation'); 
+    Route::get('/reciept', 'App\Http\Controllers\Purchases\PurchasesController@reciept')->middleware(['auth'])->name('purchases.reciept'); 
+    Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases.invoice'); 
+    
+    Route::post('/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('purchase.update');
+    Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('quotation.update');
+    
+    Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchase.show');
+    Route::get('/quotation/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showQuotation')->middleware(['auth'])->name('purchase.quotation.show');
+
 
     
-    Route::get('/{id}', 'App\Http\Controllers\Workflow\PurchasesController@showPurchase')->middleware(['auth'])->name('purchase.show');
-    Route::get('/quotation/{id}', 'App\Http\Controllers\Workflow\PurchasesController@showQuotation')->middleware(['auth'])->name('purchase.quotation.show');
 });
 
 Route::group(['prefix' => 'accouting'], function () {

@@ -47,7 +47,7 @@
                         </td>
                         <td>{{ $PurchaseQuotation->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $PurchaseQuotation->id])}}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.quotation.show', ['id' => $PurchaseQuotation->id])}}">
                                 <i class="fas fa-folder"></i>
                                 View
                             </a>

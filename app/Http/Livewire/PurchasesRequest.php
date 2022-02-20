@@ -193,7 +193,7 @@ class PurchasesRequest extends Component
                                 $this->ordre= $this->ordre+10;
                                 /* // update task statu Supplied on Kanban*/
                                 if($StatusUpdate->id){
-                                    $Task = Task::where('id',$this->data[$key]['task_id'])->update(['statu'=>$StatusUpdate->id]);
+                                    $Task = Task::where('id',$this->data[$key]['task_id'])->update(['status_id'=>$StatusUpdate->id]);
                                 }
                             }
                         }

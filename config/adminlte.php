@@ -316,15 +316,15 @@ return [
             ]
         ],
         [
-            'text'    => 'Invoinces',
+            'text'    => 'Invoices ',
             'icon'    => 'fas fa-calculator',
             'submenu' => [
                 [
-                    'text' => 'Invoinces request',
+                    'text' => 'Invoices  request',
                     'url'  => 'invoices/request',
                 ],
                 [
-                    'text' => 'Invoinces list',
+                    'text' => 'Invoices  list',
                     'url'  => 'invoices',
                 ],
             ]

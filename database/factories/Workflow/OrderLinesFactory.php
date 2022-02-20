@@ -40,9 +40,20 @@ class OrderLinesFactory extends Factory
 			'delivered_remaining_qty' => $this->qty,
 			'invoiced_remaining_qty' => $this->qty,
 			'methods_units_id' => MethodsUnits::all()->random()->id,
-			'selling_price' => $this->faker->numberBetween($min = 1, $max = 9990),
+			'selling_price' => $this->faker->numberBetween($min = 1, $max = 50),
 			'discount' => $this->faker->numberBetween($min = 0, $max = 3),
 			'accounting_vats_id' => AccountingVat ::all()->random()->id,
+
+
+            /* I dont know get validity_date from same order where id is use
+            * we can use this sql requete after seeder for update delivery date line same as order date
+            UPDATE 
+                order_lines,
+                orders
+            SET order_lines.delivery_date = orders.validity_date
+            WHERE orders.id = order_lines.orders_id
+            */
+
         ];
     }
 }
