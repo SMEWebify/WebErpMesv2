@@ -4,25 +4,18 @@
   <img width="460" height="300" src="https://user-images.githubusercontent.com/75578469/127404015-3706b77f-dea3-4acb-a722-06f483de95a9.png">
 </p>
 
-# WEB ERP MES
-##  Web Ressource and Manufacturing execution system  
+
+<p align="center">Web ERP and MES</p>
 
 
 # Why WEM ? :monocle_face:
 
-Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured.
-
-MES offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop.
-
-This project using Laravel 8, Livewire and bootstrap 4.6.
-
- Admin LTE for laravel : https://github.com/jeroennoten/Laravel-AdminLTE
- 
- Kanban : https://github.com/messerli90/jobhuntbuddy
+Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. MES offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 8, Livewire and bootstrap 4.6.
 
 
-I am unprofessional, any improvement discussion would be helpful. :hugs:
+<p align="center">I am unprofessional, any improvement discussion would be helpful. :hugs:</p>
 
+# Instal
 for instal, test or help to devellop follow wiki page : https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps
 
 # Current progress of the project :building_construction:
@@ -65,6 +58,4 @@ Kanban
 
 Delivery request
 ![image](https://user-images.githubusercontent.com/75578469/148135741-eda41b1e-8598-47bc-a822-5d0ae9e6a61a.png)
-
-
 
