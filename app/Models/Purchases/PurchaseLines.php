@@ -2,12 +2,13 @@
 
 namespace App\Models\Purchases;
 
-use App\Models\Accounting\AccountingAllocation;
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
+use App\Models\Purchases\Purchases;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Products\StockLocation;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Accounting\AccountingAllocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseLines extends Model
@@ -15,23 +16,23 @@ class PurchaseLines extends Model
     use HasFactory;
 
     protected $fillable = ['purchases_id', 
-        'tasks_id', 
-        'ordre',
-        'code',
-        'product_id',
-        'label',
-        'supplier_ref',
-        'qty',
-        'selling_price',
-        'discount',
-        'unit_price_after_discount',
-        'total_selling_price',
-        'receipt_qty',
-        'invoiced_qty',
-        'methods_units_id',
-        'accounting_allocation_id',
-        'stock_location_id',
-    ];
+                            'tasks_id', 
+                            'ordre',
+                            'code',
+                            'product_id',
+                            'label',
+                            'supplier_ref',
+                            'qty',
+                            'selling_price',
+                            'discount',
+                            'unit_price_after_discount',
+                            'total_selling_price',
+                            'receipt_qty',
+                            'invoiced_qty',
+                            'methods_units_id',
+                            'accounting_allocation_id',
+                            'stock_location_id',
+                        ];
 
     public function tasks()
     {
@@ -41,6 +42,11 @@ class PurchaseLines extends Model
     public function product()
     {
         return $this->belongsTo(Products::class, 'product_id');
+    }
+
+    public function purchase()
+    {
+        return $this->belongsTo(Purchases::class, 'purchases_id');
     }
 
     public function unit()

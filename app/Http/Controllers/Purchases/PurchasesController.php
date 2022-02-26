@@ -111,6 +111,13 @@ class PurchasesController extends Controller
         return redirect()->route('purchase.show', ['id' =>  $Purchases->id])->with('success', 'Successfully updated purchase order');
     }
 
+
+    
+    public function waintingReciept()
+    {    
+        return view('purchases/purchases-wainting-reciept');
+    }
+
     public function reciept()
     {    
         return view('purchases/purchases-reciept');

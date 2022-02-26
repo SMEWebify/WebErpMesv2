@@ -135,8 +135,6 @@ class PurchasesRequest extends Component
     public function storePurchase(){
         //check rules
         $this->validate(); 
-
-        $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();;
         
         //check if line exist
         $i = 0;
@@ -149,6 +147,8 @@ class PurchasesRequest extends Component
         }
 
         if($i>0){
+            $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();;
+
             // Create puchase order
             if($this->document_type == 'PU'){
                 $PurchaseOrderCreated = Purchases::create([

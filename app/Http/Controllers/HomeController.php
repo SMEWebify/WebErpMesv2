@@ -53,7 +53,7 @@ class HomeController extends Controller
                                             ->where('delivery_status', '<', 3)
                                             ->groupBy('orders_id')
                                             ->get();
-        $incomingOrdersCount = count($incomingOrdersCount)-5;
+        $incomingOrdersCount = count($incomingOrdersCount)-4;
 
         $incomingOrders = OrderLines::orderBy('id', 'desc')
                             ->where([
@@ -62,6 +62,7 @@ class HomeController extends Controller
                             ])
                             ->where('delivery_status', '<', 3)
                             ->groupBy('orders_id')
+                            ->take(4)
                             ->get();
         //late Order count
         $LateOrdersCount = OrderLines::orderBy('id', 'desc')
@@ -69,13 +70,13 @@ class HomeController extends Controller
                             ->where('delivery_status', '<', 3)
                             ->groupBy('orders_id')
                             ->get();
-        $LateOrdersCount = count($LateOrdersCount)-5;
+        $LateOrdersCount = count($LateOrdersCount)-4;
 
         $LateOrders = OrderLines::orderBy('id', 'desc')
                             ->where('delivery_date', '<', Carbon::now())
                             ->where('delivery_status', '<', 3)
                             ->groupBy('orders_id')
-                            ->take(5)
+                            ->take(4)
                             ->get();
         
         // Display total customers, suppliers, quotes, orders, NC 

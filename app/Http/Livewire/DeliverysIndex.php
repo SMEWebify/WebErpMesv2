@@ -48,7 +48,11 @@ class DeliverysIndex extends Component
 
     public function render()
     {
-        $Deliverys = Deliverys::withCount('DeliveryLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $Deliverys = Deliverys::withCount('DeliveryLines')
+                    ->where('label','like', '%'.$this->search.'%')
+                    ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                    ->paginate(15);
+                    
         return view('livewire.deliverys-index', [
             'Deliveryslist' => $Deliverys,
         ]);

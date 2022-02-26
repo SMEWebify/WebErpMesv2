@@ -64,6 +64,8 @@ Route::group(['prefix' => 'purchases'], function () {
     Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
     Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->middleware(['auth'])->name('purchases.request'); 
     Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->middleware(['auth'])->name('purchases.quotation'); 
+    
+    Route::get('/waiting/reciept', 'App\Http\Controllers\Purchases\PurchasesController@waintingReciept')->middleware(['auth'])->name('purchases.wainting.reciept'); 
     Route::get('/reciept', 'App\Http\Controllers\Purchases\PurchasesController@reciept')->middleware(['auth'])->name('purchases.reciept'); 
     Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases.invoice'); 
     
