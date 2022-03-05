@@ -103,11 +103,7 @@
                         @forelse ($DeliverysRequestsLineslist as $DeliverysRequestsLine)
                         <tr>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $DeliverysRequestsLine->order['id']])}}">
-                                    <i class="fas fa-folder"></i>
-                                    View
-                                </a>
-                                {{ $DeliverysRequestsLine->order['code'] }}
+                                <x-OrderButton id="{{ $DeliverysRequestsLine->order['id'] }}" code="{{ $DeliverysRequestsLine->order['code'] }}"  />
                             </td>
                             <td>{{ $DeliverysRequestsLine->ordre }}</td>
                             <td>{{ $DeliverysRequestsLine->code }}</td>

@@ -326,8 +326,12 @@
             <tbody>
               @forelse ($LastQuotes as $LastQuote)
               <tr>
-                <td><a href="{{ route('quote.show', ['id' => $LastQuote->id])}}">{{ $LastQuote->code }}</a></td>
-                <td>{{ $LastQuote->companie['label'] }}</td>
+                <td>
+                  <x-QuoteButton id="{{ $LastQuote->id }}" code="{{ $LastQuote->code }}"  />
+                </td>
+                <td>
+                  <x-CompanieButton id="{{ $LastQuote->companies_id }}" label="{{ $LastQuote->companie['label'] }}"  />
+                </td>
                 <td>
                   @if(1 == $LastQuote->statu )   <span class="badge badge-info"> Open</span>@endif
                   @if(2 == $LastQuote->statu )  <span class="badge badge-warning">Send</span>@endif
@@ -394,8 +398,11 @@
               <tbody>
                 @forelse ($LastOrders as $LastOrder)
                 <tr>
-                  <td><a href="{{ route('order.show', ['id' => $LastOrder->id])}}">{{ $LastOrder->code }}</a></td>
-                  <td>{{ $LastOrder->companie['label'] }}</td>
+                  <td>
+                    <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
+                  <td>
+                    <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
+                  </td>
                   <td>
                     @if(1 == $LastOrder->statu )  <span class="badge badge-info"> Open</span>@endif
                     @if(2 == $LastOrder->statu )  <span class="badge badge-warning">In progress</span>@endif

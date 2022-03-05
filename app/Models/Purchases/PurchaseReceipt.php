@@ -7,10 +7,10 @@ use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
-use App\Models\Purchases\PurchaseRecieptLines;
+use App\Models\Purchases\PurchaseReceiptLines;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PurchaseReciept extends Model
+class PurchaseReceipt extends Model
 {
     use HasFactory;
 
@@ -45,9 +45,9 @@ class PurchaseReciept extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function PurchaseRecieptLines()
+    public function PurchaseReceiptLines()
     {
-        return $this->hasMany(PurchaseRecieptLines::class)->orderBy('ordre');
+        return $this->hasMany(PurchaseReceiptLines::class)->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

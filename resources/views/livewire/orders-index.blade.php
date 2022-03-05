@@ -230,7 +230,9 @@
                     <tr>
                         <td>{{ $Order->code }}</td>
                         <td>{{ $Order->label }}</td>
-                        <td>{{ $Order->companie['label'] }}</td>
+                        <td>
+                            <x-CompanieButton id="{{ $Order->companies_id }}" label="{{ $Order->companie['label'] }}"  />
+                        </td>
                         <td>{{ $Order->customer_reference }}</td>
                         <td>{{ $Order->order_lines_count }}</td>
                         <td>

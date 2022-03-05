@@ -36,7 +36,9 @@
                 <tbody>
                     @forelse ($QuoteLineslist as $QuoteLine)
                     <tr>
-                        <td>{{ $QuoteLine->quote['code'] }}</td>
+                        <td>
+                            <x-QuoteButton id="{{ $QuoteLine->quotes_id }}" code="{{ $QuoteLine->quote['code'] }}"  />
+                        </td>
                         <td>{{ $QuoteLine->ordre }}</td>
                         <td>{{ $QuoteLine->code }}</td>
                         <td>@if(1 == $QuoteLine->product_id ) {{ $QuoteLine->Product['label'] }}@endif</td>

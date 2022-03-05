@@ -8,20 +8,20 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\PurchaseLines;
-use App\Models\Purchases\PurchaseReciept;
-use App\Models\Purchases\PurchaseRecieptLines;
+use App\Models\Purchases\PurchaseReceipt;
+use App\Models\Purchases\PurchaseReceiptLines;
 
-class PurchasesWaintingReciept extends Component
+class PurchasesWaintingReceipt extends Component
 {
     public $companies_id = '';
     public $sortField = 'id'; // default sorting field
     public $sortAsc = true; // default sort direction
     
-    public $LastReciept= '0';
+    public $LastReceipt= '0';
     public $document_type = 'RC';
     public $deliveryNoteNumber;
 
-    public $PurchasesWaintingRecieptLineslist;
+    public $PurchasesWaintingReceiptLineslist;
     public $code, $label, $user_id; 
     public $updateLines = false;
     public $CompaniesSelect = [];
@@ -34,7 +34,7 @@ class PurchasesWaintingReciept extends Component
     protected function rules()
     { 
         return [
-            'code' =>'required|unique:purchase_reciepts',
+            'code' =>'required|unique:purchase_receipts',
             'label' =>'required',
             'companies_id'=>'required',
             'user_id'=>'required',
@@ -55,18 +55,18 @@ class PurchasesWaintingReciept extends Component
     public function mount() 
     {
         // get last id
-        $this->LastReciept =  PurchaseReciept::latest()->first();
+        $this->LastReceipt =  PurchaseReceipt::latest()->first();
         //if we have no id, define 0 
-        if($this->LastReciept == Null){
-            $this->LastReciept = 0;
+        if($this->LastReceipt == Null){
+            $this->LastReceipt = 0;
             $this->code = $this->document_type ."-0";
             $this->label = $this->document_type ."-0";
         }
         // else we use is from db
         else{
-            $this->LastReciept = $this->LastReciept->id;
-            $this->code = $this->document_type ."-". $this->LastReciept;
-            $this->label = $this->document_type ."-". $this->LastReciept;
+            $this->LastReceipt = $this->LastReceipt->id;
+            $this->code = $this->document_type ."-". $this->LastReceipt;
+            $this->label = $this->document_type ."-". $this->LastReceipt;
         }
 
         $this->CompaniesSelect = Companies::select('id', 'label', 'code')->where('statu_supplier', '=', 2)->orderBy('code')->get();
@@ -76,15 +76,15 @@ class PurchasesWaintingReciept extends Component
     {
         $userSelect = User::select('id', 'name')->get();
         //Select task where statu is open and only purchase type
-        $PurchasesWaintingRecieptLineslist = $this->PurchasesWaintingRecieptLineslist = PurchaseLines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+        $PurchasesWaintingReceiptLineslist = $this->PurchasesWaintingReceiptLineslist = PurchaseLines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                                                                         ->where('receipt_qty','<=', 'qty')
                                                                                         ->whereHas('purchase', function($q){
                                                                                             $q->where('companies_id','like', '%'.$this->companies_id.'%');
                                                                                         })
                                                                                         ->get();
 
-        return view('livewire.purchases-wainting-reciept', [
-            'PurchasesWaintingRecieptLineslist' => $PurchasesWaintingRecieptLineslist,
+        return view('livewire.purchases-wainting-receipt', [
+            'PurchasesWaintingReceiptLineslist' => $PurchasesWaintingReceiptLineslist,
             'userSelect' => $userSelect,
         ]);
     }
@@ -107,7 +107,7 @@ class PurchasesWaintingReciept extends Component
             $StatusUpdate = Status::select('id')->where('title', 'Finished')->first();
 
             // Create puchase order
-            $RecieptCreated = PurchaseReciept::create([
+            $ReceiptCreated = PurchaseReceipt::create([
                 'code'=>$this->code,  
                 'label'=>$this->label, 
                 'companies_id'=>$this->companies_id,
@@ -117,7 +117,7 @@ class PurchasesWaintingReciept extends Component
 
             // Create lines
             foreach ($this->data as $key => $item) {
-                //check if add line to new reciept line is aviable
+                //check if add line to new receipt line is aviable
                 if(array_key_exists("purchase_line_id",$this->data[$key])){
                     if($this->data[$key]['purchase_line_id'] != false ){
                         //if not best to find request value, but we cant send hidden data with livewire
@@ -125,8 +125,8 @@ class PurchasesWaintingReciept extends Component
                         $PurchaseLines = PurchaseLines::find($this->data[$key]['purchase_line_id']);
                         
                         // Create delivery line
-                        $RecieptLines = PurchaseRecieptLines::create([
-                            'purchase_reciept_id' => $RecieptCreated->id, 
+                        $ReceiptLines = PurchaseReceiptLines::create([
+                            'purchase_receipt_id' => $ReceiptCreated->id, 
                             'purchase_line_id' => $PurchaseLines->id, 
                             'ordre' => $this->ordre, 
                             'receipt_qty' => $PurchaseLines->qty, 
@@ -143,10 +143,10 @@ class PurchasesWaintingReciept extends Component
                 }
             } 
 
-            return redirect()->route('purchases.wainting.reciept.show', ['id' => $RecieptCreated->id])->with('success', 'Successfully created new reciept');
+            return redirect()->route('purchases.wainting.receipt.show', ['id' => $ReceiptCreated->id])->with('success', 'Successfully created new receipt');
         }
         else{
-            return redirect()->route('purchases.wainting.reciept')->with('error', 'no lines selected');
+            return redirect()->route('purchases.wainting.receipt')->with('error', 'no lines selected');
         }
     }
 }

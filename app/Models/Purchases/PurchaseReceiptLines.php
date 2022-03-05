@@ -6,13 +6,13 @@ use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PurchaseRecieptLines extends Model
+class PurchaseReceiptLines extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'purchase_reciept_id',
-        'purchase_lines_id',
+        'purchase_receipt_id',
+        'purchase_line_id',
         'ordre',
         'receipt_qty',
 
@@ -20,7 +20,7 @@ class PurchaseRecieptLines extends Model
 
     public function purchaseLines()
     {
-        return $this->belongsTo(PurchaseLines::class, 'purchase_lines_id');
+        return $this->belongsTo(PurchaseLines::class, 'purchase_line_id');
     }
 
     public function GetPrettyCreatedAttribute()

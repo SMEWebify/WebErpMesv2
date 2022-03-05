@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePurchaseRecieptsTable extends Migration
+class CreatePurchaseReceiptsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePurchaseRecieptsTable extends Migration
      */
     public function up()
     {
-        Schema::create('purchase_reciepts', function (Blueprint $table) {
+        Schema::create('purchase_receipts', function (Blueprint $table) {
             $table->id();
             $table->string('code');
 			$table->string('label');
@@ -37,6 +37,6 @@ class CreatePurchaseRecieptsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('purchase_reciepts');
+        Schema::dropIfExists('purchase_receipts');
     }
 }

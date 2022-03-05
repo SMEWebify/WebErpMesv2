@@ -234,7 +234,9 @@
                     <tr>
                         <td>{{ $Quote->code }}</td>
                         <td>{{ $Quote->label }}</td>
-                        <td>{{ $Quote->companie['label'] }}</td>
+                        <td>
+                            <x-CompanieButton id="{{ $Quote->companies_id }}" label="{{ $Quote->companie['label'] }}"  />
+                        </td>
                         <td>{{ $Quote->customer_reference }}</td>
                         <td>{{ $Quote->quote_lines_count }}</td>
                         <td>

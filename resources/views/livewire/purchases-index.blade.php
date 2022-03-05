@@ -35,7 +35,9 @@
                     <tr>
                         <td>{{ $Purchase->code }}</td>
                         <td>{{ $Purchase->label }}</td>
-                        <td>{{ $Purchase->companie['label'] }}</td>
+                        <td>
+                            <x-CompanieButton id="{{ $Purchase->companies_id }}" label="{{ $Purchase->companie['label'] }}"  />
+                        </td>
                         <td>{{ $Purchase->purchase_lines_count }}</td>
                         <td>
                             @if(1 == $Purchase->statu )  <span class="badge badge-info">In progress</span>@endif

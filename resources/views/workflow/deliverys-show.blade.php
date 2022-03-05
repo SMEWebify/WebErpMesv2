@@ -168,6 +168,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th>Order</th>
                   <th>External ID</th>
                   <th>Description</th>
                   <th>Qty</th>
@@ -181,11 +182,9 @@
                   @forelse($Delivery->DeliveryLines as $DeliveryLine)
                   <tr>
                     <td>
-                      <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $DeliveryLine->OrderLine['orders_id'] ])}}">
-                          <i class="fas fa-folder"></i>
-                          {{ $DeliveryLine->OrderLine['code'] }}
-                      </a>
+                      <x-OrderButton id="{{ $DeliveryLine->OrderLine->order['id'] }}" code="{{ $DeliveryLine->OrderLine->order['code'] }}"  />
                     </td>
+                    <td>{{ $DeliveryLine->OrderLine['code'] }}</td>
                     <td>{{ $DeliveryLine->OrderLine['label'] }}</td>
                     <td>{{ $DeliveryLine->OrderLine['qty'] }}</td>
                     <td>{{ $DeliveryLine->OrderLine->Unit['label'] }}</td>
@@ -208,10 +207,12 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
                   </tr>
               @endforelse
                 <tfoot>
                   <tr>
+                    <th>Order</th>
                     <th>External ID</th>
                     <th>Description</th>
                     <th>Qty</th>

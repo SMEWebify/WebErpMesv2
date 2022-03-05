@@ -365,12 +365,12 @@ return [
                     'url'  => 'purchases',
                 ],
                 [
-                    'text' => 'Waiting to reciept',
-                    'url'  => 'purchases/waiting/reciept',
+                    'text' => 'Waiting to receipt',
+                    'url'  => 'purchases/waiting/receipt',
                 ],
                 [
-                    'text' => 'PO reciept',
-                    'url'  => 'purchases/reciept',
+                    'text' => 'PO receipt',
+                    'url'  => 'purchases/receipt',
                 ],
                 [
                     'text' => 'Invoice supplier',

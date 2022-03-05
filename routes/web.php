@@ -61,20 +61,21 @@ Route::group(['prefix' => 'invoices'], function () {
 });
 
 Route::group(['prefix' => 'purchases'], function () {
-    Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@index')->middleware(['auth'])->name('purchases'); 
+    
     Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->middleware(['auth'])->name('purchases.request'); 
     Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->middleware(['auth'])->name('purchases.quotation'); 
-    
-    Route::get('/waiting/reciept', 'App\Http\Controllers\Purchases\PurchasesController@waintingReciept')->middleware(['auth'])->name('purchases.wainting.reciept'); 
-    Route::get('/reciept', 'App\Http\Controllers\Purchases\PurchasesController@reciept')->middleware(['auth'])->name('purchases.reciept'); 
+    Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->middleware(['auth'])->name('purchases'); 
+    Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesController@waintingReceipt')->middleware(['auth'])->name('purchases.wainting.receipt'); 
+    Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesController@receipt')->middleware(['auth'])->name('purchases.receipt'); 
     Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases.invoice'); 
     
     Route::post('/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('purchase.update');
-    Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('quotation.update');
+    Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchaseQuotation')->middleware(['auth'])->name('quotation.update');
+    Route::post('/receipt/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchaseReceipt')->middleware(['auth'])->name('receipt.update');
     
     Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchase.show');
     Route::get('/quotation/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showQuotation')->middleware(['auth'])->name('purchase.quotation.show');
-
+    Route::get('/receipt/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showReceipt')->middleware(['auth'])->name('purchase.receipt.show');
 
     
 });

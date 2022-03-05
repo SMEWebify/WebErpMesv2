@@ -31,25 +31,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($Deliveryslist as $Delivery)
+                    @forelse ($PurchasesReceiptList as $PurchasesReceipt)
                     <tr>
-                        <td>{{ $Delivery->code }}</td>
-                        <td>{{ $Delivery->label }}</td>
+                        <td>{{ $PurchasesReceipt->code }}</td>
+                        <td>{{ $PurchasesReceipt->label }}</td>
+                        <td>{{ $PurchasesReceipt->companie['label'] }}</td>
+                        <td>{{ $PurchasesReceipt->purchase_receipt_lines_count }}</td>
                         <td>
-                            <x-CompanieButton id="{{ $Delivery->companies_id }}" label="{{ $Delivery->companie['label'] }}"  />
+                            @if(1 == $PurchasesReceipt->statu )  <span class="badge badge-info">In progress</span>@endif
+                            @if(2 == $PurchasesReceipt->statu )  <span class="badge badge-warning">Ordered</span>@endif
+                            @if(3 == $PurchasesReceipt->statu )  <span class="badge badge-success">Partly received</span>@endif
+                            @if(4 == $PurchasesReceipt->statu )  <span class="badge badge-danger">Received</span>@endif
+                            @if(5 == $PurchasesReceipt->statu )  <span class="badge badge-danger">Canceled</span>@endif
                         </td>
-                        <td>{{ $Delivery->delivery_lines_count }}</td>
+                        <td>{{ $PurchasesReceipt->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                            @if(1 == $Delivery->statu )  <span class="badge badge-info">In progress</span>@endif
-                            @if(2 == $Delivery->statu )  <span class="badge badge-success">Sent</span>@endif
-                        </td>
-                        <td>{{ $Delivery->GetPrettyCreatedAttribute() }}</td>
-                        <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('delivery.show', ['id' => $Delivery->id])}}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipt.show', ['id' => $PurchasesReceipt->id])}}">
                                 <i class="fas fa-folder"></i>
                                 View
                             </a>
-                            <a class="btn btn-success btn-sm" href="{{ route('delivery.print', ['id' => $Delivery->id])}}">
+                            <a class="btn btn-success btn-sm" href="{{ route('order.print', ['id' => $PurchasesReceipt->id])}}">
                                 <i class="fas fa-print"></i>
                                 Print
                             </a>
@@ -59,7 +60,7 @@
                     <tr>
                         <td colspan="8">
                             <div class="flex justify-center items-center">
-                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Delivery found ...</span>
+                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Purchase found ...</span>
                             </div>
                         </td>
                     </tr>
@@ -79,7 +80,7 @@
             </table>
         </div>
         <!-- /.row -->
-        {{ $Deliveryslist->links() }}
+        {{ $PurchasesReceiptList->links() }}
     <!-- /.card -->
     </div>
 <!-- /.card-body -->

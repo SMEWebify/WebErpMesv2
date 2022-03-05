@@ -47,10 +47,7 @@
                         @forelse ($Tasklist as $Task)
                         <tr @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif > 
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $Task->OrderLines->orders_id])}}">
-                                    <i class="fas fa-folder"></i>
-                                    {{ $Task->OrderLines->order->code }}
-                                </a>
+                                <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />
                             </td>
                             <td>{{ $Task->ORDER }}</td>
                             <td>#{{ $Task->id }} - {{ $Task->label }}</td>

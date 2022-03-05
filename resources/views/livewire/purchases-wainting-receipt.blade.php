@@ -71,7 +71,7 @@
                     <div class="row">
                         <div class="card-footer">
                             <div class="input-group">
-                                <button type="Submit" wire:click.prevent="storeReciep()" class="btn btn-success">New reciept document</button>
+                                <button type="Submit" wire:click.prevent="storeReciep()" class="btn btn-success">New receipt document</button>
                             </div>
                         </div>
                     </div>
@@ -92,29 +92,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($PurchasesWaintingRecieptLineslist as $PurchasesWaintingRecieptLine)
+                        @forelse ($PurchasesWaintingReceiptLineslist as $PurchasesWaintingReceiptLine)
                         <tr>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $PurchasesWaintingRecieptLine->tasks->OrderLines->orders_id])}}">
+                                <x-OrderButton id="{{ $PurchasesWaintingReceiptLine->tasks->OrderLines->orders_id }}" code="{{ $PurchasesWaintingReceiptLine->tasks->OrderLines->order->code }}"  />
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $PurchasesWaintingReceiptLine->purchases_id])}}">
                                     <i class="fas fa-folder"></i>
-                                    {{ $PurchasesWaintingRecieptLine->tasks->OrderLines->order->code }}
+                                    {{ $PurchasesWaintingReceiptLine->purchase->code }}
                                 </a>
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $PurchasesWaintingRecieptLine->purchases_id])}}">
-                                    <i class="fas fa-folder"></i>
-                                    {{ $PurchasesWaintingRecieptLine->purchase->code }}
-                                </a>
+                                {{ $PurchasesWaintingReceiptLine->purchase->companie->code }} - {{ $PurchasesWaintingReceiptLine->purchase->companie->label }}
                             </td>
-                            <td>
-                                {{ $PurchasesWaintingRecieptLine->purchase->companie->code }} - {{ $PurchasesWaintingRecieptLine->purchase->companie->label }}
-                            </td>
-                            <td>#{{ $PurchasesWaintingRecieptLine->tasks->id }} {{ $PurchasesWaintingRecieptLine->code }} {{ $PurchasesWaintingRecieptLine->label }}</td>
-                            <td>{{ $PurchasesWaintingRecieptLine->qty }}</td>
+                            <td>#{{ $PurchasesWaintingReceiptLine->tasks->id }} {{ $PurchasesWaintingReceiptLine->code }} {{ $PurchasesWaintingReceiptLine->label }}</td>
+                            <td>{{ $PurchasesWaintingReceiptLine->qty }}</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $PurchasesWaintingRecieptLine->id }}" wire:model="data.{{ $PurchasesWaintingRecieptLine->id }}.purchase_line_id" id="data.{{ $PurchasesWaintingRecieptLine->id }}.purchase_line_id"  type="checkbox">
-                                    <label for="data.{{ $PurchasesWaintingRecieptLine->id }}.purchase_line_id" class="custom-control-label">Add to new document </label>
+                                    <input class="custom-control-input" value="{{ $PurchasesWaintingReceiptLine->id }}" wire:model="data.{{ $PurchasesWaintingReceiptLine->id }}.purchase_line_id" id="data.{{ $PurchasesWaintingReceiptLine->id }}.purchase_line_id"  type="checkbox">
+                                    <label for="data.{{ $PurchasesWaintingReceiptLine->id }}.purchase_line_id" class="custom-control-label">Add to new document </label>
                                 </div>
                             </td>
                         </tr>

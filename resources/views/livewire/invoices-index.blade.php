@@ -35,7 +35,9 @@
                     <tr>
                         <td>{{ $Invoice->code }}</td>
                         <td>{{ $Invoice->label }}</td>
-                        <td>{{ $Invoice->companie['label'] }}</td>
+                        <td>
+                            <x-CompanieButton id="{{ $Invoice->companies_id }}" label="{{ $Invoice->companie['label'] }}"  />
+                        </td>
                         <td>{{ $Invoice->invoice_lines_count }}</td>
                         <td>
                             @if(1 == $Invoice->statu )  <span class="badge badge-info">In progress</span>@endif

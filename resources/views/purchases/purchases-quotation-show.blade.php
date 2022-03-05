@@ -80,7 +80,7 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Customer information</label>
+                      <label for="InputWebSite">Supplier information</label>
                     </div>
                     <div class="row">
                       <div class="col-5">
@@ -190,10 +190,7 @@
                     @forelse($PurchaseQuotation->PurchaseQuotationLines as $PurchaseQuotationLine)
                     <tr>
                       <td>
-                        <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $PurchaseQuotationLine->tasks->OrderLines->orders_id ])}}">
-                            <i class="fas fa-folder"></i>
-                            {{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}
-                        </a>
+                        <x-OrderButton id="{{ $PurchaseQuotationLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}"  />
                       </td>
                       <td>#{{ $PurchaseQuotationLine->tasks->id }} {{ $PurchaseQuotationLine->code }} {{ $PurchaseQuotationLine->label }}</td>
                       <td>{{ $PurchaseQuotationLine->qty_to_order }}</td>
