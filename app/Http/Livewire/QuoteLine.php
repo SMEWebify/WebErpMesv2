@@ -7,11 +7,16 @@ use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
+use App\Models\Workflow\Orders;
+use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Workflow\Quotelines;
 use App\Models\Methods\MethodsUnits;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Workflow\OrderLines;
+use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuoteLine extends Component
 {
@@ -40,6 +45,9 @@ class QuoteLine extends Component
     public $BOMServicesSelect = [];
     public $TechProductList = [];
     public $BOMProductList = [];
+
+
+    public $data = [];
 
     // Validation Rules
     protected $rules = [
@@ -189,5 +197,92 @@ class QuoteLine extends Component
         }catch(\Exception $e){
             session()->flash('error',"Something goes wrong while deleting Line");
         }
+    }
+
+    public function storeOrder($quoteId){
+
+        //check if line exist
+        $i = 0;
+        foreach ($this->data as $key => $item) {
+            if(array_key_exists("quote_line_id",$this->data[$key])){
+                if($this->data[$key]['quote_line_id'] != false ){
+                    $i++;
+                }
+            }
+        }
+
+        if($i>0){
+
+            //get data to dulicate for new order
+            $QuoteData = Quotes::find($quoteId);
+
+            //get last order id for create new Code id
+            $LastOrder =  Orders::orderBy('id', 'desc')->first();
+            if($LastOrder == Null){
+                $orderCode = "OR-0";
+            }
+            else{
+                $orderCode = "OR-". $LastOrder->id;
+            }
+
+             // Create order
+            $OrdersCreated = Orders::create([
+                'code'=>$orderCode,  
+                'label'=>$QuoteData->label,  
+                'customer_reference'=>$QuoteData->customer_reference, 
+                'companies_id'=>$QuoteData->companies_id,  
+                'companies_contacts_id'=>$QuoteData->companies_contacts_id,    
+                'companies_addresses_id'=>$QuoteData->companies_addresses_id,   
+                'validity_date'=>$QuoteData->validity_date,  
+                'user_id'=>Auth::id(),   
+                'accounting_payment_conditions_id'=>$QuoteData->accounting_payment_conditions_id,   
+                'accounting_payment_methods_id'=>$QuoteData->accounting_payment_methods_id,   
+                'accounting_deliveries_id'=>$QuoteData->accounting_deliveries_id,   
+                'comment'=>$QuoteData->comment,
+                'quote_id'=>$QuoteData->id, 
+            ]);
+
+            if($OrdersCreated){
+                // Create lines
+                foreach ($this->data as $key => $item) {
+
+                    //get data to dulicate for new order
+                    $QuoteLineData = Quotelines::find($this->data[$key]['quote_line_id']);
+
+                    Orderlines::create([
+                        'orders_id'=>$OrdersCreated->id,
+                        'ordre'=>$QuoteLineData->ordre,
+                        'code'=>$QuoteLineData->code,
+                        'product_id'=>$QuoteLineData->product_id,
+                        'label'=>$QuoteLineData->label,
+                        'qty'=>$QuoteLineData->qty,
+                        'delivered_remaining_qty'=>$QuoteLineData->qty,
+                        'invoiced_remaining_qty'=>$QuoteLineData->qty,
+                        'methods_units_id'=>$QuoteLineData->methods_units_id,
+                        'selling_price'=>$QuoteLineData->selling_price,
+                        'discount'=>$QuoteLineData->discount,
+                        'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
+                        'delivery_date'=>$QuoteLineData->delivery_date,
+                    ]);
+
+                    //update quote lines statu
+                    Quotelines::where('id',$QuoteLineData->id)->update(['statu'=>3]);
+                }
+                //update quote statu
+                Quotes::where('id',$quoteId)->update(['statu'=>3]);
+                
+            }
+            else{
+                return redirect()->back()->with('error', 'Something went wrong');
+            }
+
+            // Reset Form Fields After Creating line
+            return redirect()->route('order.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
+
+        }
+        else{
+            return redirect()->back()->with('error', 'no lines selected');
+        }
+
     }
 }

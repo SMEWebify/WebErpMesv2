@@ -70,7 +70,7 @@ class OrdersIndex extends Component
     public function mount() 
     {
         $this->userSelect = User::select('id', 'name')->get();
-        $this->LastOrder =  Orders::latest()->first();
+        $this->LastOrder =  Orders::orderBy('id', 'desc')->first();
         if($this->LastOrder == Null){
             $this->code = "OR-0";
             $this->label = "OR-0";

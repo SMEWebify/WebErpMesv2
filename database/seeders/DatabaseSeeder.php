@@ -2,23 +2,24 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-
 use App\Models\User;
+
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use Illuminate\Database\Seeder;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\QuoteLines;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
-use App\Models\Accounting\AccountingDelivery;
-use App\Models\Accounting\AccountingPaymentMethod;
-use App\Models\Accounting\AccountingPaymentConditions;
-
 use Database\Seeders\MethodsUnitTableSeeder;
+use App\Models\Accounting\AccountingDelivery;
+
 use Database\Seeders\MethodsSectionTableSeeder;
 use Database\Seeders\MethodsServicesTableSeeder;
+use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Accounting\AccountingPaymentConditions;
 
 class DatabaseSeeder extends Seeder
 {
@@ -68,7 +69,7 @@ class DatabaseSeeder extends Seeder
 
         //Quotes
         Quotes::factory()->count(500)->create();
-        
+        QuoteLines::factory()->count(5000)->create();
         //Orders 
         Orders::factory()->count(1000)->create();
         OrderLines::factory()->count(5000)->create();

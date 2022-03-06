@@ -200,6 +200,9 @@ class PurchasesRequest extends Component
                     } 
                     return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
                 }
+                else{
+                    return redirect()->back()->with('error', 'Something went wrong');
+                }
             }
             elseif($this->document_type == 'PQ'){
                 // Create puchase quotation
@@ -238,13 +241,16 @@ class PurchasesRequest extends Component
                     } 
                     return redirect()->route('purchase.quotation.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
                 }
+                else{
+                    return redirect()->back()->with('error', 'Something went wrong');
+                }
             }
             else{
-                return redirect()->route('purchases-request')->with('error', 'no document type');
+                return redirect()->back()->with('error', 'no document type');
             }
         }
         else{
-            return redirect()->route('purchases-request')->with('error', 'no lines selected');
+            return redirect()->back()->with('error', 'no lines selected');
         }
     }
 }

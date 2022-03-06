@@ -150,7 +150,7 @@ class DeliverysRequest extends Component
             return redirect()->route('delivery.show', ['id' => $DeliveryCreated->id])->with('success', 'Successfully created new delivery note');
         }
         else{
-            return redirect()->route('deliverys-request')->with('error', 'no lines selected');
+            return redirect()->back()->with('error', 'no lines selected');
         }
     }
 }

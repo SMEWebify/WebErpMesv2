@@ -338,11 +338,12 @@ return [
                     'text' => 'Product list',
                     'url'  => 'products',
                 ],
+                /*
                 [
                     'text' => 'Stock',
                     'url'  => 'products/Stock',
                 ],
-                /*  [
+                [
                     'text' => 'Inventory',
                     'url'  => '#',
                 ],*/

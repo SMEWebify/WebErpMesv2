@@ -48,7 +48,7 @@
                             <th>VAT type</th>
                             <th>Delivery date</th>
                             <th>Statu</th>
-                            <th>Action</th>
+                            <th colspan="2">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -116,10 +116,17 @@
                                     <a href="#" data-toggle="modal" data-target="#MainProcessModal{{$QuoteLine->id}}"  class="btn btn-success"><i class="fa fa-lg fa-fw  fas fa-list"></i></a>
                                 </div>
                             </td>
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" value="{{ $QuoteLine->id }}" wire:model="data.{{ $QuoteLine->id }}.quote_line_id" id="data.{{ $QuoteLine->id }}.quote_line_id"  type="checkbox">
+                                    <label for="data.{{ $QuoteLine->id }}.quote_line_id" class="custom-control-label">+</label>
+                                
+                                </div>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="12">
+                            <td colspan="13">
                                 <div class="flex justify-center items-center">
                                     <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
                                 </div>
@@ -140,7 +147,12 @@
                             <th>VAT type</th>
                             <th>Delivery date</th>
                             <th>Statu</th>
-                            <th>Action</th>
+                            <th colspan="2">
+                                <a class="btn btn-primary btn-sm" wire:click="storeOrder({{ $QuoteId }})" href="#">
+                                    <i class="fas fa-folder"></i>
+                                    New order
+                                </a>
+                            </th>
                         </tr>
                     </tfoot>
                 </table>

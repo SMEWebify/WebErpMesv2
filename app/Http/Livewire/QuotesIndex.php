@@ -71,7 +71,8 @@ class QuotesIndex extends Component
     public function mount() 
     {
         $this->userSelect = User::select('id', 'name')->get();
-        $this->LastQuote =  Quotes::latest()->first();
+        $this->LastQuote =  Quotes::orderBy('id', 'desc')->first();
+
         if($this->LastQuote == Null){
             $this->code = "QT-0";
             $this->label = "QT-0";

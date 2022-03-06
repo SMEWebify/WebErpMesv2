@@ -25,7 +25,7 @@ for instal, test or help to devellop follow wiki page : https://github.com/billy
 | Customers          |      X      |      -     |     
 | Quality            |      X      |      -     |     
 | Products           |      X      |      -     |    
-| Quote              |      X      |      -     | Quote to Order Transfer     |      -      |      X     |     
+| Quote              |      X      |      -     | Quote to Order Transfer     |      X      |      -     |     
 | Order              |      X      |      -     | Order to Delevery note Tr*  |      X      |      -     |    
 | Order confirm      |      X      |      -     |    
 | Kanban             |      X      |      -     |
@@ -34,12 +34,10 @@ for instal, test or help to devellop follow wiki page : https://github.com/billy
 | Purchase Request   |      X      |      -     | Purchase Req to Pur quote Tr* |      X      |      -     | 
 | Purchase quotation |      X      |      -     | Pur quote to Pur Order Tr*  |      -      |      X     |   
 | Purchase order     |      X      |      -     |     
-| Receipt            |      -      |      X     |
-| Printed document           |      -      |      X     | 
+| Receipt            |      X      |      -     |
+| Printed document   |      -      |      X     | Document storage           |      -      |      X     |
+| E-mail management  |      -      |      X     | E-mail send document       |      -      |      X     | 
 | Notification system        |      -      |      X     |  
-| Document storage           |      -      |      X     |
-| E-mail management          |      -      |      X     |
-| E-mail send document       |      -      |      X     | 
 | Gant schedule              |      -      |      X     |
 | User role                  |      -      |      X     |
    

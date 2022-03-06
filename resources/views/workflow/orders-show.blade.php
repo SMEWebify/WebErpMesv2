@@ -196,6 +196,16 @@
             </div>
           </div>
           <div class="col-md-3">
+            @if($Order->quote_id)
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"> Historical </h3>
+              </div>
+              <div class="card-body">
+                Order Create from <x-QuoteButton id="{{ $Order->quote_id }}" code="{{ $Order->Quote->code }}"  />
+              </div>
+            </div>
+            @endif
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
