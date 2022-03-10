@@ -59,15 +59,6 @@ class InvoicesController extends Controller
             'Factory' => $Factory,
         ]);
     }
-
-    public function print(Invoices $id)
-    {
-        $Factory = Factory::first();
-        return view('workflow/orders-print', [
-            'Delivery' => $id,
-            'Factory' => $Factory,
-        ]);
-    }
     
     public function update(UpdateInvoiceRequest $request)
     {

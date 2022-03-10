@@ -84,22 +84,6 @@ class OrdersController extends Controller
             'vatPrice' => $vatPrice,
         ]);
     }
-
-    public function print(Orders $id)
-    {
-        $OrderCalculator = new OrderCalculator($id);
-        $Factory = Factory::first();
-        $totalPrice = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
-        return view('workflow/orders-print', [
-            'Order' => $id,
-            'Factory' => $Factory,
-            'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice, 
-            'vatPrice' => $vatPrice,
-        ]);
-    }
     
     public function update(UpdateOrderRequest $request)
     {

@@ -63,13 +63,7 @@
                             <td></td>
                         </tr>
                         @empty
-                        <tr>
-                            <td colspan="17">
-                                <div class="flex justify-center items-center">
-                                    <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No task found ...</span>
-                                </div>
-                            </td>
-                        </tr>
+                            <x-EmptyDataLine col="17" text="No task found ..."  />
                         @endforelse
                     </tbody>
                     <tfoot>

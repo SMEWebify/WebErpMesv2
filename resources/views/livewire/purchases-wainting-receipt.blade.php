@@ -116,13 +116,7 @@
                             </td>
                         </tr>
                         @empty
-                        <tr>
-                            <td colspan="12">
-                                <div class="flex justify-center items-center">
-                                    <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No request found ...</span>
-                                </div>
-                            </td>
-                        </tr>
+                            <x-EmptyDataLine col="13" text="No request found ..."  />
                         @endforelse
                     </tbody>
                     <tfoot>

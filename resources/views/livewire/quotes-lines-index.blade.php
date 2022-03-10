@@ -1,13 +1,6 @@
 <div class="card-body">
     <div class="card">
-        <div class="card-body">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
-                </div>
-                <input type="text" class="form-control" wire:model="search" placeholder="Search line">
-            </div>
-        </div>
+        @include('include.search-card')
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -65,13 +58,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="13">
-                            <div class="flex justify-center items-center">
-                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No quotes lines found ...</span>
-                            </div>
-                        </td>
-                    </tr>
+                        <x-EmptyDataLine col="13" text="No quotes lines found ..."  />
                     @endforelse
                 </tbody>
                 <tfoot>

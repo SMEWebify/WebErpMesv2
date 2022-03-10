@@ -90,22 +90,6 @@ class QuotesController extends Controller
             'vatPrice' => $vatPrice,
         ]);
     }
-
-    public function print(Quotes $id)
-    {
-        $QuoteCalculator = new QuoteCalculator($id);
-        $Factory = Factory::first();
-        $totalPrice = $QuoteCalculator->getTotalPrice();
-        $subPrice = $QuoteCalculator->getSubTotal();
-        $vatPrice = $QuoteCalculator->getVatTotal();
-        return view('workflow/quotes-print', [
-            'Quote' => $id,
-            'Factory' => $Factory,
-            'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice, 
-            'vatPrice' => $vatPrice,
-        ]);
-    }
     
     public function update(UpdateQuoteRequest $request)
     {

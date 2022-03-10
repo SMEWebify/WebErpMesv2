@@ -1,16 +1,28 @@
 @extends('adminlte::page')
 
+@section('title', 'Quote')
 
+@section('content_header')
+  <div class="row mb-2">
+    <div class="col-sm-6">
+      <h1>Print document</h1>
+    </div>
+    <div class="col-sm-6">
+      <a class="btn btn-primary btn-sm" href="{{ url()->previous() }}">
+        <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalQuote">
+          Back
+        </button>
+      </a>
+    </div>
+  </div>
+@stop
+
+@section('right-sidebar')
 
 @section('content')
+<div class="container-fluid">
             <div class="row">
               <!-- this row will not appear when printing -->
-<<<<<<< HEAD
-=======
-              <div class="row no-print">
-                <x-InfocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the invoice to test."  />
-              </div>
->>>>>>> 9199ececfb1115f56353ae751b923167cbdbf847
               
               <div class="col-12">
                 <!-- Main content -->
@@ -41,18 +53,18 @@
                     <div class="col-sm-4 invoice-col">
                       To
                       <address>
-                        <strong>{{ $Quote->companie['label'] }}</strong> - <strong>{{ $Quote->contact['civility'] }} - {{ $Quote->contact['first_name'] }}  {{ $Quote->contact['name'] }}</strong><br>
-                        {{ $Quote->adresse['adress'] }}<br>
-                        {{ $Quote->adresse['zipcode'] }}, {{ $Quote->adresse['city'] }}<br>
-                        {{ $Quote->adresse['country'] }}<br>
-                        Phone: {{ $Quote->contact['number'] }}<br>
-                        Email: {{ $Quote->contact['mail'] }}
+                        <strong>{{ $Document->companie['label'] }}</strong> - <strong>{{ $Document->contact['civility'] }} - {{ $Document->contact['first_name'] }}  {{ $Document->contact['name'] }}</strong><br>
+                        {{ $Document->adresse['adress'] }}<br>
+                        {{ $Document->adresse['zipcode'] }}, {{ $Document->adresse['city'] }}<br>
+                        {{ $Document->adresse['country'] }}<br>
+                        Phone: {{ $Document->contact['number'] }}<br>
+                        Email: {{ $Document->contact['mail'] }}
                       </address>
                     </div>
                     <!-- /.col -->
                     <div class="col-sm-4 invoice-col">
-                      <b>Quote #{{  $Quote->code }}</b><br>
-                      <b>Your Ref:</b> {{  $Quote->customer_reference }}<br>
+                      <h1>{{  $typeDocumentName }} #{{  $Document->code }}</h1>
+                      <b>Your Ref:</b> {{  $Document->customer_reference }}<br>
                     </div>
                     <!-- /.col -->
                   </div>
@@ -75,17 +87,17 @@
                           </tr>
                         </thead>
                         <tbody>
-                            @forelse($Quote->QuoteLines as $QuoteLine)
+                            @forelse($Document->Lines as $DocumentLine)
                             <tr>
-                              <td>{{ $QuoteLine->code }}</td>
-                              <td>{{ $QuoteLine->label }}</td>
-                              <td>{{ $QuoteLine->qty }}</td>
-                              <td>{{ $QuoteLine->Unit['label'] }}</td>
-                              <td>{{ $QuoteLine->selling_price }}  {{ $Factory->curency }}</td>
-                              <td>{{ $QuoteLine->discount }} %</td>
-                              <td>{{ $QuoteLine->VAT['rate'] }} %</td>
-                              @if($QuoteLine->delivery_date )
-                              <td>{{ $QuoteLine->delivery_date }}</td>
+                              <td>{{ $DocumentLine->code }}</td>
+                              <td>{{ $DocumentLine->label }}</td>
+                              <td>{{ $DocumentLine->qty }}</td>
+                              <td>{{ $DocumentLine->Unit['label'] }}</td>
+                              <td>{{ $DocumentLine->selling_price }}  {{ $Factory->curency }}</td>
+                              <td>{{ $DocumentLine->discount }} %</td>
+                              <td>{{ $DocumentLine->VAT['rate'] }} %</td>
+                              @if($DocumentLine->delivery_date )
+                              <td>{{ $DocumentLine->delivery_date }}</td>
                               @else
                               <td>No date</td>
                               @endif
@@ -113,12 +125,12 @@
                   <div class="row">
                     <!-- accepted payments column -->
                     <div class="col-6">
-                      <p class="lead"><strong>Payment Methods:</strong> {{ $Quote->payment_condition['label'] }}</p>
-                      <p class="lead"><strong>Payment Conditions:</strong> {{ $Quote->payment_method['label'] }}</p>
-                      @if($Quote->comment)
+                      <p class="lead"><strong>Payment Methods:</strong> {{ $Document->payment_condition['label'] }}</p>
+                      <p class="lead"><strong>Payment Conditions:</strong> {{ $Document->payment_method['label'] }}</p>
+                      @if($Document->comment)
                         <p class="lead"><strong>Comment :</strong></p>
                         <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
-                          {{  $Quote->comment }}
+                          {{  $Document->comment }}
                         </p>
                       @endif
                     </div>
@@ -151,7 +163,7 @@
                     <!-- /.col -->
                   </div>
                   <!-- /.row -->
-    
+                </div>
 @stop
 
 @section('css')

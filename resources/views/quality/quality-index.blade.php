@@ -805,13 +805,7 @@
                         </td>
                       </tr>
                       @empty
-                      <tr>
-                        <td colspan="3">
-                            <div class="flex justify-center items-center">
-                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                            </div>
-                        </td>
-                      </tr>
+                        <x-EmptyDataLine col="3" text=" No lines found ..."  />
                       @endforelse
                     </tbody>
                   </table>
@@ -985,14 +979,8 @@
                             </td>
                           </tr>
                           @empty
-                          <tr>
-                            <td colspan="3">
-                                <div class="flex justify-center items-center">
-                                    <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                                </div>
-                            </td>
-                          </tr>
-                          @endforelse
+                            <x-EmptyDataLine col="3" text="No line found ..."  />
+                        @endforelse
                         </tbody>
                       </table>
                     </div>

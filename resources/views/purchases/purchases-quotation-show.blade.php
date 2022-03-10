@@ -166,7 +166,7 @@
                   <h3 class="card-title"> Options </h3>
                 </div>
                 <div class="card-body">
-                  <a href="{{ route('order.print', ['id' => $PurchaseQuotation->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print quotation</a>
+                  <a href="{{ route('print.order', ['id' => $PurchaseQuotation->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print quotation</a>
                 </div>
               </div>
             </div>

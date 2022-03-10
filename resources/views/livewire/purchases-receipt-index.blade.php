@@ -1,14 +1,7 @@
 
 <div class="card-body">
     <div class="card">
-        <div class="card-body">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
-                </div>
-                <input type="text" class="form-control" wire:model="search" placeholder="Search line">
-            </div>
-        </div>
+        @include('include.search-card')
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -50,20 +43,14 @@
                                 <i class="fas fa-folder"></i>
                                 View
                             </a>
-                            <a class="btn btn-success btn-sm" href="{{ route('order.print', ['id' => $PurchasesReceipt->id])}}">
+                            <a class="btn btn-success btn-sm" href="{{ route('print.order', ['id' => $PurchasesReceipt->id])}}">
                                 <i class="fas fa-print"></i>
                                 Print
                             </a>
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="8">
-                            <div class="flex justify-center items-center">
-                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Purchase found ...</span>
-                            </div>
-                        </td>
-                    </tr>
+                        <x-EmptyDataLine col="8" text="No Purchase found ..."  />
                     @endforelse
                 </tbody>
                 <tfoot>

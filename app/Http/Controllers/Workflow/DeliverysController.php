@@ -61,15 +61,6 @@ class DeliverysController extends Controller
             'Factory' => $Factory,
         ]);
     }
-
-    public function print(Deliverys $id)
-    {
-        $Factory = Factory::first();
-        return view('workflow/orders-print', [
-            'Delivery' => $id,
-            'Factory' => $Factory,
-        ]);
-    }
     
     public function update(UpdateDeliveryRequest $request)
     {

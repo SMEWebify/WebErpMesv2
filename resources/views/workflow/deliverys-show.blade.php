@@ -155,7 +155,7 @@
                 <h3 class="card-title"> Options </h3>
               </div>
               <div class="card-body">
-                <a href="{{ route('order.print', ['id' => $Delivery->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                <a href="{{ route('print.order', ['id' => $Delivery->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
               </div>
             </div>
           </div>
@@ -197,19 +197,9 @@
                       @if(4 == $Delivery->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                     </td>
                   </tr>
-                @empty
-                  <tr>
-                    <td>No Lines in this delivery</td>
-                    <td></td> 
-                    <td></td> 
-                    <td></td> 
-                    <td></td> 
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-              @endforelse
+                  @empty
+                    <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
+                  @endforelse
                 <tfoot>
                   <tr>
                     <th>Order</th>
@@ -339,7 +329,7 @@
               <!-- this row will not appear when printing -->
               <div class="row no-print">
                 <div class="col-12">
-                  <a href="{{ route('order.print', ['id' => $Delivery->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                  <a href="{{ route('print.order', ['id' => $Delivery->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
                 </div>
               </div>
             </div>
