@@ -41,14 +41,8 @@
                         </td>
                         <td>{{ $Purchase->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $Purchase->id])}}">
-                                <i class="fas fa-folder"></i>
-                                View
-                            </a>
-                            <a class="btn btn-success btn-sm" href="{{ route('print.invoice', ['id' => $Purchase->id])}}">
-                                <i class="fas fa-print"></i>
-                                Print
-                            </a>
+                            <x-ButtonTextView route="{{ route('purchase.show', ['id' => $Purchase->id])}}" />
+                            <x-ButtonTextPrint route="{{ route('print.invoice', ['id' => $Purchase->id])}}" />
                         </td>
                     </tr>
                     @empty

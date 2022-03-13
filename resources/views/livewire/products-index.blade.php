@@ -348,14 +348,7 @@
                             @endif
                         </td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('products.show', ['id' => $Product->id])}}">
-                                <i class="fas fa-folder"></i>
-                                View
-                            </a>
-                            <a class="btn btn-info btn-sm" href="#">
-                                <i class="fas fa-pencil-alt"></i>
-                                Edit
-                            </a>
+                            <x-ButtonTextView route="{{ route('products.show', ['id' => $Product->id])}}" />
                         </td>
                     </tr>
                     @empty

@@ -12,14 +12,14 @@ class Factory extends Model
     protected $table = 'factory';
 
     protected $fillable = ['name', 
-                            'ADDRESS',
+                            'address',
                             'city', 
                             'zipcode',
-                            'REGION',
+                            'region',
                             'country',
-                            'PHONE_NUMBER', 
+                            'phone_number', 
                             'mail',
-                            'WEB_SITE',
+                            'web_site',
                             'picture',
                             'siren', 
                             'nat_regis_num',

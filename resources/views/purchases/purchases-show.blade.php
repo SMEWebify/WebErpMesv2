@@ -130,10 +130,7 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-10">
-                        <label>Comment</label>
-                        <textarea class="form-control" rows="3" name="comment"  placeholder="Enter ..." >{{  $Purchase->comment }}</textarea>
-                      </div>
+                      <x-FormTextareaComment  comment="{{ $Purchase->comment }}" />
                     </div>
                   </div>
                   <div class="modal-footer">

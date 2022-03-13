@@ -49,7 +49,7 @@ class Invoices extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function InvoiceLines()
+    public function invoiceLines()
     {
         return $this->hasMany(InvoiceLines::class)->orderBy('ordre');
     }

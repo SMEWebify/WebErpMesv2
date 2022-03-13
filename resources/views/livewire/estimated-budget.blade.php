@@ -366,7 +366,6 @@
                             </td>
                         </tr>
                         @empty
-                        @empty
                             <x-EmptyDataLine col="14" text="No line found ..."  />
                         @endforelse
                     </tbody>

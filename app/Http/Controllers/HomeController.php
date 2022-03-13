@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
@@ -19,6 +20,12 @@ class HomeController extends Controller
     public function index()
     {
         $CurentYear = Carbon::now()->format('Y');
+
+        //DB information mustn't be empty.
+        $Factory = Factory::first();
+        if(!$Factory){
+            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
+        }
 
         //use for liste of tasks
         $ServiceGoals = MethodsServices::withCount('Tasks')->orderBy('ordre')->get();
@@ -44,7 +51,9 @@ class HomeController extends Controller
 
         //5 lastest Orders add 
         $LastOrders = Orders::orderBy('id', 'desc')->take(5)->get();
-        //incoming Order 
+
+        //Order incoming end date
+        // we use in future deadline trait for this
         $incomingOrdersCount = OrderLines::orderBy('id', 'desc')
                                             ->where([
                                                 ['delivery_date', '>', Carbon::now()],
@@ -54,7 +63,7 @@ class HomeController extends Controller
                                             ->groupBy('orders_id')
                                             ->get();
         $incomingOrdersCount = count($incomingOrdersCount)-4;
-
+        
         $incomingOrders = OrderLines::orderBy('id', 'desc')
                             ->where([
                                 ['delivery_date', '>', Carbon::now()],
@@ -102,13 +111,24 @@ class HomeController extends Controller
                                     ->whereYear('created_at', $CurentYear)
                                     ->groupByRaw('MONTH(delivery_date) ')
                                     ->get();
+         //TotalRevenue
+        $orderTotalRevenue = DB::table('order_lines')
+                                    ->selectRaw('
+                                    ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderTotalRevenue
+                                    ')
+                                    ->where('delivery_status', '=', 3)
+                                    ->whereYear('created_at', $CurentYear)
+                                    ->get();
+
         //Estimated Budgets data for chart
         $data['estimatedBudget'] = EstimatedBudgets::where('year', $CurentYear)->get();
-        
+
         return view('dashboard', [
+            'Factory' => $Factory,
             'LastProducts' => $LastProducts,
             'LastQuotes' => $LastQuotes,
             'LastOrders' =>  $LastOrders,
+            'OrderTotalRevenue' => $orderTotalRevenue,
             'LateOrdersCount' =>  $LateOrdersCount,
             'incomingOrders' =>  $incomingOrders,
             'incomingOrdersCount' => $incomingOrdersCount,

@@ -11,6 +11,7 @@ use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Services\InvoiceCalculator;
 
 class InvoicesController extends Controller
 {
@@ -46,6 +47,11 @@ class InvoicesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $OrderCalculator = new InvoiceCalculator($id);
+        $totalPrice = $OrderCalculator->getTotalPrice();
+        $subPrice = $OrderCalculator->getSubTotal();
+        $vatPrice = $OrderCalculator->getVatTotal();
+
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
@@ -57,6 +63,9 @@ class InvoicesController extends Controller
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
             'Factory' => $Factory,
+            'totalPrices' => $totalPrice,
+            'subPrice' => $subPrice, 
+            'vatPrice' => $vatPrice,
         ]);
     }
     

@@ -63,12 +63,12 @@
                                 <hr>
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="ADDRESS">ADDRESS</label>
+                                        <label for="address">address</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" name="ADDRESS"  id="ADDRESS" value="{{ $Factory->ADDRESS }}"  placeholder="ADDRESS">
+                                            <input type="text" class="form-control" name="address"  id="address" value="{{ $Factory->address }}"  placeholder="address">
                                         </div>
                                     </div>
                                 </div>
@@ -351,12 +351,12 @@
                                 <hr>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label for="PHONE_NUMBER">Phone number</label>
+                                        <label for="phone_number">Phone number</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" name="PHONE_NUMBER"  id="PHONE_NUMBER"  value="{{ $Factory->PHONE_NUMBER }}"  placeholder="Phone number">
+                                            <input type="text" class="form-control" name="phone_number"  id="phone_number"  value="{{ $Factory->phone_number }}"  placeholder="Phone number">
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -369,12 +369,12 @@
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <label for="WEB_SITE">Web site</label>
+                                        <label for="web_site">Web site</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
                                             </div>
-                                            <input type="text" class="form-control"  name="WEB_SITE" id="WEB_SITE" value="{{ $Factory->WEB_SITE }}" placeholder="Web site link">
+                                            <input type="text" class="form-control"  name="web_site" id="web_site" value="{{ $Factory->web_site }}" placeholder="Web site link">
                                         </div>
                                     </div>
                                 </div>

@@ -24,15 +24,15 @@ class InvoiceCalculator
     public function getVatTotal()
     {
         $tableauTVA = array();
-        $invoicesLines = $this->invoices->invoicesLines;
+        $invoicesLines = $this->invoices->invoiceLines;
         foreach ($invoicesLines as $invoicesLine) {
             $TotalCurentLine = ($invoicesLine->qty*$invoicesLine->selling_price)-($invoicesLine->qty*$invoicesLine->selling_price)*($invoicesLine->discount/100);
-			$TotalVATCurentLine =  $TotalCurentLine*($invoicesLine->VAT['rate']/100) ;
+			$TotalVATCurentLine =  $TotalCurentLine*($invoicesLine->orderLine->VAT['rate']/100) ;
             if(array_key_exists($invoicesLine->accounting_vats_id, $tableauTVA)){
                 $tableauTVA[$invoicesLine->accounting_vats_id][1] += $TotalVATCurentLine;
             }
             else{
-                $tableauTVA[$invoicesLine->accounting_vats_id] = array($invoicesLine->VAT['rate'], $TotalVATCurentLine);
+                $tableauTVA[$invoicesLine->accounting_vats_id] = array($invoicesLine->orderLine->VAT['rate'], $TotalVATCurentLine);
             }
         }
         asort($tableauTVA);
@@ -43,11 +43,11 @@ class InvoiceCalculator
     public function getTotalPrice()
     {
         $TotalPrice = 0;
-        $invoicesLines = $this->invoices->invoicesLines;
+        $invoicesLines = $this->invoices->invoiceLines;
 
         foreach ($invoicesLines as $invoicesLine) {
             $TotalPriceLine = ($invoicesLine->qty * $invoicesLine->selling_price)-($invoicesLine->qty * $invoicesLine->selling_price)*($invoicesLine->discount/100);
-            $TotalVATPrice = $TotalPriceLine*($invoicesLine->VAT['rate']/100);
+            $TotalVATPrice = $TotalPriceLine*($invoicesLine->orderLine->VAT['rate']/100);
             $TotalPrice += $TotalPriceLine+$TotalVATPrice;
         }
         return $TotalPrice;
@@ -56,7 +56,7 @@ class InvoiceCalculator
     public function getSubTotal()
     {
         $SubTotal = 0;
-        $invoicesLines = $this->invoices->invoicesLines;
+        $invoicesLines = $this->invoices->invoiceLines;
         foreach ($invoicesLines as $invoicesLine) {
             $SubTotal += ($invoicesLine->qty * $invoicesLine->selling_price)-($invoicesLine->qty * $invoicesLine->selling_price)*($invoicesLine->discount/100);
         }

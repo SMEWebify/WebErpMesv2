@@ -242,14 +242,8 @@
                         </td>
                         <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                        <a class="btn btn-primary btn-sm" href="{{ route('quote.show', ['id' => $Quote->id])}}">
-                            <i class="fas fa-folder"></i>
-                            View
-                        </a>
-                        <a class="btn btn-success btn-sm" href="{{ route('print.quote', ['id' => $Quote->id])}}">
-                            <i class="fas fa-print"></i>
-                            Print
-                        </a>
+                            <x-ButtonTextView route="{{ route('quote.show', ['id' => $Quote->id])}}" />
+                            <x-ButtonTextPrint route="{{ route('print.quote', ['id' => $Quote->id])}}" />
                         </td>
                     </tr>
                     @empty

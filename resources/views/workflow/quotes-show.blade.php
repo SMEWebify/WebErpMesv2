@@ -184,10 +184,7 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-10">
-                        <label>Comment</label>
-                        <textarea class="form-control" rows="3" name="comment"  placeholder="Enter ..." >{{  $Quote->comment }}</textarea>
-                      </div>
+                      <x-FormTextareaComment  comment="{{ $Quote->comment }}" />
                     </div>
                   </div>
                   <div class="modal-footer">
@@ -202,29 +199,7 @@
                 <h3 class="card-title"> Informations </h3>
               </div>
               <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table">
-                    <tr>
-                      <th style="width:50%">Subtotal:</th>
-                      <td>{{ $subPrice }} {{ $Factory->curency }} </td>
-                    </tr>
-                    @forelse($vatPrice as $key => $value)
-                    <tr>
-                      <td>Tax <?= $vatPrice[$key][0] ?> %</td>
-                      <td colspan="4"><?= $vatPrice[$key][1] ?> {{ $Factory->curency }}</td>
-                    </tr>
-                    @empty
-                    <tr>
-                      <td>No Tax</td>
-                      <td> </td>
-                    </tr>
-                    @endforelse
-                    <tr>
-                      <th>Total:</th>
-                      <td>{{ $totalPrices }} {{ $Factory->curency }}</td>
-                    </tr>
-                  </table>
-                </div>
+                @include('include.sub-total-price')
               </div>
             </div>
             <div class="card">

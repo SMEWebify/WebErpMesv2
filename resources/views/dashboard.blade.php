@@ -220,8 +220,8 @@
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
                 <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                <h5 class="description-header">$35,210.43</h5>
-                <span class="description-text">TOTAL REVENUE</span>
+                <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
+                <span class="description-text">TOTAL ORDER DELIVERED</span>
               </div>
               <!-- /.description-block -->
             </div>
@@ -229,25 +229,25 @@
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
                 <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                <h5 class="description-header">$10,390.90</h5>
-                <span class="description-text">TOTAL COST</span>
+                <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
+                <span class="description-text">TOTAL INVOINCED</span>
               </div>
               <!-- /.description-block -->
             </div>
             <!-- /.col -->
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
-                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                <h5 class="description-header">$24,813.53</h5>
-                <span class="description-text">TOTAL PROFIT</span>
+                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i>/</span>
+                <h5 class="description-header">/</h5>
+                <span class="description-text">/</span>
               </div>
               <!-- /.description-block -->
             </div>
             <!-- /.col -->
             <div class="col-sm-3 col-6">
               <div class="description-block">
-                <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
-                <h5 class="description-header">1200</h5>
+                <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i>/</span>
+                <h5 class="description-header">/</h5>
                 <span class="description-text">GOAL COMPLETIONS</span>
               </div>
               <!-- /.description-block -->

@@ -38,14 +38,8 @@
                         </td>
                         <td>{{ $Delivery->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('delivery.show', ['id' => $Delivery->id])}}">
-                                <i class="fas fa-folder"></i>
-                                View
-                            </a>
-                            <a class="btn btn-success btn-sm" href="{{ route('print.delivery', ['id' => $Delivery->id])}}">
-                                <i class="fas fa-print"></i>
-                                Print
-                            </a>
+                            <x-ButtonTextView route="{{ route('delivery.show', ['id' => $Delivery->id])}}" />
+                            <x-ButtonTextPrint route="{{ route('print.delivery', ['id' => $Delivery->id])}}" />
                         </td>
                     </tr>
                     @empty

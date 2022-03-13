@@ -13,6 +13,7 @@ use App\Models\Workflow\Invoices;
 use App\Services\OrderCalculator;
 use App\Services\QuoteCalculator;
 use App\Models\Workflow\Deliverys;
+use App\Services\InvoiceCalculator;
 
 class PrintController extends Controller
 {
@@ -25,7 +26,7 @@ class PrintController extends Controller
         $vatPrice = $QuoteCalculator->getVatTotal();
         $id->Lines = $id->QuoteLines;
         unset($id->QuoteLines);
-        return view('print/print', [
+        return view('print/print-sales', [
             'typeDocumentName' => 'Quote',
             'Document' => $id,
             'Factory' => $Factory,
@@ -44,7 +45,7 @@ class PrintController extends Controller
         $vatPrice = $OrderCalculator->getVatTotal();
         $id->Lines = $id->OrderLines;
         unset($id->OrderLines);
-        return view('print/print', [
+        return view('print/print-sales', [
             'typeDocumentName' => 'Order',
             'Document' => $id,
             'Factory' => $Factory,
@@ -63,7 +64,7 @@ class PrintController extends Controller
         $vatPrice = $OrderCalculator->getVatTotal();
         $id->Lines = $id->OrderLines;
         unset($id->OrderLines);
-        return view('print/print', [
+        return view('print/print-sales', [
             'typeDocumentName' => 'Order confirm',
             'Document' => $id,
             'Factory' => $Factory,
@@ -76,7 +77,8 @@ class PrintController extends Controller
     public function printDelivery(Deliverys $id)
     {
         $Factory = Factory::first();
-        return view('print/print', [
+        return view('print/print-delivery', [
+            'typeDocumentName' => 'Delivery note',
             'Document' => $id,
             'Factory' => $Factory,
         ]);
@@ -84,10 +86,20 @@ class PrintController extends Controller
 
     public function printInvoince(Invoices $id)
     {
+        $InvoiceCalculator = new InvoiceCalculator($id);
         $Factory = Factory::first();
-        return view('print/print', [
+        $totalPrice = $InvoiceCalculator->getTotalPrice();
+        $subPrice = $InvoiceCalculator->getSubTotal();
+        $vatPrice = $InvoiceCalculator->getVatTotal();
+        $id->Lines = $id->invoiceLines;
+        unset($id->invoiceLines);
+        return view('print/print-sales', [
+            'typeDocumentName' => 'Invoince',
             'Document' => $id,
             'Factory' => $Factory,
+            'totalPrices' => $totalPrice,
+            'subPrice' => $subPrice, 
+            'vatPrice' => $vatPrice,
         ]);
     }
 

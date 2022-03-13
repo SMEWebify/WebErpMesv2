@@ -16,14 +16,14 @@ class CreateFactoryTable extends Migration
         Schema::create('factory', function (Blueprint $table) {
             $table->id();
             $table->string('name')->default('Name of site');
-			$table->string('ADDRESS')->default('Address');
+			$table->string('address')->default('Address');
 			$table->string('city')->default('City');
 			$table->string('zipcode')->default('Zip code');
-			$table->string('REGION')->nullable();
+			$table->string('region')->nullable();
 			$table->string('country')->nullable();
-			$table->string('PHONE_NUMBER')->nullable();
+			$table->string('phone_number')->nullable();
 			$table->string('mail')->nullable();
-			$table->string('WEB_SITE')->nullable();
+			$table->string('web_site')->nullable();
 			$table->string('picture')->nullable();
 			$table->string('siren')->nullable();
 			$table->string('nat_regis_num')->nullable();

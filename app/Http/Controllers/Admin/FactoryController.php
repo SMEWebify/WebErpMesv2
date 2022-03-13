@@ -26,14 +26,14 @@ class FactoryController extends Controller
     {
             $Factory = Factory::first();
                         $Factory->name = $request->name;
-                        $Factory->ADDRESS = $request->ADDRESS;
+                        $Factory->address = $request->address;
                         $Factory->city = $request->city; 
                         $Factory->zipcode = $request->zipcode;
-                        $Factory->REGION = $request->REGION;
+                        $Factory->region = $request->region;
                         $Factory->country = $request->country;
-                        $Factory->PHONE_NUMBER = $request->PHONE_NUMBER; 
+                        $Factory->phone_number = $request->phone_number; 
                         $Factory->mail = $request->mail;
-                        $Factory->WEB_SITE = $request->WEB_SITE;
+                        $Factory->web_site = $request->web_site;
                         $Factory->picture = $request->picture;
                         $Factory->siren = $request->siren; 
                         $Factory->nat_regis_num = $request->nat_regis_num;

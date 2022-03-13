@@ -127,10 +127,7 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-10">
-                        <label>Comment</label>
-                        <textarea class="form-control" rows="3" name="comment"  placeholder="Enter ..." >{{  $Invoice->comment }}</textarea>
-                      </div>
+                      <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
                     </div>
                   </div>
                   <div class="modal-footer">
@@ -145,8 +142,7 @@
                 <h3 class="card-title"> Informations </h3>
               </div>
               <div class="card-body">
-                <div class="table-responsive">
-                </div>
+                @include('include.sub-total-price')
               </div>
             </div>
             <div class="card">
@@ -167,6 +163,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th>Order</th>
                   <th>External ID</th>
                   <th>Description</th>
                   <th>Qty</th>
@@ -179,6 +176,9 @@
               <tbody>
                   @forelse($Invoice->InvoiceLines as $InvoiceLine)
                   <tr>
+                    <td>
+                      <x-OrderButton id="{{ $InvoiceLine->orderLine->order['id'] }}" code="{{ $InvoiceLine->orderLine->order['code'] }}"  />
+                    </td>
                     <td>{{ $InvoiceLine->orderLine['code'] }}</td>
                     <td>{{ $InvoiceLine->orderLine['label'] }}</td>
                     <td>{{ $InvoiceLine->orderLine['qty'] }}</td>
@@ -186,17 +186,18 @@
                     <td>{{ $InvoiceLine->qty }}</td>
                     <td>{{ $InvoiceLine->orderLine['delivered_remaining_qty'] }}</td>
                     <td>
-                      @if(1 == $Invoice->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
-                      @if(2 == $Invoice->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
-                      @if(3 == $Invoice->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
-                      @if(4 == $Invoice->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
+                      @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
+                      @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
+                      @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
+                      @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                     </td>
                   </tr>
                   @empty
-                    <x-EmptyDataLine col="7" text="No line in this invoince found ..."  />
+                    <x-EmptyDataLine col="8" text="No line in this invoince found ..."  />
                   @endforelse
                 <tfoot>
                   <tr>
+                    <th>Order</th>
                     <th>External ID</th>
                     <th>Description</th>
                     <th>Qty</th>
@@ -213,126 +214,6 @@
         </div>
         <!-- /.row -->
       </div>
-      <div class="tab-pane " id="Print">
-        <div class="row">
-          <div class="col-12">
-            <x-InfocalloutComponent note="This page has been enhanced for printing. Click the print button at the bottom of the delivery note to test."  />
-            <!-- Main content -->
-            <div class="invoice p-3 mb-3">
-              <!-- title row -->
-              <div class="row">
-                <div class="col-12">
-                  <h4>
-                    <i class="fas fa-globe"></i> WEM, Inc.
-                    <small class="float-right">Date: {{ date('Y-m-d') }}</small>
-                  </h4>
-                </div>
-                <!-- /.col -->
-              </div>
-              <!-- info row -->
-              <div class="row invoice-info">
-                <div class="col-sm-4 invoice-col">
-                  From
-                  <address>
-                    <strong>{{ $Factory->name }}</strong><br>
-                    {{ $Factory->ADDRESS }}<br>
-                    {{ $Factory->zipcode }}, {{ $Factory->city }}<br>
-                    Phone: {{ $Factory->PHONE_NUMBER }}<br>
-                    Email: {{ $Factory->mail }}
-                  </address>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  To
-                  <address>
-                    <strong>{{ $Invoice->companie['label'] }}</strong>
-                  </address>
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  <b>Invoice #{{  $Invoice->code }}</b><br>
-                </div>
-                <!-- /.col -->
-              </div>
-              <!-- /.row -->
-              <!-- Table row -->
-              <div class="row">
-                <div class="col-12 table-responsive">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>External ID</th>
-                        <th>Description</th>
-                        <th>Qty</th>
-                        <th>Unit</th>
-                        <th>Delivered qty</th>
-                        <th>Remaining qty</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($Invoice->InvoiceLines as $InvoiceLine)
-                        <tr>
-                          <td>{{ $InvoiceLine->orderLine['code'] }}</td>
-                          <td>{{ $InvoiceLine->orderLine['label'] }}</td>
-                          <td>{{ $InvoiceLine->orderLine['qty'] }}</td>
-                          <td></td>
-                          <td>{{ $InvoiceLine->qty }}</td>
-                          <td>{{ $InvoiceLine->orderLine['delivered_remaining_qty'] }}</td>
-                        </tr>
-                      @empty
-                        <tr>
-                          <td>No Lines in this delivery</td>
-                          <td></td> 
-                          <td></td> 
-                          <td></td> 
-                          <td></td> 
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                    @endforelse
-                      <tfoot>
-                        <tr>
-                          <th>External ID</th>
-                          <th>Description</th>
-                          <th>Qty</th>
-                          <th>Unit</th>
-                          <th>Delivered qty</th>
-                          <th>Remaining qty</th>
-                        </tr>
-                      </tfoot>
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.col -->
-              </div>
-              <!-- /.row -->
-              <div class="row">
-                <!-- accepted payments column -->
-                <div class="col-6">
-                  @if($Invoice->comment)
-                    <p class="lead"><strong>Comment :</strong></p>
-                    <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
-                      {{  $Invoice->comment }}
-                    </p>
-                  @endif
-                </div>
-                <!-- /.col -->
-              </div>
-              <!-- /.row -->
-              <!-- this row will not appear when printing -->
-              <div class="row no-print">
-                <div class="col-12">
-                  <a href="{{ route('print.order', ['id' => $Invoice->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-                </div>
-              </div>
-            </div>
-            <!-- /.invoice -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
-      </div> 
   </div>
   <!-- /.card-body -->
 </div>

@@ -42,14 +42,8 @@
                         </td>
                         <td>{{ $PurchaseQuotation->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.quotation.show', ['id' => $PurchaseQuotation->id])}}">
-                                <i class="fas fa-folder"></i>
-                                View
-                            </a>
-                            <a class="btn btn-success btn-sm" href="{{ route('print.invoice', ['id' => $PurchaseQuotation->id])}}">
-                                <i class="fas fa-print"></i>
-                                Print
-                            </a>
+                            <x-ButtonTextView route="{{ route('purchase.quotation.show', ['id' => $PurchaseQuotation->id])}}" />
+                            <x-ButtonTextPrint route="{{ route('print.invoice', ['id' => $PurchaseQuotation->id])}}" />
                         </td>
                     </tr>
                     @empty

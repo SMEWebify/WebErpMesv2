@@ -39,34 +39,30 @@
                   </div>
                   <!-- info row -->
                   <div class="row invoice-info">
-                    <div class="col-sm-4 invoice-col">
-                      From
-                      <address>
-                        <strong>{{ $Factory->name }}</strong><br>
-                        {{ $Factory->ADDRESS }}<br>
-                        {{ $Factory->zipcode }}, {{ $Factory->city }}<br>
-                        Phone: {{ $Factory->PHONE_NUMBER }}<br>
-                        Email: {{ $Factory->mail }}
-                      </address>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-4 invoice-col">
-                      To
-                      <address>
-                        <strong>{{ $Document->companie['label'] }}</strong> - <strong>{{ $Document->contact['civility'] }} - {{ $Document->contact['first_name'] }}  {{ $Document->contact['name'] }}</strong><br>
-                        {{ $Document->adresse['adress'] }}<br>
-                        {{ $Document->adresse['zipcode'] }}, {{ $Document->adresse['city'] }}<br>
-                        {{ $Document->adresse['country'] }}<br>
-                        Phone: {{ $Document->contact['number'] }}<br>
-                        Email: {{ $Document->contact['mail'] }}
-                      </address>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-4 invoice-col">
-                      <h1>{{  $typeDocumentName }} #{{  $Document->code }}</h1>
-                      <b>Your Ref:</b> {{  $Document->customer_reference }}<br>
-                    </div>
-                    <!-- /.col -->
+                    
+                    <x-HeaderPrint  
+                      factoryName="{{ $Factory->name }}"
+                      factoryAddress="{{ $Factory->address }}"
+                      factoryZipcode="{{ $Factory->zipcode }}"
+                      factoryCity="{{ $Factory->city }}"
+                      factoryPhoneNumber="{{ $Factory->phone_number }}"
+                      factoryMail="{{ $Factory->mail }}"
+
+                      companieLabel="{{ $Document->companie['label'] }}"
+                      companieCivility="{{ $Document->contact['civility'] }}"
+                      companieFirstName="{{ $Document->contact['first_name'] }}"
+                      companieName="{{ $Document->contact['name'] }}"
+                      companieAdress="{{ $Document->adresse['adress'] }}"
+                      companieZipcode="{{ $Document->adresse['zipcode'] }}"
+                      companieCity="{{ $Document->adresse['city'] }}"
+                      companieCountry="{{ $Document->adresse['country'] }}"
+                      companieNumber="{{ $Document->contact['number'] }}"
+                      companieMail="{{ $Document->contact['mail'] }}"
+
+                      documentName="{{ $typeDocumentName}}"
+                      code="{{ $Document->code }}"
+                      customerReference="{{ $Document->customer_reference }}" 
+                    />
                   </div>
                   <!-- /.row -->
                   
@@ -103,18 +99,9 @@
                               @endif
                               
                             </tr>
-                          @empty
-                            <tr>
-                              <td>No Lines in this quote</td>
-                              <td></td> 
-                              <td></td> 
-                              <td></td> 
-                              <td></td> 
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                            </tr>
-                        @endforelse
+                            @empty
+                              <x-EmptyDataLine col="8" text="No line ..."  />
+                            @endforelse
                         </tbody>
                       </table>
                     </div>
@@ -136,29 +123,7 @@
                     </div>
                     <!-- /.col -->
                     <div class="col-6">
-                      <div class="table-responsive">
-                        <table class="table">
-                          <tr>
-                            <th style="width:50%">Subtotal:</th>
-                            <td>{{ $subPrice }} {{ $Factory->curency }} </td>
-                          </tr>
-                          @forelse($vatPrice as $key => $value)
-                          <tr>
-                            <td>Tax <?= $vatPrice[$key][0] ?> %</td>
-                            <td colspan="4"><?= $vatPrice[$key][1] ?> {{ $Factory->curency }}</td>
-                          </tr>
-                          @empty
-                          <tr>
-                            <td>No Tax</td>
-                            <td> </td>
-                          </tr>
-                          @endforelse
-                          <tr>
-                            <th>Total:</th>
-                            <td>{{ $totalPrices }} {{ $Factory->curency }}</td>
-                          </tr>
-                        </table>
-                      </div>
+                      @include('include.sub-total-price')
                     </div>
                     <!-- /.col -->
                   </div>

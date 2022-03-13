@@ -236,14 +236,8 @@
                         </td>
                         <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('order.show', ['id' => $Order->id])}}">
-                                <i class="fas fa-folder"></i>
-                                View
-                            </a>
-                            <a class="btn btn-success btn-sm" href="{{ route('print.order', ['id' => $Order->id])}}">
-                                <i class="fas fa-print"></i>
-                                Print
-                            </a>
+                            <x-ButtonTextView route="{{ route('order.show', ['id' => $Order->id])}}" />
+                            <x-ButtonTextPrint route="{{ route('print.order', ['id' => $Order->id])}}" />
                         </td>
                     </tr>
                     @empty
