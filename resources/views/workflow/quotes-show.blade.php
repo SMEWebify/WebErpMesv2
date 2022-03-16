@@ -52,90 +52,47 @@
                 <div class="card card-body">
                   <div class="row">
                       <div class="col-3">
-                        <label for="code">External ID :</label>  {{  $Quote->code }}
+                        <label for="code" class="text-success">External ID :</label>  {{  $Quote->code }}
                       </div>
                       <div class="col-3">
-                        <label for="statu">Statu :</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                          </div>
-                          <select class="form-control" name="statu" id="statu">
-                            <option value="1" @if(1 == $Quote->statu ) Selected @endif >Open</option>
-                            <option value="2" @if(2 == $Quote->statu ) Selected @endif >Send</option>
-                            <option value="3" @if(3 == $Quote->statu ) Selected @endif >Win</option>
-                            <option value="4" @if(4 == $Quote->statu ) Selected @endif >Lost</option>
-                            <option value="5" @if(5 == $Quote->statu ) Selected @endif >Closed</option>
-                            <option value="6" @if(6 == $Quote->statu ) Selected @endif >Obsolete</option>
-                          </select>
-                        </div>
+                        <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
+                          <x-slot name="prependSlot">
+                              <div class="input-group-text bg-gradient-success">
+                                  <i class="fas fa-exclamation"></i>
+                              </div>
+                          </x-slot>
+                          <option value="1" @if(1 == $Quote->statu ) Selected @endif >Open</option>
+                          <option value="2" @if(2 == $Quote->statu ) Selected @endif >Send</option>
+                          <option value="3" @if(3 == $Quote->statu ) Selected @endif >Win</option>
+                          <option value="4" @if(4 == $Quote->statu ) Selected @endif >Lost</option>
+                          <option value="5" @if(5 == $Quote->statu ) Selected @endif >Closed</option>
+                          <option value="6" @if(6 == $Quote->statu ) Selected @endif >Obsolete</option>
+                        </x-adminlte-select>
                       </div>
                       <div class="col-3">
-                        <label for="label">Name of quote</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                          </div>
-                          <input type="text" class="form-control" name="label"  id="label" placeholder="Name of quote" value="{{  $Quote->label }}">
-                        </div>
+                        @include('include.form.form-input-label',['label' =>'Name of quote', 'Value' =>  $Quote->label])
                       </div>
                     </div>
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Customer information</label>
+                      <label for="InputWebSite" class="text-info">Customer information</label>
                     </div>
                     <hr>
                     <div class="row">
                       <div class="col-5">
-                        <label for="companies_id">Companie</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-building"></i></span>
-                          </div>
-                          <select class="form-control" name="companies_id" id="companies_id">
-                            @foreach ($CompanieSelect as $item)
-                            <option value="{{ $item->id }}"  @if($item->id == $Quote->companies_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
-                            @endforeach
-                          </select>
-                        </div>
+                        @include('include.form.form-select-companie',['companiesId' =>  $Quote->companies_id])
                       </div>
                       <div class="col-5">
-                        <label for="customer_reference">Customer reference</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
-                          </div>
-                          <input type="text" class="form-control" name="customer_reference"  id="customer_reference" placeholder="Customer reference" value="{{  $Quote->customer_reference }}">
-                        </div>
+                        @include('include.form.form-input-customerInfo',['customerReference' =>  $Quote->customer_reference])
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-5">
-                        <label for="companies_addresses_id">Adress</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
-                          </div>
-                          <select class="form-control" name="companies_addresses_id" id="companies_addresses_id">
-                            @foreach ($AddressSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Quote->companies_addresses_id ) Selected @endif >{{ $item->label }} - {{ $item->adress }}</option>
-                            @endforeach
-                          </select>
-                        </div>
+                        @include('include.form.form-select-adress',['adressId' =>   $Quote->companies_addresses_id])
                       </div>
                       <div class="col-5">
-                        <label for="companies_contacts_id">Contact</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                          </div>
-                          <select class="form-control" name="companies_contacts_id" id="companies_contacts_id">
-                            @foreach ($ContactSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Quote->companies_contacts_id ) Selected @endif >{{ $item->first_name }} - {{ $item->name }}</option>
-                            @endforeach
-                          </select>
-                        </div>
+                        @include('include.form.form-select-contact',['contactId' =>   $Quote->companies_contacts_id])
                       </div>
                     </div>
                   </div>
@@ -146,39 +103,24 @@
                     <hr>
                     <div class="row">
                       <div class="col-5">
-                        <label for="accounting_payment_conditions_id">Payment condition</label>
-                        <select class="form-control" name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
-                          @foreach ($AccountingConditionSelect as $item)
-                          <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_payment_conditions_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
-                          @endforeach
-                        </select>
+                        @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Quote->accounting_payment_conditions_id])
                       </div>
                       <div class="col-5">
-                        <label for="accounting_payment_methods_id">Payment methods</label>
-                        <select class="form-control" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
-                          @foreach ($AccountingMethodsSelect as $item)
-                          <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_payment_methods_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
-                          @endforeach
-                        </select>
+                          @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Quote->accounting_payment_methods_id])
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-5">
-                        <label for="accounting_deliveries_id">Delevery method</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-truck"></i></span>
-                          </div>
-                          <select class="form-control" name="accounting_deliveries_id" id="accounting_deliveries_id">
-                            @foreach ($AccountingDeleveriesSelect as $item)
-                            <option value="{{ $item->id }}" @if($item->id == $Quote->accounting_deliveries_id ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
-                            @endforeach
-                          </select>
-                        </div>
+                          @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Quote->accounting_deliveries_id])
                       </div>
                       <div class="col-5">
                         <label for="label">Validity date</label>
-                        <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Quote->validity_date }}">
+                        <div class="input-group">
+                          <div class="input-group-text bg-gradient-secondary">
+                            <i class="fas fa-calendar-day"></i>
+                          </div>
+                          <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Quote->validity_date }}">
+                        </div>
                       </div>
                     </div>
                   </div>

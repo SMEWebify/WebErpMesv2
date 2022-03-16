@@ -145,6 +145,7 @@ class PurchasesController extends Controller
         $PurchaseReceipt->label=$request->label;
         $PurchaseReceipt->statu=$request->statu;
         $PurchaseReceipt->delivery_note_number=$request->delivery_note_number;
+        $PurchaseReceipt->comment=$request->comment;
         $PurchaseReceipt->save();
         
         return redirect()->route('purchase.receipt.show', ['id' =>  $PurchaseReceipt->id])->with('success', 'Successfully updated reciept');

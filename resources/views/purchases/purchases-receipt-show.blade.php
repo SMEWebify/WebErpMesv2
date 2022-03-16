@@ -51,39 +51,31 @@
                   <div class="card card-body">
                     <div class="row">
                       <div class="col-3">
-                        <label for="code">External ID :</label>  {{  $PurchaseReceipt->code }}
+                        <label for="code" class="text-success">External ID :</label>  {{  $PurchaseReceipt->code }}
                       </div>
                       <div class="col-3">
-                        <label for="statu">Statu :</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                          </div>
-                          <select class="form-control" name="statu" id="statu">
-                            <option value="1" @if(1 == $PurchaseReceipt->statu ) Selected @endif >In progress</option>
-                            <option value="2" @if(2 == $PurchaseReceipt->statu ) Selected @endif >Close</option>
-                          </select>
-                        </div>
+                        <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
+                          <x-slot name="prependSlot">
+                              <div class="input-group-text bg-gradient-success">
+                                  <i class="fas fa-exclamation"></i>
+                              </div>
+                          </x-slot>
+                          <option value="1" @if(1 == $PurchaseReceipt->statu ) Selected @endif >In progress</option>
+                          <option value="2" @if(2 == $PurchaseReceipt->statu ) Selected @endif >Close</option>
+                        </x-adminlte-select>
                       </div>
-                      
                       <div class="col-3">
-                        <label for="label">Name of order</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                          </div>
-                          <input type="text" class="form-control" name="label"  id="label" placeholder="Name of order" value="{{  $PurchaseReceipt->label }}">
-                        </div>
+                        @include('include.form.form-input-label',['label' =>'Name of reciept', 'Value' =>  $PurchaseReceipt->label])
                       </div>
 
                       <div class="col-3">
-                        <label for="label">Delivery note number</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                          </div>
-                          <input type="text" class="form-control" name="delivery_note_number"  id="delivery_note_number" placeholder="Delivery note number" value="{{  $PurchaseReceipt->delivery_note_number }}">
-                        </div>
+                        <x-adminlte-input name="delivery_note_number" label="Delivery note number" placeholder="Delivery note number" value="{{  $PurchaseReceipt->delivery_note_number }}" label-class="text-success">
+                          <x-slot name="prependSlot">
+                            <div class="input-group-text bg-gradient-success">
+                                  <i class="fas fa-tags"></i>
+                              </div>
+                          </x-slot>
+                        </x-adminlte-input>
                       </div>
                     </div>
                   </div>
