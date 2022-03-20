@@ -161,16 +161,8 @@
                     <td>{{ $PurchaseLine->total_selling_price }}</td>
                   </tr>
                 @empty
-                  <tr>
-                    <td>No Lines in this purchase order</td>
-                    <td></td> 
-                    <td></td> 
-                    <td></td> 
-                    <td></td> 
-                    <td></td>
-                    <td></td>
-                  </tr>
-              @endforelse
+                  <x-EmptyDataLine col="7" text="No Lines in this purchase order ..."  />
+                @endforelse
                 <tfoot>
                   <tr>
                     <th>Order</th>

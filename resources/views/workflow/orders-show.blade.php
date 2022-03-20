@@ -194,11 +194,11 @@
           });
           </script>
 
-<script>
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip({
-          html:true
-      })
-  })
-</script>
+          <script>
+            $(function () {
+              $('[data-toggle="tooltip"]').tooltip({
+                    html:true
+                })
+            })
+          </script>
 @stop

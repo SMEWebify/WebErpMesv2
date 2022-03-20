@@ -1,7 +1,4 @@
-<form wire:submit.prevent="storeOrderLine">
-    <div class="row">
-        <div class="col-2">
-            <input type="hidden"  name="orders_id"  id="orders_id" value="1" wire:model="orders_id" >
+
             <label for="ordre">Sort order:</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -16,8 +13,8 @@
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </div>
                 <input type="text" class="code form-control @error('code') is-invalid @enderror" id="code" placeholder="Enter external ID" wire:model="code">
-                @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
             </div>
+            @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="col-2">
             <label for="product_id">Product</label>
@@ -31,8 +28,8 @@
                     <option value="{{ $item->id }}" data-txt="{{ $item->code }}" >{{ $item->code }} - {{ $item->label }}</option>
                     @endforeach
                 </select>
-                @error('product_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
             </div>
+            @error('product_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="label">Description :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -85,12 +82,17 @@
         </div>
         <div class="col-2">
             <label for="accounting_vats_id">VAT type</label>
-            <select class="form-control @error('accounting_vats_id') is-invalid @enderror" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
-                <option value="" >Select VAT</option>
-                @foreach ($VATSelect as $item)
-                    <option value="{{ $item->id }}" >{{ $item->label }}</option>
-                @endforeach
-            </select>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                </div>
+                <select class="form-control @error('accounting_vats_id') is-invalid @enderror" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
+                    <option value="" >Select VAT</option>
+                    @foreach ($VATSelect as $item)
+                        <option value="{{ $item->id }}" >{{ $item->label }}</option>
+                    @endforeach
+                </select>
+            </div>
             @error('accounting_vats_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="delivery_date">Delevery date</label>
             <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model="delivery_date">

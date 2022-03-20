@@ -16,9 +16,17 @@
 
             @if($OrderStatu == 1)
                 @if($updateLines)
-                    @include('livewire.form.order-line-update')
+                <form wire:submit.prevent="update">
+                    <div class="row">
+                        <div class="col-2">
+                            <input type="hidden" wire:model="order_lines_id">
+                            @include('livewire.form.line-update')
                 @else
-                    @include('livewire.form.order-line-create')
+                <form wire:submit.prevent="storeOrderLine">
+                    <div class="row">
+                        <div class="col-2">
+                            <input type="hidden"  name="orders_id"  id="orders_id" value="1" wire:model="orders_id" >
+                            @include('livewire.form.line-create')
                 @endif
             @endif
         </div>

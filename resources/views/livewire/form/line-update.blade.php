@@ -1,12 +1,10 @@
-<form wire:submit.prevent="updateQuoteLine">
-    <div class="row">
-        <div class="col-2">
+
+
             <label for="ordre">Sort order:</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                 </div>
-                <input type="hidden" wire:model="quote_lines_id">
                 <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="Enter order" wire:model="ordre">
             </div>
             @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -81,11 +79,18 @@
         </div>
         <div class="col-2">
             <label for="accounting_vats_id">VAT type</label>
-            <select class="form-control" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
-                @foreach ($VATSelect as $item)
-                <option value="{{ $item->id }}" >{{ $item->label }}</option>
-                @endforeach
-            </select>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                </div>
+                <select class="form-control @error('accounting_vats_id') is-invalid @enderror" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
+                    <option value="" >Select VAT</option>
+                    @foreach ($VATSelect as $item)
+                        <option value="{{ $item->id }}" >{{ $item->label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            @error('accounting_vats_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="delivery_date">Delevery date</label>
             <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model="delivery_date">
             @error('delivery_date') <span class="text-danger">{{ $message }}<br/></span>@enderror

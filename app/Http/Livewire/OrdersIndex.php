@@ -39,6 +39,8 @@ class OrdersIndex extends Component
     public $accounting_deliveries_id;  
     public $comment;
 
+    public $idCompanie = '';
+
     // Validation Rules
     protected $rules = [
         'code' =>'required|unique:orders',
@@ -83,7 +85,19 @@ class OrdersIndex extends Component
 
     public function render()
     {
-        $Orders = Orders::withCount('OrderLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        if(is_numeric($this->idCompanie)){
+            $Orders = Orders::withCount('OrderLines')
+                            ->where('companies_id', $this->idCompanie)
+                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->paginate(15);
+        }
+        else{
+            $Orders = Orders::withCount('OrderLines')
+                            ->where('label','like', '%'.$this->search.'%')
+                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->paginate(15);
+        }
+
         $userSelect = User::select('id', 'name')->get();
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();

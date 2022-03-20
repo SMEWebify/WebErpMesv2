@@ -16,9 +16,17 @@
 
             @if($QuoteStatu == 1)
                 @if($updateLines)
-                    @include('livewire.form.quote-line-update')
+                <form wire:submit.prevent="updateQuoteLine">
+                    <div class="row">
+                        <div class="col-2">
+                            <input type="hidden" wire:model="quote_lines_id">
+                            @include('livewire.form.line-update')
                 @else
-                    @include('livewire.form.quote-line-create')
+                <form wire:submit.prevent="storeQuoteLine">
+                    <div class="row">
+                        <div class="col-2">
+                            <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model="quotes_id" >
+                            @include('livewire.form.line-create')
                 @endif
             @endif
         </div>

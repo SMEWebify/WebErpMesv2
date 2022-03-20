@@ -40,9 +40,9 @@
                       <option value="{{ $item->id }}"  data-type-{{ $infoLine['id_line']  }}="{{ $item->type }}" data-txt-{{ $infoLine['id_line']  }}="{{ $item->label }}">{{ $item->code }}</option>
                       @endforeach
                     </select>
-                    <!-- script or change label -->
+                    <!-- script for change label -->
                     <script type="text/javascript">
-                      $("#methods_services_id_" + {{ $infoLine['id_line']  }} ).on('change',function(){
+                      $("#methods_services_id_" + {{ $infoLine['id_line'] }}).on('change',function(){
                         var val = $(this).val();
                         var txt = $(this).find('option:selected').data("txt-" + {{ $infoLine['id_line']  }});
                         var type = $(this).find('option:selected').data("type-" + {{ $infoLine['id_line']  }});
@@ -126,13 +126,7 @@
             @forelse ($TechnicalCut as $TechProduct)
                 @include('include.subs.TechLine')
             @empty
-            <tr>
-              <td colspan="9">
-                  <div class="flex justify-center items-center">
-                      <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                  </div>
-              </td>
-            </tr>
+              <x-EmptyDataLine col="9" text="No line found ..."  />
             @endforelse
           </tbody>
           <tfoot>
@@ -291,13 +285,7 @@
             @forelse ($BOM as $BOMProduct)
                 @include('include.subs.BOMLine')
             @empty
-            <tr>
-              <td colspan="9">
-                  <div class="flex justify-center items-center">
-                      <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                  </div>
-              </td>
-            </tr>
+              <x-EmptyDataLine col="9" text="No line found ..."  />
             @endforelse
         </tbody>
         <tfoot>

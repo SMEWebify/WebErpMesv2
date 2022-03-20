@@ -40,6 +40,8 @@ class QuotesIndex extends Component
     public $accounting_deliveries_id;  
     public $comment;
 
+    public $idCompanie = '';
+
     // Validation Rules
     protected $rules = [
         'code' =>'required|unique:quotes',
@@ -85,7 +87,20 @@ class QuotesIndex extends Component
 
     public function render()
     {
-        $Quotes = Quotes::withCount('QuoteLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        if(is_numeric($this->idCompanie)){
+            $Quotes = Quotes::withCount('QuoteLines')
+                            ->where('companies_id', $this->idCompanie)
+                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->paginate(15);
+        }
+        else{
+            $Quotes = Quotes::withCount('QuoteLines')
+                            ->where('label','like', '%'.$this->search.'%')
+                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->paginate(15);
+        }
+
+        
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();

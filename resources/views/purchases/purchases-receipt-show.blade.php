@@ -166,18 +166,9 @@
                     <td>{{ $PurchaseReceiptLine->purchaseLines->tasks->qty  }}</td>
                     <td>{{ $PurchaseReceiptLine->purchaseLines->qty  }}</td>
                     <td>{{ $PurchaseReceiptLine->receipt_qty }}</td>
-                    
                   </tr>
                 @empty
-                  <tr>
-                    <td>No Lines in this purchase order</td>
-                    <td></td>
-                    <td></td> 
-                    <td></td> 
-                    <td></td> 
-                    <td></td>
-                    <td></td> 
-                  </tr>
+                  <x-EmptyDataLine col="7" text="No Lines in this purchase reciept ..."  />
               @endforelse
                 <tfoot>
                   <tr>

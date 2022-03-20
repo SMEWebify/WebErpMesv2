@@ -109,7 +109,7 @@
                                                 @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
-                                        <hr>
+                                        <!-- <hr>
                                         <div class="row">
                                             <label for="picture">Logo file</label>
                                             <div class="input-group">
@@ -124,7 +124,7 @@
                                                     <span class="input-group-text">Upload</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>-->
                                         <hr>
                                         <div class="row">
                                             <div class="col-3">
