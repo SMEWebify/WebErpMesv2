@@ -74,9 +74,23 @@ class PrintController extends Controller
         ]);
     }
 
+    public function printOrderManufacturingInstruction(Orders $id)
+    {
+        $Factory = Factory::first();
+        $id->Lines = $id->OrderLines;
+        unset($id->OrderLines);
+        return view('print/print-manufacturing-instruction', [
+            'typeDocumentName' => 'Order anufacturing Instruction',
+            'Document' => $id,
+            'Factory' => $Factory,
+        ]);
+    }
+    
     public function printDelivery(Deliverys $id)
     {
         $Factory = Factory::first();
+        $id->Lines = $id->DeliveryLines;
+        unset($id->DeliveryLines);
         return view('print/print-delivery', [
             'typeDocumentName' => 'Delivery note',
             'Document' => $id,

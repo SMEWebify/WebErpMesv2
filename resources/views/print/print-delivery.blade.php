@@ -72,6 +72,7 @@
                       <table class="table table-striped">
                         <thead>
                           <tr>
+                            <th>Order</th>
                             <th>External ID</th>
                             <th>Description</th>
                             <th>Qty</th>
@@ -81,29 +82,22 @@
                           </tr>
                         </thead>
                         <tbody>
-                            @forelse($Delivery->DeliveryLines as $DeliveryLine)
+                          @forelse($Document->Lines as $DocumentLine)
                             <tr>
-                              <td>{{ $DeliveryLine->OrderLine['code'] }}</td>
-                              <td>{{ $DeliveryLine->OrderLine['label'] }}</td>
-                              <td>{{ $DeliveryLine->OrderLine['qty'] }}</td>
-                              <td></td>
-                              <td>{{ $DeliveryLine->qty }}</td>
-                              <td>{{ $DeliveryLine->OrderLine['delivered_remaining_qty'] }}</td>
+                              <td>{{ $DocumentLine->OrderLine->order['code'] }}</td>
+                              <td>{{ $DocumentLine->OrderLine['code'] }}</td>
+                              <td>{{ $DocumentLine->OrderLine['label'] }}</td>
+                              <td>{{ $DocumentLine->OrderLine['qty'] }}</td>
+                              <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
+                              <td>{{ $DocumentLine->qty }}</td>
+                              <td>{{ $DocumentLine->OrderLine['delivered_remaining_qty'] }}</td>
                             </tr>
-                          @empty
-                            <tr>
-                              <td>No Lines in this delivery</td>
-                              <td></td> 
-                              <td></td> 
-                              <td></td> 
-                              <td></td> 
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                            </tr>
-                        @endforelse
+                            @empty
+                              <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
+                            @endforelse
                           <tfoot>
                             <tr>
+                              <th>Order</th>
                               <th>External ID</th>
                               <th>Description</th>
                               <th>Qty</th>
@@ -121,18 +115,12 @@
                   <div class="row">
                     <!-- accepted payments column -->
                     <div class="col-6">
-                      <p class="lead"><strong>Payment Methods:</strong> {{ $Document->payment_condition['label'] }}</p>
-                      <p class="lead"><strong>Payment Conditions:</strong> {{ $Document->payment_method['label'] }}</p>
                       @if($Document->comment)
                         <p class="lead"><strong>Comment :</strong></p>
                         <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
                           {{  $Document->comment }}
                         </p>
                       @endif
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-6">
-                      @include('include.sub-total-price')
                     </div>
                     <!-- /.col -->
                   </div>

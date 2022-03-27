@@ -103,6 +103,11 @@ class Task extends Model
         return $this->belongsTo(Status::class, 'status_id');
     }
 
+    public function TotalTime()
+    {
+        return $this->qty*$this->unit_time+$this->seting_time;
+    }
+
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

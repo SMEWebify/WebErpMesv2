@@ -19,7 +19,6 @@
                   <th>Name</th>
                   <th>E-mail</th>
                   <th>Created</th>
-                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -28,11 +27,6 @@
                   <td>{{ $User->name }}</td>
                   <td>{{ $User->email }}</td>
                   <td>{{ $User->GetPrettyCreatedAttribute() }}</td>
-                  <td>
-                    <div class="btn-group btn-group-sm">
-                      <a href="#" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
-                    </div>
-                  </td>
                 </tr>
                 @endforeach
               </tbody>
@@ -41,7 +35,6 @@
                     <th>Name</th>
                     <th>E-mail</th>
                     <th>Created</th>
-                    <th>Action</th>
                   </tr>
               </tfoot>
             </table>

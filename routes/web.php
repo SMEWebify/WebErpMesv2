@@ -79,6 +79,7 @@ Route::group(['prefix' => 'print'], function () {
     Route::get('/quote/{id}', 'App\Http\Controllers\PrintController@printQuote')->middleware(['auth'])->name('print.quote');
     Route::get('/order/{id}', 'App\Http\Controllers\PrintController@printOrder')->middleware(['auth'])->name('print.order');
     Route::get('/order/confirm/{id}', 'App\Http\Controllers\PrintController@printOrderConfirm')->middleware(['auth'])->name('print.order.confirm');
+    Route::get('/order/manufacturing/{id}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->middleware(['auth'])->name('print.manufacturing.instruction');
     Route::get('/delivery/{id}', 'App\Http\Controllers\PrintController@printDelivery')->middleware(['auth'])->name('print.delivery');
     Route::get('/invoice/{id}', 'App\Http\Controllers\PrintController@printInvoince')->middleware(['auth'])->name('print.invoice');
     Route::get('/purchase/quotation/{id}', 'App\Http\Controllers\PrintController@printPurchaseQuotation')->middleware(['auth'])->name('print.purchase.quotation');

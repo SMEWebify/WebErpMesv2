@@ -116,7 +116,7 @@
                 <h3 class="card-title"> Options </h3>
               </div>
               <div class="card-body">
-                <a href="{{ route('print.order', ['id' => $Delivery->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                <x-ButtonTextPrint route="{{ route('print.delivery', ['id' => $Delivery->id])}}" />
               </div>
             </div>
           </div>
