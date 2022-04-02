@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Products;
 
+use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Http\Controllers\Controller;
+use App\Models\Methods\MethodsUnits;
+use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
+use App\Http\Requests\Products\UpdateProductsRequest;
 
 class ProductsController extends Controller
 {
@@ -29,28 +33,75 @@ class ProductsController extends Controller
                                                                             ->orWhere('type', '=', 6)
                                                                             ->orWhere('type', '=', 8)
                                                                             ->orderBy('ordre')->get();
+
+        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
+        $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
+        $FamiliesSelect = MethodsFamilies::select('id', 'label')->orderBy('label')->get();
+
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
         
+        $previousUrl = route('products.show', ['id' => $Product->id-1]);
+        $nextUrl = route('products.show', ['id' => $Product->id+1]);
+
         return view('products/products-show', [
             'Product' => $Product,
             'status_id' => $status_id,
             'ProductSelect' => $ProductSelect,
             'TechServicesSelect' =>  $TechServicesSelect,
             'BOMServicesSelect' =>  $BOMServicesSelect,
+            'ServicesSelect' => $ServicesSelect,
+            'UnitsSelect' => $UnitsSelect,
+            'FamiliesSelect' => $FamiliesSelect,
             'Factory' => $Factory,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
 
-   /* public function store(StoreProductsRequest $request)
+    public function update(UpdateProductsRequest $request)
     {
-        $Product = Products::create($request->only());
-        if($request->hasFile('picture')){
-            $path = $request->picture->store('images/products/','public');
-            $Product->update(['picture' => $path]);
-        }
+        $Product = Products::findOrFail($request->id);
+        $Product->label = $request->label; 
+        $Product->ind=$request->ind;
+        $Product->methods_services_id = $request->methods_services_id; 
+        $Product->methods_families_id = $request->methods_families_id; 
+        $Product->purchased = $request->purchased; 
+        $Product->purchased_price = $request->purchased_price; 
+        $Product->sold = $request->sold; 
+        $Product->selling_price = $request->selling_price; 
+        $Product->methods_units_id = $request->methods_units_id; 
+        $Product->material = $request->material; 
+        $Product->thickness = $request->thickness; 
+        $Product->weight = $request->weight; 
+        $Product->x_size = $request->x_size; 
+        $Product->y_size = $request->y_size; 
+        $Product->z_size = $request->z_size; 
+        $Product->x_oversize = $request->x_oversize;
+        $Product->y_oversize = $request->y_oversize;
+        $Product->z_oversize = $request->z_oversize;
+        $Product->comment = $request->comment;
+        $Product->tracability_type = $request->tracability_type;
+        $Product->qty_eco_min = $request->qty_eco_min;
+        $Product->qty_eco_max = $request->qty_eco_max;
+        $Product->diameter = $request->diameter;
+        $Product->diameter_oversize = $request->diameter_oversize;
+        $Product->section_size = $request->section_size;
+        $Product->save();
+        return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated product');
+    }
+
+    public function duplicate($id)
+    {
+        $Product = Products::findOrFail($id);
+
+        $newProduct = $Product->replicate();
+        $newProduct->code = $Product->code ."#1";
+        $newProduct->save();
         
-    }*/
+        return redirect()->route('products.show', ['id' =>  $newProduct->id])->with('success', 'Successfully duplicate product');
+    }
+
 }

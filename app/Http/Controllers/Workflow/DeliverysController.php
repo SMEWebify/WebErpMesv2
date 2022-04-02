@@ -52,6 +52,8 @@ class DeliverysController extends Controller
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
+        $previousUrl = route('delivery.show', ['id' => $id->id-1]);
+        $nextUrl = route('delivery.show', ['id' => $id->id+1]);
 
         return view('workflow/deliverys-show', [
             'Delivery' => $id,
@@ -59,6 +61,8 @@ class DeliverysController extends Controller
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
             'Factory' => $Factory,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
     

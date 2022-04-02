@@ -3,14 +3,13 @@
 @section('title', 'Companies')
 
 @section('content_header')
-    <h1> {{ $Companie->label }}</h1>
+  <x-Content-header-previous-button  h1="{{ $Companie->label }}" previous="{{ $previousUrl }}" list="{{ route('companies') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('content')
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link" href="{{ route('companies') }}">Back to lists</a></li>
       <li class="nav-item"><a class="nav-link active" href="#Company" data-toggle="tab">Detail</a></li>
       <li class="nav-item"><a class="nav-link" href="#Adresses" data-toggle="tab">Adresses</a></li>
       <li class="nav-item"><a class="nav-link" href="#Contact" data-toggle="tab">Contact</a></li>
@@ -51,7 +50,7 @@
                             <label for="label">External ID</label>
                               <b class="d-block">{{ $Companie->code }}</b>
                             </p>
-                            </div>
+                          </div>
                         </div>
                         <div class="col-12 col-sm-4">
                             <label for="label">Name of company</label>

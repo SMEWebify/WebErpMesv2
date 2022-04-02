@@ -8,10 +8,11 @@ use App\Models\Admin\Factory;
 use App\Models\Workflow\Invoices;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Services\InvoiceCalculator;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
-use App\Services\InvoiceCalculator;
+use App\Http\Requests\Workflow\UpdateInvoiceRequest;
 
 class InvoicesController extends Controller
 {
@@ -51,6 +52,8 @@ class InvoicesController extends Controller
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
+        $previousUrl = route('invoice.show', ['id' => $id->id-1]);
+        $nextUrl = route('invoice.show', ['id' => $id->id+1]);
 
         $Factory = Factory::first();
         if(!$Factory){
@@ -66,6 +69,8 @@ class InvoicesController extends Controller
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
     
@@ -80,6 +85,6 @@ class InvoicesController extends Controller
         $Invoice->comment=$request->comment;
         $Invoice->save();
 
-        return redirect()->route('Invoice.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
+        return redirect()->route('invoice.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
     }
 }

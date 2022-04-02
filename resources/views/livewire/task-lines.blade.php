@@ -45,14 +45,14 @@
                     </thead>
                     <tbody>
                         @forelse ($Tasklist as $Task)
-                        <tr @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif > 
+                        <tr > 
                             <td>
                                 <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />
                             </td>
                             <td>{{ $Task->ORDER }}</td>
                             <td>#{{ $Task->id }} - {{ $Task->label }}</td>
                             <td>@if($Task->component_id ) {{ $Task->Component['label'] }}@endif</td>
-                            <td>@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
+                            <td @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
                             <td>{{ $Task->qty }}</td>
                             <td>@if($Task->methods_units_id ) {{ $Task->Unit['label'] }}@endif</td>
                             <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>

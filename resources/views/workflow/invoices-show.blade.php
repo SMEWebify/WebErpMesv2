@@ -3,13 +3,9 @@
 @section('title', 'Invoice')
 
 @section('content_header')
-    
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Invoice</h1>
-      </div>
-    </div>
+  <x-Content-header-previous-button  h1="Invoice : {{  $Invoice->code }}" previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"/>
 @stop
+
 
 @section('right-sidebar')
 
@@ -20,7 +16,6 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link" href="{{ route('invoices') }}">Back to lists</a></li>
       <li class="nav-item"><a class="nav-link active" href="#Invoice" data-toggle="tab">Invoice info</a></li>
       <li class="nav-item"><a class="nav-link" href="#InvoiceLines" data-toggle="tab">Invoice lines</a></li>
     </ul>
@@ -46,7 +41,7 @@
               </div>
             @endif
             <div class="card">
-              <form method="POST" action="{{ route('delivery.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
+              <form method="POST" action="{{ route('invoice.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
                     <div class="row">
@@ -133,8 +128,9 @@
                   <th>Description</th>
                   <th>Qty</th>
                   <th>Unit</th>
-                  <th>Delivered qty</th>
-                  <th>Remaining qty</th>
+                  <th>Price</th>
+                  <th>Discount</th>
+                  <th>VAT</th>
                   <th>Invoice status</th>
                 </tr>
               </thead>
@@ -146,10 +142,11 @@
                     </td>
                     <td>{{ $InvoiceLine->orderLine['code'] }}</td>
                     <td>{{ $InvoiceLine->orderLine['label'] }}</td>
-                    <td>{{ $InvoiceLine->orderLine['qty'] }}</td>
-                    <td></td>
                     <td>{{ $InvoiceLine->qty }}</td>
-                    <td>{{ $InvoiceLine->orderLine['delivered_remaining_qty'] }}</td>
+                    <td>{{ $InvoiceLine->OrderLine->Unit['label'] }}</td>
+                    <td>{{ $InvoiceLine->OrderLine['selling_price'] }} {{ $Factory->curency }}</td>
+                    <td>{{ $InvoiceLine->OrderLine['discount'] }} %</td>
+                    <td>{{ $InvoiceLine->OrderLine->VAT['rate'] }} %</td>
                     <td>
                       @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
                       @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
@@ -167,8 +164,9 @@
                     <th>Description</th>
                     <th>Qty</th>
                     <th>Unit</th>
-                    <th>Delivered qty</th>
-                    <th>Remaining qty</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>VAT</th>
                     <th>Invoice status</th>
                   </tr>
                 </tfoot>

@@ -3,12 +3,7 @@
 @section('title', 'Deliverys')
 
 @section('content_header')
-    
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Deliverys</h1>
-      </div>
-    </div>
+  <x-Content-header-previous-button  h1="Delivery : {{  $Delivery->code }}" previous="{{ $previousUrl }}" list="{{ route('deliverys') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('right-sidebar')

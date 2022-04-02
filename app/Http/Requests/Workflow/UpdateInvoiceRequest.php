@@ -4,7 +4,7 @@ namespace App\Http\Requests\Workflow;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreOrderRequest extends FormRequest
+class UpdateInvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,15 +24,8 @@ class StoreOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'code' =>'required|unique:orders',
+             //
             'label'=>'required',
-            'companies_id'=>'required',
-            'companies_contacts_id'=>'required',
-            'companies_addresses_id'=>'required',
-            'accounting_payment_conditions_id'=>'required',
-            'accounting_payment_methods_id'=>'required',
-            'accounting_deliveries_id'=>'required',
         ];
     }
 }

@@ -64,7 +64,9 @@ class QuotesController extends Controller
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
         $vatPrice = $QuoteCalculator->getVatTotal();
-        
+        $previousUrl = route('quote.show', ['id' => $id->id-1]);
+        $nextUrl = route('quote.show', ['id' => $id->id+1]);
+
         //DB information mustn't be empty.
         $Factory = Factory::first();
         if(!$Factory){
@@ -88,6 +90,8 @@ class QuotesController extends Controller
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
     

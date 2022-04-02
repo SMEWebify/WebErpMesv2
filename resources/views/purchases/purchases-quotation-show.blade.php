@@ -3,12 +3,7 @@
 @section('title', 'Purchase quotation')
 
 @section('content_header')
-    
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Purchase quotation</h1>
-      </div>
-    </div>
+  <x-Content-header-previous-button  h1="Purchase quotation : {{  $PurchaseQuotation->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases.quotation') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('right-sidebar')
@@ -20,7 +15,6 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link" href="{{ route('purchases.quotation') }}">Back to lists</a></li>
       <li class="nav-item"><a class="nav-link active" href="#PurchaseQuotation" data-toggle="tab">Purchase quotation info</a></li>
       <li class="nav-item"><a class="nav-link" href="#PurchaseQuotationLines" data-toggle="tab">Purchase quotation lines</a></li>
     </ul>

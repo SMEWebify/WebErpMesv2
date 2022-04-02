@@ -29,9 +29,14 @@ class CompaniesController extends Controller
     {
         $Companie = Companies::findOrFail($id);
         $userSelect = User::select('id', 'name')->get();
+        $previousUrl = route('companies.show', ['id' => $Companie->id-1]);
+        $nextUrl = route('companies.show', ['id' => $Companie->id+1]);
+
         return view('companies/companies-show', [
             'Companie' => $Companie,
             'userSelect' => $userSelect,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
 

@@ -59,6 +59,8 @@ class OrdersController extends Controller
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
+        $previousUrl = route('order.show', ['id' => $id->id-1]);
+        $nextUrl = route('order.show', ['id' => $id->id+1]);
 
         //DB information mustn't be empty.
         $Factory = Factory::first();
@@ -82,6 +84,8 @@ class OrdersController extends Controller
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
     

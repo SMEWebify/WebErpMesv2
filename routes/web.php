@@ -107,6 +107,9 @@ Route::group(['prefix' => 'times'], function () {
 Route::group(['prefix' => 'products'], function () {
     Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->middleware(['auth'])->name('products'); 
     Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->middleware(['auth'])->name('products.store');
+    Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->middleware(['auth'])->name('products.update');
+    Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->middleware(['auth'])->name('products.duplicate');
+    
     //stock route
     Route::get('/Stock', 'App\Http\Controllers\Products\StockController@index')->middleware(['auth'])->name('products.stock'); 
     Route::post('/Stock/create', 'App\Http\Controllers\Products\StockController@store')->middleware(['auth'])->name('products.stock.store');

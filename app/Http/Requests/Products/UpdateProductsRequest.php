@@ -13,7 +13,7 @@ class UpdateProductsRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,13 @@ class UpdateProductsRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'label'=>'required',
+            'methods_services_id'=>'required',
+            'methods_families_id'=>'required',
+            'methods_units_id'=>'required',
+            'sold'=>'required',
+            'purchased'=>'required',
+            'tracability_type'=>'required',
         ];
     }
 }

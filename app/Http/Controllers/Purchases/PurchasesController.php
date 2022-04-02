@@ -66,16 +66,18 @@ class PurchasesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-
         $Factory = Factory::first();
+        $previousUrl = route('purchase.quotation.show', ['id' => $id->id-1]);
+        $nextUrl = route('purchase.quotation.show', ['id' => $id->id+1]);
 
-        //return view('purchases/purchases-quotation-show', compact('PurchaseQuotation', 'CompanieSelect','AddressSelect', 'ContactSelect','Factory' ));.
         return view('purchases/purchases-quotation-show', [
             'PurchaseQuotation' => $id,
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
             'Factory' => $Factory,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
 
@@ -84,9 +86,10 @@ class PurchasesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-
         $PurchaseCalculator = new PurchaseCalculator($id);
         $totalPrice = $PurchaseCalculator->getTotalPrice();
+        $previousUrl = route('purchase.show', ['id' => $id->id-1]);
+        $nextUrl = route('purchase.show', ['id' => $id->id+1]);
 
         $Factory = Factory::first();
 
@@ -97,16 +100,22 @@ class PurchasesController extends Controller
             'ContactSelect' => $ContactSelect,
             'Factory' => $Factory,
             'totalPrices' => $totalPrice,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
 
     public function showReceipt(PurchaseReceipt $id)
     {   
         $Factory = Factory::first();
-        
+        $previousUrl = route('purchase.receipt.show', ['id' => $id->id-1]);
+        $nextUrl = route('purchase.receipt.show', ['id' => $id->id+1]);
+
         return view('purchases/purchases-receipt-show', [
             'PurchaseReceipt' => $id,
             'Factory' => $Factory,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
         ]);
     }
 

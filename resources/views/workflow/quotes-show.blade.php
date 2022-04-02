@@ -3,13 +3,7 @@
 @section('title', 'Quote')
 
 @section('content_header')
-
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Quotes</h1>
-      </div>
-    </div>
-
+  <x-Content-header-previous-button  h1="Quote : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('right-sidebar')
@@ -21,7 +15,6 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link" href="{{ route('quotes') }}">Back to lists</a></li>
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">Quote info</a></li>
       <li class="nav-item"><a class="nav-link" href="#QuoteLines" data-toggle="tab">Quote lines</a></li>
     </ul>
