@@ -7,6 +7,10 @@
 @stop
 
 @section('content')
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
@@ -391,29 +395,4 @@
 @stop
 
 @section('js')
-              <script > 
-              
-              $('#methods_services_id').on('change',function(){
-                var val = $(this).val();
-                var txt = $(this).find('option:selected').data('txt');
-                var type = $(this).find('option:selected').data('type');
-                $('#label').val( txt );
-                $('#type').val( type );
-            });
-
-            $('#methods_services_id_BOM').on('change',function(){
-                var val = $(this).val();
-                var txt = $(this).find('option:selected').data('txt');
-                var type = $(this).find('option:selected').data('type');
-                $('#LABEL_BOM').val( txt );
-                $('#type_BOM').val( type );
-            });
-
-            $('.methods_services_id').change(function () {
-                var modelObj = $(this).parent().next().children(".component_id");
-                var selector = "option[class="+this.value.toLowerCase()+"]";
-                modelObj.children(":not("+selector+")").hide();
-                modelObj.children(selector).show();
-            });
-            </script>
 @stop

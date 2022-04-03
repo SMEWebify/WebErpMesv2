@@ -171,6 +171,24 @@ class QuoteLine extends Component
         session()->flash('success','Line Updated Successfully');
     }
 
+    
+    public function duplicateLine($id){
+        $Quoteline = Quotelines::findOrFail($id);
+        $newQuoteline = $Quoteline->replicate();
+        $newQuoteline->ordre = $Quoteline->ordre+1;
+        $newQuoteline->code = $Quoteline->code ."#duplicate". $Quoteline->id;
+        $newQuoteline->label = $Quoteline->label ."#duplicate". $Quoteline->id;
+        $newQuoteline->save();
+
+        $Tasks = Task::where('quote_lines_id', $id)->get();
+        foreach ($Tasks as $Task) 
+        {
+            $newTask = $Task->replicate();
+            $newTask->quote_lines_id = $newQuoteline->id;
+            $newTask->save();
+        }
+    }
+
     public function cancel()
     {
         $this->updateLines = false;
@@ -249,7 +267,7 @@ class QuoteLine extends Component
                     //get data to dulicate for new order
                     $QuoteLineData = Quotelines::find($this->data[$key]['quote_line_id']);
 
-                    Orderlines::create([
+                    $newOrderline = Orderlines::create([
                         'orders_id'=>$OrdersCreated->id,
                         'ordre'=>$QuoteLineData->ordre,
                         'code'=>$QuoteLineData->code,
@@ -264,6 +282,15 @@ class QuoteLine extends Component
                         'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
                         'delivery_date'=>$QuoteLineData->delivery_date,
                     ]);
+
+                    $Tasks = Task::where('quote_lines_id', $this->data[$key]['quote_line_id'])->get();
+                    foreach ($Tasks as $Task) 
+                    {
+                        $newTask = $Task->replicate();
+                        $newTask->order_lines_id = $newOrderline->id;
+                        $newTask->quote_lines_id = null;
+                        $newTask->save();
+                    }
 
                     //update quote lines statu
                     Quotelines::where('id',$QuoteLineData->id)->update(['statu'=>3]);

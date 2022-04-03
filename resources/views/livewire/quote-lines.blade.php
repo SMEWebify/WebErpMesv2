@@ -89,6 +89,9 @@
                                     <a href="#" wire:click="editQuoteLine({{$QuoteLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
                                 </div>
                                 <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="duplicateLine({{$QuoteLine->id}})" class="btn btn-primary"><i class="fa fa-light fa-fw  fa-copy"></i></a>
+                                </div>
+                                <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="destroyQuoteLine({{$QuoteLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
                                 </div>
                                 @endif
@@ -142,7 +145,8 @@
                             <th>VAT type</th>
                             <th>Delivery date</th>
                             <th>Statu</th>
-                            <th colspan="2">
+                            <th></th>
+                            <th >
                                 <a class="btn btn-primary btn-sm" wire:click="storeOrder({{ $QuoteId }})" href="#">
                                     <i class="fas fa-folder"></i>
                                     New order

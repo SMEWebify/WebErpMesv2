@@ -98,6 +98,9 @@
                                         <a href="#" wire:click="edit({{$OrderLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
                                     </div>
                                     <div class="btn-group btn-group-sm">
+                                        <a href="#" wire:click="duplicateLine({{$OrderLine->id}})" class="btn btn-primary"><i class="fa fa-light fa-fw  fa-copy"></i></a>
+                                    </div>
+                                    <div class="btn-group btn-group-sm">
                                         <a href="#" wire:click="destroy({{$OrderLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
                                     </div>
                                 @endif

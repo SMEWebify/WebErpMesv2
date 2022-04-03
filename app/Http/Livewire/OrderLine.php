@@ -144,6 +144,23 @@ class OrderLine extends Component
         $this->updateLines = true;
     }
 
+    public function duplicateLine($id){
+        $Orderline = Orderlines::findOrFail($id);
+        $newOrderline = $Orderline->replicate();
+        $newOrderline->ordre = $Orderline->ordre+1;
+        $newOrderline->code = $Orderline->code ."#duplicate". $Orderline->id;
+        $newOrderline->label = $Orderline->label ."#duplicate". $Orderline->id;
+        $newOrderline->save();
+
+        $Tasks = Task::where('order_lines_id', $id)->get();
+        foreach ($Tasks as $Task) 
+        {
+            $newTask = $Task->replicate();
+            $newTask->order_lines_id = $newOrderline->id;
+            $newTask->save();
+        }
+    }
+
     public function cancel()
     {
         $this->updateLines = false;

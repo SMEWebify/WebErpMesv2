@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Products;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
+use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Http\Controllers\Controller;
@@ -96,10 +98,18 @@ class ProductsController extends Controller
     public function duplicate($id)
     {
         $Product = Products::findOrFail($id);
-
         $newProduct = $Product->replicate();
-        $newProduct->code = $Product->code ."#1";
+        $newProduct->code = Str::uuid();
+        $newProduct->label = $Product->label ."#duplicate";
         $newProduct->save();
+
+        $Tasks = Task::where('products_id', $id)->get();
+        foreach ($Tasks as $Task) 
+        {
+            $newTask = $Task->replicate();
+            $newTask->products_id = $newProduct->id;
+            $newTask->save();
+        }
         
         return redirect()->route('products.show', ['id' =>  $newProduct->id])->with('success', 'Successfully duplicate product');
     }

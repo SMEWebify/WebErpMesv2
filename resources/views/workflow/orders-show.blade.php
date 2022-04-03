@@ -170,29 +170,5 @@
 @stop
 
 @section('js')
-          <script> 
-            $('#product_id').on('change',function(){
-                var val = $(this).val();
-                var txt = $(this).find('option:selected').data('txt');
-                $('#code').val( txt );
-            });
 
-          $(function(){
-            var hash = window.location.hash;
-            hash && $('ul.nav.nav-pills a[href="' + hash + '"]').tab('show'); 
-            $('ul.nav.nav-pills a').click(function (e) {
-              $(this).tab('show');
-              var scrollmem = $('body').scrollTop();
-              window.location.hash = this.hash;
-            });
-          });
-          </script>
-
-          <script>
-            $(function () {
-              $('[data-toggle="tooltip"]').tooltip({
-                    html:true
-                })
-            })
-          </script>
 @stop
