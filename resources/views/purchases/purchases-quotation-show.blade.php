@@ -25,20 +25,7 @@
       <div class="tab-pane active" id="PurchaseQuotation">
         <div class="row">
           <div class="col-md-9">
-            @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success')}}
-            </div>
-            @endif
-            @if($errors->count())
-              <div class="alert alert-danger">
-                <ul>
-                @foreach ( $errors->all() as $message)
-                <li> {{ $message }}</li>
-                @endforeach
-                </ul>
-              </div>
-            @endif
+            @include('include.alert-result')
             <div class="card">
               <form method="POST" action="{{ route('quotation.update', ['id' => $PurchaseQuotation->id]) }}" enctype="multipart/form-data">
                 @csrf 
@@ -141,6 +128,7 @@
                     <th>Qty</th>
                     <th>Unit price</th>
                     <th>Total price</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -153,6 +141,12 @@
                       <td>{{ $PurchaseQuotationLine->qty_to_order }}</td>
                       <td>{{ $PurchaseQuotationLine->unit_price }}</td>
                       <td>{{ $PurchaseQuotationLine->total_price }}</td>
+                      <td>
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" value="{{ $PurchaseQuotationLine->id }}" name="PurchaseQuotationLine[]"  type="checkbox">
+                            <label for="PurchaseQuotationLine[]" class="custom-control-label">+</label>
+                        </div>
+                      </td>
                     </tr>
                   @empty
                     <x-EmptyDataLine col="5" text="No Lines in this purchase order ..."  />
@@ -164,6 +158,12 @@
                       <th>Qty</th>
                       <th>Unit price</th>
                       <th>Total price</th>
+                      <th >
+                          <a class="btn btn-primary btn-sm" href="#">
+                              <i class="fas fa-folder"></i>
+                              New order
+                          </a>
+                      </th>
                     </tr>
                   </tfoot>
                 </tbody>

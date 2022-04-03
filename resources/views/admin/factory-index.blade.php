@@ -18,20 +18,7 @@
     <div class="card-body">
         <div class="tab-content">
             <div class="tab-pane active" id="Settings">
-                @if($errors->count())
-                <div class="alert alert-danger">
-                    <ul>
-                    @foreach ( $errors->all() as $message)
-                    <li> {{ $message }}</li>
-                    @endforeach
-                    </ul>
-                </div>
-                @endif
-                @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success')}}
-                </div>
-                @endif
+                @include('include.alert-result')
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">General information</h3>

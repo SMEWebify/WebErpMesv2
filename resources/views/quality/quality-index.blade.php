@@ -11,22 +11,7 @@
 @section('content')
 
 <div class="card">
-
-  @if(session('success'))
-  <div class="alert alert-success">
-      {{ session('success')}}
-  </div>
-  @endif
-
-  @if($errors->count())
-    <div class="alert alert-danger">
-      <ul>
-      @foreach ( $errors->all() as $message)
-        <li> {{ $message }}</li>
-      @endforeach
-      </ul>
-    </div>
-  @endif
+  @include('include.alert-result')
 
   <div class="card-header p-2">
     <ul class="nav nav-pills">

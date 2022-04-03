@@ -25,20 +25,7 @@
       <div class="tab-pane active" id="Order">
         <div class="row">
           <div class="col-md-9">
-            @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success')}}
-            </div>
-            @endif
-            @if($errors->count())
-              <div class="alert alert-danger">
-                <ul>
-                @foreach ( $errors->all() as $message)
-                <li> {{ $message }}</li>
-                @endforeach
-                </ul>
-              </div>
-            @endif
+            @include('include.alert-result')
             <div class="card">
               <form method="POST" action="{{ route('order.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
                 @csrf
