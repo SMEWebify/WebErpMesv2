@@ -319,6 +319,7 @@
               <th>Quote ID</th>
               <th>Customer</th>
               <th>Status</th>
+              <th>Total price</th>
               <th>Created at</th>
               <th>Assigned</th>
             </tr>
@@ -340,6 +341,7 @@
                   @if(5 == $LastQuote->statu )  <span class="badge badge-secondary">Closed</span>@endif
                   @if(6 == $LastQuote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                 </td>
+                <td>{{ $LastQuote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                 <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
                 <td>{{ $LastQuote->UserManagement['name'] }}</td>
               </tr>
@@ -391,6 +393,7 @@
                 <th>Order ID</th>
                 <th>Customer</th>
                 <th>Status</th>
+                <th>Total price</th>
                 <th>Created at</th>
                 <th>Assigned</th>
               </tr>
@@ -409,6 +412,7 @@
                     @if(3 == $LastOrder->statu )  <span class="badge badge-success">Delivered</span>@endif
                     @if(4 == $LastOrder->statu )  <span class="badge badge-danger">Partly delivered</span>@endif
                   </td>
+                  <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                   <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
                   <td>{{ $LastOrder->UserManagement['name'] }}</td>
                 </tr>
@@ -425,7 +429,7 @@
         </div>
         <!-- /.card-body -->
         <div class="card-footer clearfix">
-          <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
+          <a href="{{ route('orders') }}" class="btn btn-sm btn-secondary float-right">View All Orders</a>
         </div>
         <!-- /.card-footer -->
       </div>

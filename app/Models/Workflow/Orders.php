@@ -4,15 +4,16 @@ namespace App\Models\Workflow;
 
 use App\Models\User;
 use App\Models\Workflow\Quotes;
+use App\Services\OrderCalculator;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
+
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Orders extends Model
@@ -83,5 +84,11 @@ class Orders extends Model
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        $orderCalculator = new OrderCalculator($this);
+        return $orderCalculator->getTotalPrice();
     }
 }

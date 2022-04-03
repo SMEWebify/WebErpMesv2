@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Admin\Factory;
 use App\Models\Workflow\Invoices;
 
 class InvoicesIndex extends Component
@@ -53,9 +54,11 @@ class InvoicesIndex extends Component
     public function render()
     {
         $Invoices = Invoices::withCount('InvoiceLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
-        
+        $Factory = Factory::first();
+
         return view('livewire.invoices-index', [
             'InvoicesList' => $Invoices,
+            'Factory' => $Factory
         ]);
     }
 }

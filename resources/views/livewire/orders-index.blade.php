@@ -211,6 +211,7 @@
                         </th>
                         <th>Customer reference</th>
                         <th>Lines count</th>
+                        <th>Total price</th>
                         <th>Statu</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
@@ -228,6 +229,7 @@
                         </td>
                         <td>{{ $Order->customer_reference }}</td>
                         <td>{{ $Order->order_lines_count }}</td>
+                        <td>{{ $Order->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                         <td>
                             @if(1 == $Order->statu )   <span class="badge badge-info"> Open</span>@endif
                             @if(2 == $Order->statu )  <span class="badge badge-warning">In progress</span>@endif
@@ -251,6 +253,7 @@
                         <th>Companie</th>
                         <th>Customer reference</th>
                         <th>Lines count</th>
+                        <th>Total price</th>
                         <th>Statu</th>
                         <th>Created At</th>
                         <th>Action</th>

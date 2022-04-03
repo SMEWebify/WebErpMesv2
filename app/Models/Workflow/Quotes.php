@@ -3,15 +3,16 @@
 namespace App\Models\Workflow;
 
 use App\Models\User;
+use App\Services\QuoteCalculator;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
+
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Quotes extends Model
@@ -72,10 +73,14 @@ class Quotes extends Model
         return $this->hasMany(QuoteLines::class)->orderBy('ordre');
     }
 
-
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
     }
 
+    public function getTotalPriceAttribute()
+    {
+        $quoteCalculator = new QuoteCalculator($this);
+        return $quoteCalculator->getTotalPrice();
+    }
 }

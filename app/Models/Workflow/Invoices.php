@@ -8,6 +8,7 @@ use App\Models\Workflow\InvoiceLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Services\InvoiceCalculator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Invoices extends Model
@@ -57,5 +58,11 @@ class Invoices extends Model
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        $invoiceCalculator = new InvoiceCalculator($this);
+        return $invoiceCalculator->getTotalPrice();
     }
 }

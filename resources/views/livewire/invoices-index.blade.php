@@ -16,6 +16,7 @@
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
                         <th>Lines count</th>
+                        <th>Total price</th>
                         <th>Statu</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
@@ -32,6 +33,7 @@
                             <x-CompanieButton id="{{ $Invoice->companies_id }}" label="{{ $Invoice->companie['label'] }}"  />
                         </td>
                         <td>{{ $Invoice->invoice_lines_count }}</td>
+                        <td>{{ $Invoice->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                         <td>
                             @if(1 == $Invoice->statu )  <span class="badge badge-info">In progress</span>@endif
                             @if(2 == $Invoice->statu )  <span class="badge badge-warning">Sent</span>@endif
@@ -54,6 +56,7 @@
                         <th>Label</th>
                         <th>Companie</th>
                         <th>Lines count</th>
+                        <th>Total price</th>
                         <th>Statu</th>
                         <th>Created At</th>
                         <th>Action</th>
