@@ -106,6 +106,10 @@
                                                             <td></td>
                                                         </tr>
                                                         <tr>
+                                                            
+                                                            <td class="align-middle">
+                                                                {!! DNS1D::getBarcodeHTML(strval($TechnicalCut->id), $Factory->task_barre_code) !!}
+                                                            </td>
                                                             <td>{{ $TechnicalCut->service['code'] }}</td>
                                                             <td colspan="6">Comment :</td>
                                                         </tr>
@@ -136,7 +140,9 @@
                                                             <td></td>
                                                         </tr>
                                                         <tr>
-                                                            <td>S / C</td>
+                                                            <td class="align-middle">
+                                                                {!! DNS1D::getBarcodeHTML(strval($BOM->id), $Factory->task_barre_code) !!}
+                                                            </td>
                                                             <td colspan="6">Comment :</td>
                                                         </tr>
                                                     

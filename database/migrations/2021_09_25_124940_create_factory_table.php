@@ -33,6 +33,7 @@ class CreateFactoryTable extends Migration
             $table->string('curency')->nullable();
             $table->string('add_day_validity_quote')->nullable()->default(0);
             $table->string('add_delivery_delay_order')->nullable()->default(0);
+			$table->string('task_barre_code')->default('EAN13');
             $table->timestamps();
         });
     }

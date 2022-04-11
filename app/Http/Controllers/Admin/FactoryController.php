@@ -43,6 +43,7 @@ class FactoryController extends Controller
                         $Factory->curency = $request->curency;
                         $Factory->add_day_validity_quote = $request->add_day_validity_quote;
                         $Factory->add_delivery_delay_order =  $request->add_delivery_delay_order;
+                        $Factory->task_barre_code =  $request->task_barre_code;
                         $Factory->save();
         return redirect()->route('admin.factory')->with('success', 'Successfully updated factory inforamations');
     }

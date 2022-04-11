@@ -220,6 +220,15 @@
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
                 <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+                <h5 class="description-header">{{ $orderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
+                <span class="description-text">TOTAL ORDER FORCASTED</span>
+              </div>
+              <!-- /.description-block -->
+          </div>
+          <!-- /.col -->
+            <div class="col-sm-3 col-6">
+              <div class="description-block border-right">
+                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
                 <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
                 <span class="description-text">TOTAL ORDER DELIVERED</span>
               </div>
@@ -231,15 +240,6 @@
                 <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
                 <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
                 <span class="description-text">TOTAL INVOINCED</span>
-              </div>
-              <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-3 col-6">
-              <div class="description-block border-right">
-                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i>/</span>
-                <h5 class="description-header">/</h5>
-                <span class="description-text">/</span>
               </div>
               <!-- /.description-block -->
             </div>

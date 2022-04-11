@@ -111,12 +111,22 @@ class HomeController extends Controller
                                     ->whereYear('created_at', $CurentYear)
                                     ->groupByRaw('MONTH(delivery_date) ')
                                     ->get();
-         //TotalRevenue
+        //TotalRevenue
         $orderTotalRevenue = DB::table('order_lines')
                                     ->selectRaw('
                                     ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderTotalRevenue
                                     ')
                                     ->where('delivery_status', '=', 3)
+                                    ->whereYear('created_at', $CurentYear)
+                                    ->get();
+
+        //TotalRevenue
+        $orderTotalForCast = DB::table('order_lines')
+                                    ->selectRaw('
+                                    ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderTotalForCast
+                                    ')
+                                    ->where('delivery_status', '=', 1)
+                                    ->orwhere('delivery_status', '=', 2)
                                     ->whereYear('created_at', $CurentYear)
                                     ->get();
 
@@ -129,6 +139,7 @@ class HomeController extends Controller
             'LastQuotes' => $LastQuotes,
             'LastOrders' =>  $LastOrders,
             'OrderTotalRevenue' => $orderTotalRevenue,
+            'orderTotalForCast' => $orderTotalForCast,
             'LateOrdersCount' =>  $LateOrdersCount,
             'incomingOrders' =>  $incomingOrders,
             'incomingOrdersCount' => $incomingOrdersCount,

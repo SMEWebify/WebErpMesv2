@@ -22,17 +22,9 @@
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">General information</h3>
-                        <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="card card-primary">
                             <form method="POST" action="{{ route('admin.factory.update') }}" >
                             @csrf
                             <div class="col-12">
@@ -494,7 +486,40 @@
                                                 </div>
                                             </div>
                                         </div>
+                            </div>
+                        </div>  
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                        <h3 class="card-title">Manufacturing information</h3>
+                                        <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-6">
+                                    <label for="task_barre_code">Code bare type for declare task</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                        </div>
+                                        <select class="form-control"  name="task_barre_code" id="task_barre_code">
+                                            <option value="EAN2" @if('EAN2' == $Factory->task_barre_code ) Selected @endif >EAN2</option>
+                                            <option value="EAN5" @if('EAN5' == $Factory->task_barre_code ) Selected @endif >EAN5</option>
+                                            <option value="EAN8" @if('EAN8' == $Factory->task_barre_code ) Selected @endif >EAN8</option>
+                                            <option value="EAN13" @if('EAN13' == $Factory->task_barre_code ) Selected @endif >EAN13</option>
+                                            <option value="UPCA" @if('UPCA' == $Factory->task_barre_code ) Selected @endif >UPCA</option>
+                                            <option value="UPCE" @if('UPCE' == $Factory->task_barre_code ) Selected @endif >UPCE</option>
+                                            <option value="CODE11" @if('CODE11' == $Factory->task_barre_code ) Selected @endif >CODE11</option>
+                                            <option value="C39" @if('C39' == $Factory->task_barre_code ) Selected @endif >C39</option>
+                                        </select>
                                     </div>
+                                </div>
+                            </div>
                             </div>  
                             <div class="modal-footer">
                                 <button type="Submit" class="btn btn-primary">Submit</button>
@@ -511,7 +536,6 @@
                 <x-InfocalloutComponent note="Used for dashboard chart."  />
                 @livewire('estimated-budget')
             </div>
-            
         </div>
     </div>
 </div>

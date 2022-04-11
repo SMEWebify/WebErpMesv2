@@ -23,7 +23,8 @@
         "laravel/framework": "^8.75.0",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
-        "livewire/livewire": "^2.6"
+        "livewire/livewire": "^2.6",
+        "milon/barcode": "^9.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
