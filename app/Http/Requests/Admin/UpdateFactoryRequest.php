@@ -26,7 +26,7 @@ class UpdateFactoryRequest extends FormRequest
         return [
             //
             'name' =>'required', 
-            'ADDRESS' =>'required',
+            'address' =>'required',
             'city' =>'required',
             'country' =>'required',
             'mail' =>'required',

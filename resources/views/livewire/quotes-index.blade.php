@@ -245,7 +245,7 @@
                         <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('quote.show', ['id' => $Quote->id])}}" />
-                            <x-ButtonTextPrint route="{{ route('print.quote', ['id' => $Quote->id])}}" />
+                            <x-ButtonTextPrint route="{{ route('print.quote', ['Document' => $Quote->id])}}" />
                         </td>
                     </tr>
                     @empty

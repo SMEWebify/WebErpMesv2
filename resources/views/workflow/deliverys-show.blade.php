@@ -98,7 +98,7 @@
                 <h3 class="card-title"> Options </h3>
               </div>
               <div class="card-body">
-                <x-ButtonTextPrint route="{{ route('print.delivery', ['id' => $Delivery->id])}}" />
+                <x-ButtonTextPrint route="{{ route('print.delivery', ['Document' => $Delivery->id])}}" />
               </div>
             </div>
           </div>

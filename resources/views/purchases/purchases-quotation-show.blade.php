@@ -77,10 +77,9 @@
                     <div class="row">
                       <label for="InputWebSite">Date & Payment information</label>
                     </div>
-                      <div class="col-5">
+                    <div class="col-5">
                         <label for="label">Validity date</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $PurchaseQuotation->validity_date }}">
-                      </div>
                     </div>
                   </div>
                   <div class="card card-body">
@@ -91,10 +90,13 @@
                   <div class="modal-footer">
                     <button type="Submit" class="btn btn-primary">Save changes</button>
                   </div>
-                </form>
-              </div>
-            
-            <div class="col-md-3">
+              </form>
+            </div>
+            <!-- /.card-->
+          </div>
+          <!-- /.col-md-9-->
+
+          <div class="col-md-3">
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title"> Informations </h3>
@@ -113,99 +115,81 @@
                   <a href="{{ route('print.order', ['id' => $PurchaseQuotation->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print quotation</a>
                 </div>
               </div>
-            </div>
           </div>
-        </div>     
-        <div class="tab-pane " id="PurchaseQuotationLines">
-          <!-- Table row -->
-          <div class="row">
-            <div class="col-12 table-responsive">
+          <!-- /.col-md-3-->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.tab-pane -->    
+      <div class="tab-pane " id="PurchaseQuotationLines">
+        <div class="row">
+          <div class="col-12 table-responsive">
+            <form method="POST" action="{{ route('purchase.order.store')}}" >
               <table class="table table-striped">
                 <thead>
-                  <tr>
-                    <th>Order</th>
-                    <th>Description</th>
-                    <th>Qty</th>
-                    <th>Unit price</th>
-                    <th>Total price</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                    @forelse($PurchaseQuotation->PurchaseQuotationLines as $PurchaseQuotationLine)
-                    <tr>
-                      <td>
-                        <x-OrderButton id="{{ $PurchaseQuotationLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}"  />
-                      </td>
-                      <td>#{{ $PurchaseQuotationLine->tasks->id }} {{ $PurchaseQuotationLine->code }} {{ $PurchaseQuotationLine->label }}</td>
-                      <td>{{ $PurchaseQuotationLine->qty_to_order }}</td>
-                      <td>{{ $PurchaseQuotationLine->unit_price }}</td>
-                      <td>{{ $PurchaseQuotationLine->total_price }}</td>
-                      <td>
-                        <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input" value="{{ $PurchaseQuotationLine->id }}" name="PurchaseQuotationLine[]"  type="checkbox">
-                            <label for="PurchaseQuotationLine[]" class="custom-control-label">+</label>
-                        </div>
-                      </td>
-                    </tr>
-                  @empty
-                    <x-EmptyDataLine col="5" text="No Lines in this purchase order ..."  />
-                  @endforelse
-                  <tfoot>
                     <tr>
                       <th>Order</th>
                       <th>Description</th>
                       <th>Qty</th>
                       <th>Unit price</th>
                       <th>Total price</th>
-                      <th >
-                          <a class="btn btn-primary btn-sm" href="#">
-                              <i class="fas fa-folder"></i>
-                              New order
-                          </a>
-                      </th>
+                      <th></th>
                     </tr>
-                  </tfoot>
+                </thead>
+                <tbody>
+                      @forelse($PurchaseQuotation->PurchaseQuotationLines as $PurchaseQuotationLine)
+                      <tr>
+                        <td>
+                          <x-OrderButton id="{{ $PurchaseQuotationLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}"  />
+                        </td>
+                        <td>#{{ $PurchaseQuotationLine->tasks->id }} {{ $PurchaseQuotationLine->code }} {{ $PurchaseQuotationLine->label }}</td>
+                        <td>{{ $PurchaseQuotationLine->qty_to_order }}</td>
+                        <td>{{ $PurchaseQuotationLine->unit_price }} {{ $Factory->curency }}</td>
+                        <td>{{ $PurchaseQuotationLine->total_price }} {{ $Factory->curency }}</td>
+                        <td>
+                          <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                              <input class="custom-control-input" value="{{ $PurchaseQuotationLine->id }}" name="PurchaseQuotationLine[]" id="PurchaseQuotationLine.{{ $PurchaseQuotationLine->id }}" type="checkbox">
+                              <label for="PurchaseQuotationLine.{{ $PurchaseQuotationLine->id }}" class="custom-control-label">+</label>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    @empty
+                      <x-EmptyDataLine col="5" text="No Lines in this purchase order ..."  />
+                    @endforelse
                 </tbody>
+                <tfoot>
+                      <tr>
+                        <th>Order</th>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th>Unit price</th>
+                        <th>Total price</th>
+                        <th>
+                            <button type="Submit" class="btn btn-primary">New order</button>
+                        </th>
+                      </tr>
+                </tfoot>
               </table>
-            </div>
-            <!-- /.col -->
+            </form>
           </div>
-          <!-- /.row -->
+          <!-- /.col-12 table-responsive-->
         </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.tab-pane -->
     </div>
-    <!-- /.card-body -->
+    <!-- /.tab-content -->
   </div>
-  <!-- /.card -->
-  @stop
+  <!-- /.card-body -->
+</div>
+<!-- /.card -->
+@stop
 
 @section('css')
 @stop
 
 @section('js')
-          <script> 
-            $('#product_id').on('change',function(){
-                var val = $(this).val();
-                var txt = $(this).find('option:selected').data('txt');
-                $('#code').val( txt );
-            });
 
-          $(function(){
-            var hash = window.location.hash;
-            hash && $('ul.nav.nav-pills a[href="' + hash + '"]').tab('show'); 
-            $('ul.nav.nav-pills a').click(function (e) {
-              $(this).tab('show');
-              var scrollmem = $('body').scrollTop();
-              window.location.hash = this.hash;
-            });
-          });
-          </script>
-
-<script>
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip({
-          html:true
-      })
-  })
-</script>
 @stop

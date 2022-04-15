@@ -65,6 +65,8 @@ Route::group(['prefix' => 'purchases'], function () {
     Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesController@waintingReceipt')->middleware(['auth'])->name('purchases.wainting.receipt'); 
     Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesController@receipt')->middleware(['auth'])->name('purchases.receipt'); 
     Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases.invoice'); 
+
+    Route::post('/Purchase/Order/Create', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrder')->middleware(['auth'])->name('purchase.order.store');
     
     Route::post('/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('purchase.update');
     Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchaseQuotation')->middleware(['auth'])->name('quotation.update');
@@ -76,15 +78,20 @@ Route::group(['prefix' => 'purchases'], function () {
 });
 
 Route::group(['prefix' => 'print'], function () {
-    Route::get('/quote/{id}', 'App\Http\Controllers\PrintController@printQuote')->middleware(['auth'])->name('print.quote');
-    Route::get('/order/{id}', 'App\Http\Controllers\PrintController@printOrder')->middleware(['auth'])->name('print.order');
-    Route::get('/order/confirm/{id}', 'App\Http\Controllers\PrintController@printOrderConfirm')->middleware(['auth'])->name('print.order.confirm');
-    Route::get('/order/manufacturing/{id}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->middleware(['auth'])->name('print.manufacturing.instruction');
-    Route::get('/delivery/{id}', 'App\Http\Controllers\PrintController@printDelivery')->middleware(['auth'])->name('print.delivery');
-    Route::get('/invoice/{id}', 'App\Http\Controllers\PrintController@printInvoince')->middleware(['auth'])->name('print.invoice');
-    Route::get('/purchase/quotation/{id}', 'App\Http\Controllers\PrintController@printPurchaseQuotation')->middleware(['auth'])->name('print.purchase.quotation');
-    Route::get('/purchase/{id}', 'App\Http\Controllers\PrintController@printPurchase')->middleware(['auth'])->name('print.purchase');
-    Route::get('/receipt/{id}', 'App\Http\Controllers\PrintController@printReceipt')->middleware(['auth'])->name('print.receipt');
+    Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@printQuote')->middleware(['auth'])->name('print.quote');
+    Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@printOrder')->middleware(['auth'])->name('print.order');
+    Route::get('/order/confirm/{Document}', 'App\Http\Controllers\PrintController@printOrderConfirm')->middleware(['auth'])->name('print.order.confirm');
+    Route::get('/order/manufacturing/{Document}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->middleware(['auth'])->name('print.manufacturing.instruction');
+    Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@printDelivery')->middleware(['auth'])->name('print.delivery');
+    Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@printInvoince')->middleware(['auth'])->name('print.invoice');
+    Route::get('/purchase/quotation/{Document}', 'App\Http\Controllers\PrintController@printPurchaseQuotation')->middleware(['auth'])->name('print.purchase.quotation');
+    Route::get('/purchase/{Document}', 'App\Http\Controllers\PrintController@printPurchase')->middleware(['auth'])->name('print.purchase');
+    Route::get('/receipt/{Document}', 'App\Http\Controllers\PrintController@printReceipt')->middleware(['auth'])->name('print.receipt');
+});
+
+Route::group(['prefix' => 'pdf'], function () {
+    Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getQuotePdf')->middleware(['auth'])->name('pdf.quote');
+    Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->middleware(['auth'])->name('pdf.order');
 });
 
 Route::group(['prefix' => 'accouting'], function () {

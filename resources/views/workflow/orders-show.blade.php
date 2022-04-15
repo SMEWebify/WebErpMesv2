@@ -131,13 +131,16 @@
                 <h3 class="card-title"> Options </h3>
               </div>
               <div class="card-body">
-                <x-ButtonTextPrint route="{{ route('print.order', ['id' => $Order->id])}}" />
+                <x-ButtonTextPrint route="{{ route('print.order', ['Document' => $Order->id])}}" />
               </div>
               <div class="card-body">
-                <a href="{{ route('print.order.confirm', ['id' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print order confirm</a>
+                <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
               </div>
               <div class="card-body">
-                <a href="{{ route('print.manufacturing.instruction', ['id' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print Manufacturing instruction</a>
+                <a href="{{ route('print.order.confirm', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print order confirm</a>
+              </div>
+              <div class="card-body">
+                <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print Manufacturing instruction</a>
               </div>
               
             </div>

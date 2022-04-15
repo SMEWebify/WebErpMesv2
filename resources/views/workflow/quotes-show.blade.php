@@ -129,7 +129,10 @@
                 <h3 class="card-title"> Options </h3>
               </div>
               <div class="card-body">
-                <x-ButtonTextPrint route="{{ route('print.quote', ['id' => $Quote->id])}}" />
+                <x-ButtonTextPrint route="{{ route('print.quote', ['Document' => $Quote->id])}}" />
+              </div>
+              <div class="card-body">
+                <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" />
               </div>
             </div>
           </div>

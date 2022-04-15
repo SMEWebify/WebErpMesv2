@@ -137,9 +137,9 @@
                     <td>#{{ $PurchaseLine->tasks->id }} {{ $PurchaseLine->code }} {{ $PurchaseLine->label }}</td>
                     <td>{{ $PurchaseLine->supplier_ref }}</td>
                     <td>{{ $PurchaseLine->qty }}</td>
-                    <td>{{ $PurchaseLine->selling_price }}</td>
+                    <td>{{ $PurchaseLine->selling_price }} {{ $Factory->curency }}</td>
                     <td>{{ $PurchaseLine->discount }} %</td>
-                    <td>{{ $PurchaseLine->total_selling_price }}</td>
+                    <td>{{ $PurchaseLine->total_selling_price }} {{ $Factory->curency }}</td>
                   </tr>
                 @empty
                   <x-EmptyDataLine col="7" text="No Lines in this purchase order ..."  />

@@ -2,144 +2,146 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
 use App\Models\Admin\Factory;
-use App\Models\Purchases\PurchaseReceipt;
-use App\Models\Purchases\Purchases;
-use App\Models\Purchases\PurchasesQuotation;
+
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use PDF;
 use App\Models\Workflow\Invoices;
 use App\Services\OrderCalculator;
 use App\Services\QuoteCalculator;
 use App\Models\Workflow\Deliverys;
+use App\Models\Purchases\Purchases;
 use App\Services\InvoiceCalculator;
+use App\Models\Purchases\PurchaseReceipt;
+use App\Models\Purchases\PurchasesQuotation;
 
 class PrintController extends Controller
 {
-    public function printQuote(Quotes $id)
+    public function printQuote(Quotes $Document)
     {
-        $QuoteCalculator = new QuoteCalculator($id);
+        $typeDocumentName = 'Quote';
+        $QuoteCalculator = new QuoteCalculator($Document);
         $Factory = Factory::first();
-        $totalPrice = $QuoteCalculator->getTotalPrice();
+        $totalPrices = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
         $vatPrice = $QuoteCalculator->getVatTotal();
-        $id->Lines = $id->QuoteLines;
-        unset($id->QuoteLines);
-        return view('print/print-sales', [
-            'typeDocumentName' => 'Quote',
-            'Document' => $id,
-            'Factory' => $Factory,
-            'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice, 
-            'vatPrice' => $vatPrice,
-        ]);
+        $Document->Lines = $Document->QuoteLines;
+        unset($Document->QuoteLines);
+        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
+    }
+
+    public function getQuotePdf(Quotes $Document)
+    {
+        $typeDocumentName = 'Quote';
+        $QuoteCalculator = new QuoteCalculator($Document);
+        $Factory = Factory::first();
+        $totalPrices = $QuoteCalculator->getTotalPrice();
+        $subPrice = $QuoteCalculator->getSubTotal();
+        $vatPrice = $QuoteCalculator->getVatTotal();
+        $Document->Lines = $Document->QuoteLines;
+        unset($Document->QuoteLines);
+
+        $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
+        return $pdf->stream();
     }
     
-    public function printOrder(Orders $id)
+    public function printOrder(Orders $Document)
     {
-        $OrderCalculator = new OrderCalculator($id);
+        $typeDocumentName = 'Order';
+        $OrderCalculator = new OrderCalculator($Document);
         $Factory = Factory::first();
-        $totalPrice = $OrderCalculator->getTotalPrice();
+        $totalPrices = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
-        $id->Lines = $id->OrderLines;
-        unset($id->OrderLines);
-        return view('print/print-sales', [
-            'typeDocumentName' => 'Order',
-            'Document' => $id,
-            'Factory' => $Factory,
-            'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice, 
-            'vatPrice' => $vatPrice,
-        ]);
+        $Document->Lines = $Document->OrderLines;
+        unset($Document->OrderLines);
+        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
 
-    public function printOrderConfirm(Orders $id)
+    public function getOrderPdf(Orders $Document)
     {
-        $OrderCalculator = new OrderCalculator($id);
+        $typeDocumentName = 'Order';
+        $OrderCalculator = new OrderCalculator($Document);
         $Factory = Factory::first();
-        $totalPrice = $OrderCalculator->getTotalPrice();
+        $totalPrices = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
-        $id->Lines = $id->OrderLines;
-        unset($id->OrderLines);
-        return view('print/print-sales', [
-            'typeDocumentName' => 'Order confirm',
-            'Document' => $id,
-            'Factory' => $Factory,
-            'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice, 
-            'vatPrice' => $vatPrice,
-        ]);
+        $Document->Lines = $Document->OrderLines;
+        unset($Document->OrderLines);
+
+        $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
+        return $pdf->stream();
     }
 
-    public function printOrderManufacturingInstruction(Orders $id)
+    public function printOrderConfirm(Orders $Document)
     {
+        $typeDocumentName = 'Order confirm';
+        $OrderCalculator = new OrderCalculator($Document);
         $Factory = Factory::first();
-        $id->Lines = $id->OrderLines;
-        unset($id->OrderLines);
-        return view('print/print-manufacturing-instruction', [
-            'typeDocumentName' => 'Order anufacturing Instruction',
-            'Document' => $id,
-            'Factory' => $Factory,
-        ]);
+        $totalPrices = $OrderCalculator->getTotalPrice();
+        $subPrice = $OrderCalculator->getSubTotal();
+        $vatPrice = $OrderCalculator->getVatTotal();
+        $Document->Lines = $Document->OrderLines;
+        unset($Document->OrderLines);
+        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
+    }
+
+    public function printOrderManufacturingInstruction(Orders $Document)
+    {
+        $typeDocumentName = 'Order anufacturing Instruction';
+        $Factory = Factory::first();
+        $Document->Lines = $Document->OrderLines;
+        unset($Document->OrderLines);
+        return view('print/print-manufacturing-instruction', compact('typeDocumentName','Document', 'Factory'));
     }
     
-    public function printDelivery(Deliverys $id)
+    public function printDelivery(Deliverys $Document)
     {
+        $typeDocumentName = 'Delivery note';
         $Factory = Factory::first();
-        $id->Lines = $id->DeliveryLines;
-        unset($id->DeliveryLines);
-        return view('print/print-delivery', [
-            'typeDocumentName' => 'Delivery note',
-            'Document' => $id,
-            'Factory' => $Factory,
-        ]);
+        $Document->Lines = $Document->DeliveryLines;
+        unset($Document->DeliveryLines);
+        return view('print/print-delivery', compact('typeDocumentName','Document', 'Factory'));
     }
 
-    public function printInvoince(Invoices $id)
+    public function printInvoince(Invoices $Document)
     {
-        $InvoiceCalculator = new InvoiceCalculator($id);
+        $typeDocumentName = 'Invoince';
+        $InvoiceCalculator = new InvoiceCalculator($Document);
         $Factory = Factory::first();
-        $totalPrice = $InvoiceCalculator->getTotalPrice();
+        $totalPrices = $InvoiceCalculator->getTotalPrice();
         $subPrice = $InvoiceCalculator->getSubTotal();
         $vatPrice = $InvoiceCalculator->getVatTotal();
-        $id->Lines = $id->invoiceLines;
-        unset($id->invoiceLines);
-        return view('print/print-sales', [
-            'typeDocumentName' => 'Invoince',
-            'Document' => $id,
-            'Factory' => $Factory,
-            'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice, 
-            'vatPrice' => $vatPrice,
-        ]);
+        $Document->Lines = $Document->invoiceLines;
+        unset($Document->invoiceLines);
+        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
 
-    public function printPurchaseQuotation(PurchasesQuotation $id)
+    public function printPurchaseQuotation(PurchasesQuotation $Document)
     {
         $Factory = Factory::first();
         return view('print/print', [
-            'Document' => $id,
+            'Document' => $Document,
             'Factory' => $Factory,
         ]);
     }
 
-    public function printPurchase(Purchases $id)
+    public function printPurchase(Purchases $Document)
     {
         $Factory = Factory::first();
         return view('print/print', [
-            'Document' => $id,
+            'Document' => $Document,
             'Factory' => $Factory,
         ]);
     }
 
-    public function printReceipt(PurchaseReceipt $id)
+    public function printReceipt(PurchaseReceipt $Document)
     {
         $Factory = Factory::first();
         return view('print/print', [
-            'Document' => $id,
+            'Document' => $Document,
             'Factory' => $Factory,
         ]);
     }

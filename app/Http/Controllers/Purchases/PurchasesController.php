@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Purchases;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
+use App\Models\Planning\Status;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
@@ -14,6 +15,7 @@ use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
+use App\Http\Requests\Purchases\StorePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
@@ -103,6 +105,62 @@ class PurchasesController extends Controller
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
         ]);
+    }
+
+    public function storePurchaseOrder(StorePurchaseRequest $request)
+    { 
+        $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();
+
+        $PurchaseOrderCreated = Purchases::create($request->only('code',
+                                                                'label', 
+                                                                'companies_id',
+                                                                'user_id' ));
+
+        if($PurchaseOrderCreated){
+            // Create lines
+            foreach ($this->data as $key => $item) {
+                //check if add line to new delivery note is aviable
+                if(array_key_exists("task_id",$this->data[$key])){
+                    if($this->data[$key]['task_id'] != false ){
+                        //if not best to find request value, but we cant send hidden data with livewire
+                        //How pass all information from task information ?
+                        $Task = Task::find($this->data[$key]['task_id']);
+                        // Create delivery line
+                        $PurchaseLines = PurchaseLines::create([
+                                'purchases_id' => $PurchaseOrderCreated->id,
+                                'tasks_id' => $this->data[$key]['task_id'], 
+                                'ordre' => $this->ordre, 
+                                //'code' => , can be null
+                                'product_id' =>$Task->products_id,
+                                'label' => $Task->label,
+                                //'supplier_ref' => , can be null
+                                'qty' => $Task->qty,
+                                'selling_price' => $Task->unit_cost,
+                                'discount' => 0,
+                                'unit_price_after_discount' => $Task->unit_cost,
+                                'total_selling_price' => $Task->unit_cost * $Task->qty,
+                                //'receipt_qty' =>, defaut to 0
+                                //'invoiced_qty' =>, defaut to 0
+                                'methods_units_id' => $Task->methods_units_id,
+                                //'accounting_allocation_id' => , can be null
+                                //'stock_location_id' => , can be null
+                                'statu' => 1
+                            ]); 
+
+                        /* // up order line for next record*/
+                        $this->ordre= $this->ordre+10;
+                        /* // update task statu Supplied on Kanban*/
+                        if($StatusUpdate->id){
+                            $Task = Task::where('id',$this->data[$key]['task_id'])->update(['status_id'=>$StatusUpdate->id]);
+                        }
+                    }
+                }
+            } 
+            return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
+        }
+        else{
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
     }
 
     public function showReceipt(PurchaseReceipt $id)
