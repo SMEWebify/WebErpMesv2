@@ -292,10 +292,17 @@ return [
                     'text' => 'Kanban',
                     'url'  => 'production/kanban',
                 ],
+                /* 
+                https://github.com/billyboy35/WebErpMesv2/issues/27
+                [
+                    'text' => 'Gantt',
+                    'url'  => 'production/Gantt',
+                ],
+                */
             ]
         ],
         /* 
-            probably use https://github.com/acaronlex/laravel-calendar in future
+        https://github.com/billyboy35/WebErpMesv2/issues/30
         [
             'text' => 'Calendar',
             'url'  => '#',
@@ -386,11 +393,13 @@ return [
             'url'  => 'quality',
         ],
         ['header' => 'Settings'],
+        /* 
         [
             'text' => 'Setting times',
             'icon'    => 'fas fa-user-clock',
             'url'  => 'times',
         ],
+        */
         [
             'text' => 'Methods',
             'icon'   => 'fas fa-cogs',

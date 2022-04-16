@@ -91,7 +91,7 @@ Route::group(['prefix' => 'print'], function () {
 
 Route::group(['prefix' => 'pdf'], function () {
     Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getQuotePdf')->middleware(['auth'])->name('pdf.quote');
-    Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->middleware(['auth'])->name('pdf.order');
+    Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->middleware(['auth'])->name('pdf.order');
 });
 
 Route::group(['prefix' => 'accouting'], function () {

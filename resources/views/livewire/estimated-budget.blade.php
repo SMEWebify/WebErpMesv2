@@ -31,31 +31,31 @@
                         </div>
                         @error('year') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount1">Amount 1 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="amount1" wire:model="amount1">
                         </div>
                         @error('amount1') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount2">Amount 2 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="amount2" wire:model="amount2">
                         </div>
                         @error('amount2') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount3">Amount 3 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="amount3" wire:model="amount3">
                         </div>
@@ -65,17 +65,23 @@
                         <label for="amount4">Amount 4 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="amount4" wire:model="amount4">
                         </div>
                         @error('amount4') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        <br/>
+                        <button type="submit" class="btn btn-success btn-block">Update</button>
+                    </div>
                     <div class="col-2">
                         <label for="amount5">Amount 5 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="amount5" wire:model="amount5">
                         </div>
@@ -85,45 +91,43 @@
                         <label for="amount6">Amount 6 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="amount6" wire:model="amount6">
                         </div>
                         @error('amount6') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
-                        <br/>
-                        <button type="submit" class="btn btn-success btn-block">Update</button>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-2">
-                    </div>
-                    <div class="col-1">
                         <label for="amount7">Amount 7 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="amount7" wire:model="amount7">
                         </div>
                         @error('amount7') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount8">Amount 8 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="amount8" wire:model="amount8">
                         </div>
                         @error('amount8') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        <br/>
+                        <button onclick="location.reload();"  class="btn btn-primary btn-block">Refresh Page</button>
+                    </div>
+                    <div class="col-2">
                         <label for="amount9">Amount 9 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="amount9" wire:model="amount9">
                         </div>
@@ -133,7 +137,7 @@
                         <label for="amount10">Amount 10 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="amount10" wire:model="amount10">
                         </div>
@@ -143,7 +147,7 @@
                         <label for="amount11">Amount 11 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="amount11" wire:model="amount11">
                         </div>
@@ -153,15 +157,11 @@
                         <label for="amount12">Amount 12 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="amount12" wire:model="amount12">
                         </div>
                         @error('amount12') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                    </div>
-                    <div class="col-1">
-                        <br/>
-                        <button onclick="location.reload();"  class="btn btn-primary btn-block">Refresh Page</button>
                     </div>
                 </div>
             </form>
@@ -182,31 +182,31 @@
                         </div>
                         @error('year') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount1">Amount 1 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="amount1" wire:model="amount1">
                         </div>
                         @error('amount1') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount2">Amount 2 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="amount2" wire:model="amount2">
                         </div>
                         @error('amount2') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount3">Amount 3 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="amount3" wire:model="amount3">
                         </div>
@@ -216,17 +216,23 @@
                         <label for="amount4">Amount 4 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="amount4" wire:model="amount4">
                         </div>
                         @error('amount4') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        <br/>
+                        <button type="submit" class="btn btn-success btn-block">Add</button>
+                    </div>
                     <div class="col-2">
                         <label for="amount5">Amount 5 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="amount5" wire:model="amount5">
                         </div>
@@ -236,45 +242,42 @@
                         <label for="amount6">Amount 6 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="amount6" wire:model="amount6">
                         </div>
                         @error('amount6') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
-                        <br/>
-                        <button type="submit" class="btn btn-success btn-block">Add</button>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-2">
-                    </div>
-                    <div class="col-1">
                         <label for="amount7">Amount 7 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="amount7" wire:model="amount7">
                         </div>
                         @error('amount7') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="amount8">Amount 8 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="amount8" wire:model="amount8">
                         </div>
                         @error('amount8') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-1">
+                </div>
+                <div class="row">
+                    <div class="col-2">
+
+                    </div>
+                    <div class="col-2">
                         <label for="amount9">Amount 9 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="amount9" wire:model="amount9">
                         </div>
@@ -284,7 +287,7 @@
                         <label for="amount10">Amount 10 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="amount10" wire:model="amount10">
                         </div>
@@ -294,7 +297,7 @@
                         <label for="amount11">Amount 11 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="amount11" wire:model="amount11">
                         </div>
@@ -304,13 +307,11 @@
                         <label for="amount12">Amount 12 :</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
                             <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="amount12" wire:model="amount12">
                         </div>
                         @error('amount12') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                    </div>
-                    <div class="col-1">
                     </div>
                 </div>
             </form>

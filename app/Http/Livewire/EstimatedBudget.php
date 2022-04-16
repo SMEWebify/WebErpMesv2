@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Admin\Factory;
 use Illuminate\Validation\Rule;
 use App\Models\Admin\EstimatedBudgets;
 
@@ -20,6 +21,8 @@ class EstimatedBudget extends Component
 
     public $year;
     public $idEstimatedBudget, $amount1, $amount2, $amount3, $amount4, $amount5, $amount6, $amount7, $amount8, $amount9, $amount10, $amount11, $amount12; 
+    
+    public $Factory;
 
     // Validation Rules
   /*  protected $rules = [
@@ -42,7 +45,6 @@ class EstimatedBudget extends Component
     {
         return [
             'year' =>['required',Rule::unique('estimated_budgets')->ignore($this->year, 'year')],
-           // 'year' =>['required', 'unique:estimated_budgets,year,' . $this->year],
             'amount1'=>'required',
             'amount2'=>'required',
             'amount3'=>'required',
@@ -73,11 +75,16 @@ class EstimatedBudget extends Component
         $this->resetPage();
     }
 
+
+    
+
     public function render()
     {
+        $this->Factory = Factory::first();
         
         return view('livewire.estimated-budget', [
             'EstimatedBudgetlist' => EstimatedBudgets::where('year','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(10),
+            'Factory' => $this->Factory,
         ]);
     }
 
