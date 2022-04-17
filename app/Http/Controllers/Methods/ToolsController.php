@@ -8,7 +8,10 @@ use App\Http\Requests\Methods\StoreToolRequest;
 
 class ToolsController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreToolRequest $request)
     {
         $Service =  MethodsTools::create($request->only('code','label', 'ETAT','cost', 'end_date','comment', 'qty'));

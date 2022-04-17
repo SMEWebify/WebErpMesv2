@@ -9,6 +9,9 @@ use App\Http\Requests\Companies\UpdateCompanieRequest;
 
 class CompaniesController extends Controller
 {
+    /**
+     * @return View
+     */
     public function index()
     {
         
@@ -25,6 +28,10 @@ class CompaniesController extends Controller
         ])->with('data',$data);;
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function show($id)
     {
         $Companie = Companies::findOrFail($id);
@@ -40,6 +47,10 @@ class CompaniesController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function update(UpdateCompanieRequest $request)
     {
         $Companie = Companies::findOrFail($request->id);

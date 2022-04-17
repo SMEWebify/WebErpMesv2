@@ -8,7 +8,10 @@ use App\Http\Requests\Methods\StoreUnitRequest;
 
 class UnitsController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreUnitRequest $request)
     {
         $Unit = MethodsUnits::create($request->only('code', 'label','type'));

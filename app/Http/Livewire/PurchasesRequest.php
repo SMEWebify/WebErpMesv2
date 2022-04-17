@@ -104,6 +104,10 @@ class PurchasesRequest extends Component
             $this->code = $this->document_type ."-". $this->LastPurchaseQuotation;
             $this->label = $this->document_type ."-". $this->LastPurchaseQuotation;
         }
+        else{
+            
+            session()->flash('error', 'Please select on type of document.');
+        }
     }
 
     public function render()
@@ -118,8 +122,7 @@ class PurchasesRequest extends Component
                                                                         ->where(
                                                                             function($query) {
                                                                                 return $query
-                                                                                    ->where('type', '=', '1')
-                                                                                    ->orWhere('type', '=', '2')
+                                                                                    ->Where('type', '=', '2')
                                                                                     ->orWhere('type', '=', '3')
                                                                                     ->orWhere('type', '=', '4')
                                                                                     ->orWhere('type', '=', '5')
@@ -147,7 +150,7 @@ class PurchasesRequest extends Component
         }
 
         if($i>0){
-            $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();;
+            $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();
 
             // Create puchase order
             if($this->document_type == 'PU'){

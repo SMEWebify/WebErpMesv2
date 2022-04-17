@@ -16,7 +16,9 @@ use App\Http\Requests\Workflow\UpdateInvoiceRequest;
 
 class InvoicesController extends Controller
 {
-    //
+    /**
+     * @return View
+     */
     public function index()
     {    
         $CurentYear = Carbon::now()->format('Y');
@@ -38,11 +40,18 @@ class InvoicesController extends Controller
         return view('workflow/invoices-index')->with('data',$data);
     }
 
+    /**
+     * @return View
+     */
     public function request()
     {    
         return view('workflow/invoices-request');
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function show(Invoices $id)
     {
         $CompanieSelect = Companies::select('id', 'code','label')->get();
@@ -52,8 +61,8 @@ class InvoicesController extends Controller
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
-        $previousUrl = route('invoice.show', ['id' => $id->id-1]);
-        $nextUrl = route('invoice.show', ['id' => $id->id+1]);
+        $previousUrl = route('invoices.show', ['id' => $id->id-1]);
+        $nextUrl = route('invoices.show', ['id' => $id->id+1]);
 
         $Factory = Factory::first();
         if(!$Factory){
@@ -73,7 +82,11 @@ class InvoicesController extends Controller
             'nextUrl' =>  $nextUrl,
         ]);
     }
-    
+
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateInvoiceRequest $request)
     {
         $Invoice = Invoices::find($request->id);
@@ -85,6 +98,6 @@ class InvoicesController extends Controller
         $Invoice->comment=$request->comment;
         $Invoice->save();
 
-        return redirect()->route('invoice.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
+        return redirect()->route('invoices.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
     }
 }

@@ -27,7 +27,7 @@
           <div class="col-md-9">
             @include('include.alert-result')
             <div class="card">
-              <form method="POST" action="{{ route('quote.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
+              <form method="POST" action="{{ route('quotes.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
                 @csrf 
                 <div class="card card-body">
                   <div class="row">

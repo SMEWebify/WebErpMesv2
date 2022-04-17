@@ -9,7 +9,10 @@ use App\Http\Requests\Times\StoreBanckHolidayRequest;
 
 class BanckHolidayController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreBanckHolidayRequest $request)
     {
         $TimesBanckHoliday = TimesBanckHoliday::create($request->only('fixed', 'date', 'label'));

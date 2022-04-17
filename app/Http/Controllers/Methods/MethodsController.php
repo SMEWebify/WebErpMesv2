@@ -15,7 +15,10 @@ use App\Models\Methods\MethodsRessources;
 
 class MethodsController extends Controller
 {
-    //
+    
+    /**
+     * @return View
+     */
     public function index()
     {
         $MethodsServices = MethodsServices::orderBy('ordre')->paginate(10);

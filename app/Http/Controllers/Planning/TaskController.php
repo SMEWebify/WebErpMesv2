@@ -13,7 +13,9 @@ use App\Models\Planning\Status;
 
 class TaskController extends Controller
 {
-    //
+    /**
+     * @return View
+     */
     public function index()
     {
         $Factory = Factory::first();
@@ -25,6 +27,9 @@ class TaskController extends Controller
         ]);
     }
 
+    /**
+     * @return View
+     */
     public function kanban()
     {
         $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->get();
@@ -35,6 +40,10 @@ class TaskController extends Controller
         return view('workflow/kanban-index', compact('tasks', 'Factory'));
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function sync(Request $request)
     {
         $this->validate(request(), [
@@ -52,6 +61,10 @@ class TaskController extends Controller
         return $request->status()->with('tasks')->get();
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreTaskRequest $request, $id)
     {
         $Task = Task::create($request->only('label', 
@@ -92,16 +105,20 @@ class TaskController extends Controller
             return redirect()->route('products.show', ['id' => $id])->with('success', 'Successfully created new task');
         }
         elseif(isset($request->quote_lines_id)){
-            return redirect()->to(route('quote.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully created new task');
+            return redirect()->to(route('quotes.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully created new task');
         }
         elseif(isset($request->order_lines_id)){
             $OrderLine = OrderLines::find($request->order_lines_id);
             $OrderLine->tasks_status = 2;
             $OrderLine->save();
-            return redirect()->to(route('order.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully created new task');
+            return redirect()->to(route('orders.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully created new task');
         }
     }
 
+    /**
+     * @param $id_type, $id_page ,$id_task
+     * @return View
+     */
     public function delete($id_type, $id_page, $id_task)
     {
         $Task =  Task::find($id_task);
@@ -111,13 +128,18 @@ class TaskController extends Controller
             return redirect()->route('products.show', ['id' => $id_page])->with('success', 'Successfully delete task #'. $id_task);
         }
         elseif($id_type == 'quote_lines_id'){
-            return redirect()->to(route('quote.show', ['id' => $id_page]).'#QuoteLines')->with('success', 'Successfully delete task #'. $id_task);
+            return redirect()->to(route('quotes.show', ['id' => $id_page]).'#QuoteLines')->with('success', 'Successfully delete task #'. $id_task);
         }
         elseif($id_type == 'order_lines_id'){
-            return redirect()->to(route('order.show', ['id' => $id_page]).'#OrderLines')->with('success', 'Successfully delete task #'. $id_task);
+            return redirect()->to(route('orders.show', ['id' => $id_page]).'#OrderLines')->with('success', 'Successfully delete task #'. $id_task);
         }
     }
 
+    /**
+     * @param $id
+     * @param Request $request
+     * @return mixed
+     */
     public function update(UpdateTaskRequest $request, $id)
     {
         $task = Task::find($request->id);
@@ -139,10 +161,10 @@ class TaskController extends Controller
             return redirect()->route('products.show', ['id' => $id])->with('success', 'Successfully updated task');
         }
         elseif(isset($request->quote_lines_id)){
-            return redirect()->to(route('quote.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully updated task');
+            return redirect()->to(route('quotes.show', ['id' => $id]).'#QuoteLines')->with('success', 'Successfully updated task');
         }
         elseif(isset($request->order_lines_id)){
-            return redirect()->to(route('order.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully updated task');
+            return redirect()->to(route('orders.show', ['id' => $id]).'#OrderLines')->with('success', 'Successfully updated task');
         }
     }
 }

@@ -16,6 +16,9 @@ use App\Models\Quality\QualityNonConformity;
 
 class QualityController extends Controller
 {
+    /**
+     * @return View
+     */
     public function index()
     {
         $QualityActions = QualityAction::orderBy('id')->paginate(10);

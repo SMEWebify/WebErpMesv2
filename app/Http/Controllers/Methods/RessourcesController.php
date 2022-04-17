@@ -8,7 +8,11 @@ use App\Http\Requests\Methods\StoreRessourceRequest;
 
 class RessourcesController extends Controller
 {
-    //
+    
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreRessourceRequest $request)
     {
         $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label','mask_time', 'capacity','section_id', 'color', 'service_id','color'));

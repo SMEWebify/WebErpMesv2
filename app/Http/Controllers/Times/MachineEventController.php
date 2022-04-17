@@ -9,7 +9,10 @@ use App\Http\Requests\Times\StoreMachineEventRequest;
 
 class MachineEventController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreMachineEventRequest $request)
     {
         $TimesMachineEvent = TimesMachineEvent::create($request->only('code', 'ordre', 'label', 'mask_time', 'color', 'ETAT'));

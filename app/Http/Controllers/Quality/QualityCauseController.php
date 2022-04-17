@@ -8,6 +8,10 @@ use App\Models\Quality\QualityCause;
 
 class QualityCauseController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreQualityCauseRequest $request)
     {
         $Cause = QualityCause::create($request->only('code', 'label'));

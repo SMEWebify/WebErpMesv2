@@ -105,7 +105,7 @@
                                 <x-OrderButton id="{{ $InvoicesRequestsLine->orderLine->order['id'] }}" code="{{ $InvoicesRequestsLine->orderLine->order['code'] }}"  />
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('delivery.show', ['id' => $InvoicesRequestsLine->deliverys_id ]) }}">
+                                <a class="btn btn-primary btn-sm" href="{{ route('deliverys.show', ['id' => $InvoicesRequestsLine->deliverys_id ]) }}">
                                     <i class="fas fa-folder"></i>
                                     View
                                 </a>

@@ -51,7 +51,7 @@
                             @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                         </td>
                         <td>
-                            <x-ButtonTextView route="{{ route('quote.show', ['id' => $QuoteLine->quotes_id])}}" />
+                            <x-ButtonTextView route="{{ route('quotes.show', ['id' => $QuoteLine->quotes_id])}}" />
                         </td>
                     </tr>
                     @empty

@@ -9,7 +9,10 @@ use App\Http\Requests\Accounting\StorePaymentMethodRequest;
 
 class PaymentMethodController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StorePaymentMethodRequest $request)
     {
         $PaymentMethode = AccountingPaymentMethod::create($request->only('code',

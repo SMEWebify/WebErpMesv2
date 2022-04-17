@@ -16,12 +16,18 @@ use App\Http\Requests\Products\UpdateProductsRequest;
 
 class ProductsController extends Controller
 {
-    //
+    /**
+     * @return view
+     */
     public function index()
     {
         return view('products/products-index');
     }
-    
+
+    /**
+     * @param $id
+     * @return View
+     */
     public function show($id)
     {
         $Product = Products::findOrFail($id);
@@ -63,6 +69,10 @@ class ProductsController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateProductsRequest $request)
     {
         $Product = Products::findOrFail($request->id);
@@ -95,6 +105,10 @@ class ProductsController extends Controller
         return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated product');
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function duplicate($id)
     {
         $Product = Products::findOrFail($id);

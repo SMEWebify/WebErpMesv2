@@ -8,7 +8,10 @@ use App\Http\Requests\Accounting\StoreVatRequest;
 
 class VatController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreVatRequest $request)
     {
         $VaT = AccountingVat::create($request->only('code',

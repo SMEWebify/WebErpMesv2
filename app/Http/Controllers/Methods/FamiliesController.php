@@ -8,7 +8,11 @@ use App\Http\Requests\Methods\StoreFamilyRequest;
 
 class FamiliesController extends Controller
 {
-    //
+    
+     /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreFamilyRequest $request)
     {
         $Family = MethodsFamilies::create($request->only('code', 'label','service_id'));

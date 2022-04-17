@@ -22,11 +22,17 @@ use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
 
 class PurchasesController extends Controller
 {
+    /**
+     * @return View
+     */
     public function request()
     {    
         return view('purchases/purchases-request');
     }
 
+    /**
+     * @return View
+     */
     public function quotation()
     {    
         $CurentYear = Carbon::now()->format('Y');
@@ -40,6 +46,9 @@ class PurchasesController extends Controller
         return view('purchases/purchases-quotation')->with('data',$data);
     }
 
+    /**
+     * @return View
+     */
     public function purchase()
     {   
         $CurentYear = Carbon::now()->format('Y');
@@ -63,6 +72,10 @@ class PurchasesController extends Controller
         return view('purchases/purchases-index')->with('data',$data);
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function showQuotation(PurchasesQuotation $id)
     {   
         $CompanieSelect = Companies::select('id', 'code','label')->get();
@@ -83,6 +96,10 @@ class PurchasesController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function showPurchase(Purchases $id)
     {   
         $CompanieSelect = Companies::select('id', 'code','label')->get();
@@ -107,6 +124,10 @@ class PurchasesController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function storePurchaseOrder(StorePurchaseRequest $request)
     { 
         $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();
@@ -163,6 +184,10 @@ class PurchasesController extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function showReceipt(PurchaseReceipt $id)
     {   
         $Factory = Factory::first();
@@ -177,6 +202,10 @@ class PurchasesController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function updatePurchase(UpdatePurchaseRequest $request)
     {
         $Purchases = Purchases::find($request->id);
@@ -191,6 +220,10 @@ class PurchasesController extends Controller
         return redirect()->route('purchase.show', ['id' =>  $Purchases->id])->with('success', 'Successfully updated purchase order');
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function updatePurchaseQuotation(UpdatePurchaseQuotationRequest $request)
     {
         $PurchasesQuotation = PurchasesQuotation::find($request->id);
@@ -206,6 +239,10 @@ class PurchasesController extends Controller
         return redirect()->route('purchase.quotation.show', ['id' =>  $PurchasesQuotation->id])->with('success', 'Successfully updated purchase quotation');
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function updatePurchaseReceipt(UpdatePurchaseReceiptRequest $request)
     {
         $PurchaseReceipt = PurchaseReceipt::find($request->id);
@@ -218,13 +255,17 @@ class PurchasesController extends Controller
         return redirect()->route('purchase.receipt.show', ['id' =>  $PurchaseReceipt->id])->with('success', 'Successfully updated reciept');
     }
     
-
-    
+    /**
+     * @return View
+     */
     public function waintingReceipt()
     {    
         return view('purchases/purchases-wainting-receipt');
     }
 
+    /**
+     * @return View
+     */
     public function receipt()
     {    
         $CurentYear = Carbon::now()->format('Y');
@@ -237,6 +278,9 @@ class PurchasesController extends Controller
         return view('purchases/purchases-receipt')->with('data',$data);
     }
 
+    /**
+     * @return View
+     */
     public function invoice()
     {    
         return view('purchases/purchases-invoice');

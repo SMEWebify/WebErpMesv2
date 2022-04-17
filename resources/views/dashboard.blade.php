@@ -138,12 +138,12 @@
               </p>
               @forelse ($incomingOrders as $incomingOrder)
               <div class="progress-group alert alert-warning">
-                <a href="{{ route('order.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $incomingOrder->order['code'] }}<br/>
+                <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $incomingOrder->order['code'] }}<br/>
                 <i class="fas fa-calendar-alt"></i> {{ $incomingOrder->delivery_date }}
               </div>
               @empty
               <div class="progress-group">
-                No coming order.
+                No coming orders.
               </div>
               <!-- /.progress-group -->
               @endforelse
@@ -160,12 +160,12 @@
               </p>
               @forelse ($LateOrders as $LateOrder)
               <div class="progress-group alert alert-danger">
-                <a href="{{ route('order.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $LateOrder->order['code'] }}<br/>
+                <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $LateOrder->order['code'] }}<br/>
                 <i class="fas fa-calendar-alt"></i> {{ $LateOrder->delivery_date }}
               </div>
               @empty
               <div class="progress-group">
-                No late order.
+                No late orders.
               </div>
               <!-- /.progress-group -->
               @endforelse
@@ -457,7 +457,7 @@
             @forelse ($LastProducts as $LastProduct)
             <li class="item">
               <div class="product-img">
-                <img src="{{ asset('/storage/images/products/'. $LastProduct->picture) }} alt="Product Image" class="img-size-50">
+                <img src="{{ asset('/storage/images/products/'. $LastProduct->picture) }}" alt="Product Image" class="img-size-50">
               </div>
               <div class="product-info">
                 <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->label }} {{ $LastProduct->ind }}

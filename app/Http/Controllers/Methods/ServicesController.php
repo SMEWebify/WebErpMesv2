@@ -8,7 +8,10 @@ use App\Http\Requests\Methods\StoreServicesRequest;
 
 class ServicesController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreServicesRequest $request)
     {
         $Service =  MethodsServices::create($request->only('code','ordre', 'label','type', 'hourly_rate','margin', 'color','picture', 'compannie_id'));

@@ -152,7 +152,7 @@ class InvoicesRequest extends Component
             }
                 
             // return view on new document
-            return redirect()->route('invoice.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new invoice');
+            return redirect()->route('invoices.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new invoice');
         }
         else{
             return redirect()->route('invoices-request')->with('error', 'no lines selected');

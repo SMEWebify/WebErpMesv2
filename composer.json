@@ -25,7 +25,8 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
         "livewire/livewire": "^2.6",
-        "milon/barcode": "^9.0"
+        "milon/barcode": "^9.0",
+        "protonemedia/laravel-cross-eloquent-search": "^2.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

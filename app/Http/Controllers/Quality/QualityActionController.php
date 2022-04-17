@@ -8,6 +8,10 @@ use App\Http\Requests\Quality\StoreQualityActionRequest;
 
 class QualityActionController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreQualityActionRequest $request)
     {
         $Action = QualityAction::create($request->only('code',

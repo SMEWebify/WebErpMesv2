@@ -9,7 +9,9 @@ use App\Http\Requests\Admin\UpdateFactoryRequest;
 
 class FactoryController extends Controller
 {
-    //
+    /**
+     * @return View
+     */
     public function index()
     {
         $VATSelect  =  AccountingVat::select('id', 'label')->orderBy('rate')->get();
@@ -22,6 +24,10 @@ class FactoryController extends Controller
                         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateFactoryRequest $request)
     {
             $Factory = Factory::first();

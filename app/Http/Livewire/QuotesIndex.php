@@ -141,7 +141,7 @@ class QuotesIndex extends Component
                                             'comment'=>$this->comment, 
             ]);
             // Reset Form Fields After Creating line
-            return redirect()->route('quote.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
+            return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
     }
 }
 

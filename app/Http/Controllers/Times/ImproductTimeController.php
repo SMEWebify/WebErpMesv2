@@ -9,7 +9,10 @@ use App\Http\Requests\Times\StoreImproductTimeRequest;
 
 class ImproductTimeController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreImproductTimeRequest $request)
     {
         $TimesImproductTime = TimesImproductTime::create($request->only('label', 'MACHINE_statuS', 'resources_required', 'mask_time'));

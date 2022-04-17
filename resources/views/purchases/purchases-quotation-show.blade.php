@@ -124,7 +124,7 @@
       <div class="tab-pane " id="PurchaseQuotationLines">
         <div class="row">
           <div class="col-12 table-responsive">
-            <form method="POST" action="{{ route('purchase.order.store')}}" >
+            <form method="POST" action="{{ route('purchase.orders.store')}}" >
               <table class="table table-striped">
                 <thead>
                     <tr>

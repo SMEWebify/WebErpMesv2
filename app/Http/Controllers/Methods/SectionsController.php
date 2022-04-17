@@ -8,7 +8,11 @@ use App\Http\Requests\Methods\StoreSectionRequest;
 
 class SectionsController extends Controller
 {
-    //
+    
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreSectionRequest $request)
     {
         $Section = MethodsSection::create($request->only('ordre','code', 'label','user_id','color'));

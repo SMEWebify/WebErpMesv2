@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
+    /**
+     * @return View
+     */
     public function List()
     {
         $Users = User::orderBy('id')->paginate(10);
@@ -16,6 +19,9 @@ class UsersController extends Controller
         ]);
     }
 
+    /**
+     * @return View
+     */
     public function profile()
     {
         $UserProfil = User::find(Auth::user()->id);

@@ -63,7 +63,7 @@
                             @if(3 == $OrderLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                         </td>
                         <td>
-                            <x-ButtonTextView route="{{ route('order.show', ['id' => $OrderLine->orders_id])}}" />
+                            <x-ButtonTextView route="{{ route('orders.show', ['id' => $OrderLine->orders_id])}}" />
                         </td>
                     </tr>
                     @empty

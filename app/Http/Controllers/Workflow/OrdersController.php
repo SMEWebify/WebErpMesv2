@@ -19,7 +19,9 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class OrdersController extends Controller
 {
-    //
+    /**
+     * @return View
+     */
     public function index()
     {   
         $CurentYear = Carbon::now()->format('Y');
@@ -41,12 +43,9 @@ class OrdersController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Orders $Orders
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return View
      */
-
     public function show(Orders $id)
     {
         $CompanieSelect = Companies::select('id', 'code','label')->get();
@@ -59,8 +58,8 @@ class OrdersController extends Controller
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
-        $previousUrl = route('order.show', ['id' => $id->id-1]);
-        $nextUrl = route('order.show', ['id' => $id->id+1]);
+        $previousUrl = route('orders.show', ['id' => $id->id-1]);
+        $nextUrl = route('orders.show', ['id' => $id->id+1]);
 
         //DB information mustn't be empty.
         $Factory = Factory::first();
@@ -89,6 +88,10 @@ class OrdersController extends Controller
         ]);
     }
     
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateOrderRequest $request)
     {
         $Order = Orders::find($request->id);
@@ -104,7 +107,7 @@ class OrdersController extends Controller
         $Order->accounting_deliveries_id=$request->accounting_deliveries_id;
         $Order->comment=$request->comment;
         $Order->save();
-        return redirect()->route('order.show', ['id' =>  $Order->id])->with('success', 'Successfully updated Order');
+        return redirect()->route('orders.show', ['id' =>  $Order->id])->with('success', 'Successfully updated Order');
     }
 }
 

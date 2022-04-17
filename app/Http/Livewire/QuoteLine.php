@@ -304,7 +304,7 @@ class QuoteLine extends Component
             }
 
             // Reset Form Fields After Creating line
-            return redirect()->route('order.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
+            return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
 
         }
         else{

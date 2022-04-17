@@ -32,29 +32,29 @@ Route::group(['prefix' => 'companies'], function () {
 Route::group(['prefix' => 'quotes'], function () {
     Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->middleware(['auth'])->name('quotes'); 
     Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->middleware(['auth'])->name('quotes-lines'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->middleware(['auth'])->name('quote.update');
-    Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->middleware(['auth'])->name('quote.show');
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->middleware(['auth'])->name('quotes.update');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->middleware(['auth'])->name('quotes.show');
 });
 
 Route::group(['prefix' => 'orders'], function () {
     Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->middleware(['auth'])->name('orders'); 
     Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->middleware(['auth'])->name('orders-lines'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->middleware(['auth'])->name('order.update');
-    Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->middleware(['auth'])->name('order.show');
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->middleware(['auth'])->name('orders.update');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->middleware(['auth'])->name('orders.show');
 });
 
 Route::group(['prefix' => 'deliverys'], function () {
     Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->middleware(['auth'])->name('deliverys'); 
     Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->middleware(['auth'])->name('deliverys-request'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->middleware(['auth'])->name('delivery.update');
-    Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->middleware(['auth'])->name('delivery.show');
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->middleware(['auth'])->name('deliverys.update');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->middleware(['auth'])->name('deliverys.show');
 });
 
 Route::group(['prefix' => 'invoices'], function () {
     Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->middleware(['auth'])->name('invoices'); 
     Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->middleware(['auth'])->name('invoices-request'); 
-    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->middleware(['auth'])->name('invoice.update');
-    Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->middleware(['auth'])->name('invoice.show');
+    Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->middleware(['auth'])->name('invoices.update');
+    Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->middleware(['auth'])->name('invoices.show');
 });
 
 Route::group(['prefix' => 'purchases'], function () {
@@ -66,7 +66,7 @@ Route::group(['prefix' => 'purchases'], function () {
     Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesController@receipt')->middleware(['auth'])->name('purchases.receipt'); 
     Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases.invoice'); 
 
-    Route::post('/Purchase/Order/Create', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrder')->middleware(['auth'])->name('purchase.order.store');
+    Route::post('/Purchase/Order/Create', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrder')->middleware(['auth'])->name('purchase.orders.store');
     
     Route::post('/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('purchase.update');
     Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchaseQuotation')->middleware(['auth'])->name('quotation.update');
@@ -80,7 +80,7 @@ Route::group(['prefix' => 'purchases'], function () {
 Route::group(['prefix' => 'print'], function () {
     Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@printQuote')->middleware(['auth'])->name('print.quote');
     Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@printOrder')->middleware(['auth'])->name('print.order');
-    Route::get('/order/confirm/{Document}', 'App\Http\Controllers\PrintController@printOrderConfirm')->middleware(['auth'])->name('print.order.confirm');
+    Route::get('/order/confirm/{Document}', 'App\Http\Controllers\PrintController@printOrderConfirm')->middleware(['auth'])->name('print.orders.confirm');
     Route::get('/order/manufacturing/{Document}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->middleware(['auth'])->name('print.manufacturing.instruction');
     Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@printDelivery')->middleware(['auth'])->name('print.delivery');
     Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@printInvoince')->middleware(['auth'])->name('print.invoice');
@@ -176,6 +176,12 @@ Route::group(['prefix' => 'users'], function () {
     Route::get('/Profile/Update', 'App\Http\Controllers\UsersController@update')->middleware(['auth'])->name('user.profile.update');
 
 });
+
+Route::match(
+    ['get', 'post'],
+    '/navbar/search',
+    'App\Http\Controllers\SearchController@showNavbarSearchResults'
+);
 
 require __DIR__.'/auth.php';
 

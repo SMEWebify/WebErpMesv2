@@ -28,7 +28,7 @@
           <div class="col-md-9">
             @include('include.alert-result')
             <div class="card">
-              <form method="POST" action="{{ route('invoice.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
+              <form method="POST" action="{{ route('invoices.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
                     <div class="row">

@@ -8,7 +8,10 @@ use App\Http\Requests\Companies\UpdateAdressRequest;
 
 class AddressesController extends Controller
 {
-    //
+    /**
+     * @param $id
+     * @return View
+     */
     public function edit($id)
     {
         $adress = CompaniesAddresses::findOrFail($id);
@@ -17,12 +20,20 @@ class AddressesController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreAdressRequest $request)
     {
         $adress = CompaniesAddresses::create($request->only('companies_id', 'ordre', 'label', 'adress','zipcode','city','country','number','mail'));
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully created adress');
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateAdressRequest $request)
     {
         $adress = CompaniesAddresses::find($request->id);

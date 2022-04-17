@@ -507,7 +507,7 @@
                   <div class="card-header">
                     <h3 class="card-title">New delevery mode</h3>
                   </div>
-                  <form  method="POST" action="{{ route('accouting.delivery.create') }}" class="form-horizontal">
+                  <form  method="POST" action="{{ route('accouting.deliverys.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
                       <label for="code">External ID</label>

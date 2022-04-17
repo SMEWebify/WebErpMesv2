@@ -9,7 +9,10 @@ use App\Http\Requests\Accounting\StoreAllocationRequest;
 
 class AllocationController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreAllocationRequest $request)
     {
         $Allocation = AccountingAllocation::create($request->only('account',
@@ -18,8 +21,6 @@ class AllocationController extends Controller
                                                                 'vat_account', 
                                                                 'code_account',
                                                                 'type_imputation'));
-
         return redirect()->route('accounting')->with('success', 'Successfully created allocation.');
-
     }
 }

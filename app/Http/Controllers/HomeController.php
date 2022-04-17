@@ -15,8 +15,9 @@ use App\Models\Methods\MethodsServices;
 
 class HomeController extends Controller
 {
-    //
-    
+    /**
+     * @return View
+     */
     public function index()
     {
         $CurentYear = Carbon::now()->format('Y');

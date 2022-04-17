@@ -9,8 +9,10 @@ use App\Http\Requests\Accounting\StoreDeliveryRequest;
 
 class DeliveryController extends Controller
 {
-    //
-
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreDeliveryRequest $request)
     {
         $Delevery = AccountingDelivery::create($request->only('code','label'));

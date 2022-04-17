@@ -19,6 +19,10 @@ use App\Models\Purchases\PurchasesQuotation;
 
 class PrintController extends Controller
 {
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printQuote(Quotes $Document)
     {
         $typeDocumentName = 'Quote';
@@ -32,6 +36,10 @@ class PrintController extends Controller
         return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
 
+    /**
+     * @param $Document
+     * @return View
+     */
     public function getQuotePdf(Quotes $Document)
     {
         $typeDocumentName = 'Quote';
@@ -47,6 +55,10 @@ class PrintController extends Controller
         return $pdf->stream();
     }
     
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printOrder(Orders $Document)
     {
         $typeDocumentName = 'Order';
@@ -59,7 +71,11 @@ class PrintController extends Controller
         unset($Document->OrderLines);
         return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
-
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function getOrderPdf(Orders $Document)
     {
         $typeDocumentName = 'Order';
@@ -74,7 +90,11 @@ class PrintController extends Controller
         $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
         return $pdf->stream();
     }
-
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printOrderConfirm(Orders $Document)
     {
         $typeDocumentName = 'Order confirm';
@@ -87,7 +107,11 @@ class PrintController extends Controller
         unset($Document->OrderLines);
         return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
-
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printOrderManufacturingInstruction(Orders $Document)
     {
         $typeDocumentName = 'Order anufacturing Instruction';
@@ -97,6 +121,10 @@ class PrintController extends Controller
         return view('print/print-manufacturing-instruction', compact('typeDocumentName','Document', 'Factory'));
     }
     
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printDelivery(Deliverys $Document)
     {
         $typeDocumentName = 'Delivery note';
@@ -105,7 +133,11 @@ class PrintController extends Controller
         unset($Document->DeliveryLines);
         return view('print/print-delivery', compact('typeDocumentName','Document', 'Factory'));
     }
-
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printInvoince(Invoices $Document)
     {
         $typeDocumentName = 'Invoince';
@@ -118,7 +150,11 @@ class PrintController extends Controller
         unset($Document->invoiceLines);
         return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
-
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printPurchaseQuotation(PurchasesQuotation $Document)
     {
         $Factory = Factory::first();
@@ -127,7 +163,11 @@ class PrintController extends Controller
             'Factory' => $Factory,
         ]);
     }
-
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printPurchase(Purchases $Document)
     {
         $Factory = Factory::first();
@@ -136,7 +176,11 @@ class PrintController extends Controller
             'Factory' => $Factory,
         ]);
     }
-
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printReceipt(PurchaseReceipt $Document)
     {
         $Factory = Factory::first();

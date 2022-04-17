@@ -8,7 +8,11 @@ use App\Http\Requests\Methods\StoreLocationRequest;
 
 class LocationsController extends Controller
 {
-    //
+    
+     /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreLocationRequest $request)
     {
         $Location = MethodsLocation::create($request->only('code', 'label','ressource_id','color'));

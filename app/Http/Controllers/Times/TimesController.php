@@ -12,7 +12,9 @@ use App\Models\Times\TimesImproductTime;
 
 class TimesController extends Controller
 {
-    //
+    /**
+     * @return View
+     */
     public function index()
     {
         $TimesAbsences = TimesAbsence::All();

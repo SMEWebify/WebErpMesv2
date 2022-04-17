@@ -15,7 +15,9 @@ use App\Http\Requests\Workflow\UpdateDeliveryRequest;
 
 class DeliverysController extends Controller
 {
-    //
+    /**
+     * @return View
+     */
     public function index()
     {    
         $CurentYear = Carbon::now()->format('Y');
@@ -38,11 +40,18 @@ class DeliverysController extends Controller
         return view('workflow/deliverys-index')->with('data',$data);
     }
 
+    /**
+     * @return View
+     */
     public function request()
     {    
         return view('workflow/deliverys-request');
     }
 
+    /**
+     * @param $id
+     * @return View
+     */
     public function show(Deliverys $id)
     {
         $CompanieSelect = Companies::select('id', 'code','label')->get();
@@ -52,8 +61,8 @@ class DeliverysController extends Controller
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
-        $previousUrl = route('delivery.show', ['id' => $id->id-1]);
-        $nextUrl = route('delivery.show', ['id' => $id->id+1]);
+        $previousUrl = route('deliverys.show', ['id' => $id->id-1]);
+        $nextUrl = route('deliverys.show', ['id' => $id->id+1]);
 
         return view('workflow/deliverys-show', [
             'Delivery' => $id,
@@ -66,6 +75,10 @@ class DeliverysController extends Controller
         ]);
     }
     
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateDeliveryRequest $request)
     {
         $Delivery = Deliverys::find($request->id);
@@ -77,7 +90,7 @@ class DeliverysController extends Controller
         $Delivery->comment=$request->comment;
         $Delivery->save();
 
-        return redirect()->route('delivery.show', ['id' =>  $Delivery->id])->with('success', 'Successfully updated Delivery');
+        return redirect()->route('deliverys.show', ['id' =>  $Delivery->id])->with('success', 'Successfully updated Delivery');
     }
 
 }

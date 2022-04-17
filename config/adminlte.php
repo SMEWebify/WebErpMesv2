@@ -227,9 +227,12 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type'         => 'navbar-search',
-            'text'         => 'search',
-            'topnav_right' => false,
+            'type'          => 'navbar-search',
+            'text'          => 'search',        
+            'topnav'        => true,
+            'url'           => 'navbar/search',
+            'method'        => 'post', 
+            'input_name'    => 'searchVal' ,
         ],
         [
             'type'         => 'fullscreen-widget',
@@ -237,10 +240,13 @@ return [
         ],
 
         // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
+        /*[
+            'type'      => 'sidebar-menu-search',
+            'text'      => 'search',
+            'url'       => 'sidebar/search' ,
+            'method'    => 'post' ,
+            'input_name'=> 'searchVal' ,
+        ],*/
         [
             'text'        => 'Dashboard',
             'url'         => 'dashboard',
@@ -249,7 +255,7 @@ return [
         [
             'text'    => 'Companies',
             'icon'    => 'far fa-building',
-            'url'  => 'companies',
+            'url'     => 'companies',
         ],
         [
             'text'    => 'Quote',

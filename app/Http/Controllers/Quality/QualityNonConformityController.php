@@ -8,7 +8,10 @@ use App\Http\Requests\Quality\StoreQualityNonConformityRequest;
 
 class QualityNonConformityController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreQualityNonConformityRequest $request)
     {
         $NonConformity =  QualityNonConformity::create($request->only('code',

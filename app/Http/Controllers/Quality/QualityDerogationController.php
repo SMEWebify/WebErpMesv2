@@ -8,7 +8,10 @@ use App\Http\Requests\Quality\StoreQualityDerogationRequest;
 
 class QualityDerogationController extends Controller
 {
-    //
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreQualityDerogationRequest $request)
     {
         $Derogation =  QualityDerogation::create($request->only('code',

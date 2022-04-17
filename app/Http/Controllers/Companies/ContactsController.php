@@ -10,7 +10,10 @@ use App\Http\Requests\Companies\UpdateContactRequest;
 
 class ContactsController extends Controller
 {
-    //
+    /**
+     * @param $id
+     * @return View
+     */
     public function edit($id)
     {
         $contact = CompaniesContacts::findOrFail($id);
@@ -19,12 +22,20 @@ class ContactsController extends Controller
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StoreContactRequest $request)
     {
         $contact = CompaniesContacts::create($request->only('companies_id', 'ordre', 'civility', 'first_name','name','function','number','mobile','mail'));
         return redirect()->route('companies.show', ['id' => $request->companies_id])->with('success', 'Successfully created contact');
     }
 
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateContactRequest $request)
     {
         $contact = CompaniesContacts::find($request->id);

@@ -9,8 +9,10 @@ use App\Http\Requests\Accounting\StorePaymentConditionRequest;
 
 class PaymentConditionsController extends Controller
 {
-    //
-
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function store(StorePaymentConditionRequest $request)
     {
         $PaymentCondition = AccountingPaymentConditions::create($request->only('code',

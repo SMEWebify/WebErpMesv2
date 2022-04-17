@@ -11,6 +11,9 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class AccountingController extends Controller
 {
+    /**
+     * @return View
+     */
     public function index()
     {
         $Allocations = AccountingAllocation::All();

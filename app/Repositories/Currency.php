@@ -89,7 +89,7 @@ class Currency
     }
 
     /**
-     * @return mixed
+     * @return View
      */
     public function getVatPercentage()
     {

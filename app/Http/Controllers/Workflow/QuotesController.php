@@ -23,7 +23,9 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class QuotesController extends Controller
 {
-    //
+    /**
+     * @return View
+     */
     public function index()
     {
         $CurentYear = Carbon::now()->format('Y');
@@ -46,12 +48,9 @@ class QuotesController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param Quotes $Quotes
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return View
      */
-    
     public function show(Quotes $id)
     {
         $CompanieSelect = Companies::select('id', 'code','label')->get();
@@ -64,8 +63,8 @@ class QuotesController extends Controller
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
         $vatPrice = $QuoteCalculator->getVatTotal();
-        $previousUrl = route('quote.show', ['id' => $id->id-1]);
-        $nextUrl = route('quote.show', ['id' => $id->id+1]);
+        $previousUrl = route('quotes.show', ['id' => $id->id-1]);
+        $nextUrl = route('quotes.show', ['id' => $id->id+1]);
 
         //DB information mustn't be empty.
         $Factory = Factory::first();
@@ -95,6 +94,10 @@ class QuotesController extends Controller
         ]);
     }
     
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateQuoteRequest $request)
     {
         $Quote = Quotes::find($request->id);
@@ -112,6 +115,6 @@ class QuotesController extends Controller
         $Quote->save();
         $QuoteLines = QuoteLines::where('quotes_id', $request->id)->update(['statu' => $request->statu]);
         
-        return redirect()->route('quote.show', ['id' =>  $Quote->id])->with('success', 'Successfully updated quote');
+        return redirect()->route('quotes.show', ['id' =>  $Quote->id])->with('success', 'Successfully updated quote');
     }
 }

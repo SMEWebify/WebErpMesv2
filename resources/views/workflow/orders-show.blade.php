@@ -27,7 +27,7 @@
           <div class="col-md-9">
             @include('include.alert-result')
             <div class="card">
-              <form method="POST" action="{{ route('order.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
+              <form method="POST" action="{{ route('orders.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
                     <div class="row">
@@ -137,7 +137,7 @@
                 <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
               </div>
               <div class="card-body">
-                <a href="{{ route('print.order.confirm', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print order confirm</a>
+                <a href="{{ route('print.orders.confirm', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print order confirm</a>
               </div>
               <div class="card-body">
                 <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print Manufacturing instruction</a>
