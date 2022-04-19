@@ -43,17 +43,14 @@ for instal, test or help to devellop follow wiki page : https://github.com/billy
    
 -----------------
 Dashboard
-![image](https://user-images.githubusercontent.com/75578469/149237382-10fc919e-f2bb-4929-910c-8a25b8323f83.png)
+![image](https://user-images.githubusercontent.com/75578469/164035450-16391d88-1724-4bfa-ab25-bd5528f9f690.png)
 
 
 Quote & Order management with task
-![image](https://user-images.githubusercontent.com/75578469/149237245-c9f05555-c4c3-4e90-9380-24229b82b30e.png)
-![image](https://user-images.githubusercontent.com/75578469/149237447-2d18ff6d-9cb8-4454-aea6-b83e4b118edd.png)
-![image](https://user-images.githubusercontent.com/75578469/142014346-09f2eb77-c6e8-49a5-bf76-d4111f867bda.png)
+![image](https://user-images.githubusercontent.com/75578469/164035570-33da9040-7df4-4551-bb69-7ec88e80673b.png)
+![image](https://user-images.githubusercontent.com/75578469/164035711-504ac598-9385-486b-98f0-87a6a0a3b24a.png)
+![image](https://user-images.githubusercontent.com/75578469/164035818-9ec3bc0a-9e6d-420b-a3b4-ca5200684495.png)
 
-Kanban 
-![image](https://user-images.githubusercontent.com/75578469/148135648-698c2315-1995-4b75-bbba-898c10646aeb.png)
 
-Delivery request
-![image](https://user-images.githubusercontent.com/75578469/148135741-eda41b1e-8598-47bc-a822-5d0ae9e6a61a.png)
+
 
