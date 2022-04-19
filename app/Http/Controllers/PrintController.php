@@ -148,7 +148,7 @@ class PrintController extends Controller
         $vatPrice = $InvoiceCalculator->getVatTotal();
         $Document->Lines = $Document->invoiceLines;
         unset($Document->invoiceLines);
-        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
+        return view('print/print-invoice', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
     
     /**

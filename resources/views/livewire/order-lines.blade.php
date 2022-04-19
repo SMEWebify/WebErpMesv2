@@ -99,8 +99,10 @@
                                         <div class="dropdown-menu">
                                             @if($OrderStatu == 1 && 1 == $OrderLine->delivery_status)
                                             <a href="#" class="dropdown-item " wire:click="duplicateLine({{$OrderLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
-                                            <a href="#" class="dropdown-item" wire:click="editQuoteLine({{$OrderLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
-                                            <a href="#" class="dropdown-item" wire:click="destroyQuoteLine({{$OrderLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="edit({{$OrderLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="destroy({{$OrderLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                            @else
+                                            <p class="dropdown-item "><span class="text-info">Order curently in progress</span></p>
                                             @endif
                                         </div>
                                     </div>
