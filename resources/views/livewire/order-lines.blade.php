@@ -93,40 +93,20 @@
                                 @if(3 == $OrderLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                             </td>
                             <td>
-                                @if($OrderStatu == 1 && 1 == $OrderLine->delivery_status)
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="#" wire:click="edit({{$OrderLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
-                                    </div>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="#" wire:click="duplicateLine({{$OrderLine->id}})" class="btn btn-primary"><i class="fa fa-light fa-fw  fa-copy"></i></a>
-                                    </div>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="#" wire:click="destroy({{$OrderLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
-                                    </div>
-                                @endif
-                                <!-- Modal -->
-                                <div class="modal fade" id="MainProcessModal{{$OrderLine->id}}" tabindex="-1" role="dialog" aria-labelledby="MainProcessModalTitle{{$OrderLine->id}}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                            <h5 class="modal-title" id="MainProcessModalTitle{{$OrderLine->id}}">Add line to BOM</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $OrderLine->orders_id]),'id_page' => $OrderLine->orders_id, 'id_type' => 'order_lines_id', 'infoLine' => ['id_line' => $OrderLine->id, 'qty_line' => $OrderLine->qty], 'status_id'=>$status_id['id'] ,'TechnicalCut' => $OrderLine->TechnicalCut,'BOM' => $OrderLine->BOM])
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="Submit" class="btn btn-primary">Submit</button>
-                                            </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <div class="dropdown-menu">
+                                            @if($OrderStatu == 1 && 1 == $OrderLine->delivery_status)
+                                            <a href="#" class="dropdown-item " wire:click="duplicateLine({{$OrderLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="editQuoteLine({{$OrderLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="destroyQuoteLine({{$OrderLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                            @endif
                                         </div>
                                     </div>
-                                </div>
-                                <!-- End Modal -->
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" data-toggle="modal" data-target="#MainProcessModal{{$OrderLine->id}}"  class="btn btn-success"><i class="fa fa-lg fa-fw  fas fa-list"></i></a>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks ({{  $OrderLine->getTaskCountAttribute() }})</span></a></button>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

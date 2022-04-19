@@ -6,12 +6,12 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-4">
-                    <label for="ORDER">Sort order</label>
+                    <label for="ordre">Sort order</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                       </div>
-                      <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
+                      <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
                       <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $infoLine['id_line']  }}">
                       <input type="hidden" class="form-control" name="id" value="{{ $TechProduct->id }}">
                       <input type="hidden" name="qty"  id="qty"  value="{{ $infoLine['qty_line']  }}" value=".001">

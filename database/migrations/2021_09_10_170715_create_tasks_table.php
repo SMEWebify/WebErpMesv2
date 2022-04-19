@@ -16,7 +16,7 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('label');
-			$table->integer('ORDER');
+			$table->integer('ordre');
 			$table->integer('quote_lines_id')->nullable();
 			$table->integer('order_lines_id')->nullable();
 			$table->integer('products_id')->nullable();
@@ -52,6 +52,7 @@ class CreateTasksTable extends Migration
             $table->decimal('diameter', 10, 3)->nullable();
 			$table->decimal('diameter_oversize', 10, 3)->nullable();
 			$table->integer('to_schedule')->nullable();
+			$table->dateTime('start_date')->nullable();
 			$table->string('material')->nullable();
 			$table->decimal('thickness', 10, 3)->nullable();
 			$table->decimal('weight', 10, 3)->nullable();

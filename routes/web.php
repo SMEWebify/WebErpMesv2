@@ -130,6 +130,7 @@ Route::group(['prefix' => 'products'], function () {
 
 Route::group(['prefix' => 'task'], function () {
     Route::put('/sync', 'App\Http\Controllers\Planning\TaskController@sync')->name('task.sync');
+    Route::get('/{id_type}/{id_page}/show/{id_line}', 'App\Http\Controllers\Planning\TaskController@manage')->middleware(['auth'])->name('task.manage');
     Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->middleware(['auth'])->name('task.delete');
     Route::post('/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
     Route::post('/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->middleware(['auth'])->name('task.update');

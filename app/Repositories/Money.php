@@ -22,7 +22,7 @@ class Money
         $this->curency = new Currency($curency);
     }
     /**
-     * @return View
+     * @return Mixed
      */
     public function getAmount()
     {

@@ -135,6 +135,6 @@ class User extends Authenticatable
     
     public function tasks()
     {
-        return $this->hasMany(Task::class)->orderBy('ORDER')->whereNotNull('order_lines_id');
+        return $this->hasMany(Task::class)->orderBy('ordre')->whereNotNull('order_lines_id');
     }
 }

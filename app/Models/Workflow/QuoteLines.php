@@ -50,7 +50,12 @@ class QuoteLines extends Model
 
     public function Task()
     {
-        return $this->hasMany(Task::class, 'quote_lines_id')->orderBy('ORDER');
+        return $this->hasMany(Task::class, 'quote_lines_id')->orderBy('ordre');
+    }
+
+    public function getTaskCountAttribute()
+    {
+        return $this->Task()->count();
     }
 
     public function TechnicalCut()
@@ -60,7 +65,7 @@ class QuoteLines extends Model
                         return $query->where('type', 1)
                                     ->orWhere('type', 7);
                     })
-                    ->orderBy('ORDER');
+                    ->orderBy('ordre');
     }
 
     public function BOM()
@@ -73,7 +78,7 @@ class QuoteLines extends Model
                                     ->orWhere('type','=', 6)
                                     ->orWhere('type','=', 8);
                     })
-                    ->orderBy('ORDER');
+                    ->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

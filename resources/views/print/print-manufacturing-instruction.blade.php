@@ -87,7 +87,7 @@
                                         @forelse($DocumentLine->TechnicalCut as $TechnicalCut)
                                                         <tr>
                                                             <td class="align-middle" rowspan="3">
-                                                                Ord. {{ $TechnicalCut->ORDER }}
+                                                                Ord. {{ $TechnicalCut->ordre }}
                                                             </td>
                                                             <td>Label : {{ $TechnicalCut->label }}</td>
                                                             <td>User :</td>
@@ -121,7 +121,7 @@
                                         @forelse($DocumentLine->BOM as $BOM)
                                                         <tr>
                                                             <td class="align-middle" rowspan="3">
-                                                                Ord. {{ $BOM->ORDER }}
+                                                                Ord. {{ $BOM->ordre }}
                                                             </td>
                                                             <td>Label : {{ $BOM->label }}</td>
                                                             <td>Supplier :</td>

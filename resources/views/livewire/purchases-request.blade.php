@@ -116,7 +116,7 @@
                             <td>
                                 <x-OrderButton id="{{ $PurchasesRequestsLines->OrderLines->order->id }}" code="{{ $PurchasesRequestsLines->OrderLines->order->code }}"  />
                             </td>
-                            <td>{{ $PurchasesRequestsLines->ORDER }}</td>
+                            <td>{{ $PurchasesRequestsLines->ordre }}</td>
                             <td>{{ $PurchasesRequestsLines->id }} - {{ $PurchasesRequestsLines->label }}</td>
                             <td>@if($PurchasesRequestsLines->component_id ) {{ $PurchasesRequestsLines->Component['label'] }}@endif</td>
                             <td>{{ $PurchasesRequestsLines->qty }}</td>

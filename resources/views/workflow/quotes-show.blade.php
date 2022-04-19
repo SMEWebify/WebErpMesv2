@@ -16,7 +16,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">Quote info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#QuoteLines" data-toggle="tab">Quote lines</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Quote lines</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -138,7 +138,7 @@
           </div>
         </div>
       </div>   
-      <div class="tab-pane " id="QuoteLines">
+      <div class="tab-pane " id="Lines">
         @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu, 'QuoteDelay' => $Quote->validity_date])
       </div>           
   </div>

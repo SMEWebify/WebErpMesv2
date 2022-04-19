@@ -16,12 +16,12 @@
               @csrf
               <div class="row">
                 <div class="col-4">
-                  <label for="ORDER">Sort order</label>
+                  <label for="ordre">Sort order</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                     </div>
-                    <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
+                    <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
                     <input type="hidden" name="{{ $id_type }}" value="{{ $infoLine['id_line']  }}">
                     <input type="hidden" name="status_id" value="{{ $status_id }}">
                     <input type="hidden" name="qty"  id="qty"  value="{{ $infoLine['qty_line']  }}" value=".001">
@@ -125,7 +125,7 @@
           <tbody>
             @forelse ($TechnicalCut as $TechProduct)
             <tr>
-                <td>{{ $TechProduct->ORDER }}</td>
+                <td>{{ $TechProduct->ordre }}</td>
                 <td>{{ $TechProduct->label }}</td>
                 <td>{{ $TechProduct->service['label'] }}</td>
                 <td>{{ $TechProduct->seting_time }}</td>
@@ -191,12 +191,12 @@
             @csrf
             <div class="row">
               <div class="col-3">
-                <label for="ORDER">Sort order</label>
+                <label for="ordre">Sort order</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                   </div>
-                  <input type="number" class="form-control" name="ORDER" id="ORDER" placeholder="Order">
+                  <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
                   <input type="hidden" class="form-control" name="{{ $id_type }}" value="{{ $infoLine['id_line']  }}">
                   <input type="hidden" class="form-control" name="status_id" value="{{ $status_id }}">
                 </div>
@@ -310,7 +310,7 @@
           <tbody>
             @forelse ($BOM as $BOMProduct)
             <tr>
-              <td>{{ $BOMProduct->ORDER }}</td>
+              <td>{{ $BOMProduct->ordre }}</td>
               <td>{{ $BOMProduct->label }}</td>
               <td>{{ $BOMProduct->service['label'] }}</td>
               <td>{{ $BOMProduct->Component['code'] }}</td>

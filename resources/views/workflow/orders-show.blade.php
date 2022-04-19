@@ -16,7 +16,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">Order info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#OrderLines" data-toggle="tab">Order lines</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Order lines</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -147,7 +147,7 @@
           </div>
         </div>
       </div>    
-      <div class="tab-pane " id="OrderLines">
+      <div class="tab-pane " id="Lines">
         @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date])
       </div> 
   </div>

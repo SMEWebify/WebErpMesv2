@@ -84,40 +84,20 @@
                                 @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
                             </td>
                             <td>
-                                @if($QuoteStatu == 1)
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="editQuoteLine({{$QuoteLine->id}})" class="btn btn-info"><i class="fa fa-lg fa-fw  fa-edit"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="duplicateLine({{$QuoteLine->id}})" class="btn btn-primary"><i class="fa fa-light fa-fw  fa-copy"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="destroyQuoteLine({{$QuoteLine->id}})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
-                                </div>
-                                @endif
-                                <!-- Modal -->
-                                <div class="modal fade" id="MainProcessModal{{$QuoteLine->id}}" tabindex="-1" role="dialog" aria-labelledby="MainProcessModalTitle{{$QuoteLine->id}}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                            <h5 class="modal-title" id="MainProcessModalTitle{{$QuoteLine->id}}">Add line to BOM</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                @include('include.Main-procces', ['route' => route('task.store', ['id' => $QuoteLine->quotes_id]),'id_page' => $QuoteLine->quotes_id, 'id_type' => 'quote_lines_id', 'infoLine' => ['id_line' => $QuoteLine->id, 'qty_line' => $QuoteLine->qty], 'status_id'=>$status_id['id'] ,'TechnicalCut' => $QuoteLine->TechnicalCut,'BOM' => $QuoteLine->BOM])
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="Submit" class="btn btn-primary">Submit</button>
-                                            </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <div class="dropdown-menu">
+                                            @if($QuoteStatu == 1)
+                                            <a href="#" class="dropdown-item " wire:click="duplicateLine({{$QuoteLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="editQuoteLine({{$QuoteLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="destroyQuoteLine({{$QuoteLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                            @endif
                                         </div>
                                     </div>
-                                </div>
-                                <!-- End Modal -->
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" data-toggle="modal" data-target="#MainProcessModal{{$QuoteLine->id}}"  class="btn btn-success"><i class="fa fa-lg fa-fw  fas fa-list"></i></a>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ route('task.manage', ['id_type'=> 'quote_lines_id', 'id_page'=>  $QuoteLine->quotes_id, 'id_line' => $QuoteLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks ({{  $QuoteLine->getTaskCountAttribute() }})</span></a></button>
+                                    </div>
                                 </div>
                             </td>
                             <td>

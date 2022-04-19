@@ -66,8 +66,14 @@ class Products extends Model
 
     public function Task()
     {
-        return $this->hasMany(Task::class, 'products_id')->orderBy('ORDER');
+        return $this->hasMany(Task::class, 'products_id')->orderBy('ordre');
     }
+
+    public function getTaskCountAttribute()
+    {
+        return $this->Task()->count();
+    }
+
 
     public function TechnicalCut()
     {
@@ -76,7 +82,7 @@ class Products extends Model
                         return $query->where('type', 1)
                                     ->orWhere('type', 7);
                     })
-                    ->orderBy('ORDER');
+                    ->orderBy('ordre');
     }
 
     public function BOM()
@@ -89,7 +95,7 @@ class Products extends Model
                                     ->orWhere('type','=', 6)
                                     ->orWhere('type','=', 8);
                     })
-                    ->orderBy('ORDER');
+                    ->orderBy('ordre');
     }
 
     public function Quotelines()

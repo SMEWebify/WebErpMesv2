@@ -15,7 +15,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab">Detail</a></li>
-      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">Technical cut + BOM</a></li>
+      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">Technical cut + BOM ({{ $Product->getTaskCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">Quotes list</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">Orders list</a></li>
     </ul>
@@ -365,9 +365,7 @@
           </div>
         </div>
       <div class="tab-pane " id="TechnicalInfo">
-        @include('include.Main-procces', ['route' => route('task.store', ['id' => $Product->id]), 'id_page' => $Product->id,'id_type' => 'products_id', 'infoLine' => ['id_line' => $Product->id, 'qty_line' =>1], 'status_id'=>$status_id['id'] ,'TechnicalCut' => $Product->TechnicalCut,'BOM' => $Product->BOM])
-      </div>    
-      <div class="tab-pane " id="Contact">
+        @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id]) 
       </div>
       <div class="tab-pane" id="quote">
       </div>

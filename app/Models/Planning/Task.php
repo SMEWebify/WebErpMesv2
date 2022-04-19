@@ -19,7 +19,7 @@ class Task extends Model
     use HasFactory;
 
     protected $fillable = ['label', 
-                            'ORDER',
+                            'ordre',
                             'quote_lines_id',
                             'order_lines_id',
                             'products_id',
@@ -101,6 +101,11 @@ class Task extends Model
     public function status()
     {
         return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    public function ProductTime()
+    {
+        return $this->qty*$this->unit_time;
     }
 
     public function TotalTime()

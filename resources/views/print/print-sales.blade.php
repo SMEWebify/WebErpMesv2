@@ -9,7 +9,7 @@
     </div>
     <div class="col-sm-6">
       <a class="btn btn-primary btn-sm" href="{{ url()->previous() }}">
-        <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalQuote">
+        <button type="button" class="btn btn-primary float-sm-right">
           Back
         </button>
       </a>
