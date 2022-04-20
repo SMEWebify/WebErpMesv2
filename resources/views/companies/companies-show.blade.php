@@ -11,10 +11,10 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Company" data-toggle="tab">Detail</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Adresses" data-toggle="tab">Adresses</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Contact" data-toggle="tab">Contact</a></li>
-      <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">Quotes list</a></li>
-      <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">Orders list</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Adresses" data-toggle="tab">Adresses ({{ $Companie->getAddressesCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Contact" data-toggle="tab">Contact ({{ $Companie->geContactsCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">Quotes list ({{ $Companie->getQuotesCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">Orders list ({{ $Companie->getOrdersCountAttribute() }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->

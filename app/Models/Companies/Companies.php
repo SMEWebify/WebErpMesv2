@@ -2,10 +2,12 @@
 
 namespace App\Models\Companies;
 
+use App\Models\User;
+use App\Models\Workflow\Orders;
+use App\Models\Workflow\Quotes;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
@@ -39,14 +41,44 @@ class Companies extends Model
         return $this->hasMany(CompaniesAddresses::class);
     }
 
+    public function getAddressesCountAttribute()
+    {
+        return $this->Addresses()->count();
+    }
+
     public function Contacts()
     {
         return $this->hasMany(CompaniesContacts::class);
     }
 
+    public function geContactsCountAttribute()
+    {
+        return $this->Contacts()->count();
+    }
+
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function Quotes()
+    {
+        return $this->hasMany(Quotes::class, 'companies_id');
+    }
+
+    public function getQuotesCountAttribute()
+    {
+        return $this->Quotes()->count();
+    }
+
+    public function Orders()
+    {
+        return $this->hasMany(Orders::class, 'companies_id');
+    }
+
+    public function getOrdersCountAttribute()
+    {
+        return $this->Quotes()->count();
     }
 
     public function GetPrettyCreatedAttribute()

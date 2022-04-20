@@ -66,7 +66,8 @@ Route::group(['prefix' => 'purchases'], function () {
     Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesController@receipt')->middleware(['auth'])->name('purchases.receipt'); 
     Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases.invoice'); 
 
-    Route::post('/Purchase/Order/Create', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrder')->middleware(['auth'])->name('purchase.orders.store');
+    //only for quote request to purchase order
+    Route::post('/Purchase/Order/Create/{id}', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrder')->middleware(['auth'])->name('purchases.orders.store');
     
     Route::post('/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('purchase.update');
     Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchaseQuotation')->middleware(['auth'])->name('quotation.update');

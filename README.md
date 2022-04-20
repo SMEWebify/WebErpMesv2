@@ -32,7 +32,7 @@ for instal, test or help to devellop follow wiki page : https://github.com/billy
 | Delivery note      |      X      |      -     | Delevery  to Invoice Tr*    |      X      |      -     |    
 | Invoices           |      X      |      -     |     
 | Purchase Request   |      X      |      -     | Purchase Req to Pur quote Tr* |      X      |      -     | 
-| Purchase quotation |      X      |      -     | Pur quote to Pur Order Tr*  |      -      |      X     |   
+| Purchase quotation |      X      |      -     | Pur quote to Pur Order Tr*  |      X      |      -     |   
 | Purchase order     |      X      |      -     |     
 | Receipt            |      X      |      -     |
 | Printed document   |      -      |      X     | Document storage           |      -      |      X     |

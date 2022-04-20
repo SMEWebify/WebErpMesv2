@@ -5,16 +5,20 @@ namespace App\Http\Controllers\Purchases;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
+use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use App\Http\Controllers\Controller;
 use App\Services\PurchaseCalculator;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
+use App\Models\Purchases\PurchaseQuotationLines;
 use App\Http\Requests\Purchases\StorePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
@@ -125,62 +129,86 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param Request $request, $id
      * @return View
      */
-    public function storePurchaseOrder(StorePurchaseRequest $request)
+    public function storePurchaseOrder(Request $request, $id)
     { 
-        $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();
+        if($request->PurchaseQuotationLine){
+            //get data to dulicate for new purchase order
+            $purchaseData = PurchasesQuotation::find($id);
 
-        $PurchaseOrderCreated = Purchases::create($request->only('code',
-                                                                'label', 
-                                                                'companies_id',
-                                                                'user_id' ));
+            //get last order id for create new Code id
+            $LastPurchase =  Purchases::orderBy('id', 'desc')->first();
+            if($LastPurchase == Null){
+                $purchaseCode = "PU-0";
+            }
+            else{
+                $purchaseCode = "PU-". $LastPurchase->id;
+            }
+            // Create order
+            $PurchaseOrderCreated = Purchases::create([
+                'code'=> $purchaseCode,  
+                'label'=> $purchaseCode, 
+                'companies_id'=>$purchaseData->companies_id, 
+                //'companies_contacts_id' 
+                //'companies_addresses_id' 
+                //'statu' => defaut 1
+                'user_id'=>Auth::id(),
+                //'Comment' => defaut emtpy
+            ]);
 
-        if($PurchaseOrderCreated){
-            // Create lines
-            foreach ($this->data as $key => $item) {
-                //check if add line to new delivery note is aviable
-                if(array_key_exists("task_id",$this->data[$key])){
-                    if($this->data[$key]['task_id'] != false ){
-                        //if not best to find request value, but we cant send hidden data with livewire
-                        //How pass all information from task information ?
-                        $Task = Task::find($this->data[$key]['task_id']);
-                        // Create delivery line
-                        $PurchaseLines = PurchaseLines::create([
-                                'purchases_id' => $PurchaseOrderCreated->id,
-                                'tasks_id' => $this->data[$key]['task_id'], 
-                                'ordre' => $this->ordre, 
-                                //'code' => , can be null
-                                'product_id' =>$Task->products_id,
-                                'label' => $Task->label,
-                                //'supplier_ref' => , can be null
-                                'qty' => $Task->qty,
-                                'selling_price' => $Task->unit_cost,
-                                'discount' => 0,
-                                'unit_price_after_discount' => $Task->unit_cost,
-                                'total_selling_price' => $Task->unit_cost * $Task->qty,
-                                //'receipt_qty' =>, defaut to 0
-                                //'invoiced_qty' =>, defaut to 0
-                                'methods_units_id' => $Task->methods_units_id,
-                                //'accounting_allocation_id' => , can be null
-                                //'stock_location_id' => , can be null
-                                'statu' => 1
-                            ]); 
+            $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();
 
-                        /* // up order line for next record*/
-                        $this->ordre= $this->ordre+10;
-                        /* // update task statu Supplied on Kanban*/
-                        if($StatusUpdate->id){
-                            $Task = Task::where('id',$this->data[$key]['task_id'])->update(['status_id'=>$StatusUpdate->id]);
-                        }
+            if($PurchaseOrderCreated){
+                // Create lines
+                $ordre = 10;
+                foreach ($request->PurchaseQuotationLine as $key => $item) {
+                    //if not best to find request value, but we cant send hidden data with livewire
+                    //How pass all information from task information ?
+                    $Task = Task::find($request->PurchaseQuotationLineTaskid[$key]);
+
+                    // Create delivery line
+                    $PurchaseLines = PurchaseLines::create([
+                            'purchases_id' => $PurchaseOrderCreated->id,
+                            'tasks_id' => $request->PurchaseQuotationLineTaskid[$key], 
+                            'ordre' => $ordre, 
+                            //'code' => , can be null
+                            'product_id' =>$Task->products_id,
+                            'label' => $Task->label,
+                            //'supplier_ref' => , can be null
+                            'qty' => $Task->qty,
+                            'selling_price' => $Task->unit_cost,
+                            'discount' => 0,
+                            'unit_price_after_discount' => $Task->unit_cost,
+                            'total_selling_price' => $Task->unit_cost * $Task->qty,
+                            //'receipt_qty' =>, defaut to 0
+                            //'invoiced_qty' =>, defaut to 0
+                            'methods_units_id' => $Task->methods_units_id,
+                            //'accounting_allocation_id' => , can be null
+                            //'stock_location_id' => , can be null
+                            'statu' => 1
+                        ]); 
+
+                    /* // up order line for next record*/
+                    $ordre= $ordre+10;
+                    /* // update task statu Supplied on Kanban*/
+                    if($StatusUpdate->id){
+                        $taskUpdated = Task::where('id',$request->PurchaseQuotationLineTaskid[$key])->update(['status_id'=>$StatusUpdate->id]);
                     }
+                    /* update quotation line qty accepted*/
+                    $PurchasesQuotationLine = PurchaseQuotationLines::where('id', $item)->update(['qty_accepted'=> $Task->qty]);
                 }
-            } 
-            return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
+
+                return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
+                
+            }
+            else{
+                return redirect()->back()->withErrors(['msg' => 'Something went wrong']);
+            }
         }
         else{
-            return redirect()->back()->with('error', 'Something went wrong');
+            return redirect()->back()->withErrors(['msg' => 'no lines selected']);
         }
     }
 

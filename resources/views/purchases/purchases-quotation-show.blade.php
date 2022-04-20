@@ -124,7 +124,8 @@
       <div class="tab-pane " id="PurchaseQuotationLines">
         <div class="row">
           <div class="col-12 table-responsive">
-            <form method="POST" action="{{ route('purchase.orders.store')}}" >
+            <form method="POST" action="{{ route('purchases.orders.store', ['id' => $PurchaseQuotation->id])}}" >
+              @csrf
               <table class="table table-striped">
                 <thead>
                     <tr>
@@ -134,6 +135,8 @@
                       <th>Unit price</th>
                       <th>Total price</th>
                       <th></th>
+                      <th>Qty accepted</th>
+                      <th>Canceled qty</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -142,18 +145,21 @@
                         <td>
                           <x-OrderButton id="{{ $PurchaseQuotationLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}"  />
                         </td>
-                        <td>#{{ $PurchaseQuotationLine->tasks->id }} {{ $PurchaseQuotationLine->code }} {{ $PurchaseQuotationLine->label }}</td>
+                        <td>#{{ $PurchaseQuotationLine->tasks->id }}  {{ $PurchaseQuotationLine->tasks->label }}</td>
                         <td>{{ $PurchaseQuotationLine->qty_to_order }}</td>
                         <td>{{ $PurchaseQuotationLine->unit_price }} {{ $Factory->curency }}</td>
                         <td>{{ $PurchaseQuotationLine->total_price }} {{ $Factory->curency }}</td>
                         <td>
                           <div class="form-group">
                             <div class="custom-control custom-checkbox">
+                              <input type="hidden" value="{{ $PurchaseQuotationLine->tasks->id }}" name="PurchaseQuotationLineTaskid[]" >
                               <input class="custom-control-input" value="{{ $PurchaseQuotationLine->id }}" name="PurchaseQuotationLine[]" id="PurchaseQuotationLine.{{ $PurchaseQuotationLine->id }}" type="checkbox">
                               <label for="PurchaseQuotationLine.{{ $PurchaseQuotationLine->id }}" class="custom-control-label">+</label>
                             </div>
                           </div>
                         </td>
+                        <td>{{ $PurchaseQuotationLine->qty_accepted }}</td>
+                        <td>{{ $PurchaseQuotationLine->canceled_qty }}</td>
                       </tr>
                     @empty
                       <x-EmptyDataLine col="5" text="No Lines in this purchase order ..."  />
@@ -169,6 +175,8 @@
                         <th>
                             <button type="Submit" class="btn btn-primary">New order</button>
                         </th>
+                        <th>Qty accepted</th>
+                        <th>Canceled qty</th>
                       </tr>
                 </tfoot>
               </table>
