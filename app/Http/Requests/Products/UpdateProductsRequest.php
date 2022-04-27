@@ -31,6 +31,7 @@ class UpdateProductsRequest extends FormRequest
             'sold'=>'required',
             'purchased'=>'required',
             'tracability_type'=>'required',
+            'picture'=> 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }

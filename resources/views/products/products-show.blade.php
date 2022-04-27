@@ -305,7 +305,7 @@
                     <div class="col-12 col-sm-4">
                       <div class="text-muted">
                       <p class="text-sm">Selling price
-                        <b class="d-block">{{ $Product->selling_price }}</b>
+                        <b class="d-block">{{ $Product->selling_price }} {{ $Factory->curency }}</b>
                       </p>
                       </div>
                     </div>
@@ -318,7 +318,7 @@
                     <div class="col-12 col-sm-4">
                       <div class="text-muted">
                       <p class="text-sm">Purchased price
-                        <b class="d-block">{{ $Product->purchased_price }}</b>
+                        <b class="d-block">{{ $Product->purchased_price }} {{ $Factory->curency }}</b>
                       </p>
                       </div>
                     </div>
@@ -351,6 +351,34 @@
                   <!-- /.div row -->
                   </div>
                   @endif
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"> Product image </h3>
+                </div>
+                <div class="card-body">
+                  @if($Product->picture)
+                      <img src="{{ asset('/images/products/'. $Product->picture) }}" alt="Product Image">
+                  @endif
+                  <form action="{{ route('products.update.image') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="far fa-image"></i></span>
+                        </div>
+                        <div class="custom-file">
+                          
+                            <input type="hidden" name="id" value="{{ $Product->id }}">
+                            <input type="file" class="custom-file-input" name="picture" id="picture">
+                            <label class="custom-file-label" for="picture">Choose file</label>
+                        </div>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-success">Upload</button>
+                        </div>
+                    </div>
+                  </form>
                 </div>
               </div>
               <div class="card">

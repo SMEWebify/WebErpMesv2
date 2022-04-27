@@ -456,9 +456,11 @@
           <ul class="products-list product-list-in-card pl-2 pr-2">  
             @forelse ($LastProducts as $LastProduct)
             <li class="item">
-              <div class="product-img">
-                <img src="{{ asset('/storage/images/products/'. $LastProduct->picture) }}" alt="Product Image" class="img-size-50">
-              </div>
+              @if($LastProduct->picture)
+                <div class="product-img">
+                  <img src="{{ asset('/images/products/'. $LastProduct->picture) }}" alt="Product Image" class="img-size-50">
+                </div>
+              @endif
               <div class="product-info">
                 <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->label }} {{ $LastProduct->ind }}
                   <span class="badge badge-info float-right">{{ $LastProduct->purchased_price }}</span></a>

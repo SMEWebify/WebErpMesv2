@@ -282,22 +282,6 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="row">
-                            <label for="picture">Logo file</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="far fa-image"></i></span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="picture">
-                                    <label class="custom-file-label" for="picture">Choose file</label>
-                                </div>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">Upload</span>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="Submit" wire:click.prevent="storeProduct()" class="btn btn-success">Add</button>

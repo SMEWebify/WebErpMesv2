@@ -73,6 +73,32 @@ class ProductsController extends Controller
      * @param Request $request
      * @return View
      */
+    public function StoreImage(Request $request)
+    {
+        
+        $request->validate([
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+        ]);
+        
+        if($request->hasFile('picture')){
+            $Product = Products::findOrFail($request->id);
+            $file =  $request->file('picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->picture->move(public_path('images/products'), $filename);
+            $Product->update(['picture' => $filename]);
+            $Product->save();
+
+            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated image');
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function update(UpdateProductsRequest $request)
     {
         $Product = Products::findOrFail($request->id);
