@@ -38,4 +38,29 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable   $exception
+     * @return \Illuminate\Http\Response
+     */
+    public function render($request, Throwable  $exception)
+    {
+        // return parent::render($request, $exception);
+        if ($exception instanceof HttpExceptionInterface) {
+            if (env('APP_ENV') === 'production' && $exception->getCode() == 404) {
+                return response()->view('errors.404', [], 404);
+            }
+            if (env('APP_ENV') === 'production' && $exception->getCode() == 419) {
+                return response()->view('errors.419', [], 419);
+            }
+            if (env('APP_ENV') === 'production' && $exception->getCode() == 500) {
+                return response()->view('errors.500', [], 500);
+            }
+        }
+
+        return parent::render($request, $exception);
+    }
 }
