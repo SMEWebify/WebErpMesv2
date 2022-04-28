@@ -30,6 +30,7 @@ class StoreServicesRequest extends FormRequest
             'label'=>'required',
             'hourly_rate'=>'required',
             'margin'=>'required',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }
 }

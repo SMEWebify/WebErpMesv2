@@ -55,9 +55,9 @@
                     <tbody>
                       @forelse ($MethodsServices as $MethodsService)
                       <tr>
-                        <td> 
+                        <td>
                           @if($MethodsService->picture )
-                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsService->picture) }}">
+                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'.$MethodsService->picture) }}">
                           @endif
                         </td>
                         <td>{{ $MethodsService->ordre }}</td>
@@ -168,7 +168,12 @@
                       </div>
                       <div class="form-group">
                         <label for="hourly_rate">Hourly rate</label>
-                        <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">{{ $Factory->curency }}/H</span>
+                          </div>
+                          <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001">
+                        </div>
                       </div>
                       <div class="form-group">
                         <label for="margin">Margin :</label>
@@ -184,17 +189,14 @@
                         <input type="color" class="form-control"  name="color" id="color" >
                       </div>
                       <div class="form-group">
-                        <label for="picture">Logo file</label>
+                        <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="far fa-image"></i></span>
                           </div>
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="picture"  id="picture">
-                            <label class="custom-file-label" for="picture">Choose file</label>
-                          </div>
-                          <div class="input-group-append">
-                            <span class="input-group-text">Upload</span>
+                              <input type="file" class="custom-file-input" name="picture" id="picture">
+                              <label class="custom-file-label" for="picture">Choose file</label>
                           </div>
                       </div>
                       <div class="form-group">
@@ -250,9 +252,9 @@
                       @forelse ($MethodsRessources as $MethodsRessource)
                       <tr>
                       
-                        <td> 
+                        <td>
                           @if($MethodsRessource->picture )
-                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsRessource->picture) }}">
+                          <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/ressources/'.$MethodsRessource->picture) }}">
                           @endif
                         </td>
                         <td>{{ $MethodsRessource->ordre }}</td>
@@ -361,17 +363,15 @@
                     <input type="color" class="form-control"  name="color" id="color" >
                   </div>
                   <div class="form-group">
-                    <label for="picture">Logo file</label>
+                    
+                    <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-image"></i></span>
                       </div>
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input" name="picture"  id="picture">
-                        <label class="custom-file-label" for="picture">Choose file</label>
-                      </div>
-                      <div class="input-group-append">
-                        <span class="input-group-text">Upload</span>
+                          <input type="file" class="custom-file-input" name="picture" id="picture">
+                          <label class="custom-file-label" for="picture">Choose file</label>
                       </div>
                   </div>
                   <div class="form-group">
@@ -904,7 +904,7 @@
                       <tr>
                         <td> 
                           @if($MethodsTool->picture )
-                          <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/'.$MethodsTool->picture) }}">
+                          <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/tools/'. $MethodsTool->picture) }}">
                           @endif
                         </td>
                         <td>{{ $MethodsTool->code }}</td>
@@ -986,7 +986,12 @@
                     </div>
                     <div class="form-group">
                       <label for="cost">Cost</label>
-                      <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                        </div>
+                        <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001">
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="qty">Quantity</label>
@@ -1002,19 +1007,14 @@
                       <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="Qty" >
                     </div>
                     <div class="form-group">
-                      <label for="picture">Logo file</label>
+                      <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                       <div class="input-group">
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="far fa-image"></i></span>
-                          </div>
-                          <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="picture"  id="picture">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="far fa-image"></i></span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="picture" id="picture">
                             <label class="custom-file-label" for="picture">Choose file</label>
-                          </div>
-                          <div class="input-group-append">
-                            <span class="input-group-text">Upload</span>
-                          </div>
                         </div>
                     </div>
                     <div class="card-footer">

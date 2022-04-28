@@ -16,10 +16,19 @@ class RessourcesController extends Controller
     public function store(StoreRessourceRequest $request)
     {
         $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label','mask_time', 'capacity','section_id', 'color', 'service_id','color'));
+
         if($request->hasFile('picture')){
-            $path = $request->picture->store('images/methods','public');
-            $Ressource->update(['picture' => $path]);
+            $Ressource = MethodsRessources::findOrFail($Ressource->id);
+            $file =  $request->file('picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->picture->move(public_path('images/ressources'), $filename);
+            $Ressource->update(['picture' => $filename]);
+            $Ressource->save();
         }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }
+
         return redirect()->route('methods')->with('success', 'Successfully created ressource.');
     }
 }

@@ -369,7 +369,6 @@
                             <span class="input-group-text"><i class="far fa-image"></i></span>
                         </div>
                         <div class="custom-file">
-                          
                             <input type="hidden" name="id" value="{{ $Product->id }}">
                             <input type="file" class="custom-file-input" name="picture" id="picture">
                             <label class="custom-file-label" for="picture">Choose file</label>

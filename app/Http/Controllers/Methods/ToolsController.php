@@ -14,11 +14,20 @@ class ToolsController extends Controller
      */
     public function store(StoreToolRequest $request)
     {
-        $Service =  MethodsTools::create($request->only('code','label', 'ETAT','cost', 'end_date','comment', 'qty'));
+        $Tool =  MethodsTools::create($request->only('code','label', 'ETAT','cost', 'end_date','comment', 'qty'));
+
         if($request->hasFile('picture')){
-            $path = $request->picture->store('images/methods','public');
-            $Service->update(['picture' => $path]);
+            $Tool = MethodsTools::findOrFail($Tool->id);
+            $file =  $request->file('picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->picture->move(public_path('images/tools'), $filename);
+            $Tool->update(['picture' => $filename]);
+            $Tool->save();
         }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }
+
         return redirect()->route('methods')->with('success', 'Successfully created tool.');
     }
 }

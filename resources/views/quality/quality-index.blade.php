@@ -70,13 +70,7 @@
                   </td>
                 </tr>
                 @empty
-                <tr>
-                  <td colspan="8">
-                      <div class="flex justify-center items-center">
-                          <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                      </div>
-                  </td>
-                </tr>
+                <x-EmptyDataLine col="8" text="No line found ..."  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -249,13 +243,7 @@
                   </td>
                 </tr>
                 @empty
-                <tr>
-                  <td colspan="7">
-                      <div class="flex justify-center items-center">
-                          <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                      </div>
-                  </td>
-                </tr>
+                <x-EmptyDataLine col="7" text="No line found ..."  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -428,13 +416,7 @@
                   </td>
                 </tr>
                 @empty
-                <tr>
-                  <td colspan="8">
-                      <div class="flex justify-center items-center">
-                          <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                      </div>
-                  </td>
-                </tr>
+                <x-EmptyDataLine col="8" text="No line found ..."  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -630,13 +612,7 @@
                           <td>{{ $QualityControlDevice->GetPrettyCreatedAttribute() }}</td>
                         </tr>
                         @empty
-                        <tr>
-                          <td colspan="7">
-                              <div class="flex justify-center items-center">
-                                  <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                              </div>
-                          </td>
-                        </tr>
+                          <x-EmptyDataLine col="6" text="No line found ..."  />
                         @endforelse
                       </tbody>
                       <tfoot>
@@ -667,7 +643,7 @@
                   <form method="POST" action="{{ route('quality.device.create')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
-                      <div class="col-2">
+                      <div class="col-4">
                         <label for="code">External ID</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
@@ -676,7 +652,7 @@
                           <input type="text" class="form-control"  name="code" id="code" placeholder="External ID">
                         </div>
                       </div>
-                      <div class="col-2">
+                      <div class="col-4">
                         <label for="label">Label</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
@@ -685,7 +661,7 @@
                           <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
                         </div>
                       </div>
-                      <div class="col-2">
+                      <div class="col-4">
                         <label for="service_id">Service</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
@@ -698,7 +674,9 @@
                           </select>
                         </div>
                       </div>
-                      <div class="col-3">
+                    </div>
+                    <div class="row">
+                      <div class="col-4">
                         <label for="user_id">User</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
@@ -711,7 +689,7 @@
                           </select>
                         </div>
                       </div>
-                      <div class="col-2">
+                      <div class="col-4">
                         <label for="label">Serial number</label>
                         <input type="text" class="form-control"  name="serial_number" id="serial_number" placeholder="Serial number">
                       </div>
@@ -719,18 +697,15 @@
                     </div>
                     <div class="form-group">
                       <div class="col-md-8">
-                        <label for="picture">Logo file</label>
+                        <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                         <div class="input-group">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="far fa-image"></i></span>
-                          </div>
-                          <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="picture">
-                            <label class="custom-file-label" for="picture">Choose file</label>
-                          </div>
-                          <div class="input-group-append">
-                            <span class="input-group-text">Upload</span>
-                          </div>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-image"></i></span>
+                            </div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="picture" id="picture">
+                                <label class="custom-file-label" for="picture">Choose file</label>
+                            </div>
                         </div>
                       </div>
                     <!-- /.form-group -->

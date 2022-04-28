@@ -14,11 +14,20 @@ class ServicesController extends Controller
      */
     public function store(StoreServicesRequest $request)
     {
-        $Service =  MethodsServices::create($request->only('code','ordre', 'label','type', 'hourly_rate','margin', 'color','picture', 'compannie_id'));
+        $Service =  MethodsServices::create($request->only('code','ordre', 'label','type', 'hourly_rate','margin', 'color', 'compannie_id'));
+        
         if($request->hasFile('picture')){
-            $path = $request->picture->store('images/methods','public');
-            $Service->update(['picture' => $path]);
+            $Service = MethodsServices::findOrFail($Service->id);
+            $file =  $request->file('picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->picture->move(public_path('images/methods'), $filename);
+            $Service->update(['picture' => $filename]);
+            $Service->save();
         }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }
+
         return redirect()->route('methods')->with('success', 'Successfully created service.');
     }
 }

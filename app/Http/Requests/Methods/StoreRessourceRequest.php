@@ -31,6 +31,7 @@ class StoreRessourceRequest extends FormRequest
             'capacity'=>'required',
             'section_id'=>'required',
             'service_id'=>'required',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }
 }

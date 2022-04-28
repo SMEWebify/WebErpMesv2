@@ -25,7 +25,7 @@
                     </div>
                     <div class="card-body">
                         <div class="card card-primary">
-                            <form method="POST" action="{{ route('admin.factory.update') }}" >
+                            <form method="POST" action="{{ route('admin.factory.update') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="col-12">
                                 <div class="row">
@@ -61,7 +61,6 @@
                                             </div>
                                             <input type="text" class="form-control" name="zipcode"  id="zipcode"  value="{{ $Factory->zipcode }}"  placeholder="Zip code">
                                         </div>
-
                                     </div>
                                     <div class="col-4">
                                         <label for="city">City</label>
@@ -472,17 +471,19 @@
                                         </div>
                             </div>
                             <div class="card-body">
+                                @if($Factory->picture)
+                                <div class="row">
+                                    <img src="{{ asset('/images/factory/'. $Factory->picture) }}" alt="Product Image">
+                                </div>
+                                @endif
                                         <div class="row">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="far fa-image"></i></span>
                                                 </div>
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="picture">
-                                                    <label class="custom-file-label" for="picture">Choose file</label>
-                                                </div>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">Upload</span>
+                                                    <input type="file" class="custom-file-input" name="picture" id="picture">
+                                                    <label class="custom-file-label" for="picture">Choose file  (peg,png,jpg,gif,svg | max: 10 240 Ko)</label>
                                                 </div>
                                             </div>
                                         </div>

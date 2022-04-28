@@ -25,9 +25,10 @@ class StoreToolRequest extends FormRequest
     {
         return [
             //
-                'code' =>'required|unique:methods_tools',
-                'label'=>'required',
-                'qty'=>'required',
+            'code' =>'required|unique:methods_tools',
+            'label'=>'required',
+            'qty'=>'required',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }
 }
