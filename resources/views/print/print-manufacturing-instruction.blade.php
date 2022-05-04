@@ -70,7 +70,8 @@
                             @forelse($Document->Lines as $DocumentLine)
                                 <tr>
                                     <th rowspan="2" class="align-middle">
-                                        {{ $DocumentLine->code }} - {{ $DocumentLine->label }}
+                                        {{ $DocumentLine->code }} <br/>
+                                        {{ $DocumentLine->label }}
                                     </th>
                                     <th>Qty : {{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</th>
                                     <th> Délay :

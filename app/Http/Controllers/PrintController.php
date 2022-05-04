@@ -112,6 +112,25 @@ class PrintController extends Controller
      * @param $Document
      * @return View
      */
+    public function getOrderConfirmPdf(Orders $Document)
+    {
+        $typeDocumentName = 'Order Confirm';
+        $OrderCalculator = new OrderCalculator($Document);
+        $Factory = Factory::first();
+        $totalPrices = $OrderCalculator->getTotalPrice();
+        $subPrice = $OrderCalculator->getSubTotal();
+        $vatPrice = $OrderCalculator->getVatTotal();
+        $Document->Lines = $Document->OrderLines;
+        unset($Document->OrderLines);
+
+        $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
+        return $pdf->stream();
+    }
+    
+    /**
+     * @param $Document
+     * @return View
+     */
     public function printOrderManufacturingInstruction(Orders $Document)
     {
         $typeDocumentName = 'Order anufacturing Instruction';
@@ -133,6 +152,20 @@ class PrintController extends Controller
         unset($Document->DeliveryLines);
         return view('print/print-delivery', compact('typeDocumentName','Document', 'Factory'));
     }
+
+    /**
+     * @param $Document
+     * @return View
+     */
+    public function getDeliveryPdf(Deliverys $Document)
+    {
+        $typeDocumentName = 'Delivery note';
+        $Factory = Factory::first();
+        $Document->Lines = $Document->DeliveryLines;
+        unset($Document->DeliveryLines);
+        $pdf = PDF::loadView('print/pdf-delivery', compact('typeDocumentName','Document', 'Factory'));
+        return $pdf->stream();
+    }
     
     /**
      * @param $Document
@@ -149,6 +182,24 @@ class PrintController extends Controller
         $Document->Lines = $Document->invoiceLines;
         unset($Document->invoiceLines);
         return view('print/print-invoice', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
+    }
+    
+        /**
+     * @param $Document
+     * @return View
+     */
+    public function getInvoicePdf(Invoices $Document)
+    {
+        $typeDocumentName = 'Invoince';
+        $InvoiceCalculator = new InvoiceCalculator($Document);
+        $Factory = Factory::first();
+        $totalPrices = $InvoiceCalculator->getTotalPrice();
+        $subPrice = $InvoiceCalculator->getSubTotal();
+        $vatPrice = $InvoiceCalculator->getVatTotal();
+        $Document->Lines = $Document->invoiceLines;
+        unset($Document->invoiceLines);
+        $pdf = PDF::loadView('print/pdf-invoice', compact('typeDocumentName','Document', 'Factory'));
+        return $pdf->stream();
     }
     
     /**

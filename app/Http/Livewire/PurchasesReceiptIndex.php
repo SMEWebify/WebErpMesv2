@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseReceipt;
 
 class PurchasesReceiptIndex extends Component
@@ -42,7 +43,7 @@ class PurchasesReceiptIndex extends Component
 
     public function mount() 
     {
-
+        $this->user_id = Auth::id();
     }
 
     public function render()

@@ -27,7 +27,10 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"> Informations </h3>
+              </div>
               <form method="POST" action="{{ route('invoices.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
@@ -84,7 +87,7 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="card">
+            <div class="card card-secondary">
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
               </div>
@@ -92,12 +95,21 @@
                 @include('include.sub-total-price')
               </div>
             </div>
-            <div class="card">
+            <div class="card card-warning">
               <div class="card-header">
                 <h3 class="card-title"> Options </h3>
               </div>
-              <div class="card-body">
-                <a href="{{ route('print.order', ['Document' => $Invoice->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+              <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <td style="width:50%"> 
+                          <x-ButtonTextPrint route="{{ route('print.invoice', ['Document' => $Invoice->id])}}" />
+                        </td>
+                        <td>
+                          <x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" />
+                        </td>
+                    </tr>
+                </table>
               </div>
             </div>
           </div>

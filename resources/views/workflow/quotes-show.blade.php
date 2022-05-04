@@ -26,7 +26,10 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"> Informations </h3>
+              </div>
               <form method="POST" action="{{ route('quotes.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
                 @csrf 
                 <div class="card card-body">
@@ -116,7 +119,7 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="card">
+            <div class="card card-secondary">
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
               </div>
@@ -124,15 +127,17 @@
                 @include('include.sub-total-price')
               </div>
             </div>
-            <div class="card">
+            <div class="card card-warning">
               <div class="card-header">
                 <h3 class="card-title"> Options </h3>
               </div>
-              <div class="card-body">
-                <x-ButtonTextPrint route="{{ route('print.quote', ['Document' => $Quote->id])}}" />
-              </div>
-              <div class="card-body">
-                <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" />
+              <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <td style="width:50%"> <x-ButtonTextPrint route="{{ route('print.quote', ['Document' => $Quote->id])}}" /></td>
+                        <td><x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /></td>
+                    </tr>
+                </table>
               </div>
             </div>
           </div>

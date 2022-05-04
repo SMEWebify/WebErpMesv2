@@ -26,7 +26,10 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"> Informations </h3>
+              </div>
               <form method="POST" action="{{ route('orders.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
@@ -109,8 +112,8 @@
           </div>
           <div class="col-md-3">
             @if($Order->quote_id)
-            <div class="card">
-              <div class="card-header">
+            <div class="card card-info">
+              <div class="card-header ">
                 <h3 class="card-title"> Historical </h3>
               </div>
               <div class="card-body">
@@ -118,7 +121,7 @@
               </div>
             </div>
             @endif
-            <div class="card">
+            <div class="card card-secondary">
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
               </div>
@@ -126,23 +129,38 @@
                 @include('include.sub-total-price')
               </div>
             </div>
-            <div class="card">
+            <div class="card card-warning">
               <div class="card-header">
                 <h3 class="card-title"> Options </h3>
               </div>
-              <div class="card-body">
-                <x-ButtonTextPrint route="{{ route('print.order', ['Document' => $Order->id])}}" />
+              <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <td style="width:50%"> 
+                          <x-ButtonTextPrint route="{{ route('print.order', ['Document' => $Order->id])}}" />
+                        </td>
+                        <td>
+                          <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
+                        </td>
+                    </tr>
+                    <tr>
+                      <td style="width:50%">
+                        <a href="{{ route('print.orders.confirm', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print order confirm</a>
+                      </td>
+                      <td>
+                        <x-ButtonTextPDF route="{{ route('pdf.orders.confirm', ['Document' => $Order->id])}}" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="width:50%">
+                        <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print Manufacturing instruction</a>
+                      </td>
+                      <td>
+                        
+                      </td>
+                  </tr>
+                </table>
               </div>
-              <div class="card-body">
-                <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
-              </div>
-              <div class="card-body">
-                <a href="{{ route('print.orders.confirm', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print order confirm</a>
-              </div>
-              <div class="card-body">
-                <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print Manufacturing instruction</a>
-              </div>
-              
             </div>
           </div>
         </div>

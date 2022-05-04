@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseReceiptLines;
@@ -54,6 +55,7 @@ class PurchasesWaintingReceipt extends Component
 
     public function mount() 
     {
+        $this->user_id = Auth::id();
         // get last id
         $this->LastReceipt =  PurchaseReceipt::latest()->first();
         //if we have no id, define 0 

@@ -24,7 +24,10 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"> Informations </h3>
+              </div>
               <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
@@ -199,7 +202,7 @@
               </div>
             </div>
             <div class="col-md-3">
-              <div class="card">
+              <div class="card card-secondary">
                 <div class="card-header">
                   <h3 class="card-title"> Informations </h3>
                 </div>

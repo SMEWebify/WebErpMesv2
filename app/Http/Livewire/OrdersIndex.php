@@ -13,6 +13,7 @@ use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+use Illuminate\Support\Facades\Auth;
 
 class OrdersIndex extends Component
 {
@@ -34,7 +35,7 @@ class OrdersIndex extends Component
     public $companies_addresses_id;  
     public $validity_date;  
     public $statu = '1';  
-    public $user_id;  
+    public $user_id ;
     public $accounting_payment_conditions_id;  
     public $accounting_payment_methods_id;  
     public $accounting_deliveries_id;  
@@ -72,6 +73,7 @@ class OrdersIndex extends Component
 
     public function mount() 
     {
+        $this->user_id = Auth::id();
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastOrder =  Orders::orderBy('id', 'desc')->first();
         if($this->LastOrder == Null){

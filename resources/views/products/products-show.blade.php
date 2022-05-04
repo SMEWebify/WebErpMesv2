@@ -27,7 +27,10 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"> Informations </h3>
+              </div>
               <form method="POST" action="{{ route('products.update', ['id' => $Product->id]) }}" enctype="multipart/form-data">
                 @csrf
                     <div class="row">
@@ -283,7 +286,7 @@
               </div>
             </div>
             <div class="col-md-3">
-              <div class="card">
+              <div class="card card-secondary">
                 <div class="card-header">
                   <h3 class="card-title"> Informations </h3>
                 </div>
@@ -353,7 +356,7 @@
                   @endif
                 </div>
               </div>
-              <div class="card">
+              <div class="card card-info">
                 <div class="card-header">
                   <h3 class="card-title"> Product image </h3>
                 </div>
@@ -380,7 +383,7 @@
                   </form>
                 </div>
               </div>
-              <div class="card">
+              <div class="card card-warning">
                 <div class="card-header">
                   <h3 class="card-title"> Options </h3>
                 </div>

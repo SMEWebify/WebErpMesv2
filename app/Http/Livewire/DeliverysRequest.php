@@ -8,6 +8,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
 
 class DeliverysRequest extends Component
@@ -52,6 +53,7 @@ class DeliverysRequest extends Component
 
     public function mount() 
     {
+        $this->user_id = Auth::id();
         $this->LastDelivery =  Deliverys::latest()->first();
         if($this->LastDelivery == Null){
             $this->code = "DN-0";

@@ -8,6 +8,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Purchases\PurchaseQuotationLines;
@@ -68,28 +69,29 @@ class PurchasesRequest extends Component
 
     public function mount() 
     {
-            // get last id
-            $this->LastPurchase =  Purchases::latest()->first();
-            //if we have no id, define 0 
-            if($this->LastPurchase == Null){
-                $this->LastPurchase = 0;
-                $this->code = $this->document_type ."-0";
-                $this->label = $this->document_type ."-0";
-            }
-            // else we use is from db
-            else{
-                $this->LastPurchase = $this->LastPurchase->id;
-                $this->code = $this->document_type ."-". $this->LastPurchase;
-                $this->label = $this->document_type ."-". $this->LastPurchase;
-            }
+        $this->user_id = Auth::id();
+        // get last id
+        $this->LastPurchase =  Purchases::latest()->first();
+        //if we have no id, define 0 
+        if($this->LastPurchase == Null){
+            $this->LastPurchase = 0;
+            $this->code = $this->document_type ."-0";
+            $this->label = $this->document_type ."-0";
+        }
+        // else we use is from db
+        else{
+            $this->LastPurchase = $this->LastPurchase->id;
+            $this->code = $this->document_type ."-". $this->LastPurchase;
+            $this->label = $this->document_type ."-". $this->LastPurchase;
+        }
 
-            $this->LastPurchaseQuotation =  PurchasesQuotation::latest()->first();
-            if($this->LastPurchaseQuotation == Null){
-                $this->LastPurchaseQuotation = 0;
-            }
-            else{
-                $this->LastPurchaseQuotation = $this->LastPurchaseQuotation->id;
-            }
+        $this->LastPurchaseQuotation =  PurchasesQuotation::latest()->first();
+        if($this->LastPurchaseQuotation == Null){
+            $this->LastPurchaseQuotation = 0;
+        }
+        else{
+            $this->LastPurchaseQuotation = $this->LastPurchaseQuotation->id;
+        }
 
         $this->CompaniesSelect = Companies::select('id', 'label', 'code')->where('statu_supplier', '=', 2)->orderBy('code')->get();
     }

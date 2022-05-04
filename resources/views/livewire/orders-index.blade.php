@@ -43,7 +43,7 @@
                                     <select class="form-control" wire:model="user_id" name="user_id" id="user_id">
                                         <option value="">Select user management</option>
                                     @foreach ($userSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}" >{{ $item->name }}</option>
                                     @endforeach
                                     </select>
                                 </div>

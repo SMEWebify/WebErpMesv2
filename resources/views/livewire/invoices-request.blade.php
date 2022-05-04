@@ -1,16 +1,6 @@
 <div class="card-body">
     <div class="card">
-        @if(session()->has('success'))
-                <div class="alert alert-success" role="alert">
-                    {{ session()->get('success') }}
-                </div>
-            @endif
-
-            @if(session()->has('error'))
-                <div class="alert alert-danger" role="alert">
-                    {{ session()->get('error') }}
-                </div>
-            @endif
+        @include('include.alert-result')
         <form>
             @csrf
             <div class="card-body">

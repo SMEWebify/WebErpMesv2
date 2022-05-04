@@ -1,7 +1,7 @@
 <div class="table-responsive">
     <table class="table">
         <tr>
-            <th style="width:50%">Subtotal:</th>
+            <td style="width:50%">Subtotal:</td>
             <td>{{ $subPrice }} {{ $Factory->curency }} </td>
         </tr>
         @forelse($vatPrice as $key => $value)
@@ -16,7 +16,7 @@
         </tr>
         @endforelse
         <tr>
-            <th>Total:</th>
+            <td>Total:</td>
             <td>{{ $totalPrices }} {{ $Factory->curency }}</td>
         </tr>
     </table>

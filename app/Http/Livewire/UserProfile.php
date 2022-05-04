@@ -12,6 +12,9 @@ class UserProfile extends Component
     public $name;
     public $email;
     public $password;
+    public $personnal_phone_number;
+    public $born_date;
+    public $desc;
 
     public $current_hashed_password;
 
@@ -22,7 +25,8 @@ class UserProfile extends Component
     protected $rules = [
         'name' =>'required',
         'email'=>'required|email',
-        'password' => 'required'
+        'password' => 'required',
+        'born_date' => 'date',
     ];
 
     public function mount()
@@ -32,6 +36,9 @@ class UserProfile extends Component
         $this->name = $model->name;
         $this->email = $model->email;
         $this->current_hashed_password = $model->password;
+        $this->personnal_phone_number = $model->personnal_phone_number;
+        $this->born_date = $model->born_date;
+        $this->desc = $model->desc;
     }
 
     public function render()
@@ -46,7 +53,11 @@ class UserProfile extends Component
             User::find($this->userId)->fill([
                 'name'=>$this->name,
                 'email'=>$this->email,
+                'personnal_phone_number'=>$this->personnal_phone_number,
+                'born_date'=>$this->born_date,
+                'desc'=>$this->desc,
             ])->save();
+
         session()->flash('success','Profile updated Successfully');
     }
 }

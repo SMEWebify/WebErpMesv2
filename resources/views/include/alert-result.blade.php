@@ -1,14 +1,14 @@
         @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success')}}
-            </div>
+        <x-adminlte-alert theme="success" title="Success">
+            {{ session('success')}}
+        </x-adminlte-alert>
         @endif
         @if($errors->count())
-            <div class="alert alert-danger">
-                <ul>
+        <x-adminlte-alert theme="warning" title="Warning">
+            <ul>
                 @foreach ( $errors->all() as $message)
                 <li> {{ $message }}</li>
                 @endforeach
-                </ul>
-            </div>
+            </ul>
+        </x-adminlte-alert>
         @endif

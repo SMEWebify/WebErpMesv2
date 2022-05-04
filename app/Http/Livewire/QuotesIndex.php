@@ -9,6 +9,7 @@ use App\Models\Admin\Factory;
 use App\Models\Workflow\Quotes;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
@@ -73,6 +74,7 @@ class QuotesIndex extends Component
 
     public function mount() 
     {
+        $this->user_id = Auth::id();
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastQuote =  Quotes::orderBy('id', 'desc')->first();
 

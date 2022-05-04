@@ -95,18 +95,6 @@
                             @empty
                               <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
                             @endforelse
-                          <tfoot>
-                            <tr>
-                              <th>Order</th>
-                              <th>External ID</th>
-                              <th>Description</th>
-                              <th>Qty</th>
-                              <th>Unit</th>
-                              <th>Delivered qty</th>
-                              <th>Remaining qty</th>
-                            </tr>
-                          </tfoot>
-                        </tbody>
                       </table>
                     </div>
                     <!-- /.col -->

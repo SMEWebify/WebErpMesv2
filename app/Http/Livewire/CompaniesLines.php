@@ -4,8 +4,9 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
-use App\Models\Companies\Companies;
 use Livewire\WithPagination;
+use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\Auth;
 
 class CompaniesLines extends Component
 {
@@ -55,6 +56,7 @@ class CompaniesLines extends Component
 
     public function mount() 
     {
+        $this->user_id = Auth::id();
         $this->userSelect = User::select('id', 'name')->get();
     }
 

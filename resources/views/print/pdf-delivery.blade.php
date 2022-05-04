@@ -71,8 +71,6 @@
                     {{ $Document->adresse['country'] }}
                     Phone : {{ $Document->contact['number'] }}
                     Mail : {{ $Document->contact['mail'] }}
-                    <br /><br />
-            Identifier: {{ $Document->customer_reference }}
                 </pre>
             </td>
         </tr>
@@ -86,36 +84,30 @@
     <table width="100%">
         <thead>
             <tr>
+                <th align="left">Order</th>
                 <th align="left">Description</th>
                 <th align="left">Qty</th>
                 <th align="left">Unit</th>
-                <th align="left">Selling price</th>
-                <th align="left">Discount</th>
-                <th align="left">VAT</th>
-                <th align="left">Delivery date</th>
+                <th align="left">Delivered qty</th>
+                <th align="left">Remaining qty</th>
             </tr>
         </thead>
         <tbody>
             @forelse($Document->Lines as $DocumentLine)
             <tr>
+                <td>{{ $DocumentLine->OrderLine->order['code'] }}</td>
                 <td>
-                    {{ $DocumentLine->label }}<br>
-                    <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
+                    {{ $DocumentLine->OrderLine['label'] }}<br>
+                    <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>
                 </td>
+                <td>{{ $DocumentLine->OrderLine['label'] }}</td>
+                <td>{{ $DocumentLine->OrderLine['qty'] }}</td>
+                <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
                 <td>{{ $DocumentLine->qty }}</td>
-                <td>{{ $DocumentLine->Unit['label'] }}</td>
-                <td>{{ $DocumentLine->selling_price }}  {{ $Factory->curency }}</td>
-                <td>{{ $DocumentLine->discount }} %</td>
-                <td>{{ $DocumentLine->VAT['rate'] }} %</td>
-                @if($DocumentLine->delivery_date )
-                <td>{{ $DocumentLine->delivery_date }}</td>
-                @else
-                <td>No date</td>
-                @endif
-                
+                <td>{{ $DocumentLine->OrderLine['delivered_remaining_qty'] }}</td>
             </tr>
             @empty
-                <x-EmptyDataLine col="7" text="No line ..."  />
+                <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
             @endforelse
         </tbody>
     </table>
@@ -123,37 +115,12 @@
     <table width="100%">
         <tr>
             <td align="left" style="width: 50%;">
-                <p class="lead"><strong>Payment Methods:</strong> {{ $Document->payment_condition['label'] }}</p>
-                <p class="lead"><strong>Payment Conditions:</strong> {{ $Document->payment_method['label'] }}</p>
                 @if($Document->comment)
                 <p class="lead"><strong>Comment :</strong></p>
                 <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
                     {{  $Document->comment }}
                 </p>
                 @endif
-            </td>
-            <td align="right" style="width: 50%;">
-                <table width="80%">
-                    <tr>
-                        <th align="right" style="width:50%">Subtotal:</th>
-                        <td align="right" style="width:30%">{{ $subPrice }} {{ $Factory->curency }} </td>
-                    </tr>
-                    @forelse($vatPrice as $key => $value)
-                    <tr>
-                        <td align="right" style="width:50%">Tax <?= $vatPrice[$key][0] ?> %</td>
-                        <td align="right" style="width:30%"><?= $vatPrice[$key][1] ?> {{ $Factory->curency }}</td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td align="right" style="width:50%">No Tax</td>
-                        <td align="right" style="width:30%"> </td>
-                    </tr>
-                    @endforelse
-                    <tr>
-                        <th align="right" style="width:50%">Total:</th>
-                        <td align="right" style="width:30%">{{ $totalPrices }} {{ $Factory->curency }}</td>
-                    </tr>
-                </table>
             </td>
         </tr>
     </table>
