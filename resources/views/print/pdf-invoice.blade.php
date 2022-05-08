@@ -59,7 +59,9 @@
                 </pre>
             </td>
             <td align="center">
-                <!--<img src="/path/to/logo.png" alt="Logo" width="64" class="logo"/>-->
+                @if($Factory->picture)
+                <img src="data:image/png;base64,{{ $image }}" alt="Logo" width="64" class="logo"/>
+                @endif
             </td>
             <td align="right" style="width: 40%;">
 

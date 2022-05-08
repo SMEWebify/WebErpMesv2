@@ -89,27 +89,21 @@
                 <th align="left">Order</th>
                 <th align="left">Description</th>
                 <th align="left">Qty</th>
-                <th align="left">Unit</th>
-                <th align="left">Delivered qty</th>
-                <th align="left">Remaining qty</th>
+                <th align="left">Unit price</th>
+                <th align="left">Total price</th>
             </tr>
         </thead>
         <tbody>
             @forelse($Document->Lines as $DocumentLine)
             <tr>
-                <td>{{ $DocumentLine->OrderLine->order['code'] }}</td>
-                <td>
-                    {{ $DocumentLine->OrderLine['label'] }}<br>
-                    <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>
-                </td>
-                <td>{{ $DocumentLine->OrderLine['label'] }}</td>
-                <td>{{ $DocumentLine->OrderLine['qty'] }}</td>
-                <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
-                <td>{{ $DocumentLine->qty }}</td>
-                <td>{{ $DocumentLine->OrderLine['delivered_remaining_qty'] }}</td>
+                <td>{{ $DocumentLine->tasks->OrderLines->order->code }}</td>
+                <td>#{{ $DocumentLine->tasks->id }}  {{ $DocumentLine->tasks->label }}</td>
+                <td>{{ $DocumentLine->qty_to_order }}</td>
+                <td>.............{{ $Factory->curency }}</td>
+                <td>.............{{ $Factory->curency }}</td>
             </tr>
             @empty
-                <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
+                <x-EmptyDataLine col="5" text="No line in this delivery found ..."  />
             @endforelse
         </tbody>
     </table>

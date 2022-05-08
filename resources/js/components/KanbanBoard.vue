@@ -17,14 +17,18 @@
                     <p>#{{ task.id }} - <span class="font-weight-bold">Order {{ task.order_lines.order.code }}</span>  || <span class="font-weight-bold">{{ task.order_lines.label }} || qty {{ task.order_lines.qty }}</span> - {{ task.label }} - {{ task.order_lines.delivery_date }}</p>
                     <div class="float-right">
                       <div class="row">
-                        <div class="col-6">
+                        <div class="col-4">
+                              <!--<img :src="task.service.picture"  class="profile-user-img img-fluid img-circle" >-->
+                        </div>
+                        <div class="col-4">
                           <p>
-                            Setting Time : {{ task.seting_time }}<br/>
-                            Unit Time :{{ task.unit_time }}
+                            <span class="font-weight-bold">Setting Time :</span> {{ task.seting_time }}<br/>
+                            <span class="font-weight-bold">Unit Time :</span> {{ task.unit_time }}
                           </p>
                         </div>
-                        <div class="col-6">
-                          <p>Advancement : {{ task.advancement }}</p>
+                        <div class="col-4">
+                          <p>
+                            <span class="font-weight-bold">Advancement :</span> {{ task.advancement }}</p>
                         </div>
                       </div>
                     </div>

@@ -66,14 +66,6 @@
             <td align="right" style="width: 40%;">
 
                 <h3>{{ $Document->companie['label'] }}</h3>
-                <pre>
-                    {{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
-                    {{ $Document->adresse['adress'] }}
-                    {{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }}
-                    {{ $Document->adresse['country'] }}
-                    Phone : {{ $Document->contact['number'] }}
-                    Mail : {{ $Document->contact['mail'] }}
-                </pre>
             </td>
         </tr>
 
@@ -86,30 +78,35 @@
     <table width="100%">
         <thead>
             <tr>
-                <th align="left">Order</th>
-                <th align="left">Description</th>
-                <th align="left">Qty</th>
-                <th align="left">Unit</th>
-                <th align="left">Delivered qty</th>
-                <th align="left">Remaining qty</th>
+                <th>Purchase Order</th>
+                <th>Order</th>
+                <th>Description</th>
+                <th>Supplier ref</th>
+                <th>Qty</th>
+                <th>Qty purchase</th>
+                <th>Qty receipt</th>
             </tr>
         </thead>
         <tbody>
             @forelse($Document->Lines as $DocumentLine)
             <tr>
-                <td>{{ $DocumentLine->OrderLine->order['code'] }}</td>
                 <td>
-                    {{ $DocumentLine->OrderLine['label'] }}<br>
-                    <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>
+                    <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $DocumentLine->purchaseLines->purchases_id ])}}">
+                        <i class="fas fa-folder"></i>
+                        {{ $DocumentLine->purchaseLines->purchase->code }}
+                    </a>
                 </td>
-                <td>{{ $DocumentLine->OrderLine['label'] }}</td>
-                <td>{{ $DocumentLine->OrderLine['qty'] }}</td>
-                <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
-                <td>{{ $DocumentLine->qty }}</td>
-                <td>{{ $DocumentLine->OrderLine['delivered_remaining_qty'] }}</td>
+                <td>
+                <x-OrderButton id="{{ $DocumentLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $DocumentLine->purchaseLines->tasks->OrderLines->order->code }}"  />
+                </td>
+                <td>#{{ $DocumentLine->purchaseLines->tasks->id }} {{ $DocumentLine->purchaseLines->tasks->code }} {{ $DocumentLine->purchaseLines->tasks->label }}</td>
+                <td>{{ $DocumentLine->purchaseLines->supplier_ref }}</td>
+                <td>{{ $DocumentLine->purchaseLines->tasks->qty  }}</td>
+                <td>{{ $DocumentLine->purchaseLines->qty  }}</td>
+                <td>{{ $DocumentLine->receipt_qty }}</td>
             </tr>
             @empty
-                <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
+                <x-EmptyDataLine col="6" text="No Lines in this purchase order ..."  />
             @endforelse
         </tbody>
     </table>

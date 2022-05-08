@@ -88,28 +88,28 @@
             <tr>
                 <th align="left">Order</th>
                 <th align="left">Description</th>
+                <th align="left">Supplier ref</th>
                 <th align="left">Qty</th>
-                <th align="left">Unit</th>
-                <th align="left">Delivered qty</th>
-                <th align="left">Remaining qty</th>
+                <th align="left">Selling price</th>
+                <th align="left">Discount</th>
+                <th align="left">Total selling price</th>
             </tr>
         </thead>
         <tbody>
             @forelse($Document->Lines as $DocumentLine)
             <tr>
-                <td>{{ $DocumentLine->OrderLine->order['code'] }}</td>
                 <td>
-                    {{ $DocumentLine->OrderLine['label'] }}<br>
-                    <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>
+                    {{ $DocumentLine->tasks->OrderLines->order->code }}
                 </td>
-                <td>{{ $DocumentLine->OrderLine['label'] }}</td>
-                <td>{{ $DocumentLine->OrderLine['qty'] }}</td>
-                <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
+                <td>#{{ $DocumentLine->tasks->id }} {{ $DocumentLine->code }} {{ $DocumentLine->label }}</td>
+                <td>{{ $DocumentLine->supplier_ref }}</td>
                 <td>{{ $DocumentLine->qty }}</td>
-                <td>{{ $DocumentLine->OrderLine['delivered_remaining_qty'] }}</td>
+                <td>{{ $DocumentLine->selling_price }} {{ $Factory->curency }}</td>
+                <td>{{ $DocumentLine->discount }} %</td>
+                <td>{{ $DocumentLine->total_selling_price }} {{ $Factory->curency }}</td>
             </tr>
             @empty
-                <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
+                <x-EmptyDataLine col="6" text="No Lines in this purchase order ..."  />
             @endforelse
         </tbody>
     </table>

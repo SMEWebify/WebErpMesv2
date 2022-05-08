@@ -464,12 +464,12 @@
               <div class="product-info">
                 <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->label }} {{ $LastProduct->ind }}
                   @if($LastProduct->purchased_price)
-                  <span class="badge badge-info float-right">{{ $LastProduct->purchased_price }}  {{ $Factory->curency }}</span></a>
+                  <span class="badge badge-info float-right">Purchased price {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}</span></a>
                   @endif
                 <span class="product-description">
                   {{ $LastProduct->code }}
                   @if($LastProduct->selling_price)
-                  <span class="badge badge-success float-right">{{ $LastProduct->selling_price }}  {{ $Factory->curency }}</span>
+                  <span class="badge badge-success float-right">Selling price {{ $LastProduct->selling_price }}  {{ $Factory->curency }}</span>
                   @endif
                 </span>
               </div>

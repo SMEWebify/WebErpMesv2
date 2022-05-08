@@ -109,7 +109,16 @@
                 <h3 class="card-title"> Options </h3>
               </div>
               <div class="card-body">
-                <a href="{{ route('print.order', ['Document' => $Purchase->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print purchase order</a>
+                <table class="table">
+                  <tr>
+                      <td style="width:50%"> 
+                        <x-ButtonTextPrint route="{{ route('print.purchase', ['Document' => $Purchase->id])}}" />
+                      </td>
+                      <td>
+                        <x-ButtonTextPDF route="{{ route('pdf.purchase', ['Document' => $Purchase->id])}}" />
+                      </td>
+                  </tr>
+                </table>
               </div>
             </div>
           </div>

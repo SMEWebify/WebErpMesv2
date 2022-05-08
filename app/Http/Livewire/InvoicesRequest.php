@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Workflow\Invoices;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\DeliveryLines;
 
@@ -46,6 +47,7 @@ class InvoicesRequest extends Component
 
     public function mount() 
     {
+        $this->user_id = Auth::id();
         $this->LastInvoice =  Invoices::latest()->first();
         if($this->LastInvoice == Null){
             $this->code = "IN-0";

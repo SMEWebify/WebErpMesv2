@@ -105,8 +105,8 @@ class QuotesIndex extends Component
 
         
         $CompanieSelect = Companies::select('id', 'code','label')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
         $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
         $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
         $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
