@@ -14,7 +14,8 @@ class OrdersLinesIndex extends Component
     public $search = '';
     public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
-    
+    public $product_id = '';
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -32,7 +33,15 @@ class OrdersLinesIndex extends Component
     
     public function render()
     {
-        $OrderLines = OrderLines::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        if(is_numeric($this->product_id)){
+            $OrderLines = OrderLines::where('product_id', $this->product_id)
+                                    ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                                    ->paginate(15);
+        }
+        else{
+            $OrderLines = OrderLines::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        }
+        
         return view('livewire.orders-lines-index', [
             'OrderLineslist' => $OrderLines,
         ]);

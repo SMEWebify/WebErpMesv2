@@ -56,7 +56,9 @@
                                 </div>
                             </td>
                             <td>{{ $OrderLine->code }}</td>
-                            <td>@if($OrderLine->product_id ) {{ $OrderLine->Product['label'] }}@endif</td>
+                            <td>
+                                @if($OrderLine->product_id ) <x-ButtonTextView route="{{ route('products.show', ['id' => $OrderLine->product_id])}}" />@endif
+                            </td>
                             <td>{{ $OrderLine->label }}</td>
                             <td>
                                 <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Delivered qty : {{ $OrderLine->delivered_qty }} <br /> Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>

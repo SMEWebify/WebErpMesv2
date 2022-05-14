@@ -32,7 +32,8 @@ class QuoteLine extends Component
     public $status_id;
 
     public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ordre, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $quote_lines_id, $quotes_id, $ordre, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $code='';
     public $label='';
     public $discount= 0;
     public $updateLines = false;
@@ -73,6 +74,22 @@ class QuoteLine extends Component
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+    
+    public function ChangeCodelabel()
+    {
+        $product = Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price')->where('id', $this->product_id)->get();
+        if(count($product) > 0){
+            $this->code = $product[0]->code ;
+            $this->label =  $product[0]->label;
+            $this->methods_units_id =  $product[0]->methods_units_id;
+            $this->selling_price =  $product[0]->selling_price;
+        }else{
+            $this->code ='';
+            $this->label ='';
+            $this->methods_units_id ='';
+            $this->selling_price ='';
+        }
     }
 
     public function mount($QuoteId, $QuoteStatu, $QuoteDelay) 

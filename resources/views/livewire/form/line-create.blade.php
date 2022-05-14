@@ -22,7 +22,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                 </div>
-                <select class="product_id form-control @error('product_id') is-invalid @enderror"  name="product_id" id="product_id"  wire:model="product_id">
+                <select wire:click.prevent="ChangeCodelabel()" class="product_id form-control @error('product_id') is-invalid @enderror"  name="product_id" id="product_id"  wire:model="product_id">
                     <option value="" >Select Product</option>
                     @foreach ($ProductsSelect as $item)
                     <option value="{{ $item->id }}" data-txt="{{ $item->code }}" >{{ $item->code }} - {{ $item->label }}</option>

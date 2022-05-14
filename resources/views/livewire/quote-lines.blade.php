@@ -55,7 +55,7 @@
                             </td>
                             <td>{{ $QuoteLine->code }}</td>
                             <td>
-                                @if($QuoteLine->product_id ) {{ $QuoteLine->Product['label'] }}@endif
+                                @if($QuoteLine->product_id ) <x-ButtonTextView route="{{ route('products.show', ['id' => $QuoteLine->product_id])}}" />@endif
                             </td>
                             <td>{{ $QuoteLine->label }}</td>
                             <td>{{ $QuoteLine->qty }}</td>

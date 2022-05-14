@@ -27,7 +27,8 @@ class OrderLine extends Component
     public $status_id;
 
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ordre, $code, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $order_lines_id, $orders_id, $ordre, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $code='';
     public $label='';
     public $discount= 0;
     public $updateLines = false;
@@ -66,6 +67,23 @@ class OrderLine extends Component
         $this->resetPage();
     }
 
+    public function ChangeCodelabel()
+    {
+        $product = Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price')->where('id', $this->product_id)->get();
+        if(count($product) > 0){
+            $this->code = $product[0]->code ;
+            $this->label =  $product[0]->label;
+            $this->methods_units_id =  $product[0]->methods_units_id;
+            $this->selling_price =  $product[0]->selling_price;
+        }else{
+            $this->code ='';
+            $this->label ='';
+            $this->methods_units_id ='';
+            $this->selling_price ='';
+        }
+    }
+
+    
     public function mount($OrderId, $OrderStatu, $OrderDelay) 
     {
         $this->orders_id = $OrderId;
@@ -85,7 +103,7 @@ class OrderLine extends Component
                                                                             ->orWhere('type', '=', 6)
                                                                             ->orWhere('type', '=', 8)
                                                                             ->orderBy('ordre')->get();
-    }
+}
 
     public function render()
     {

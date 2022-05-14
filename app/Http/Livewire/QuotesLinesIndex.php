@@ -14,6 +14,7 @@ class QuotesLinesIndex extends Component
     public $search = '';
     public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
+    public $product_id = '';
 
     public function sortBy($field)
     {
@@ -32,7 +33,15 @@ class QuotesLinesIndex extends Component
 
     public function render()
     {
-        $QuoteLines = QuoteLines::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        if(is_numeric($this->product_id)){
+            $QuoteLines = QuoteLines::where('product_id', $this->product_id)
+                                    ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                                    ->paginate(15);
+        
+        }
+        else{
+            $QuoteLines = QuoteLines::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        }
         
         return view('livewire.quotes-lines-index',[
             'QuoteLineslist' => $QuoteLines,

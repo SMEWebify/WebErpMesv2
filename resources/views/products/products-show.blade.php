@@ -398,8 +398,10 @@
         @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id]) 
       </div>
       <div class="tab-pane" id="quote">
+        @livewire('quotes-lines-index' , ['product_id' => $Product->id ])
       </div>
       <div class="tab-pane" id="order">
+        @livewire('orders-lines-index' , ['product_id' => $Product->id ])
       </div>
     </div>
   </div>
