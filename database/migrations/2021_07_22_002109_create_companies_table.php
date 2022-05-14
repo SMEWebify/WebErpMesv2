@@ -25,7 +25,7 @@ class CreateCompaniesTable extends Migration
 			$table->string('naf_code')->nullable();
 			$table->string('intra_community_vat')->nullable();
 			$table->string('picture')->nullable();
-			$table->integer('statu_customer')->default(0);
+			$table->integer('statu_customer')->default(1);
             #1 - Inactive
             #2 - Active
             #3 - Prospect
@@ -33,7 +33,7 @@ class CreateCompaniesTable extends Migration
 			$table->integer('user_id')->nullable()->default(0);
 			$table->integer('account_general_customer')->nullable()->default(0);
 			$table->integer('account_auxiliary_customer')->nullable()->default(0);
-			$table->integer('statu_supplier')->default(0);
+			$table->integer('statu_supplier')->default(1);
             #1 - Inactive
             #2 - Active
 			$table->integer('account_general_supplier')->nullable()->default(0);

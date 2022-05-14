@@ -101,7 +101,7 @@
                                                 @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
-                                                <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="naf_code code">
+                                                <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="Naf code">
                                                 @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="col-3">
@@ -109,39 +109,11 @@
                                                 @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
-                                        <!-- <hr>
-                                        <div class="row">
-                                            <label for="picture">Logo file</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="far fa-image"></i></span>
-                                                </div>
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="picture">
-                                                    <label class="custom-file-label" for="picture">Choose file</label>
-                                                </div>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">Upload</span>
-                                                </div>
-                                            </div>
-                                        </div>-->
                                         <hr>
                                         <div class="row">
-                                            <div class="col-3">
-                                                <label for="statu_customer">Statu client</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                                    </div>
-                                                    <select class="form-control" name="statu_customer" id="statu_customer" wire:model="statu_customer">
-                                                        <option value="">Select statu</option>
-                                                        <option value="1">Inactive</option>
-                                                        <option value="2">Active</option>
-                                                        <option value="3">Prospect</option>
-                                                    </select>
-                                                    @error('statu_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                                </div>
-                                            </div>
+                                            <label for="siren">Client information</label>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-3">
                                                 <label for="discount">Discount :</label>
                                                 <div class="input-group">
@@ -165,20 +137,9 @@
                                         </div>
                                         <hr>
                                         <div class="row">
-                                            <div class="col-3">
-                                                <label for="statu_supplier">Statu supplier</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                                    </div>
-                                                    <select class="form-control" name="statu_supplier" id="statu_supplier"  wire:model="statu_supplier">
-                                                        <option value="">Select statu</option>
-                                                        <option value="1" selected>Inactive</option>
-                                                        <option value="2">Active</option>
-                                                    </select>
-                                                @error('statu_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                                </div>
-                                            </div>
+                                            <label for="siren">Supplier information</label>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-3">
                                                 <label for="recept_controle">Reception control</label>
                                                 <select class="form-control" name="recept_controle" id="recept_controle" wire:model="recept_controle">

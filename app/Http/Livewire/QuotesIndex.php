@@ -142,6 +142,7 @@ class QuotesIndex extends Component
                                             'accounting_deliveries_id'=>$this->accounting_deliveries_id,   
                                             'comment'=>$this->comment, 
             ]);
+            Companies::where('id', $this->companies_id)->update(['statu_customer'=>1]);
             // Reset Form Fields After Creating line
             return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
     }

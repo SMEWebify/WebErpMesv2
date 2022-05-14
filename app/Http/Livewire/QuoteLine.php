@@ -10,12 +10,13 @@ use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
+use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Quotelines;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
-use App\Models\Workflow\OrderLines;
 use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuoteLine extends Component
@@ -276,6 +277,9 @@ class QuoteLine extends Component
                 'comment'=>$QuoteData->comment,
                 'quote_id'=>$QuoteData->id, 
             ]);
+
+            
+            Companies::where('id', $QuoteData->companies_id)->update(['statu_customer'=>2]);
 
             if($OrdersCreated){
                 // Create lines
