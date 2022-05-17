@@ -40,7 +40,6 @@ class FactoryController extends Controller
         $Factory->phone_number = $request->phone_number; 
         $Factory->mail = $request->mail;
         $Factory->web_site = $request->web_site;
-        $Factory->picture = $request->picture;
         $Factory->siren = $request->siren; 
         $Factory->nat_regis_num = $request->nat_regis_num;
         $Factory->vat_num = $request->vat_num;

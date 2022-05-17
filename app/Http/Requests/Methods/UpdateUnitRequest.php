@@ -13,7 +13,7 @@ class UpdateUnitRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class UpdateUnitRequest extends FormRequest
     public function rules()
     {
         return [
-           
+            //
+            'label'=>'required',
         ];
     }
 }

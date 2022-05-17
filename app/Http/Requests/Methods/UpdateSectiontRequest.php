@@ -13,7 +13,7 @@ class UpdateSectiontRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,8 @@ class UpdateSectiontRequest extends FormRequest
     {
         return [
             //
+            'ordre' =>'required',
+            'label'=>'required',
         ];
     }
 }

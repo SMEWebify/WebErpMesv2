@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Methods;
 use Illuminate\Http\Request;
 use App\Models\Methods\MethodsTools;
 use App\Http\Requests\Methods\StoreToolRequest;
+use App\Http\Requests\Methods\UpdateToolRequest;
 
 class ToolsController extends Controller
 {
@@ -29,5 +30,23 @@ class ToolsController extends Controller
         }
 
         return redirect()->route('methods')->with('success', 'Successfully created tool.');
+    }
+
+    /**
+     * @param $request
+     * @return View
+     */
+    public function update(UpdateToolRequest $request)
+    {
+        $Tool = MethodsTools::find($request->id);
+        $Tool->label=$request->label;
+        $Tool->ETAT=$request->ETAT;
+        $Tool->cost=$request->cost;
+        $Tool->end_date=$request->end_date;
+        $Tool->qty=$request->qty;
+        $Tool->save();
+
+
+        return redirect()->route('methods')->with('success', 'Successfully updated tool.');
     }
 }

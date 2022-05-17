@@ -76,20 +76,117 @@
                         <td>{{ $MethodsService->hourly_rate }}</td>
                         <td>{{ $MethodsService->margin }}</td>
                         <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}"></td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <td class="py-0 align-middle">
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalService{{ $MethodsService->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $MethodsService->id }} -->
+                          <div class="modal fade" id="ModalService{{ $MethodsService->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalServiceTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Update {{ $MethodsService->label }}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="{{ route('methods.service.update', ['id' => $MethodsService->id]) }}" enctype="multipart/form-data">
+                                  @csrf
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label for="ordre">Sort order:</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" value="{{ $MethodsService->ordre }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="label">Label</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control"  name="label" id="label" placeholder="Label" value="{{ $MethodsService->label }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="type">Type</label>
+                                        <div class="input-group">
+                                          <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                          </div>
+                                          <select class="form-control" name="type" id="type">
+                                              <option value="1" @if($MethodsService->type == 1 ) Selected @endif>Productive</option>
+                                              <option value="2" @if($MethodsService->type == 2 ) Selected @endif>Raw material</option>
+                                              <option value="3" @if($MethodsService->type == 3 ) Selected @endif>Raw material (Sheet)</option>
+                                              <option value="4" @if($MethodsService->type == 4 ) Selected @endif>Raw material (Profil)</option>
+                                              <option value="5" @if($MethodsService->type == 5 ) Selected @endif>Raw material (block)</option>
+                                              <option value="6" @if($MethodsService->type == 6 ) Selected @endif>Purchase</option>
+                                              <option value="7" @if($MethodsService->type == 7 ) Selected @endif>Sub-contracting</option>
+                                              <option value="8" @if($MethodsService->type == 8 ) Selected @endif>Composed component</option>
+                                          </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="hourly_rate">Hourly rate</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">{{ $Factory->curency }}/H</span>
+                                        </div>
+                                        <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001" value="{{ $MethodsService->hourly_rate }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="margin">Margin :</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" name="margin" id="margin" placeholder="10%" step=".001" value="{{ $MethodsService->hourly_rate }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="color">Color</label>
+                                      <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="far fa-image"></i></span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="picture" id="picture">
+                                            <label class="custom-file-label" for="picture">Choose file</label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="compannie_id">Supplier</label>
+                                        <select class="form-control" name="compannie_id" id="compannie_id">
+                                          <option value="NULL">None</option>
+                                          @foreach ($CompaniesSelect as $item)
+                                          <option value="{{ $item->id }}"  @if($MethodsService->compannie_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                          @endforeach
+                                        </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
                       @empty
-                      <tr>
-                        <td colspan="9">
-                          <div class="flex justify-center items-center">
-                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Service found ...</span>
-                          </div>
-                        </td>
-                      </tr>
+                        <x-EmptyDataLine col="9" text="No lines found ..."  />
                       @endforelse
                     </tbody>
                     <tfoot>
@@ -119,7 +216,7 @@
                   <div class="card-header">
                     <h3 class="card-title">New Service</h3>
                   </div>
-                  <form method="POST" action="{{ route('methods.service.create')}}" enctype="multipart/form-data">
+                  <form method="POST" action="{{ route('methods.service.create') }}" enctype="multipart/form-data">
                     @csrf
                       <div class="form-group">
                         <label for="code">External ID</label>
@@ -198,6 +295,7 @@
                               <input type="file" class="custom-file-input" name="picture" id="picture">
                               <label class="custom-file-label" for="picture">Choose file</label>
                           </div>
+                        
                       </div>
                       <div class="form-group">
                         <label for="compannie_id">Supplier</label>
@@ -251,7 +349,6 @@
                     <tbody>
                       @forelse ($MethodsRessources as $MethodsRessource)
                       <tr>
-                      
                         <td>
                           @if($MethodsRessource->picture )
                           <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/ressources/'.$MethodsRessource->picture) }}">
@@ -260,25 +357,131 @@
                         <td>{{ $MethodsRessource->ordre }}</td>
                         <td>{{ $MethodsRessource->code }}</td>
                         <td>{{ $MethodsRessource->label }}</td>
-                        <td>{{ $MethodsRessource->mask_time }}</td>
+                        <td>
+                          @if($MethodsRessource->mask_time == 1  ) Yes @endif
+                          @if($MethodsRessource->mask_time == 2  ) No @endif
+                        </td>
                         <td>{{ $MethodsRessource->capacity }} h/w</td>
                         <td>{{ $MethodsRessource->section['label'] }}</td>
                         <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}"></td>
                         <td>{{ $MethodsRessource->service['label'] }}</td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <td class=" py-0 align-middle">
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalRessource{{ $MethodsRessource->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $MethodsRessource->id }} -->
+                          <div class="modal fade" id="ModalRessource{{ $MethodsRessource->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalRessourceTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Update {{ $MethodsRessource->label }}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="{{ route('methods.ressource.update', ['id' => $MethodsRessource->id]) }}" enctype="multipart/form-data">
+                                  @csrf
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label for="ordre">Sort order:</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" value="{{ $MethodsRessource->ordre }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="label">Label</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control"  name="label" id="label" placeholder="Label" value="{{ $MethodsRessource->label }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mask_time">Mask time ?</label>
+                                        <div class="input-group">
+                                          <div class="input-group-prepend">
+                                              <span class="input-group-text"><i class="fas fa-user-times"></i></span>
+                                          </div>
+                                          <select class="form-control" name="mask_time" id="mask_time">
+                                              <option value="2" @if($MethodsRessource->mask_time == 2  ) Selected @endif>No</option>
+                                              <option value="1" @if($MethodsRessource->mask_time == 1  ) Selected @endif>Yes</option>
+                                          </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="capacity">Hour capacity by week</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" name="capacity" id="capacity" placeholder="110 h/week" value="{{ $MethodsRessource->capacity }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="color">Color</label>
+                                      <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}">
+                                    </div>
+                                    <div class="form-group">
+                                      
+                                      <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="far fa-image"></i></span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="picture" id="picture">
+                                            <label class="custom-file-label" for="picture">Choose file</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="section_id">Section</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-industry"></i></span>
+                                        </div>
+                                        <select class="form-control" name="section_id" id="section_id">
+                                          @forelse ($SectionsSelect as $item)
+                                          <option value="{{ $item->id }}" @if($MethodsRessource->section_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                          @empty
+                                          <option value="">No section, please add before</option>
+                                          @endforelse
+                                        </select>
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="service_id">Services</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                        </div>
+                                        <select class="form-control" name="service_id" id="service_id">
+                                          @forelse ($ServicesSelect as $item)
+                                          <option value="{{ $item->id }}" @if($MethodsRessource->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                          @empty
+                                          <option value="">No service</option>
+                                          @endforelse
+                                        </select>
+                                      </div>
+                                    </div>
+                                    <!-- /.form-group -->
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
                       @empty
-                      <tr>
-                        <td colspan="9">
-                          <div class="flex justify-center items-center">
-                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Ressource found ...</span>
-                          </div>
-                        </td>
-                      </tr>
+                        <x-EmptyDataLine col="10" text="No lines found ..."  />
                       @endforelse
                     </tbody>
                     <tfoot>
@@ -449,20 +652,74 @@
                         <td>{{ $MethodsSection->label }}</td>
                         <td>{{ $MethodsSection->UserManagement['name'] }}</td>
                         <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsSection->color }}"></td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <td class=" py-0 align-middle">
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalSection{{ $MethodsSection->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $MethodsSection->id }} -->
+                          <div class="modal fade" id="ModalSection{{ $MethodsSection->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalSectionTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Update {{ $MethodsSection->label }}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="{{ route('methods.section.update', ['id' => $MethodsSection->id]) }}" enctype="multipart/form-data">
+                                  @csrf
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label for="ordre">Sort order:</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10" value="{{ $MethodsSection->ordre }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="label">Label</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsSection->label }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="color">Color</label>
+                                      <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsSection->color }}">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label for="user_id">User management</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <select class="form-control" name="user_id" id="user_id">
+                                          @foreach ($userSelect as $item)
+                                          <option value="{{ $item->id }}" @if($MethodsRessource->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
+                                          @endforeach
+                                        </select>
+                                      </div>
+                                    </div>
+                                    <!-- /.form-group -->
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
                       @empty
-                      <tr>
-                        <td colspan="6">
-                          <div class="flex justify-center items-center">
-                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Section found ...</span>
-                          </div>
-                        </td>
-                      </tr>
+                      <x-EmptyDataLine col="6" text="No lines found ..."  />
                       @endforelse
                     </tbody>
                     <tfoot>
@@ -572,10 +829,54 @@
                         <td>{{ $MethodsLocation->label }}</td>
                         <td>{{ $MethodsLocation->ressources['label'] }}</td>
                         <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsLocation->color }}"></td>
-                        
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <td class=" py-0 align-middle">
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalLocation{{ $MethodsLocation->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $MethodsLocation->id }} -->
+                          <div class="modal fade" id="ModalLocation{{ $MethodsLocation->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalLocationTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Update {{ $MethodsLocation->label }}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="{{ route('methods.location.update', ['id' => $MethodsLocation->id]) }}" enctype="multipart/form-data">
+                                  @csrf
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label for="label">Label</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsLocation->label }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="color">Color</label>
+                                      <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsLocation->color }}">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="ressource_id">Ressource</label>
+                                      <select class="form-control" name="ressource_id" id="ressource_id">
+                                        @foreach ($RessourcesSelect as $item)
+                                        <option value="{{ $item->id }}" @if($MethodsLocation->ressource_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                        @endforeach
+                                      </select>
+                                    </div>
+                                    <!-- /.form-group -->
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -685,20 +986,61 @@
                           @if($MethodsUnit->type  == 4) Volume @endif
                           @if($MethodsUnit->type  == 5) Other @endif
                         </td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <td class=" py-0 align-middle">
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalUnit{{ $MethodsUnit->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $MethodsUnit->id }} -->
+                          <div class="modal fade" id="ModalUnit{{ $MethodsUnit->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalUnitTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Update {{ $MethodsUnit->label }}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="{{ route('methods.unit.update', ['id' => $MethodsUnit->id]) }}" enctype="multipart/form-data">
+                                  @csrf
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label for="label">Label</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsUnit->label }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="type">Type</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-ruler"></i></span>
+                                        </div>
+                                        <select class="form-control" name="type" id="type">
+                                            <option value="1" @if($MethodsUnit->type == 1  ) Selected @endif>Mass</option>
+                                            <option value="2" @if($MethodsUnit->type == 2  ) Selected @endif>Length</option>
+                                            <option value="3" @if($MethodsUnit->type == 3  ) Selected @endif>Aera</option>
+                                            <option value="4" @if($MethodsUnit->type == 4  ) Selected @endif>Volume</option>
+                                            <option value="5" @if($MethodsUnit->type == 5  ) Selected @endif>Other</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
                       @empty
-                      <tr>
-                        <td colspan="9">
-                          <div class="flex justify-center items-center">
-                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Unit found ...</span>
-                          </div>
-                        </td>
-                      </tr>
+                      <x-EmptyDataLine col="9" text="No lines found ..."  />
                       @endforelse
                     </tbody>
                     <tfoot>
@@ -794,20 +1136,61 @@
                         <td>{{ $MethodsFamilie->code }}</td>
                         <td>{{ $MethodsFamilie->label }}</td>
                         <td>{{ $MethodsFamilie->service['label'] }}</td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <td class=" py-0 align-middle">
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalFamilie{{ $MethodsFamilie->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $MethodsFamilie->id }} -->
+                          <div class="modal fade" id="ModalFamilie{{ $MethodsFamilie->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalFamilieTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Update {{ $MethodsFamilie->label }}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="{{ route('methods.family.update', ['id' => $MethodsFamilie->id]) }}" enctype="multipart/form-data">
+                                  @csrf
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label for="label">Label</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsFamilie->label }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="service_id">Services</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                        </div>
+                                        <select class="form-control" name="service_id" id="service_id">
+                                          @forelse ($ServicesSelect as $item)
+                                          <option value="{{ $item->id }}" @if($MethodsFamilie->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                          @empty
+                                          <option value="">No service, please add one before</option>
+                                          @endforelse
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
                       @empty
-                      <tr>
-                        <td colspan="4">
-                          <div class="flex justify-center items-center">
-                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Families found ...</span>
-                          </div>
-                        </td> 
-                      </tr>
+                      <x-EmptyDataLine col="4" text="No lines found ..."  />
                       @endforelse
                     </tbody>
                     <tfoot>
@@ -916,20 +1299,91 @@
                         <td>{{ $MethodsTool->cost }}</td>
                         <td>{{ $MethodsTool->end_date }}</td>
                         <td>{{ $MethodsTool->qty }}</td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <td class=" py-0 align-middle">
+                          <!-- Button trigger modal -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalTool{{ $MethodsTool->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $MethodsTool->id }} -->
+                          <div class="modal fade" id="ModalTool{{ $MethodsTool->id }}" tabindex="-1" role="dialog" aria-labelledby="ModalToolTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Update {{ $MethodsTool->label }}</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <form method="POST" action="{{ route('methods.tool.update', ['id' => $MethodsTool->id]) }}" enctype="multipart/form-data">
+                                  @csrf
+                                  <div class="modal-body">
+                                    <div class="form-group">
+                                      <label for="label">Label</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsTool->label }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="ETAT">Statu</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                        </div>
+                                        <select class="form-control" name="ETAT" id="ETAT">
+                                          <option value="1" @if($MethodsTool->ETAT == 1 ) Selected @endif>Unused</option>
+                                          <option value="2" @if($MethodsTool->ETAT == 2  ) Selected @endif>Used</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="cost">Cost</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                        </div>
+                                        <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001" value="{{ $MethodsTool->cost }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="qty">Quantity</label>
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-times"></i></span>
+                                        </div>
+                                        <input type="numer" class="form-control" name="qty"  id="qty" placeholder="Qty" value="{{ $MethodsTool->qty }}">
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="end_date">End date</label>
+                                      <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="Qty" value="{{ $MethodsTool->end_date }}" >
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="far fa-image"></i></span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="picture" id="picture">
+                                            <label class="custom-file-label" for="picture">Choose file</label>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
                       @empty
-                      <tr>
-                        <td colspan="8">
-                          <div class="flex justify-center items-center">
-                              <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Tool found ...</span>
-                          </div>
-                        </td>
-                      </tr>
+                      <x-EmptyDataLine col="8" text="No lines found ..."  />
                       @endforelse
                     </tbody>
                     <tfoot>

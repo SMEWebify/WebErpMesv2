@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Methods;
 use Illuminate\Http\Request;
 use App\Models\Methods\MethodsServices;
 use App\Http\Requests\Methods\StoreServicesRequest;
+use App\Http\Requests\Methods\UpdateServicesRequest;
 
 class ServicesController extends Controller
 {
@@ -29,5 +30,35 @@ class ServicesController extends Controller
         }
 
         return redirect()->route('methods')->with('success', 'Successfully created service.');
+    }
+
+    /**
+     * @param $request
+     * @return View
+     */
+    public function update(UpdateServicesRequest $request)
+    {
+        
+        $Service = MethodsServices::find($request->id);
+        $Service->ordre=$request->ordre;
+        $Service->label=$request->label;
+        $Service->type=$request->type;
+        $Service->hourly_rate=$request->hourly_rate;
+        $Service->margin=$request->margin;
+        $Service->color=$request->color;
+        $Service->compannie_id=$request->compannie_id;
+        $Service->save();
+
+    /* if($request->hasFile('picture')){
+            $file =  $request->file('picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->picture->move(public_path('images/methods'), $filename);
+            $Service->update(['picture' => $filename]);
+            $Service->save();
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }*/
+        return redirect()->route('methods')->with('success', 'Successfully updated service.');
     }
 }

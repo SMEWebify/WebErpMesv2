@@ -13,7 +13,7 @@ class UpdateRessourceRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,12 @@ class UpdateRessourceRequest extends FormRequest
     {
         return [
             //
+            'ordre' =>'required',
+            'label'=>'required',
+            'capacity'=>'required',
+            'section_id'=>'required',
+            'service_id'=>'required',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }
 }

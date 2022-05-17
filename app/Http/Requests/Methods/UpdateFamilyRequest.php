@@ -13,7 +13,7 @@ class UpdateFamilyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,8 @@ class UpdateFamilyRequest extends FormRequest
     {
         return [
             //
+            'label'=>'required',
+            'service_id'=>'required',
         ];
     }
 }

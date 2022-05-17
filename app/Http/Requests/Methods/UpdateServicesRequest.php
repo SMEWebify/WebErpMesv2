@@ -13,7 +13,7 @@ class UpdateServicesRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,11 @@ class UpdateServicesRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'ordre' =>'required',
+            'label'=>'required',
+            'hourly_rate'=>'required',
+            'margin'=>'required',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }
 }

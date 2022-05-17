@@ -169,13 +169,20 @@ Route::group(['prefix' => 'quality'], function () {
 
 Route::group(['prefix' => 'methods'], function () {
     Route::get('/', 'App\Http\Controllers\Methods\MethodsController@index')->middleware(['auth'])->name('methods');
-    Route::post('/methods/Unit/create', 'App\Http\Controllers\Methods\UnitsController@store')->middleware(['auth'])->name('methods.unit.create');
-    Route::post('/methods/Family/create', 'App\Http\Controllers\Methods\FamiliesController@store')->middleware(['auth'])->name('methods.family.create');
-    Route::post('/methods/Service/create', 'App\Http\Controllers\Methods\ServicesController@store')->middleware(['auth'])->name('methods.service.create');
-    Route::post('/methods/Section/create', 'App\Http\Controllers\Methods\SectionsController@store')->middleware(['auth'])->name('methods.section.create');
-    Route::post('/methods/Ressources/create', 'App\Http\Controllers\Methods\RessourcesController@store')->middleware(['auth'])->name('methods.ressource.create');
-    Route::post('/methods/Location/create', 'App\Http\Controllers\Methods\LocationsController@store')->middleware(['auth'])->name('methods.location.create');
-    Route::post('/methods/Tool/create', 'App\Http\Controllers\Methods\ToolsController@store')->middleware(['auth'])->name('methods.tool.create');
+    Route::post('/Unit/create', 'App\Http\Controllers\Methods\UnitsController@store')->middleware(['auth'])->name('methods.unit.create');
+    Route::post('/Unit/edit/{id}', 'App\Http\Controllers\Methods\UnitsController@update')->middleware(['auth'])->name('methods.unit.update');
+    Route::post('/Family/create', 'App\Http\Controllers\Methods\FamiliesController@store')->middleware(['auth'])->name('methods.family.create');
+    Route::post('/Family/edit/{id}', 'App\Http\Controllers\Methods\FamiliesController@update')->middleware(['auth'])->name('methods.family.update');
+    Route::post('/Service/create', 'App\Http\Controllers\Methods\ServicesController@store')->middleware(['auth'])->name('methods.service.create');
+    Route::post('/Service/edit/{id}', 'App\Http\Controllers\Methods\ServicesController@update')->middleware(['auth'])->name('methods.service.update');
+    Route::post('/Section/create', 'App\Http\Controllers\Methods\SectionsController@store')->middleware(['auth'])->name('methods.section.create');
+    Route::post('/Section/edit/{id}', 'App\Http\Controllers\Methods\SectionsController@update')->middleware(['auth'])->name('methods.section.update');
+    Route::post('/Ressources/create', 'App\Http\Controllers\Methods\RessourcesController@store')->middleware(['auth'])->name('methods.ressource.create');
+    Route::post('/Ressources/edit/{id}', 'App\Http\Controllers\Methods\RessourcesController@update')->middleware(['auth'])->name('methods.ressource.update');
+    Route::post('/Location/create', 'App\Http\Controllers\Methods\LocationsController@store')->middleware(['auth'])->name('methods.location.create');
+    Route::post('/Location/edit/{id}', 'App\Http\Controllers\Methods\LocationsController@update')->middleware(['auth'])->name('methods.location.update');
+    Route::post('/Tool/create', 'App\Http\Controllers\Methods\ToolsController@store')->middleware(['auth'])->name('methods.tool.create');
+    Route::post('/Tool/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->middleware(['auth'])->name('methods.tool.update');
 });
 
 

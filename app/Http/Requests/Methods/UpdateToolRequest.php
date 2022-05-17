@@ -13,7 +13,7 @@ class UpdateToolRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,9 @@ class UpdateToolRequest extends FormRequest
     {
         return [
             //
+            'label'=>'required',
+            'qty'=>'required',
+            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }
 }

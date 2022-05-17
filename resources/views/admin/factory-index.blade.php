@@ -449,9 +449,9 @@
                                                         <span class="input-group-text">$</span>
                                                     </div>
                                                     <select class="form-control"  name="curency" id="curency" >
-                                                        <option value="USD" selected="selected">United States Dollars</option>
-                                                        <option value="EUR">Euro</option>
-                                                        <option value="GBP">United Kingdom Pounds</option>
+                                                        <option value="USD" @if('USD' == $Factory->curency ) Selected @endif>United States Dollars</option>
+                                                        <option value="EUR" @if('EUR' == $Factory->curency ) Selected @endif>Euro</option>
+                                                        <option value="GBP" @if('GBP' == $Factory->curency ) Selected @endif>United Kingdom Pounds</option>
                                                     </select>
                                                 </div>
                                             </div>
