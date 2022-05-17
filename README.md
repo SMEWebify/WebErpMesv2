@@ -16,7 +16,9 @@ Often, management systems offer full CRM and billing management. But if a link i
 <p align="center">I am unprofessional, any improvement discussion would be helpful. :hugs:</p>
 
 # Instal
-for instal, test or help to devellop follow wiki page : https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps
+for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-dev))
+
+for run to production, follow this link :  [wiki page (install to run)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
 # Current progress of the project :building_construction:
 
