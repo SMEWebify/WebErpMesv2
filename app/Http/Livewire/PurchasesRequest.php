@@ -255,7 +255,8 @@ class PurchasesRequest extends Component
             }
         }
         else{
-            return redirect()->back()->with('error', 'no lines selected');
+            $errors = $this->getErrorBag();
+            $errors->add('errors', 'no lines selected');
         }
     }
 }

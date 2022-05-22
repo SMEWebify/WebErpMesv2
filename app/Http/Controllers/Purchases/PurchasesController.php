@@ -22,6 +22,7 @@ use App\Models\Purchases\PurchaseQuotationLines;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
+use App\Models\Purchases\PurchaseInvoice;
 
 class PurchasesController extends Controller
 {
@@ -230,6 +231,25 @@ class PurchasesController extends Controller
     }
 
     /**
+     * @param $id
+     * @return View
+     */
+    public function showInvoice(PurchaseInvoice $id)
+    {   
+        $Factory = Factory::first();
+        $previousUrl = route('purchase.invoice.show', ['id' => $id->id-1]);
+        $nextUrl = route('purchase.invoice.show', ['id' => $id->id+1]);
+
+        return view('purchases/purchases-invoice-show', [
+            'PurchaseInvoice' => $id,
+            'Factory' => $Factory,
+            'previousUrl' =>  $previousUrl,
+            'nextUrl' =>  $nextUrl,
+        ]);
+    }
+    
+
+    /**
      * @param Request $request
      * @return View
      */
@@ -308,8 +328,35 @@ class PurchasesController extends Controller
     /**
      * @return View
      */
-    public function invoice()
+    public function waintingInvoice()
     {    
-        return view('purchases/purchases-invoice');
+        return view('purchases/purchases-wainting-invoice');
+    }
+
+    /**
+     * @return View
+     */
+    public function invoice()
+    {   
+        $CurentYear = Carbon::now()->format('Y');
+        //Purchases data for chart
+        $data['purchasesDataRate'] = DB::table('purchase_invoices')
+                                    ->select('statu', DB::raw('count(*) as PurchaseInvoiceCountRate'))
+                                    ->groupBy('statu')
+                                    ->get();
+        //Purchases data for chart
+        $data['purchaseMonthlyRecap'] = DB::table('purchase_invoice_lines')
+                                                            ->join('purchase_lines', 'purchase_invoice_lines.purchase_line_id', '=', 'purchase_lines.id')
+                                                            ->join('tasks', 'purchase_lines.tasks_id', '=', 'tasks.id')
+                                                            ->join('order_lines', 'tasks.order_lines_id', '=', 'order_lines.id')
+                                                            ->selectRaw('
+                                                                MONTH(purchase_lines.created_at) AS month,
+                                                                SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS purchaseSum
+                                                            ')
+                                                            ->whereYear('purchase_invoice_lines.created_at', $CurentYear)
+                                                            ->groupByRaw('MONTH(purchase_invoice_lines.created_at) ')
+                                                            ->get();
+                                                            
+        return view('purchases/purchases-invoice')->with('data',$data);
     }
 }

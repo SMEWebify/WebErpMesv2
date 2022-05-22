@@ -61,7 +61,8 @@
                             </td>
                             <td>{{ $OrderLine->label }}</td>
                             <td>
-                                <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Delivered qty : {{ $OrderLine->delivered_qty }} <br /> Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
+                                <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Delivered qty : {{ $OrderLine->delivered_qty }} 
+Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             </td>
                             <td>{{ $OrderLine->Unit['label'] }}</td>
                             <td>{{ $OrderLine->selling_price }} {{ $Factory->curency }}</td>

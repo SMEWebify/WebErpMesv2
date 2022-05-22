@@ -135,6 +135,8 @@
                   <th>Description</th>
                   <th>Supplier ref</th>
                   <th>Qty</th>
+                  <th>Qty Reciept</th>
+                  <th>Qty Invoice</th>
                   <th>Selling price</th>
                   <th>Discount</th>
                   <th>Total selling price</th>
@@ -149,6 +151,8 @@
                     <td>#{{ $PurchaseLine->tasks->id }} {{ $PurchaseLine->code }} {{ $PurchaseLine->label }}</td>
                     <td>{{ $PurchaseLine->supplier_ref }}</td>
                     <td>{{ $PurchaseLine->qty }}</td>
+                    <td>{{ $PurchaseLine->receipt_qty }}</td>
+                    <td>{{ $PurchaseLine->invoiced_qty }}</td>
                     <td>{{ $PurchaseLine->selling_price }} {{ $Factory->curency }}</td>
                     <td>{{ $PurchaseLine->discount }} %</td>
                     <td>{{ $PurchaseLine->total_selling_price }} {{ $Factory->curency }}</td>
@@ -162,6 +166,8 @@
                     <th>Description</th>
                     <th>Supplier ref</th>
                     <th>Qty</th>
+                    <th>Qty Reciept</th>
+                    <th>Qty Invoice</th>
                     <th>Selling price</th>
                     <th>Discount</th>
                     <th>Total selling price</th>

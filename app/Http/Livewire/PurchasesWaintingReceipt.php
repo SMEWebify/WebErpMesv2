@@ -145,10 +145,11 @@ class PurchasesWaintingReceipt extends Component
                 }
             } 
 
-            return redirect()->route('purchases.wainting.receipt.show', ['id' => $ReceiptCreated->id])->with('success', 'Successfully created new receipt');
+            return redirect()->route('purchase.receipt.show', ['id' => $ReceiptCreated->id])->with('success', 'Successfully created new receipt');
         }
         else{
-            return redirect()->route('purchases.wainting.receipt')->with('error', 'no lines selected');
+            $errors = $this->getErrorBag();
+            $errors->add('errors', 'no lines selected');
         }
     }
 }

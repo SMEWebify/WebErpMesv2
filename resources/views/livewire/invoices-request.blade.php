@@ -97,9 +97,7 @@
                             <td>
                                 <a class="btn btn-primary btn-sm" href="{{ route('deliverys.show', ['id' => $InvoicesRequestsLine->deliverys_id ]) }}">
                                     <i class="fas fa-folder"></i>
-                                    View
-                                </a>
-                                {{ $InvoicesRequestsLine->delivery['code'] }}
+                                    {{ $InvoicesRequestsLine->delivery['code'] }}
                             </td>
                             <td>{{ $InvoicesRequestsLine->orderLine['code'] }}</td>
                             <td>{{ $InvoicesRequestsLine->orderLine['label'] }}</td>

@@ -387,6 +387,10 @@ return [
                     'url'  => 'purchases/receipt',
                 ],
                 [
+                    'text' => 'Waiting to invoice',
+                    'url'  => 'purchases/waiting/invoice',
+                ],
+                [
                     'text' => 'Invoice supplier',
                     'url'  => 'purchases/invoice',
                 ],
