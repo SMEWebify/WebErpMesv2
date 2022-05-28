@@ -131,8 +131,24 @@ class HomeController extends Controller
                                     ->whereYear('created_at', $CurentYear)
                                     ->get();
 
+        
+
         //Estimated Budgets data for chart
         $data['estimatedBudget'] = EstimatedBudgets::where('year', $CurentYear)->get();
+
+        //GOAL 
+        $EstimatedBudgets = $data['estimatedBudget'][0]->amount1
+                            +$data['estimatedBudget'][0]->amount2
+                            +$data['estimatedBudget'][0]->amount3
+                            +$data['estimatedBudget'][0]->amount4
+                            +$data['estimatedBudget'][0]->amount5
+                            +$data['estimatedBudget'][0]->amount6
+                            +$data['estimatedBudget'][0]->amount7
+                            +$data['estimatedBudget'][0]->amount8
+                            +$data['estimatedBudget'][0]->amount9
+                            +$data['estimatedBudget'][0]->amount10
+                            +$data['estimatedBudget'][0]->amount11
+                            +$data['estimatedBudget'][0]->amount12;
 
         return view('dashboard', [
             'Factory' => $Factory,
@@ -147,6 +163,7 @@ class HomeController extends Controller
             'LateOrders' =>  $LateOrders,
             'ServiceGoals' => $ServiceGoals,
             'Tasks' => $Tasks,
+            'EstimatedBudgets' => $EstimatedBudgets,
         ])->with('data',$data);
     }
 

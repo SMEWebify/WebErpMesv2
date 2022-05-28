@@ -219,7 +219,7 @@
           <div class="row">
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
-                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+                <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
                 <h5 class="description-header">{{ $orderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
                 <span class="description-text">TOTAL ORDER FORCASTED</span>
               </div>
@@ -228,7 +228,7 @@
           <!-- /.col -->
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
-                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+                <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
                 <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
                 <span class="description-text">TOTAL ORDER DELIVERED</span>
               </div>
@@ -237,7 +237,7 @@
             <!-- /.col -->
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
-                <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
+                <!--<<span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>-->
                 <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
                 <span class="description-text">TOTAL INVOINCED</span>
               </div>
@@ -246,8 +246,9 @@
             <!-- /.col -->
             <div class="col-sm-3 col-6">
               <div class="description-block">
-                <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i>/</span>
-                <h5 class="description-header">/</h5>
+                <!--<span class="description-percentage text-danger"><i class="fas fa-caret-down"></i></span>-->
+                {{ round($OrderTotalRevenue[0]->orderTotalRevenue / $EstimatedBudgets *100,2)}} %
+                <h5 class="description-header"> {{ $OrderTotalRevenue[0]->orderTotalRevenue }}  /{{ $EstimatedBudgets }}</h5>
                 <span class="description-text">GOAL COMPLETIONS</span>
               </div>
               <!-- /.description-block -->
