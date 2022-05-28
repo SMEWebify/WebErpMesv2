@@ -1299,7 +1299,7 @@
                         <td>{{ $MethodsTool->cost }}</td>
                         <td>{{ $MethodsTool->end_date }}</td>
                         <td>{{ $MethodsTool->qty }}</td>
-                        <td class=" py-0 align-middle">
+                        <td class="py-0 align-middle">
                           <!-- Button trigger modal -->
                           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalTool{{ $MethodsTool->id }}">
                             <i class="fa fa-lg fa-fw  fa-edit"></i>

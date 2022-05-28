@@ -25,6 +25,7 @@ class UpdatePaymentMethodRequest extends FormRequest
     {
         return [
             //
+            'label'=>'required',
         ];
     }
 }

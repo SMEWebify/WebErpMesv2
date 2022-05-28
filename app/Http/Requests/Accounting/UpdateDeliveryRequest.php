@@ -25,6 +25,7 @@ class UpdateDeliveryRequest extends FormRequest
     {
         return [
             //
+            'label'=>'required',
         ];
     }
 }

@@ -107,10 +107,15 @@ Route::group(['prefix' => 'pdf'], function () {
 Route::group(['prefix' => 'accouting'], function () {
     Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
     Route::post('/Allocation/create', 'App\Http\Controllers\Accounting\AllocationController@store')->middleware(['auth'])->name('accouting.allocation.create');
+    Route::post('/Allocation/edit/{id}', 'App\Http\Controllers\Accounting\AllocationController@update')->middleware(['auth'])->name('accouting.allocation.update');
     Route::post('/Delivery/create', 'App\Http\Controllers\Accounting\DeliveryController@store')->middleware(['auth'])->name('accouting.delivery.create');
+    Route::post('/Delivery/edit/{id}', 'App\Http\Controllers\Accounting\DeliveryController@update')->middleware(['auth'])->name('accouting.delivery.update');
     Route::post('/PaymentCondition/create', 'App\Http\Controllers\Accounting\PaymentConditionsController@store')->middleware(['auth'])->name('accouting.paymentCondition.create');
+    Route::post('/PaymentCondition/edit/{id}', 'App\Http\Controllers\Accounting\PaymentConditionsController@update')->middleware(['auth'])->name('accouting.paymentCondition.update');
     Route::post('/PaymentMethod/create', 'App\Http\Controllers\Accounting\PaymentMethodController@store')->middleware(['auth'])->name('accouting.paymentMethod.create');
+    Route::post('/PaymentMethod/edit/{id}', 'App\Http\Controllers\Accounting\PaymentMethodController@update')->middleware(['auth'])->name('accouting.paymentMethod.update');
     Route::post('/VAT/create', 'App\Http\Controllers\Accounting\VatController@store')->middleware(['auth'])->name('accouting.vat.create');
+    Route::post('/VAT/create/edit/{id}', 'App\Http\Controllers\Accounting\VatController@update')->middleware(['auth'])->name('accouting.vat.update');
 });
 
 Route::group(['prefix' => 'times'], function () {

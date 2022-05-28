@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Accounting\AccountingDelivery;
 use App\Http\Requests\Accounting\StoreDeliveryRequest;
+use App\Http\Requests\Accounting\UpdateDeliveryRequest;
 
 class DeliveryController extends Controller
 {
@@ -17,5 +18,17 @@ class DeliveryController extends Controller
     {
         $Delevery = AccountingDelivery::create($request->only('code','label'));
         return redirect()->route('accounting')->with('success', 'Successfully created delevery mode.');
+    }
+
+        /**
+     * @param $request
+     * @return View
+     */
+    public function update(UpdateDeliveryRequest $request)
+    {
+        $AccountingDelivery = AccountingDelivery::find($request->id);
+        $AccountingDelivery->label=$request->label;
+        $AccountingDelivery->save();
+        return redirect()->route('accounting')->with('success', 'Successfully updated delevery mode.');
     }
 }

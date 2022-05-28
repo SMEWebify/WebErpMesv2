@@ -25,6 +25,7 @@ class UpdatePaymentConditionRequest extends FormRequest
     {
         return [
             //
+            'label'=>'required',
         ];
     }
 }

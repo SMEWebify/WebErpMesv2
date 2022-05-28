@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Http\Requests\Accounting\StorePaymentMethodRequest;
+use App\Http\Requests\Accounting\UpdatePaymentMethodRequest;
 
 class PaymentMethodController extends Controller
 {
@@ -19,5 +20,18 @@ class PaymentMethodController extends Controller
                                                                         'label',
                                                                         'code_account'));
         return redirect()->route('accounting')->with('success', 'Successfully created payment method mode.');
+    }
+
+    /**
+     * @param $request
+     * @return View
+     */
+    public function update(UpdatePaymentMethodRequest $request)
+    {
+        $PaymentMethod = AccountingPaymentMethod::find($request->id);
+        $PaymentMethod->label=$request->label;
+        $PaymentMethod->code_account=$request->code_account;
+        $PaymentMethod->save();
+        return redirect()->route('accounting')->with('success', 'Successfully updated payment method mode.');
     }
 }

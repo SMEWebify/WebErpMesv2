@@ -25,6 +25,8 @@ class UpdateVatRequest extends FormRequest
     {
         return [
             //
+            'label'=>'required',
+            'rate'=>'required|unique:accounting_vats',
         ];
     }
 }

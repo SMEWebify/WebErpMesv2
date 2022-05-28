@@ -25,6 +25,8 @@ class UpdateAllocationRequest extends FormRequest
     {
         return [
             //
+            'label'=>'required',
+            'accounting_vats_id'=>'required',
         ];
     }
 }
