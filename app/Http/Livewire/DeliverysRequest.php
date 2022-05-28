@@ -10,6 +10,8 @@ use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 
 class DeliverysRequest extends Component
 {
@@ -17,14 +19,13 @@ class DeliverysRequest extends Component
     //use WithPagination;
     //protected $paginationTheme = 'bootstrap';
 
-    public $companies_id = '';
     public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
     
     public $LastDelivery = '1';
 
     public $DeliverysRequestsLineslist;
-    public $code, $label, $user_id; 
+    public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
     public $updateLines = false;
     public $CompaniesSelect = [];
     public $data = [];
@@ -37,6 +38,8 @@ class DeliverysRequest extends Component
         'code' =>'required|unique:deliverys',
         'label' =>'required',
         'companies_id'=>'required',
+        'companies_addresses_id' =>'required',
+        'companies_contacts_id' =>'required',
         'user_id'=>'required',
         
     ];
@@ -64,12 +67,14 @@ class DeliverysRequest extends Component
             $this->label = "DN-". $this->LastDelivery->id;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
     }
 
     public function render()
     {
         $userSelect = User::select('id', 'name')->get();
+        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
 
         //Select order line where not delivered or partialy delivered
         $DeliverysRequestsLineslist = $this->DeliverysRequestsLineslist = OrderLines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
@@ -84,6 +89,8 @@ class DeliverysRequest extends Component
                                                                         })->get();
         return view('livewire.deliverys-request', [
             'DeliverysRequestsLineslist' => $DeliverysRequestsLineslist,
+            'AddressSelect' => $AddressSelect,
+            'ContactSelect' => $ContactSelect,
             'userSelect' => $userSelect,
         ]);
     }
@@ -108,6 +115,8 @@ class DeliverysRequest extends Component
                                                 'code'=>$this->code,  
                                                 'label'=>$this->label, 
                                                 'companies_id'=>$this->companies_id,   
+                                                'companies_addresses_id'=>$this->companies_addresses_id,  
+                                                'companies_contacts_id'=>$this->companies_contacts_id,  
                                                 'user_id'=>$this->user_id, 
             ]);
 
@@ -152,7 +161,8 @@ class DeliverysRequest extends Component
             return redirect()->route('deliverys.show', ['id' => $DeliveryCreated->id])->with('success', 'Successfully created new delivery note');
         }
         else{
-            return redirect()->back()->with('error', 'no lines selected');
+            $errors = $this->getErrorBag();
+            $errors->add('errors', 'no lines selected');
         }
     }
 }

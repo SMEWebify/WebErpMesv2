@@ -10,22 +10,24 @@ use App\Models\Workflow\OrderLines;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\DeliveryLines;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 
 class InvoicesRequest extends Component
 {
-    public $companies_id = '';
     public $sortField = 'id'; // default sorting field
     public $sortAsc = true; // default sort direction
     
     public $LastDelivery = '1';
 
     public $DeliverysRequestsLineslist;
-    public $code, $label, $user_id; 
+    public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
     public $updateLines = false;
     public $CompaniesSelect = [];
     public $data = [];
     public $qty = [];
 
+    public $idCompanie = '';
     private $ordre = 10;
 
     // Validation Rules
@@ -33,6 +35,8 @@ class InvoicesRequest extends Component
         'code' =>'required|unique:invoices',
         'label' =>'required',
         'companies_id'=>'required',
+        'companies_addresses_id' =>'required',
+        'companies_contacts_id' =>'required',
         'user_id'=>'required',
     ];
     public function sortBy($field)
@@ -58,12 +62,15 @@ class InvoicesRequest extends Component
             $this->label = "IN-". $this->LastInvoice->id;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
     }
 
     public function render()
     {
         $userSelect = User::select('id', 'name')->get();
+
+        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
 
         //Select delevery line where not Partly invoiced or Invoiced
         $InvoicesRequestsLineslist = $this->DeliverysRequestsLineslist = DeliveryLines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
@@ -84,6 +91,8 @@ class InvoicesRequest extends Component
 
         return view('livewire.invoices-request', [
             'InvoicesRequestsLineslist' => $InvoicesRequestsLineslist,
+            'AddressSelect' => $AddressSelect,
+            'ContactSelect' => $ContactSelect,
             'userSelect' => $userSelect,
         ]);
     }
@@ -108,6 +117,8 @@ class InvoicesRequest extends Component
                                                 'code'=>$this->code,  
                                                 'label'=>$this->label, 
                                                 'companies_id'=>$this->companies_id,   
+                                                'companies_addresses_id'=>$this->companies_addresses_id,  
+                                                'companies_contacts_id'=>$this->companies_contacts_id,  
                                                 'user_id'=>$this->user_id, 
             ]);
 

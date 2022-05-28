@@ -57,9 +57,45 @@
                         </div>
                         @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="card-footer">
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <label for="companies_addresses_id">Adress</label>
                         <div class="input-group">
-                            <button type="Submit" wire:click.prevent="storeDeliveryNote()" class="btn btn-success">New delivery note</button>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                            </div>
+                            <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
+                                <option value="">Select address</option>
+                            @forelse ($AddressSelect as $item)
+                                <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
+                            @empty
+                                <option value="">No address, please add</option>
+                            @endforelse
+                            </select>
+                        </div>
+                        @error('companies_addresses_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-3">
+                        <label for="companies_contacts_id">Contact</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
+                                <option value="">Select contact</option>
+                            @forelse ($ContactSelect as $item)
+                                <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
+                            @empty
+                                <option value="">No contact, please add</option>
+                            @endforelse
+                            </select>
+                        </div>
+                        @error('companies_contacts_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-3"><br/>
+                        <div class="input-group">
+                            <button type="Submit" wire:click.prevent="storeDeliveryNote()" class="btn btn-success">New Delivery note</button>
                         </div>
                     </div>
                 </div>
