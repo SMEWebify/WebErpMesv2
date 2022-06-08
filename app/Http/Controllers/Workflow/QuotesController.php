@@ -74,7 +74,7 @@ class QuotesController extends Controller
         
         $Status = Status::select('id')->orderBy('order')->first();
         if(!$Status){
-            return redirect()->route('admin.factory')->with('error', 'Please check kanban statu');
+            return redirect()->route('admin.factory')->withErrors('Please add Kanban information before');
         }
 
         return view('workflow/quotes-show', [

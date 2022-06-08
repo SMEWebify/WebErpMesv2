@@ -62,7 +62,7 @@ class User extends Authenticatable
             $this->image_url="img_avatar.png";
         }
 
-        return asset('/storage/images/profiles/' . $this->image_url);
+        return asset('/images/profiles/' . $this->image_url);
     }
   
     public function adminlte_profile_url()
