@@ -13,16 +13,20 @@
 Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. MES offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 8, Livewire and bootstrap 4.6.
 
 
-<p align="center">I am unprofessional, any improvement discussion would be helpful. :hugs:</p>
+<p align="center">Any improvement discussion would be helpful. :hugs:</p>
 
-# Instal
+# Demo :eyes:
+
+[Demo page](http://demo.wem-project.org)
+
+# Instal :construction_worker:
 for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 
 for run to production, follow this link :  [wiki page (install to run)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
 # Current progress of the project :building_construction:
 
-Project Feature, follow wiki page : https://github.com/billyboy35/WebErpMesv2/wiki/Feature
+Project Feature, follow this linl : [wiki page](https://github.com/billyboy35/WebErpMesv2/wiki/Feature)
    
 -----------------
 Dashboard
