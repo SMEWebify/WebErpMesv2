@@ -29,11 +29,15 @@ class HomeController extends Controller
         }
 
         //use for liste of tasks
-        $ServiceGoals = MethodsServices::withCount('Tasks')->orderBy('ordre')->get();
+        $ServiceGoals = MethodsServices::withCount(['Tasks', 'Tasks' => function ($query) {
+                                            $query->whereNotNull('order_lines_id');
+                                        }])
+                                        ->orderBy('ordre')->get();
         $Tasks = DB::table('tasks')
                     ->select('tasks.id','statuses.title', 'methods_services.id as methods_id', 'methods_services.label', DB::raw('count(*) as total_task'))
                     ->join('statuses', 'tasks.status_id', '=', 'statuses.id')
                     ->join('methods_services', 'tasks.methods_services_id', '=', 'methods_services.id')
+                    ->whereNotNull('tasks.order_lines_id')
                     ->groupBy('methods_services_id')
                     ->groupBy('status_id')
                     ->orderBy('statuses.order', 'asc')
