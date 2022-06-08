@@ -701,7 +701,7 @@
                                         </div>
                                         <select class="form-control" name="user_id" id="user_id">
                                           @foreach ($userSelect as $item)
-                                          <option value="{{ $item->id }}" @if($MethodsRessource->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
+                                          <option value="{{ $item->id }}" @if($MethodsSection->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                           @endforeach
                                         </select>
                                       </div>
