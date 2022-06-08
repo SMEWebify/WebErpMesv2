@@ -12,7 +12,7 @@ use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
-use App\Models\Workflow\Quotelines;
+use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsServices;
