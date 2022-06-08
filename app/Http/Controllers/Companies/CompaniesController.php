@@ -21,7 +21,7 @@ class CompaniesController extends Controller
         $data['SupplierCountRate']= DB::table('companies')->where('statu_supplier', '=', 2)->where('statu_customer', '!=', 2)->count();
         $data['ClientSupplierCountRate']= DB::table('companies')->where('statu_customer', '=', 2)->where('statu_supplier', 2)->count();
          //5 lastest Companies add 
-        $LastComapnies = Companies::orderByRaw('id', 'desc')->take(5)->get();
+        $LastComapnies = Companies::orderBy('id', 'desc')->take(5)->get();
         
         return view('companies/companies-index', [
             'LastComapnies' => $LastComapnies

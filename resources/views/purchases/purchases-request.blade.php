@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Purchases Receipt')
+@section('title', 'Purchases Request')
 
 @section('content_header')
   <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>Purchases Receipt</h1>
+        <h1>Purchases Request</h1>
     </div>
   </div>
 @stop

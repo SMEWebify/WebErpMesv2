@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Quotes;
-use App\ServiceS\QuoteCalculator;
+use App\Services\QuoteCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;

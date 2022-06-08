@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
-use App\ServiceS\OrderCalculator;
+use App\Services\OrderCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
