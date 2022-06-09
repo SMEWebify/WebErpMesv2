@@ -17,7 +17,9 @@ Often, management systems offer full CRM and billing management. But if a link i
 
 # Demo :eyes:
 
-[Demo page](http://demo.wem-project.org)
+[Demo page](http://demo.wem-project.org) 
+login : contact@wem-project.org 
+Password : password
 
 # Instal :construction_worker:
 for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-dev))
