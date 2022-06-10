@@ -27,7 +27,7 @@ class PrintController extends Controller
     public function getImageFactoryPath($Factory){
         // Example image is located at `public/images/factory`
         if($Factory->picture){
-            return base64_encode(file_get_contents(public_path('images\factory\\'.$Factory->picture)));
+            return base64_encode(file_get_contents(public_path('images/factory/'.$Factory->picture)));
         }
         else{
             return null;
