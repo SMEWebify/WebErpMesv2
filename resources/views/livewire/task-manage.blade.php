@@ -29,7 +29,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                         </div>
-                        <input type="number" class="form-control @error('ordre') is-invalid @enderror" name="ordre" id="ordre" placeholder="Order" wire:model="ordre">
+                        <input type="number" class="form-control @error('ordre') is-invalid @enderror" name="ordre" id="ordre" placeholder="Order" min="0" wire:model="ordre">
                         
                         <input type="hidden" name="{{ $idType }}" value="{{ $Line->id   }}">
                         <input type="hidden" name="qty"  id="qty"  value="{{ $Line->qty  }}" value=".001">
@@ -87,7 +87,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
                         </div>
-                        <input type="number" class="form-control @error('seting_time') is-invalid @enderror" name="seting_time"  id="seting_time" placeholder="Setting time" value="0" step=".001"    wire:model="seting_time" >
+                        <input type="number" class="form-control @error('seting_time') is-invalid @enderror" name="seting_time"  id="seting_time" placeholder="Setting time" value="0" step=".001"  min="0"  wire:model="seting_time" >
                     </div>
                     @error('seting_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     @else 
@@ -96,7 +96,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-times"></i></span>
                         </div>
-                        <input type="number" class="form-control @error('qty') is-invalid @enderror" name="qty"  id="qty" value="{{ $Line->qty  }}" placeholder="Quantity" step=".001"  wire:model="qty">
+                        <input type="number" class="form-control @error('qty') is-invalid @enderror" name="qty"  id="qty" value="{{ $Line->qty  }}" placeholder="Quantity" step=".001"  min="0" wire:model="qty">
                     </div>
                     @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     @endif
@@ -108,7 +108,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
                         </div>
-                        <input type="number" class="form-control @error('unit_time') is-invalid @enderror" name="unit_time"  id="unit_time" placeholder="Unit time" value="0" step=".001"  wire:model="unit_time" >
+                        <input type="number" class="form-control @error('unit_time') is-invalid @enderror" name="unit_time"  id="unit_time" placeholder="Unit time" value="0" step=".001"  min="0" wire:model="unit_time" >
                     </div>
                     @error('unit_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     @endif
@@ -119,7 +119,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">{{ $Factory->curency }}</span>
                         </div>
-                        <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="Unit cost" value="0" step=".001" wire:model="unit_cost">
+                        <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="Unit cost" value="0" step=".001" min="0" wire:model="unit_cost">
                     </div>
                 </div>
                 <div class="col-3">
@@ -128,7 +128,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">{{ $Factory->curency }}</span>
                         </div>
-                        <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price"  id="unit_price" placeholder="Unit time" value="0" step=".001" wire:model="unit_price">
+                        <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price"  id="unit_price" placeholder="Unit time" value="0" step=".001" min="0" wire:model="unit_price">
                     </div>
                     @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                 </div>

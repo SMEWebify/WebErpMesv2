@@ -5,7 +5,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                 </div>
-                <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="Enter order" wire:model="ordre">
+                <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="Enter order" min="0" wire:model="ordre">
             </div>
             @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="code">External ID</label>
@@ -44,7 +44,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-times"></i></span>
                 </div>
-                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="Quantity" wire:model="qty">
+                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="Quantity" min="0" wire:model="qty">
             </div>
             @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="methods_units_id">Unit</label>
@@ -65,7 +65,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">{{ $Factory->curency }}</span>
                 </div>
-                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" wire:model="selling_price" step=".001">
+                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" min="0" wire:model="selling_price" step=".001">
             </div>
             @error('selling_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
             <label for="discount">Discount :</label>

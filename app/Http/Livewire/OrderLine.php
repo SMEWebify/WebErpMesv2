@@ -43,11 +43,11 @@ class OrderLine extends Component
 
     // Validation Rules
     protected $rules = [
-        'ordre'=>'required',
+        'ordre' =>'required|numeric|gt:0',
         'label'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
-        'selling_price'=>'required',
+        'selling_price'=>'required|numeric|gt:0',
         'discount'=>'required',
         'accounting_vats_id'=>'required',
     ];

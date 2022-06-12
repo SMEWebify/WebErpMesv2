@@ -140,7 +140,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">{{ $Factory->curency }}</span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="purchased_price" name="purchased_price" id="purchased_price" placeholder="Purchased price" step=".001">
+                                    <input type="number" class="form-control" wire:model="purchased_price" name="purchased_price" id="purchased_price" min="0" placeholder="Purchased price" step=".001">
                                 </div>
                                 @error('purchased_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -149,7 +149,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">{{ $Factory->curency }}</span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="selling_price" name="selling_price" id="selling_price" placeholder="Selling price" step=".001">
+                                    <input type="number" class="form-control" wire:model="selling_price" name="selling_price" id="selling_price" min="0" placeholder="Selling price" step=".001">
                                 </div>
                             </div>
                         </div>
@@ -172,7 +172,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="thickness" name="thickness" id="thickness" placeholder="Thickness" step=".001">
+                                    <input type="number" class="form-control" wire:model="thickness" name="thickness" id="thickness" min="0" placeholder="Thickness" step=".001">
                                 </div>
                                 @error('thickness') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -181,7 +181,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="weight" name="weight" id="weight" placeholder="Weight" step=".001">
+                                    <input type="number" class="form-control" wire:model="weight" name="weight" id="weight" min="0" placeholder="Weight" step=".001">
                                 </div>
                                 @error('weight') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -194,7 +194,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="x_size" name="x_size" id="x_size" placeholder="X size" step=".001">
+                                    <input type="number" class="form-control" wire:model="x_size" name="x_size" id="x_size" min="0" placeholder="X size" step=".001">
                                 </div>
                                 @error('x_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -204,7 +204,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="y_size" name="y_size" id="y_size" placeholder="Y size" step=".001">
+                                    <input type="number" class="form-control" wire:model="y_size" name="y_size" id="y_size" min="0" placeholder="Y size" step=".001">
                                 </div>
                                 @error('y_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -214,7 +214,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="z_size" name="z_size" id="z_size" placeholder="Z size" step=".001">
+                                    <input type="number" class="form-control" wire:model="z_size" name="z_size" id="z_size" min="0" placeholder="Z size" step=".001">
                                 </div>
                                 @error('z_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -225,7 +225,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="x_oversize" name="x_oversize" id="x_oversize" placeholder="X oversize" step=".001">
+                                    <input type="number" class="form-control" wire:model="x_oversize" name="x_oversize" id="x_oversize" min="0"  placeholder="X oversize" step=".001">
                                 </div>
                                 @error('x_oversize') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -234,7 +234,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="y_oversize" name="y_oversize" id="y_oversize" placeholder="Y oversize" step=".001">
+                                    <input type="number" class="form-control" wire:model="y_oversize" name="y_oversize" id="y_oversize" min="0" placeholder="Y oversize" step=".001">
                                 </div>
                                 @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -243,7 +243,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                     </div>
-                                    <input type="number" class="form-control" wire:model="z_oversize" name="z_oversize" id="z_oversize" placeholder="Z oversize" step=".001">
+                                    <input type="number" class="form-control" wire:model="z_oversize" name="z_oversize" id="z_oversize" min="0"  placeholder="Z oversize" step=".001">
                                 </div>
                                 @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
@@ -251,15 +251,15 @@
                         <hr>
                         <div class="row">
                             <div class="col-4">
-                                <input type="number" class="form-control" wire:model="diameter" name="diameter" id="diameter" placeholder="Diameter" step=".001">
+                                <input type="number" class="form-control" wire:model="diameter" name="diameter" id="diameter" min="0" placeholder="Diameter" step=".001">
                                 @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-4">
-                                <input type="number" class="form-control" wire:model="diameter_oversize" name="diameter_oversize" id="diameter_oversize" placeholder="Diameter_oversize" step=".001">
+                                <input type="number" class="form-control" wire:model="diameter_oversize" name="diameter_oversize" id="diameter_oversize" min="0" placeholder="Diameter_oversize" step=".001">
                                 @error('diameter_oversize') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-4">
-                                <input type="number" class="form-control" wire:model="section_size" name="section_size" id="section_size" placeholder="Section size" step=".001">
+                                <input type="number" class="form-control" wire:model="section_size" name="section_size" id="section_size" min="0" placeholder="Section size" step=".001">
                                 @error('section_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                         </div>
@@ -269,11 +269,11 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
-                                <input type="number" class="form-control" wire:model="qty_eco_min" name="qty_eco_min" id="qty_eco_min" placeholder="Qty eco min" step=".001">
+                                <input type="number" class="form-control" wire:model="qty_eco_min" name="qty_eco_min" id="qty_eco_min" min="0" placeholder="Qty eco min" step=".001">
                                 @error('qty_eco_min') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-4">
-                                <input type="number" class="form-control" wire:model="qty_eco_max" name="qty_eco_max" id="qty_eco_max" placeholder="Qty eco max" step=".001">
+                                <input type="number" class="form-control" wire:model="qty_eco_max" name="qty_eco_max" id="qty_eco_max" min="0" placeholder="Qty eco max" step=".001">
                                 @error('qty_eco_max') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-4">

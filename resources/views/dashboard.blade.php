@@ -596,13 +596,13 @@
         },
         {
           label               : 'Order targets ',
-          backgroundColor     : 'rgba(210, 214, 222, 1)',
-          borderColor         : 'rgba(210, 214, 222, 1)',
+          backgroundColor     : 'rgba(40, 167, 69, 1)',
+          borderColor         : 'rgba(40, 167, 69, 1)',
           pointRadius         : 5,
-          pointColor          : 'rgba(210, 214, 222, 1)',
+          pointColor          : 'rgba(40, 167, 69, 1)',
           pointStrokeColor    : '#c1c7d1',
           pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(220,220,220,1)',
+          pointHighlightStroke: 'rgba(40, 167, 69, 1)',
           data                :  [
                                 @foreach ($data['estimatedBudget'] as $key => $item)
                                   "{{ $item->amount1 }}",

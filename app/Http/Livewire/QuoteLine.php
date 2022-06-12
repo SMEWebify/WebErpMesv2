@@ -53,11 +53,11 @@ class QuoteLine extends Component
 
     // Validation Rules
     protected $rules = [
-        'ordre'=>'required',
+        'ordre' =>'required|numeric|min:0|not_in:0',
         'label'=>'required',
         'qty'=>'required',
         'methods_units_id'=>'required',
-        'selling_price'=>'required',
+        'selling_price'=>'required|numeric|min:0|not_in:0',
         'discount'=>'required',
         'accounting_vats_id'=>'required',
     ];

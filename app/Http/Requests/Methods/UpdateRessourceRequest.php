@@ -25,7 +25,7 @@ class UpdateRessourceRequest extends FormRequest
     {
         return [
             //
-            'ordre' =>'required',
+            'ordre' =>'required|numeric|gt:0',
             'label'=>'required',
             'capacity'=>'required',
             'section_id'=>'required',

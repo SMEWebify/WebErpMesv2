@@ -26,7 +26,7 @@ class StoreServicesRequest extends FormRequest
         return [
             //
             'code' =>'required|unique:methods_services',
-            'ordre' =>'required',
+            'ordre' =>'required|numeric|gt:0',
             'label'=>'required',
             'hourly_rate'=>'required',
             'margin'=>'required',

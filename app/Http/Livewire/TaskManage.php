@@ -43,10 +43,10 @@ class TaskManage extends Component
     // Validation Rules
     protected $rules = [
         'label'=>'required',
-        'ordre'=>'required',
+        'ordre' =>'required|numeric|gt:0',
         'methods_services_id' =>'required',
-        'unit_cost'=>'required',
-        'unit_price'=>'required',
+        'unit_cost'=>'required|numeric|gt:0',
+        'unit_price'=>'required|numeric|gt:0',
     ];
 
     public function ChangeTaskType() 

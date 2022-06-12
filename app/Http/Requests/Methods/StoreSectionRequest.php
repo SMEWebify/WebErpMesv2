@@ -25,7 +25,7 @@ class StoreSectionRequest extends FormRequest
     {
         return [
             //
-            'ordre' =>'required',
+            'ordre' =>'required|numeric|gt:0',
             'code' =>'required|unique:methods_sections',
             'label'=>'required',
         ];

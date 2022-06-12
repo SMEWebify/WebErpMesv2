@@ -25,7 +25,7 @@ class UpdateSectiontRequest extends FormRequest
     {
         return [
             //
-            'ordre' =>'required',
+            'ordre' =>'required|numeric|gt:0',
             'label'=>'required',
         ];
     }

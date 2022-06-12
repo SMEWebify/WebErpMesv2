@@ -25,7 +25,7 @@ class StoreRessourceRequest extends FormRequest
     {
         return [
             //
-            'ordre' =>'required',
+            'ordre' =>'required|numeric|gt:0',
             'code' =>'required|unique:methods_ressources',
             'label'=>'required',
             'capacity'=>'required',

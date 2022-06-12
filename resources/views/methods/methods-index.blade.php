@@ -100,7 +100,7 @@
                                         <div class="input-group-prepend">
                                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" value="{{ $MethodsService->ordre }}">
+                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" min="0" value="{{ $MethodsService->ordre }}">
                                       </div>
                                     </div>
                                     <div class="form-group">
@@ -233,7 +233,7 @@
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                           </div>
-                          <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
+                          <input type="number" class="form-control" name="ordre" id="ordre" min="0" placeholder="Order">
                         </div>
                       </div>
                       <div class="form-group">
@@ -389,7 +389,7 @@
                                         <div class="input-group-prepend">
                                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" value="{{ $MethodsRessource->ordre }}">
+                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" min="0" value="{{ $MethodsRessource->ordre }}">
                                       </div>
                                     </div>
                                     <div class="form-group">
@@ -528,7 +528,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                       </div>
-                      <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order">
+                      <input type="number" class="form-control" name="ordre" id="ordre" min="0" placeholder="Order">
                     </div>
                   </div>
                   <div class="form-group">
@@ -676,7 +676,7 @@
                                         <div class="input-group-prepend">
                                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10" value="{{ $MethodsSection->ordre }}">
+                                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10" min="0" value="{{ $MethodsSection->ordre }}">
                                       </div>
                                     </div>
                                     <div class="form-group">
@@ -748,7 +748,7 @@
                         <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                         </div>
-                        <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10">
+                        <input type="number" class="form-control" name="ordre" id="ordre" min="0" placeholder="10">
                       </div>
                     </div>
                     <div class="form-group">

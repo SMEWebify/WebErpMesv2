@@ -1,5 +1,3 @@
-
-
 <p align="center">
   <img width="460" height="300" src="https://user-images.githubusercontent.com/75578469/127404015-3706b77f-dea3-4acb-a722-06f483de95a9.png">
 </p>
@@ -7,10 +5,15 @@
 
 <p align="center">Web ERP and MES</p>
 
+<p align="center">
+  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
+  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/docs/README-fr.md">Français</a> •
+</p>
+
 
 # Why WEM ? :monocle_face:
 
-Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. MES offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 8, Livewire and bootstrap 4.6.
+Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. WEM offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 8, Livewire and bootstrap 4.6.
 
 
 <p align="center">Any improvement discussion would be helpful. :hugs:</p>
@@ -18,7 +21,9 @@ Often, management systems offer full CRM and billing management. But if a link i
 # Demo :eyes:
 
 [Demo page](http://demo.wem-project.org) 
+
 login : contact@wem-project.org 
+
 Password : password
 
 # Instal :construction_worker:
@@ -28,7 +33,7 @@ for run to production, follow this link :  [wiki page (install to run)](https://
 
 # Current progress of the project :building_construction:
 
-Project Feature, follow this linl : [wiki page](https://github.com/billyboy35/WebErpMesv2/wiki/Feature)
+Project Feature, follow this link : [wiki page](https://github.com/billyboy35/WebErpMesv2/wiki/Feature)
    
 -----------------
 Dashboard

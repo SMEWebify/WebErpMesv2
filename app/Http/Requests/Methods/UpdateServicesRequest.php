@@ -24,7 +24,7 @@ class UpdateServicesRequest extends FormRequest
     public function rules()
     {
         return [
-            'ordre' =>'required',
+            'ordre' =>'required|numeric|gt:0',
             'label'=>'required',
             'hourly_rate'=>'required',
             'margin'=>'required',
