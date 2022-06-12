@@ -7,8 +7,9 @@
 
 <p align="center">
   <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
-  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/docs/README-fr.md">Français</a> •
+  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/docs/README.fr.md">Français</a>
 </p>
+
 
 
 # Why WEM ? :monocle_face:
