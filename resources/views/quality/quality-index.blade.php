@@ -11,8 +11,6 @@
 @section('content')
 
 <div class="card">
-  @include('include.alert-result')
-
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Actions" data-toggle="tab">Actions</a></li>
@@ -28,6 +26,7 @@
       <div class="tab-pane active" id="Actions">
         <div class="card-body">
           <x-InfocalloutComponent note="Actions are measures taken to prevent a problem from occurring (preventive actions), to solve an existing problem (corrective actions), or to improve a process or product (improvement requests)."  />
+          @include('include.alert-result')
           <div class="row">
             <table  class="table table-bordered table-striped">
               <thead>
@@ -203,6 +202,7 @@
       </div>
       <!-- /.tab-pane -->
       <div class="tab-pane" id="Derogations">
+        @include('include.alert-result')
         <div class="card-body">
           <div class="row">
             <table  class="table table-bordered table-striped">
@@ -374,6 +374,7 @@
       <div class="tab-pane" id="NonConformities">
         <div class="card-body">
           <x-InfocalloutComponent note="Non-conformity sheets are documents summing up data related to a quality issue that arose within your company, with a customer, or with a supplier and the extra costs it generated.."  />
+          @include('include.alert-result')
           <div class="row">
             <table  class="table table-bordered table-striped">
               <thead>
@@ -584,6 +585,7 @@
           <div class="card card-primary">
             <div class="card-body">
               <x-InfocalloutComponent note="The measuring devices used to measure quality."  />
+              @include('include.alert-result')
               <div class="row">
                 <div class="col-md-7 card-primary">
                   <div class="card-header">
@@ -726,6 +728,7 @@
       <!-- /.tab-pane -->
       <div class="tab-pane" id="Settings">
         <x-InfocalloutComponent note="To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource."  />
+        @include('include.alert-result')
         <div class="card card-primary collapsed-card">
           <div class="card-header">
             <h3 class="card-title">Failing list</h3>
@@ -738,7 +741,7 @@
               </button>
             </div>
           </div>
-          <div class="card-body" style="display: block;">
+          <div class="card-body" style="display: none;">
             <div class="row">
               <div class="col-md-6 card-secondary">
                 <div class="card-header">
@@ -802,15 +805,15 @@
                       </div>
                     </div>
                   </form>
-                <!-- /.card secondary -->
-                </div>
-              <!-- /.row -->
+              <!-- /.card secondary -->
               </div>
-            <!-- /.card body -->
+            <!-- /.row -->
             </div>
-          <!-- /.card primary -->
+          <!-- /.card body -->
           </div>
-          <div class="card card-primary collapsed-card">
+        <!-- /.card primary -->
+        </div>
+        <div class="card card-primary collapsed-card">
             <div class="card-header">
               <h3 class="card-title">Causes list</h3>
               <div class="card-tools">
@@ -822,7 +825,7 @@
                 </button>
               </div>
             </div>
-            <div class="card-body" style="display: block;">
+            <div class="card-body" style="display: none;">
               <div class="row">
                 <div class="col-md-6 card-secondary">
                   <div class="card-header">
@@ -849,13 +852,7 @@
                           </td>
                         </tr>
                         @empty
-                        <tr>
-                          <td colspan="3">
-                              <div class="flex justify-center items-center">
-                                  <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No lines found ...</span>
-                              </div>
-                          </td>
-                        </tr>
+                        <x-EmptyDataLine col="3" text="No line found ..."  />
                         @endforelse
                       </tbody>
                     </table>
@@ -892,100 +889,99 @@
                         </div>
                       </div>
                     </form>
-                  <!-- /.card secondary -->
-                  </div>
-                <!-- /.row -->
+                <!-- /.card secondary -->
                 </div>
-              <!-- /.card body -->
+              <!-- /.row -->
               </div>
-            <!-- /.card primary -->
+            <!-- /.card body -->
             </div>
-            <div class="card card-primary collapsed-card">
-              <div class="card-header">
-                <h3 class="card-title">Correction list</h3>
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-plus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="card-body" style="display: none;">
-                <div class="row">
-                  <div class="col-md-6 card-secondary">
-                    <div class="card-header">
-                        <h3 class="card-title">Correction type list</h3>
-                    </div>
-                    <div class="card-body p-0">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>External ID</th>
-                            <th>Label</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @forelse ($QualityCorrections as $QualityCorrection)
-                          <tr>
-                            <td>{{ $QualityCorrection->code }}</td>
-                            <td>{{ $QualityCorrection->label }}</td>
-                            <td class="text-right py-0 align-middle">
-                              <div class="btn-group btn-group-sm">
-                                <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                              </div>
-                            </td>
-                          </tr>
-                          @empty
-                            <x-EmptyDataLine col="3" text="No line found ..."  />
-                        @endforelse
-                        </tbody>
-                      </table>
-                    </div>
-                  <!-- /.card secondary -->
-                  </div>
-                  <div class="col-md-6 card-secondary">
-                      <div class="card-header">
-                        <h3 class="card-title">New Correction</h3>
-                      </div>
-                      <form  method="POST" action="{{ route('quality.correction.create') }}" class="form-horizontal">
-                        @csrf
-                        <div class="form-group">
-                          <label for="code">External ID</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                            </div>
-                            <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="label">Label</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                            </div>
-                            <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
-                          </div>
-                        </div>
-                        <div class="card-footer">
-                          <div class="offset-sm-2 col-sm-10">
-                            <button type="submit" class="btn btn-danger">Submit New</button>
-                          </div>
-                        </div>
-                      </form>
-                    <!-- /.card secondary -->
-                    </div>
-                  <!-- /.row -->
-                  </div>
-                <!-- /.card body -->
-                </div>
-              <!-- /.card primary -->
-              </div>
+            <!-- /.card primary -->
         </div>
-        <!-- /.tab-pane -->
+        <div class="card card-primary collapsed-card">
+          <div class="card-header">
+            <h3 class="card-title">Correction list</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                <i class="fas fa-plus"></i>
+              </button>
+              <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" style="display: none;">
+            <div class="row">
+              <div class="col-md-6 card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title">Correction type list</h3>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>External ID</th>
+                        <th>Label</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @forelse ($QualityCorrections as $QualityCorrection)
+                      <tr>
+                        <td>{{ $QualityCorrection->code }}</td>
+                        <td>{{ $QualityCorrection->label }}</td>
+                        <td class="text-right py-0 align-middle">
+                          <div class="btn-group btn-group-sm">
+                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                          </div>
+                        </td>
+                      </tr>
+                      @empty
+                        <x-EmptyDataLine col="3" text="No line found ..."  />
+                      @endforelse
+                    </tbody>
+                  </table>
+                </div>
+              <!-- /.card secondary -->
+              </div>
+              <div class="col-md-6 card-secondary">
+                  <div class="card-header">
+                    <h3 class="card-title">New Correction</h3>
+                  </div>
+                  <form  method="POST" action="{{ route('quality.correction.create') }}" class="form-horizontal">
+                    @csrf
+                    <div class="form-group">
+                      <label for="code">External ID</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="label">Label</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <div class="offset-sm-2 col-sm-10">
+                        <button type="submit" class="btn btn-danger">Submit New</button>
+                      </div>
+                    </div>
+                  </form>
+              <!-- /.card secondary -->
+              </div>
+            <!-- /.row -->
+            </div>
+          <!-- /.card body -->
+          </div>
+        <!-- /.card primary -->
+        </div>
+      <!-- /.tab-pane -->
       </div>
     <!-- /.tab-content -->
     </div>
