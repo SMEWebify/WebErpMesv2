@@ -745,7 +745,7 @@
             <div class="row">
               <div class="col-md-6 card-secondary">
                 <div class="card-header">
-                    <h3 class="card-title">Failling type list</h3>
+                    <h3 class="card-title">Failure type list</h3>
                 </div>
                 <div class="card-body p-0">
                   <table class="table">
@@ -777,9 +777,9 @@
               </div>
               <div class="col-md-6 card-secondary">
                   <div class="card-header">
-                    <h3 class="card-title">New Failling</h3>
+                    <h3 class="card-title">New Failure</h3>
                   </div>
-                  <form  method="POST" action="{{ route('quality.failling.create') }}" class="form-horizontal">
+                  <form  method="POST" action="{{ route('quality.failure.create') }}" class="form-horizontal">
                     @csrf
                     <div class="form-group">
                       <label for="code">External ID</label>

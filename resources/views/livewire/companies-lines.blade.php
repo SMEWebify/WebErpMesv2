@@ -214,9 +214,9 @@
                                     <td>{{ $Companie->GetPrettyCreatedAttribute() }}</td>
                                     <td>
                                         @if($Companie->statu_customer == 2 )
-                                        <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check-double"></i></span>
-                                        @elseif($Companie->statu_customer == 3 )
                                         <span class="badge badge-warning"><i class="fa fa-lg fa-fw  fa-check"></i></span>
+                                        @elseif($Companie->statu_customer == 3 )
+                                        <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check-double"></i></span>
                                         @else
                                         <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
                                         @endif

@@ -25,6 +25,7 @@
                         <th>Tasks status</th>
                         <th>Delivery status</th>
                         <th>Invoice status</th>
+                        <th>Task</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -65,6 +66,11 @@
                             @if(3 == $OrderLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                         </td>
                         <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks ({{  $OrderLine->getTaskCountAttribute() }})</span></a></button>
+                            </div>
+                        </td>
+                        <td>
                             <x-ButtonTextView route="{{ route('orders.show', ['id' => $OrderLine->orders_id])}}" />
                         </td>
                     </tr>
@@ -88,6 +94,7 @@
                         <th>Tasks status</th>
                         <th>Delivery status</th>
                         <th>Invoice status</th>
+                        <th>Task</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>

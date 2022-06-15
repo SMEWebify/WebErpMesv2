@@ -279,7 +279,7 @@ class QuoteLine extends Component
             ]);
 
             
-            Companies::where('id', $QuoteData->companies_id)->update(['statu_customer'=>2]);
+            Companies::where('id', $QuoteData->companies_id)->update(['statu_customer'=>3]);
 
             if($OrdersCreated){
                 // Create lines

@@ -319,16 +319,16 @@
                         <td>{{ $Product->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             @if($Product->sold == 1 )
-                            <i class="fas fa-check-double"></i>
+                            <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
                             @else
-                            <i class="fas fa-times"></i>
+                            <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
                             @endif
                         </td>
                         <td>
                             @if($Product->purchased == 1 )
-                            <i class="fas fa-check"></i>
+                            <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
                             @else
-                            <i class="fas fa-times"></i>
+                            <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
                             @endif
                         </td>
                         <td>
