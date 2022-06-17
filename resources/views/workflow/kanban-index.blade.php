@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Kanban')
+@section('title', 'Workflow')
 
 @section('content_header')
     
     <div class="row mb-2">
         <div class="col-sm-6">
-        <h1>Kanban board</h1>
+        <h1>Workflow board</h1>
         </div>
     </div>
 
