@@ -112,8 +112,8 @@
                   <div class="row">
                     <!-- accepted payments column -->
                     <div class="col-6">
-                      <p class="lead"><strong>Payment Methods:</strong> {{ $Document->payment_condition['label'] }}</p>
-                      <p class="lead"><strong>Payment Conditions:</strong> {{ $Document->payment_method['label'] }}</p>
+                      <p class="lead"><strong>Payment Methods:</strong> {{ $Document->payment_method['label'] }}</p>
+                      <p class="lead"><strong>Payment Conditions:</strong> {{ $Document->payment_condition['label'] }}</p>
                       @if($Document->comment)
                         <p class="lead"><strong>Comment :</strong></p>
                         <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">

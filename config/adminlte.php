@@ -295,7 +295,7 @@ return [
                     'url'  => 'production/Task',
                 ],
                 [
-                    'text' => 'Kanban',
+                    'text' => 'Workflow',
                     'url'  => 'production/kanban',
                 ],
                 /* 

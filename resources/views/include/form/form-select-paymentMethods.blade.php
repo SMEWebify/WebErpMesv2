@@ -4,7 +4,7 @@
             <i class="fas fa-comment-dollar"></i>
         </div>
     </x-slot>
-    @foreach ($AccountingConditionSelect as $item)
+    @foreach ($AccountingMethodsSelect as $item)
         <option value="{{ $item->id }}" @if($item->id == $accountingPaymentMethodsId ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
     @endforeach
 </x-adminlte-select>
