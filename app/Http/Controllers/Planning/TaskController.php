@@ -53,7 +53,7 @@ class TaskController extends Controller
      */
     public function kanban()
     {
-        $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->get();
+        $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->with('tasks.service')->get();
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');

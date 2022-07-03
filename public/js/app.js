@@ -2117,10 +2117,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -41790,9 +41786,9 @@ var render = function () {
         "div",
         { key: status.title, staticClass: "col-12 col-lg-6 col-xl-3" },
         [
-          _c("div", { staticClass: "card card-row card-secondary" }, [
-            _c("div", { staticClass: "card card-primary" }, [
-              _c("h5", { staticClass: "card-title" }, [
+          _c("div", { staticClass: "card" }, [
+            _c("div", { staticClass: "card-header bg-blue" }, [
+              _c("h5", [
                 _vm._v("\n          " + _vm._s(status.title) + "\n        "),
               ]),
             ]),
@@ -41833,74 +41829,81 @@ var render = function () {
                           { key: task.id, staticClass: "card mb-5 bg-light" },
                           [
                             _c("div", { staticClass: "card-body p-3 " }, [
-                              _c("p", [
-                                _vm._v("#" + _vm._s(task.id) + " - "),
-                                _c(
-                                  "span",
-                                  { staticClass: "font-weight-bold" },
-                                  [
-                                    _vm._v(
-                                      "Order " +
-                                        _vm._s(task.order_lines.order.code)
-                                    ),
-                                  ]
-                                ),
-                                _vm._v("  || "),
-                                _c(
-                                  "span",
-                                  { staticClass: "font-weight-bold" },
-                                  [
-                                    _vm._v(
-                                      _vm._s(task.order_lines.label) +
-                                        " || qty " +
-                                        _vm._s(task.order_lines.qty)
-                                    ),
-                                  ]
-                                ),
+                              _vm._v(
+                                "\n                    #" +
+                                  _vm._s(task.id) +
+                                  " - "
+                              ),
+                              _c("span", { staticClass: "font-weight-bold" }, [
                                 _vm._v(
-                                  " - " +
-                                    _vm._s(task.label) +
-                                    " - " +
-                                    _vm._s(task.order_lines.delivery_date)
+                                  "Order " + _vm._s(task.order_lines.order.code)
                                 ),
                               ]),
+                              _vm._v(
+                                " - " +
+                                  _vm._s(task.label) +
+                                  " - " +
+                                  _vm._s(task.order_lines.delivery_date)
+                              ),
+                              _c("br"),
+                              _vm._v(" "),
+                              _c("span", { staticClass: "font-weight-bold" }, [
+                                _vm._v(
+                                  _vm._s(task.order_lines.label) +
+                                    " || qty " +
+                                    _vm._s(task.order_lines.qty)
+                                ),
+                              ]),
+                              _c("br"),
                               _vm._v(" "),
                               _c("div", { staticClass: "float-right" }, [
                                 _c("div", { staticClass: "row" }, [
-                                  _c("div", { staticClass: "col-4" }),
-                                  _vm._v(" "),
                                   _c("div", { staticClass: "col-4" }, [
-                                    _c("p", [
-                                      _c(
-                                        "span",
-                                        { staticClass: "font-weight-bold" },
-                                        [_vm._v("Setting Time :")]
-                                      ),
-                                      _vm._v(" " + _vm._s(task.seting_time)),
-                                      _c("br"),
-                                      _vm._v(" "),
-                                      _c(
-                                        "span",
-                                        { staticClass: "font-weight-bold" },
-                                        [_vm._v("Unit Time :")]
-                                      ),
-                                      _vm._v(
-                                        " " +
-                                          _vm._s(task.unit_time) +
-                                          "\n                        "
-                                      ),
-                                    ]),
+                                    task.service.picture
+                                      ? _c("img", {
+                                          staticClass:
+                                            "profile-user-img img-fluid img-circle",
+                                          attrs: {
+                                            src:
+                                              "/images/methods/" +
+                                              task.service.picture,
+                                          },
+                                        })
+                                      : _vm._e(),
                                   ]),
                                   _vm._v(" "),
                                   _c("div", { staticClass: "col-4" }, [
-                                    _c("p", [
-                                      _c(
-                                        "span",
-                                        { staticClass: "font-weight-bold" },
-                                        [_vm._v("Advancement :")]
-                                      ),
-                                      _vm._v(" " + _vm._s(task.advancement)),
-                                    ]),
+                                    _c(
+                                      "span",
+                                      { staticClass: "font-weight-bold" },
+                                      [_vm._v("Setting Time :")]
+                                    ),
+                                    _vm._v(" " + _vm._s(task.seting_time)),
+                                    _c("br"),
+                                    _vm._v(" "),
+                                    _c(
+                                      "span",
+                                      { staticClass: "font-weight-bold" },
+                                      [_vm._v("Unit Time :")]
+                                    ),
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(task.unit_time) +
+                                        "\n                      "
+                                    ),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "col-4" }, [
+                                    _c(
+                                      "span",
+                                      { staticClass: "font-weight-bold" },
+                                      [_vm._v("Advancement :")]
+                                    ),
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(task.advancement) +
+                                        "\n                      "
+                                    ),
                                   ]),
                                 ]),
                               ]),
@@ -41928,9 +41931,14 @@ var render = function () {
                           "!status.tasks.length && newTaskForStatus !== status.id",
                       },
                     ],
-                    staticClass: "card mb-5 bg-light",
+                    staticClass:
+                      "flex-1 p-4 flex flex-col items-center justify-center",
                   },
-                  [_vm._m(0, true)]
+                  [
+                    _c("span", { staticClass: "text-gray-600" }, [
+                      _vm._v("No tasks yet"),
+                    ]),
+                  ]
                 ),
               ],
               1
@@ -41942,16 +41950,7 @@ var render = function () {
     0
   )
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-body p-3" }, [
-      _c("p", [_vm._v("No tasks yet")]),
-    ])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
