@@ -149,7 +149,7 @@
               @endforelse
               @if ($incomingOrdersCount >= 1)
               <div class="small-box bg-warning">
-                <a href="#" class="small-box-footer">+ {{ $incomingOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="{{ route('orders') }}" class="small-box-footer">+ {{ $incomingOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
               </div>
               @endif
             </div>
@@ -171,7 +171,7 @@
               @endforelse
               @if ($LateOrdersCount >= 1)
               <div class="small-box bg-danger">
-                <a href="#" class="small-box-footer">+ {{ $LateOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="{{ route('orders') }}" class="small-box-footer">+ {{ $LateOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
               </div>
               @endif
             </div>
