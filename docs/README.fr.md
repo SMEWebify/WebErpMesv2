@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
-  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/docs/README-fr.md">Français</a> •
+  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/docs/README-fr.md">Français</a>
 </p>
 
 # Pourquoi WEM ? :monocle_face:
@@ -42,7 +42,7 @@ Dashboard
 Gestion des devis et des commandes avec tâche
 ![image](https://user-images.githubusercontent.com/75578469/164035570-33da9040-7df4-4551-bb69-7ec88e80673b.png)
 ![image](https://user-images.githubusercontent.com/75578469/164035711-504ac598-9385-486b-98f0-87a6a0a3b24a.png)
-![image](https://user-images.githubusercontent.com/75578469/164035818-9ec3bc0a-9e6d-420b-a3b4-ca5200684495.png)
+![image](https://user-images.githubusercontent.com/75578469/177055341-330a2ca4-61f4-4293-9774-42b05d7165ee.png)
 
 
 
