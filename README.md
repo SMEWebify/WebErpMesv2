@@ -44,7 +44,7 @@ Dashboard
 Quote & Order management with task
 ![image](https://user-images.githubusercontent.com/75578469/164035570-33da9040-7df4-4551-bb69-7ec88e80673b.png)
 ![image](https://user-images.githubusercontent.com/75578469/164035711-504ac598-9385-486b-98f0-87a6a0a3b24a.png)
-![image](https://user-images.githubusercontent.com/75578469/164035818-9ec3bc0a-9e6d-420b-a3b4-ca5200684495.png)
+![image](https://user-images.githubusercontent.com/75578469/177055327-68b3ba66-163d-4838-9ced-e1c6944ecbd1.png)
 
 
 
