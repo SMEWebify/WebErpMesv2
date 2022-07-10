@@ -14,7 +14,7 @@
 
 # Why WEM ? :monocle_face:
 
-Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. WEM offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 8, Livewire and bootstrap 4.6.
+Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. WEM offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 9, Livewire and bootstrap 4.6.
 
 
 <p align="center">Any improvement discussion would be helpful. :hugs:</p>

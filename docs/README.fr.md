@@ -12,7 +12,7 @@
 
 # Pourquoi WEM ? :monocle_face:
 
-Souvent, les systèmes de gestion offrent un suivit de la gestion commerciale et de la facturation. Mais s'il manque un lien entre ce qui est chiffré en devis et ce qui doit être fabriqué. WEM propose un lien entre les attentes du client et un état en temps réel de la commande dans l'atelier de fabrication. Ce projet utilise Laravel 8, Livewire et bootstrap 4.6.
+Souvent, les systèmes de gestion offrent un suivit de la gestion commerciale et de la facturation. Mais s'il manque un lien entre ce qui est chiffré en devis et ce qui doit être fabriqué. WEM propose un lien entre les attentes du client et un état en temps réel de la commande dans l'atelier de fabrication. Ce projet utilise Laravel 9, Livewire et bootstrap 4.6.
 
 
 <p align="center">Toute discussion d'amélioration serait utile. :hugs:</p>
