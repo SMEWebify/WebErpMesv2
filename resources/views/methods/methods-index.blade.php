@@ -309,7 +309,7 @@
                     <!-- /.form-group -->
                     </div>
                     <div class="card-footer">
-                      <button type="submit" class="btn btn-danger">Submit</button>
+                      <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                 </form>
               <!-- /.card secondary -->
@@ -610,7 +610,7 @@
                 <!-- /.form-group -->
                 </div>
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-danger">Submit</button>
+                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                 </div>
             </form>
               </div>
@@ -788,9 +788,7 @@
                       </div>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                      <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -940,9 +938,7 @@
                       </select>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                      <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -1095,9 +1091,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                      <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -1245,9 +1239,7 @@
                       </div>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                      <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -1472,9 +1464,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                      <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->

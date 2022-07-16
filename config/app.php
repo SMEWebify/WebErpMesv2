@@ -167,6 +167,7 @@ return [
          */
         Milon\Barcode\BarcodeServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -205,8 +206,11 @@ return [
         'Crypt' => Illuminate\Support\Facades\Crypt::class,
         'Date' => Illuminate\Support\Facades\Date::class,
         'DB' => Illuminate\Support\Facades\DB::class,
+        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
         'Eloquent' => Illuminate\Database\Eloquent\Model::class,
         'Event' => Illuminate\Support\Facades\Event::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'File' => Illuminate\Support\Facades\File::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
@@ -216,6 +220,7 @@ return [
         'Mail' => Illuminate\Support\Facades\Mail::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password' => Illuminate\Support\Facades\Password::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'RateLimiter' => Illuminate\Support\Facades\RateLimiter::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
@@ -230,9 +235,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
-        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
-        'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];

@@ -70,6 +70,8 @@
       </div>
       <div class="col-md-9">
         <div class="card">
+          @include('include.alert-result')
+          
           @livewire('companies-lines')
         </div>
       </div>

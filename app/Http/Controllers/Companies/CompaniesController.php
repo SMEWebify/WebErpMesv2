@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Companies;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
 
 class CompaniesController extends Controller
@@ -45,6 +47,80 @@ class CompaniesController extends Controller
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
         ]);
+    }
+
+    public function import(Request $request)
+    {   
+        $this->user_id = Auth::id();
+        $file = $request->file('import_file');
+        if ($file) {
+            $filename = $file->getClientOriginalName(); //Get file name
+            $extension = $file->getClientOriginalExtension(); //Get extension of uploaded file
+            $tempPath = $file->getRealPath(); //Get Path
+            $fileSize = $file->getSize(); //Get size of uploaded file in bytes
+            //Where uploaded file will be stored on the server 
+            $location = 'imports'; //Created an "uploads" folder for that
+            // Upload file
+            $file->move($location, $filename);
+            // In case the uploaded file path is to be stored in the database 
+            $filepath = public_path("/" . $location . "/" . $filename);
+            // Reading file
+            $file = fopen($filepath, "r");
+            $importData_arr = array(); // Read through the file and store the contents as an array
+            $i = 0;
+            //Read the contents of the uploaded file 
+            while (($filedata = fgetcsv($file, 1000, ";")) !== FALSE) {
+                $num = count($filedata);
+                // Skip first row (Remove below comment if you want to skip the first row)
+                if ($i == 0 && $request->header  ) {
+                    $i++;
+                    continue;
+                }
+                for ($c = 0; $c < $num; $c++) {
+                    //dd(trim(strip_tags($filedata[$c])));
+                    $importData_arr[$i][] = trim(strip_tags($filedata[$c]));
+                }
+                $i++;
+            }
+            
+            fclose($file); //Close after reading
+            $j = 0;
+            $maxKey = max($request->code, $request->discount, 1, 6, 7);
+
+            foreach ($importData_arr as $importData) {
+                if($maxKey>=count($importData)){
+                    //no column match
+                    return redirect()->route('admin.factory')->withErrors('imports failed, no column match');
+                }
+                
+            
+                try {
+                    $CompaniesCreated = Companies::create([
+                        'code'=>utf8_encode($importData[$request->code]),
+                        'label'=> array_key_exists($request->label,  $importData) ? $importData[$request->label] : null,
+                        'website'=> array_key_exists($request->website,  $importData) ? $importData[$request->website] : null,
+                        'fbsite'=> array_key_exists($request->fbsite,  $importData) ? $importData[$request->fbsite] : null,
+                        'twittersite'=> array_key_exists($request->twittersite,  $importData) ? $importData[$request->twittersite] : null,
+                        'lkdsite'=> array_key_exists($request->lkdsite,  $importData) ? $importData[$request->lkdsite] : null,
+                        'siren'=> array_key_exists($request->siren,  $importData) ? $importData[$request->siren] : null,
+                        'naf_code'=> array_key_exists($request->naf_code,  $importData) ? $importData[$request->naf_code] : null,
+                        'intra_community_vat'=> array_key_exists($request->intra_community_vat,  $importData) ? $importData[$request->intra_community_vat] : null,
+                        'discount'=> array_key_exists($request->discount,  $importData) ? $importData[$request->discount] : null,
+                        'user_id'=>$this->user_id,
+                    ]);
+
+                    $j++;
+                } catch (\Exception $e) {
+                    dd($e);
+                }
+            }
+            
+            return redirect()->route('companies')->with('success', 'Successfully imports companies,'. $j .' lines added.');
+
+        } else {
+            //no file was uploaded
+            return redirect()->route('admin.factory')->withErrors('imports failed, no file');
+        }
     }
 
     /**

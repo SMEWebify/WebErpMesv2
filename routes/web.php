@@ -25,6 +25,7 @@ Route::group(['prefix' => 'companies'], function () {
     Route::post('/addresses/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->middleware(['auth'])->name('addresses.store');
     Route::post('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->middleware(['auth'])->name('addresses.update');
     Route::get('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->middleware(['auth'])->name('addresses.edit');
+    Route::post('/import', 'App\Http\Controllers\Companies\CompaniesController@import')->middleware(['auth'])->name('companies.import');
     Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->middleware(['auth'])->name('companies.update');
     Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->middleware(['auth'])->name('companies.show');
 });

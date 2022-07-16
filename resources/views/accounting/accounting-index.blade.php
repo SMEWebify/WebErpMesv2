@@ -167,9 +167,7 @@
                       </select>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -295,9 +293,7 @@
                       <input type="text" class="form-control" name="code_account"  id="code_account" placeholder="Code account">
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -434,9 +430,7 @@
                       </div>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -633,9 +627,7 @@
                       </select>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->
@@ -750,9 +742,7 @@
                       </div>
                     </div>
                     <div class="card-footer">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="submit" class="btn btn-danger">Submit New</button>
-                      </div>
+                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
                 <!-- /.card secondary -->

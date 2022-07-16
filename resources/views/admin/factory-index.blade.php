@@ -13,6 +13,7 @@
             <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Factory settings</a></li>
             <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Workflow settings</a></li>
             <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">Estimated Budget</a></li>
+            <li class="nav-item"><a class="nav-link" href="#CustomerImport" data-toggle="tab">Customer Import</a></li>
         </ul>
     </div>
     <div class="card-body">
@@ -401,7 +402,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-8">
                                                 <label for="add_day_validity_quote">Additional day of validity of the offer</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -413,7 +414,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-8">
                                                 <label for="add_delivery_delay_order">Additional day delivery delay</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -428,7 +429,7 @@
                                 </div>
                                 <hr>
                                 <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-8">
                                                 <label for="accounting_vats_id">VAT type</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -442,7 +443,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-8">
                                                 <label for="curency">Curency</label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -502,7 +503,7 @@
                                         </div>
                             </div>
                             <div class="card-body">
-                                <div class="col-6">
+                                <div class="col-8">
                                     <label for="task_barre_code">Code bare type for declare task</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -523,7 +524,7 @@
                             </div>
                             </div>  
                             <div class="modal-footer">
-                                <button type="Submit" class="btn btn-primary">Submit</button>
+                                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                             </div>
                         </form>
                     </div>
@@ -537,10 +538,164 @@
                 <x-InfocalloutComponent note="Used for dashboard chart."  />
                 @livewire('estimated-budget')
             </div>
+            <div class="tab-pane " id="CustomerImport">
+                @include('include.alert-result')
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Select your file</h3>
+                    </div>
+                    <form method="POST" action="{{ route('companies.import') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="card-body">
+                            {{-- Placeholder, sm size and prepend icon --}}
+                            <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="Choose a .csv file...">
+                                <x-slot name="prependSlot">
+                                    <div class="input-group-text bg-lightblue">
+                                        <i class="fas fa-upload"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input-file>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Header line ?</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input-switch name="header" data-on-text="YES" data-off-text="NO" data-on-color="teal" checked/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">External ID</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="code" placeholder="set CSV col number" required type="number">
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-red">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Name of company</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="label" placeholder="set CSV col number" required type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-red">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Web site link</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="website" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Facebook link</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="fbsite" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Twitter link</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="twittersite" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Linkedin link</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="lkdsite" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Siren</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="siren" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Naf Code</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="naf_code" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">VAT number</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="intra_community_vat" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Discount</label></div>
+                                <div class="col-8">
+                                    <x-adminlte-input name="discount" placeholder="set CSV col number"  type="number" min=0>
+                                        <x-slot name="appendSlot">
+                                            <div class="input-group-text bg-blue">
+                                                <i class="fas fa-hashtag"></i>
+                                            </div>
+                                        </x-slot>
+                                    </x-adminlte-input>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 @stop
+
+@section('plugins.BootstrapSwitch', true)
 
 @section('css')
 @stop
