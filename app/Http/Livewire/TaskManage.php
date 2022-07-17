@@ -2,15 +2,17 @@
 
 namespace App\Http\Livewire;
 
+use stdClass;
 use Livewire\Component;
 use App\Models\Admin\Factory;
+use App\Models\Planning\Task;
 use App\Models\Planning\Status;
+use PhpParser\Node\Expr\Empty_;
 use App\Models\Products\Products;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
-use App\Models\Planning\Task;
-use App\Models\Workflow\OrderLines;
 
 class TaskManage extends Component
 {
@@ -105,6 +107,11 @@ class TaskManage extends Component
         elseif($this->idType == 'order_lines_id'){
             $Line = OrderLines::findOrFail($this->idLine);
         }
+        else{
+            $Line = new stdClass();
+            $Line->id = null;
+            $Line->qty = 0;
+        }
         
         return view('livewire.task-manage',[
             'Line' => $Line,
@@ -125,7 +132,7 @@ class TaskManage extends Component
         $this->methods_units_id  = '';
     }
 
-    public function storeTask($idLine){
+    public function storeTask($idLine  = null){
         $this->validate();
 
         if($this->idType == 'products_id'){
@@ -135,6 +142,11 @@ class TaskManage extends Component
             $this->quote_lines_id = $idLine;
         }
         elseif($this->idType == 'order_lines_id'){
+            $this->order_lines_id = $idLine;
+        }
+        else{
+            $this->products_id = $idLine;
+            $this->order_lines_id = $idLine;
             $this->order_lines_id = $idLine;
         }
 

@@ -37,7 +37,11 @@
                         @forelse ($Tasklist as $Task)
                         <tr > 
                             <td>
-                                <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />
+                                @if($Task->OrderLines ?? null)
+                                    <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />
+                                @else
+                                    Generic
+                                @endif
                             </td>
                             <td>{{ $Task->ordre }}</td>
                             <td>#{{ $Task->id }} - {{ $Task->label }}</td>

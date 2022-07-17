@@ -7,7 +7,7 @@
         <form wire:submit.prevent="storeTask({{ $Line->id }})">
         @endif
             <div class="row">
-                <div class="card-header">
+                <div class="col-2">
                     <label for="companies_id">Task type</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -21,9 +21,7 @@
                     </div>
                     @error('document_type') <span class="text-danger">{{ $message }}<br/></span>@enderror
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
+                <div class="col-2">
                     <label for="ordre">Sort order</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -36,7 +34,7 @@
                     </div>
                     @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                     <label for="methods_services_id">Services</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -51,7 +49,7 @@
                     </div>
                     @error('methods_services_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                     <label for="label">Label</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -61,7 +59,7 @@
                     </div>
                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                     @if($TaskType == 'BOM') 
                     <label for="component_id">Component</label>
                     <div class="input-group">
@@ -80,7 +78,9 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
+                <div class="col-2">
+                </div>
+                <div class="col-2">
                     @if($TaskType == 'TechCut')
                     <label for="seting_time">Setting time</label>
                     <div class="input-group">
@@ -101,7 +101,7 @@
                     @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     @endif
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                     @if($TaskType == 'TechCut')
                     <label for="unit_time">Unit time</label>
                     <div class="input-group">
@@ -113,7 +113,7 @@
                     @error('unit_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     @endif
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                     <label for="unit_cost">Unit cost</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -122,7 +122,7 @@
                         <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="Unit cost" value="0" step=".001" min="0" wire:model="unit_cost">
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                     <label for="unit_price">Unit price</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -132,18 +132,17 @@
                     </div>
                     @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-3">
+                <div class="col-2">
                     @if($updateLines)
                     <button type="Submit" class="btn btn-warning">Update</button>
                     @else
-                    <button type="Submit" class="btn btn-primary">Submit</button>
+                    <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
                     @endif
                 </div>
             </div>
         </form>
     </div>
+    @if($Line->id ?? null)
     <div class="card card-secondary">
         <div class="card-header">
             <h3 class="card-title">Technical cut</h3>
@@ -297,4 +296,5 @@
         </div>
         <!-- /.card-body -->
     </div>
+    @endif
 </div>
