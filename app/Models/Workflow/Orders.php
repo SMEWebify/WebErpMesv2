@@ -15,10 +15,12 @@ use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Orders extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = ['code', 
                             'label', 
@@ -90,5 +92,11 @@ class Orders extends Model
     {
         $orderCalculator = new OrderCalculator($this);
         return $orderCalculator->getTotalPrice();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly(['code', 'label', 'statu']);
+        // Chain fluent methods for configuration options
     }
 }

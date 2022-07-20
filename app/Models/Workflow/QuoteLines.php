@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class QuoteLines extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
     
     protected $fillable = ['quotes_id', 
                             'ordre', 
@@ -84,5 +86,11 @@ class QuoteLines extends Model
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly(['quotes_id', 'code', 'label', 'statu']);
+        // Chain fluent methods for configuration options
     }
 }

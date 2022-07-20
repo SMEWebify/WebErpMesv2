@@ -143,22 +143,68 @@
         </form>
     </div>
     @if($Line->id ?? null)
-    <div class="card card-secondary">
-        <div class="card-header">
-            <h3 class="card-title">Technical cut</h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                    <i class="fas fa-times"></i>
-                </button>
+    <div class="card-body">
+        <div class="card card-secondary">
+            <div class="card-header">
+                <h3 class="card-title">Technical cut</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sort order</th>
+                            <th>Label</th>
+                            <th>Service</th>
+                            <th>Setting time</th>
+                            <th>Unit time</th>
+                            <th>Unit cost</th>
+                            <th>Unit price</th>
+                            <th>Statu</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($Line->TechnicalCut as $TechLine)
+                        <tr>
+                            <td>{{ $TechLine->ordre }}</td>
+                            <td>{{ $TechLine->label }}</td>
+                            <td>{{ $TechLine->service['label'] }}</td>
+                            <td>{{ $TechLine->seting_time }}</td>
+                            <td>{{ $TechLine->unit_time }}</td>
+                            <td>{{ $TechLine->unit_cost }} {{ $Factory->curency }}</td>
+                            <td>{{ $TechLine->unit_price }} {{ $Factory->curency }}</td>
+                            <td>
+                            @if($TechLine->order_lines_id)
+                                {{ $TechLine->status['title'] }}
+                            @else
+                                Not for this page
+                            @endif
+                            </td>
+                            <td class=" py-0 align-middle">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item " wire:click="duplicateLine({{$TechLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
+                                        <a href="#" class="dropdown-item" wire:click="editTaskLine({{$TechLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
+                                        <a href="#" class="dropdown-item" wire:click="destroyTaskLine({{$TechLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <x-EmptyDataLine col="9" text="No line found ..."  />
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
                         <th>Sort order</th>
                         <th>Label</th>
                         <th>Service</th>
@@ -168,133 +214,89 @@
                         <th>Unit price</th>
                         <th>Statu</th>
                         <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($Line->TechnicalCut as $TechLine)
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+            
+        <div class="card card-secondary">
+            <div class="card-header">
+                <h3 class="card-title">Bill of materials</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table  class="table">
+                    <thead>
                     <tr>
-                        <td>{{ $TechLine->ordre }}</td>
-                        <td>{{ $TechLine->label }}</td>
-                        <td>{{ $TechLine->service['label'] }}</td>
-                        <td>{{ $TechLine->seting_time }}</td>
-                        <td>{{ $TechLine->unit_time }}</td>
-                        <td>{{ $TechLine->unit_cost }} {{ $Factory->curency }}</td>
-                        <td>{{ $TechLine->unit_price }} {{ $Factory->curency }}</td>
+                        <th>Sort order</th>
+                        <th>Label</th>
+                        <th>Service</th>
+                        <th>Component</th>
+                        <th>Quantity</th>
+                        <th>Unit cost</th>
+                        <th>Unit price</th>
+                        <th>Statu</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($Line->BOM as $BOMline)
+                        <tr>
+                        <td>{{ $BOMline->ordre }}</td>
+                        <td>{{ $BOMline->label }}</td>
+                        <td>{{ $BOMline->service['label'] }}</td>
+                        <td>{{ $BOMline->Component['code'] }}</td>
+                        <td>{{ $BOMline->qty }}</td>
+                        <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>
+                        <td>{{ $BOMline->unit_price }} {{ $Factory->curency }}</td>
                         <td>
-                        @if($TechLine->order_lines_id)
-                            {{ $TechLine->status['title'] }}
-                        @else
+                            @if($BOMline->order_lines_id)
+                            {{ $BOMline->status['title'] }}
+                            @else
                             Not for this page
-                        @endif
+                            @endif
                         </td>
                         <td class=" py-0 align-middle">
                             <div class="input-group-prepend">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item " wire:click="duplicateLine({{$TechLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
-                                    <a href="#" class="dropdown-item" wire:click="editTaskLine({{$TechLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
-                                    <a href="#" class="dropdown-item" wire:click="destroyTaskLine({{$TechLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                    <a href="#" class="dropdown-item " wire:click="duplicateLine({{$BOMline->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
+                                    <a href="#" class="dropdown-item" wire:click="editTaskLine({{$BOMline->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
+                                    <a href="#" class="dropdown-item" wire:click="destroyTaskLine({{$BOMline->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
                                 </div>
                             </div>
                         </td>
-                    </tr>
-                    @empty
-                    <x-EmptyDataLine col="9" text="No line found ..."  />
-                    @endforelse
-                </tbody>
-                <tfoot>
+                        </tr>
+                        @empty
+                        <x-EmptyDataLine col="9" text="No line found ..."  />
+                        @endforelse
+                    </tbody>
+                    <tfoot>
                     <tr>
-                    <th>Sort order</th>
-                    <th>Label</th>
-                    <th>Service</th>
-                    <th>Setting time</th>
-                    <th>Unit time</th>
-                    <th>Unit cost</th>
-                    <th>Unit price</th>
-                    <th>Statu</th>
-                    <th>Action</th>
+                        <th>Sort order</th>
+                        <th>Label</th>
+                        <th>Service</th>
+                        <th>Component</th>
+                        <th>Quantity</th>
+                        <th>Unit cost</th>
+                        <th>Unit price</th>
+                        <th>Statu</th>
+                        <th>Action</th>
                     </tr>
-                </tfoot>
-            </table>
-        </div>
-        <!-- /.card-body -->
-    </div>
-        
-    <div class="card card-secondary">
-        <div class="card-header">
-            <h3 class="card-title">Bill of materials</h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                <i class="fas fa-plus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                <i class="fas fa-times"></i>
-                </button>
+                    </tfoot>
+                </table>
             </div>
+            <!-- /.card-body -->
         </div>
-        <div class="card-body">
-            <table  class="table">
-                <thead>
-                <tr>
-                    <th>Sort order</th>
-                    <th>Label</th>
-                    <th>Service</th>
-                    <th>Component</th>
-                    <th>Quantity</th>
-                    <th>Unit cost</th>
-                    <th>Unit price</th>
-                    <th>Statu</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                    @forelse($Line->BOM as $BOMline)
-                    <tr>
-                    <td>{{ $BOMline->ordre }}</td>
-                    <td>{{ $BOMline->label }}</td>
-                    <td>{{ $BOMline->service['label'] }}</td>
-                    <td>{{ $BOMline->Component['code'] }}</td>
-                    <td>{{ $BOMline->qty }}</td>
-                    <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>
-                    <td>{{ $BOMline->unit_price }} {{ $Factory->curency }}</td>
-                    <td>
-                        @if($BOMline->order_lines_id)
-                        {{ $BOMline->status['title'] }}
-                        @else
-                        Not for this page
-                        @endif
-                    </td>
-                    <td class=" py-0 align-middle">
-                        <div class="input-group-prepend">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                            <div class="dropdown-menu">
-                                <a href="#" class="dropdown-item " wire:click="duplicateLine({{$BOMline->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
-                                <a href="#" class="dropdown-item" wire:click="editTaskLine({{$BOMline->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
-                                <a href="#" class="dropdown-item" wire:click="destroyTaskLine({{$BOMline->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
-                            </div>
-                        </div>
-                    </td>
-                    </tr>
-                    @empty
-                    <x-EmptyDataLine col="9" text="No line found ..."  />
-                    @endforelse
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th>Sort order</th>
-                    <th>Label</th>
-                    <th>Service</th>
-                    <th>Component</th>
-                    <th>Quantity</th>
-                    <th>Unit cost</th>
-                    <th>Unit price</th>
-                    <th>Statu</th>
-                    <th>Action</th>
-                </tr>
-                </tfoot>
-            </table>
-        </div>
-        <!-- /.card-body -->
     </div>
     @endif
 </div>
