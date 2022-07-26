@@ -153,9 +153,11 @@ Route::group(['prefix' => 'task'], function () {
     Route::post('/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->middleware(['auth'])->name('task.update');
 });
 
+
 Route::group(['prefix' => 'production'], function () {
     Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->middleware(['auth'])->name('production.task');
     Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->middleware(['auth'])->name('production.kanban');
+    Route::get('/calendar', 'App\Http\Controllers\Planning\CalendarController@index')->middleware(['auth'])->name('production.calendar');
 });
 
 Route::group(['prefix' => 'admin'], function () {
@@ -194,10 +196,11 @@ Route::group(['prefix' => 'methods'], function () {
     Route::post('/Tool/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->middleware(['auth'])->name('methods.tool.update');
 });
 
-Route::get('notifications/get', 'App\Http\Controllers\NotificationsController@getNotificationsData')->middleware(['auth'])->name('notifications.get');
-Route::get('notifications/show', 'App\Http\Controllers\NotificationsController@show')->middleware(['auth'])->name('notifications.show');
-Route::post('notifications/show', 'App\Http\Controllers\UsersController@settingNotification')->middleware(['auth'])->name('notifications.setting');
-
+Route::group(['prefix' => 'notifications'], function () {
+    Route::get('/get', 'App\Http\Controllers\NotificationsController@getNotificationsData')->middleware(['auth'])->name('notifications.get');
+    Route::get('/show', 'App\Http\Controllers\NotificationsController@show')->middleware(['auth'])->name('notifications.show');
+    Route::post('/show', 'App\Http\Controllers\UsersController@settingNotification')->middleware(['auth'])->name('notifications.setting');
+});
 
 Route::post('dropzone/store', 'App\Http\Controllers\DropzoneController@dropzoneStore')->middleware(['auth'])->name('dropzone.store');
 

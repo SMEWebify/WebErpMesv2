@@ -303,9 +303,13 @@ return [
             ]
         ],
         [
-            'text'    => 'Tasks',
-            'icon' => 'fas fa-tasks',
+            'text'    => 'Scheduling',
+            'icon' => 'fas fa-calendar-alt',
             'submenu' => [
+                [
+                    'text' => 'Order calendar',
+                    'url'  => 'production/calendar',
+                ],
                 [
                     'text' => 'Tasks list',
                     'url'  => 'production/Task',
@@ -314,6 +318,7 @@ return [
                     'text' => 'Workflow',
                     'url'  => 'production/kanban',
                 ],
+                
                 /* 
                 https://github.com/billyboy35/WebErpMesv2/issues/27
                 [
@@ -323,13 +328,6 @@ return [
                 */
             ]
         ],
-        /* 
-        https://github.com/billyboy35/WebErpMesv2/issues/30
-        [
-            'text' => 'Calendar',
-            'url'  => '#',
-            'icon' => 'fas fa-calendar-alt',
-        ],*/
         [
             'text'    => 'Delivery notes',
             'icon'    => 'fas fa-receipt',
