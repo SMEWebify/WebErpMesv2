@@ -133,10 +133,12 @@
                     @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                 </div>
                 <div class="col-2">
-                    @if($updateLines)
-                    <button type="Submit" class="btn btn-warning">Update</button>
-                    @else
-                    <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
+                    @if($TaskType == 'BOM' or $TaskType == 'TechCut')
+                        @if($updateLines)
+                        <button type="Submit" class="btn btn-warning">Update</button>
+                        @else
+                        <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
+                        @endif
                     @endif
                 </div>
             </div>

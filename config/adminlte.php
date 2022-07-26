@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'logo' => '<b>WEM</b>',
+    'logo' => '<b>WEM</b> v1.0',
     'logo_img' => 'vendor/adminlte/dist/img/WEMLogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -242,7 +242,19 @@ return [
             'type'         => 'darkmode-widget',
             'topnav_right' => true, // Or "topnav => true" to place on the left.
         ],
-
+        [
+            'type'         => 'navbar-notification',
+            'id'           => 'my-notification',
+            'icon'         => 'fas fa-bell',
+            'route'        => 'notifications.show',
+            'topnav_right' => true,
+            'dropdown_mode'   => true,
+            'dropdown_flabel' => 'All notifications',
+            'update_cfg'   => [
+                'route'  => ['notifications.get', ['param' => 'val']],
+                'period' => 30,
+            ],
+        ],
         // Sidebar items:
         /*[
             'type'      => 'sidebar-menu-search',
@@ -552,12 +564,27 @@ return [
             ],
         ],
         'BootstrapSwitch' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/bootstrap-switch/js/bootstrap-switch.min.js',
+                ],
+            ],
+        ],
+        'Dropzone' => [
+            'active' => true,
+            'files' => [
+                [
+                'type' => 'css',
+                'asset' => false,
+                'location' => '//unpkg.com/dropzone@5/dist/min/dropzone.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//unpkg.com/dropzone@5/dist/min/dropzone.min.js',
                 ],
             ],
         ],

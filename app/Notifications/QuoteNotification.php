@@ -7,11 +7,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class UserRegisteredNotification extends Notification
+class QuoteNotification extends Notification
 {
     use Queueable;
     private $data;
-    
+
     /**
      * Create a new notification instance.
      *
@@ -57,7 +57,8 @@ class UserRegisteredNotification extends Notification
     {
         return [
             'id' => $this->data['id'],
-            'code' => $this->data['name'],
+            'code' => $this->data['code'],
+            'user_id' => $this->data['user_id']
         ];
     }
 }

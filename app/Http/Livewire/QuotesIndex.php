@@ -10,8 +10,10 @@ use App\Models\Workflow\Quotes;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\QuoteNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
@@ -143,8 +145,12 @@ class QuotesIndex extends Component
                                             'comment'=>$this->comment, 
             ]);
 
+            // notification for all user in database
+            $users = User::where('quotes_notification', 1)->get();
+            Notification::send($users, new QuoteNotification($QuotesCreated));
+
+            //change statu companie
             Companies::where('id', $this->companies_id)->update(['statu_customer'=>2]);
-            // Reset Form Fields After Creating line
             return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
     }
 }

@@ -194,10 +194,16 @@ Route::group(['prefix' => 'methods'], function () {
     Route::post('/Tool/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->middleware(['auth'])->name('methods.tool.update');
 });
 
+Route::get('notifications/get', 'App\Http\Controllers\NotificationsController@getNotificationsData')->middleware(['auth'])->name('notifications.get');
+Route::get('notifications/show', 'App\Http\Controllers\NotificationsController@show')->middleware(['auth'])->name('notifications.show');
+Route::post('notifications/show', 'App\Http\Controllers\UsersController@settingNotification')->middleware(['auth'])->name('notifications.setting');
+
+
+Route::post('dropzone/store', 'App\Http\Controllers\DropzoneController@dropzoneStore')->middleware(['auth'])->name('dropzone.store');
 
 Route::group(['prefix' => 'users'], function () {
     Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
-    Route::get('/Profile', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');
+    Route::get('/Profile/{id}', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');
     Route::get('/Profile/Update', 'App\Http\Controllers\UsersController@update')->middleware(['auth'])->name('user.profile.update');
 
 });

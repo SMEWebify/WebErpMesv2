@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class UserRegisteredNotification extends Notification
+class CompanieNotification extends Notification
 {
     use Queueable;
     private $data;
@@ -57,7 +57,8 @@ class UserRegisteredNotification extends Notification
     {
         return [
             'id' => $this->data['id'],
-            'code' => $this->data['name'],
+            'code' => $this->data['label'],
+            'user_id' => $this->data['user_id']
         ];
     }
 }

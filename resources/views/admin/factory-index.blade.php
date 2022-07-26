@@ -558,13 +558,13 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Header line ?</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Header line ?</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input-switch name="header" data-on-text="YES" data-off-text="NO" data-on-color="teal" checked/>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">External ID</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">External ID</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="code" placeholder="set CSV col number" required type="number">
                                         <x-slot name="appendSlot">
@@ -576,7 +576,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Name of company</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Name of company</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="label" placeholder="set CSV col number" required type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -588,7 +588,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Web site link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Web site link</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="website" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -600,7 +600,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Facebook link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Facebook link</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="fbsite" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -612,7 +612,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Twitter link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Twitter link</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="twittersite" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -624,7 +624,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Linkedin link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Linkedin link</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="lkdsite" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -636,7 +636,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Siren</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Siren</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="siren" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -648,7 +648,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Naf Code</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Naf Code</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="naf_code" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -660,7 +660,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">VAT number</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">VAT number</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="intra_community_vat" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">
@@ -672,7 +672,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-sm-2 col-form-label">Discount</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Discount</label></div>
                                 <div class="col-8">
                                     <x-adminlte-input name="discount" placeholder="set CSV col number"  type="number" min=0>
                                         <x-slot name="appendSlot">

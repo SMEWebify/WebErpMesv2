@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Quotes;
@@ -10,8 +11,8 @@ use App\Services\QuoteCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;

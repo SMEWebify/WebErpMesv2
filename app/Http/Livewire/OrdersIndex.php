@@ -8,12 +8,14 @@ use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\Auth;
+use App\Notifications\OrderNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
-use Illuminate\Support\Facades\Auth;
 
 class OrdersIndex extends Component
 {
@@ -141,8 +143,13 @@ class OrdersIndex extends Component
                                             'accounting_deliveries_id'=>$this->accounting_deliveries_id,   
                                             'comment'=>$this->comment, 
             ]);
+
+            // notification for all user in database
+            $users = User::where('orders_notification', 1)->get();
+            Notification::send($users, new OrderNotification($OrdersCreated));
+
+            //change statu companie
             Companies::where('id', $this->companies_id)->update(['statu_customer'=>3]);
-            // Reset Form Fields After Creating line
             return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
     }
 }

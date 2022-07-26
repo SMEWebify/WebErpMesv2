@@ -7,6 +7,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\CompanieNotification;
+use Illuminate\Support\Facades\Notification;
 
 class CompaniesLines extends Component
 {
@@ -94,7 +96,11 @@ class CompaniesLines extends Component
                 'recept_controle'=>$this->recept_controle,
                 'comment'=>$this->comment,
             ]);
-            // Reset Form Fields After Creating line
+
+            // notification for all user in database
+            $users = User::where('companies_notification', 1)->get();
+            Notification::send($users, new CompanieNotification($CompaniesCreated));
+
             return redirect()->route('companies.show', ['id' => $CompaniesCreated->id])->with('success', 'Successfully created new company');
     }
 }

@@ -22,7 +22,7 @@ use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {
-    use HasFactory,LogsActivity;
+    use HasFactory,LogsActivity, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -36,6 +36,10 @@ class User extends Authenticatable
         'personnal_phone_number',
         'desc',
         'born_date',
+        'companies_notification',
+        'users_notification',
+        'quotes_notification',
+        'orders_notification',
     ];
 
     /**

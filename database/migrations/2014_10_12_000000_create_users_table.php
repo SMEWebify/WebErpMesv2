@@ -23,6 +23,10 @@ class CreateUsersTable extends Migration
             $table->string('personnal_phone_number')->nullable();
             $table->date('born_date')->nullable();
             $table->string('desc')->nullable();
+            $table->boolean('companies_notification')->default(1);
+            $table->boolean('users_notification')->default(1);
+            $table->boolean('quotes_notification')->default(1);
+            $table->boolean('orders_notification')->default(1);
             $table->rememberToken();
             $table->timestamps();
 
