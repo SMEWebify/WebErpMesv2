@@ -2,16 +2,17 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Orders;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
 class Deliverys extends Model
 {
@@ -56,6 +57,11 @@ class Deliverys extends Model
     public function DeliveryLines()
     {
         return $this->hasMany(DeliveryLines::class)->orderBy('ordre');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function GetPrettyCreatedAttribute()

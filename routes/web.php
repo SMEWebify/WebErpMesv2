@@ -202,7 +202,7 @@ Route::group(['prefix' => 'notifications'], function () {
     Route::post('/show', 'App\Http\Controllers\UsersController@settingNotification')->middleware(['auth'])->name('notifications.setting');
 });
 
-Route::post('dropzone/store', 'App\Http\Controllers\DropzoneController@dropzoneStore')->middleware(['auth'])->name('dropzone.store');
+Route::post('upload-file', 'App\Http\Controllers\FileUpload@fileUpload')->middleware(['auth'])->name('file.store');
 
 Route::group(['prefix' => 'users'], function () {
     Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');

@@ -2,21 +2,22 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
 use App\Services\OrderCalculator;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
+
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
-
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
 class Orders extends Model
 {
@@ -81,6 +82,11 @@ class Orders extends Model
     public function OrderLines()
     {
         return $this->hasMany(OrderLines::class)->orderBy('ordre');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function GetPrettyCreatedAttribute()

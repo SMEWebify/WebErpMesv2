@@ -2,17 +2,18 @@
 
 namespace App\Models\Products;
 
+use App\Models\File;
 use App\Models\Planning\Task;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
 class Products extends Model
 {
@@ -103,6 +104,11 @@ class Products extends Model
     public function Quotelines()
     {
         return $this->hasMany(QuoteLines::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function GetPrettyCreatedAttribute()

@@ -2,16 +2,17 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\File;
 use App\Models\User;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
+use App\Services\InvoiceCalculator;
 use App\Models\Workflow\InvoiceLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
-use App\Models\Companies\CompaniesAddresses;
-use App\Services\InvoiceCalculator;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+use App\Models\Companies\CompaniesAddresses;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Invoices extends Model
 {
@@ -66,6 +67,11 @@ class Invoices extends Model
     {
         $invoiceCalculator = new InvoiceCalculator($this);
         return $invoiceCalculator->getTotalPrice();
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -2,6 +2,7 @@
 
 namespace App\Models\Quality;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Quality\QualityAction;
 use Illuminate\Database\Eloquent\Model;
@@ -50,6 +51,11 @@ class QualityNonConformity extends Model
     public function Task()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function GetPrettyCreatedAttribute()

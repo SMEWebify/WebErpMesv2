@@ -2,20 +2,21 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\File;
 use App\Models\User;
 use App\Services\QuoteCalculator;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
+
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
-
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
 class Quotes extends Model
 {
@@ -75,6 +76,11 @@ class Quotes extends Model
         return $this->hasMany(QuoteLines::class)->orderBy('ordre');
     }
 
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
+    
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

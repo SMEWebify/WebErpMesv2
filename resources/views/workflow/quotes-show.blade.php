@@ -140,6 +140,41 @@
                 </table>
               </div>
             </div>
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title"> Documents </h3>
+              </div>
+                <div class="card-body">
+                    <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="far fa-file"></i></span>
+                            </div>
+                            <div class="custom-file">
+                              <input type="hidden" name="quote_id" value="{{ $Quote->id }}" >
+                              <input type="file" name="file" class="custom-file-input" id="chooseFile">
+                              <label class="custom-file-label" for="chooseFile">Choose file</label>
+                            </div>
+                            <div class="input-group-append">
+                              <button type="submit" name="submit" class="btn btn-success">
+                                Upload
+                              </button>
+                            </div>
+                          </div>
+                    </form>
+                    <h5 class="mt-5 text-muted">Attached files</h5>
+                    <ul class="list-unstyled">
+                      @forelse ( $Quote->files as $file)
+                      <li>
+                        <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
+                      </li>
+                      @empty
+                        No file
+                      @endforelse
+                    </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>   

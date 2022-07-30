@@ -2,6 +2,7 @@
 
 namespace App\Models\Companies;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
@@ -79,6 +80,11 @@ class Companies extends Model
     public function getOrdersCountAttribute()
     {
         return $this->Quotes()->count();
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function GetPrettyCreatedAttribute()

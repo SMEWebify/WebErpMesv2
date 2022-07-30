@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +49,11 @@ class PurchaseReceipt extends Model
     public function PurchaseReceiptLines()
     {
         return $this->hasMany(PurchaseReceiptLines::class)->orderBy('ordre');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function GetPrettyCreatedAttribute()
