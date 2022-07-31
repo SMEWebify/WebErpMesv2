@@ -170,7 +170,7 @@
                                 @error('accounting_deliveries_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                             <div class="col-5">
-                                <label for="label">Validity date</label>
+                                <label for="label">Delevery date</label>
                                 <input type="date" class="form-control" wire:model="validity_date"  name="validity_date"  id="validity_date">
                                 @error('validity_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>

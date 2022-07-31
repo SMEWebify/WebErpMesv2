@@ -56,6 +56,7 @@ class OrdersIndex extends Component
         'accounting_payment_methods_id'=>'required',
         'accounting_deliveries_id'=>'required',
         'user_id'=>'required',
+        'validity_date'=>'required',
     ];
 
     public function sortBy($field)
