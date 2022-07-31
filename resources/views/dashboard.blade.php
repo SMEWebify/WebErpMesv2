@@ -8,89 +8,59 @@
 
 @section('content')
 <div class="row">
+  
     <div class="col-lg-2 col-6">
-      <!-- small box -->
-      <div class="small-box bg-info">
-        <div class="inner">
-          <h3>{{$data['customers_count']}}</h3>
-          <p>Clients</p>
-        </div>
-        <div class="icon">
-          <i class="ion ion-bag"></i>
-        </div>
-        <a href="{{ route('companies') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-      </div>
+      <x-adminlte-small-box title="{{$data['suppliers_count']}}" 
+                            text="Clients" 
+                            icon="far fa-building"
+                            theme="info" 
+                            url="{{ route('companies') }}" 
+                            url-text="View details"/>
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-6">
-      <!-- small box -->
-      <div class="small-box bg-success">
-        <div class="inner">
-          <h3>{{$data['suppliers_count']}}</h3>
-          
-          <p>Suppliers</p>
-        </div>
-        <div class="icon">
-          <i class="ion ion-stats-bars"></i>
-        </div>
-        <a href="{{ route('companies') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-      </div>
+      <x-adminlte-small-box title="{{ $data['customers_count'] }}" 
+                            text="Suppliers" 
+                            icon="far fa-building"
+                            theme="success" 
+                            url="{{ route('companies') }}" 
+                            url-text="View details"/>
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-6">
-      <!-- small box -->
-      <div class="small-box bg-warning">
-        <div class="inner">
-          <h3>{{$data['user_count']}}</h3>
-          <p>User</p>
-        </div>
-        <div class="icon">
-          <i class="ion ion-person-add"></i>
-        </div>
-        <a href="{{ route('users') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-      </div>
+      <x-adminlte-small-box title="{{ $data['user_count'] }}" 
+                            text="User" 
+                            icon="fas fa-user-plus"
+                            theme="warning" 
+                            url="{{ route('users') }}" 
+                            url-text="View details"/>
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-6">
-      <!-- small box -->
-      <div class="small-box bg-danger">
-        <div class="inner">
-          <h3>{{$data['quotes_count']}}</h3>
-          <p>Quotes</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-calculator"></i>
-        </div>
-        <a href="{{ route('quotes') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-      </div>
+      <x-adminlte-small-box title="{{ $data['quotes_count'] }}" 
+                            text="Quotes" 
+                            icon="fas fa-calculator"
+                            theme="danger" 
+                            url="{{ route('quotes') }}" 
+                            url-text="View details"/>
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-6">
-      <!-- small box -->
-      <div class="small-box bg-secondary">
-        <div class="inner">
-          <h3>{{$data['orders_count']}}</h3>
-          <p>Orders</p>
-        </div>
-        <div class="icon">
-          <i class="ion ion-bag"></i>
-        </div>
-        <a href="{{ route('orders') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-      </div>
+      <x-adminlte-small-box title="{{ $data['orders_count'] }}" 
+                            text="Orders" 
+                            icon="fas fa-shopping-cart"
+                            theme="secondary" 
+                            url="{{ route('orders') }}" 
+                            url-text="View details"/>
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-6">
-      <!-- small box -->
-      <div class="small-box bg-primary">
-        <div class="inner">
-          <h3>{{$data['quality_non_conformities_count']}}</h3>
-          <p>Non conformities</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-times-circle"></i>
-        </div>
-        <a href="{{ route('quality') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-      </div>
+      <x-adminlte-small-box title="{{ $data['quality_non_conformities_count'] }}" 
+                            text="Non conformities" 
+                            icon="fas fa-times-circle"
+                            theme="primary" 
+                            url="{{ route('quality') }}" 
+                            url-text="View details"/>
     </div>
     <!-- ./col -->
   </div>
@@ -664,4 +634,41 @@
       options: lineChartOptions
     })
   </script>
+
+<script>
+
+  $(document).ready(function() {
+
+      let sBox = new _AdminLTE_SmallBox('sbUpdatable');
+
+      let updateBox = () =>
+      {
+          // Stop loading animation.
+          sBox.toggleLoading();
+
+          // Update data.
+          let rep = Math.floor(1000 * Math.random());
+          let idx = rep < 100 ? 0 : (rep > 500 ? 2 : 1);
+          let text = 'Reputation - ' + ['Basic', 'Silver', 'Gold'][idx];
+          let icon = 'fas fa-medal ' + ['text-primary', 'text-light', 'text-warning'][idx];
+          let url = ['url1', 'url2', 'url3'][idx];
+
+          let data = {text, title: rep, icon, url};
+          sBox.update(data);
+      };
+
+      let startUpdateProcedure = () =>
+      {
+          // Simulate loading procedure.
+          sBox.toggleLoading();
+
+          // Wait and update the data.
+          setTimeout(updateBox, 2000);
+      };
+
+      setInterval(startUpdateProcedure, 10000);
+  })
+
+</script>
+
 @stop
