@@ -33,6 +33,7 @@
               </div>
               <form method="POST" action="{{ route('products.update', ['id' => $Product->id]) }}" enctype="multipart/form-data">
                 @csrf
+                  <div class="card card-body">
                     <div class="row">
                         <div class="col-4">
                           <div class="text-muted">
@@ -55,7 +56,8 @@
                             <input type="text" class="form-control" value="{{ $Product->ind }}"   name="ind"  id="ind" placeholder="Index">
                         </div>
                     </div>
-                    <hr>
+                  </div>
+                  <div class="card card-body">
                     <div class="row">
                         <div class="col-4">
                             <label for="methods_services_id">Services</label>
@@ -106,7 +108,8 @@
                             </div>
                         </div>
                     </div>
-                    <hr>
+                  </div>
+                  <div class="card card-body">
                     <div class="row">
                         <div class="col-4">
                             <label for="purchased">Purchased</label>
@@ -162,7 +165,8 @@
                             </div>
                         </div>
                     </div>
-                    <hr>
+                  </div>
+                  <div class="card card-body">
                     <div class="row">
                         <label for="material">Proprieties</label>
                     </div>
@@ -247,7 +251,6 @@
                         </div>
                         </div>
                     </div>
-                    <hr>
                     <div class="row">
                         <div class="col-4">
                           <input type="number" class="form-control" value="{{ $Product->diameter }}" name="diameter" id="diameter" placeholder="Diameter" step=".001">
@@ -259,7 +262,8 @@
                           <input type="number" class="form-control" value="{{ $Product->section_size }}" name="section_size" id="section_size" placeholder="Section size" step=".001">
                         </div>
                     </div>
-                    <hr>
+                  </div>
+                  <div class="card card-body">
                     <div class="row">
                         <label for="qty_eco_min">Other information</label>
                     </div>
@@ -279,9 +283,10 @@
                         <x-FormTextareaComment  comment="{{ $Product->comment }}" />
                       </div>
                     </div>
-                    <div class="modal-footer">
-                      <button type="Submit" class="btn btn-primary">Save changes</button>
-                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="Submit" class="btn btn-primary">Save changes</button>
+                  </div>
                 </form>
               </div>
             </div>

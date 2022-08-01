@@ -6,140 +6,142 @@
         @else
         <form wire:submit.prevent="storeTask({{ $Line->id }})">
         @endif
-            <div class="row">
-                <div class="col-2">
-                    <label for="companies_id">Task type</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+            <div class="card card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <label for="companies_id">Task type</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                            </div>
+                            <select class="form-control" wire:click.prevent="ChangeTaskType()" wire:model="TaskType" name="TaskType" id="TaskType">
+                                <option value="">Select your task Type</option>
+                                <option value="TechCut">Technical Cut</option>
+                                <option value="BOM">BOM</option>
+                            </select>
                         </div>
-                        <select class="form-control" wire:click.prevent="ChangeTaskType()" wire:model="TaskType" name="TaskType" id="TaskType">
-                            <option value="">Select your task Type</option>
-                            <option value="TechCut">Technical Cut</option>
-                            <option value="BOM">BOM</option>
-                        </select>
+                        @error('document_type') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    @error('document_type') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                </div>
-                <div class="col-2">
-                    <label for="ordre">Sort order</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                    <div class="col-2">
+                        <label for="ordre">Sort order</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                            </div>
+                            <input type="number" class="form-control @error('ordre') is-invalid @enderror" name="ordre" id="ordre" placeholder="Order" min="0" wire:model="ordre">
+                            
+                            <input type="hidden" name="{{ $idType }}" value="{{ $Line->id   }}">
+                            <input type="hidden" name="qty"  id="qty"  value="{{ $Line->qty  }}" value=".001">
                         </div>
-                        <input type="number" class="form-control @error('ordre') is-invalid @enderror" name="ordre" id="ordre" placeholder="Order" min="0" wire:model="ordre">
-                        
-                        <input type="hidden" name="{{ $idType }}" value="{{ $Line->id   }}">
-                        <input type="hidden" name="qty"  id="qty"  value="{{ $Line->qty  }}" value=".001">
+                        @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                </div>
-                <div class="col-2">
-                    <label for="methods_services_id">Services</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                    <div class="col-2">
+                        <label for="methods_services_id">Services</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            </div>
+                            <select class="form-control @error('methods_services_id') is-invalid @enderror" name="methods_services_id" id="methods_services_id" wire:model="methods_services_id">
+                            <option>Select Services</option>
+                                @foreach ($ServicesSelect as $item)
+                                <option value="{{ $item->id }}-{{ $item->type }}" data-txt="{{ $item->label }}">{{ $item->code }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                        <select class="form-control @error('methods_services_id') is-invalid @enderror" name="methods_services_id" id="methods_services_id" wire:model="methods_services_id">
-                        <option>Select Services</option>
-                            @foreach ($ServicesSelect as $item)
-                            <option value="{{ $item->id }}-{{ $item->type }}" data-txt="{{ $item->label }}">{{ $item->code }}</option>
-                            @endforeach
-                        </select>
+                        @error('methods_services_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    @error('methods_services_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                </div>
-                <div class="col-2">
-                    <label for="label">Label</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                    <div class="col-2">
+                        <label for="label">Label</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                            </div>
+                            <input type="text" class="form-control @error('label') is-invalid @enderror"  name="label"  id="LABEL_TechnicalCut" placeholder="Label" wire:model="label">
                         </div>
-                        <input type="text" class="form-control @error('label') is-invalid @enderror"  name="label"  id="LABEL_TechnicalCut" placeholder="Label" wire:model="label">
+                        @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                </div>
-                <div class="col-2">
-                    @if($TaskType == 'BOM') 
-                    <label for="component_id">Component</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                    <div class="col-2">
+                        @if($TaskType == 'BOM') 
+                        <label for="component_id">Component</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            </div>
+                            <select class="form-control @error('component_id') is-invalid @enderror" name="component_id" id="component_id"  wire:model="component_id" >
+                                <option>Select Component</option>
+                                @foreach ($ProductSelect as $item)
+                                <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->code }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                        <select class="form-control @error('component_id') is-invalid @enderror" name="component_id" id="component_id"  wire:model="component_id" >
-                            <option>Select Component</option>
-                            @foreach ($ProductSelect as $item)
-                            <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->code }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @error('component_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                    @endif 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-2">
-                </div>
-                <div class="col-2">
-                    @if($TaskType == 'TechCut')
-                    <label for="seting_time">Setting time</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
-                        </div>
-                        <input type="number" class="form-control @error('seting_time') is-invalid @enderror" name="seting_time"  id="seting_time" placeholder="Setting time" value="0" step=".001"  min="0"  wire:model="seting_time" >
-                    </div>
-                    @error('seting_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                    @else 
-                    <label for="qty">Quantity</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-times"></i></span>
-                        </div>
-                        <input type="number" class="form-control @error('qty') is-invalid @enderror" name="qty"  id="qty" value="{{ $Line->qty  }}" placeholder="Quantity" step=".001"  min="0" wire:model="qty">
-                    </div>
-                    @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                    @endif
-                </div>
-                <div class="col-2">
-                    @if($TaskType == 'TechCut')
-                    <label for="unit_time">Unit time</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
-                        </div>
-                        <input type="number" class="form-control @error('unit_time') is-invalid @enderror" name="unit_time"  id="unit_time" placeholder="Unit time" value="0" step=".001"  min="0" wire:model="unit_time" >
-                    </div>
-                    @error('unit_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                    @endif
-                </div>
-                <div class="col-2">
-                    <label for="unit_cost">Unit cost</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                        </div>
-                        <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="Unit cost" value="0" step=".001" min="0" wire:model="unit_cost">
+                        @error('component_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                        @endif 
                     </div>
                 </div>
-                <div class="col-2">
-                    <label for="unit_price">Unit price</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                        </div>
-                        <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price"  id="unit_price" placeholder="Unit time" value="0" step=".001" min="0" wire:model="unit_price">
+                <div class="row">
+                    <div class="col-2">
                     </div>
-                    @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                </div>
-                <div class="col-2">
-                    @if($TaskType == 'BOM' or $TaskType == 'TechCut')
-                        @if($updateLines)
-                        <button type="Submit" class="btn btn-warning">Update</button>
-                        @else
-                        <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
+                    <div class="col-2">
+                        @if($TaskType == 'TechCut')
+                        <label for="seting_time">Setting time</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                            </div>
+                            <input type="number" class="form-control @error('seting_time') is-invalid @enderror" name="seting_time"  id="seting_time" placeholder="Setting time" value="0" step=".001"  min="0"  wire:model="seting_time" >
+                        </div>
+                        @error('seting_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                        @else 
+                        <label for="qty">Quantity</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-times"></i></span>
+                            </div>
+                            <input type="number" class="form-control @error('qty') is-invalid @enderror" name="qty"  id="qty" value="{{ $Line->qty  }}" placeholder="Quantity" step=".001"  min="0" wire:model="qty">
+                        </div>
+                        @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         @endif
-                    @endif
+                    </div>
+                    <div class="col-2">
+                        @if($TaskType == 'TechCut')
+                        <label for="unit_time">Unit time</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                            </div>
+                            <input type="number" class="form-control @error('unit_time') is-invalid @enderror" name="unit_time"  id="unit_time" placeholder="Unit time" value="0" step=".001"  min="0" wire:model="unit_time" >
+                        </div>
+                        @error('unit_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                        @endif
+                    </div>
+                    <div class="col-2">
+                        <label for="unit_cost">Unit cost</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
+                            </div>
+                            <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="Unit cost" value="0" step=".001" min="0" wire:model="unit_cost">
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <label for="unit_price">Unit price</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
+                            </div>
+                            <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price"  id="unit_price" placeholder="Unit time" value="0" step=".001" min="0" wire:model="unit_price">
+                        </div>
+                        @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-2">
+                        @if($TaskType == 'BOM' or $TaskType == 'TechCut')
+                            @if($updateLines)
+                            <button type="Submit" class="btn btn-warning">Update</button>
+                            @else
+                            <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
+                            @endif
+                        @endif
+                    </div>
                 </div>
             </div>
         </form>

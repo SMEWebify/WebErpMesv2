@@ -12,160 +12,167 @@
                                     <div class="modal-body">
                                         <form>
                                         @csrf
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <label for="code">External ID</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <label for="code">External ID</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control @error('code') is-invalid @enderror" wire:model="code" name="code" id="code" placeholder="External ID">
                                                     </div>
-                                                    <input type="text" class="form-control @error('code') is-invalid @enderror" wire:model="code" name="code" id="code" placeholder="External ID">
+                                                    @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-4">
-                                                <label for="label">Name of company</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                <div class="col-4">
+                                                    <label for="label">Name of company</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control @error('label') is-invalid @enderror" wire:model="label" name="label"  id="label" placeholder="Name of company">
                                                     </div>
-                                                    <input type="text" class="form-control @error('label') is-invalid @enderror" wire:model="label" name="label"  id="label" placeholder="Name of company">
+                                                    @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-4">
-                                                <label for="user_id">Technical manager</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <div class="col-4">
+                                                    <label for="user_id">Technical manager</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                        </div>
+                                                        <select class="form-control" name="user_id" id="user_id" wire:model="user_id">
+                                                            <option value="">Select user</option>
+                                                        @foreach ($userSelect as $item)
+                                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                        @endforeach
+                                                        </select>
                                                     </div>
-                                                    <select class="form-control" name="user_id" id="user_id" wire:model="user_id">
-                                                        <option value="">Select user</option>
-                                                    @foreach ($userSelect as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                                    @endforeach
+                                                    @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <label for="InputWebSite">Site link</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control"  name="website" id="website" wire:model="website" placeholder="Web site link">
+                                                    </div>
+                                                    @error('website') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control"  name="fbsite" id="fbsite" wire:model="fbsite"  placeholder="Facebook link">
+                                                    </div>
+                                                    @error('fbsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control"  name="twittersite" id="twittersite" wire:model="twittersite" placeholder="Twitter link">
+                                                    </div>
+                                                    @error('twittersite') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
+                                                        </div>
+                                                    <input type="text" class="form-control"  name="lkdsite" id="lkdsite" wire:model="lkdsite" placeholder="Linkedin link">
+                                                    </div>
+                                                    @error('lkdsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <label for="siren">Administrative information</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <input type="text" class="form-control" name="siren" id="siren" wire:model="siren" placeholder="Siren">
+                                                    @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                                <div class="col-3">
+                                                    <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="Naf code">
+                                                    @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                                <div class="col-3">
+                                                    <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat" wire:model="intra_community_vat" placeholder="VAT number">
+                                                    @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <label for="siren">Client information</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <label for="discount">Discount :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                                        </div>
+                                                        <input type="number" class="form-control" name="discount" id="discount" wire:model="discount" placeholder="Discount">
+                                                    </div>
+                                                    @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                                <div class="col-3">
+                                                    <label for="account_general_customer">General Account</label>
+                                                    <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" wire:model="account_general_customer" placeholder="General Account">
+                                                    @error('account_general_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                                <div class="col-3">
+                                                    <label for="account_auxiliary_customer">Auxiliary Account</label>
+                                                    <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" wire:model="account_auxiliary_customer" placeholder="Auxiliary account">
+                                                    @error('account_auxiliary_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <label for="siren">Supplier information</label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <label for="recept_controle">Reception control</label>
+                                                    <select class="form-control" name="recept_controle" id="recept_controle" wire:model="recept_controle">
+                                                        <option value="">Select controle type</option>
+                                                        <option value="1">Yes</option>
+                                                        <option value="2">No</option>
                                                     </select>
+                                                    @error('recept_controle') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <label for="InputWebSite">Site link</label>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control"  name="website" id="website" wire:model="website" placeholder="Web site link">
+                                                <div class="col-3">
+                                                    <label for="account_general_supplier">General Account</label>
+                                                    <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  wire:model="account_general_supplier" placeholder="General Account">
+                                                    @error('account_general_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                @error('website') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control"  name="fbsite" id="fbsite" wire:model="fbsite"  placeholder="Facebook link">
+                                                <div class="col-3">
+                                                    <label for="account_auxiliary_supplier">Auxiliary Account</label>
+                                                    <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  wire:model="account_auxiliary_supplier" placeholder="Auxiliary account">
+                                                    @error('account_auxiliary_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                @error('fbsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
-                                            <div class="col-3">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control"  name="twittersite" id="twittersite" wire:model="twittersite" placeholder="Twitter link">
+                                        </div>
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <label>Comment</label>
+                                                    <textarea class="form-control" rows="3" name="comment"  wire:model="comment" placeholder="Enter ..."></textarea>
+                                                    @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                @error('twittersite') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
-                                                    </div>
-                                                <input type="text" class="form-control"  name="lkdsite" id="lkdsite" wire:model="lkdsite" placeholder="Linkedin link">
-                                                </div>
-                                                @error('lkdsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <label for="siren">Administrative information</label>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <input type="text" class="form-control" name="siren" id="siren" wire:model="siren" placeholder="Siren">
-                                                @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="Naf code">
-                                                @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat" wire:model="intra_community_vat" placeholder="VAT number">
-                                                @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <label for="siren">Client information</label>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <label for="discount">Discount :</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                                                    </div>
-                                                    <input type="number" class="form-control" name="discount" id="discount" wire:model="discount" placeholder="Discount">
-                                                </div>
-                                                @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="account_general_customer">General Account</label>
-                                                <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" wire:model="account_general_customer" placeholder="General Account">
-                                                @error('account_general_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="account_auxiliary_customer">Auxiliary Account</label>
-                                                <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" wire:model="account_auxiliary_customer" placeholder="Auxiliary account">
-                                                @error('account_auxiliary_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <label for="siren">Supplier information</label>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <label for="recept_controle">Reception control</label>
-                                                <select class="form-control" name="recept_controle" id="recept_controle" wire:model="recept_controle">
-                                                    <option value="">Select controle type</option>
-                                                    <option value="1">Yes</option>
-                                                    <option value="2">No</option>
-                                                </select>
-                                                @error('recept_controle') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="account_general_supplier">General Account</label>
-                                                <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  wire:model="account_general_supplier" placeholder="General Account">
-                                                @error('account_general_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="account_auxiliary_supplier">Auxiliary Account</label>
-                                                <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  wire:model="account_auxiliary_supplier" placeholder="Auxiliary account">
-                                                @error('account_auxiliary_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <label>Comment</label>
-                                                <textarea class="form-control" rows="3" name="comment"  wire:model="comment" placeholder="Enter ..."></textarea>
-                                                @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
                                         <div class="modal-footer">

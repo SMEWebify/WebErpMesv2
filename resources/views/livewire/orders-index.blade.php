@@ -13,174 +13,192 @@
                 <div class="modal-body">
                     <form>
                         @csrf
-                        <div class="row">
-                            <div class="col-3">
-                                <label for="code">External ID</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        <div class="card card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <label for="code">External ID</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" wire:model="code" name="code" id="code" placeholder="External ID">
+                                        @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                     </div>
-                                    <input type="text" class="form-control" wire:model="code" name="code" id="code" placeholder="External ID">
-                                    @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="col-3">
+                                    <label for="label">Name of order</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" wire:model="label" name="label"  id="label" placeholder="Name of order" required>
+                                        @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <label for="user_id">User management</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <select class="form-control" wire:model="user_id" name="user_id" id="user_id">
+                                            <option value="">Select user management</option>
+                                        @foreach ($userSelect as $item)
+                                            <option value="{{ $item->id }}" >{{ $item->name }}</option>
+                                        @endforeach
+                                        </select>
+                                    </div>
+                                    @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="col-3">
+                                    <label for="user_id">Order type</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <select class="form-control" wire:model="type" name="type" id="type">)
+                                            <option value="1" >Customer sales order</option>
+                                            <option value="2" >Internal sales order</option>
+                                        </select>
+                                    </div>
+                                    @error('type') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                            <div class="col-3">
-                                <label for="label">Name of order</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        </div>
+                        <div class="card card-body">
+                            <div class="row">
+                                <label for="InputWebSite">Customer information</label>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="companies_id">Company</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                        </div>
+                                        <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
+                                            <option value="">Select company</option>
+                                        @forelse ($CompanieSelect as $item)
+                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                        @empty
+                                            <option value="">No company, please add</option>
+                                        @endforelse
+                                        </select>
                                     </div>
-                                    <input type="text" class="form-control" wire:model="label" name="label"  id="label" placeholder="Name of order" required>
-                                    @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                    @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="col-6">
+                                    <label for="customer_reference">Customer reference</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" wire:model="customer_reference"  name="customer_reference"  id="customer_reference" placeholder="Customer reference">
+                                        @error('customer_reference') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-3">
-                                <label for="user_id">User management</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="companies_addresses_id">Adress</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                                        </div>
+                                        <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
+                                            <option value="">Select address</option>
+                                        @forelse ($AddressSelect as $item)
+                                            <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
+                                        @empty
+                                            <option value="">No address, please add</option>
+                                        @endforelse
+                                        </select>
+                                    </div>
+                                    @error('companies_addresses_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="col-6">
+                                    <label for="companies_contacts_id">Contact</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
+                                            <option value="">Select contact</option>
+                                        @forelse ($ContactSelect as $item)
+                                            <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
+                                        @empty
+                                            <option value="">No contact, please add</option>
+                                        @endforelse
+                                        </select>
                                     </div>
-                                    <select class="form-control" wire:model="user_id" name="user_id" id="user_id">
-                                        <option value="">Select user management</option>
-                                    @foreach ($userSelect as $item)
-                                        <option value="{{ $item->id }}" >{{ $item->name }}</option>
-                                    @endforeach
-                                    </select>
+                                    @error('companies_contacts_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <label for="InputWebSite">Customer information</label>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-5">
-                                <label for="companies_id">Company</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                    </div>
-                                    <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
-                                        <option value="">Select company</option>
-                                    @forelse ($CompanieSelect as $item)
+                        <div class="card card-body">
+                            <div class="row">
+                                <label for="InputWebSite">Date & Payment information</label>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="accounting_payment_conditions_id">Payment condition</label>
+                                    <select class="form-control" wire:model="accounting_payment_conditions_id"  name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
+                                        <option value="">Select payement condition</option>
+                                    @forelse ($AccountingConditionSelect as $item)
                                         <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                                     @empty
-                                        <option value="">No company, please add</option>
+                                        <option value="">No payment conditions, please add in accounting page</option>
                                     @endforelse
                                     </select>
+                                    @error('accounting_payment_conditions_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                            </div>
-                            <div class="col-5">
-                                <label for="customer_reference">Customer reference</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" wire:model="customer_reference"  name="customer_reference"  id="customer_reference" placeholder="Customer reference">
-                                    @error('customer_reference') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-5">
-                                <label for="companies_addresses_id">Adress</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
-                                    </div>
-                                    <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
-                                        <option value="">Select address</option>
-                                    @forelse ($AddressSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
-                                    @empty
-                                        <option value="">No address, please add</option>
-                                    @endforelse
-                                    </select>
-                                </div>
-                                @error('companies_addresses_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                            </div>
-                            <div class="col-5">
-                                <label for="companies_contacts_id">Contact</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    </div>
-                                    <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
-                                        <option value="">Select contact</option>
-                                    @forelse ($ContactSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
-                                    @empty
-                                        <option value="">No contact, please add</option>
-                                    @endforelse
-                                    </select>
-                                </div>
-                                @error('companies_contacts_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <label for="InputWebSite">Date & Payment information</label>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-5">
-                                <label for="accounting_payment_conditions_id">Payment condition</label>
-                                <select class="form-control" wire:model="accounting_payment_conditions_id"  name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
-                                    <option value="">Select payement condition</option>
-                                @forelse ($AccountingConditionSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
-                                @empty
-                                    <option value="">No payment conditions, please add in accounting page</option>
-                                @endforelse
-                                </select>
-                                @error('accounting_payment_conditions_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                            </div>
-                            <div class="col-5">
-                                <label for="accounting_payment_methods_id">Payment methods</label>
-                                <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
-                                    <option value="">Select payment methods</option>
-                                @forelse ($AccountingMethodsSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
-                                @empty
-                                    <option value="">No payment methods, please add in accounting page</option>
-                                @endforelse
-                                </select>
-                                @error('accounting_payment_methods_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-5">
-                                <label for="accounting_deliveries_id">Delevery method</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-truck"></i></span>
-                                    </div>
-                                    <select class="form-control" wire:model="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id">
-                                        <option value="">Select deliveries</option>
-                                    @forelse ($AccountingDeleveriesSelect as $item)
+                                <div class="col-6">
+                                    <label for="accounting_payment_methods_id">Payment methods</label>
+                                    <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
+                                        <option value="">Select payment methods</option>
+                                    @forelse ($AccountingMethodsSelect as $item)
                                         <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                                     @empty
-                                        <option value="">No delivery type, please add in accounting page</option>
+                                        <option value="">No payment methods, please add in accounting page</option>
                                     @endforelse
                                     </select>
+                                    @error('accounting_payment_methods_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                @error('accounting_deliveries_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
-                            <div class="col-5">
-                                <label for="label">Delevery date</label>
-                                <input type="date" class="form-control" wire:model="validity_date"  name="validity_date"  id="validity_date">
-                                @error('validity_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="accounting_deliveries_id">Delevery method</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                                        </div>
+                                        <select class="form-control" wire:model="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id">
+                                            <option value="">Select deliveries</option>
+                                        @forelse ($AccountingDeleveriesSelect as $item)
+                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                        @empty
+                                            <option value="">No delivery type, please add in accounting page</option>
+                                        @endforelse
+                                        </select>
+                                    </div>
+                                    @error('accounting_deliveries_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="col-6">
+                                    <label for="label">Delevery date</label>
+                                    <input type="date" class="form-control" wire:model="validity_date"  name="validity_date"  id="validity_date">
+                                    @error('validity_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
                             </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-10">
-                                <label>Comment</label>
-                                <textarea class="form-control" rows="3" wire:model="comment" name="comment"  placeholder=" ..."></textarea>
-                                @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                        <div class="card card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label>Comment</label>
+                                    <textarea class="form-control" rows="3" wire:model="comment" name="comment"  placeholder=" ..."></textarea>
+                                    @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">

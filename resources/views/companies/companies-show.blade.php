@@ -31,80 +31,81 @@
               <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
-                      <div class="row">
-                        <label for="InputWebSite">General information</label>
-                      </div>
-                      <div class="row">
-                        <div class="col-12 col-sm-4">
-                          <div class="text-muted">
-                            <label for="label">External ID</label>
-                              <b class="d-block">{{ $Companie->code }}</b>
-                            </p>
-                          </div>
-                        </div>
-                        <div class="col-12 col-sm-4">
-                            <label for="label">Name of company</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                </div>
-                                <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="Name of company">
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-4">
-                            <label for="user_id">Technical manager</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                </div>
-                                <select class="form-control" name="user_id" id="user_id" value="user_id">
-                                    <option value="">Select user</option>
-                                @foreach ($userSelect as $item)
-                                    <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
-                                @endforeach
-                                </select>
-                            </div>
+                    <div class="row">
+                      <label for="InputWebSite">General information</label>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 col-sm-4">
+                        <div class="text-muted">
+                          <label for="label">External ID</label>
+                          <b class="d-block">{{ $Companie->code }}</b>
                         </div>
                       </div>
-                      <hr>
-                      <div class="row">
-                          <label for="InputWebSite">Site link</label>
-                      </div>
-                      <div class="row">
-                          <div class="col-3">
-                              <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
-                                  </div>
-                                  <input type="text" class="form-control"  name="website" id="website" value="{{ $Companie->website }}" placeholder="Web site link">
+                      <div class="col-12 col-sm-4">
+                          <label for="label">Name of company</label>
+                          <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-building"></i></span>
                               </div>
-                          </div>
-                          <div class="col-3">
-                              <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
-                                  </div>
-                                  <input type="text" class="form-control"  name="fbsite" id="fbsite"  value="{{ $Companie->fbsite }}"  placeholder="Facebook link">
-                              </div>
-                          </div>
-                          <div class="col-3">
-                              <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
-                                  </div>
-                                  <input type="text" class="form-control"  name="twittersite" id="twittersite" value="{{ $Companie->twittersite }}"  placeholder="Twitter link">
-                              </div>
-                          </div>
-                          <div class="col-3">
-                              <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
-                                  </div>
-                              <input type="text" class="form-control"  name="lkdsite" id="lkdsite" value="{{ $Companie->lkdsite }}"  placeholder="Linkedin link">
-                              </div>
+                              <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="Name of company">
                           </div>
                       </div>
-                    <hr>
+                      <div class="col-12 col-sm-4">
+                          <label for="user_id">Technical manager</label>
+                          <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                              </div>
+                              <select class="form-control" name="user_id" id="user_id" value="user_id">
+                                  <option value="">Select user</option>
+                              @foreach ($userSelect as $item)
+                                  <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
+                              @endforeach
+                              </select>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card card-body">
+                    <div class="row">
+                        <label for="InputWebSite">Site link</label>
+                    </div>
+                    <div class="row">
+                      <div class="col-3">
+                          <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                              </div>
+                              <input type="text" class="form-control"  name="website" id="website" value="{{ $Companie->website }}" placeholder="Web site link">
+                          </div>
+                      </div>
+                      <div class="col-3">
+                          <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
+                              </div>
+                              <input type="text" class="form-control"  name="fbsite" id="fbsite"  value="{{ $Companie->fbsite }}"  placeholder="Facebook link">
+                          </div>
+                      </div>
+                      <div class="col-3">
+                          <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
+                              </div>
+                              <input type="text" class="form-control"  name="twittersite" id="twittersite" value="{{ $Companie->twittersite }}"  placeholder="Twitter link">
+                          </div>
+                      </div>
+                      <div class="col-3">
+                          <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
+                              </div>
+                          <input type="text" class="form-control"  name="lkdsite" id="lkdsite" value="{{ $Companie->lkdsite }}"  placeholder="Linkedin link">
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card card-body">
                     <div class="row">
                         <label for="siren">Administrative information</label>
                     </div>
@@ -122,7 +123,8 @@
                             @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
                     </div>
-                    <hr>
+                  </div>
+                  <div class="card card-body">
                     <div class="row">
                         <div class="col-3">
                             <label for="statu_customer">Statu client</label>
@@ -156,7 +158,8 @@
                             <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" value="{{ $Companie->account_auxiliary_customer }}" placeholder="Auxiliary account">
                         </div>
                     </div>
-                    <hr>
+                  </div>
+                  <div class="card card-body">
                     <div class="row">
                         <div class="col-3">
                             <label for="statu_supplier">Statu supplier</label>
@@ -188,17 +191,14 @@
                             <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  value="{{ $Companie->account_auxiliary_supplier }}" placeholder="Auxiliary account">
                         </div>
                     </div>
-                    <hr>
-                    <div class="card card-body">
-                      <div class="row">
+                  </div>
+                  <div class="card card-body">
                         <x-FormTextareaComment  comment="{{ $Companie->comment }}" />
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="Submit" class="btn btn-primary">Save changes</button>
-                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="Submit" class="btn btn-primary">Save changes</button>
+                  </div>
                 </form>
-              </div>
               </div>
             </div>
             <div class="col-md-3">
