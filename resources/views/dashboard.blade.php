@@ -375,7 +375,11 @@
                   <td>
                     <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
                   <td>
+                    @if($LastOrder->type == 1 )
                     <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
+                    @else
+                    Internal order
+                    @endif
                   </td>
                   <td>
                     @if(1 == $LastOrder->statu )  <span class="badge badge-info"> Open</span>@endif

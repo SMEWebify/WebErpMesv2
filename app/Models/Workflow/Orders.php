@@ -37,6 +37,7 @@ class Orders extends Model
                             'accounting_deliveries_id',  
                             'comment',
                             'quote_id',
+                            'type',
                         ];
 
     public function companie()

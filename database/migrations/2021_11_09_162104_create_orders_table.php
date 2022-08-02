@@ -33,6 +33,9 @@ class CreateOrdersTable extends Migration
 			$table->integer('accounting_deliveries_id');
 			$table->text('comment', 65535)->nullable();
             $table->integer('quote_id')->nullable();
+            $table->integer('type')->default(1);
+            #1 = Customer sales order
+            #2 = Internal sales order
             $table->timestamps();
         });
     }

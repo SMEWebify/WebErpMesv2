@@ -55,6 +55,7 @@
                       </div>
                     </div>
                   </div>
+                  @if($Order->type == 1)
                   <div class="card card-body">
                     <div class="row">
                       <label for="InputWebSite">Customer information</label>
@@ -94,11 +95,21 @@
                           @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Order->accounting_deliveries_id])
                       </div>
                       <div class="col-5">
-                        <label for="label">Validity date</label>
+                        <label for="label">Delevery date</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                       </div>
                     </div>
                   </div>
+                  @else
+                  <div class="card card-body">
+                    <div class="row">
+                      <div class="col-5">
+                        <label for="label">Delevery date</label>
+                        <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
+                      </div>
+                    </div>
+                  </div>
+                  @endif
                   <div class="card card-body">
                     <div class="row">
                       <x-FormTextareaComment  comment="{{ $Order->comment }}" />
@@ -135,6 +146,7 @@
               </div>
               <div class="table-responsive">
                 <table class="table">
+                    @if($Order->type == 1)
                     <tr>
                         <td style="width:50%"> 
                           <x-ButtonTextPrint route="{{ route('print.order', ['Document' => $Order->id])}}" />
@@ -151,6 +163,7 @@
                         <x-ButtonTextPDF route="{{ route('pdf.orders.confirm', ['Document' => $Order->id])}}" />
                       </td>
                     </tr>
+                    @endif
                     <tr>
                       <td style="width:50%">
                         <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print Manufacturing instruction</a>

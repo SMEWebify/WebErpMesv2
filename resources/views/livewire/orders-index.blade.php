@@ -56,7 +56,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model="type" name="type" id="type">)
+                                        <select class="form-control" wire:click.prevent="changeLabel()" wire:model="type" name="type" id="type">)
                                             <option value="1" >Customer sales order</option>
                                             <option value="2" >Internal sales order</option>
                                         </select>
@@ -77,7 +77,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-building"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
+                                        <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id" @if($type == 2) disabled @endif>
                                             <option value="">Select company</option>
                                         @forelse ($CompanieSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -94,7 +94,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model="customer_reference"  name="customer_reference"  id="customer_reference" placeholder="Customer reference">
+                                        <input type="text" class="form-control" wire:model="customer_reference"  name="customer_reference"  id="customer_reference" placeholder="Customer reference" @if($type == 2) disabled @endif>
                                         @error('customer_reference') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                     </div>
                                 </div>
@@ -106,7 +106,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
+                                        <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id" @if($type == 2) disabled @endif>
                                             <option value="">Select address</option>
                                         @forelse ($AddressSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
@@ -123,7 +123,7 @@
                                         <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
+                                        <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id" @if($type == 2) disabled @endif>
                                             <option value="">Select contact</option>
                                         @forelse ($ContactSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
@@ -144,7 +144,7 @@
                             <div class="row">
                                 <div class="col-6">
                                     <label for="accounting_payment_conditions_id">Payment condition</label>
-                                    <select class="form-control" wire:model="accounting_payment_conditions_id"  name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
+                                    <select class="form-control" wire:model="accounting_payment_conditions_id"  name="accounting_payment_conditions_id" id="accounting_payment_conditions_id" @if($type == 2) disabled @endif>
                                         <option value="">Select payement condition</option>
                                     @forelse ($AccountingConditionSelect as $item)
                                         <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -156,7 +156,7 @@
                                 </div>
                                 <div class="col-6">
                                     <label for="accounting_payment_methods_id">Payment methods</label>
-                                    <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
+                                    <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id" @if($type == 2) disabled @endif>
                                         <option value="">Select payment methods</option>
                                     @forelse ($AccountingMethodsSelect as $item)
                                         <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -174,7 +174,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-truck"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id">
+                                        <select class="form-control" wire:model="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id" @if($type == 2) disabled @endif>
                                             <option value="">Select deliveries</option>
                                         @forelse ($AccountingDeleveriesSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -243,7 +243,11 @@
                         <td>{{ $Order->code }}</td>
                         <td>{{ $Order->label }}</td>
                         <td>
+                            @if($Order->type == 1 )
                             <x-CompanieButton id="{{ $Order->companies_id }}" label="{{ $Order->companie['label'] }}"  />
+                            @else
+                            Internal order
+                            @endif
                         </td>
                         <td>{{ $Order->customer_reference }}</td>
                         <td>{{ $Order->order_lines_count }}</td>
