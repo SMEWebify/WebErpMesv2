@@ -585,7 +585,7 @@
                   <div class="card-header">
                       <h3 class="card-title">Measuring devices list</h3>
                   </div>
-                  <div class="card-body p-0">
+                  <div class="card-body ">
                     <table class="table">
                       <thead>
                       <tr>
@@ -622,7 +622,7 @@
                         </tr>
                       </tfoot>
                     </table>
-                  <!-- /.row -->
+                  <!-- /.card-body -->
                   </div>
                   <div class="row">
                     <div class="col-5">
@@ -630,12 +630,13 @@
                     </div>
                   <!-- /.row -->
                   </div>
-                <!-- /.card secondary -->
+                <!-- /.col-md-7 card-primary -->
                 </div>
             <div class="col-md-5 card-secondary">
                 <div class="card-header">
                   <h3 class="card-title">New measuring devices</h3>
                 </div>
+                <div class="card-body">
                   <form method="POST" action="{{ route('quality.device.create')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
@@ -710,16 +711,18 @@
                       <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                   </form>
-                  <!-- /.card secondary -->
-                  </div>
-                <!-- /.row -->
+                <!-- /.card body -->
                 </div>
-              <!-- /.card body -->
+              <!-- /.card secondary -->
               </div>
-            <!-- /.card primary -->
+            <!-- /.row -->
             </div>
-      </div>
+          <!-- /.card body -->
+          </div>
+        <!-- /.card primary -->
+        </div>
       <!-- /.tab-pane -->
+      </div>
       <div class="tab-pane" id="Settings">
         <x-InfocalloutComponent note="To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource."  />
         @include('include.alert-result')
@@ -741,7 +744,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Failure type list</h3>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body ">
                   <table class="table">
                     <thead>
                       <tr>
@@ -823,7 +826,7 @@
                   <div class="card-header">
                       <h3 class="card-title">Cause type list</h3>
                   </div>
-                  <div class="card-body p-0">
+                  <div class="card-body ">
                     <table class="table">
                       <thead>
                         <tr>
@@ -905,7 +908,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Correction type list</h3>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body ">
                   <table class="table">
                     <thead>
                       <tr>

@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Products\Stocks;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Products\StoreStockRequest;
 use App\Models\Products\StockLocation;
+use App\Http\Requests\Products\StoreStockRequest;
+use App\Http\Requests\Products\UpdateStockRequest;
 
 class StockController extends Controller
 {
@@ -44,5 +45,18 @@ class StockController extends Controller
             'userSelect' => $userSelect,
             'LastStockLocation' => $LastStockLocation
         ]);
+    }
+
+    /**
+     * @param $request
+     * @return View
+     */
+    public function update(UpdateStockRequest $request)
+    {
+        $Stock = Stocks::find($request->id);
+        $Stock->label=$request->label;
+        $Stock->user_id=$request->user_id;
+        $Stock->save();
+        return redirect()->route('products.stock')->with('success', 'Successfully updated stock '.  $Stock->label);
     }
 }

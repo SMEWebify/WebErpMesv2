@@ -31,7 +31,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Absence Request</h3>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body ">
                   <table class="table">
                     <thead>
                       <tr>
@@ -143,7 +143,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Banck Holidays list</h3>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body ">
                   <table class="table">
                     <thead>
                       <tr>
@@ -235,7 +235,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Improduct time list</h3>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body ">
                   <table class="table">
                     <thead>
                       <tr>
@@ -349,7 +349,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Machine events list</h3>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body ">
                   <table class="table">
                     <thead>
                       <tr>

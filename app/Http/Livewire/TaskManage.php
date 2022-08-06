@@ -29,12 +29,12 @@ class TaskManage extends Component
     public $methods_services_id;
     public $component_id;
     public $type;
-    public $qty;
-    public $seting_time;
-    public $unit_time;
-    public $unit_cost;
-    public $unit_price;
-    public $methods_units_id;
+    public $qty = 0;
+    public $seting_time = 0;
+    public $unit_time = 0;
+    public $unit_cost = 0;
+    public $unit_price = 0;
+    public $methods_units_id = 0;
 
     Private $quote_lines_id;
     Private $order_lines_id;

@@ -137,11 +137,17 @@ Route::group(['prefix' => 'products'], function () {
     //stock route
     Route::get('/Stock', 'App\Http\Controllers\Products\StockController@index')->middleware(['auth'])->name('products.stock'); 
     Route::post('/Stock/create', 'App\Http\Controllers\Products\StockController@store')->middleware(['auth'])->name('products.stock.store');
-    Route::get('/Stock/{id}', 'App\Http\Controllers\Products\StockController@show')->middleware(['auth'])->name('products.stocks.show');
+    Route::post('/Stock/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->middleware(['auth'])->name('products.stock.update');
+    Route::get('/Stock/{id}', 'App\Http\Controllers\Products\StockController@show')->middleware(['auth'])->name('products.stock.show');
+    
     Route::post('/Stock/Location/create', 'App\Http\Controllers\Products\StockLocationController@store')->middleware(['auth'])->name('products.stocklocation.store');
+    Route::post('/Stock/Location/edit/{id}', 'App\Http\Controllers\Products\StockLocationController@update')->middleware(['auth'])->name('products.stocklocation.update');
     Route::get('/Stock/Location/{id}', 'App\Http\Controllers\Products\StockLocationController@show')->middleware(['auth'])->name('products.stocklocation.show');
+    
     Route::post('/Stock/Location/product/create', 'App\Http\Controllers\Products\StockLocationProductsController@store')->middleware(['auth'])->name('products.stockline.store');
-
+    Route::post('/Stock/Location/product/edit/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@update')->middleware(['auth'])->name('products.stockline.update');
+    Route::get('/Stock/Location/product/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@show')->middleware(['auth'])->name('products.stockline.show');
+    
     Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->middleware(['auth'])->name('products.show');
 });
 

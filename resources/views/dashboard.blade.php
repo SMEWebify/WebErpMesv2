@@ -108,8 +108,8 @@
               </p>
               @forelse ($incomingOrders as $incomingOrder)
               <div class="progress-group alert alert-warning">
-                <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $incomingOrder->order['code'] }}<br/>
-                <i class="fas fa-calendar-alt"></i> {{ $incomingOrder->delivery_date }}
+                <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a> {{ $incomingOrder->order['code'] }}<br/>
+                <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $incomingOrder->delivery_date }}
               </div>
               @empty
               <div class="progress-group">
@@ -130,8 +130,8 @@
               </p>
               @forelse ($LateOrders as $LateOrder)
               <div class="progress-group alert alert-danger">
-                <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a>{{ $LateOrder->order['code'] }}<br/>
-                <i class="fas fa-calendar-alt"></i> {{ $LateOrder->delivery_date }}
+                <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a> {{ $LateOrder->order['code'] }}<br/>
+                <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $LateOrder->delivery_date }}
               </div>
               @empty
               <div class="progress-group">
