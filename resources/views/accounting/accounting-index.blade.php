@@ -500,7 +500,7 @@
                                   <input type="number" class="form-control" name="code_account"  id="code_account" placeholder="Code account" value="{{ $Allocation->code_account }}">
                                 </div>
                                 <div class="form-group">
-                                  <label for="type_imputation">End of month</label>
+                                  <label for="type_imputation">Type of</label>
                                   <select class="form-control" name="type_imputation" id="type_imputation">
                                       <option value="1" @if($Allocation->type_imputation == 1 ) Selected @endif>Purchase</option>
                                       <option value="2" @if($Allocation->type_imputation == 2 ) Selected @endif>Purchase (stock)</option>
@@ -582,7 +582,7 @@
                         <input type="number" class="form-control" name="code_account"  id="code_account" placeholder="Code account">
                       </div>
                       <div class="form-group">
-                        <label for="type_imputation">End of month</label>
+                        <label for="type_imputation">Type of</label>
                         <select class="form-control" name="type_imputation" id="type_imputation">
                             <option value="1">Purchase</option>
                             <option value="2">Purchase (stock)</option>
