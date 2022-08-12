@@ -17,6 +17,10 @@
                             <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model="quotes_id" >
                             @include('livewire.form.line-create')
                 @endif
+            @else
+            <x-adminlte-alert theme="info" title="Info">
+                The document status does not allow adding / modifying / deleting lines.
+            </x-adminlte-alert>
             @endif
         </div>
     </div>
