@@ -433,7 +433,7 @@
           </div>
         </div>
       <div class="tab-pane " id="TechnicalInfo">
-        @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id]) 
+        @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id, 'statu' => 1]) 
       </div>
       <div class="tab-pane" id="quote">
         @livewire('quotes-lines-index' , ['product_id' => $Product->id ])

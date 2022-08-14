@@ -22,7 +22,7 @@
 @section('content')
 
 <div class="card">
-  @livewire('task-manage', ['idType' => $id_type, 'idPage' => $id_page, 'idLine' => $id_line])
+  @livewire('task-manage', ['idType' => $id_type, 'idPage' => $id_page, 'idLine' => $id_line,'statu' => $Document->statu ])
 </div>
 <!-- /.card -->
 @stop

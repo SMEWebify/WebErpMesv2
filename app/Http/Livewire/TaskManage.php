@@ -19,6 +19,7 @@ class TaskManage extends Component
     public $idLine;
     public $idType;
     public $idPage;
+    public $statu;
     public $status_id;
     public $ServicesSelect;
     public $TaskType = "TechCut";

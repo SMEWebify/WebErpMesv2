@@ -31,7 +31,9 @@
     </div>
     <div class="card-body" style="display: none;">
       <div class="row">
-        @livewire('task-manage', ['idType' => 'generic', 'idPage' => null, 'idLine' => null]) 
+        <div class="col-12">
+          @livewire('task-manage', ['idType' => 'generic', 'idPage' => null, 'idLine' => null, 'statu' => 1])
+        </div> 
       <!-- /.row -->
       </div>
     <!-- /.card body -->

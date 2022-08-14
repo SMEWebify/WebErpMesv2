@@ -1,5 +1,6 @@
 <div>
     <div class="card-body">
+    @if($statu == 1)
         @include('include.alert-result')
         @if($updateLines)
         <form wire:submit.prevent="updateTask">
@@ -146,6 +147,8 @@
             </div>
         </form>
     </div>
+    @endif
+
     @if($Line->id ?? null)
     <div class="card-body">
         <div class="card card-secondary">

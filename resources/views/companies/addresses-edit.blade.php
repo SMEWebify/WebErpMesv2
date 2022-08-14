@@ -17,15 +17,7 @@
   <form method="POST" action="{{ route('addresses.edit', ['id' => $adress->id]) }}" >
     @csrf
     <div class="card-body">
-      @if($errors->count())
-      <div class="alert alert-danger">
-        <ul>
-        @foreach ( $errors->all() as $message)
-          <li> {{ $message }}</li>
-        @endforeach
-        </ul>
-      </div>
-      @endif
+      @include('include.alert-result')
       <div class="row">
         <div class="col-5">
           <label for="ordre">Sort order:</label>
