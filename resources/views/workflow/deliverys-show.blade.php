@@ -100,8 +100,8 @@
               <div class="card-header">
                 <h3 class="card-title"> Options </h3>
               </div>
-              <div class="table-responsive">
-                <table class="table">
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
                     <tr>
                         <td style="width:50%"> 
                             <x-ButtonTextPrint route="{{ route('print.delivery', ['Document' => $Delivery->id])}}" />

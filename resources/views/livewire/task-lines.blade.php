@@ -10,8 +10,8 @@
                     <input type="text" class="form-control" wire:model="search" placeholder="Search Task">
                 </div>
             </div>
-            <div class="table-responsive">
-                <table class="table">
+            <div class="table-responsive p-0">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Order</th>

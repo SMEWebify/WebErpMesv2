@@ -12,8 +12,8 @@
     <div class="card">
         <!-- /.card-header -->
         <div class="card-body">
-          <div class="row">
-            <table class="table">
+          <div class="table-responsive p-0">
+            <table class="table table-hover">
               <thead>
                 <tr>
                   <th>Name</th>

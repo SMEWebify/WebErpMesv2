@@ -83,8 +83,8 @@
                     </div>
                 </form>
             </div>
-            <div class="table-responsive">
-                <table class="table">
+            <div class="table-responsive p-0">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>

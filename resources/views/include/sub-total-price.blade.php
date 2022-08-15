@@ -1,5 +1,5 @@
-<div class="table-responsive">
-    <table class="table">
+<div class="table-responsive p-0">
+    <table class="table table-hover">
         <tr>
             <td style="width:50%">Subtotal:</td>
             <td>{{ $subPrice }} {{ $Factory->curency }} </td>

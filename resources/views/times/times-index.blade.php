@@ -31,8 +31,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Absence Request</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>User</th>
@@ -143,8 +143,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Banck Holidays list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>Fixed</th>
@@ -235,8 +235,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Improduct time list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>Desciption</th>
@@ -349,8 +349,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Machine events list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>

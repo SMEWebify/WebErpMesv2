@@ -97,21 +97,19 @@
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
               </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table">
-                    <tr>
-                    </tr>
-                  </table>
-                </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                  <tr>
+                  </tr>
+                </table>
               </div>
             </div>
             <div class="card card-warning">
               <div class="card-header">
                 <h3 class="card-title"> Options </h3>
               </div>
-              <div class="card-body">
-                <table class="table">
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
                   <tr>
                       <td style="width:50%"> 
                         <x-ButtonTextPrint route="{{ route('print.receipt', ['Document' => $PurchaseReceipt->id])}}" />

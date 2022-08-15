@@ -196,70 +196,72 @@
                                     <input type="text" class="form-control" wire:model="search" placeholder="Search company">
                                 </div>
                             </div>
-                            <table class="table">
-                                <thead>
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th >
+                                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                                            </th>
+                                            <th>
+                                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                                            </th>
+                                            <th>
+                                                <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                                            </th>
+                                            <th>Statu client</th>
+                                            <th>Statu supplier</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @forelse ($Companieslist as $Companie)
                                     <tr>
-                                        <th >
-                                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
-                                        </th>
-                                        <th>
-                                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
-                                        </th>
-                                        <th>
-                                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
-                                        </th>
-                                        <th>Statu client</th>
-                                        <th>Statu supplier</th>
-                                        <th>Action</th>
+                                        <td>{{ $Companie->code }}</td>
+                                        <td>{{ $Companie->label }}</td>
+                                        <td>{{ $Companie->GetPrettyCreatedAttribute() }}</td>
+                                        <td>
+                                            @if($Companie->statu_customer == 2 )
+                                            <span class="badge badge-warning"><i class="fa fa-lg fa-fw  fa-check"></i></span>
+                                            @elseif($Companie->statu_customer == 3 )
+                                            <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check-double"></i></span>
+                                            @else
+                                            <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($Companie->statu_supplier == 2 )
+                                            <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
+                                            @else
+                                            <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <x-ButtonTextView route="{{ route('companies.show', ['id' => $Companie->id])}}" />
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                @forelse ($Companieslist as $Companie)
-                                <tr>
-                                    <td>{{ $Companie->code }}</td>
-                                    <td>{{ $Companie->label }}</td>
-                                    <td>{{ $Companie->GetPrettyCreatedAttribute() }}</td>
-                                    <td>
-                                        @if($Companie->statu_customer == 2 )
-                                        <span class="badge badge-warning"><i class="fa fa-lg fa-fw  fa-check"></i></span>
-                                        @elseif($Companie->statu_customer == 3 )
-                                        <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check-double"></i></span>
-                                        @else
-                                        <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($Companie->statu_supplier == 2 )
-                                        <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
-                                        @else
-                                        <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <x-ButtonTextView route="{{ route('companies.show', ['id' => $Companie->id])}}" />
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="6">
-                                        <div class="flex justify-center items-center">
-                                            <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No companies found ...</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                                </tbody>
-                                <tfoot>
+                                    @empty
                                     <tr>
-                                        <th>Code</th>
-                                        <th>Label</th>
-                                        <th>Created At</th>
-                                        <th>Statu client</th>
-                                        <th>Statu supplier</th>
-                                        <th>Action</th>
+                                        <td colspan="6">
+                                            <div class="flex justify-center items-center">
+                                                <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No companies found ...</span>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </tfoot>
-                            </table>
+                                    @endforelse
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Label</th>
+                                            <th>Created At</th>
+                                            <th>Statu client</th>
+                                            <th>Statu supplier</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                         <!-- /.row -->
                         {{ $Companieslist->links() }}

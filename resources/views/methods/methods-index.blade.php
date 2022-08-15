@@ -37,8 +37,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Service type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table  class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                     <tr>
                       <th>Picture</th>
@@ -616,8 +616,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Section type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>Sort</th>
@@ -785,8 +785,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Location in workshop list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>
@@ -928,8 +928,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Units type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>
@@ -1074,8 +1074,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Famillies type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>
@@ -1212,8 +1212,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Tools list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>Picture</th>

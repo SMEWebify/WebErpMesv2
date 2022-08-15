@@ -1,8 +1,8 @@
 <div class="card-body">
     <div class="card">
         @include('include.search-card')
-        <div class="table-responsive">
-            <table class="table">
+        <div class="table-responsive p-0">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>

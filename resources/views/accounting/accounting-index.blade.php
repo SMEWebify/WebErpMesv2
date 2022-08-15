@@ -32,8 +32,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Payment condition type list</h3>
                 </div>
-                <div class="card-body">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>
@@ -181,8 +181,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Payment choice type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>
@@ -300,8 +300,8 @@
                 <div class="card-header">
                     <h3 class="card-title">VAT type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>
@@ -428,8 +428,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Accouting Allocations type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>Account number</th>
@@ -617,8 +617,8 @@
                 <div class="card-header">
                     <h3 class="card-title">Delevery type list</h3>
                 </div>
-                <div class="card-body ">
-                  <table class="table">
+                <div class="card-body table-responsive p-0">
+                  <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>External ID</th>
