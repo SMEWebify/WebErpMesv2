@@ -19,98 +19,120 @@
 
 @section('content')
 <div class="card">
-  @if($errors->count())
-  <div class="alert alert-danger">
-    <ul>
-    @foreach ( $errors->all() as $message)
-      <li> {{ $message }}</li>
-    @endforeach
-    </ul>
-  </div>
-  @endif
+  @include('include.alert-result')
     <div class="card card-primary">
       <div class="card-body">
         <div class="row">
           <div class="col-md-8 card-primary">
+            <div class="row">
+              
+              <div class="col-12 col-sm-4">
+                <x-adminlte-info-box title="Entries" text="{{ $StockLocationProduct->getTotalEntryStockMove() }} item(s)" icon="fa fa-arrow-up" theme="warning"/>
+              </div>
+
+              <div class="col-12 col-sm-4">
+                <x-adminlte-info-box title="Sortings" text="{{ $StockLocationProduct->getTotalSortingStockMove() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
+              </div>
+              <div class="col-12 col-sm-4">
+                <x-adminlte-info-box title="Current Qty" text="{{ $StockLocationProduct->getCurrentStockMove() }} item(s)" icon="fa fa-database" theme="success"/>
+              </div>
+            </div>
             <div class="card-header">
                 <h3 class="card-title">Stocks location product list</h3>
             </div>
-            <div class="card-body">
-              <div  id="stocks_wrapper" class="dataTables_wrapper dt-bootstrap4">     
-                <div class="col-sm-12">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>Code</th>
-                        <th>User management</th>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Qty reserve</th>
-                        <th>Qty mini</th>
-                        <th>End date</th>
-                        <th>Addressing</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <th>Code</th>
-                        <th>User management</th>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Qty reserve</th>
-                        <th>Qty mini</th>
-                        <th>End date</th>
-                        <th>Addressing</th>
-                        <th>Action</th>
-                      </tr>
-                    </tfoot>
-                  </table>
-                <!-- /.col-sm-12 -->
-                </div>
-              <!-- /.stock_wrapper-->
-              </div>
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Date time</th>
+                    <th>Qty</th>
+                    <th>Order</th>
+                    <th>Task</th>
+                    <th>Purchase</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($StockMoves as $StockMove)
+                  <tr>
+                    <td>{{ $StockMove->UserManagement['name'] }}</td>
+                    <td>{{ $StockMove->GetPrettyCreatedAttribute() }}</td>
+                    <td>{{ $StockMove->qty }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      @if(1 == $StockMove->typ_move )Inventories @endif
+                      @if(2 == $StockMove->typ_move )Task allocation @endif
+                      @if(3 == $StockMove->typ_move )Purchase order reception @endif
+                      @if(4 == $StockMove->typ_move )Inter-stock mvts @endif
+                      @if(5 == $StockMove->typ_move )Manual Stock reception @endif
+                      @if(6 == $StockMove->typ_move )Manual Stock dispatching @endif
+                      @if(7 == $StockMove->typ_move )Reservation @endif
+                      @if(8 == $StockMove->typ_move )Reservation cancellation @endif
+                      @if(9 == $StockMove->typ_move )Part delivery @endif
+                      @if(10 == $StockMove->typ_move )In production @endif
+                      @if(11 == $StockMove->typ_move )Reservation of a component in production @endif
+                      @if(12 == $StockMove->typ_move )Manufactured component entry @endif
+                      @if(13 == $StockMove->typ_move )Direct inventory @endif
+                    </td>
+                    <td></td>
+                  </tr>
+                  @empty
+                    <x-EmptyDataLine col="9" text="No lines found ..."  />
+                  @endforelse
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>User</th>
+                    <th>Date time</th>
+                    <th>Qty</th>
+                    <th>Order</th>
+                    <th>Task</th>
+                    <th>Purchase</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                  </tr>
+                </tfoot>
+              </table>
             <!-- /.card-body-->
             </div>
           <!-- /.col-md-8 card-secondary-->
           </div>
-          <div class="col-md-4 card-secondary">
+          <div class="col-md-4">
+            <div class="card card-secondary">
               <div class="card-header">
-                <h3 class="card-title">New stock product line</h3>
+                <h3 class="card-title">New entry stock line</h3>
               </div>
-
               <div class="card-body">
-                <form  method="POST" action="{{ route('products.stockline.store') }}" class="form-horizontal">
+                <form  method="POST" action="{{ route('products.stockline.entry') }}" class="form-horizontal">
                   @csrf
                   <div class="form-group">
-                    <label for="code">External ID</label>
+                    <label for="typ_move">Move Type</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                        <span class="input-group-text"><i class="fas fa-list"></i></span>
                       </div>
-                      <input type="text" class="form-control" name="code" id="code" placeholder="External ID" value="STOCK-PRODUCT-{{ $LastStockLocationProduct->id ?? '0' }}">
-                      <input type="hidden" name="stock_locations_id" id="stock_locations_id" value="{{ $StockLocation->id }}">
+                      <select class="form-control" name="typ_move" id="typ_move">
+                        <option value="5" >Manual Stock reception</option>
+                        <option value="1" >Inventories</option>
+                        <option value="3" >Purchase order reception</option>
+                        <option value="12" >Manufactured component entry</option>
+                      </select>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="mini_qty">Mini qty :</label>
+                    <label for="qty">Qty :</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-times"></i></span>
                       </div>
-                      <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="Mini qty ex: 1.50" step=".001">
+                      <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" step=".001">
+                      <input type="hidden" name="stock_location_products_id" id="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
+                      <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
                     </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="end_date">End date</label>
-                    <input type="date" class="form-control" name="end_date"  id="end_date" >
-                  </div>
-                  <div class="form-group">
-                    <label for="addressing">Addressing</label>
-                    <input type="text" class="form-control" name="addressing" id="addressing" placeholder="Addressing">
                   </div>
                   <div class="card-footer">
                     <div class="offset-sm-2 col-sm-10">
@@ -122,14 +144,58 @@
               </div>
             <!-- /.card secondary -->
             </div>
-          <!-- /.row -->
+
+            <div class="card card-warning">
+              <div class="card-header">
+                <h3 class="card-title">New sorting stock line</h3>
+              </div>
+
+              <div class="card-body">
+                <form  method="POST" action="{{ route('products.stockline.sorting') }}" class="form-horizontal">
+                  @csrf
+                  <div class="form-group">
+                    <label for="typ_move">Move Type</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-list"></i></span>
+                      </div>
+                      <select class="form-control" name="typ_move" id="typ_move">
+                        <option value="6" >Manual Stock dispatching</option>
+                        <option value="9" >Part delivery</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="qty">Qty :</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-times"></i></span>
+                      </div>
+                      <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" max="0" step=".001">
+                      <input type="hidden" name="stock_location_products_id" id="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
+                      <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <div class="offset-sm-2 col-sm-10">
+                      <button type="submit" class="btn btn-danger">Submit New</button>
+                    </div>
+                  </div>
+                </form>
+              <!-- /.card body -->
+              </div>
+            <!-- /.card secondary -->
+            </div>
+          <!-- /.col-md-4 -->
           </div>
-        <!-- /.card body -->
+        <!-- /.row -->
         </div>
-      <!-- /.card primary -->
+      <!-- /.card body -->
       </div>
-    <!-- /.card --> 
+    <!-- /.card primary -->
     </div>
+  <!-- /.card --> 
+  </div>
 @stop
 
 @section('css')

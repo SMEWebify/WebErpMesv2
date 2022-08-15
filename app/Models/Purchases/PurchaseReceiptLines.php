@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use App\Models\Products\StockMove;
 use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,11 @@ class PurchaseReceiptLines extends Model
     public function purchaseLines()
     {
         return $this->belongsTo(PurchaseLines::class, 'purchase_line_id');
+    }
+
+    public function StockMove()
+    {
+        return $this->hasMany(StockMove::class);
     }
 
     public function GetPrettyCreatedAttribute()

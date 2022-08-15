@@ -4,6 +4,7 @@ namespace App\Models\Products;
 
 use App\Models\User;
 use App\Models\Products\Products;
+use App\Models\Products\StockMove;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -28,6 +29,41 @@ class StockLocationProducts extends Model
     public function Product()
     {
         return $this->belongsTo(Products::class, 'products_id');
+    }
+
+    public function StockLocation()
+    {
+        return $this->belongsTo(StockLocation::class, 'stock_locations_id');
+    }
+
+    public function StockMove()
+    {
+        return $this->hasMany(StockMove::class);
+    }
+
+    public function getTotalEntryStockMove()
+    {
+        return StockMove::where('stock_location_products_id', $this->id)
+                        ->where('typ_move', '1')
+                        ->orwhere('typ_move', '3')
+                        ->orwhere('typ_move', '5')
+                        ->orwhere('typ_move', '12')
+                        ->get()
+                        ->sum('qty');
+    }
+
+    public function getTotalSortingStockMove()
+    {
+        return StockMove::where('stock_location_products_id', $this->id)
+                        ->where('typ_move', '6')
+                        ->orwhere('typ_move', '9')
+                        ->get()
+                        ->sum('qty');
+    }
+
+    public function getCurrentStockMove()
+    {
+        return $this->getTotalEntryStockMove() + $this->getTotalSortingStockMove();
     }
 
     public function GetPrettyCreatedAttribute()

@@ -191,7 +191,7 @@ class PurchasesController extends Controller
                             //'invoiced_qty' =>, defaut to 0
                             'methods_units_id' => $Task->methods_units_id,
                             //'accounting_allocation_id' => , can be null
-                            //'stock_location_id' => , can be null
+                            //'stock_locations_id' => , can be null
                             'statu' => 1
                         ]); 
 

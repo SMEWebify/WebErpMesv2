@@ -11,15 +11,7 @@
 @section('content')
 
                 <div class="card">
-                  @if($errors->count())
-                  <div class="alert alert-danger">
-                    <ul>
-                    @foreach ( $errors->all() as $message)
-                      <li> {{ $message }}</li>
-                    @endforeach
-                    </ul>
-                  </div>
-                  @endif
+                  @include('include.alert-result')
                     <div class="card card-primary">
                       <div class="card-body">
                         <div class="row">
@@ -27,12 +19,13 @@
                             <div class="card-header">
                                 <h3 class="card-title">Stocks list</h3>
                             </div>
-                            <div class="card-body">
-                              <table class="table">
+                            <div class="card-body table-responsive p-0">
+                              <table class="table table-hover">
                                 <thead>
                                   <tr>
                                     <th>External ID</th>
                                     <th>Desciption</th>
+                                    <th>Lines count</th>
                                     <th>Created At</th>
                                     <th>Action</th>
                                   </tr>
@@ -42,6 +35,8 @@
                                   <tr>
                                     <td>{{ $stock->code }}</td>
                                     <td>{{ $stock->label }}</td>
+                                    <td>{{ $stock->stock_location_count }}</td>
+                                    
                                     <td>{{ $stock->GetPrettyCreatedAttribute() }}</td>
                                     <td class="py-0 align-middle">
                                       <div class="btn-group btn-group-sm">
@@ -94,6 +89,7 @@
                                   <tr>
                                     <th>External ID</th>
                                     <th>Desciption</th>
+                                    <th>Lines count</th>
                                     <th>Created At</th>
                                     <th>Action</th>
                                   </tr>
@@ -162,8 +158,6 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css">
 @stop
 
 @section('js')

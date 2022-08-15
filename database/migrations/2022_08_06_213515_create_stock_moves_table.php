@@ -16,14 +16,13 @@ return new class extends Migration
         Schema::create('stock_moves', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->dateTime('datetime_move');
             $table->integer('qty')->default(0);
             $table->integer('reserve_qty')->default(0);
             $table->integer('bad_qty')->default(0);
             $table->integer('stock_location_products_id');
-            $table->integer('line_job_id')->nullable();
+            $table->integer('order_line_id')->nullable();
             $table->integer('task_id')->nullable();
-            $table->integer('purchase_delivery_detail_id')->nullable();
+            $table->integer('purchase_receipt_line_id')->nullable();
             $table->integer('typ_move')->default(5);
             #1 - Inventories
             #2 - Task allocation

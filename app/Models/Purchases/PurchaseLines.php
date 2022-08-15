@@ -31,7 +31,7 @@ class PurchaseLines extends Model
                             'invoiced_qty',
                             'methods_units_id',
                             'accounting_allocation_id',
-                            'stock_location_id',
+                            'stock_locations_id',
                         ];
 
     public function tasks()
@@ -61,7 +61,7 @@ class PurchaseLines extends Model
 
     public function stockLocation()
     {
-        return $this->belongsTo(StockLocation::class, 'stock_location_id');
+        return $this->belongsTo(StockLocation::class, 'stock_locations_id');
     }
 
     public function GetPrettyCreatedAttribute()

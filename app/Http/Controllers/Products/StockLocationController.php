@@ -24,7 +24,7 @@ class StockLocationController extends Controller
         $userSelect = User::select('id', 'name')->get();
         $ProductSelect = Products::select('id', 'code')->get();
         $LastStockLocationProduct =  DB::table('stock_location_products')->orderBy('id', 'desc')->first();
-
+        
         return view('products/stockLocation-show', [
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,

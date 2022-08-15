@@ -16,7 +16,7 @@ class StockController extends Controller
     //
     public function index()
     {
-        $stocks = Stocks::All();
+        $stocks = Stocks::withCount('StockLocation')->get();
         $userSelect = User::select('id', 'name')->get();
         $LastStock =  DB::table('stocks')->orderBy('id', 'desc')->first();
         return view('products/stocks-index', [
@@ -35,7 +35,7 @@ class StockController extends Controller
     public function show($id)
     {
         $Stock = Stocks::findOrFail($id);
-        $StockLocations = StockLocation::where('stocks_id', '=', $id)->get();
+        $StockLocations = StockLocation::withCount('StockLocationProducts')->where('stocks_id', '=', $id)->get();
         $userSelect = User::select('id', 'name')->get();
         $LastStockLocation =  DB::table('stock_locations')->orderBy('id', 'desc')->first();
         

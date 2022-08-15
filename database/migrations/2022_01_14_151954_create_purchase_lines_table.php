@@ -31,7 +31,7 @@ class CreatePurchaseLinesTable extends Migration
             $table->integer('invoiced_qty')->default(0);
 			$table->integer('methods_units_id')->nullable();
             $table->integer('accounting_allocation_id')->nullable();
-            $table->integer('stock_location_id')->nullable();
+            $table->integer('stock_locations_id')->nullable();
             $table->timestamps();
         });
     }

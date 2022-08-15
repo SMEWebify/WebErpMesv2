@@ -17,15 +17,7 @@
 
 @section('content')
 <div class="card">
-  @if($errors->count())
-  <div class="alert alert-danger">
-    <ul>
-    @foreach ( $errors->all() as $message)
-      <li> {{ $message }}</li>
-    @endforeach
-    </ul>
-  </div>
-  @endif
+  @include('include.alert-result')
     <div class="card card-primary">
       <div class="card-body">
         <div class="row">
@@ -33,12 +25,13 @@
             <div class="card-header">
                 <h3 class="card-title">Stocks location list</h3>
             </div>
-            <div class="card-body">
-              <table class="table">
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
                 <thead>
                   <tr>
                     <th>Code</th>
                     <th>Label</th>
+                    <th>Lines count</th>
                     <th>End date</th>
                     <th>User management</th>
                     <th>Action</th>
@@ -49,6 +42,7 @@
                   <tr>
                     <td>{{ $StockLocation->code }}</td>
                     <td>{{ $StockLocation->label }}</td>
+                    <td>{{ $StockLocation->stock_location_products_count }}</td>
                     <td>{{ $StockLocation->end_date }}</td>
                     <td>{{ $StockLocation->UserManagement['name'] }}</td>
                     <td class=" py-0 align-middle">
@@ -107,6 +101,7 @@
                   <tr>
                     <th>Code</th>
                     <th>Label</th>
+                    <th>Lines count</th>
                     <th>End date</th>
                     <th>User management</th>
                     <th>Action</th>

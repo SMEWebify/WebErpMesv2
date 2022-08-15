@@ -3,18 +3,19 @@
 namespace App\Models\Planning;
 
 use App\Models\User;
+use App\Models\Planning\Status;
 use App\Models\Products\Products;
+use App\Models\Products\StockMove;
+use Spatie\Activitylog\LogOptions;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsTools;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Planning\Status;
-use App\Models\Workflow\OrderLines;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
 class Task extends Model
 {
@@ -68,6 +69,11 @@ class Task extends Model
     public function OrderLines()
     {
         return $this->belongsTo(OrderLines::class, 'order_lines_id');
+    }
+
+    public function StockMove()
+    {
+        return $this->hasMany(StockMove::class);
     }
 
     public function Products()

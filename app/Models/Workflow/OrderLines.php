@@ -5,13 +5,14 @@ namespace App\Models\Workflow;
 use App\Models\Planning\Task;
 use App\Models\Workflow\Orders;
 use App\Models\Products\Products;
+use App\Models\Products\StockMove;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderLines extends Model
 {
@@ -60,6 +61,11 @@ class OrderLines extends Model
     public function Task()
     {
         return $this->hasMany(Task::class)->orderBy('ordre');
+    }
+
+    public function StockMove()
+    {
+        return $this->hasMany(StockMove::class);
     }
 
     public function getTaskCountAttribute()
