@@ -7,6 +7,7 @@ use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 
 class StockLocationProducts extends Model
 {
@@ -44,10 +45,12 @@ class StockLocationProducts extends Model
     public function getTotalEntryStockMove()
     {
         return StockMove::where('stock_location_products_id', $this->id)
-                        ->where('typ_move', '1')
-                        ->orwhere('typ_move', '3')
-                        ->orwhere('typ_move', '5')
-                        ->orwhere('typ_move', '12')
+                        ->where(function (Builder $query) {
+                            return $query->where('typ_move', '1')
+                                        ->orwhere('typ_move', '3')
+                                        ->orwhere('typ_move', '5')
+                                        ->orwhere('typ_move', '12');
+                        })
                         ->get()
                         ->sum('qty');
     }
@@ -55,8 +58,10 @@ class StockLocationProducts extends Model
     public function getTotalSortingStockMove()
     {
         return StockMove::where('stock_location_products_id', $this->id)
-                        ->where('typ_move', '6')
-                        ->orwhere('typ_move', '9')
+                        ->where(function (Builder $query) {
+                            return $query->where('typ_move', '6')
+                                        ->orwhere('typ_move', '9');
+                        })
                         ->get()
                         ->sum('qty');
     }

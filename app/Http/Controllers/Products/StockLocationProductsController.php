@@ -23,7 +23,7 @@ class StockLocationProductsController extends Controller
         $StockLocationProduct = StockLocationProducts::findOrFail($id);
         $StockLocation = StockLocation::findOrFail($StockLocationProduct->stock_locations_id);
         $Stock = Stocks::findOrFail($StockLocation->stocks_id);
-
+        
         return view('products/StockLocationProduct-show', [
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,
