@@ -30,7 +30,7 @@
                             <th>Setting time</th>
                             <th>Unit time</th>
                             <th>Statu</th>
-                            <th>Action</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +74,7 @@
                             <th>Setting time</th>
                             <th>Unit time</th>
                             <th>Statu</th>
-                            <th>Action</th>
+                            <th></th>
                         </tr>
                     </tfoot>
                 </table>
