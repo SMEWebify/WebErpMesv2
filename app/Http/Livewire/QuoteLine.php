@@ -208,8 +208,20 @@ class QuoteLine extends Component
         }
     }
 
-    public function cancel()
-    {
+    
+    public function breakDown($id){
+        $Quoteline = Quotelines::findOrFail($id);
+        $TaskLine = Task::where('products_id', $Quoteline->product_id)->get();
+        foreach ($TaskLine as $Task) 
+        {
+            $newTask = $Task->replicate();
+            $newTask->quote_lines_id = $id;
+            $newTask->products_id = null;
+            $newTask->save();
+        }
+    }
+
+    public function cancel(){
         $this->updateLines = false;
         $this->resetFields();
     }
