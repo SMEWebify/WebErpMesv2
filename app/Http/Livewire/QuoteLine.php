@@ -33,9 +33,10 @@ class QuoteLine extends Component
     public $status_id;
 
     public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ordre, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $quote_lines_id, $quotes_id, $ordre, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $code='';
     public $label='';
+    public $qty= 0;
     public $discount= 0;
     public $updateLines = false;
     public $ProductsSelect = [];
@@ -55,7 +56,7 @@ class QuoteLine extends Component
     protected $rules = [
         'ordre' =>'required|numeric|min:0|not_in:0',
         'label'=>'required',
-        'qty'=>'required',
+        'qty'=>'required|min:1|not_in:0',
         'methods_units_id'=>'required',
         'selling_price'=>'required|numeric|min:0|not_in:0',
         'discount'=>'required',

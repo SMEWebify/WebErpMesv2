@@ -184,13 +184,20 @@ Route::group(['prefix' => 'quality'], function () {
     Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->middleware(['auth'])->name('quality');
     //tab
     Route::post('/Action/create', 'App\Http\Controllers\Quality\QualityActionController@store')->middleware(['auth'])->name('quality.action.create');
+    Route::post('/Action/edit/{id}', 'App\Http\Controllers\Quality\QualityActionController@update')->middleware(['auth'])->name('quality.action.update');
     Route::post('/Device/create', 'App\Http\Controllers\Quality\QualityControlDeviceController@store')->middleware(['auth'])->name('quality.device.create');
+    Route::post('/Device/edit/{id}', 'App\Http\Controllers\Quality\QualityControlDeviceController@update')->middleware(['auth'])->name('quality.device.update');
     Route::post('/NonConformitie/create', 'App\Http\Controllers\Quality\QualityNonConformityController@store')->middleware(['auth'])->name('quality.nonConformitie.create');
+    Route::post('/NonConformitie/edit/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@update')->middleware(['auth'])->name('quality.nonConformitie.update');
     Route::post('/Derogation/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->middleware(['auth'])->name('quality.derogation.create');
+    Route::post('/Derogation/edit/{id}', 'App\Http\Controllers\Quality\QualityDerogationController@update')->middleware(['auth'])->name('quality.derogation.update');
     //setting
     Route::post('/Failure/create', 'App\Http\Controllers\Quality\QualityFailureController@store')->middleware(['auth'])->name('quality.failure.create');
+    Route::post('/Failure/edit/{id}', 'App\Http\Controllers\Quality\QualityFailureController@update')->middleware(['auth'])->name('quality.failure.update');
     Route::post('/Cause/create', 'App\Http\Controllers\Quality\QualityCauseController@store')->middleware(['auth'])->name('quality.cause.create');
+    Route::post('/Cause/edit/{id}', 'App\Http\Controllers\Quality\QualityCauseController@update')->middleware(['auth'])->name('quality.cause.update');
     Route::post('/Correction/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->middleware(['auth'])->name('quality.correction.create');
+    Route::post('/Correction/edit/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@update')->middleware(['auth'])->name('quality.correction.update');
 });
 
 Route::group(['prefix' => 'methods'], function () {

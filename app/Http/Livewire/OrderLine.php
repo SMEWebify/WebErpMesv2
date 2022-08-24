@@ -27,9 +27,10 @@ class OrderLine extends Component
     public $status_id;
 
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ordre, $product_id, $qty, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $order_lines_id, $orders_id, $ordre, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $code='';
     public $label='';
+    public $qty= 0;
     public $discount= 0;
     public $updateLines = false;
     public $ProductsSelect = [];

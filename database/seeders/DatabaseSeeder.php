@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
          */
 
         //user
-        User::factory()->count(50)->create();
+        User::factory()->count(2)->create();
         //companies informations
         Companies::factory()->count(500)->create();
         CompaniesContacts::factory()->count(2000)->create();

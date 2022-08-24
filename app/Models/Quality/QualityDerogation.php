@@ -12,16 +12,16 @@ class QualityDerogation extends Model
     use HasFactory;
 
     protected $fillable = ['code',
-    'label', 
-    'statu',
-    'type', 
-    'user_id',
-    'service_id',  
-    'pb_descp',  
-    'proposal', 
-    'reply', 
-    'quality_non_conformitie_id',  
-    'decision'];
+                            'label', 
+                            'statu',
+                            'type', 
+                            'user_id',
+                            'pb_descp',  
+                            'proposal', 
+                            'reply', 
+                            'quality_non_conformitie_id',  
+                            'decision'
+                        ];
 
     public function UserManagement()
     {
@@ -30,7 +30,7 @@ class QualityDerogation extends Model
 
     public function QualityNonConformity()
     {
-        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformities_id');
+        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformitie_id');
     }
     
     public function GetPrettyCreatedAttribute()

@@ -67,6 +67,11 @@ class Companies extends Model
         return $this->hasMany(Quotes::class, 'companies_id');
     }
 
+    public function NonConformity()
+    {
+        return $this->hasMany(QualityNonConformity::class, 'companies_id');
+    }
+
     public function getQuotesCountAttribute()
     {
         return $this->Quotes()->count();

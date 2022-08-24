@@ -29,7 +29,7 @@ class QualityAction extends Model
 
     public function QualityNonConformity()
     {
-        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformities_id');
+        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformitie_id');
     }
 
     public function GetPrettyCreatedAttribute()

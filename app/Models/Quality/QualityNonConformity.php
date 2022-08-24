@@ -4,8 +4,13 @@ namespace App\Models\Quality;
 
 use App\Models\File;
 use App\Models\User;
+use App\Models\Companies\Companies;
+use App\Models\Quality\QualityCause;
 use App\Models\Quality\QualityAction;
+use App\Models\Quality\QualityFailure;
+use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Quality\QualityCorrection;
 use App\Models\Quality\QualityDerogation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -40,12 +45,32 @@ class QualityNonConformity extends Model
 
     public function Action()
     {
-        return $this->hasMany(QualityAction::class, 'action_id');
+        return $this->hasMany(QualityAction::class);
     }
 
     public function Derogation()
     {
-        return $this->hasMany(QualityDerogation::class, 'derogation_id');
+        return $this->hasMany(QualityDerogation::class);
+    }
+
+    public function Failure()
+    {
+        return $this->belongsTo(QualityFailure::class, 'failure_id');
+    }
+
+    public function Cause()
+    {
+        return $this->belongsTo(QualityCause::class, 'causes_id');
+    }
+
+    public function Correction()
+    {
+        return $this->belongsTo(QualityCorrection::class, 'correction_id');
+    }
+
+    public function companie()
+    {
+        return $this->belongsTo(Companies::class, 'companie_id');
     }
 
     public function Task()

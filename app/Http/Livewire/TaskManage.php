@@ -72,6 +72,22 @@ class TaskManage extends Component
         }
     }
 
+    /*public function ChangeCodelabel()
+    {
+        $product = Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price')->where('id', $this->product_id)->get();
+        if(count($product) > 0){
+            $this->code = $product[0]->code ;
+            $this->label =  $product[0]->label;
+            $this->methods_units_id =  $product[0]->methods_units_id;
+            $this->selling_price =  $product[0]->selling_price;
+        }else{
+            $this->code ='';
+            $this->label ='';
+            $this->methods_units_id ='';
+            $this->selling_price ='';
+        }
+    }*/
+
     public function mount($idType, $idPage, $idLine) 
     {
         $this->idLine = $idLine;
