@@ -106,7 +106,9 @@ Route::group(['prefix' => 'pdf'], function () {
 });
 
 Route::group(['prefix' => 'accouting'], function () {
+    //index route
     Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
+    //tab
     Route::post('/Allocation/create', 'App\Http\Controllers\Accounting\AllocationController@store')->middleware(['auth'])->name('accouting.allocation.create');
     Route::post('/Allocation/edit/{id}', 'App\Http\Controllers\Accounting\AllocationController@update')->middleware(['auth'])->name('accouting.allocation.update');
     Route::post('/Delivery/create', 'App\Http\Controllers\Accounting\DeliveryController@store')->middleware(['auth'])->name('accouting.delivery.create');
@@ -120,7 +122,9 @@ Route::group(['prefix' => 'accouting'], function () {
 });
 
 Route::group(['prefix' => 'times'], function () {
+    //index route
     Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->middleware(['auth'])->name('times');
+    //tab
     Route::post('/Absence/create', 'App\Http\Controllers\Times\AbsenceController@store')->middleware(['auth'])->name('times.absence.create');
     Route::post('/BanckHoliday/create', 'App\Http\Controllers\Times\BanckHolidayController@store')->middleware(['auth'])->name('times.banckholiday.create');
     Route::post('/ImproductTime/create', 'App\Http\Controllers\Times\ImproductTimeController@store')->middleware(['auth'])->name('times.improducttime.create');
@@ -128,12 +132,13 @@ Route::group(['prefix' => 'times'], function () {
 });
 
 Route::group(['prefix' => 'products'], function () {
-    Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->middleware(['auth'])->name('products'); 
+    //index product route
+    Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->middleware(['auth'])->name('products');
+    //product route 
     Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->middleware(['auth'])->name('products.store');
     Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->middleware(['auth'])->name('products.update');
     Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->middleware(['auth'])->name('products.duplicate');
     Route::post('/image', 'App\Http\Controllers\Products\ProductsController@StoreImage')->middleware(['auth'])->name('products.update.image');
-    
     //stock route
     Route::get('/Stock', 'App\Http\Controllers\Products\StockController@index')->middleware(['auth'])->name('products.stock'); 
     Route::post('/Stock/create', 'App\Http\Controllers\Products\StockController@store')->middleware(['auth'])->name('products.stock.store');
@@ -175,20 +180,23 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::group(['prefix' => 'quality'], function () {
+    //index route
     Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->middleware(['auth'])->name('quality');
-    Route::post('/Failure/create', 'App\Http\Controllers\Quality\QualityFailureController@store')->middleware(['auth'])->name('quality.failure.create');
-    Route::post('/Cause/create', 'App\Http\Controllers\Quality\QualityCauseController@store')->middleware(['auth'])->name('quality.cause.create');
-    Route::post('/Correction/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->middleware(['auth'])->name('quality.correction.create');
-    Route::post('/Device/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->middleware(['auth'])->name('quality.device.create');
-    Route::post('/Action/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->middleware(['auth'])->name('quality.action.create');
+    //tab
+    Route::post('/Action/create', 'App\Http\Controllers\Quality\QualityActionController@store')->middleware(['auth'])->name('quality.action.create');
     Route::post('/Device/create', 'App\Http\Controllers\Quality\QualityControlDeviceController@store')->middleware(['auth'])->name('quality.device.create');
     Route::post('/NonConformitie/create', 'App\Http\Controllers\Quality\QualityNonConformityController@store')->middleware(['auth'])->name('quality.nonConformitie.create');
     Route::post('/Derogation/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->middleware(['auth'])->name('quality.derogation.create');
-    Route::post('/Action/create', 'App\Http\Controllers\Quality\QualityActionController@store')->middleware(['auth'])->name('quality.action.create');
+    //setting
+    Route::post('/Failure/create', 'App\Http\Controllers\Quality\QualityFailureController@store')->middleware(['auth'])->name('quality.failure.create');
+    Route::post('/Cause/create', 'App\Http\Controllers\Quality\QualityCauseController@store')->middleware(['auth'])->name('quality.cause.create');
+    Route::post('/Correction/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->middleware(['auth'])->name('quality.correction.create');
 });
 
 Route::group(['prefix' => 'methods'], function () {
+    //index route
     Route::get('/', 'App\Http\Controllers\Methods\MethodsController@index')->middleware(['auth'])->name('methods');
+    //tab
     Route::post('/Unit/create', 'App\Http\Controllers\Methods\UnitsController@store')->middleware(['auth'])->name('methods.unit.create');
     Route::post('/Unit/edit/{id}', 'App\Http\Controllers\Methods\UnitsController@update')->middleware(['auth'])->name('methods.unit.update');
     Route::post('/Family/create', 'App\Http\Controllers\Methods\FamiliesController@store')->middleware(['auth'])->name('methods.family.create');
