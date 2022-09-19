@@ -443,6 +443,12 @@ return [
             'url'  => 'admin/factory',
             'icon'    => 'fas fa-industry',
         ],
+        ['header' => 'W.E.M.'],
+        [
+            'text' => 'Licence',
+            'url'  => 'licence',
+            'icon'    => 'nav-icon fas fa-file-contract',
+        ],
     ],
 
     /*

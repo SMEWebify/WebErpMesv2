@@ -228,6 +228,8 @@ Route::group(['prefix' => 'notifications'], function () {
 
 Route::post('upload-file', 'App\Http\Controllers\FileUpload@fileUpload')->middleware(['auth'])->name('file.store');
 
+Route::get('/licence', function () {return view('licence');})->middleware(['auth'])->name('licence');
+
 Route::group(['prefix' => 'users'], function () {
     Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
     Route::get('/Profile/{id}', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');
