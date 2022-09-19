@@ -17,6 +17,7 @@
             const calendar = new Calendar(calendarEl, 
             {
                 events: JSON.parse(data),
+                eventColor: '#378006',
                 height: 800,
                 themeSystem: 'bootstrap',
                 headerToolbar: {
