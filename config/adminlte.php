@@ -31,7 +31,7 @@ return [
     */
 
     'use_ico_only' => false,
-    'use_full_favicon' => false,
+    'use_full_favicon' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -45,9 +45,9 @@ return [
     |
     */
 
-    'logo' => '<b>WEM</b> v1.0',
+    'logo' => 'v1.0.1',
     'logo_img' => 'vendor/adminlte/dist/img/WEMLogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'WEM',

@@ -30,10 +30,10 @@ pour tester ou aider à développer suivez ce lien : [wiki page (install en dev)
 
 pour passer en production, suivez ce lien : [wiki page (install en production)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
-# Avancement actuel du projet :building_construction:
+-----------------
 
-Project Feature, suivez ce lien : [wiki page](https://github.com/billyboy35/WebErpMesv2/wiki/Feature)
-   
+:building_construction: Project et fonctionnalités, suivez ce lien : : [wiki page](https://github.com/billyboy35/WebErpMesv2/wiki/Features)
+  
 -----------------
 Dashboard
 ![image](https://user-images.githubusercontent.com/75578469/164035450-16391d88-1724-4bfa-ab25-bd5528f9f690.png)
