@@ -324,6 +324,12 @@ class QuoteLine extends Component
                         $newTask->order_lines_id = $newOrderline->id;
                         $newTask->quote_lines_id = null;
                         $newTask->save();
+
+                        //update info that order line as task
+                        $OrderLine = OrderLines::find($newOrderline->id);
+                        $OrderLine->tasks_status = 2;
+                        $OrderLine->save();
+                        
                     }
 
                     //update quote lines statu
