@@ -26,6 +26,7 @@ class UpdateLocationRequest extends FormRequest
         return [
             //
             'label'=>'required',
+            'ressource_id'=>'required',
         ];
     }
 }

@@ -27,6 +27,7 @@ class StoreLocationRequest extends FormRequest
             //
             'code' =>'required|unique:methods_locations',
             'label'=>'required',
+            'ressource_id'=>'required',
         ];
     }
 }
