@@ -74,7 +74,8 @@ class QuoteLines extends Model
     {
         return $this->hasMany(Task::class, 'quote_lines_id')
                     ->where(function (Builder $query) {
-                        return $query->where('type', 3)
+                        return $query->where('type', 2)
+                                    ->orWhere('type','=', 3)
                                     ->orWhere('type','=', 4)
                                     ->orWhere('type','=', 5)
                                     ->orWhere('type','=', 6)
