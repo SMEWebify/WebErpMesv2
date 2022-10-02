@@ -318,14 +318,11 @@ return [
                     'text' => 'Workflow',
                     'url'  => 'production/kanban',
                 ],
-                
-                /* 
-                https://github.com/billyboy35/WebErpMesv2/issues/27
                 [
                     'text' => 'Gantt',
-                    'url'  => 'production/Gantt',
+                    'url'  => 'production/gantt',
                 ],
-                */
+                
             ]
         ],
         [
@@ -487,21 +484,21 @@ return [
 
     'plugins' => [
         'Datatables' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/datatables/js/jquery.dataTables.min.js',
                 ],
                 [
                     'type' => 'js',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/datatables/js/dataTables.bootstrap4.min.js',
                 ],
                 [
                     'type' => 'css',
-                    'asset' => true,
+                    'asset' => false,
                     'location' => 'vendor/datatables/css/dataTables.bootstrap4.min.css',
                 ],
             ],
@@ -612,7 +609,7 @@ return [
             ],
         ],
         'Dropzone' => [
-            'active' => true,
+            'active' => false,
             'files' => [
                 [
                 'type' => 'css',
@@ -626,6 +623,23 @@ return [
                 ],
             ],
         ],
+        'dhtmlxGantt ' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => '//cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => '//cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js',
+                ],
+            ],
+        ],
+
+
     ],
 
     /*

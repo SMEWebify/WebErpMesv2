@@ -87,7 +87,7 @@
                         <label for="seting_time">Setting time</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                                <span class="input-group-text"><i class="fas fa-stopwatch"> Hour(s)</i></span>
                             </div>
                             <input type="number" class="form-control @error('seting_time') is-invalid @enderror" name="seting_time"  id="seting_time" placeholder="Setting time" value="0" step=".001"  min="0"  wire:model="seting_time" >
                         </div>
@@ -108,7 +108,7 @@
                         <label for="unit_time">Unit time</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                                <span class="input-group-text"><i class="fas fa-stopwatch"> Hour(s)</i></span>
                             </div>
                             <input type="number" class="form-control @error('unit_time') is-invalid @enderror" name="unit_time"  id="unit_time" placeholder="Unit time" value="0" step=".001"  min="0" wire:model="unit_time" >
                         </div>
@@ -184,8 +184,8 @@
                             <td>{{ $TechLine->ordre }}</td>
                             <td>{{ $TechLine->label }}</td>
                             <td>{{ $TechLine->service['label'] }}</td>
-                            <td>{{ $TechLine->seting_time }}</td>
-                            <td>{{ $TechLine->unit_time }}</td>
+                            <td>{{ $TechLine->seting_time }} h</td>
+                            <td>{{ $TechLine->unit_time }} h</td>
                             <td>{{ $TechLine->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $TechLine->unit_price }} {{ $Factory->curency }}</td>
                             <td>

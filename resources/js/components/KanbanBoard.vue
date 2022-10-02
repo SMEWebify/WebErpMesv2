@@ -26,7 +26,7 @@
                             <span class="font-weight-bold">Unit Time :</span> {{ task.unit_time }}
                         </div>
                         <div class="col-4">
-                            <span class="font-weight-bold">Advancement :</span> {{ task.advancement }}
+                            <span class="font-weight-bold">Advancement :</span> {{ task.progress }}
                         </div>
                       </div>
                     </div>

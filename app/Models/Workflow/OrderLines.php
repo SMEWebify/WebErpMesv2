@@ -34,6 +34,7 @@ class OrderLines extends Model
                             'accounting_vats_id',
                             'delivery_date',
                             'tasks_status',
+                            'internal_delay',
                             'delivery_status',
                             'invoice_status',
                         ];

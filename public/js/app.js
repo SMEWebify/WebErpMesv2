@@ -41901,7 +41901,7 @@ var render = function () {
                                     ),
                                     _vm._v(
                                       " " +
-                                        _vm._s(task.advancement) +
+                                        _vm._s(task.progress) +
                                         "\n                      "
                                     ),
                                   ]),

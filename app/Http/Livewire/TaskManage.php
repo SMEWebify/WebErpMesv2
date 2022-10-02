@@ -30,7 +30,7 @@ class TaskManage extends Component
     public $methods_services_id;
     public $component_id;
     public $type;
-    public $qty = 0;
+    public $qty;
     public $seting_time = 0;
     public $unit_time = 0;
     public $unit_cost = 0;
@@ -111,19 +111,22 @@ class TaskManage extends Component
     {
         if($this->idType == 'products_id'){
             $Line = Products::findOrFail($this->idLine);
+            $this->qty = 1 ;
         }
         elseif($this->idType == 'quote_lines_id'){
             $Line = Quotelines::findOrFail($this->idLine);
+            $this->qty = $Line->qty ;
         }
         elseif($this->idType == 'order_lines_id'){
             $Line = OrderLines::findOrFail($this->idLine);
+            $this->qty = $Line->qty ;
         }
         else{
             $Line = new stdClass();
             $Line->id = null;
             $Line->qty = 0;
         }
-        
+
         return view('livewire.task-manage',[
             'Line' => $Line,
         ]);
@@ -137,7 +140,6 @@ class TaskManage extends Component
         $this->seting_time  = '';
         $this->unit_time  = '';
         $this->selling_price  = '';
-        $this->qty  = '';
         $this->unit_cost  = '';
         $this->unit_price  = '';    
         $this->methods_units_id  = '';
@@ -175,7 +177,7 @@ class TaskManage extends Component
                             'seting_time' => $this->seting_time,   
                             'unit_time' => $this->unit_time,   
                             'remaining_time', 
-                            'advancement', 
+                            'progress', 
                             'status_id' => $this->status_id,   
                             'type' => $this->type,  
                             'delay',

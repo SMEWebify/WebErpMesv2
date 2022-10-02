@@ -172,6 +172,7 @@ Route::group(['prefix' => 'production'], function () {
     Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->middleware(['auth'])->name('production.task');
     Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->middleware(['auth'])->name('production.kanban');
     Route::get('/calendar', 'App\Http\Controllers\Planning\CalendarController@index')->middleware(['auth'])->name('production.calendar');
+    Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->middleware(['auth'])->name('production.gantt');
 });
 
 Route::group(['prefix' => 'admin'], function () {

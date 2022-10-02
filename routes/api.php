@@ -19,4 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/gantt/data', 'App\Http\Controllers\Planning\GanttController@get');
+
 Route::apiResource('order',OrderController::class);

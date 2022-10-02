@@ -31,7 +31,7 @@ class Task extends Model
                             'seting_time', 
                             'unit_time', 
                             'remaining_time', 
-                            'advancement', 
+                            'progress', 
                             'status_id', 
                             'type',
                             'delay',
@@ -55,6 +55,8 @@ class Task extends Model
                             'weight', 
                             'quality_non_conformities_id',
                             'methods_tools_id'];
+
+    protected $appends = ["open"];
 
     public function service()
     {
@@ -124,6 +126,10 @@ class Task extends Model
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function getOpenAttribute(){
+        return true;
     }
 
     public function getActivitylogOptions(): LogOptions

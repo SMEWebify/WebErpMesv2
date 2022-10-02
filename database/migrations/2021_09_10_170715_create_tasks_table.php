@@ -25,7 +25,7 @@ class CreateTasksTable extends Migration
 			$table->decimal('seting_time', 10, 3)->nullable();
 			$table->decimal('unit_time', 10, 3)->nullable();
 			$table->decimal('remaining_time', 10, 3)->nullable();
-			$table->decimal('advancement', 10, 3)->nullable()->default(0.000);
+			$table->decimal('progress', 10, 3)->nullable()->default(0.000);
 			$table->integer('status_id')->default(1);
 			$table->integer('type');
             #1 = Productive
@@ -52,7 +52,7 @@ class CreateTasksTable extends Migration
             $table->decimal('diameter', 10, 3)->nullable();
 			$table->decimal('diameter_oversize', 10, 3)->nullable();
 			$table->integer('to_schedule')->nullable();
-			$table->dateTime('start_date')->nullable();
+			$table->dateTime('end_date')->nullable();
 			$table->string('material')->nullable();
 			$table->decimal('thickness', 10, 3)->nullable();
 			$table->decimal('weight', 10, 3)->nullable();

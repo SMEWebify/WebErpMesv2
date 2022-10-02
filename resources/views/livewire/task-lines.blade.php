@@ -51,8 +51,8 @@
                             <td>@if($Task->methods_units_id ) {{ $Task->Unit['label'] }}@endif</td>
                             <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
-                            <td>{{ $Task->seting_time }}</td>
-                            <td>{{ $Task->unit_time }}</td>
+                            <td>{{ $Task->seting_time }} h</td>
+                            <td>{{ $Task->unit_time }} h</td>
                             <td>{{ $Task->status['title'] }}</td>
                             <td></td>
                         </tr>

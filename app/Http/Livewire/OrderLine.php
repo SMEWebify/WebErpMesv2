@@ -41,7 +41,7 @@ class OrderLine extends Component
     public $BOMServicesSelect = [];
     public $TechProductList = [];
     public $BOMProductList = [];
-
+    
     // Validation Rules
     protected $rules = [
         'ordre' =>'required|numeric|gt:0',
@@ -124,6 +124,9 @@ class OrderLine extends Component
     public function storeOrderLine(){
 
         $this->validate();
+        $date = date_create($this->delivery_date);
+        $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
+        
         // Create Line
         Orderlines::create([
             'orders_id'=>$this->orders_id,
@@ -138,6 +141,7 @@ class OrderLine extends Component
             'selling_price'=>$this->selling_price,
             'discount'=>$this->discount,
             'accounting_vats_id'=>$this->accounting_vats_id,
+            'internal_delay'=>$internalDelay,
             'delivery_date'=>$this->delivery_date,
         ]);
         // Set Flash Message
@@ -147,6 +151,7 @@ class OrderLine extends Component
     }
 
     public function edit($id){
+        
         $Line = Orderlines::findOrFail($id);
         $this->order_lines_id = $id;
         $this->ordre = $Line->ordre;
@@ -176,6 +181,18 @@ class OrderLine extends Component
         {
             $newTask = $Task->replicate();
             $newTask->order_lines_id = $newOrderline->id;
+            $newTask->save();
+        }
+    }
+
+    public function breakDown($id){
+        $OrderLine = OrderLines::findOrFail($id);
+        $TaskLine = Task::where('products_id', $OrderLine->product_id)->get();
+        foreach ($TaskLine as $Task) 
+        {
+            $newTask = $Task->replicate();
+            $newTask->order_lines_id = $id;
+            $newTask->products_id = null;
             $newTask->save();
         }
     }
@@ -219,6 +236,10 @@ class OrderLine extends Component
             if($OderLineToUpdate->delivered_qty == $this->qty ){
                 $OderLineToUpdate->delivery_status = 3;
             }*/
+            $date = date_create($this->delivery_date);
+            $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
+        
+            
             $OderLineToUpdate->ordre = $this->ordre;
             $OderLineToUpdate->code = $this->code;
             $OderLineToUpdate->product_id = $this->product_id;
@@ -230,6 +251,7 @@ class OrderLine extends Component
             $OderLineToUpdate->selling_price = $this->selling_price;
             $OderLineToUpdate->discount = $this->discount;
             $OderLineToUpdate->accounting_vats_id = $this->accounting_vats_id;
+            $OderLineToUpdate->internal_delay = $internalDelay;
             $OderLineToUpdate->delivery_date = $this->delivery_date;
             $OderLineToUpdate->save();
     
