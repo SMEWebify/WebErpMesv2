@@ -25,7 +25,7 @@ class TaskManage extends Component
     public $TaskType = "TechCut";
 
     public $taskId;
-    public $ordre;
+    public $ordre = 1;
     public $label;
     public $methods_services_id;
     public $component_id;
@@ -74,11 +74,13 @@ class TaskManage extends Component
 
     public function ChangeCodelabel()
     {
-        $Service = MethodsServices::select('id', 'label')->where('id', $this->methods_services_id)->get();
+        $Service = MethodsServices::select('id', 'ordre', 'label')->where('id', $this->methods_services_id)->get();
         if(count($Service) > 0){
             $this->label =  $Service[0]->label;
+            $this->ordre =  $Service[0]->ordre;
         }else{
-            $this->label ='';
+            $this->label = '';
+            $this->ordre =10;
         }
     }
 
