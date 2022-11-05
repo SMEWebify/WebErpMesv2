@@ -107,10 +107,11 @@
                                             <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                                         </div>
                                         <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id" @if($type == 2) disabled @endif>
-                                            <option value="">Select address</option>
+                                            
                                         @forelse ($AddressSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
+                                            <option value="{{ $item->id }}" >{{ $item->label }} - {{ $item->adress }}</option>
                                         @empty
+                                            <option value="">Select address</option>
                                             <option value="">No address, please add</option>
                                         @endforelse
                                         </select>
@@ -124,10 +125,10 @@
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
                                         <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id" @if($type == 2) disabled @endif>
-                                            <option value="">Select contact</option>
                                         @forelse ($ContactSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" >{{ $item->first_name }} - {{ $item->name }}</option>
                                         @empty
+                                            <option value="">Select address</option>
                                             <option value="">No contact, please add</option>
                                         @endforelse
                                         </select>
