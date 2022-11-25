@@ -228,7 +228,7 @@ return [
         // Navbar items:
         [
             'type'          => 'navbar-search',
-            'text'          => 'search',        
+            'text'          => 'search_trans_key',        
             'topnav'        => true,
             'url'           => 'navbar/search',
             'method'        => 'post', 
@@ -255,6 +255,23 @@ return [
                 'period' => 30,
             ],
         ],
+        [
+            'text' => 'language_trans_key',
+            'topnav_right' => true,
+            'icon' => 'flag-icon flag-icon-uk',
+            'submenu' => [
+                [
+                    'text'=>'english_trans_key',
+                    'icon' => 'flag-icon flag-icon-uk',
+                    'url'=> '#'
+                ],
+                [
+                    'text'=>'french_trans_key',
+                    'icon' => 'flag-icon flag-icon-fr',
+                    'url'=> '#'
+                ]
+            ]
+        ],
         // Sidebar items:
         /*[
             'type'      => 'sidebar-menu-search',
@@ -264,155 +281,155 @@ return [
             'input_name'=> 'searchVal' ,
         ],*/
         [
-            'text'        => 'Dashboard',
+            'text'        => 'dashboard_trans_key',
             'url'         => 'dashboard',
             'icon'        => 'fas fa-tachometer-alt',
         ],
         [
-            'text'    => 'Companies',
+            'text'    => 'companies_trans_key',
             'icon'    => 'far fa-building',
             'url'     => 'companies',
         ],
         [
-            'text'    => 'Quote',
+            'text'    => 'quote_trans_key',
             'icon'    => 'fas fa-calculator',
             'submenu' => [
                 [
-                    'text' => 'Quotes list',
+                    'text' => 'quotes_list_trans_key',
                     'url'  => 'quotes',
                 ],
                 [
-                    'text' => 'Quotes lines list',
+                    'text' => 'quotes_lines_list_trans_key',
                     'url'  => 'quotes/lines',
                 ],
             ]
         ],
         [
-            'text'    => 'Orders',
+            'text'    => 'orders_trans_key',
             'icon'    => 'fas fa-shopping-cart',
             'url'  => 'orders',
             'submenu' => [
                 [
-                    'text' => 'Orders list',
+                    'text' => 'orders_list_trans_key',
                     'url'  => 'orders',
                 ],
                 [
-                    'text' => 'Orders lines list',
+                    'text' => 'orders_lines_list_trans_key',
                     'url'  => 'orders/lines',
                 ],
             ]
         ],
         [
-            'text'    => 'Scheduling',
+            'text'    => 'scheduling_trans_key',
             'icon' => 'fas fa-calendar-alt',
             'submenu' => [
                 [
-                    'text' => 'Order calendar',
+                    'text' => 'order_calendar_trans_key',
                     'url'  => 'production/calendar',
                 ],
                 [
-                    'text' => 'Tasks list',
+                    'text' => 'tasks_list_trans_key',
                     'url'  => 'production/Task',
                 ],
                 [
-                    'text' => 'Workflow',
+                    'text' => 'workflow_trans_key',
                     'url'  => 'production/kanban',
                 ],
                 [
-                    'text' => 'Gantt',
+                    'text' => 'gantt_trans_key',
                     'url'  => 'production/gantt',
                 ],
                 
             ]
         ],
         [
-            'text'    => 'Delivery notes',
+            'text'    => 'delivery_notes_trans_key',
             'icon'    => 'fas fa-receipt',
             'submenu' => [
                 [
-                    'text' => 'Deliverys notes request',
+                    'text' => 'deliverys_notes_request_trans_key',
                     'url'  => 'deliverys/request',
                 ],
                 [
-                    'text' => 'Deliverys notes list',
+                    'text' => 'deliverys_notes_list_trans_key',
                     'url'  => 'deliverys',
                 ],
             ]
         ],
         [
-            'text'    => 'Invoices ',
+            'text'    => 'invoices_trans_key',
             'icon'    => 'fas fa-calculator',
             'submenu' => [
                 [
-                    'text' => 'Invoices  request',
+                    'text' => 'invoices_request_trans_key',
                     'url'  => 'invoices/request',
                 ],
                 [
-                    'text' => 'Invoices  list',
+                    'text' => 'invoices_list_trans_key',
                     'url'  => 'invoices',
                 ],
             ]
         ],
-        ['header' => 'Others'],
+        ['header' => 'others_trans_key'],
         [
-            'text'    => 'Product',
+            'text'    => 'product_trans_key',
             'icon'    => 'fas fa-barcode',
             'submenu' => [
                 [
-                    'text' => 'Product list',
+                    'text' => 'product_list_trans_key',
                     'url'  => 'products',
                 ],
                 [
-                    'text' => 'Stock',
+                    'text' => 'stock_trans_key',
                     'url'  => 'products/Stock',
                 ],
                 /*[
-                    'text' => 'Inventory',
+                    'text' => 'inventory_trans_key',
                     'url'  => '#',
                 ],*/
             ],
         ],
         [
-            'text'    => 'Purchase',
+            'text'    => 'purchase_trans_key',
             'icon'    => 'fas fa-cash-register',
             'submenu' => [
                 [
-                    'text' => 'Purchase request',
+                    'text' => 'purchase_request_trans_key',
                     'url'  => 'purchases/request',
                 ],
                 [
-                    'text' => 'Requests for quotation list',
+                    'text' => 'requests_for_quotation_list_trans_key',
                     'url'  => 'purchases/quotation',
                 ],
                 [
-                    'text' => 'Purchase list',
+                    'text' => 'purchase_list_trans_key',
                     'url'  => 'purchases',
                 ],
                 [
-                    'text' => 'Waiting to receipt',
+                    'text' => 'waiting_to_receipt_trans_key',
                     'url'  => 'purchases/waiting/receipt',
                 ],
                 [
-                    'text' => 'PO receipt',
+                    'text' => 'po_receipt_trans_key',
                     'url'  => 'purchases/receipt',
                 ],
                 [
-                    'text' => 'Waiting to invoice',
+                    'text' => 'waiting_to_invoice_trans_key',
                     'url'  => 'purchases/waiting/invoice',
                 ],
                 [
-                    'text' => 'Invoice supplier',
+                    'text' => 'invoice_supplier_trans_key',
                     'url'  => 'purchases/invoice',
                 ],
             ],
         ],
         [
             
-            'text' => 'Quality',
+            'text' => 'quality_trans_key',
             'icon'    => 'fas fa-ruler-combined',
             'url'  => 'quality',
         ],
-        ['header' => 'Settings'],
+        ['header' => 'settings_trans_key'],
         /* 
         [
             'text' => 'Setting times',
@@ -421,28 +438,28 @@ return [
         ],
         */
         [
-            'text' => 'Methods',
+            'text' => 'methods_trans_key',
             'icon'   => 'fas fa-cogs',
             'url'  => 'methods',
         ],
         [
-            'text' => 'Accouting',
+            'text' => 'accouting_trans_key',
             'icon'    => 'fas fa-piggy-bank',
             'url'  => 'accouting',
         ],
         [
-            'text'        => 'Users',
+            'text'        => 'users_trans_key',
             'url'         => 'users',
             'icon'        => 'fas fa-users',
         ],
         [
-            'text' => 'Your company',
+            'text' => 'your_company_trans_key',
             'url'  => 'admin/factory',
             'icon'    => 'fas fa-industry',
         ],
         ['header' => 'W.E.M.'],
         [
-            'text' => 'Licence',
+            'text' => 'licence_trans_key',
             'url'  => 'licence',
             'icon'    => 'nav-icon fas fa-file-contract',
         ],
@@ -606,6 +623,16 @@ return [
                     'asset' => true,
                     'location' => 'vendor/bootstrap-switch/js/bootstrap-switch.min.js',
                 ],
+            ],
+        ],
+        'FlagIconCss' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css',
+                    ],
             ],
         ],
         'Dropzone' => [

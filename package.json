@@ -33,6 +33,7 @@
         "@fortawesome/fontawesome-free": "^5.15.4",
         "admin-lte": "^3.2.0",
         "cross-env": "^7.0.3",
+        "flag-icon-css": "^4.1.7",
         "vuedraggable": "^2.24.3"
     }
 }
