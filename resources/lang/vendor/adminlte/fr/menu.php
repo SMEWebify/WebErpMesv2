@@ -13,7 +13,7 @@ return [
     'quotes_lines_list_trans_key'              => 'Liste des ligne de devis',
     'orders_trans_key'                         => 'Commandes',
     'orders_list_trans_key'                    => 'Liste des ligne de commandes',
-    'orders_lines_list_trans_key'              => 'Orders lines list',
+    'orders_lines_list_trans_key'              => 'Liste des ligne de commandes',
     'scheduling_trans_key'                     => 'Planification',
     'order_calendar_trans_key'                 => 'Calendrier des commandes',
     'tasks_list_trans_key'                     => 'Liste des tâches',

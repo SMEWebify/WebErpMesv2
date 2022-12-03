@@ -263,12 +263,12 @@ return [
                 [
                     'text'=>'english_trans_key',
                     'icon' => 'flag-icon flag-icon-uk',
-                    'url'=> '#'
+                    'url'=> 'en',
                 ],
                 [
                     'text'=>'french_trans_key',
                     'icon' => 'flag-icon flag-icon-fr',
-                    'url'=> '#'
+                    'url'=> 'fr',
                 ]
             ]
         ],

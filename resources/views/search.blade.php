@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Search results')
+@section('title', __('general_content.search_results_trans_key'))
 
 @section('content_header')
-    <h1>Search results</h1>
+    <h1>{{ __('general_content.search_results_trans_key') }}</h1>
 @stop
 
 
@@ -14,10 +14,10 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Label</th>
-                        <th>Created At</th>
-                        <th>Action</th>
+                        <th>{{__('general_content.code_trans_key') }}</th>
+                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,10 +43,10 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                    <th>Code</th>
-                    <th>Label</th>
-                    <th>Created At</th>
-                    <th>Action</th>
+                        <th>{{__('general_content.code_trans_key') }}</th>
+                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
                 </tfoot>
             </table>
