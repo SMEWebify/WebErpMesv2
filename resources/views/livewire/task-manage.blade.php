@@ -212,15 +212,15 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                        <th>Sort order</th>
-                        <th>Label</th>
-                        <th>Service</th>
-                        <th>Setting time</th>
-                        <th>Unit time</th>
-                        <th>Unit cost</th>
-                        <th>Unit price</th>
-                        <th>Statu</th>
-                        <th>Action</th>
+                            <th>Total :</th>
+                            <th></th>
+                            <th></th>
+                            <th>{{ $Line->getTechnicalCutTotalSettingTimeAttribute() }} h</th>
+                            <th>{{ $Line->getTechnicalCutTotalUnitTimeAttribute() }} h</th>
+                            <th>{{ $Line->getTechnicalCutTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
+                            <th>{{ $Line->getTechnicalCutTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </tfoot>
                 </table>
@@ -289,15 +289,15 @@
                     </tbody>
                     <tfoot>
                     <tr>
-                        <th>Sort order</th>
-                        <th>Label</th>
-                        <th>Service</th>
-                        <th>Component</th>
-                        <th>Quantity</th>
-                        <th>Unit cost</th>
-                        <th>Unit price</th>
-                        <th>Statu</th>
-                        <th>Action</th>
+                        <th>Total :</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>{{ $Line->getBOMTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
+                        <th>{{ $Line->getBOMTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     </tfoot>
                 </table>

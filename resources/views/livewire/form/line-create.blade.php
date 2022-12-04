@@ -101,6 +101,7 @@
         <div class="col-2">
             <br/>
             <button type="submit" class="btn btn-success btn-block">Add</button>
+            <!--<button wire:click="upQuoteLine()"  class="btn btn-primary btn-block">Refresh Page</button>-->
         </div>
     </div>
 </form>

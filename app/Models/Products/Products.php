@@ -88,6 +88,34 @@ class Products extends Model
                     ->orderBy('ordre');
     }
 
+    public function getTechnicalCutTotalSettingTimeAttribute()
+    {
+        return $this->TechnicalCut->reduce(function ($totalSettingTime, $TechnicalCut) {
+        return $totalSettingTime + $TechnicalCut->seting_time;
+        },0);
+    }
+
+    public function getTechnicalCutTotalUnitTimeAttribute()
+    {
+        return $this->TechnicalCut->reduce(function ($TotalUnitTime, $TechnicalCut) {
+        return $TotalUnitTime + $TechnicalCut->unit_time;
+        },0);
+    }
+
+    public function getTechnicalCutTotalUnitPricettribute()
+    {
+        return $this->TechnicalCut->reduce(function ($totalUnitPrice, $TechnicalCut) {
+        return $totalUnitPrice + $TechnicalCut->unit_price;
+        },0);
+    }
+
+    public function getTechnicalCutTotalUnitCostAttribute()
+    {
+        return $this->TechnicalCut->reduce(function ($totalUnitCost, $TechnicalCut) {
+        return $totalUnitCost + $TechnicalCut->unit_cost;
+        },0);
+    }
+
     public function BOM()
     {
         return $this->hasMany(Task::class, 'products_id')
@@ -100,6 +128,20 @@ class Products extends Model
                                     ->orWhere('type','=', 8);
                     })
                     ->orderBy('ordre');
+    }
+
+    public function getBOMTotalUnitPricettribute()
+    {
+        return $this->BOM->reduce(function ($totalUnitPrice, $BOM) {
+        return $totalUnitPrice + $BOM->unit_price;
+        },0);
+    }
+
+    public function getBOMTotalUnitCostAttribute()
+    {
+        return $this->BOM->reduce(function ($totalUnitCost, $BOM) {
+        return $totalUnitCost + $BOM->unit_cost;
+        },0);
     }
 
     public function Quotelines()
