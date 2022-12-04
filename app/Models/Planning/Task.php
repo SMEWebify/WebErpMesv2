@@ -118,6 +118,11 @@ class Task extends Model
         return $this->qty*$this->unit_time;
     }
 
+    public function Margin()
+    {
+        return (1-($this->unit_cost/$this->unit_price))*100;
+    }
+
     public function TotalTime()
     {
         return $this->qty*$this->unit_time+$this->seting_time;

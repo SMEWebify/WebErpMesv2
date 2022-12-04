@@ -117,11 +117,11 @@ class TaskManage extends Component
         }
         elseif($this->idType == 'quote_lines_id'){
             $Line = Quotelines::findOrFail($this->idLine);
-            $this->qty = $Line->qty ;
+            $this->qty = 1 ;
         }
         elseif($this->idType == 'order_lines_id'){
             $Line = OrderLines::findOrFail($this->idLine);
-            $this->qty = $Line->qty ;
+            $this->qty = 1 ;
         }
         else{
             $Line = new stdClass();

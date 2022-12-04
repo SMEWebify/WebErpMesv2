@@ -32,7 +32,6 @@
                             <input type="number" class="form-control @error('ordre') is-invalid @enderror" name="ordre" id="ordre" placeholder="Order" min="0" wire:model="ordre">
                             
                             <input type="hidden" name="{{ $idType }}" value="{{ $Line->id   }}">
-                            <input type="hidden" name="qty"  id="qty"  value="{{ $Line->qty  }}" value=".001">
                         </div>
                         @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -173,6 +172,7 @@
                             <th>Setting time</th>
                             <th>Unit time</th>
                             <th>Unit cost</th>
+                            <th>Margin</th>
                             <th>Unit price</th>
                             <th>Statu</th>
                             <th>Action</th>
@@ -187,6 +187,7 @@
                             <td>{{ $TechLine->seting_time }} h</td>
                             <td>{{ $TechLine->unit_time }} h</td>
                             <td>{{ $TechLine->unit_cost }} {{ $Factory->curency }}</td>
+                            <td>{{ $TechLine->Margin() }} %</td>
                             <td>{{ $TechLine->unit_price }} {{ $Factory->curency }}</td>
                             <td>
                             @if($TechLine->order_lines_id)
@@ -218,6 +219,7 @@
                             <th>{{ $Line->getTechnicalCutTotalSettingTimeAttribute() }} h</th>
                             <th>{{ $Line->getTechnicalCutTotalUnitTimeAttribute() }} h</th>
                             <th>{{ $Line->getTechnicalCutTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
+                            <th>{{ $Line->getTechnicalCutTMarginAttribute() }} %</th>
                             <th>{{ $Line->getTechnicalCutTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
                             <th></th>
                             <th></th>
@@ -250,6 +252,7 @@
                         <th>Component</th>
                         <th>Quantity</th>
                         <th>Unit cost</th>
+                        <th>Margin</th>
                         <th>Unit price</th>
                         <th>Statu</th>
                         <th>Action</th>
@@ -258,30 +261,31 @@
                     <tbody>
                         @forelse($Line->BOM as $BOMline)
                         <tr>
-                        <td>{{ $BOMline->ordre }}</td>
-                        <td>{{ $BOMline->label }}</td>
-                        <td>{{ $BOMline->service['label'] }}</td>
-                        <td>{{ $BOMline->Component['code'] }}</td>
-                        <td>{{ $BOMline->qty }}</td>
-                        <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>
-                        <td>{{ $BOMline->unit_price }} {{ $Factory->curency }}</td>
-                        <td>
-                            @if($BOMline->order_lines_id)
-                            {{ $BOMline->status['title'] }}
-                            @else
-                            Not for this page
-                            @endif
-                        </td>
-                        <td class=" py-0 align-middle">
-                            <div class="input-group-prepend">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item " wire:click="duplicateLine({{$BOMline->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
-                                    <a href="#" class="dropdown-item" wire:click="editTaskLine({{$BOMline->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
-                                    <a href="#" class="dropdown-item" wire:click="destroyTaskLine({{$BOMline->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                            <td>{{ $BOMline->ordre }}</td>
+                            <td>{{ $BOMline->label }}</td>
+                            <td>{{ $BOMline->service['label'] }}</td>
+                            <td>{{ $BOMline->Component['code'] }}</td>
+                            <td>{{ $BOMline->qty }}</td>
+                            <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>
+                            <td>{{ $BOMline->Margin() }} %</td>
+                            <td>{{ $BOMline->unit_price }} {{ $Factory->curency }}</td>
+                            <td>
+                                @if($BOMline->order_lines_id)
+                                {{ $BOMline->status['title'] }}
+                                @else
+                                Not for this page
+                                @endif
+                            </td>
+                            <td class=" py-0 align-middle">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item " wire:click="duplicateLine({{$BOMline->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
+                                        <a href="#" class="dropdown-item" wire:click="editTaskLine({{$BOMline->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
+                                        <a href="#" class="dropdown-item" wire:click="destroyTaskLine({{$BOMline->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
+                            </td>
                         </tr>
                         @empty
                         <x-EmptyDataLine col="9" text="No line found ..."  />
@@ -295,6 +299,7 @@
                         <th></th>
                         <th></th>
                         <th>{{ $Line->getBOMTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
+                        <th>{{ $Line->getBOMTMarginAttribute() }} %</th>
                         <th>{{ $Line->getBOMTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
                         <th></th>
                         <th></th>

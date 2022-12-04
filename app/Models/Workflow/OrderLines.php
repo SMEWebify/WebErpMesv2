@@ -112,6 +112,11 @@ class OrderLines extends Model
         },0);
     }
 
+    public function getTechnicalCutTMarginAttribute()
+    {
+        return round((1-($this->getTechnicalCutTotalUnitCostAttribute()/$this->getTechnicalCutTotalUnitPricettribute()))*100,2);
+    }
+
     public function BOM()
     {
         return $this->hasMany(Task::class, 'order_lines_id')
@@ -129,15 +134,20 @@ class OrderLines extends Model
     public function getBOMTotalUnitPricettribute()
     {
         return $this->BOM->reduce(function ($totalUnitPrice, $BOM) {
-        return $totalUnitPrice + $BOM->unit_price;
+        return $totalUnitPrice + $BOM->unit_price*$BOM->qty;
         },0);
     }
 
     public function getBOMTotalUnitCostAttribute()
     {
         return $this->BOM->reduce(function ($totalUnitCost, $BOM) {
-        return $totalUnitCost + $BOM->unit_cost;
+        return $totalUnitCost + $BOM->unit_cost*$BOM->qty;
         },0);
+    }
+
+    public function getBOMTMarginAttribute()
+    {
+        return round((1-($this->getBOMTotalUnitCostAttribute()/$this->getBOMTotalUnitPricettribute()))*100,2);
     }
 
     public function GetPrettyCreatedAttribute()
