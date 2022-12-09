@@ -19,15 +19,15 @@ class NotificationsController extends Controller
         $notifications = [];
         $user = User::find(Auth::id());
         foreach ($user->unreadNotifications  as $notification) {
-            if($notification->type == 'App\Notifications\QuoteNotification') $type = 'fas fa-calculator';
-            if($notification->type == 'App\Notifications\OrderNotification') $type = 'fas fa-shopping-cart';
-            if($notification->type == 'App\Notifications\CompanieNotification') $type = 'far fa-building';
-            
             $id = $notification->data['id'];
+
+            if($notification->type == 'App\Notifications\QuoteNotification') {$type = 'fas fa-calculator'; $route = route('quotes.show', ['id' => $id]);}
+            if($notification->type == 'App\Notifications\OrderNotification') {$type = 'fas fa-shopping-cart'; $route = route('orders.show', ['id' => $id]);}
+            if($notification->type == 'App\Notifications\CompanieNotification') {$type = 'far fa-building'; $route = route('companies.show', ['id' => $id]);}
+            
             $code = $notification->data['code'];
             $notificationOriginUser = User::find($notification->data['user_id']);
             $text = ''.$code .' created by '. $notificationOriginUser['name'] .'';
-            $route = route('quotes.show', ['id' => $id]);
 
             array_push($notifications,[
                             'icon' => $type,
