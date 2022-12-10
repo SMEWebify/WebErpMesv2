@@ -936,6 +936,7 @@
                         <th>Description</th>
                         <th>Type</th>
                         <th></th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -949,6 +950,12 @@
                           @if($MethodsUnit->type  == 3) Aera @endif
                           @if($MethodsUnit->type  == 4) Volume @endif
                           @if($MethodsUnit->type  == 5) Other @endif
+                        </td>
+                        <td>
+                          <div class="custom-control custom-radio">
+                            <input class="custom-control-input" type="radio" id="customRadio{{ $MethodsUnit->id }}" name="customRadio"  @if( $MethodsUnit->default == 1 ) checked @endif disabled>
+                            <label for="customRadio{{ $MethodsUnit->id }}" class="custom-control-label">by default</label>
+                          </div>
                         </td>
                         <td class=" py-0 align-middle">
                           <!-- Button Modal -->
@@ -984,6 +991,13 @@
                                     </select>
                                   </div>
                                 </div>
+                                <div class="form-group">
+                                  <label for="month_end">By default</label>
+                                  <select class="form-control" name="default" id="default">
+                                      <option value="0" @if($MethodsUnit->default == 0) selected @endif>No</option>
+                                      <option value="1" @if($MethodsUnit->default == 1) selected @endif>Yes</option>
+                                  </select>
+                                </div>
                               </div>
                               <div class="card-footer">
                                 <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
@@ -1001,6 +1015,7 @@
                         <th>External ID</th>
                         <th>Description</th>
                         <th>Type</th>
+                        <th></th>
                         <th></th>
                       </tr>
                     </tfoot>

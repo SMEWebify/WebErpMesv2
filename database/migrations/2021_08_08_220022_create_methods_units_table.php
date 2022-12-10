@@ -18,6 +18,7 @@ class CreateMethodsUnitsTable extends Migration
             $table->string('code');
 			$table->string('label');
 			$table->integer('type');
+            $table->integer('default')->default(0);
             $table->timestamps();
         });
     }

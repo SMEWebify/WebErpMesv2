@@ -25,9 +25,11 @@ class UnitsController extends Controller
      */
     public function update(UpdateUnitRequest $request)
     {
+        if($request->default == 1) MethodsUnits::query()->update(['default' => 0]);
         $Unit = MethodsUnits::find($request->id);
         $Unit->label=$request->label;
         $Unit->type=$request->type;
+        $Unit->default=$request->default;
         $Unit->save();
         return redirect()->route('methods')->with('success', 'Successfully updated Unit.');
     }
