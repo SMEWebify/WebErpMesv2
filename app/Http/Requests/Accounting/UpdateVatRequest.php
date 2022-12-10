@@ -26,7 +26,7 @@ class UpdateVatRequest extends FormRequest
         return [
             //
             'label'=>'required',
-            'rate'=>'required|unique:accounting_vats',
+            'rate'=>'required|unique:accounting_vats,rate,'. $this->id,
         ];
     }
 }

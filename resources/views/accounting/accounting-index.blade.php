@@ -308,6 +308,7 @@
                         <th>Desciption</th>
                         <th>Rate</th>
                         <th></th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -316,6 +317,12 @@
                         <td>{{ $VAT->code }}</td>
                         <td>{{ $VAT->label }}</td>
                         <td>{{ $VAT->rate }}</td>
+                        <td>
+                          <div class="custom-control custom-radio">
+                            <input class="custom-control-input" type="radio" id="customRadio{{ $VAT->id }}" name="customRadio"  @if( $VAT->default == 1 ) checked @endif disabled>
+                            <label for="customRadio{{ $VAT->id }}" class="custom-control-label">by default</label>
+                          </div>
+                        </td>
                         <td class=" py-0 align-middle">
                           <!-- Button Modal {{ $VAT->id }} -->
                           <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#VAT{{ $VAT->id }}">
@@ -344,6 +351,13 @@
                                     <input type="number" class="form-control" name="rate"  id="rate" placeholder="10 %" step=".01" value="{{ $VAT->rate }}">
                                   </div>
                                 </div>
+                                <div class="form-group">
+                                  <label for="month_end">By default</label>
+                                  <select class="form-control" name="default" id="default">
+                                      <option value="0" @if($VAT->default == 0) selected @endif>No</option>
+                                      <option value="1" @if($VAT->default == 1) selected @endif>Yes</option>
+                                  </select>
+                                </div>
                               </div>
                               <div class="card-footer">
                                 <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
@@ -361,6 +375,7 @@
                         <th>External ID</th>
                         <th>Desciption</th>
                         <th>Rate</th>
+                        <th></th>
                         <th></th>
                       </tr>
                     </tfoot>

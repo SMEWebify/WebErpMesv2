@@ -26,7 +26,7 @@ class UpdateQualityControlDeviceRequest extends FormRequest
         return [
             //
             'label'=>'required',
-            'serial_number'=>'required|unique:quality_control_devices',
+            'serial_number'=>'required|unique:quality_control_devices,serial_number,'. $this->id,
             'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }

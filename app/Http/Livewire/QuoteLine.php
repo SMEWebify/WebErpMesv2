@@ -101,8 +101,8 @@ class QuoteLine extends Component
         $this->delivery_date = $QuoteDelay;
         $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
-        $this->VATSelect = AccountingVat::select('id', 'label')->orderBy('rate')->get();
-        $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
+        $this->VATSelect = AccountingVat::select('id', 'label', 'default')->orderBy('rate')->get();
+        $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get();
         $this->Factory = Factory::first();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
         $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
