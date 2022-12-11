@@ -34,7 +34,8 @@ class Companies extends Model
                             'account_general_supplier',
                             'account_auxiliary_supplier',
                             'recept_controle',
-                            'comment'
+                            'comment',
+                            'active',
                         ];
 
     public function Addresses()

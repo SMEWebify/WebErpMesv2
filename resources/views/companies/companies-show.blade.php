@@ -35,34 +35,44 @@
                       <label for="InputWebSite">General information</label>
                     </div>
                     <div class="row">
-                      <div class="col-12 col-sm-4">
+                      <div class="col-3">
                         <div class="text-muted">
                           <label for="label">External ID</label>
                           <b class="d-block">{{ $Companie->code }}</b>
                         </div>
                       </div>
-                      <div class="col-12 col-sm-4">
-                          <label for="label">Name of company</label>
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-building"></i></span>
-                              </div>
-                              <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="Name of company">
-                          </div>
+                      <div class="col-3">
+                        <label for="label">Name of company</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            </div>
+                            <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="Name of company">
+                        </div>
                       </div>
-                      <div class="col-12 col-sm-4">
-                          <label for="user_id">Technical manager</label>
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-user"></i></span>
-                              </div>
-                              <select class="form-control" name="user_id" id="user_id" value="user_id">
-                                  <option value="">Select user</option>
-                              @foreach ($userSelect as $item)
-                                  <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
-                              @endforeach
-                              </select>
-                          </div>
+                      <div class="col-3">
+                        <label for="user_id">Technical manager</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <select class="form-control" name="user_id" id="user_id" value="user_id">
+                                <option value="">Select user</option>
+                            @foreach ($userSelect as $item)
+                                <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
+                            @endforeach
+                            </select>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <label for="companies_notification">Active</label>
+                        <div class="input-group">
+                              @if($Companie->active == 1)  
+                                  <x-adminlte-input-switch name="active" data-on-text="YES" data-off-text="NO" data-on-color="teal"  checked />
+                              @else
+                                  <x-adminlte-input-switch name="active" data-on-text="YES" data-off-text="NO" data-on-color="teal"  />
+                              @endif
+                        </div>
                       </div>
                     </div>
                   </div>

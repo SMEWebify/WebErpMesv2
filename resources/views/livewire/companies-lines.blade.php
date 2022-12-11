@@ -209,6 +209,7 @@
                                             <th>
                                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
                                             </th>
+                                            <th>Active</th>
                                             <th>Statu client</th>
                                             <th>Statu supplier</th>
                                             <th>Action</th>
@@ -220,6 +221,13 @@
                                         <td>{{ $Companie->code }}</td>
                                         <td>{{ $Companie->label }}</td>
                                         <td>{{ $Companie->GetPrettyCreatedAttribute() }}</td>
+                                        <td>
+                                            @if($Companie->active == 1 )
+                                            <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
+                                            @else
+                                            <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($Companie->statu_customer == 2 )
                                             <span class="badge badge-warning"><i class="fa fa-lg fa-fw  fa-check"></i></span>
@@ -255,6 +263,7 @@
                                             <th>Code</th>
                                             <th>Label</th>
                                             <th>Created At</th>
+                                            <th>Active</th>
                                             <th>Statu client</th>
                                             <th>Statu supplier</th>
                                             <th>Action</th>

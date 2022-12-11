@@ -148,6 +148,8 @@ class CompaniesController extends Controller
         $Companie->account_auxiliary_supplier =$request->account_auxiliary_supplier;
         $Companie->recept_controle =$request->recept_controle;
         $Companie->comment =$request->comment;
+        if($request->active) $Companie->active=1;
+        else $Companie->active = 0;
         $Companie->save();
         return redirect()->route('companies.show', ['id' =>  $Companie->id])->with('success', 'Successfully updated companie');
     }

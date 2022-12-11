@@ -41,6 +41,7 @@ class CreateCompaniesTable extends Migration
 			$table->integer('recept_controle')->default(0);
 			$table->text('comment', 65535)->nullable();
 			$table->string('sector_id')->nullable();
+            $table->boolean('active')->default(1);
             $table->timestamps();
 
         });

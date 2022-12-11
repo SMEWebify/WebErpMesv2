@@ -52,7 +52,7 @@ class QuotesController extends Controller
      */
     public function show(Quotes $id)
     {
-        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $CompanieSelect = Companies::select('id', 'code','label')->where('active', 1)->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
         $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
