@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'logo' => 'v1.0.2',
+    'logo' => 'v1.0.3',
     'logo_img' => 'vendor/adminlte/dist/img/WEMLogo.png',
     'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
