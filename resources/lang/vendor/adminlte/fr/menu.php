@@ -17,6 +17,8 @@ return [
     'scheduling_trans_key'                     => 'Planification',
     'order_calendar_trans_key'                 => 'Calendrier des commandes',
     'tasks_list_trans_key'                     => 'Liste des tâches',
+    'tasks_trans_key'                          => 'Tâches',
+    'tasks_statu_trans_key'                    => 'Task management',
     'workflow_trans_key'                       => 'Flux de travail',
     'gantt_trans_key'                          => 'Gantt',
     'delivery_notes_trans_key'                 => 'Bons de livraison',

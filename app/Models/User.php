@@ -11,6 +11,7 @@ use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
 use App\Models\Products\StockLocation;
+use App\Models\Planning\TaskActivities;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Quality\QualityDerogation;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -145,6 +146,11 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->hasMany(Task::class)->orderBy('ordre')->whereNotNull('order_lines_id');
+    }
+
+    public function taskActivities()
+    {
+        return $this->hasMany(TaskActivities::class);
     }
 
     public function files()

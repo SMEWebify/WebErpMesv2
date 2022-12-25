@@ -64,7 +64,9 @@ return [
 
     'scheduling_trans_key'                     => 'Scheduling',
     'order_calendar_trans_key'                 => 'Order calendar',
+    'tasks_trans_key'                          => 'Tâches',
     'tasks_list_trans_key'                     => 'Tasks list',
+    'tasks_statu_trans_key'                    => 'Task management',
     'workflow_trans_key'                       => 'Workflow',
     'gantt_trans_key'                          => 'Gantt',
     'delivery_notes_trans_key'                 => 'Delivery notes',

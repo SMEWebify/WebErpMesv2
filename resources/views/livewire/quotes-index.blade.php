@@ -267,7 +267,6 @@
                 </tfoot>
             </table>
         </div>
-        <!-- /.row -->
         {{ $Quoteslist->links() }}
     <!-- /.card -->
     </div>

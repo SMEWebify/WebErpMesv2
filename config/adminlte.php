@@ -326,10 +326,22 @@ return [
                 [
                     'text' => 'order_calendar_trans_key',
                     'url'  => 'production/calendar',
-                ],
-                [
-                    'text' => 'tasks_list_trans_key',
-                    'url'  => 'production/Task',
+                ],[
+                    'text'    => 'tasks_trans_key',
+                    'icon_color' => 'primary',
+                    'submenu' => [
+                        [
+                            'text' => 'tasks_statu_trans_key',
+                            'url'  => 'production/Task/Statu',
+                            'icon_color' => 'primary',
+                        ],
+                        [
+                            'text' => 'tasks_list_trans_key',
+                            'url'  => 'production/Task',
+                            'icon_color' => 'primary',
+                        ],
+                    ]
+                    
                 ],
                 [
                     'text' => 'workflow_trans_key',
@@ -338,6 +350,8 @@ return [
                 [
                     'text' => 'gantt_trans_key',
                     'url'  => 'production/gantt',
+                    'label'       => 'Beta',
+                    'label_color' => 'danger',
                 ],
                 
             ]

@@ -25,11 +25,9 @@
         <div class="row">
           <div class="col-md-8 card-primary">
             <div class="row">
-              
               <div class="col-12 col-sm-4">
                 <x-adminlte-info-box title="Entries" text="{{ $StockLocationProduct->getTotalEntryStockMove() }} item(s)" icon="fa fa-arrow-up" theme="warning"/>
               </div>
-
               <div class="col-12 col-sm-4">
                 <x-adminlte-info-box title="Sortings" text="{{ $StockLocationProduct->getTotalSortingStockMove() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
               </div>
