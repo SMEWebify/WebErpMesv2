@@ -17,6 +17,14 @@
                                 <option value="" >Select Year</option>
                                 <option value="2021" >2021</option>
                                 <option value="2022" >2022</option>
+                                <option value="2023" >2023</option>
+                                <option value="2024" >2024</option>
+                                <option value="2025" >2025</option>
+                                <option value="2026" >2026</option>
+                                <option value="2027" >2027</option>
+                                <option value="2028" >2028</option>
+                                <option value="2029" >2029</option>
+                                <option value="2030" >2030</option>
                             </select>
                         </div>
                         @error('year') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -166,8 +174,16 @@
                             </div>
                             <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model="year">
                                 <option value="" >Select Year</option>
-                                <option value="2021" selected>2021</option>
+                                <option value="2021" >2021</option>
                                 <option value="2022" >2022</option>
+                                <option value="2023" selected>2023</option>
+                                <option value="2024" >2024</option>
+                                <option value="2025" >2025</option>
+                                <option value="2026" >2026</option>
+                                <option value="2027" >2027</option>
+                                <option value="2028" >2028</option>
+                                <option value="2029" >2029</option>
+                                <option value="2030" >2030</option>
                             </select>
                         </div>
                         @error('year') <span class="text-danger">{{ $message }}<br/></span>@enderror
