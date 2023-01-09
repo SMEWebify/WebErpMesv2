@@ -100,6 +100,9 @@ class QuoteLines extends Model
 
     public function getTechnicalCutTMarginAttribute()
     {
+        if($this->getTechnicalCutTotalUnitPricettribute() <= 0 ){
+            return 0;
+        }
         return round((1-($this->getTechnicalCutTotalUnitCostAttribute()/$this->getTechnicalCutTotalUnitPricettribute()))*100,2);
     }
 
@@ -133,6 +136,9 @@ class QuoteLines extends Model
 
     public function getBOMTMarginAttribute()
     {
+        if($this->getBOMTotalUnitPricettribute() <= 0 ){
+            return 0;
+        }
         return round((1-($this->getBOMTotalUnitCostAttribute()/$this->getBOMTotalUnitPricettribute()))*100,2);
     }
 
