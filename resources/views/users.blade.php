@@ -11,45 +11,28 @@
 @section('content')
     <div class="card">
         <!-- /.card-header -->
-        <div class="card-body">
-          <div class="table-responsive p-0">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>E-mail</th>
-                  <th>Created</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach ($Users as $User)
-                <tr>
-                  <td>{{ $User->name }}</td>
-                  <td>{{ $User->email }}</td>
-                  <td>{{ $User->GetPrettyCreatedAttribute() }}</td>
-                </tr>
-                @endforeach
-              </tbody>
-              <tfoot>
-                <tr>
-                    <th>Name</th>
-                    <th>E-mail</th>
-                    <th>Created</th>
-                  </tr>
-              </tfoot>
-            </table>
-          </div>
-          <!-- /.row -->
-          <div class="row">
-            <div class="col-5">
-              {{ $Users->links() }}
+        <div class="row">
+            @foreach ($Users as $User)
+            <div class="col-4">
+              <x-adminlte-profile-widget name="{{ $User->name }}" desc="{{ $User->GetPrettyCreatedAttribute() }}" theme="primary"
+                img="../images/profiles/img_avatar.png">
+                <x-adminlte-profile-col-item class="text-primary border-right" icon="far fa-envelope" title="E-mail" text="{{ $User->email }}" size=6 badge="primary"/>
+                <x-adminlte-profile-col-item class="text-danger" icon="fas fa-lg fa-phone" title="Phone" text="{{ $User->personnal_phone_number }}" size=6 badge="danger"/>
+              </x-adminlte-profile-widget>
             </div>
-          </div>
-          <!-- /.row -->
+            @endforeach
         </div>
-        <!-- /.card-body -->
+        <!-- /.row -->
+        <div class="row">
+          <div class="col-5">
+            {{ $Users->links() }}
+          </div>
+        </div>
+        <!-- /.row -->
       </div>
-      <!-- /.card -->
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
 @stop
 
 @section('css')
