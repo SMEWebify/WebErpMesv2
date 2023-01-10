@@ -32,7 +32,7 @@
             margin-left: 15px;
         }
         .information {
-            background-color: #60A7A6;
+            background-color: {{ $Factory->pdf_header_font_color }};
             color: #FFF;
         }
         .information .logo {

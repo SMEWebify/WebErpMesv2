@@ -46,6 +46,7 @@ class FactoryController extends Controller
         $Factory->accounting_vats_id = $request->accounting_vats_id;
         $Factory->share_capital = $request->share_capital; 
         $Factory->curency = $request->curency;
+        $Factory->pdf_header_font_color = $request->pdf_header_font_color;
         $Factory->add_day_validity_quote = $request->add_day_validity_quote;
         $Factory->add_delivery_delay_order =  $request->add_delivery_delay_order;
         $Factory->task_barre_code =  $request->task_barre_code;

@@ -24,6 +24,7 @@ class CreateFactoryTable extends Migration
 			$table->string('phone_number')->nullable();
 			$table->string('mail')->nullable();
 			$table->string('web_site')->nullable();
+			$table->string('pdf_header_font_color')->default('#60A7A6');
 			$table->string('picture')->nullable();
 			$table->string('siren')->nullable();
 			$table->string('nat_regis_num')->nullable();

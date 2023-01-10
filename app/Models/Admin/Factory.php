@@ -20,6 +20,7 @@ class Factory extends Model
                             'phone_number', 
                             'mail',
                             'web_site',
+                            'pdf_header_font_color',
                             'picture',
                             'siren', 
                             'nat_regis_num',
