@@ -18,10 +18,10 @@ class CompaniesController extends Controller
     {
         
         //Quote data for chart
-        $data['ClientCountRate'] = DB::table('companies')->where('statu_customer', '=', 2)->where('statu_supplier', '!=', 2)->count();
-        $data['ProspectCountRate'] = DB::table('companies')->where('statu_customer', '=', 3)->count();
-        $data['SupplierCountRate']= DB::table('companies')->where('statu_supplier', '=', 2)->where('statu_customer', '!=', 2)->count();
-        $data['ClientSupplierCountRate']= DB::table('companies')->where('statu_customer', '=', 2)->where('statu_supplier', 2)->count();
+        $data['ClientCountRate'] = DB::table('companies')->where('statu_customer', '=', 3)->count();
+        $data['ProspectCountRate'] = DB::table('companies')->where('statu_customer', '=', 2)->count();
+        $data['SupplierCountRate']= DB::table('companies')->where('statu_supplier', '=', 2)->count();
+        $data['ClientSupplierCountRate']= DB::table('companies')->where('statu_customer', '>', 1)->where('statu_supplier', 2)->count();
          //5 lastest Companies add 
         $LastComapnies = Companies::orderBy('id', 'desc')->take(5)->get();
         

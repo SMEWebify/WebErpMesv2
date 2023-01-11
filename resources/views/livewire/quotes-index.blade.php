@@ -15,23 +15,23 @@
                     @csrf
                         <div class="card card-body">
                             <div class="row">
-                                <div class="col-3">
-                                    <label for="code">External ID</label>
-                                    <div class="input-group">
+                               <!-- <div class="col-3">
+                                    <label for="id">External ID</label>
+                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model="code"  name="code" id="code" placeholder="External ID" >
-                                    </div>
-                                    @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                </div>
+                                        <input type="text" class="form-control" wire:model="id"  name="id" id="id" placeholder="External ID" >
+                                    </div> 
+                                    @error('id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div> -->
                                 <div class="col-3">
-                                    <label for="label">Name of quote</label>
+                                    <label for="label">Project Name</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model="label" name="label"  id="label"  placeholder="Name of quote" required>
+                                        <input type="text" class="form-control" wire:model="label" name="label"  id="label"  placeholder="Project Name" required>
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -67,7 +67,7 @@
                                         <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
                                             <option value="">Select company</option>
                                             @forelse ($CompanieSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                            <option value="{{ $item->id }}">{{ $item->id }} - {{ $item->label }}</option>
                                             @empty
                                             <option value="">No company, please add</option>
                                             @endforelse
@@ -134,7 +134,7 @@
                                     <select class="form-control" wire:model="accounting_payment_conditions_id" name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
                                         <option value="">Select payement condition</option>
                                         @forelse ($AccountingConditionSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->id }} - {{ $item->label }}</option>
                                         @empty
                                             <option value="">No payment conditions, please add in accounting page</option>
                                         @endforelse
@@ -146,7 +146,7 @@
                                     <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
                                         <option value="">Select payment methods</option>
                                         @forelse ($AccountingMethodsSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                            <option value="{{ $item->id }}">{{ $item->id }} - {{ $item->label }}</option>
                                         @empty
                                             <option value="">No payment methods, please add in accounting page</option>
                                         @endforelse
@@ -164,7 +164,7 @@
                                         <select class="form-control" wire:model="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id">
                                             <option value="">Select deliveries</option>
                                         @forelse ($AccountingDeleveriesSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                            <option value="{{ $item->id }}">{{ $item->id }} - {{ $item->label }}</option>
                                         @empty
                                             <option value="">No delivery type, please add in accounting page</option>
                                         @endforelse
@@ -205,20 +205,20 @@
                 <thead>
                     <tr>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">QT Ref @include('include.sort-icon', ['field' => 'id'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Project @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Company @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
-                        <th>Customer reference</th>
+                        <th>Customer Ref</th>
                         <th>Lines count</th>
                         <th>Total price</th>
-                        <th>Statu</th>
+                        <th>Status</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created @include('include.sort-icon', ['field' => 'created_at'])</a>
                         </th>
                         <th>Action</th>
                     </tr>
@@ -228,9 +228,7 @@
                     <tr>
                         <td>{{ $Quote->code }}</td>
                         <td>{{ $Quote->label }}</td>
-                        <td>
-                            <x-CompanieButton id="{{ $Quote->companies_id }}" label="{{ $Quote->companie['label'] }}"  />
-                        </td>
+                        <td>{{ $Quote->companie['label'] }}</td>
                         <td>{{ $Quote->customer_reference }}</td>
                         <td>{{ $Quote->quote_lines_count }}</td>
                         <td>{{ $Quote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
@@ -254,13 +252,13 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Code</th>
+                        <th>id</th>
                         <th>Label</th>
-                        <th>Companie</th>
-                        <th>Customer reference</th>
+                        <th>Company</th>
+                        <th>Customer Ref</th>
                         <th>Lines count</th>
                         <th>Total price</th>
-                        <th>Statu</th>
+                        <th>Status</th>
                         <th>Created At</th>
                         <th>Action</th>
                     </tr>

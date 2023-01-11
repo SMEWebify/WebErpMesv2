@@ -9,7 +9,7 @@
       </div>
       <div class="col-sm-6">
         <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalCompanie">
-          New companie
+          Add New Company
         </button>
       </div>
     </div>
@@ -23,7 +23,7 @@
       <div class="col-md-3">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title"> Statistiques </h3>
+            <h3 class="card-title"> Stats </h3>
           </div>
           <div class="card-body">
             <canvas id="donutChart" width="400" height="400"></canvas>
@@ -31,7 +31,7 @@
         </div>
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title"> Latest companie added </h3>
+            <h3 class="card-title"> Latest company added </h3>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -94,12 +94,12 @@ var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
           'Client',
           'Prospect',
           'Supplier',
-          'Client & Supplier',
+          //'Client & Supplier',
       ],
       datasets: [
         {
-          data: ["{{ $data['ClientCountRate'] }}","{{ $data['ProspectCountRate'] }}","{{ $data['SupplierCountRate'] }}","{{ $data['ClientSupplierCountRate'] }}"], 
-          backgroundColor : ['#f56954', '#00a65a', '#f39c12','#00c0ef',],
+          data: ["{{ $data['ClientCountRate'] }}","{{ $data['ProspectCountRate'] }}","{{ $data['SupplierCountRate'] }}"], //,"{{ $data['ClientSupplierCountRate'] }}"
+          backgroundColor : ['#f56954', '#00a65a', '#f39c12',], //'#00c0ef',
         }
       ]
     }

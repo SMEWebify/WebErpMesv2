@@ -26,7 +26,7 @@
             @include('include.alert-result')
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title"> Information </h3>
               </div>
               <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
@@ -37,7 +37,7 @@
                     <div class="row">
                       <div class="col-12 col-sm-4">
                         <div class="text-muted">
-                          <label for="label">External ID</label>
+                          <label for="label">Company Ref</label>
                           <b class="d-block">{{ $Companie->code }}</b>
                         </div>
                       </div>
@@ -111,13 +111,13 @@
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="Siren">
+                            <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="Reg Number">
                             @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                        <div class="col-3">
+                        <!-- <div class="col-3">
                             <input type="text" class="form-control" name="naf_code" id="naf_code"  value="{{ $Companie->naf_code }}" placeholder="naf_code code">
                             @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                        </div>
+                        </div> -->
                         <div class="col-3">
                             <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="VAT number">
                             @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -127,21 +127,21 @@
                   <div class="card card-body">
                     <div class="row">
                         <div class="col-3">
-                            <label for="statu_customer">Statu client</label>
+                            <label for="statu_customer">Status Client</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                 </div>
                                 <select class="form-control" name="statu_customer" id="statu_customer" value="statu_customer">
-                                    <option value="">Select statu</option>
+                                    <option value="">Select status</option>
                                     <option value="1" @if($Companie->statu_customer == 1 ) Selected @endif>Inactive</option>
-                                    <option value="2" @if($Companie->statu_customer == 2 ) Selected @endif>Active</option>
-                                    <option value="3" @if($Companie->statu_customer == 3 ) Selected @endif>Prospect</option>
+                                    <option value="2" @if($Companie->statu_customer == 2 ) Selected @endif>Prospect</option>
+                                    <option value="3" @if($Companie->statu_customer == 3 ) Selected @endif>Active</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-3">
-                            <label for="discount">Discount :</label>
+                            <label for="discount">Discount:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
@@ -162,7 +162,7 @@
                   <div class="card card-body">
                     <div class="row">
                         <div class="col-3">
-                            <label for="statu_supplier">Statu supplier</label>
+                            <label for="statu_supplier">Status Supplier</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
@@ -175,7 +175,7 @@
                             </div>
                         </div>
                         <div class="col-3">
-                            <label for="recept_controle">Reception control</label>
+                            <label for="recept_controle">Approved Supplier</label>
                             <select class="form-control" name="recept_controle" id="recept_controle" value="recept_controle">
                                 <option value="">Select controle type</option>
                                 <option value="1" @if($Companie->recept_controle == 1 ) Selected @endif>Yes</option>
@@ -204,7 +204,7 @@
             <div class="col-md-3">
               <div class="card card-secondary">
                 <div class="card-header">
-                  <h3 class="card-title"> Informations </h3>
+                  <h3 class="card-title"> Information </h3>
                 </div>
                 <div class="card-body">
                   @if($Companie->website )
@@ -273,7 +273,7 @@
                         <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
                       </div>
                       <div class="col-5">
-                        <label for="label">Label adresse</label>
+                        <label for="label">Label address</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>

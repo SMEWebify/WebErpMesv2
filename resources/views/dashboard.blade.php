@@ -9,20 +9,29 @@
 @section('content')
 <div class="row">
   
-    <div class="col-lg-2 col-6">
+    <!-- <div class="col-lg-2 col-6">
       <x-adminlte-small-box title="{{$data['suppliers_count']}}" 
                             text="{{ __('general_content.client_trans_key') }}" 
                             icon="far fa-building"
                             theme="info" 
                             url="{{ route('companies') }}" 
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
-    </div>
+    </div> -->
     <!-- ./col -->
     <div class="col-lg-2 col-6">
       <x-adminlte-small-box title="{{ $data['customers_count'] }}" 
-                            text="{{ __('general_content.suppliers_trans_key') }}" 
+                            text="{{ __('general_content.client_trans_key') }}" 
                             icon="far fa-building"
                             theme="success" 
+                            url="{{ route('companies') }}" 
+                            url-text="{{ __('general_content.view_details_trans_key') }}"/>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-2 col-6">
+      <x-adminlte-small-box title="{{$data['suppliers_count']}}" 
+                            text="{{ __('general_content.suppliers_trans_key') }}" 
+                            icon="far fa-building"
+                            theme="info" 
                             url="{{ route('companies') }}" 
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
@@ -208,7 +217,7 @@
             <div class="col-sm-3 col-6">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>-->
-                <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
+                <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
                 <span class="description-text">{{ __('general_content.total_invoiced_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -268,7 +277,7 @@
     </div>
 
   <div class="col-md-8">
-    <!-- TABLE: LATEST ORDERS -->
+    <!-- TABLE: LATEST QUOTES -->
     <div class="card">
       <div class="card-header border-transparent">
         <h3 class="card-title">{{ __('general_content.latest_quotes_trans_key') }}</h3>
@@ -289,6 +298,7 @@
             <tr>
               <th>{{ __('general_content.id_trans_key') }}</th>
               <th>{{ __('general_content.customer_trans_key') }}</th>
+              <th>{{ __('general_content.label_trans_key')}}</th>
               <th>{{ __('general_content.status_trans_key') }}</th>
               <th>{{ __('general_content.total_price_trans_key') }}</th>
               <th>{{ __('general_content.created_at_trans_key') }}</th>
@@ -302,8 +312,11 @@
                   <x-QuoteButton id="{{ $LastQuote->id }}" code="{{ $LastQuote->code }}"  />
                 </td>
                 <td>
-                  <x-CompanieButton id="{{ $LastQuote->companies_id }}" label="{{ $LastQuote->companie['label'] }}"  />
-                </td>
+                  {{ $LastQuote->companie['label'] }}
+                </td>    
+                <td>
+                  {{ $LastQuote->label }}
+                </td>       
                 <td>
                   @if(1 == $LastQuote->statu )   <span class="badge badge-info"> Open</span>@endif
                   @if(2 == $LastQuote->statu )  <span class="badge badge-warning">Send</span>@endif
@@ -363,6 +376,7 @@
               <tr>
                 <th>{{ __('general_content.id_trans_key') }}</th>
                 <th>{{ __('general_content.customer_trans_key') }}</th>
+                <th>{{ __('general_content.label_trans_key')}}</th>
                 <th>{{ __('general_content.status_trans_key') }}</th>
                 <th>{{ __('general_content.total_price_trans_key') }}</th>
                 <th>{{ __('general_content.created_at_trans_key') }}</th>
@@ -381,6 +395,7 @@
                     {{ __('general_content.internal_order_trans_key') }}
                     @endif
                   </td>
+                  <td>{{ $LastOrder->label }}</td>
                   <td>
                     @if(1 == $LastOrder->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
                     @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif

@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'WEB ERP MES',
+    'title' => 'SyncroPoint Database',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -45,12 +45,12 @@ return [
     |
     */
 
-    'logo' => 'v1.0.2',
-    'logo_img' => 'vendor/adminlte/dist/img/WEMLogo.png',
+    'logo' => 'v1.0.0',
+    'logo_img' => 'vendor/adminlte/dist/img/SPLogo.png',
     'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'WEM',
+    'logo_img_alt' => 'SPData',
 
     /*
     |--------------------------------------------------------------------------

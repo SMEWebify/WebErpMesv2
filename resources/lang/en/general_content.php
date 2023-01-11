@@ -10,9 +10,9 @@ return [
     'partly_delivered_trans_key'               => 'Partly delivered',
 
     //GENERAL HEADER TABLE
-    'id_trans_key'                             => 'ID',
+    'id_trans_key'                             => 'Ref',
     'code_trans_key'                           => 'Code',
-    'label_trans_key'                          => 'Label',
+    'label_trans_key'                          => 'Project Ref',
     'customer_trans_key'                       => 'Customer',
     'status_trans_key'                         => 'Status',
     'total_price_trans_key'                    => 'Total price',
@@ -37,8 +37,8 @@ return [
     'no_late_orders_trans_key'                 => 'No late orders.',
     'goal_task_trans_key'                      => 'Goal Task Completion',
     'no_task_trans_key'                        => 'No service go to Methods for add.',
-    'total_order_forcasted_trans_key'          => 'TOTAL ORDER FORCASTED',
-    'total_order_delivered_trans_key'          => 'TOTAL ORDER DELIVERED',
+    'total_order_forcasted_trans_key'          => 'AWARDED JOBS',
+    'total_order_delivered_trans_key'          => 'VALUE DELIVERED',
     'total_invoiced_trans_key'                 => 'TOTAL INVOICED',
     'goal_trans_key'                           => 'GOAL COMPLETIONS',
     'quote_transformation_trans_key'           => 'Quote transformation rate',
@@ -53,6 +53,7 @@ return [
 
     'quote_trans_key'                          => 'Quote',
     'quotes_list_trans_key'                    => 'quotes list',
+    'quotes_sent_trans_key'                    => 'sent quotes', 
     'quotes_lines_list_trans_key'              => 'quotes lines list',
     
     'orders_trans_key'                         => 'Orders',

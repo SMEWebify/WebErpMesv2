@@ -4,7 +4,7 @@
                             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="ModalCompanieTitle">New companie</h5>
+                                        <h5 class="modal-title" id="ModalCompanieTitle">Add New Company</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -15,12 +15,12 @@
                                         <div class="card card-body">
                                             <div class="row">
                                                 <div class="col-4">
-                                                    <label for="code">External ID</label>
+                                                    <label for="code">Company Ref</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                                         </div>
-                                                        <input type="text" class="form-control @error('code') is-invalid @enderror" wire:model="code" name="code" id="code" placeholder="External ID">
+                                                        <input type="text" class="form-control @error('code') is-invalid @enderror" wire:model="code" name="code" id="code" placeholder="AAA000">
                                                     </div>
                                                     @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
@@ -100,13 +100,13 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-3">
-                                                    <input type="text" class="form-control" name="siren" id="siren" wire:model="siren" placeholder="Siren">
+                                                    <input type="text" class="form-control" name="siren" id="siren" wire:model="siren" placeholder="Reg Number">
                                                     @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <!-- <div class="col-3">
                                                     <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="Naf code">
                                                     @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                                </div>
+                                                </div> -->
                                                 <div class="col-3">
                                                     <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat" wire:model="intra_community_vat" placeholder="VAT number">
                                                     @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -146,9 +146,9 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-3">
-                                                    <label for="recept_controle">Reception control</label>
+                                                    <label for="recept_controle">Approved Vendor</label>
                                                     <select class="form-control" name="recept_controle" id="recept_controle" wire:model="recept_controle">
-                                                        <option value="">Select controle type</option>
+                                                        <option value="">Select control type</option>
                                                         <option value="1">Yes</option>
                                                         <option value="2">No</option>
                                                     </select>
@@ -201,16 +201,16 @@
                                     <thead>
                                         <tr>
                                             <th >
-                                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Ref @include('include.sort-icon', ['field' => 'code'])</a>
                                             </th>
                                             <th>
-                                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Company Name @include('include.sort-icon', ['field' => 'label'])</a>
                                             </th>
                                             <th>
                                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
                                             </th>
-                                            <th>Statu client</th>
-                                            <th>Statu supplier</th>
+                                            <th>Status Client</th>
+                                            <th>Status Supplier</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -255,8 +255,8 @@
                                             <th>Code</th>
                                             <th>Label</th>
                                             <th>Created At</th>
-                                            <th>Statu client</th>
-                                            <th>Statu supplier</th>
+                                            <th>Status Client</th>
+                                            <th>Status Supplier</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>

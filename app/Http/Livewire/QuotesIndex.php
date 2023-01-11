@@ -80,14 +80,15 @@ class QuotesIndex extends Component
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastQuote =  Quotes::orderBy('id', 'desc')->first();
 
-        if($this->LastQuote == Null){
-            $this->code = "QT-0";
-            $this->label = "QT-0";
-        }
-        else{
-            $this->code = "QT-". $this->LastQuote->id;
-            $this->label = "QT-". $this->LastQuote->id;
-        }
+         if($this->LastQuote == Null){
+             $this->code = "QT-0";
+        //     $this->label = "QT-0";
+         }
+         else{
+             $this->code = "QT-". $this->LastQuote->id;
+            $this->code++;
+        //     $this->label = "QT-". $this->LastQuote->id;
+         }
     }
 
     public function render()

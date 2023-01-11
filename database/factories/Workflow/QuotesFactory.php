@@ -28,12 +28,12 @@ class QuotesFactory extends Factory
      */
     public function definition()
     {
-        $this->code = $this->faker->unique()->numerify('QT-####');
+        $this->code = $this->faker->unique()->numerify('QT-');
 
         return [
             //
             'code' => $this->code,
-			'label' => $this->code,
+			'label' => $this->faker->words(7,true),
 			'customer_reference' => $this->faker->words(7,true) ,
 			'companies_id' => Companies::all()->random()->id,
 			'companies_contacts_id' => CompaniesContacts::all()->random()->id,

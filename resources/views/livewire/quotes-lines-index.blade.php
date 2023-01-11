@@ -22,7 +22,7 @@
                         <th>Discount</th>
                         <th>VAT type</th>
                         <th>Delivery date</th>
-                        <th>Statu</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -45,12 +45,12 @@
                         <td>{{ $QuoteLine->VAT['label'] }}</td>
                         <td>{{ $QuoteLine->delivery_date }}</td>
                         <td>
-                            @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif
-                            @if(2 == $QuoteLine->statu )  <span class="badge badge-warning">Send</span>@endif
-                            @if(3 == $QuoteLine->statu )  <span class="badge badge-success">Win</span>@endif
-                            @if(4 == $QuoteLine->statu )  <span class="badge badge-danger">Lost</span>@endif
-                            @if(5 == $QuoteLine->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                            @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                            @if(1 == $QuoteLine->status )   <span class="badge badge-info"> Open</span>@endif
+                            @if(2 == $QuoteLine->status )  <span class="badge badge-warning">Send</span>@endif
+                            @if(3 == $QuoteLine->status )  <span class="badge badge-success">Win</span>@endif
+                            @if(4 == $QuoteLine->status )  <span class="badge badge-danger">Lost</span>@endif
+                            @if(5 == $QuoteLine->status )  <span class="badge badge-secondary">Closed</span>@endif
+                            @if(6 == $QuoteLine->status )   <span class="badge badge-secondary">Obsolete</span>@endif
                         </td>
                         <td>
                             <x-ButtonTextView route="{{ route('quotes.show', ['id' => $QuoteLine->quotes_id])}}" />
@@ -73,7 +73,7 @@
                         <th>Discount</th>
                         <th>VAT type</th>
                         <th>Delivery date</th>
-                        <th>Statu</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>
