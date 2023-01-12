@@ -163,7 +163,24 @@ class Task extends Model
 
     public function progress()
     {
+        if($this->TotalTime() <= 0){
+            return 0;
+        }
         return   round($this->getTotalLogTime()/$this->TotalTime()*100,2);
+    }
+
+    public function getTotalLogGoodQt()
+    {
+        return   TaskActivities::where('task_id', $this->id)
+                                ->where('type', 4)
+                                ->sum('good_qt');
+    }
+
+    public function getTotalLogBadQt()
+    {
+        return   TaskActivities::where('task_id', $this->id)
+                                ->where('type', 5)
+                                ->sum('bad_qt');
     }
 
     public function GetPrettyCreatedAttribute()

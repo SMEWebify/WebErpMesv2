@@ -7,6 +7,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
 
@@ -22,6 +23,16 @@ class TaskStatu extends Component
     public $search = '';
     public $Factory = []; 
     public $user_id ;
+
+    
+    public $addGoodQt = 0;
+    public $addBadQt = 0;
+    
+    // Validation Rules
+    protected $rules = [
+        'addGoodQt' =>'required|numeric|min:0',
+        'addBadQt' =>'required|numeric|min:0',
+    ];
 
     public function mount() 
     {
@@ -87,6 +98,43 @@ class TaskStatu extends Component
             'user_id'=>$this->user_id,
             'type'=>'3',
             'timestamp' =>Carbon::now(),
+            'comment'=>'',
+        ]);
+
+        $StatusUpdate = Status::select('id')->where('title', 'Finished')->first();
+        /* // update task statu Supplied on Kanban*/
+        if($StatusUpdate->id){
+            $Task = Task::where('id',$taskId)->update(['status_id'=>$StatusUpdate->id]);
+        }
+
+        // Set Flash Message
+        session()->flash('success','Log activitie added successfully');
+    }
+
+    public function addGoodQt()
+    {
+        $this->validate();
+        // Create Line
+        TaskActivities::create([
+            'task_id'=> $this->search,
+            'user_id'=>$this->user_id,
+            'type'=>'4',
+            'good_qt'=>$this->addGoodQt,
+            'comment'=>'',
+        ]);
+        // Set Flash Message
+        session()->flash('success','Log activitie added successfully');
+    }
+
+    public function addRejectedQt()
+    {
+        $this->validate();
+        // Create Line
+        TaskActivities::create([
+            'task_id'=> $this->search,
+            'user_id'=>$this->user_id,
+            'type'=>'5',
+            'bad_qt'=>$this->addBadQt,
             'comment'=>'',
         ]);
         // Set Flash Message

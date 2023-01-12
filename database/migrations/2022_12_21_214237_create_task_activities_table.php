@@ -24,6 +24,8 @@ return new class extends Migration
             #4 = Declare a finished part quantity
             #5 = Declare a refuse  part quantity
             $table->timestamp('timestamp');
+            $table->integer('good_qt')->default(0);
+			$table->integer('bad_qt')->default(0);
 			$table->text('comment', 65535)->nullable();
             $table->timestamps();
         });

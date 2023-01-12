@@ -15,6 +15,8 @@ class TaskActivities extends Model
                             'user_id',
                             'type',
                             'timestamp',
+                            'good_qt',
+                            'bad_qt',
                             'comment',];
 
 

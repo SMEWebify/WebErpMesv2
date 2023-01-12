@@ -334,6 +334,8 @@ return [
                             'text' => 'tasks_statu_trans_key',
                             'url'  => 'production/Task/Statu',
                             'icon_color' => 'primary',
+                            'label'       => 'Beta',
+                            'label_color' => 'danger',
                         ],
                         [
                             'text' => 'tasks_list_trans_key',
