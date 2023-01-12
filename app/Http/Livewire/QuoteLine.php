@@ -30,6 +30,7 @@ class QuoteLine extends Component
     
     public $QuoteId;
     public $QuoteStatu;
+    public $quote_Statu;
     public $status_id;
 
     public $QuoteLineslist;
@@ -48,7 +49,6 @@ class QuoteLine extends Component
     public $BOMServicesSelect = [];
     public $TechProductList = [];
     public $BOMProductList = [];
-
 
     public $data = [];
 

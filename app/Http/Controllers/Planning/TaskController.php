@@ -35,6 +35,7 @@ class TaskController extends Controller
     public function manage($id_type, $id_page, $id_line)
     {
         if($id_type == 'products_id'){
+            
         }
         elseif($id_type == 'quote_lines_id'){
             $Document = Quotes::findOrFail($id_page);

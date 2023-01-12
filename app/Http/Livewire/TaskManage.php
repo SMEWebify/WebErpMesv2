@@ -43,6 +43,10 @@ class TaskManage extends Component
 
     public $updateLines = false;
 
+    public $Factory = [];
+    public $UnitsSelect = [];
+    public $ProductSelect  = [];
+
     // Validation Rules
     protected $rules = [
         'label'=>'required',
@@ -141,7 +145,6 @@ class TaskManage extends Component
         $this->label  = '';
         $this->seting_time  = '';
         $this->unit_time  = '';
-        $this->selling_price  = '';
         $this->unit_cost  = '';
         $this->unit_price  = '';    
         $this->methods_units_id  = '';
@@ -225,7 +228,6 @@ class TaskManage extends Component
         $this->label = $Line->label;
         $this->seting_time = $Line->seting_time;
         $this->unit_time = $Line->unit_time;
-        $this->selling_price = $Line->selling_price;
         $this->qty = $Line->qty;
         $this->unit_cost = $Line->unit_cost;
         $this->unit_price = $Line->unit_price;     

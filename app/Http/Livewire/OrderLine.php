@@ -24,6 +24,7 @@ class OrderLine extends Component
     
     public $OrderId;
     public $OrderStatu;
+    public $order_Statu;
     public $status_id;
 
     public $OrderLineslist;
@@ -36,6 +37,7 @@ class OrderLine extends Component
     public $ProductsSelect = [];
     public $UnitsSelect = [];
     public $VATSelect = [];
+    public $Factory = [];
     public $ProductSelect  = [];
     public $TechServicesSelect = [];
     public $BOMServicesSelect = [];
@@ -195,6 +197,9 @@ class OrderLine extends Component
             $newTask->products_id = null;
             $newTask->save();
         }
+
+        $OrderLine->tasks_status = 2;
+        $OrderLine->save();
     }
 
     public function cancel()
