@@ -15,7 +15,6 @@
                     <thead>
                         <tr>
                             <th>Order</th>
-                            <th>Sort</th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                             </th>
@@ -27,10 +26,9 @@
                             <th>Unit</th>
                             <th>Unit cost</th>
                             <th>Unit price</th>
-                            <th>Setting time</th>
-                            <th>Unit time</th>
+                            <th>Total time</th>
+                            <th>Progress</th>
                             <th>Statu</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,7 +41,6 @@
                                     Generic
                                 @endif
                             </td>
-                            <td>{{ $Task->ordre }}</td>
                             <td>#{{ $Task->id }} - {{ $Task->label }}</td>
                             <td>@if($Task->component_id ) {{ $Task->Component['label'] }}@endif</td>
                             <td @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
@@ -51,10 +48,15 @@
                             <td>@if($Task->methods_units_id ) {{ $Task->Unit['label'] }}@endif</td>
                             <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
-                            <td>{{ $Task->seting_time }} h</td>
-                            <td>{{ $Task->unit_time }} h</td>
+                            <td>{{ $Task->getTotalLogTime() }} h</td>
+                            <td>
+                                @if($Task->progress() > 100 )
+                                    <x-adminlte-progress theme="teal" value="100" with-label animated/>
+                                @else
+                                    <x-adminlte-progress theme="teal" value="{{ $Task->progress() }}" with-label animated/>
+                                @endif
+                            </td>
                             <td>{{ $Task->status['title'] }}</td>
-                            <td></td>
                         </tr>
                         @empty
                             <x-EmptyDataLine col="17" text="No task found ..."  />
@@ -63,7 +65,6 @@
                     <tfoot>
                         <tr>
                             <th>Order</th>
-                            <th>Sort</th>
                             <th>Description</th>
                             <th>Product</th>
                             <th>Service</th>
@@ -71,10 +72,9 @@
                             <th>Unit</th>
                             <th>Unit cost</th>
                             <th>Unit price</th>
-                            <th>Setting time</th>
-                            <th>Unit time</th>
+                            <th>Total Time</th>
+                            <th>Progress</th>
                             <th>Statu</th>
-                            <th></th>
                         </tr>
                     </tfoot>
                 </table>

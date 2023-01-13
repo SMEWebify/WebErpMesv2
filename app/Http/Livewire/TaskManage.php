@@ -182,7 +182,6 @@ class TaskManage extends Component
                             'seting_time' => $this->seting_time,   
                             'unit_time' => $this->unit_time,   
                             'remaining_time', 
-                            'progress', 
                             'status_id' => $this->status_id,   
                             'type' => $this->type,  
                             'delay',

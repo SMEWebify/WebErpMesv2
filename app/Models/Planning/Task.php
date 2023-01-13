@@ -35,7 +35,6 @@ class Task extends Model
                             'seting_time', 
                             'unit_time', 
                             'remaining_time', 
-                            'progress', 
                             'status_id', 
                             'type',
                             'delay',

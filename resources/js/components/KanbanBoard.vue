@@ -21,13 +21,13 @@
                         <div class="col-4">
                               <img v-if="task.service.picture" :src="'/images/methods/'+task.service.picture" class="profile-user-img img-fluid img-circle" >
                         </div>
-                        <div class="col-4">
+                        <div class="col-8">
                             <span class="font-weight-bold">Setting Time :</span> {{ task.seting_time }}<br/>
                             <span class="font-weight-bold">Unit Time :</span> {{ task.unit_time }}
                         </div>
-                        <div class="col-4">
+                        <!-- <div class="col-4">
                             <span class="font-weight-bold">Advancement :</span> {{ task.progress }}
-                        </div>
+                        </div>-->
                       </div>
                     </div>
                   <!-- <a class="btn btn-outline-primary btn-sm" href="#">View</a>-->

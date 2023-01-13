@@ -25,7 +25,6 @@ class CreateTasksTable extends Migration
 			$table->decimal('seting_time', 10, 3)->nullable();
 			$table->decimal('unit_time', 10, 3)->nullable();
 			$table->decimal('remaining_time', 10, 3)->nullable();
-			$table->decimal('progress', 10, 3)->nullable()->default(0.000);
 			$table->integer('status_id')->default(1);
 			$table->integer('type');
             #1 = Productive
