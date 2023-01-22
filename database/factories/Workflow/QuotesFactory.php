@@ -14,6 +14,8 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class QuotesFactory extends Factory
 {
+    
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -26,6 +28,9 @@ class QuotesFactory extends Factory
      *
      * @return array
      */
+    private $code;
+
+    
     public function definition()
     {
         $this->code = $this->faker->unique()->numerify('QT-####');

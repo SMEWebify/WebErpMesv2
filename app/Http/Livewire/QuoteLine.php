@@ -17,6 +17,8 @@ use App\Models\Methods\MethodsUnits;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Workflow\OrderLineDetails;
+use App\Models\Workflow\QuoteLineDetails;
 use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuoteLine extends Component
@@ -134,7 +136,7 @@ class QuoteLine extends Component
     public function storeQuoteLine(){
         $this->validate();
         // Create Line
-        Quotelines::create([
+        $NewQuoteLine = Quotelines::create([
             'quotes_id'=>$this->quotes_id,
             'ordre'=>$this->ordre,
             'code'=>$this->code,
@@ -147,6 +149,10 @@ class QuoteLine extends Component
             'accounting_vats_id'=>$this->accounting_vats_id,
             'delivery_date'=>$this->delivery_date,
         ]);
+        
+        //add line detail
+        QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
+        
         // Set Flash Message
         session()->flash('success','Line added Successfully');
         // Reset Form Fields After Creating line
@@ -198,6 +204,11 @@ class QuoteLine extends Component
         $newQuoteline->code = $Quoteline->code ."#duplicate". $Quoteline->id;
         $newQuoteline->label = $Quoteline->label ."#duplicate". $Quoteline->id;
         $newQuoteline->save();
+
+        $QuotelineDetails = QuoteLineDetails::where('quote_lines_id', $id)->first();
+        $newQuotelineDetails = $QuotelineDetails->replicate();
+        $newQuotelineDetails->quote_lines_id = $newQuoteline->id;
+        $newQuotelineDetails->save();
 
         $Tasks = Task::where('quote_lines_id', $id)->get();
         foreach ($Tasks as $Task) 
@@ -300,7 +311,6 @@ class QuoteLine extends Component
 
                     //get data to dulicate for new order
                     $QuoteLineData = Quotelines::find($this->data[$key]['quote_line_id']);
-
                     $newOrderline = Orderlines::create([
                         'orders_id'=>$OrdersCreated->id,
                         'ordre'=>$QuoteLineData->ordre,
@@ -315,6 +325,25 @@ class QuoteLine extends Component
                         'discount'=>$QuoteLineData->discount,
                         'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
                         'delivery_date'=>$QuoteLineData->delivery_date,
+                    ]);
+
+                    //add line detail
+                    $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $this->data[$key]['quote_line_id'])->first();
+                    $newOrderLineDetail = OrderLineDetails::create([
+                        'order_lines_id'=>$newOrderline->id,
+                        'x_size'=>$QuoteLineDetailData->x_size,
+                        'y_size'=>$QuoteLineDetailData->y_size,
+                        'Z_size'=>$QuoteLineDetailData->Z_size,
+                        'x_oversize'=>$QuoteLineDetailData->x_oversize,
+                        'Y_oversize'=>$QuoteLineDetailData->Y_oversize,
+                        'z_oversize'=>$QuoteLineDetailData->z_oversize,
+                        'diameter'=>$QuoteLineDetailData->diameter,
+                        'diameter_oversize'=>$QuoteLineDetailData->diameter_oversize,
+                        'material'=>$QuoteLineDetailData->material,
+                        'thickness'=>$QuoteLineDetailData->thickness,
+                        'weight'=>$QuoteLineDetailData->weight,
+                        'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
+                        'cad_file'=>$QuoteLineDetailData->cad_file,
                     ]);
 
                     $Tasks = Task::where('quote_lines_id', $this->data[$key]['quote_line_id'])->get();

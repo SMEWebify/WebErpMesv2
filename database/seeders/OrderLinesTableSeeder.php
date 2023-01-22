@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Seeder;
+use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\OrderLineDetails;
 
 class OrderLinesTableSeeder extends Seeder
 {
@@ -15,6 +16,12 @@ class OrderLinesTableSeeder extends Seeder
     public function run()
     {
         //
-        OrderLines::factory()->count(5000)->create();
+        $OrderLines = OrderLines::factory()->count(500)->create();
+
+        foreach ($OrderLines as $key => $OrderLine) {
+            OrderLineDetails::factory()
+                ->for($OrderLine, 'OrderLines')
+                ->create();
+        }
     }
 }

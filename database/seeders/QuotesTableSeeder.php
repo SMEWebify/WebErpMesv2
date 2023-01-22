@@ -15,6 +15,6 @@ class QuotesTableSeeder extends Seeder
     public function run()
     {
         //
-        Quotes::factory()->count(500)->create();
+        Quotes::factory()->count(50)->create();
     }
 }

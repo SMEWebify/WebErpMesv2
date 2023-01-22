@@ -10,6 +10,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Workflow\OrderLineDetails;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -61,7 +62,12 @@ class OrderLines extends Model
 
     public function Task()
     {
-        return $this->hasMany(Task::class)->orderBy('ordre');
+        return $this->hasMany(Task::class, 'order_lines_id')->orderBy('ordre');
+    }
+
+    public function OrderLineDetails()
+    {
+        return $this->hasOne(OrderLineDetails::class, 'order_lines_id');
     }
 
     public function StockMove()

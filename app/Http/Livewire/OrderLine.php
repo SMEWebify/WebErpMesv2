@@ -6,12 +6,13 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
-use App\Models\Planning\Status;
+use App\Models\Workflow\OrderLineDetails;
 
 class OrderLine extends Component
 {
@@ -130,7 +131,7 @@ class OrderLine extends Component
         $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
         
         // Create Line
-        Orderlines::create([
+        $NewOrderLine = Orderlines::create([
             'orders_id'=>$this->orders_id,
             'ordre'=>$this->ordre,
             'code'=>$this->code,
@@ -146,6 +147,10 @@ class OrderLine extends Component
             'internal_delay'=>$internalDelay,
             'delivery_date'=>$this->delivery_date,
         ]);
+
+        //add line detail
+        OrderLineDetails::create(['order_lines_id'=>$NewOrderLine->id]);
+
         // Set Flash Message
         session()->flash('success','Line added Successfully');
         // Reset Form Fields After Creating line
@@ -177,6 +182,11 @@ class OrderLine extends Component
         $newOrderline->code = $Orderline->code ."#duplicate". $Orderline->id;
         $newOrderline->label = $Orderline->label ."#duplicate". $Orderline->id;
         $newOrderline->save();
+
+        $OrderLineDetails = OrderLineDetails::where('order_lines_id', $id)->first();
+        $newOrderLineDetails = $OrderLineDetails->replicate();
+        $newOrderLineDetails->order_lines_id = $newOrderline->id;
+        $newOrderLineDetails->save();
 
         $Tasks = Task::where('order_lines_id', $id)->get();
         foreach ($Tasks as $Task) 

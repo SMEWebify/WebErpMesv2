@@ -37,9 +37,9 @@ class DatabaseSeeder extends Seeder
         //user
         User::factory()->count(2)->create();
         //companies informations
-        Companies::factory()->count(500)->create();
-        CompaniesContacts::factory()->count(2000)->create();
-        CompaniesAddresses::factory()->count(2000)->create();
+        Companies::factory()->count(50)->create();
+        CompaniesContacts::factory()->count(200)->create();
+        CompaniesAddresses::factory()->count(200)->create();
         //Accounting informations 
         AccountingVat::factory()->count(4)->create();
         AccountingPaymentConditions::factory()->count(5)->create();
@@ -68,11 +68,11 @@ class DatabaseSeeder extends Seeder
         */
 
         //Quotes
-        Quotes::factory()->count(500)->create();
-        QuoteLines::factory()->count(5000)->create();
+        Quotes::factory()->count(50)->create();
+        QuoteLines::factory()->count(500)->create();
         //Orders 
-        Orders::factory()->count(1000)->create();
-        OrderLines::factory()->count(5000)->create();
+        Orders::factory()->count(100)->create();
+        OrderLines::factory()->count(500)->create();
 
         //Task
     }

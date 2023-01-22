@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Workflow;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Workflow\OrderLineDetails;
+use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 
 class OrderLinesController extends Controller
 {
@@ -13,5 +15,54 @@ class OrderLinesController extends Controller
     public function index()
     {    
         return view('workflow/orders-lines-index');
+    }
+
+        /**
+     * @param Request $request
+     * @return View
+     */
+    public function update($idOrder, UpdateOrderLineDetailsRequest $request)
+    {
+        
+        $OrderLineDetails = OrderLineDetails::find($request->id);
+        $OrderLineDetails->x_size=$request->x_size;
+        $OrderLineDetails->y_size=$request->y_size;
+        $OrderLineDetails->z_size=$request->z_size;
+        $OrderLineDetails->x_oversize=$request->x_oversize;
+        $OrderLineDetails->y_oversize=$request->y_oversize;
+        $OrderLineDetails->z_oversize=$request->z_oversize;
+        $OrderLineDetails->diameter=$request->diameter;
+        $OrderLineDetails->diameter_oversize=$request->diameter_oversize;
+        $OrderLineDetails->material=$request->material;
+        $OrderLineDetails->thickness=$request->thickness;
+        $OrderLineDetails->weight=$request->weight;
+        $OrderLineDetails->material_loss_rate=$request->material_loss_rate;
+        $OrderLineDetails->save();
+        return redirect()->route('orders.show', ['id' =>  $idOrder])->with('success', 'Successfully updated order detail line');
+    }
+
+        /**
+     * @param Request $request
+     * @return View
+     */
+    public function StoreImage($idOrder,Request $request)
+    {
+        
+        $request->validate([
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+        ]);
+        
+        if($request->hasFile('picture')){
+            $OrderLineDetails = OrderLineDetails::findOrFail($request->id);
+            $file =  $request->file('picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->picture->move(public_path('images/order-lines'), $filename);
+            $OrderLineDetails->update(['picture' => $filename]);
+            $OrderLineDetails->save();
+            return redirect()->route('quotes.show', ['id' =>  $idOrder])->with('success', 'Successfully updated image');
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }
     }
 }

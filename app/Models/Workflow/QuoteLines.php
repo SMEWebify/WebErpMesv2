@@ -5,13 +5,14 @@ namespace App\Models\Workflow;
 use App\Models\Planning\Task;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Workflow\QuoteLineDetails;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuoteLines extends Model
 {
@@ -45,6 +46,7 @@ class QuoteLines extends Model
     {
         return $this->belongsTo(MethodsUnits::class, 'methods_units_id');
     }
+    
     public function VAT()
     {
         return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
@@ -53,6 +55,11 @@ class QuoteLines extends Model
     public function Task()
     {
         return $this->hasMany(Task::class, 'quote_lines_id')->orderBy('ordre');
+    }
+
+    public function QuoteLineDetails()
+    {
+        return $this->hasOne(QuoteLineDetails::class, 'quote_lines_id');
     }
 
     public function getTaskCountAttribute()
