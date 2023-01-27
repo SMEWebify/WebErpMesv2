@@ -41,7 +41,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
-                            <select class="form-control @error('methods_services_id') is-invalid @enderror" wire:click.prevent="ChangeCodelabel()" name="methods_services_id" id="methods_services_id" wire:model="methods_services_id">
+                            <select class="form-control @error('methods_services_id') is-invalid @enderror" wire:click.prevent="ChangeCodelabel()" name="methods_services_id" id="methods_services_id" wire:model="methods_services_id" required>
                             <option>Select Services</option>
                                 @foreach ($ServicesSelect as $item)
                                 <option value="{{ $item->id }}-{{ $item->type }}" data-txt="{{ $item->label }}">{{ $item->code }}</option>

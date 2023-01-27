@@ -152,70 +152,82 @@ class TaskManage extends Component
 
     public function storeTask($idLine  = null){
         $this->validate();
+        //custom rule if is BOM for check if service or component is not empty
+        if($this->TaskType == 'BOM'&& (is_null($this->component_id) || $this->component_id == "Select Component" || empty($this->component_id))){
 
-        if($this->idType == 'products_id'){
-            $this->products_id = $idLine;
+            // Set Flash Message
+            session()->flash('error', 'Please select Component.');
         }
-        elseif($this->idType == 'quote_lines_id'){
-            $this->quote_lines_id = $idLine;
-        }
-        elseif($this->idType == 'order_lines_id'){
-            $this->order_lines_id = $idLine;
+        elseif($this->methods_services_id == 'Select Services' || is_null($this->methods_services_id)){
+            // Set Flash Message
+            session()->flash('error', 'Please select service.');
         }
         else{
-            $this->products_id = $idLine;
-            $this->order_lines_id = $idLine;
-            $this->order_lines_id = $idLine;
+
+            if($this->idType == 'products_id'){
+                $this->products_id = $idLine;
+            }
+            elseif($this->idType == 'quote_lines_id'){
+                $this->quote_lines_id = $idLine;
+            }
+            elseif($this->idType == 'order_lines_id'){
+                $this->order_lines_id = $idLine;
+            }
+            else{
+                $this->products_id = $idLine;
+                $this->order_lines_id = $idLine;
+                $this->order_lines_id = $idLine;
+            }
+
+            $splitMethod = explode("-", $this->methods_services_id);
+            $this->methods_services_id =  $splitMethod[0]; 
+            $this->type =  $splitMethod[1]; 
+            // Create Task
+            $Task = Task::create(['label' => $this->label, 
+                                'ordre' => $this->ordre, 
+                                'quote_lines_id' => $this->quote_lines_id, 
+                                'order_lines_id' => $this->order_lines_id, 
+                                'products_id' => $this->products_id, 
+                                'methods_services_id' => $this->methods_services_id,  
+                                'component_id' => $this->component_id,  
+                                'seting_time' => $this->seting_time,   
+                                'unit_time' => $this->unit_time,   
+                                'remaining_time', 
+                                'status_id' => $this->status_id,   
+                                'type' => $this->type,  
+                                'delay',
+                                'qty' => $this->qty,  
+                                'qty_init' => $this->qty,  
+                                'qty_aviable',
+                                'unit_cost' => $this->unit_cost,  
+                                'unit_price' => $this->unit_price,  
+                                'methods_units_id' => $this->methods_units_id,  
+                                'x_size', 
+                                'y_size', 
+                                'z_size', 
+                                'x_oversize',
+                                'y_oversize',
+                                'z_oversize',
+                                'diameter',
+                                'diameter_oversize',
+                                'to_schedule',
+                                'material', 
+                                'thickness', 
+                                'weight', 
+                                'quality_non_conformities_id',
+                                'methods_tools_id']);
+
+            if($this->idType == 'order_lines_id'){
+                $OrderLine = OrderLines::find($this->order_lines_id);
+                $OrderLine->tasks_status = 2;
+                $OrderLine->save();
+            }
+
+            // Set Flash Message
+            session()->flash('success','Task added Successfully');
+            // Reset Form Fields After Creating line
+            $this->resetFields();
         }
-
-        $splitMethod = explode("-", $this->methods_services_id);
-        $this->methods_services_id =  $splitMethod[0]; 
-        $this->type =  $splitMethod[1]; 
-        // Create Task
-        $Task = Task::create(['label' => $this->label, 
-                            'ordre' => $this->ordre, 
-                            'quote_lines_id' => $this->quote_lines_id, 
-                            'order_lines_id' => $this->order_lines_id, 
-                            'products_id' => $this->products_id, 
-                            'methods_services_id' => $this->methods_services_id,  
-                            'component_id' => $this->component_id,  
-                            'seting_time' => $this->seting_time,   
-                            'unit_time' => $this->unit_time,   
-                            'remaining_time', 
-                            'status_id' => $this->status_id,   
-                            'type' => $this->type,  
-                            'delay',
-                            'qty' => $this->qty,  
-                            'qty_init' => $this->qty,  
-                            'qty_aviable',
-                            'unit_cost' => $this->unit_cost,  
-                            'unit_price' => $this->unit_price,  
-                            'methods_units_id' => $this->methods_units_id,  
-                            'x_size', 
-                            'y_size', 
-                            'z_size', 
-                            'x_oversize',
-                            'y_oversize',
-                            'z_oversize',
-                            'diameter',
-                            'diameter_oversize',
-                            'to_schedule',
-                            'material', 
-                            'thickness', 
-                            'weight', 
-                            'quality_non_conformities_id',
-                            'methods_tools_id']);
-
-        if($this->idType == 'order_lines_id'){
-            $OrderLine = OrderLines::find($this->order_lines_id);
-            $OrderLine->tasks_status = 2;
-            $OrderLine->save();
-        }
-
-        // Set Flash Message
-        session()->flash('success','Task added Successfully');
-        // Reset Form Fields After Creating line
-        $this->resetFields();
     }
 
     public function editTaskLine($id){

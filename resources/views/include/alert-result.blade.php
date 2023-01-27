@@ -12,3 +12,10 @@
             </ul>
         </x-adminlte-alert>
         @endif
+
+        @if (session()->has('error'))
+            <x-adminlte-alert theme="warning" title="Warning">
+                {{ session('error') }}
+            
+        </x-adminlte-alert>
+        @endif
