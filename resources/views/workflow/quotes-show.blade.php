@@ -17,6 +17,7 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">Quote info</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Quote lines</a></li>
+      <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">Lines Import</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -180,7 +181,119 @@
       </div>   
       <div class="tab-pane " id="Lines">
         @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu, 'QuoteDelay' => $Quote->validity_date])
-      </div>           
+      </div>
+      <div class="tab-pane " id="LinesImport">
+        @include('include.alert-result')
+        @if($Quote->statu == 1)
+        <x-InfocalloutComponent note="The unit value are defined in the methods section and the value of the default VAT are defined in the accounting section. If there is no discount column, the default value will be 0 %."  />
+
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Select your file</h3>
+            </div>
+            <form method="POST" action="{{ route('quotes.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
+                @csrf
+                <div class="card-body">
+                    {{-- Placeholder, sm size and prepend icon --}}
+                    <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="Choose a .csv file...">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-lightblue">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                        </x-slot>
+                    </x-adminlte-input-file>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4 text-right"><label class="col-form-label">Header line ?</label></div>
+                        <div class="col-8">
+                            <x-adminlte-input-switch name="header" data-on-text="YES" data-off-text="NO" data-on-color="teal" checked/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-right"><label class="col-form-label">External ID</label></div>
+                        <div class="col-8">
+                            <x-adminlte-input name="code" placeholder="set CSV col number" required type="number">
+                                <x-slot name="appendSlot">
+                                    <div class="input-group-text bg-red">
+                                        <i class="fas fa-hashtag"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-right"><label class="col-form-label">Description</label></div>
+                        <div class="col-8">
+                            <x-adminlte-input name="label" placeholder="set CSV col number" required type="number" min=0>
+                                <x-slot name="appendSlot">
+                                    <div class="input-group-text bg-red">
+                                        <i class="fas fa-hashtag"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-right"><label class="col-form-label">Qty</label></div>
+                        <div class="col-8">
+                            <x-adminlte-input name="qty" placeholder="set CSV col number" required type="number" min=0>
+                                <x-slot name="appendSlot">
+                                  <div class="input-group-text bg-red">
+                                        <i class="fas fa-hashtag"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-right"><label class="col-form-label">Selling price</label></div>
+                        <div class="col-8">
+                            <x-adminlte-input name="selling_price" placeholder="set CSV col number" required type="number" min=0>
+                                <x-slot name="appendSlot">
+                                  <div class="input-group-text bg-red">
+                                        <i class="fas fa-hashtag"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-right"><label class="col-form-label">Discount</label></div>
+                        <div class="col-8">
+                            <x-adminlte-input name="discount" placeholder="set CSV col number"  type="number" min=0>
+                                <x-slot name="appendSlot">
+                                    <div class="input-group-text bg-blue">
+                                        <i class="fas fa-hashtag"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-right"><label class="col-form-label">Delivery date</label></div>
+                        <div class="col-8">
+                            <x-adminlte-input name="delivery_date" placeholder="set CSV col number"  type="number" min=0>
+                                <x-slot name="appendSlot">
+                                    <div class="input-group-text bg-blue">
+                                        <i class="fas fa-hashtag"></i>
+                                    </div>
+                                </x-slot>
+                            </x-adminlte-input>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                </div>
+            </form>
+        </div>
+        @else
+        <x-adminlte-alert theme="info" title="Info">
+            The document status does not allow adding / modifying / deleting lines.
+        </x-adminlte-alert>
+        @endif
+    </div>
   </div>
   <!-- /.card-body -->
 </div>

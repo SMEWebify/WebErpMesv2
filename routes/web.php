@@ -42,7 +42,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         //quote line
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->middleware(['auth'])->name('quotes.update.detail.line');
         Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->middleware(['auth'])->name('quotes.update.detail.picture');
-    
+        Route::post('/{idQuote}/import', 'App\Http\Controllers\Workflow\QuoteLinesController@import')->middleware(['auth'])->name('quotes.import');
     });
     
 

@@ -51,7 +51,7 @@ class CompaniesController extends Controller
 
     public function import(Request $request)
     {   
-        $this->user_id = Auth::id();
+        $user_id = Auth::id();
         $file = $request->file('import_file');
         if ($file) {
             $filename = $file->getClientOriginalName(); //Get file name
@@ -106,7 +106,7 @@ class CompaniesController extends Controller
                         'naf_code'=> array_key_exists($request->naf_code,  $importData) ? $importData[$request->naf_code] : null,
                         'intra_community_vat'=> array_key_exists($request->intra_community_vat,  $importData) ? $importData[$request->intra_community_vat] : null,
                         'discount'=> array_key_exists($request->discount,  $importData) ? $importData[$request->discount] : null,
-                        'user_id'=>$this->user_id,
+                        'user_id'=>$user_id,
                     ]);
 
                     $j++;
