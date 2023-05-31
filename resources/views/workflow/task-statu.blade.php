@@ -16,7 +16,7 @@
 
 <div class="card-body">
 
-  @livewire('task-statu')
+  @livewire('task-statu', ['id' =>$TaskId])
 
 </div>
 @stop

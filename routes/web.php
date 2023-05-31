@@ -182,6 +182,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
 
     Route::group(['prefix' => 'production'], function () {
+        Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->middleware(['auth'])->name('production.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->middleware(['auth'])->name('production.task.statu');
         Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->middleware(['auth'])->name('production.task');
         Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->middleware(['auth'])->name('production.kanban');

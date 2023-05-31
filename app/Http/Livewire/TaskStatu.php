@@ -34,25 +34,24 @@ class TaskStatu extends Component
         'addBadQt' =>'required|numeric|min:0',
     ];
 
-    public function mount() 
+    public function mount($id) 
     {
         $this->Factory = Factory::first();
         $this->user_id = Auth::id();
+        $this->search = $id;
+        $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
+        $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
+        $this->Task = Task::with('OrderLines.order')->find($this->search);
     }
 
     public function render()
     {
+        
         if(!empty($this->search)){
-                $lastTaskActivities = $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)
-                                                        ->latest()
-                                                        ->first();
-                
-                $taskActivities = $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
-                
-                $Task = $this->Task = Task::with('OrderLines.order')
-                                                ->find($this->search);
-
-            }
+            $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
+            $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
+            $this->Task = Task::with('OrderLines.order')->find($this->search);
+        }
                             
         
         return view('livewire.task-statu', [
@@ -72,6 +71,9 @@ class TaskStatu extends Component
             'timestamp' =>Carbon::now(),
             'comment'=>'',
         ]);
+
+        $this->render();
+
         // Set Flash Message
         session()->flash('success','Log activitie added successfully');
     }
@@ -86,6 +88,9 @@ class TaskStatu extends Component
             'timestamp' =>Carbon::now(),
             'comment'=>'',
         ]);
+
+        $this->render();
+
         // Set Flash Message
         session()->flash('success','Log activitie added successfully');
     }
@@ -107,6 +112,8 @@ class TaskStatu extends Component
             $Task = Task::where('id',$taskId)->update(['status_id'=>$StatusUpdate->id]);
         }
 
+        $this->render();
+
         // Set Flash Message
         session()->flash('success','Log activitie added successfully');
     }
@@ -122,6 +129,9 @@ class TaskStatu extends Component
             'good_qt'=>$this->addGoodQt,
             'comment'=>'',
         ]);
+
+        $this->render();
+
         // Set Flash Message
         session()->flash('success','Log activitie added successfully');
     }
@@ -137,6 +147,9 @@ class TaskStatu extends Component
             'bad_qt'=>$this->addBadQt,
             'comment'=>'',
         ]);
+
+        $this->render();
+
         // Set Flash Message
         session()->flash('success','Log activitie added successfully');
     }

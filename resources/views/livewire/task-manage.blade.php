@@ -166,7 +166,8 @@
                     <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Sort order</th>
+                            <th>ID</th>
+                            <th>Order</th>
                             <th>Label</th>
                             <th>Service</th>
                             <th>Setting time</th>
@@ -181,6 +182,7 @@
                     <tbody>
                         @forelse ($Line->TechnicalCut as $TechLine)
                         <tr>
+                            <td><a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-secondary">#{{ $TechLine->id }}</a></td>
                             <td>{{ $TechLine->ordre }}</td>
                             <td>{{ $TechLine->label }}</td>
                             <td>{{ $TechLine->service['label'] }}</td>
@@ -208,11 +210,12 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="9" text="No line found ..."  />
+                        <x-EmptyDataLine col="10" text="No line found ..."  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
+                            <th></th>
                             <th>Total :</th>
                             <th></th>
                             <th></th>
@@ -246,7 +249,8 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>Sort order</th>
+                        <th>ID</th>
+                        <th>Order</th>
                         <th>Label</th>
                         <th>Service</th>
                         <th>Component</th>
@@ -261,6 +265,7 @@
                     <tbody>
                         @forelse($Line->BOM as $BOMline)
                         <tr>
+                            <td>#{{ $BOMline->id }}</td>
                             <td>{{ $BOMline->ordre }}</td>
                             <td>{{ $BOMline->label }}</td>
                             <td>{{ $BOMline->service['label'] }}</td>
@@ -288,11 +293,12 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="9" text="No line found ..."  />
+                        <x-EmptyDataLine col="10" text="No line found ..."  />
                         @endforelse
                     </tbody>
                     <tfoot>
                     <tr>
+                        <th></th>
                         <th>Total :</th>
                         <th></th>
                         <th></th>

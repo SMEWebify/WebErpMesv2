@@ -85,14 +85,15 @@ class TaskController extends Controller
         /**
      * @return View
      */
-    public function statu()
+    public function statu(Request $request)
     {
         $Factory = Factory::first();
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
         return view('workflow/task-statu', [
-            'Factory' => $Factory
+            'Factory' => $Factory,
+            'TaskId' => $request->id,
         ]);
     }
 }
