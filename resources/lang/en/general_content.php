@@ -11,7 +11,7 @@ return [
 
     //GENERAL HEADER TABLE
     'id_trans_key'                             => 'ID',
-    'code_trans_key'                           => 'Code',
+    'code_trans_key'                           => 'Project Ref',
     'label_trans_key'                          => 'Label',
     'customer_trans_key'                       => 'Customer',
     'status_trans_key'                         => 'Status',

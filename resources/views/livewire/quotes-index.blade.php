@@ -205,20 +205,20 @@
                 <thead>
                     <tr>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">ID @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Project @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Company @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
-                        <th>Customer reference</th>
+                        <th>Customer Re</th>
                         <th>Lines count</th>
                         <th>Total price</th>
-                        <th>Statu</th>
+                        <th>Status</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created @include('include.sort-icon', ['field' => 'created_at'])</a>
                         </th>
                         <th>Action</th>
                     </tr>
@@ -254,14 +254,14 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Code</th>
-                        <th>Label</th>
-                        <th>Companie</th>
-                        <th>Customer reference</th>
+                        <th>ID</th>
+                        <th>Project</th>
+                        <th>Company</th>
+                        <th>Customer Ref</th>
                         <th>Lines count</th>
                         <th>Total price</th>
-                        <th>Statu</th>
-                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Created</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>

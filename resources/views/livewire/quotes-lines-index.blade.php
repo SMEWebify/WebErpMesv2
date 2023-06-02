@@ -22,7 +22,7 @@
                         <th>Discount</th>
                         <th>VAT type</th>
                         <th>Delivery date</th>
-                        <th>Statu</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -73,7 +73,7 @@
                         <th>Discount</th>
                         <th>VAT type</th>
                         <th>Delivery date</th>
-                        <th>Statu</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>

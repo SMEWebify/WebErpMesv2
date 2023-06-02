@@ -3,7 +3,8 @@
 @section('title', 'Quote')
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="Quote : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <x-Content-header-previous-button  h1="Quote : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('right-sidebar')
@@ -24,6 +25,18 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Quote">
+        <div class="row ">
+          <div class="col-12">
+              <div class="arrow-steps clearfix">
+                  <div class="step {{ $Quote->statu == 1 ? 'current' : '' }} {{ $Quote->statu <= 1 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(1)">{{ __('Open') }}</a></span> </div>
+                  <div class="step {{ $Quote->statu == 2 ? 'current' : '' }} {{ $Quote->statu <= 2 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(2)">{{ __('Send') }}</a></span> </div>
+                  <div class="step {{ $Quote->statu == 3 ? 'current' : '' }} {{ $Quote->statu <= 3 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(3)">{{ __('Win') }}</a></span> </div>
+                  <div class="step {{ $Quote->statu == 4 ? 'current' : '' }} {{ $Quote->statu <= 4 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(4)">{{ __('Lost') }}</a><span> </div>
+                  <div class="step {{ $Quote->statu == 5 ? 'current' : '' }} {{ $Quote->statu <= 5 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(5)">{{ __('Closed') }}</a><span> </div>
+                  <div class="step {{ $Quote->statu == 6 ? 'current' : '' }} {{ $Quote->statu <= 6 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(6)">{{ __('Obsolete') }}</a><span> </div>
+              </div>
+          </div>
+      </div>
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')

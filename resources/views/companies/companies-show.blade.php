@@ -26,7 +26,7 @@
             @include('include.alert-result')
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title"> Information </h3>
               </div>
               <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
@@ -121,7 +121,7 @@
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="Siren">
+                            <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="Reg Numbe">
                             @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
                         <div class="col-3">
@@ -137,13 +137,13 @@
                   <div class="card card-body">
                     <div class="row">
                         <div class="col-3">
-                            <label for="statu_customer">Statu client</label>
+                            <label for="statu_customer">Status client</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                 </div>
                                 <select class="form-control" name="statu_customer" id="statu_customer" value="statu_customer">
-                                    <option value="">Select statu</option>
+                                    <option value="">Select status</option>
                                     <option value="1" @if($Companie->statu_customer == 1 ) Selected @endif>Inactive</option>
                                     <option value="2" @if($Companie->statu_customer == 2 ) Selected @endif>Active</option>
                                     <option value="3" @if($Companie->statu_customer == 3 ) Selected @endif>Prospect</option>
@@ -151,7 +151,7 @@
                             </div>
                         </div>
                         <div class="col-3">
-                            <label for="discount">Discount :</label>
+                            <label for="discount">Discount:</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
@@ -172,13 +172,13 @@
                   <div class="card card-body">
                     <div class="row">
                         <div class="col-3">
-                            <label for="statu_supplier">Statu supplier</label>
+                            <label for="statu_supplier">Status supplier</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                 </div>
                                 <select class="form-control" name="statu_supplier" id="statu_supplier"  value="statu_supplier">
-                                    <option value="">Select statu</option>
+                                    <option value="">Select status</option>
                                     <option value="1" @if($Companie->statu_supplier == 1 ) Selected @endif>Inactive</option>
                                     <option value="2" @if($Companie->statu_supplier == 2 ) Selected @endif>Active</option>
                                 </select>
@@ -214,7 +214,7 @@
             <div class="col-md-3">
               <div class="card card-secondary">
                 <div class="card-header">
-                  <h3 class="card-title"> Informations </h3>
+                  <h3 class="card-title"> Information </h3>
                 </div>
                 <div class="card-body">
                   @if($Companie->website )
@@ -245,7 +245,7 @@
       <div class="tab-pane " id="Adresses">
         <div class="card card-secondary">
           <div class="card-header">
-            <h3 class="card-title">Addresses</h3>
+            <h3 class="card-title">Address</h3>
             <div class="card-tools">
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAdress">
                 Add address
@@ -283,7 +283,7 @@
                         <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
                       </div>
                       <div class="col-5">
-                        <label for="label">Label adresse</label>
+                        <label for="label">Label address</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-tags"></i></span>
