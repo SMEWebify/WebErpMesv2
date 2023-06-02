@@ -74,7 +74,7 @@
                                         {{ $DocumentLine->label }}
                                     </th>
                                     <th>Qty : {{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</th>
-                                    <th> Délay :
+                                    <th>Time limit :
                                         @if($DocumentLine->delivery_date )
                                             {{ $DocumentLine->delivery_date }}
                                         @else

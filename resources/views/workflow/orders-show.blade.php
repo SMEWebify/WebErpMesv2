@@ -149,7 +149,7 @@
                     @if($Order->type == 1)
                     <tr>
                         <td style="width:50%"> 
-                          <x-ButtonTextPrint route="{{ route('print.order', ['Document' => $Order->id])}}" />
+                          Order 
                         </td>
                         <td>
                           <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
@@ -157,8 +157,7 @@
                     </tr>
                     <tr>
                       <td style="width:50%">
-                        <a href="{{ route('print.orders.confirm', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print order confirm</a>
-                      </td>
+                        Order confirm </td>
                       <td>
                         <x-ButtonTextPDF route="{{ route('pdf.orders.confirm', ['Document' => $Order->id])}}" />
                       </td>
@@ -166,10 +165,10 @@
                     @endif
                     <tr>
                       <td style="width:50%">
-                        <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print Manufacturing instruction</a>
+                        Manufacturing instruction 
                       </td>
                       <td>
-                        
+                        <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print</a>
                       </td>
                   </tr>
                 </table>

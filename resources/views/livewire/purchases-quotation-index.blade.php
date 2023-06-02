@@ -43,7 +43,7 @@
                         <td>{{ $PurchaseQuotation->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('purchase.quotation.show', ['id' => $PurchaseQuotation->id])}}" />
-                            <x-ButtonTextPrint route="{{ route('print.purchase.quotation', ['Document' => $PurchaseQuotation->id])}}" />
+                            <x-ButtonTextPDF route="{{ route('pdf.purchase.quotation', ['Document' => $PurchaseQuotation->id])}}" />
                         </td>
                     </tr>
                     @empty

@@ -38,23 +38,6 @@ class PrintController extends Controller
      * @param $Document
      * @return View
      */
-    public function printQuote(Quotes $Document)
-    {
-        $typeDocumentName = 'Quote';
-        $QuoteCalculator = new QuoteCalculator($Document);
-        $Factory = Factory::first();
-        $totalPrices = $QuoteCalculator->getTotalPrice();
-        $subPrice = $QuoteCalculator->getSubTotal();
-        $vatPrice = $QuoteCalculator->getVatTotal();
-        $Document->Lines = $Document->QuoteLines;
-        unset($Document->QuoteLines);
-        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
-    }
-
-    /**
-     * @param $Document
-     * @return View
-     */
     public function getQuotePdf(Quotes $Document)
     {
         $typeDocumentName = 'Quote';
@@ -74,23 +57,6 @@ class PrintController extends Controller
      * @param $Document
      * @return View
      */
-    public function printOrder(Orders $Document)
-    {
-        $typeDocumentName = 'Order';
-        $OrderCalculator = new OrderCalculator($Document);
-        $Factory = Factory::first();
-        $totalPrices = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
-        $Document->Lines = $Document->OrderLines;
-        unset($Document->OrderLines);
-        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
-    }
-    
-    /**
-     * @param $Document
-     * @return View
-     */
     public function getOrderPdf(Orders $Document)
     {
         $typeDocumentName = 'Order';
@@ -104,23 +70,6 @@ class PrintController extends Controller
         $image= $this->getImageFactoryPath($Factory);
         $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice','image'));
         return $pdf->stream();
-    }
-    
-    /**
-     * @param $Document
-     * @return View
-     */
-    public function printOrderConfirm(Orders $Document)
-    {
-        $typeDocumentName = 'Order confirm';
-        $OrderCalculator = new OrderCalculator($Document);
-        $Factory = Factory::first();
-        $totalPrices = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
-        $Document->Lines = $Document->OrderLines;
-        unset($Document->OrderLines);
-        return view('print/print-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
     }
     
     /**
@@ -155,18 +104,6 @@ class PrintController extends Controller
         return view('print/print-manufacturing-instruction', compact('typeDocumentName','Document', 'Factory'));
     }
     
-    /**
-     * @param $Document
-     * @return View
-     */
-    public function printDelivery(Deliverys $Document)
-    {
-        $typeDocumentName = 'Delivery note';
-        $Factory = Factory::first();
-        $Document->Lines = $Document->DeliveryLines;
-        unset($Document->DeliveryLines);
-        return view('print/print-delivery', compact('typeDocumentName','Document', 'Factory'));
-    }
 
     /**
      * @param $Document
@@ -183,22 +120,6 @@ class PrintController extends Controller
         return $pdf->stream();
     }
     
-    /**
-     * @param $Document
-     * @return View
-     */
-    public function printInvoince(Invoices $Document)
-    {
-        $typeDocumentName = 'Invoince';
-        $InvoiceCalculator = new InvoiceCalculator($Document);
-        $Factory = Factory::first();
-        $totalPrices = $InvoiceCalculator->getTotalPrice();
-        $subPrice = $InvoiceCalculator->getSubTotal();
-        $vatPrice = $InvoiceCalculator->getVatTotal();
-        $Document->Lines = $Document->invoiceLines;
-        unset($Document->invoiceLines);
-        return view('print/print-invoice', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice'));
-    }
     
     /**
      * @param $Document
@@ -219,18 +140,6 @@ class PrintController extends Controller
         return $pdf->stream();
     }
     
-    /**
-     * @param $Document
-     * @return View
-     */
-    public function printPurchaseQuotation(PurchasesQuotation $Document)
-    {
-        $typeDocumentName = 'Request for price';
-        $Factory = Factory::first();
-        $Document->Lines = $Document->PurchaseQuotationLines;
-        unset($Document->PurchaseQuotationLines);
-        return view('print/print-purchases-quotation', compact('typeDocumentName','Document', 'Factory'));
-    }
     
     /**
      * @param $Document
@@ -252,21 +161,6 @@ class PrintController extends Controller
      * @param $Document
      * @return View
      */
-    public function printPurchase(Purchases $Document)
-    {
-        $typeDocumentName = 'Purchase order';
-        $PurchaseCalculator = new PurchaseCalculator($Document);
-        $Factory = Factory::first();
-        $totalPrices = $PurchaseCalculator->getTotalPrice();
-        $Document->Lines = $Document->PurchaseLines;
-        unset($Document->PurchaseLines);
-        return view('print/print-purchases', compact('typeDocumentName','Document', 'Factory','totalPrices'));
-    }
-
-    /**
-     * @param $Document
-     * @return View
-     */
     public function getPurchasePdf(Purchases $Document)
     {
         $typeDocumentName = 'Purchase order';
@@ -278,19 +172,6 @@ class PrintController extends Controller
         $image= $this->getImageFactoryPath($Factory);
         $pdf = PDF::loadView('print/pdf-purchases', compact('typeDocumentName','Document', 'Factory','totalPrices','image'));
         return $pdf->stream();
-    }
-    
-    /**
-     * @param $Document
-     * @return View
-     */
-    public function printReceipt(PurchaseReceipt $Document)
-    {
-        $typeDocumentName = 'Purchase Receipt';
-        $Factory = Factory::first();
-        $Document->Lines = $Document->PurchaseReceiptLines;
-        unset($Document->PurchaseReceiptLines);
-        return view('print/print-purchases-reciept', compact('typeDocumentName','Document', 'Factory'));
     }
 
         /**

@@ -262,7 +262,7 @@
                         <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
-                            <x-ButtonTextPrint route="{{ route('print.order', ['Document' => $Order->id])}}" />
+                            <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
                         </td>
                     </tr>
                     @empty

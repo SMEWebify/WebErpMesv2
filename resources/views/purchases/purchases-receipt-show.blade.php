@@ -112,7 +112,7 @@
                 <table class="table table-hover">
                   <tr>
                       <td style="width:50%"> 
-                        <x-ButtonTextPrint route="{{ route('print.receipt', ['Document' => $PurchaseReceipt->id])}}" />
+                        Receipt
                       </td>
                       <td>
                         <x-ButtonTextPDF route="{{ route('pdf.receipt', ['Document' => $PurchaseReceipt->id])}}" />

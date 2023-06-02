@@ -43,7 +43,7 @@
                         <td>{{ $Invoice->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('invoices.show', ['id' => $Invoice->id])}}" />
-                            <x-ButtonTextPrint route="{{ route('print.invoice', ['Document' => $Invoice->id])}}" />
+                            <x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" />
                         </td>
                     </tr>
                     @empty

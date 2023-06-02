@@ -96,15 +96,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'print'], function () {
-        Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@printQuote')->middleware(['auth'])->name('print.quote');
-        Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@printOrder')->middleware(['auth'])->name('print.order');
-        Route::get('/order/confirm/{Document}', 'App\Http\Controllers\PrintController@printOrderConfirm')->middleware(['auth'])->name('print.orders.confirm');
         Route::get('/order/manufacturing/{Document}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->middleware(['auth'])->name('print.manufacturing.instruction');
-        Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@printDelivery')->middleware(['auth'])->name('print.delivery');
-        Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@printInvoince')->middleware(['auth'])->name('print.invoice');
-        Route::get('/purchase/quotation/{Document}', 'App\Http\Controllers\PrintController@printPurchaseQuotation')->middleware(['auth'])->name('print.purchase.quotation');
-        Route::get('/purchase/{Document}', 'App\Http\Controllers\PrintController@printPurchase')->middleware(['auth'])->name('print.purchase');
-        Route::get('/receipt/{Document}', 'App\Http\Controllers\PrintController@printReceipt')->middleware(['auth'])->name('print.receipt');
     });
 
     Route::group(['prefix' => 'pdf'], function () {
