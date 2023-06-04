@@ -25,18 +25,7 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Quote">
-        <div class="row ">
-          <div class="col-12">
-              <div class="arrow-steps clearfix">
-                  <div class="step {{ $Quote->statu == 1 ? 'current' : '' }} {{ $Quote->statu <= 1 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(1)">{{ __('Open') }}</a></span> </div>
-                  <div class="step {{ $Quote->statu == 2 ? 'current' : '' }} {{ $Quote->statu <= 2 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(2)">{{ __('Send') }}</a></span> </div>
-                  <div class="step {{ $Quote->statu == 3 ? 'current' : '' }} {{ $Quote->statu <= 3 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(3)">{{ __('Win') }}</a></span> </div>
-                  <div class="step {{ $Quote->statu == 4 ? 'current' : '' }} {{ $Quote->statu <= 4 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(4)">{{ __('Lost') }}</a><span> </div>
-                  <div class="step {{ $Quote->statu == 5 ? 'current' : '' }} {{ $Quote->statu <= 5 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(5)">{{ __('Closed') }}</a><span> </div>
-                  <div class="step {{ $Quote->statu == 6 ? 'current' : '' }} {{ $Quote->statu <= 6 ? ' ' : 'done' }}"> <span><a href="#" wire:click="changeStatu(6)">{{ __('Obsolete') }}</a><span> </div>
-              </div>
-          </div>
-      </div>
+        @livewire('arrow-steps.arrow-quote', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu])
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -50,21 +39,6 @@
                   <div class="row">
                       <div class="col-3">
                         <label for="code" class="text-success">External ID :</label>  {{  $Quote->code }}
-                      </div>
-                      <div class="col-3">
-                        <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
-                          <x-slot name="prependSlot">
-                              <div class="input-group-text bg-gradient-success">
-                                  <i class="fas fa-exclamation"></i>
-                              </div>
-                          </x-slot>
-                          <option value="1" @if(1 == $Quote->statu ) Selected @endif >Open</option>
-                          <option value="2" @if(2 == $Quote->statu ) Selected @endif >Send</option>
-                          <option value="3" @if(3 == $Quote->statu ) Selected @endif >Win</option>
-                          <option value="4" @if(4 == $Quote->statu ) Selected @endif >Lost</option>
-                          <option value="5" @if(5 == $Quote->statu ) Selected @endif >Closed</option>
-                          <option value="6" @if(6 == $Quote->statu ) Selected @endif >Obsolete</option>
-                        </x-adminlte-select>
                       </div>
                       <div class="col-3">
                         @include('include.form.form-input-label',['label' =>'Name of quote', 'Value' =>  $Quote->label])

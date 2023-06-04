@@ -97,7 +97,6 @@ class OrdersController extends Controller
     {
         $Order = Orders::find($request->id);
         $Order->label=$request->label;
-        $Order->statu=$request->statu;
         $Order->customer_reference=$request->customer_reference;
         $Order->companies_id=$request->companies_id;
         $Order->companies_contacts_id=$request->companies_contacts_id;

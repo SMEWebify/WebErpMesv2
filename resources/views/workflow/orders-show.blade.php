@@ -3,6 +3,7 @@
 @section('title', 'Order')
 
 @section('content_header')
+  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <x-Content-header-previous-button  h1="Order : {{  $Order->code }}" previous="{{ $previousUrl }}" list="{{ route('orders') }}" next="{{ $nextUrl }}"/>
 @stop
 
@@ -23,6 +24,7 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Order">
+        @livewire('arrow-steps.arrow-order', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu])
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -36,19 +38,6 @@
                     <div class="row">
                       <div class="col-3">
                         <label for="code" class="text-success">External ID :</label>  {{  $Order->code }}
-                      </div>
-                      <div class="col-3">
-                        <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
-                          <x-slot name="prependSlot">
-                              <div class="input-group-text bg-gradient-success">
-                                  <i class="fas fa-exclamation"></i>
-                              </div>
-                          </x-slot>
-                          <option value="1" @if(1 == $Order->statu ) Selected @endif >Open</option>
-                            <option value="2" @if(2 == $Order->statu ) Selected @endif >In progress</option>
-                            <option value="3" @if(3 == $Order->statu ) Selected @endif >Delivered</option>
-                            <option value="4" @if(4 == $Order->statu ) Selected @endif >Partly delivered</option>
-                        </x-adminlte-select>
                       </div>
                       <div class="col-3">
                         @include('include.form.form-input-label',['label' =>'Name of order', 'Value' =>  $Order->label])

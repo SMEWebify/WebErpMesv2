@@ -101,7 +101,6 @@ class QuotesController extends Controller
     {
         $Quote = Quotes::find($request->id);
         $Quote->label=$request->label;
-        $Quote->statu=$request->statu;
         $Quote->customer_reference=$request->customer_reference;
         $Quote->companies_id=$request->companies_id;
         $Quote->companies_contacts_id=$request->companies_contacts_id;
@@ -112,7 +111,6 @@ class QuotesController extends Controller
         $Quote->accounting_deliveries_id=$request->accounting_deliveries_id;
         $Quote->comment=$request->comment;
         $Quote->save();
-        $QuoteLines = QuoteLines::where('quotes_id', $request->id)->update(['statu' => $request->statu]);
         
         return redirect()->route('quotes.show', ['id' =>  $Quote->id])->with('success', 'Successfully updated quote');
     }
