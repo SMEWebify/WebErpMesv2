@@ -182,7 +182,7 @@
                     <tbody>
                         @forelse ($Line->TechnicalCut as $TechLine)
                         <tr>
-                            <td><a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-secondary">#{{ $TechLine->id }}</a></td>
+                            <td><a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-success">View </a> #{{ $TechLine->id }}</a></td>
                             <td>{{ $TechLine->ordre }}</td>
                             <td>{{ $TechLine->label }}</td>
                             <td>{{ $TechLine->service['label'] }}</td>

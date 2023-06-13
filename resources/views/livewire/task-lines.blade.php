@@ -41,7 +41,7 @@
                                     Generic
                                 @endif
                             </td>
-                            <td>#{{ $Task->id }} - {{ $Task->label }}</td>
+                            <td><a href="{{ route('production.task.statu.id', ['id' => $Task->id]) }}" class="btn btn-sm btn-success">View </a> #{{ $Task->id }} - {{ $Task->label }}</td>
                             <td>@if($Task->component_id ) {{ $Task->Component['label'] }}@endif</td>
                             <td @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
                             <td>{{ $Task->qty }}</td>
