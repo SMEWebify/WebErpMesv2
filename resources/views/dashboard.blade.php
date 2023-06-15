@@ -415,7 +415,7 @@
     <!-- PRODUCT LIST -->
     <div class="col-md-4">
       <div class="card">
-        <div class="card-header">
+        <div class="card-header border-transparent">
           <h3 class="card-title">{{ __('general_content.latest_products_trans_key') }}</h3>
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -427,7 +427,7 @@
           </div>
         </div>
         <!-- /.card-header -->
-        <div class="card">
+        <div class="card-body">
           <ul class="products-list product-list-in-card pl-2 pr-2">  
             @forelse ($LastProducts as $LastProduct)
             <li class="item">
