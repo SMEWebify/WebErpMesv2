@@ -4,6 +4,7 @@ namespace App\Models\Companies;
 
 use App\Models\File;
 use App\Models\User;
+use App\Models\Workflow\Leads;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use Illuminate\Database\Eloquent\Model;
@@ -63,6 +64,11 @@ class Companies extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function Leads()
+    {
+        return $this->hasMany(Leads::class, 'companies_id');
+    }
+
     public function Quotes()
     {
         return $this->hasMany(Quotes::class, 'companies_id');
@@ -71,6 +77,11 @@ class Companies extends Model
     public function NonConformity()
     {
         return $this->hasMany(QualityNonConformity::class, 'companies_id');
+    }
+
+    public function getLeadsCountAttribute()
+    {
+        return $this->Leads()->count();
     }
 
     public function getQuotesCountAttribute()

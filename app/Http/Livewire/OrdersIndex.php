@@ -44,7 +44,6 @@ class OrdersIndex extends Component
     public $comment;
     public $type = '1';
     
-
     public $idCompanie = '';
 
     // Validation Rules

@@ -33,6 +33,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->middleware(['auth'])->name('companies.show');
     });
 
+    Route::group(['prefix' => 'leads'], function () {
+        //leads
+        Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->middleware(['auth'])->name('leads'); 
+    });
+
     Route::group(['prefix' => 'quotes'], function () {
         //quote
         Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->middleware(['auth'])->name('quotes'); 

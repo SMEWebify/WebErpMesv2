@@ -291,6 +291,11 @@ return [
             'url'     => 'companies',
         ],
         [
+            'text'        => 'leads_trans_key',
+            'url'         => 'leads',
+            'icon'        => 'fas fa-globe',
+        ],
+        [
             'text'    => 'quote_trans_key',
             'icon'    => 'fas fa-calculator',
             'submenu' => [

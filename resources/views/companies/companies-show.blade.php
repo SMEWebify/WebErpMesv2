@@ -13,6 +13,7 @@
       <li class="nav-item"><a class="nav-link active" href="#Company" data-toggle="tab">Detail</a></li>
       <li class="nav-item"><a class="nav-link" href="#Adresses" data-toggle="tab">Adresses ({{ $Companie->getAddressesCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Contact" data-toggle="tab">Contact ({{ $Companie->geContactsCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#lead" data-toggle="tab">Leads list ({{ $Companie->getLeadsCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">Quotes list ({{ $Companie->getQuotesCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">Orders list ({{ $Companie->getOrdersCountAttribute() }})</a></li>
     </ul>
@@ -450,12 +451,16 @@
         <!-- /.card-body -->
         </div> 
       </div>
+      <div class="tab-pane" id="lead">
+        @livewire('leads-index' , ['idCompanie' => $Companie->id ])
+      </div>
       <div class="tab-pane" id="quote">
         @livewire('quotes-index' , ['idCompanie' => $Companie->id ])
       </div>
       <div class="tab-pane" id="order">
         @livewire('orders-index' , ['idCompanie' => $Companie->id ])
       </div>
+      
     </div>
   </div>
 </div>

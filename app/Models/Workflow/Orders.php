@@ -40,21 +40,25 @@ class Orders extends Model
                             'type',
                         ];
 
+    // Relationship with the company associated with the order
     public function companie()
     {
         return $this->belongsTo(Companies::class, 'companies_id');
     }
 
+   // Relationship with the contact associated with the order
     public function contact()
     {
         return $this->belongsTo(CompaniesContacts::class, 'companies_contacts_id');
     }
 
+    // Relationship with the adresse associated with the order
     public function adresse()
     {
         return $this->belongsTo(CompaniesAddresses::class, 'companies_addresses_id');
     }
 
+        // Relationship with the user associated with the order
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');

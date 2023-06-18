@@ -36,21 +36,25 @@ class Quotes extends Model
                             'accounting_deliveries_id',  
                             'comment' ];
 
+    // Relationship with the company associated with the quote
     public function companie()
     {
         return $this->belongsTo(Companies::class, 'companies_id');
     }
 
+   // Relationship with the contact associated with the quote
     public function contact()
     {
         return $this->belongsTo(CompaniesContacts::class, 'companies_contacts_id');
     }
 
+    // Relationship with the adresse associated with the quote
     public function adresse()
     {
         return $this->belongsTo(CompaniesAddresses::class, 'companies_addresses_id');
     }
 
+        // Relationship with the user associated with the quote
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');

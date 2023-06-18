@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\File;
 use App\Models\Planning\Task;
+use App\Models\Workflow\Leads;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use Spatie\Activitylog\LogOptions;
@@ -131,6 +132,11 @@ class User extends Authenticatable
     public function stock_location_product()
     {
         return $this->hasMany(StockLocationProducts::class);
+    }
+
+    public function leads()
+    {
+        return $this->hasMany(Leads::class);
     }
 
     public function quotes()

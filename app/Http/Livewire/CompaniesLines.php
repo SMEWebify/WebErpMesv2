@@ -65,14 +65,6 @@ class CompaniesLines extends Component
         ]);
     }
 
-    public function resetFields(){
-        $this->code = '';
-        $this->product_id = '';
-        $this->label = '';
-        $this->qty = '';
-        $this->selling_price = '';
-    }
-
     public function storeCompany(){
 
         $this->validate();

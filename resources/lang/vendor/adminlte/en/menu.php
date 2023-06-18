@@ -8,6 +8,7 @@ return [
     'french_trans_key'                         => 'French',
     'dashboard_trans_key'                      => 'Dashboard',
     'companies_trans_key'                      => 'Companies',
+    'leads_trans_key'                          => 'Leads',
     'quote_trans_key'                          => 'Quote',
     'quotes_list_trans_key'                    => 'quotes list',
     'quotes_lines_list_trans_key'              => 'quotes lines list',
