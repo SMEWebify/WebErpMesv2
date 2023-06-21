@@ -31,6 +31,24 @@
                             <div class="card-body">
                                 Account created at : {{ $UserProfil->GetPrettyCreatedAttribute() }}
                             </div>
+                            <div class="card-body">
+                                Employment status : {{ $UserProfil->employment_status}}
+                            </div>
+                            <div class="card-body">
+                                Job title : {{ $UserProfil->job_title}}
+                            </div>
+                            <div class="card-body">
+                                Pay grade : {{ $UserProfil->pay_grade}}
+                            </div>
+                            <div class="card-body">
+                                Work station id : {{ $UserProfil->work_station_id}}
+                            </div>
+                            <div class="card-body">
+                                Joined_date : {{ $UserProfil->joined_date}}
+                            </div>
+                            <div class="card-body">
+                                Confirmation date : {{ $UserProfil->confirmation_date}}
+                            </div>
                         </div>
                     </div>
                 </div>

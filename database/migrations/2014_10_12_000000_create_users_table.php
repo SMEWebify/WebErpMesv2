@@ -23,6 +23,54 @@ class CreateUsersTable extends Migration
             $table->string('personnal_phone_number')->nullable();
             $table->date('born_date')->nullable();
             $table->string('desc')->nullable();
+
+            /** Add for WebErpMesv2/issues/142 */
+            $table->string('nationality')->nullable();
+            $table->integer('gender')->nullable();
+            #1 => Male
+            #2 => Female
+            #3 => Other
+            $table->integer('marital_status')->nullable();
+            #1 => Married
+            #2 => Single
+            #3 => Divorced
+            #3 => Widowed
+            #3 => Other
+            $table->string('ssn_num')->nullable();
+            $table->string('nic_num')->nullable();
+            $table->string('driving_license')->nullable();
+            $table->date('driving_license_exp_date')->nullable();
+            $table->integer('employment_status')->default(1);
+            #1 => Undefined
+            #2 => worker
+            #3 => Employee
+            #4 => Self-employed
+            $table->string('job_title')->nullable();
+            $table->string('pay_grade', 10, 3)->nullable();
+            $table->string('work_station_id')->nullable();
+            $table->string('address1')->nullable();
+            $table->string('address2')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
+            $table->string('province')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('home_phone')->nullable();
+            $table->string('mobile_phone')->nullable();
+            $table->string('private_email')->nullable();
+            $table->date('joined_date')->nullable();
+            $table->date('confirmation_date')->nullable();
+            $table->date('termination_date')->nullable();
+            $table->integer('supervisor_id')->nullable();
+            $table->integer('section_id')->nullable();
+            $table->string('custom1')->nullable();
+            $table->string('custom2')->nullable();
+            $table->string('custom3')->nullable();
+            $table->string('custom4')->nullable();
+            $table->integer('statu')->default(1);
+            #1 => Active
+            #2 => Inactive
+            /** end add for WebErpMesv2/issues/142 */
+
             $table->boolean('companies_notification')->default(1);
             $table->boolean('users_notification')->default(1);
             $table->boolean('quotes_notification')->default(1);
