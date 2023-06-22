@@ -61,5 +61,84 @@ class QuoteCalculator
         }
         return $SubTotal;
     }
+    
+    public function getTotalProductTimeByService()
+    {
+        $tableauService = array();
+        $quoteLines = $this->quote->quoteLines;
+        foreach ($quoteLines as $quoteLine) {
+            foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
+                $TotalServiceProductTimeForQuoteCurentLine =  $TechnicalCutLine->unit_time*$quoteLine->qty ;
+                if(array_key_exists($TechnicalCutLine->label, $tableauService)){
+                    $tableauService[$TechnicalCutLine->label][1] += $TotalServiceProductTimeForQuoteCurentLine;
+                }
+                else{
+                    $tableauService[$TechnicalCutLine->label] = array($TechnicalCutLine->label, $TotalServiceProductTimeForQuoteCurentLine, $TechnicalCutLine->service['color']);
+                }
+            }
 
+        }
+        asort($tableauService);
+        return $tableauService;
+    }
+
+    public function getTotalSettingTimeByService()
+    {
+        $tableauService = array();
+        $quoteLines = $this->quote->quoteLines;
+        foreach ($quoteLines as $quoteLine) {
+            foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
+                $TotalServiceSettingTimeForQuoteCurentLine =  $TechnicalCutLine->seting_time ;
+                if(array_key_exists($TechnicalCutLine->label, $tableauService)){
+                    $tableauService[$TechnicalCutLine->label][1] += $TotalServiceSettingTimeForQuoteCurentLine;
+                }
+                else{
+                    $tableauService[$TechnicalCutLine->label] = array($TechnicalCutLine->label, $TotalServiceSettingTimeForQuoteCurentLine, $TechnicalCutLine->service['color']);
+                }
+            }
+
+        }
+        asort($tableauService);
+        return $tableauService;
+    }
+
+    public function getTotalCostByService()
+    {
+        $tableauService = array();
+        $quoteLines = $this->quote->quoteLines;
+        foreach ($quoteLines as $quoteLine) {
+            foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
+                $TotalServiceCostForQuoteCurentLine =  $TechnicalCutLine->unit_cost*$quoteLine->qty ;
+                if(array_key_exists($TechnicalCutLine->label, $tableauService)){
+                    $tableauService[$TechnicalCutLine->label][1] += $TotalServiceCostForQuoteCurentLine;
+                }
+                else{
+                    $tableauService[$TechnicalCutLine->label] = array($TechnicalCutLine->label, $TotalServiceCostForQuoteCurentLine, $TechnicalCutLine->service['color']);
+                }
+            }
+
+        }
+        asort($tableauService);
+        return $tableauService;
+    }
+
+    public function getTotalPriceByService()
+    {
+        $tableauService = array();
+        $quoteLines = $this->quote->quoteLines;
+        foreach ($quoteLines as $quoteLine) {
+            foreach ($quoteLine->TechnicalCut as $TechnicalCutLine) {
+                $TotalServicePriceForQuoteCurentLine =  $TechnicalCutLine->unit_price*$quoteLine->qty ;
+                if(array_key_exists($TechnicalCutLine->label, $tableauService)){
+                    $tableauService[$TechnicalCutLine->label][1] += $TotalServicePriceForQuoteCurentLine;
+                }
+                else{
+                    $tableauService[$TechnicalCutLine->label] = array($TechnicalCutLine->label, $TotalServicePriceForQuoteCurentLine, $TechnicalCutLine->service['color']);
+                }
+            }
+
+        }
+        asort($tableauService);
+        return $tableauService;
+    }
 }

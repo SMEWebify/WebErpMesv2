@@ -58,6 +58,10 @@ class OrdersController extends Controller
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
+        $TotalServiceProductTime = $OrderCalculator->getTotalProductTimeByService();
+        $TotalServiceSettingTime = $OrderCalculator->getTotalSettingTimeByService();
+        $TotalServiceCost = $OrderCalculator->getTotalCostByService();
+        $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
         $previousUrl = route('orders.show', ['id' => $id->id-1]);
         $nextUrl = route('orders.show', ['id' => $id->id+1]);
 
@@ -83,11 +87,14 @@ class OrdersController extends Controller
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
+            'TotalServiceProductTime'=> $TotalServiceProductTime,
+            'TotalServiceSettingTime'=> $TotalServiceSettingTime,
+            'TotalServiceCost'=> $TotalServiceCost,
+            'TotalServicePrice'=> $TotalServicePrice,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
         ]);
     }
-
     
     /**
      * @param Request $request

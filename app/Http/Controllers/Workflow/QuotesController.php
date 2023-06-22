@@ -62,6 +62,10 @@ class QuotesController extends Controller
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();
         $vatPrice = $QuoteCalculator->getVatTotal();
+        $TotalServiceProductTime = $QuoteCalculator->getTotalProductTimeByService();
+        $TotalServiceSettingTime = $QuoteCalculator->getTotalSettingTimeByService();
+        $TotalServiceCost = $QuoteCalculator->getTotalCostByService();
+        $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
         $previousUrl = route('quotes.show', ['id' => $id->id-1]);
         $nextUrl = route('quotes.show', ['id' => $id->id+1]);
 
@@ -88,6 +92,10 @@ class QuotesController extends Controller
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
+            'TotalServiceProductTime'=> $TotalServiceProductTime,
+            'TotalServiceSettingTime'=> $TotalServiceSettingTime,
+            'TotalServiceCost'=> $TotalServiceCost,
+            'TotalServicePrice'=> $TotalServicePrice,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
         ]);

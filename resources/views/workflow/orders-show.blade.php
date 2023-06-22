@@ -201,7 +201,52 @@
             </div>
           </div>
         </div>
-      </div>    
+      
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card-secondary">
+              <div class="card-header">
+                <h3 class="card-title"> {{ __('Total product time by service') }} </h3>
+              </div>
+              <div class="card-body">
+                <canvas id="productDonutChart" width="400" height="400"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card-secondary">
+              <div class="card-header">
+                <h3 class="card-title"> {{ __('Total setting time by service') }} </h3>
+              </div>
+              <div class="card-body">
+                <canvas id="settingDonutChart" width="400" height="400"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card-secondary">
+              <div class="card-header">
+                <h3 class="card-title"> {{ __('Total cost by service') }} </h3>
+              </div>
+              <div class="card-body">
+                <canvas id="CostDonutChart" width="400" height="400"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card-secondary">
+              <div class="card-header">
+                <h3 class="card-title"> {{ __('Total price by service') }} </h3>
+              </div>
+              <div class="card-body">
+                <canvas id="PriceDonutChart" width="400" height="400"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>     
       <div class="tab-pane " id="Lines">
         @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date])
       </div> 
@@ -215,4 +260,153 @@
 @stop
 
 @section('js')
+  <script type="text/javascript">
+  //-------------
+  //- PIE CHART 1 -
+  //-------------
+  var donutChartCanvas = $('#productDonutChart').get(0).getContext('2d')
+  var donutData        = {
+      labels: [
+        @foreach ($TotalServiceProductTime as $item)
+        "{{ $item[0] }} - {{ $item[1] }}h",
+        @endforeach
+      ],
+      datasets: [
+        {
+          data: [
+                @foreach ($TotalServiceProductTime as $item)
+                "{{ $item[1] }}",
+                @endforeach
+              ], 
+              backgroundColor: [
+                @foreach ($TotalServiceProductTime as $item)
+                "{{ $item[2] }}",
+                @endforeach
+              ],
+        }
+      ]
+    }
+
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'pie',
+      data: donutData,
+      options: {
+                  maintainAspectRatio : false,
+                  responsive : true, 
+              }
+    })
+
+  //-------------
+  //- PIE CHART 2 -
+  //-------------
+  var donutChartCanvas = $('#settingDonutChart').get(0).getContext('2d')
+  var donutData        = {
+      labels: [
+        @foreach ($TotalServiceSettingTime as $item)
+        "{{ $item[0] }} - {{ $item[1] }}h",
+        @endforeach
+      ],
+      datasets: [
+        {
+          data: [
+                @foreach ($TotalServiceSettingTime as $item)
+                "{{ $item[1] }}",
+                @endforeach
+              ], 
+              backgroundColor: [
+                @foreach ($TotalServiceSettingTime as $item)
+                "{{ $item[2] }}",
+                @endforeach
+              ],
+        }
+      ]
+    }
+
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'pie',
+      data: donutData,
+      options: {
+                  maintainAspectRatio : false,
+                  responsive : true, 
+              }
+    })
+
+  //-------------
+  //- PIE CHART 3 -
+  //-------------
+  var donutChartCanvas = $('#CostDonutChart').get(0).getContext('2d')
+  var donutData        = {
+      labels: [
+        @foreach ($TotalServiceCost as $item)
+        "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
+        @endforeach
+      ],
+      datasets: [
+        {
+          data: [
+                @foreach ($TotalServiceCost as $item)
+                "{{ $item[1] }}",
+                @endforeach
+              ], 
+              backgroundColor: [
+                @foreach ($TotalServiceCost as $item)
+                "{{ $item[2] }}",
+                @endforeach
+              ],
+        }
+      ]
+    }
+
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'pie',
+      data: donutData,
+      options: {
+                  maintainAspectRatio : false,
+                  responsive : true, 
+              }
+    })
+
+  //-------------
+  //- PIE CHART 4 -
+  //-------------
+  var donutChartCanvas = $('#PriceDonutChart').get(0).getContext('2d')
+  var donutData        = {
+      labels: [
+        @foreach ($TotalServicePrice as $item)
+        "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
+        @endforeach
+      ],
+      datasets: [
+        {
+          data: [
+                @foreach ($TotalServicePrice as $item)
+                "{{ $item[1] }}",
+                @endforeach
+              ], 
+              backgroundColor: [
+                @foreach ($TotalServicePrice as $item)
+                "{{ $item[2] }}",
+                @endforeach
+              ],
+        }
+      ]
+    }
+
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'pie',
+      data: donutData,
+      options: {
+                  maintainAspectRatio : false,
+                  responsive : true, 
+              }
+    })
+  </script>
 @stop
