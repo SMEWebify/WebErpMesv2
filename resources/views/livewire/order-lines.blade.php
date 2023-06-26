@@ -51,12 +51,11 @@
                     <tbody>
                         @forelse ($OrderLineslist as $OrderLine)
                         <tr>
-                            <td>{{ $OrderLine->ordre }} - 
+                            <td> 
                                 <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="up({{ $OrderLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="down({{ $OrderLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
+                                    <a href="#" wire:click="up({{ $OrderLine->id }})" class="btn btn-secondary"><i class="fas fa-sort-up"></i></a>
+                                    <span class="btn btn-info">{{ $OrderLine->ordre }}</span>
+                                    <a href="#" wire:click="down({{ $OrderLine->id }})" class="btn btn-primary"><i class="fas fa-sort-down"></i></a>
                                 </div>
                             </td>
                             <td>{{ $OrderLine->code }}</td>
@@ -252,7 +251,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                         </div>
                                     </div>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks ({{  $OrderLine->getTaskCountAttribute() }})</span></a></button>
+                                        <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks {{  $OrderLine->getTaskCountAttribute() }}</span></a></button>
                                     </div>
                                 </div>
                             </td>

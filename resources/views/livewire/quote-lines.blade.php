@@ -49,12 +49,11 @@
                         @forelse ($QuoteLineslist as $QuoteLine)
                         <tr>
                             <td>
-                                {{ $QuoteLine->ordre }} - 
+                                
                                 <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="upQuoteLine({{ $QuoteLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="downQuoteLine({{ $QuoteLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
+                                    <a href="#" wire:click="upQuoteLine({{ $QuoteLine->id }})" class="btn btn-secondary"><i class="fas fa-sort-up"></i></a>
+                                    <span class="btn btn-info">{{ $QuoteLine->ordre }}</span>
+                                    <a href="#" wire:click="downQuoteLine({{ $QuoteLine->id }})" class="btn btn-primary"><i class="fas fa-sort-down"></i></a>
                                 </div>
                             </td>
                             <td>{{ $QuoteLine->code }}</td>
@@ -239,7 +238,7 @@
                                         </div>
                                     </div>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('task.manage', ['id_type'=> 'quote_lines_id', 'id_page'=>  $QuoteLine->quotes_id, 'id_line' => $QuoteLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks ({{  $QuoteLine->getTaskCountAttribute() }})</span></a></button>
+                                        <a href="{{ route('task.manage', ['id_type'=> 'quote_lines_id', 'id_page'=>  $QuoteLine->quotes_id, 'id_line' => $QuoteLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks {{  $QuoteLine->getTaskCountAttribute() }}</span></a></button>
                                     </div>
                                 </div>
                             </td>
