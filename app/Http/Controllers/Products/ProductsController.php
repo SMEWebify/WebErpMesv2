@@ -10,6 +10,7 @@ use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Http\Requests\Products\UpdateProductsRequest;
@@ -149,6 +150,14 @@ class ProductsController extends Controller
             $newTask = $Task->replicate();
             $newTask->products_id = $newProduct->id;
             $newTask->save();
+        }
+
+        $SubAssemblyLine = SubAssembly::where('products_id', $id)->get();
+        foreach ($SubAssemblyLine as $SubAssembly) 
+        {
+            $newSubAssembly = $SubAssembly->replicate();
+            $newSubAssembly->products_id = $newProduct->id;
+            $newSubAssembly->save();
         }
         
         return redirect()->route('products.show', ['id' =>  $newProduct->id])->with('success', 'Successfully duplicate product');

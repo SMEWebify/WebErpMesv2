@@ -18,7 +18,6 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">Quote info</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Quote lines</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Analyses" data-toggle="tab">Analyses</a></li>
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">Lines Import</a></li>
     </ul>
   </div>

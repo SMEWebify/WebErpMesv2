@@ -17,6 +17,7 @@ use App\Models\Methods\MethodsUnits;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Planning\SubAssembly;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
 use League\CommonMark\Extension\SmartPunct\Quote;
@@ -217,6 +218,13 @@ class QuoteLine extends Component
             $newTask->quote_lines_id = $newQuoteline->id;
             $newTask->save();
         }
+        $SubAssemblyLine = SubAssembly::where('quote_lines_id', $id)->get();
+        foreach ($SubAssemblyLine as $SubAssembly) 
+        {
+            $newSubAssembly = $SubAssembly->replicate();
+            $newSubAssembly->quote_lines_id = $newQuoteline->id;
+            $newSubAssembly->save();
+        }
     }
 
     
@@ -229,6 +237,14 @@ class QuoteLine extends Component
             $newTask->quote_lines_id = $id;
             $newTask->products_id = null;
             $newTask->save();
+        }
+        $SubAssemblyLine = SubAssembly::where('products_id', $Quoteline->product_id)->get();
+        foreach ($SubAssemblyLine as $SubAssembly) 
+        {
+            $newSubAssembly = $SubAssembly->replicate();
+            $newSubAssembly->quote_lines_id = $id;
+            $newSubAssembly->products_id = null;
+            $newSubAssembly->save();
         }
     }
 
@@ -359,6 +375,15 @@ class QuoteLine extends Component
                         $OrderLine->tasks_status = 2;
                         $OrderLine->save();
                         
+                    }
+                    
+                    $SubAssemblyLine = SubAssembly::where('quote_lines_id', $this->data[$key]['quote_line_id'])->get();
+                    foreach ($SubAssemblyLine as $SubAssembly) 
+                    {
+                        $newSubAssembly = $SubAssembly->replicate();
+                        $newSubAssembly->order_lines_id = $newOrderline->id;
+                        $newTask->quote_lines_id = null;
+                        $newSubAssembly->save();
                     }
 
                     //update quote lines statu

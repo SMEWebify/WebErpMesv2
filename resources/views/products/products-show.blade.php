@@ -15,7 +15,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab">Detail</a></li>
-      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">Technical cut + BOM ({{ $Product->getTaskCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">Technical cut + BOM {{ $Product->getTaskCountAttribute() }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">Quotes list</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">Orders list</a></li>
     </ul>

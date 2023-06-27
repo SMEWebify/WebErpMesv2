@@ -8,6 +8,7 @@ use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Planning\SubAssembly;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
@@ -77,7 +78,9 @@ class OrderLines extends Model
 
     public function getTaskCountAttribute()
     {
-        return $this->Task()->count();
+        $taskCount =  $this->Task()->count();
+        $subAssemblyCount = $this->SubAssembly()->count();
+        return '('. $taskCount .') ('. $subAssemblyCount .')';
     }
 
     public function TechnicalCut()
@@ -161,6 +164,11 @@ class OrderLines extends Model
         }
 
         return round((1-($this->getBOMTotalUnitCostAttribute()/$this->getBOMTotalUnitPricettribute()))*100,2);
+    }
+
+    public function SubAssembly()
+    {
+        return $this->hasMany(SubAssembly::class, 'order_lines_id')->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

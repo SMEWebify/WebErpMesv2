@@ -7,6 +7,7 @@ use App\Models\Planning\Task;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
@@ -74,7 +75,9 @@ class Products extends Model
 
     public function getTaskCountAttribute()
     {
-        return $this->Task()->count();
+        $taskCount =  $this->Task()->count();
+        $subAssemblyCount = $this->SubAssembly()->count();
+        return '('. $taskCount .') ('. $subAssemblyCount .')';
     }
 
 
@@ -170,6 +173,11 @@ class Products extends Model
     public function files()
     {
         return $this->hasMany(File::class);
+    }
+
+    public function SubAssembly()
+    {
+        return $this->hasMany(SubAssembly::class, 'products_id')->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

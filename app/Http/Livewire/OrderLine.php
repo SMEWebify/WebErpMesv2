@@ -10,6 +10,7 @@ use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
@@ -195,6 +196,14 @@ class OrderLine extends Component
             $newTask->order_lines_id = $newOrderline->id;
             $newTask->save();
         }
+        
+        $SubAssemblyLine = SubAssembly::where('order_lines_id', $id)->get();
+        foreach ($SubAssemblyLine as $SubAssembly) 
+        {
+            $newSubAssembly = $SubAssembly->replicate();
+            $newSubAssembly->order_lines_id = $newOrderline->id;
+            $newSubAssembly->save();
+        }
     }
 
     public function breakDown($id){
@@ -206,6 +215,14 @@ class OrderLine extends Component
             $newTask->order_lines_id = $id;
             $newTask->products_id = null;
             $newTask->save();
+        }
+        $SubAssemblyLine = SubAssembly::where('products_id', $OrderLine->product_id)->get();
+        foreach ($SubAssemblyLine as $SubAssembly) 
+        {
+            $newSubAssembly = $SubAssembly->replicate();
+            $newSubAssembly->order_lines_id = $id;
+            $newSubAssembly->products_id = null;
+            $newSubAssembly->save();
         }
 
         $OrderLine->tasks_status = 2;

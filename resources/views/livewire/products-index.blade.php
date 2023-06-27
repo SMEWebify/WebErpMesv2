@@ -313,6 +313,7 @@
                         <th>Created At</th>
                         <th>Sold</th>
                         <th>Purchase</th>
+                        <th></th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -337,6 +338,11 @@
                             @endif
                         </td>
                         <td>
+                            <div class="btn-group btn-group-sm">
+                                <span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks {{  $Product->getTaskCountAttribute() }}</span>
+                            </div>
+                        </td>
+                        <td>
                             <x-ButtonTextView route="{{ route('products.show', ['id' => $Product->id])}}" />
                         </td>
                     </tr>
@@ -351,6 +357,7 @@
                         <th>Created At</th>
                         <th>Sold</th>
                         <th>Purchase</th>
+                        <th></th>
                         <th>Action</th>
                     </tr>
                 </tfoot>

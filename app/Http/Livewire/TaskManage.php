@@ -13,6 +13,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
+use App\Models\Planning\SubAssembly;
 
 class TaskManage extends Component
 {
@@ -25,16 +26,22 @@ class TaskManage extends Component
     public $TaskType = "TechCut";
 
     public $taskId;
+    public $subAssemblyId;
     public $ordre = 1;
+    public $subAssemblyOrdre = 1;
     public $label;
+    public $subAssemblylabel;
     public $methods_services_id;
     public $component_id;
+    public $subAssemblyComponentId;
     public $type;
     public $qty;
+    public $subAssemblyQty = 0;
     public $seting_time = 0;
     public $unit_time = 0;
     public $unit_cost = 0;
     public $unit_price = 0;
+    public $subAssemblyUnit_price = 0;
     public $methods_units_id = 0;
 
     Private $quote_lines_id;
@@ -46,6 +53,10 @@ class TaskManage extends Component
     public $Factory = [];
     public $UnitsSelect = [];
     public $ProductSelect  = [];
+    public $ComponentSelect  = [];
+
+
+
 
     // Validation Rules
     protected $rules = [
@@ -88,6 +99,22 @@ class TaskManage extends Component
         }
     }
 
+    public function ChangeSubAssemblyCodelabel()
+    {
+        $Product = Products::select('id',  'label', 'selling_price')->where('id', $this->subAssemblyComponentId)->get();
+        if(count($Product) > 0){
+            $this->subAssemblylabel =  $Product[0]->label;
+            $this->subAssemblyUnit_price =  $Product[0]->selling_price;
+            if($Product[0]->selling_price == null){
+                $this->subAssemblyUnit_price =0;
+            }
+        }else{
+            $this->subAssemblylabel = '';
+            $this->subAssemblyUnit_price =0;
+        }
+    }
+    
+
     public function mount($idType, $idPage, $idLine) 
     {
         $this->idLine = $idLine;
@@ -108,7 +135,13 @@ class TaskManage extends Component
         $this->Factory = Factory::first();
         $status =  Status::select('id')->orderBy('order')->first();
         $this->status_id = $status->id;
-        $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
+        $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->with('service')->whereRelation('service', 'type', 2)
+                                                                                                            ->OrwhereRelation('service', 'type', 3)
+                                                                                                            ->OrwhereRelation('service', 'type', 4)
+                                                                                                            ->OrwhereRelation('service', 'type', 5)
+                                                                                                            ->OrwhereRelation('service', 'type', 6)
+                                                                                                            ->get();
+        $this->ComponentSelect = Products::select('id', 'code','label', 'methods_services_id')->with('service')->whereRelation('service', 'type', 8)->get();
         $this->ServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
 
     }
@@ -286,6 +319,82 @@ class TaskManage extends Component
             session()->flash('success',"Task #". $id ." deleted Successfully !");
         }catch(\Exception $e){
             session()->flash('error',"Something goes wrong while deleting Task #". $id);
+        }
+    }
+
+    public function storeSubAssembly($idLine  = null){
+            if($this->idType == 'products_id'){
+                $this->products_id = $idLine;
+            }
+            elseif($this->idType == 'quote_lines_id'){
+                $this->quote_lines_id = $idLine;
+            }
+            elseif($this->idType == 'order_lines_id'){
+                $this->order_lines_id = $idLine;
+            }
+            else{
+                session()->flash('error',"Something goes wrong ");
+            }
+
+            // Validate request
+            $validatedData = $this->validate([
+                'subAssemblyQty' => 'required',
+                'subAssemblyComponentId' => 'required',
+            ]);
+
+            // Create Task
+            $Task = SubAssembly::create(['ordre' => $this->subAssemblyOrdre, 
+                                        'quote_lines_id' => $this->quote_lines_id, 
+                                        'order_lines_id' => $this->order_lines_id, 
+                                        'products_id' => $this->products_id, 
+                                        'child_id' => $this->subAssemblyComponentId, 
+                                        'qty' => $this->subAssemblyQty,
+                                        'unit_price' => $this->subAssemblyUnit_price]);
+            // Set Flash Message
+            session()->flash('success','Sub assembly added Successfully');
+    }
+
+    public function editSubAssemblyLine($id){
+        $Line = SubAssembly::findOrFail($id);
+        $this->subAssemblyId = $id;
+        $this->subAssemblyOrdre = $Line->ordre;
+        $this->subAssemblyComponentId = $Line->child_id;
+        $this->subAssemblyQty = $Line->qty;
+        $this->subAssemblyUnit_price = $Line->unit_price;
+        $this->updateLines = true;
+    }
+
+    public function updateSubAssembly(){
+        // Validate request
+        $validatedData = $this->validate([
+            'subAssemblyQty' => 'required',
+            'subAssemblyComponentId' => 'required',
+        ]);
+
+        // Update line
+        SubAssembly::find($this->subAssemblyId)->fill([
+            'ordre' => $this->subAssemblyOrdre, 
+            'child_id' => $this->subAssemblyComponentId, 
+            'qty' => $this->subAssemblyQty,  
+            'unit_price' => $this->subAssemblyUnit_price,  
+        ])->save();
+        session()->flash('success','Sub assembly line updated Successfully');
+    }
+
+    public function duplicateSubAssemblyLine($id){
+        $SubAssembly = SubAssembly::findOrFail($id);
+        $newSubAssembly = $SubAssembly->replicate();
+        $newSubAssembly->ordre = $SubAssembly->ordre+1;
+        $newSubAssembly->save();
+    }
+    
+
+    public function destroySubAssemblyLine($id){
+        try{
+            SubAssembly::findOrFail($id)->delete();
+            session()->flash('success',"Sub assembly #". $id ." deleted Successfully !");
+        }catch(\Exception $e){
+            session()->flash('error',"Something goes wrong while deleting sub assembly #". $id);
         }
     }
 }

@@ -9,6 +9,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Planning\SubAssembly;
 use App\Models\Workflow\QuoteLineDetails;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -64,7 +65,9 @@ class QuoteLines extends Model
 
     public function getTaskCountAttribute()
     {
-        return $this->Task()->count();
+        $taskCount =  $this->Task()->count();
+        $subAssemblyCount = $this->SubAssembly()->count();
+        return '('. $taskCount .') ('. $subAssemblyCount .')';
     }
 
     public function TechnicalCut()
@@ -147,6 +150,11 @@ class QuoteLines extends Model
             return 0;
         }
         return round((1-($this->getBOMTotalUnitCostAttribute()/$this->getBOMTotalUnitPricettribute()))*100,2);
+    }
+
+    public function SubAssembly()
+    {
+        return $this->hasMany(SubAssembly::class, 'quote_lines_id')->orderBy('ordre');
     }
 
     public function GetPrettyCreatedAttribute()

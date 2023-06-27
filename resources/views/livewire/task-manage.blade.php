@@ -1,6 +1,6 @@
 <div>
-    <div class="card-body">
     @if($statu == 1)
+    <div class="card-body">
         @include('include.alert-result')
         @if($updateLines)
         <form wire:submit.prevent="updateTask">
@@ -150,7 +150,7 @@
 
     @if($Line->id ?? null)
     <div class="card-body">
-        <div class="card card-secondary">
+        <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">Technical cut</h3>
                 <div class="card-tools">
@@ -233,7 +233,7 @@
             <!-- /.card-body -->
         </div>
             
-        <div class="card card-secondary">
+        <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">Bill of materials</h3>
                 <div class="card-tools">
@@ -307,6 +307,156 @@
                         <th>{{ $Line->getBOMTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
                         <th>{{ $Line->getBOMTMarginAttribute() }} %</th>
                         <th>{{ $Line->getBOMTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+    @endif
+
+    @if($statu == 1)
+    <div class="card-body">
+        @if($updateLines)
+        <form wire:submit.prevent="updateSubAssembly">
+        @else
+        <form wire:submit.prevent="storeSubAssembly({{ $Line->id }})">
+        @endif
+            <div class="card card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <label for="subAssemblyOrdre">Sort order</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                            </div>
+                            <input type="number" class="form-control @error('subAssemblyOrdre') is-invalid @enderror" name="subAssemblyOrdre" id="subAssemblyOrdre" placeholder="Order" min="0" wire:model="subAssemblyOrdre">
+                            
+                        </div>
+                        @error('subAssemblyOrdre') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                        <input type="hidden" name="{{ $idType }}" value="{{ $Line->id   }}">
+                    </div>
+                    <div class="col-2">
+                        <label for="subAssemblyComponentId">Component</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            </div>
+                            <select class="form-control @error('subAssemblyComponentId') is-invalid @enderror" name="subAssemblyComponentId" id="subAssemblyComponentId"  wire:click.prevent="ChangeSubAssemblyCodelabel()" wire:model="subAssemblyComponentId" >
+                                <option>Select Component</option>
+                                @foreach ($ComponentSelect as $item)
+                                <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->code }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('subAssemblyComponentId') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-2">
+                        <label for="subAssemblylabel">Label</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                            </div>
+                            <input type="text" class="form-control @error('subAssemblylabel') is-invalid @enderror"  name="subAssemblylabel"  id="subAssemblylabel" placeholder="Label" wire:model="subAssemblylabel" disabled>
+                        </div>
+                        @error('subAssemblylabel') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-2">
+                        <label for="subAssemblyQty">Quantity</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-times"></i></span>
+                            </div>
+                            <input type="number" class="form-control @error('subAssemblyQty') is-invalid @enderror" name="subAssemblyQty"  id="subAssemblyQty" value="1" placeholder="Quantity" step="1"  min="0" wire:model="subAssemblyQty">
+                        </div>
+                        @error('subAssemblyQty') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-2">
+                        <label for="subAssemblyUnit_price">Unit Price</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">{{ $Factory->curency }}</span>
+                            </div>
+                            <input type="number" class="form-control @error('subAssemblyUnit_price') is-invalid @enderror" name="subAssemblyUnit_price"  id="subAssemblyUnit_price" placeholder="Unit Price" value="0" step=".001" min="0" wire:model="subAssemblyUnit_price">
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        @if($updateLines)
+                        <button type="Submit" class="btn btn-warning">Update</button>
+                        @else
+                        <x-adminlte-button class="btn-flat" type="submit" label="Add Sub assembly" theme="success" icon="fas fa-lg fa-save"/>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    @endif
+
+    @if($Line->id ?? null)
+    <div class="card-body">
+        <div class="card card-secondary">
+            <div class="card-header">
+                <h3 class="card-title">Sub assembly</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Order</th>
+                        <th>Code</th>
+                        <th>Label</th>
+                        <th>Quantity</th>
+                        <th>Unit cost (base cost)</th>
+                        <th>Unit price </th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($Line->SubAssembly as $SubAssemblyLine)
+                        <tr>
+                            <td>#{{ $SubAssemblyLine->id }}</td>
+                            <td>{{ $SubAssemblyLine->ordre }}</td>
+                            <td>{{ $SubAssemblyLine->Child['code'] }}</td>
+                            <td>{{ $SubAssemblyLine->Child['label'] }}</td>
+                            <td>{{ $SubAssemblyLine->qty }}</td>
+                            <td>{{ $SubAssemblyLine->Child['selling_price'] }}  {{ $Factory->curency }}</td>
+                            <td>{{ $SubAssemblyLine->unit_price }}  {{ $Factory->curency }}</td>
+                            <td class=" py-0 align-middle">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item " wire:click="duplicateSubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> Copy line</span></a>
+                                        <a href="#" class="dropdown-item" wire:click="editSubAssemblyLine({{$SubAssemblyLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> Edit line</span></a>
+                                        <a href="#" class="dropdown-item" wire:click="destroySubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> Delete line</span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <x-EmptyDataLine col="6" text="No line found ..."  />
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th></th>
                         <th></th>
                     </tr>
