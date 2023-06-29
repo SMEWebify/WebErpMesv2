@@ -45,6 +45,7 @@
                       </div>
                     </div>
                   </div>
+                @if($Quote->companie['active'] == 1)
                   <div class="card card-body">
                     <div class="row">
                       <label for="InputWebSite" class="text-info">Customer information</label>
@@ -67,6 +68,11 @@
                       </div>
                     </div>
                   </div>
+                  @else
+                  <x-adminlte-alert theme="info" title="Info">
+                    The customer <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  /> is currently disabled, you cannot change the customer and order address
+                  </x-adminlte-alert>
+                  @endif
                   <div class="card card-body">
                     <div class="row">
                       <label for="InputWebSite">Date & Payment information</label>
