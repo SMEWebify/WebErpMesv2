@@ -96,7 +96,7 @@ class Companies extends Model
 
     public function getOrdersCountAttribute()
     {
-        return $this->Quotes()->count();
+        return $this->Orders()->count();
     }
 
     public function files()
