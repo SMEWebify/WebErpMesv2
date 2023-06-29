@@ -111,6 +111,9 @@
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('deliverys_id')" role="button" href="#">Delivery @include('include.sort-icon', ['field' => 'orders_id'])</a>
                             </th>
                             <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            </th>
+                            <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                             </th>
                             <th>
@@ -134,6 +137,13 @@
                                 <a class="btn btn-primary btn-sm" href="{{ route('deliverys.show', ['id' => $InvoicesRequestsLine->deliverys_id ]) }}">
                                     <i class="fas fa-folder"></i>
                                     {{ $InvoicesRequestsLine->delivery['code'] }}
+                            </td>
+                            <td>
+                                @if($InvoicesRequestsLine->orderLine->order->type == 1 )
+                                <x-CompanieButton id="{{ $InvoicesRequestsLine->orderLine->order->companies_id }}" label="{{ $InvoicesRequestsLine->orderLine->order->companie['label'] }}"  />
+                                @else
+                                Internal order
+                                @endif
                             </td>
                             <td>{{ $InvoicesRequestsLine->orderLine['code'] }}</td>
                             <td>{{ $InvoicesRequestsLine->orderLine['label'] }}</td>
@@ -159,6 +169,7 @@
                         <tr>
                             <th>Order</th>
                             <th>Delivery</th>
+                            <th>Companie</th>
                             <th>code</th>
                             <th>label</th>
                             <th>Qty</th>

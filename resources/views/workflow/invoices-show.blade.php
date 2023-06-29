@@ -147,10 +147,10 @@
                     <td>{{ $InvoiceLine->OrderLine['discount'] }} %</td>
                     <td>{{ $InvoiceLine->OrderLine->VAT['rate'] }} %</td>
                     <td>
-                      @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
-                      @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
-                      @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
-                      @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
+                      @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">In progress</span>@endif
+                      @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">Sent</span>@endif
+                      @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">Invoiced</span>@endif
+                      @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-success">Partially invoiced</span>@endif
                     </td>
                   </tr>
                   @empty

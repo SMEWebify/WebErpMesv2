@@ -146,10 +146,10 @@
                     <td>{{ $DeliveryLine->qty }}</td>
                     <td>{{ $DeliveryLine->OrderLine['delivered_remaining_qty'] }}</td>
                     <td>
-                      @if(1 == $Delivery->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
-                      @if(2 == $Delivery->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
-                      @if(3 == $Delivery->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
-                      @if(4 == $Delivery->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
+                      @if(1 == $DeliveryLine->invoice_status )  <span class="badge badge-info">Chargeable</span>@endif
+                      @if(2 == $DeliveryLine->invoice_status )  <span class="badge badge-danger">Not chargeable</span>@endif
+                      @if(3 == $DeliveryLine->invoice_status )  <span class="badge badge-warning">Partly invoiced</span>@endif
+                      @if(4 == $DeliveryLine->invoice_status )  <span class="badge badge-success">Invoiced</span>@endif
                     </td>
                   </tr>
                   @empty

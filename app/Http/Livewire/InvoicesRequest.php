@@ -26,7 +26,7 @@ class InvoicesRequest extends Component
     public $CompaniesSelect = [];
     public $data = [];
     public $qty = [];
-
+    public $LastInvoice;
     public $idCompanie = '';
     private $ordre = 10;
 
@@ -71,7 +71,7 @@ class InvoicesRequest extends Component
         $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
-
+        
         //Select delevery line where not Partly invoiced or Invoiced
         $InvoicesRequestsLineslist = $this->DeliverysRequestsLineslist = DeliveryLines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                                                         ->where(
@@ -82,12 +82,7 @@ class InvoicesRequest extends Component
                                                                             })
                                                                         ->whereHas('delivery', function($q){
                                                                             $q->where('companies_id','like', '%'.$this->companies_id.'%');
-                                                                        })
-                                                                        ->with('delivery')
-                                                                        ->with('orderLine.order')
-                                                                        ->with('orderLine.Product')
-                                                                        ->with('orderLine.Unit')
-                                                                        ->with('orderLine.VAT')->get();
+                                                                        })->get();
 
         return view('livewire.invoices-request', [
             'InvoicesRequestsLineslist' => $InvoicesRequestsLineslist,
@@ -130,8 +125,9 @@ class InvoicesRequest extends Component
                         //if not best to find request value, but we cant send hidden data with livewire
                         //How pass order_line_id & qty delivered ?
                         $DeliveryLine = DeliveryLines::find($this->data[$key]['deliverys_id']);
-                        // Create delivery line
-                        
+                        $DeliveryLine->invoice_status = 4; 
+                        $DeliveryLine->save();
+                        // Create  invoice line
                         $InvoiceLines = InvoiceLines::create([
                             'invoices_id' => $InvoiceCreated->id,
                             'order_line_id' => $DeliveryLine->order_line_id, 

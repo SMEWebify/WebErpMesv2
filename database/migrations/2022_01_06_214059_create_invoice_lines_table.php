@@ -22,10 +22,10 @@ class CreateInvoiceLinesTable extends Migration
 			$table->integer('qty');
             $table->integer('accounting_allocation_id')->nullable();
             $table->integer('invoice_status')->default(1);
-            #1 = Chargeable
-            #2 = Not chargeable
-            #3 = Partly invoiced
-            #4 = Invoiced
+            #1 = In progress
+            #2 = Sent
+            #3 = Invoiced
+            #4 = Partially invoiced
             $table->timestamps();
         });
     }

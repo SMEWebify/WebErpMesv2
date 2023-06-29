@@ -107,11 +107,12 @@
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">Order @include('include.sort-icon', ['field' => 'orders_id'])</a>
                             </th>
-                            <th>Sort</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            </th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
                             </th>
-                            <th>Product</th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
                             </th>
@@ -131,9 +132,14 @@
                             <td>
                                 <x-OrderButton id="{{ $DeliverysRequestsLine->order['id'] }}" code="{{ $DeliverysRequestsLine->order['code'] }}"  />
                             </td>
-                            <td>{{ $DeliverysRequestsLine->ordre }}</td>
+                            <td>
+                                @if($DeliverysRequestsLine->order->type == 1 )
+                                <x-CompanieButton id="{{ $DeliverysRequestsLine->order->companies_id }}" label="{{ $DeliverysRequestsLine->order->companie['label'] }}"  />
+                                @else
+                                Internal order
+                                @endif
+                            </td>
                             <td>{{ $DeliverysRequestsLine->code }}</td>
-                            <td>@if(1 == $DeliverysRequestsLine->product_id ) {{ $DeliverysRequestsLine->Product['label'] }}@endif</td>
                             <td>{{ $DeliverysRequestsLine->label }}</td>
                             <td>
                                 {{ $DeliverysRequestsLine->delivered_remaining_qty }}
@@ -160,7 +166,7 @@
                     <tfoot>
                         <tr>
                             <th>Order</th>
-                            <th>Sort</th>
+                            <th>Companie</th>
                             <th>External ID</th>
                             <th>Product</th>
                             <th>Description</th>
