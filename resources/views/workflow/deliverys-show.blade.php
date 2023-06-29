@@ -56,27 +56,6 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Customer information</label>
-                    </div>
-                    <div class="row">
-                      <div class="col-5">
-                        @include('include.form.form-select-companie',['companiesId' =>  $Delivery->companies_id])
-                      </div>
-                      <div class="col-5">
-                        
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-5">
-                        @include('include.form.form-select-adress',['adressId' =>   $Delivery->companies_addresses_id])
-                      </div>
-                      <div class="col-5">
-                        @include('include.form.form-select-contact',['contactId' =>   $Delivery->companies_contacts_id])
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card card-body">
-                    <div class="row">
                       <x-FormTextareaComment  comment="{{ $Delivery->comment }}" />
                     </div>
                   </div>
@@ -93,6 +72,18 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
+                  <div class="card-body">
+                    Delevery created at :  {{ $Delivery->GetPrettyCreatedAttribute() }}
+                  </div>
+                  <div class="card-body">
+                    Companie name :  <x-CompanieButton id="{{ $Delivery->companie['id'] }}" label="{{ $Delivery->companie['label'] }}"  />
+                  </div>
+                  <div class="card-body">
+                    Adress name :   {{ $Delivery->adresse['label'] }} - {{ $Delivery->adresse['adress'] }}
+                  </div>
+                  <div class="card-body">
+                    Contact name :  {{ $Delivery->contact['first_name'] }} - {{ $Delivery->contact['name'] }}
+                  </div>
                 </div>
               </div>
             </div>

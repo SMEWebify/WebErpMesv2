@@ -56,27 +56,6 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Customer information</label>
-                    </div>
-                    <div class="row">
-                      <div class="col-5">
-                        @include('include.form.form-select-companie',['companiesId' =>  $Invoice->companies_id])
-                      </div>
-                      <div class="col-5">
-                        
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-5">
-                        @include('include.form.form-select-adress',['adressId' =>   $Invoice->companies_addresses_id])
-                      </div>
-                      <div class="col-5">
-                        @include('include.form.form-select-contact',['contactId' =>   $Invoice->companies_contacts_id])
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card card-body">
-                    <div class="row">
                       <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
                     </div>
                   </div>
@@ -90,6 +69,22 @@
             <div class="card card-secondary">
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <div class="card-body">
+                    Invoice created at :  {{ $Invoice->GetPrettyCreatedAttribute() }}
+                  </div>
+                  <div class="card-body">
+                    Companie name :  <x-CompanieButton id="{{ $Invoice->companie['id'] }}" label="{{ $Invoice->companie['label'] }}"  />
+                  </div>
+                  <div class="card-body">
+                    Adress name :   {{ $Invoice->adresse['label'] }} - {{ $Invoice->adresse['adress'] }}
+                  </div>
+                  <div class="card-body">
+                    Contact name :  {{ $Invoice->contact['first_name'] }} - {{ $Invoice->contact['name'] }}
+                  </div>
+                </div>
               </div>
               <div class="card-body">
                 @include('include.sub-total-price')
