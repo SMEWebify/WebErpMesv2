@@ -92,9 +92,6 @@ class InvoicesController extends Controller
         $Invoice = Invoices::find($request->id);
         $Invoice->label=$request->label;
         $Invoice->statu=$request->statu;
-        $Invoice->companies_id=$request->companies_id;
-        $Invoice->companies_contacts_id=$request->companies_contacts_id;
-        $Invoice->companies_addresses_id=$request->companies_addresses_id;
         $Invoice->comment=$request->comment;
         $Invoice->save();
 

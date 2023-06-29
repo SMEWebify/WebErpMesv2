@@ -84,9 +84,6 @@ class DeliverysController extends Controller
         $Delivery = Deliverys::find($request->id);
         $Delivery->label=$request->label;
         $Delivery->statu=$request->statu;
-        $Delivery->companies_id=$request->companies_id;
-        $Delivery->companies_contacts_id=$request->companies_contacts_id;
-        $Delivery->companies_addresses_id=$request->companies_addresses_id;
         $Delivery->comment=$request->comment;
         $Delivery->save();
 
