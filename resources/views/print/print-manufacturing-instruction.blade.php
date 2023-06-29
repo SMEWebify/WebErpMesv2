@@ -37,6 +37,7 @@
                     </div>
                     <!-- info row -->
                     <div class="row invoice-info">
+                        @if($Document->type == 1)
                         <x-HeaderPrint  
                             factoryName="{{ $Factory->name }}"
                             factoryAddress="{{ $Factory->address }}"
@@ -45,6 +46,7 @@
                             factoryPhoneNumber="{{ $Factory->phone_number }}"
                             factoryMail="{{ $Factory->mail }}"
 
+                            
                             companieLabel="{{ $Document->companie['label'] }}"
                             companieCivility="{{ $Document->contact['civility'] }}"
                             companieFirstName="{{ $Document->contact['first_name'] }}"
@@ -60,6 +62,32 @@
                             code="{{ $Document->code }}"
                             customerReference="{{ $Document->customer_reference }}" 
                             />
+                            @else
+                            <x-HeaderPrint  
+                            factoryName="{{ $Factory->name }}"
+                            factoryAddress="{{ $Factory->address }}"
+                            factoryZipcode="{{ $Factory->zipcode }}"
+                            factoryCity="{{ $Factory->city }}"
+                            factoryPhoneNumber="{{ $Factory->phone_number }}"
+                            factoryMail="{{ $Factory->mail }}"
+
+                            
+                            companieLabel="INTERNAL ORDER"
+                            companieCivility=" "
+                            companieFirstName=" "
+                            companieName=" "
+                            companieAdress=" "
+                            companieZipcode=" "
+                            companieCity=" "
+                            companieCountry=" "
+                            companieNumber="N/A"
+                            companieMail="N/A"
+
+                            documentName="{{ $typeDocumentName}}"
+                            code="{{ $Document->code }}"
+                            customerReference=" " 
+                            />
+                            @endif
                         </div>
                     </div>
                     <!-- Table row -->

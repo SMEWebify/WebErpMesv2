@@ -64,7 +64,7 @@
                 @endif
             </td>
             <td align="right" style="width: 40%;">
-
+                @if($Document->type == 1)
                 <h3>{{ $Document->companie['label'] }}</h3>
                 <pre>
                     {{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
@@ -76,6 +76,9 @@
                     <br /><br />
             Identifier: {{ $Document->customer_reference }}
                 </pre>
+                @else
+                <h1>Internal Order</h1>
+                @endif
             </td>
         </tr>
 
@@ -125,8 +128,10 @@
     <table width="100%">
         <tr>
             <td align="left" style="width: 50%;">
+                @if($Document->type == 1)
                 <p class="lead"><strong>Payment Methods:</strong> {{ $Document->payment_method['label'] }}</p>
                 <p class="lead"><strong>Payment Conditions:</strong> {{ $Document->payment_condition['label'] }}</p>
+                @endif
                 @if($Document->comment)
                 <p class="lead"><strong>Comment :</strong></p>
                 <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
