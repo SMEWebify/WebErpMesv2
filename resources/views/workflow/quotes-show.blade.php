@@ -70,7 +70,7 @@
                   </div>
                   @else
                   <x-adminlte-alert theme="info" title="Info">
-                    The customer <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  /> is currently disabled, you cannot change the customer and order address
+                    The customer <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
                   </x-adminlte-alert>
                   @endif
                   <div class="card card-body">
