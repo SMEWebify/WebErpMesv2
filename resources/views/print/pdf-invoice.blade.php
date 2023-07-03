@@ -106,7 +106,7 @@
                 </td>
                 <td>{{ $DocumentLine->qty }}</td>
                 <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
-                <td>{{ $DocumentLine->selling_price }}  {{ $Factory->curency }}</td>
+                <td>{{ $DocumentLine->OrderLine->selling_price }}  {{ $Factory->curency }}</td>
                 <td>{{ $DocumentLine->OrderLine->discount }} %</td>
                 <td>{{ $DocumentLine->OrderLine->VAT['rate'] }} %</td>
                 @if($DocumentLine->OrderLine->delivery_date )

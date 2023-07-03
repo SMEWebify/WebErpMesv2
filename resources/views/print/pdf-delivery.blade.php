@@ -102,7 +102,6 @@
                     {{ $DocumentLine->OrderLine['label'] }}<br>
                     <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>
                 </td>
-                <td>{{ $DocumentLine->OrderLine['label'] }}</td>
                 <td>{{ $DocumentLine->OrderLine['qty'] }}</td>
                 <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
                 <td>{{ $DocumentLine->qty }}</td>
