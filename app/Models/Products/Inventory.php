@@ -11,7 +11,7 @@ class Inventory extends Model
 
     protected $fillable = ['code',
                           'label', 
-                          'START_DATE',
+                          'start_date',
                           'end_date',
                           'label'];
   

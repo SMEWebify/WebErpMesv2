@@ -10,7 +10,7 @@ class TimesMachineEvent extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code',  'ordre',  'label',  'mask_time',  'color',  'ETAT'];
+    protected $fillable = ['code',  'ordre',  'label',  'mask_time',  'color',  'etat'];
 
     public function improductTime()
     {

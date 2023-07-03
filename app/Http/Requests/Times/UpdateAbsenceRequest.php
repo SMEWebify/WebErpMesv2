@@ -13,7 +13,7 @@ class UpdateAbsenceRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,8 @@ class UpdateAbsenceRequest extends FormRequest
     {
         return [
             //
+            'start_date'=>'required',
+            'end_date'=>'required',
         ];
     }
 }

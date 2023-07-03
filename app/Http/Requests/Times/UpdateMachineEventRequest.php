@@ -13,7 +13,7 @@ class UpdateMachineEventRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,8 @@ class UpdateMachineEventRequest extends FormRequest
     {
         return [
             //
+            'ordre' =>'required|numeric|gt:0',
+            'label'=>'required',
         ];
     }
 }

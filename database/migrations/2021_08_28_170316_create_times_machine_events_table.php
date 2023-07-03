@@ -20,7 +20,7 @@ class CreateTimesMachineEventsTable extends Migration
 			$table->string('label');
 			$table->integer('mask_time');
 			$table->string('color');
-			$table->integer('ETAT');
+			$table->integer('etat');
             $table->timestamps();
         });
     }

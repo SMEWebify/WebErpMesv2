@@ -60,12 +60,49 @@
                           @if($TimesAbsence->absence_type_day  == 3)Worked day @endif
                         </td>
                         <td>{{ $TimesAbsence->statu }}</td>
-                        <td>{{ $TimesAbsence->START_DATE }}</td>
+                        <td>{{ $TimesAbsence->start_date }}</td>
                         <td>{{ $TimesAbsence->end_date }}</td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                          </div>
+                        <td class=" py-0 align-middle">
+                          <!-- Button Modal -->
+                          <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#TimesAbsence{{ $TimesAbsence->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $TimesAbsence->id }} -->
+                          <x-adminlte-modal id="TimesAbsence{{ $TimesAbsence->id }}" title="Update {{ $TimesAbsence->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                            <form method="POST" action="{{ route('times.absence.update', ['id' => $TimesAbsence->id]) }}" enctype="multipart/form-data">
+                              @csrf
+                              <div class="card-body">
+                                <div class="form-group">
+                                  <label for="absence_type">Absence type</label>
+                                  <select class="form-control" name="absence_type" id="absence_type">
+                                      <option value="1" @if($TimesAbsence->absence_type == 1  ) Selected @endif>Full day absence</option>
+                                      <option value="2" @if($TimesAbsence->absence_type == 2  ) Selected @endif>1 st half day absence</option>
+                                      <option value="3" @if($TimesAbsence->absence_type == 3  ) Selected @endif>2 nd half day absence</option>
+                                      <option value="4" @if($TimesAbsence->absence_type == 4  ) Selected @endif>Absence in hours</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="absence_type_day">Absence type day</label>
+                                  <select class="form-control" name="absence_type_day" id="absence_type_day">
+                                      <option value="1" @if($TimesAbsence->absence_type_day == 1  ) Selected @endif>Calendar</option>
+                                      <option value="2" @if($TimesAbsence->absence_type_day == 2  ) Selected @endif>Workable day</option>
+                                      <option value="3" @if($TimesAbsence->absence_type_day == 3  ) Selected @endif>Worked day</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="start_date">Start date</label>
+                                  <input type="date" class="form-control" name="start_date"  id="start_date" value="{{ $TimesAbsence->start_date }}">
+                                </div>
+                                <div class="form-group">
+                                  <label for="end_date">End date</label>
+                                  <input type="date" class="form-control" name="end_date"  id="end_date" value="{{ $TimesAbsence->end_date }}">
+                                </div>
+                              </div>
+                              <div class="card-footer">
+                                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                              </div>
+                            </form>
+                          </x-adminlte-modal>
                         </td>
                       </tr>
                       @empty
@@ -112,8 +149,8 @@
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="START_DATE">Start date</label>
-                      <input type="date" class="form-control" name="START_DATE"  id="START_DATE" >
+                      <label for="start_date">Start date</label>
+                      <input type="date" class="form-control" name="start_date"  id="start_date" >
                     </div>
                     <div class="form-group">
                       <label for="end_date">End date</label>
@@ -162,10 +199,42 @@
                         </td>
                         <td>{{ $TimesBanckHoliday->date }}</td>
                         <td>{{ $TimesBanckHoliday->label }}</td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                          </div>
+                        <td class=" py-0 align-middle">
+                          <!-- Button Modal -->
+                          <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#TimesBanckHoliday{{ $TimesBanckHoliday->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $TimesBanckHoliday->id }} -->
+                          <x-adminlte-modal id="TimesBanckHoliday{{ $TimesBanckHoliday->id }}" title="Update {{ $TimesBanckHoliday->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                            <form method="POST" action="{{ route('times.banckholiday.update', ['id' => $TimesBanckHoliday->id]) }}" enctype="multipart/form-data">
+                              @csrf
+                              <div class="card-body">
+                                <div class="form-group">
+                                  <label for="label">Label</label>
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $TimesBanckHoliday->label }}">
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="fixed">Fixed</label>
+                                  <select class="form-control" name="fixed" id="fixed">
+                                      <option value="2" @if($TimesBanckHoliday->fixed == 2 ) Selected @endif>No</option>
+                                      <option value="1" @if($TimesBanckHoliday->fixed == 1 ) Selected @endif>Yes</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="date">Date</label>
+                                  <input type="date" class="form-control" name="date"  id="date" value="{{ $TimesBanckHoliday->date }}">
+                                </div>
+                              </div>
+                              <div class="card-footer">
+                                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                              </div>
+                            </form>
+                          </x-adminlte-modal>
                         </td>
                       </tr>
                       @empty
@@ -259,10 +328,59 @@
                           @if($TimesImproductTime->mask_time  == 1)Yes @endif
                           @if($TimesImproductTime->mask_time  == 2)No @endif
                         </td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                          </div>
+                        <td class=" py-0 align-middle">
+                          <!-- Button Modal -->
+                          <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#TimesImproductTime{{ $TimesImproductTime->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $TimesImproductTime->id }} -->
+                          <x-adminlte-modal id="TimesImproductTime{{ $TimesImproductTime->id }}" title="Update {{ $TimesImproductTime->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                            <form method="POST" action="{{ route('times.improducttime.update', ['id' => $TimesImproductTime->id]) }}" enctype="multipart/form-data">
+                              @csrf
+                              <div class="card-body">
+                                <div class="form-group">
+                                  <label for="label">Label</label>
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $TimesImproductTime->label }}">
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="times_machine_events_id">Machine status</label>
+                                  <select class="form-control" name="times_machine_events_id" id="times_machine_events_id">
+                                      @foreach ($TimesMachineEventsSelect as $item)
+                                      <option value="{{ $item->id }}" @if($TimesImproductTime->times_machine_events_id == $item->id ) Selected @endif>{{ $item->label }}</option>
+                                      @endforeach
+                                    </select>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="resources_required">Ressource required</label>
+                                  <select class="form-control" name="resources_required" id="resources_required">
+                                      <option value="2" @if($TimesImproductTime->resources_required == 2 ) Selected @endif>No</option>
+                                      <option value="1" @if($TimesImproductTime->resources_required == 1 ) Selected @endif>Yes</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="mask_time">Mask time</label>
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text"><i class="fas fa-user-times"></i></span>
+                                    </div>
+                                    <select class="form-control" name="mask_time" id="mask_time">
+                                        <option value="2" @if($TimesImproductTime->mask_time == 2 ) Selected @endif>No</option>
+                                        <option value="1" @if($TimesImproductTime->mask_time == 1 ) Selected @endif>Yes</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="card-footer">
+                                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                              </div>
+                            </form>
+                          </x-adminlte-modal>
                         </td>
                       </tr>
                       @empty
@@ -294,12 +412,12 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                         </div>
-                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                        <input type="text" class="form-control" name="label"  id="label" placeholder="Label" >
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="MACHINE_statuS">Machine status</label>
-                      <select class="form-control" name="MACHINE_statuS" id="MACHINE_statuS">
+                      <label for="times_machine_events_id">Machine status</label>
+                      <select class="form-control" name="times_machine_events_id" id="times_machine_events_id">
                           @foreach ($TimesMachineEventsSelect as $item)
                           <option value="{{ $item->id }}">{{ $item->label }}</option>
                           @endforeach
@@ -372,17 +490,72 @@
                           @if($TimesMachineEvent->mask_time  == 1)Yes @endif
                           @if($TimesMachineEvent->mask_time  == 2)No @endif
                         </td>
-                        <td>{{ $TimesMachineEvent->color }}</td>
+                        <td><input type="color" class="form-control"  name="color" id="color" value="{{ $TimesMachineEvent->color }}"></td>
                         <td>
-                          @if($TimesMachineEvent->ETAT  == 1)Stop @endif
-                          @if($TimesMachineEvent->ETAT  == 2)Setup @endif
-                          @if($TimesMachineEvent->ETAT  == 3)Run @endif
-                          @if($TimesMachineEvent->ETAT  == 4)Off @endif
+                          @if($TimesMachineEvent->etat  == 1)Stop @endif
+                          @if($TimesMachineEvent->etat  == 2)Setup @endif
+                          @if($TimesMachineEvent->etat  == 3)Run @endif
+                          @if($TimesMachineEvent->etat  == 4)Off @endif
                         </td>
-                        <td class="text-right py-0 align-middle">
-                          <div class="btn-group btn-group-sm">
-                            <a href="#" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                          </div>
+                        <td class=" py-0 align-middle">
+                          <!-- Button Modal -->
+                          <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#TimesMachineEvent{{ $TimesMachineEvent->id }}">
+                            <i class="fa fa-lg fa-fw  fa-edit"></i>
+                          </button>
+                          <!-- Modal {{ $TimesMachineEvent->id }} -->
+                          <x-adminlte-modal id="TimesMachineEvent{{ $TimesMachineEvent->id }}" title="Update {{ $TimesMachineEvent->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                            <form method="POST" action="{{ route('times.machineevent.update', ['id' => $TimesMachineEvent->id]) }}" enctype="multipart/form-data">
+                              @csrf
+                              <div class="card-body">
+                                <div class="form-group">
+                                  <label for="ordre">Sort order:</label>
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                                    </div>
+                                    <input type="number" class="form-control" name="ordre" id="ordre" placeholder="10" value="{{ $TimesMachineEvent->ordre }}">
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="label">Label</label>
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $TimesMachineEvent->label }}">
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="mask_time">Mask time</label>
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text"><i class="fas fa-user-times"></i></span>
+                                    </div>
+                                    <select class="form-control" name="mask_time" id="mask_time">
+                                        <option value="2"  @if($TimesMachineEvent->mask_time == 2 ) Selected @endif>No</option>
+                                        <option value="1"  @if($TimesMachineEvent->mask_time == 1 ) Selected @endif>Yes</option>
+                                    </select>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="color">Color</label>
+                                  <input type="color" class="form-control"  name="color" id="color" value="{{ $TimesMachineEvent->color }}">
+                                </div>
+                                <div class="form-group">
+                                  <label for="etat">Status</label>
+                                  <select class="form-control" name="etat" id="etat">
+                                      <option value="1" @if($TimesMachineEvent->etat == 1 ) Selected @endif>Stop</option>
+                                      <option value="2" @if($TimesMachineEvent->etat == 2 ) Selected @endif>Setup</option>
+                                      <option value="3" @if($TimesMachineEvent->etat == 3 ) Selected @endif>Run</option>
+                                      <option value="4" @if($TimesMachineEvent->etat == 4 ) Selected @endif>Off</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="card-footer">
+                                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                              </div>
+                            </form>
+                          </x-adminlte-modal>
                         </td>
                       </tr>
                       @empty
@@ -454,8 +627,8 @@
                       <input type="color" class="form-control"  name="color" id="color" >
                     </div>
                     <div class="form-group">
-                      <label for="ETAT">Status</label>
-                      <select class="form-control" name="ETAT" id="ETAT">
+                      <label for="etat">Status</label>
+                      <select class="form-control" name="etat" id="etat">
                           <option value="1">Stop</option>
                           <option value="2">Setup</option>
                           <option value="3">Run</option>

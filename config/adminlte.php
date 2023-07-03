@@ -451,13 +451,11 @@ return [
             'url'  => 'quality',
         ],
         ['header' => 'settings_trans_key'],
-        /* 
         [
             'text' => 'Setting times',
             'icon'    => 'fas fa-user-clock',
             'url'  => 'times',
         ],
-        */
         [
             'text' => 'methods_trans_key',
             'icon'   => 'fas fa-cogs',

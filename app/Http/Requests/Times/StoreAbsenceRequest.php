@@ -25,7 +25,7 @@ class StoreAbsenceRequest extends FormRequest
     {
         return [
             //
-            'START_DATE'=>'required',
+            'start_date'=>'required',
             'end_date'=>'required',
         ];
     }

@@ -13,7 +13,7 @@ class UpdateBanckHolidayRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,6 +25,8 @@ class UpdateBanckHolidayRequest extends FormRequest
     {
         return [
             //
+            'date' =>'required|unique:times_banck_holidays',
+            'label'=>'required',
         ];
     }
 }

@@ -136,9 +136,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->middleware(['auth'])->name('times');
         //tab
         Route::post('/Absence/create', 'App\Http\Controllers\Times\AbsenceController@store')->middleware(['auth'])->name('times.absence.create');
+        Route::post('/Absence/edit/{id}', 'App\Http\Controllers\Times\AbsenceController@update')->middleware(['auth'])->name('times.absence.update');
         Route::post('/BanckHoliday/create', 'App\Http\Controllers\Times\BanckHolidayController@store')->middleware(['auth'])->name('times.banckholiday.create');
+        Route::post('/BanckHoliday/edit/{id}', 'App\Http\Controllers\Times\BanckHolidayController@update')->middleware(['auth'])->name('times.banckholiday.update');
         Route::post('/ImproductTime/create', 'App\Http\Controllers\Times\ImproductTimeController@store')->middleware(['auth'])->name('times.improducttime.create');
+        Route::post('/ImproductTime/edit/{id}', 'App\Http\Controllers\Times\ImproductTimeController@update')->middleware(['auth'])->name('times.improducttime.update');
         Route::post('/MachineEvent/create', 'App\Http\Controllers\Times\MachineEventController@store')->middleware(['auth'])->name('times.machineevent.create');
+        Route::post('/MachineEvent/edit/{id}', 'App\Http\Controllers\Times\MachineEventController@update')->middleware(['auth'])->name('times.machineevent.update');
     });
 
     Route::group(['prefix' => 'products'], function () {
