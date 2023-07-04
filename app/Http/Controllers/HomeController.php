@@ -8,6 +8,7 @@ use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
+use App\Models\Admin\Announcement;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use App\Models\Admin\EstimatedBudgets;
@@ -27,6 +28,8 @@ class HomeController extends Controller
         if(!$Factory){
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
+
+        $Announcement = Announcement::latest()->first();
 
         //use for liste of tasks
         $ServiceGoals = MethodsServices::withCount(['Tasks', 'Tasks' => function ($query) {
@@ -134,9 +137,7 @@ class HomeController extends Controller
                                     ->orwhere('delivery_status', '=', 2)
                                     ->whereYear('created_at', $CurentYear)
                                     ->get();
-
         
-
         //Estimated Budgets data for chart
         $data['estimatedBudget'] = EstimatedBudgets::where('year', $CurentYear)->get();
         if(count($data['estimatedBudget']) == 0){
@@ -159,6 +160,7 @@ class HomeController extends Controller
 
         return view('dashboard', [
             'Factory' => $Factory,
+            'Announcement' => $Announcement,
             'LastProducts' => $LastProducts,
             'LastQuotes' => $LastQuotes,
             'LastOrders' =>  $LastOrders,

@@ -7,6 +7,7 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\Leads;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Models\Admin\Announcement;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
@@ -119,6 +120,11 @@ class User extends Authenticatable
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function Announcement()
+    {
+        return $this->hasMany(Announcement::class);
     }
 
     public function companie()

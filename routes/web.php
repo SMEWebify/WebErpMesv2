@@ -192,6 +192,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'admin'], function () {
+        
+        Route::post('/factory/announcement/create', 'App\Http\Controllers\Admin\FactoryController@storeAnnouncement')->middleware(['auth'])->name('admin.factory.announcement.create');
+        Route::get('/factory/announcement/delete/{id}', 'App\Http\Controllers\Admin\FactoryController@deleteAnnouncement')->middleware(['auth'])->name('admin.factory.announcement.delete');
         Route::post('/factory/update', 'App\Http\Controllers\Admin\FactoryController@update')->middleware(['auth'])->name('admin.factory.update');
         Route::get('/factory', 'App\Http\Controllers\Admin\FactoryController@index')->middleware(['auth'])->name('admin.factory');
     });

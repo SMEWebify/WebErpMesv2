@@ -58,7 +58,7 @@ class Orders extends Model
         return $this->belongsTo(CompaniesAddresses::class, 'companies_addresses_id');
     }
 
-        // Relationship with the user associated with the order
+    // Relationship with the user associated with the order
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');

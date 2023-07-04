@@ -11,6 +11,7 @@
     <div class="card-header p-2">
         <ul class="nav nav-pills">
             <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Factory settings</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Announcement" data-toggle="tab">Announcement</a></li>
             <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Workflow settings</a></li>
             <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">Estimated Budget</a></li>
             <li class="nav-item"><a class="nav-link" href="#CustomerImport" data-toggle="tab">Customer Import</a></li>
@@ -506,17 +507,17 @@
                                 <img src="{{ asset('/images/factory/'. $Factory->picture) }}" alt="Product Image">
                             </div>
                             @endif
-                                    <div class="row">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="far fa-image"></i></span>
-                                            </div>
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" name="picture" id="picture">
-                                                <label class="custom-file-label" for="picture">Choose file  (peg,png,jpg,gif,svg | max: 10 240 Ko)</label>
-                                            </div>
-                                        </div>
+                            <div class="row">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="far fa-image"></i></span>
                                     </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="picture" id="picture">
+                                        <label class="custom-file-label" for="picture">Choose file  (peg,png,jpg,gif,svg | max: 10 240 Ko)</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>  
                     <div class="card card-secondary">
@@ -556,6 +557,76 @@
                         <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
                     </div>
                 </form>
+            </div>
+            <div class="tab-pane " id="Announcement">
+                @include('include.alert-result')
+                <form method="POST" action="{{ route('admin.factory.announcement.create') }}" enctype="multipart/form-data">
+                @csrf
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title">Make an announcement</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <label for="title">Title</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="title"  id="title" placeholder="Title">
+                                    </div>
+                                </div>
+                                <div class="col-9">
+                                    <x-FormTextareaComment  comment="..." />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                        </div>
+                    </div>
+                </form>
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Announcement list</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Text</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($AnnouncementLines as $AnnouncementLine)
+                                    <tr>
+                                        <td>{{ $AnnouncementLine->title }}</td>
+                                        <td>{{ $AnnouncementLine->comment }}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ route('admin.factory.announcement.delete', ['id' => $AnnouncementLine->id])}}" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                        <x-EmptyDataLine col="3" text="No line found ..."  />
+                                    @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Text</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="tab-pane " id="Kanban">
                 <x-InfocalloutComponent note="The first line will be used for the default status of new tasks. The last line is used for finished task, ready for delivery note"  />

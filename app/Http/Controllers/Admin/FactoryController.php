@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Factory;
+use App\Models\Admin\Announcement;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Accounting\AccountingVat;
 use App\Http\Requests\Admin\UpdateFactoryRequest;
+use App\Http\Requests\Admin\StoreAnnouncementRequest;
 
 class FactoryController extends Controller
 {
@@ -14,11 +17,13 @@ class FactoryController extends Controller
      */
     public function index()
     {
+        $AnnouncementLines = Announcement::get()->All();
         $VATSelect  =  AccountingVat::select('id', 'label')->orderBy('rate')->get();
         $Factory  =  Factory::firstOrCreate(
                                     ['id' =>'1',],
                                 );
                         return view('admin/factory-index', [
+                            'AnnouncementLines' => $AnnouncementLines,
                             'VATSelect' => $VATSelect,
                             'Factory' => $Factory,
                         ]);
@@ -66,4 +71,33 @@ class FactoryController extends Controller
 
         return redirect()->route('admin.factory')->with('success', 'Successfully updated factory inforamations');
     }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function storeAnnouncement(StoreAnnouncementRequest $request)
+    {
+        // Create Line
+        $AnnouncementCreated = Announcement::create([
+                                                    'title'=>$request->title,  
+                                                    'user_id'=>Auth::id(),    
+                                                    'comment'=>$request->comment, 
+                                                    ]);
+
+        return redirect()->route('admin.factory')->with('success', 'Successfully add announcement');
+    }
+
+    /**
+     * @param id $id
+     * @return View
+     */
+    public function deleteAnnouncement($id)
+    {
+        // Delete Line
+        $AnnouncementDelete= Announcement::where('id', $id)->delete();
+
+        return redirect()->route('admin.factory')->with('success', 'Successfully delete announcement');
+    }
+    
 }

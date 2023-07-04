@@ -48,7 +48,9 @@ return [
     'no_order_trans_key'                       => 'Pas de commande, allez sur la page de commande pour ajouter une commande',
     'latest_products_trans_key'                => 'Articles récemment ajoutés',
     'no_product_trans_key'                     => 'Aucun produit, accédez à la page du produit pour ajouter un article',
-
+    'announcement_trans_key'                   => 'Annonces',
+    'order_to_be_delivered_trans_key'          => 'Commandes à livrée(s)',
+    
     'companies_trans_key'                      => 'Companies',
 
     'quote_trans_key'                          => 'Quote',

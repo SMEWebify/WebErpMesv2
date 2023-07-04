@@ -48,6 +48,8 @@ return [
     'no_order_trans_key'                       => 'No order, go order page for add order',
     'latest_products_trans_key'                => 'Recently Added Products',
     'no_product_trans_key'                     => 'No product, go product page for add item',
+    'announcement_trans_key'                   => 'Announcement',
+    'order_to_be_delivered_trans_key'          => 'Order to be delivered',
 
     'companies_trans_key'                      => 'Companies',
 

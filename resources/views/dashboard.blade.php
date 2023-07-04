@@ -67,30 +67,51 @@
   <!-- /.row -->
 
   <div class="row">
-    <div class="col-md-12">
+    <!-- TABLE: ANNOUNCEMENT -->
+    <div class="col-md-4">
+      <div class="card bg-gradient-primary">
+        <div class="card-header border-transparent">
+          <h3 class="card-title">{{ __('general_content.announcement_trans_key') }}</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body ">
+          <h2><i class="icon fas fa-info"></i> {{ $Announcement->title ?? 'No announcement' }}</h2>
+            {{ optional($Announcement)->GetPrettyCreatedAttribute() }} by {{ optional($Announcement)->UserManagement['name'] ?? 'Nobody'  }}
+            <div class="bg-primary disabled color-palette">
+              <h5>{!! nl2br(htmlspecialchars(optional($Announcement)->comment, ENT_NOQUOTES)) ?? 'No announcement' !!}</h5>
+            </div>       
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.col -->
+
+    <div class="col-md-6">
       <div class="card">
         <div class="card-header">
-          <div class="row">
-            <div class="col-md-8">
-              <h5 class="card-title">{{ __('general_content.monthly_recap_report_trans_key') }}</h5>
-            </div>
-            <div class="col-md-4">
-              <h5 class="card-title">{{ __('general_content.monthly_recap_task_trans_key') }}</h5>
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
+          <h5 class="card-title">{{ __('general_content.monthly_recap_report_trans_key') }}</h5>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
         </div>
         <!-- /.card-header -->
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
               <p class="text-center">
                 <strong>{{ __('general_content.sales_period_trans_key', ['year' => now()->year]) }}</strong>
               </p>
@@ -101,8 +122,73 @@
               <!-- /.chart-responsive -->
             </div>
             <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- ./card-body -->
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-sm-3 col-1">
+              <div class="description-block border-right">
+                <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
+                <h5 class="description-header">{{ $orderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
+                <span class="description-text">{{ __('general_content.total_order_forcasted_trans_key') }}</span>
+              </div>
+              <!-- /.description-block -->
+          </div>
+          <!-- /.col -->
+            <div class="col-sm-3 col-1">
+              <div class="description-block border-right">
+                <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
+                <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
+                <span class="description-text">{{ __('general_content.total_order_delivered_trans_key') }}</span>
+              </div>
+              <!-- /.description-block -->
+            </div>
             <!-- /.col -->
-            <div class="col-md-1 border-left">
+            <div class="col-sm-3 col-1">
+              <div class="description-block border-right">
+                <!--<<span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>-->
+                <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
+                <span class="description-text">{{ __('general_content.total_invoiced_trans_key') }}</span>
+              </div>
+              <!-- /.description-block -->
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-3 col-1">
+              <div class="description-block">
+                <!--<span class="description-percentage text-danger"><i class="fas fa-caret-down"></i></span>-->
+                <h5 class="description-header"> {{ $OrderTotalRevenue[0]->orderTotalRevenue }}  /{{ $EstimatedBudgets }} ({{ round($OrderTotalRevenue[0]->orderTotalRevenue / $EstimatedBudgets *100,2)}} %)</h5>
+                <span class="description-text">{{ __('general_content.goal_trans_key') }}</span>
+              </div>
+              <!-- /.description-block -->
+            </div>
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.card-footer -->
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.col-md-6" -->
+
+    <div class="col-md-2">
+      <div class="card ">
+        <div class="card-header">
+          <h5 class="card-title">{{ __('general_content.order_to_be_delivered_trans_key') }}</h5>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
               <p class="text-center">
                 <strong><i class="icon fas fa-ban"></i> {{ __('general_content.incoming_orders_trans_key') }}</strong>
               </p>
@@ -124,7 +210,7 @@
               @endif
             </div>
             <!-- /.col -->
-            <div class="col-md-1 border-left">
+            <div class="col-md-6 border-left">
               <p class="text-center">
                 <strong><i class="icon fas fa-ban"></i> {{ __('general_content.late_orders_trans_key') }}</strong>
               </p>
@@ -146,95 +232,17 @@
               @endif
             </div>
             <!-- /.col -->
-            <div class="col-md-4 card">
-              <p class="text-center">
-                <strong>{{ __('general_content.goal_task_trans_key') }}</strong>
-              </p>
-              @forelse ($ServiceGoals as $ServiceGoal)
-              <div class="progress-group">
-                {{ $ServiceGoal->label }}
-                <span class="float-right">{{ $ServiceGoal->tasks_count }}</span>
-                <div class="progress progress-sm">
-                  @php
-                  foreach($Tasks as $Task){
-                  if($Task->methods_id == $ServiceGoal->id){
-                    $width = 100/($ServiceGoal->tasks_count/ $Task->total_task);
-                    
-                    if($Task->title ==  __('general_content.open_trans_key') ){ $class = 'bg-danger';}
-                    elseif($Task->title ==  __('general_content.started_trans_key') ){ $class = 'bg-warning';}
-                    elseif($Task->title ==  __('general_content.in_progress_trans_key') ){ $class = 'bg-primary';}
-                    elseif($Task->title ==  __('general_content.finished_trans_key') ){ $class = 'bg-success';}
-                    else{ $class = 'bg-info';}
-                    echo '<div class="progress-bar '.   $class  .'" style="width: '.  $width  .'%">'. $Task->title .' - '. $Task->total_task .'</div>' ;
-                  }
-                }
-                @endphp
-                </div>
-              </div>
-              <!-- /.progress-group -->
-              @empty
-              <div class="progress-group">
-                {{ __('general_content.no_task_trans_key') }}
-              </div>
-              <!-- /.progress-group -->
-              @endforelse
-            </div>
-            <!-- /.col -->
-            
           </div>
           <!-- /.row -->
         </div>
-        <!-- ./card-body -->
-        <div class="card-footer">
-          <div class="row">
-            <div class="col-sm-3 col-6">
-              <div class="description-block border-right">
-                <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
-                <h5 class="description-header">{{ $orderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
-                <span class="description-text">{{ __('general_content.total_order_forcasted_trans_key') }}</span>
-              </div>
-              <!-- /.description-block -->
-          </div>
-          <!-- /.col -->
-            <div class="col-sm-3 col-6">
-              <div class="description-block border-right">
-                <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
-                <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
-                <span class="description-text">{{ __('general_content.total_order_delivered_trans_key') }}</span>
-              </div>
-              <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-3 col-6">
-              <div class="description-block border-right">
-                <!--<<span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>-->
-                <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
-                <span class="description-text">{{ __('general_content.total_invoiced_trans_key') }}</span>
-              </div>
-              <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-3 col-6">
-              <div class="description-block">
-                <!--<span class="description-percentage text-danger"><i class="fas fa-caret-down"></i></span>-->
-                {{ round($OrderTotalRevenue[0]->orderTotalRevenue / $EstimatedBudgets *100,2)}} %
-                <h5 class="description-header"> {{ $OrderTotalRevenue[0]->orderTotalRevenue }}  /{{ $EstimatedBudgets }}</h5>
-                <span class="description-text">{{ __('general_content.goal_trans_key') }}</span>
-              </div>
-              <!-- /.description-block -->
-            </div>
-          </div>
-          <!-- /.row -->
-        </div>
-        <!-- /.card-footer -->
+        <!-- /.card-body -->
       </div>
       <!-- /.card -->
     </div>
-    <!-- /.col -->
+    <!-- /.col-md-2 -->
   </div>
   <!-- /.row -->
 
-  <!-- Main row -->
   <div class="row">
     <div class="col-md-4">
       <div class="card">
@@ -252,9 +260,9 @@
         <!-- /.card-header -->
         <div class="card-body">
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="chart-responsive">
-                <canvas id="QuoteRate"  style="min-height: 310px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
+                <canvas id="QuoteRate"  style="min-height: 350px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
               </div>
               <!-- ./chart-responsive -->
             </div>
@@ -265,11 +273,12 @@
         <!-- /.card-body -->
       </div>
       <!-- /.card -->
-    </div>
+  </div>
+  <!-- /.row -->
 
-  <div class="col-md-8">
-    <!-- TABLE: LATEST ORDERS -->
-    <div class="card">
+  <div class="col-md-4">
+    <!-- TABLE: LATEST QUOTES -->
+    <div class="card  bg-gradient-success">
       <div class="card-header border-transparent">
         <h3 class="card-title">{{ __('general_content.latest_quotes_trans_key') }}</h3>
         <div class="card-tools">
@@ -336,16 +345,89 @@
     <!-- /.card -->
   </div>
   <!-- /.col -->
+   <!-- TABLE: LATEST ORDERS -->
+   <div class="col-md-4">
+    <div class="card  bg-gradient-info">
+      <div class="card-header border-transparent">
+        <h3 class="card-title">{{ __('general_content.latest_orders_trans_key') }}</h3>
+        <div class="card-tools">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button type="button" class="btn btn-tool" data-card-widget="remove">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table m-0">
+            <thead>
+            <tr>
+              <th>{{ __('general_content.id_trans_key') }}</th>
+              <th>{{ __('general_content.customer_trans_key') }}</th>
+              <th>{{ __('general_content.status_trans_key') }}</th>
+              <th>{{ __('general_content.total_price_trans_key') }}</th>
+              <th>{{ __('general_content.created_at_trans_key') }}</th>
+              <th>{{ __('general_content.assigned_trans_key') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+              @forelse ($LastOrders as $LastOrder)
+              <tr>
+                <td>
+                  <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
+                <td>
+                  @if($LastOrder->type == 1 )
+                  <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
+                  @else
+                  {{ __('general_content.internal_order_trans_key') }}
+                  @endif
+                </td>
+                <td>
+                  @if(1 == $LastOrder->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
+                  @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
+                  @if(3 == $LastOrder->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
+                  @if(4 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
+                </td>
+                <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
+                <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
+                <td>{{ $LastOrder->UserManagement['name'] }}</td>
+              </tr>
+              <!-- /.item -->
+              @empty
+            <tr>
+              <td colspan="4">{{ __('general_content.no_order_trans_key') }}</td>
+            </tr>
+            @endforelse
+            </tbody>
+          </table>
+        </div>
+        <!-- /.table-responsive -->
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <a href="{{ route('orders') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
+      </div>
+      <!-- /.card-footer -->
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.col -->
 </div>
 <!-- /.row -->
 
   <!-- Main row -->
   <div class="row">
-    <div class="col-md-8">
-      <!-- TABLE: LATEST ORDERS -->
+    
+   
+
+    <!-- SERVICE GOAL -->
+    <div class="col-md-4">
       <div class="card">
-        <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.latest_orders_trans_key') }}</h3>
+        <div class="card-header">
+          <h5 class="card-title">{{ __('general_content.goal_task_trans_key') }}</h5>
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
@@ -356,61 +438,49 @@
           </div>
         </div>
         <!-- /.card-header -->
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table m-0">
-              <thead>
-              <tr>
-                <th>{{ __('general_content.id_trans_key') }}</th>
-                <th>{{ __('general_content.customer_trans_key') }}</th>
-                <th>{{ __('general_content.status_trans_key') }}</th>
-                <th>{{ __('general_content.total_price_trans_key') }}</th>
-                <th>{{ __('general_content.created_at_trans_key') }}</th>
-                <th>{{ __('general_content.assigned_trans_key') }}</th>
-              </tr>
-              </thead>
-              <tbody>
-                @forelse ($LastOrders as $LastOrder)
-                <tr>
-                  <td>
-                    <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
-                  <td>
-                    @if($LastOrder->type == 1 )
-                    <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
-                    @else
-                    {{ __('general_content.internal_order_trans_key') }}
-                    @endif
-                  </td>
-                  <td>
-                    @if(1 == $LastOrder->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
-                    @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                    @if(3 == $LastOrder->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
-                    @if(4 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
-                  </td>
-                  <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
-                  <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
-                  <td>{{ $LastOrder->UserManagement['name'] }}</td>
-                </tr>
-                <!-- /.item -->
-                @empty
-              <tr>
-                <td colspan="4">{{ __('general_content.no_order_trans_key') }}</td>
-              </tr>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12 card">
+              @forelse ($ServiceGoals as $ServiceGoal)
+              <div class="progress-group">
+                {{ $ServiceGoal->label }}
+                <span class="float-right">{{ $ServiceGoal->tasks_count }}</span>
+                <div class="progress progress-sm">
+                  @php
+                  foreach($Tasks as $Task){
+                  if($Task->methods_id == $ServiceGoal->id){
+                    $width = 100/($ServiceGoal->tasks_count/ $Task->total_task);
+                    
+                    if($Task->title ==  __('general_content.open_trans_key') ){ $class = 'bg-danger';}
+                    elseif($Task->title ==  __('general_content.started_trans_key') ){ $class = 'bg-warning';}
+                    elseif($Task->title ==  __('general_content.in_progress_trans_key') ){ $class = 'bg-primary';}
+                    elseif($Task->title ==  __('general_content.finished_trans_key') ){ $class = 'bg-success';}
+                    else{ $class = 'bg-info';}
+                    echo '<div class="progress-bar '.   $class  .'" style="width: '.  $width  .'%">'. $Task->title .' - '. $Task->total_task .'</div>' ;
+                  }
+                }
+                @endphp
+                </div>
+              </div>
+              <!-- /.progress-group -->
+              @empty
+              <div class="progress-group">
+                {{ __('general_content.no_task_trans_key') }}
+              </div>
+              <!-- /.progress-group -->
               @endforelse
-              </tbody>
-            </table>
+            </div>
+            <!-- /.col -->
           </div>
-          <!-- /.table-responsive -->
+          <!-- /.row -->
         </div>
         <!-- /.card-body -->
-        <div class="card-footer clearfix">
-          <a href="{{ route('orders') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
-        </div>
-        <!-- /.card-footer -->
       </div>
       <!-- /.card -->
     </div>
-    <!-- /.col -->
+    <!-- /.col-md-4 -->
+
+
 
     <!-- PRODUCT LIST -->
     <div class="col-md-4">
@@ -456,7 +526,7 @@
           </ul>
         </div>
         <!-- /.card-body -->
-        <div class="card-footer text-center">
+        <div class="card-footer clearfix">
             <a href="{{ route('products') }}" class="btn btn-sm btn-secondary">{{ __('general_content.view_all_trans_key') }}</a>
           </div>
         </div>
