@@ -38,7 +38,8 @@ for run to production, follow this link :  [wiki page (install to run)](https://
   
 -----------------
 Dashboard
-![image](https://user-images.githubusercontent.com/75578469/164035450-16391d88-1724-4bfa-ab25-bd5528f9f690.png)
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/50e4186b-678b-451c-a70b-839bd300e227)
+
 
 
 Quote & Order management with task
