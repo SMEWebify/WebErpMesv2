@@ -38,7 +38,7 @@ for run to production, follow this link :  [wiki page (install to run)](https://
   
 -----------------
 Dashboard
-![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/50e4186b-678b-451c-a70b-839bd300e227)
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/07840f20-081d-47d3-b892-14f86b5ecc44)
 
 
 
