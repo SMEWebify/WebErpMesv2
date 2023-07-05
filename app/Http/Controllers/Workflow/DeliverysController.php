@@ -28,14 +28,14 @@ class DeliverysController extends Controller
                                     ->get();
         //Delivery data for chart
         $data['deliveryMonthlyRecap'] = DB::table('delivery_lines')
-                                                            ->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
-                                                            ->selectRaw('
-                                                                MONTH(delivery_lines.created_at) AS month,
-                                                                SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS orderSum
-                                                            ')
-                                                            ->whereYear('delivery_lines.created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(delivery_lines.created_at) ')
-                                                            ->get();
+                                    ->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
+                                    ->selectRaw('
+                                        MONTH(delivery_lines.created_at) AS month,
+                                        SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS orderSum
+                                    ')
+                                    ->whereYear('delivery_lines.created_at', $CurentYear)
+                                    ->groupByRaw('MONTH(delivery_lines.created_at) ')
+                                    ->get();
 
         return view('workflow/deliverys-index')->with('data',$data);
     }

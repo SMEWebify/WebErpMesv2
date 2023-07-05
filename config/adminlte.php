@@ -463,13 +463,13 @@ return [
         ],
         [
             'text' => 'accouting_trans_key',
-            'icon'    => 'fas fa-piggy-bank',
+            'icon' => 'fas fa-piggy-bank',
             'url'  => 'accouting',
         ],
         [
-            'text'        => 'users_trans_key',
-            'url'         => 'users',
-            'icon'        => 'fas fa-users',
+            'text'     => 'users_trans_key',
+            'url'      => 'users',
+            'icon'     => 'fas fa-users',
         ],
         [
             'text' => 'your_company_trans_key',
@@ -480,7 +480,12 @@ return [
         [
             'text' => 'licence_trans_key',
             'url'  => 'licence',
-            'icon'    => 'nav-icon fas fa-file-contract',
+            'icon' => 'nav-icon fas fa-file-contract',
+        ],
+        [
+            'text' => 'release_note_trans_key',
+            'url'  => 'https://github.com/SMEWebify/WebErpMesv2/releases',
+            'icon' => 'nav-icon fas fa-file-contract',
         ],
     ],
 

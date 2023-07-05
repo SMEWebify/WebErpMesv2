@@ -50,6 +50,9 @@ return [
     'no_product_trans_key'                     => 'No product, go product page for add item',
     'announcement_trans_key'                   => 'Announcement',
     'order_to_be_delivered_trans_key'          => 'Order to be delivered',
+    'delivered_month_in_progress_trans_key'    => 'Total Delivered for the month',
+    'remaining_month_trans_key'                => 'Total remaining to deliver',
+    
 
     'companies_trans_key'                      => 'Companies',
 
@@ -110,7 +113,7 @@ return [
     'users_trans_key'                          => 'Users',
     'your_company_trans_key'                   => 'Your company',
     'licence_trans_key'                        => 'Licence',
-
-
+    'release_note_trans_key'                   => 'Release notes',
+    
     'search_results_trans_key'                 => 'Search results',
 ];

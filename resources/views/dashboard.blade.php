@@ -71,7 +71,9 @@
     <div class="col-md-4">
       <div class="card bg-gradient-primary">
         <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.announcement_trans_key') }}</h3>
+          <h3 class="card-title">{{ __('general_content.announcement_trans_key') }} 
+            {{ optional($Announcement)->GetPrettyCreatedAttribute() }} by {{ optional($Announcement)->UserManagement['name'] ?? 'Nobody'  }}
+          </h3> 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
@@ -84,7 +86,6 @@
         <!-- /.card-header -->
         <div class="card-body ">
           <h2><i class="icon fas fa-info"></i> {{ $Announcement->title ?? 'No announcement' }}</h2>
-            {{ optional($Announcement)->GetPrettyCreatedAttribute() }} by {{ optional($Announcement)->UserManagement['name'] ?? 'Nobody'  }}
             <div class="bg-primary disabled color-palette">
               <h5>{!! nl2br(htmlspecialchars(optional($Announcement)->comment, ENT_NOQUOTES)) ?? 'No announcement' !!}</h5>
             </div>       
@@ -203,11 +204,7 @@
               </div>
               <!-- /.progress-group -->
               @endforelse
-              @if ($incomingOrdersCount >= 1)
-              <div class="small-box bg-warning">
-                <a href="{{ route('orders') }}" class="small-box-footer">+ {{ $incomingOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-              @endif
+              
             </div>
             <!-- /.col -->
             <div class="col-md-6 border-left">
@@ -225,6 +222,24 @@
               </div>
               <!-- /.progress-group -->
               @endforelse
+              
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-md-6 border-left">
+              @if ($incomingOrdersCount >= 1)
+              <div class="small-box bg-warning">
+                <a href="{{ route('orders') }}" class="small-box-footer">+ {{ $incomingOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+              @endif
+            </div>
+            <!-- /.col -->
+            <div class="col-md-6 border-left">
               @if ($LateOrdersCount >= 1)
               <div class="small-box bg-danger">
                 <a href="{{ route('orders') }}" class="small-box-footer">+ {{ $LateOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
@@ -235,7 +250,7 @@
           </div>
           <!-- /.row -->
         </div>
-        <!-- /.card-body -->
+        <!-- /.card-footer -->
       </div>
       <!-- /.card -->
     </div>
@@ -480,7 +495,48 @@
     </div>
     <!-- /.col-md-4 -->
 
-
+    <!-- TABLE: DELIVERED -->
+    <div class="col-md-4">
+      <div class="card bg-gradient-warning">
+        <div class="card-header border-transparent">
+          <h3 class="card-title">{{ __('general_content.delivered_month_in_progress_trans_key') }}</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body ">
+          <h1><i class="icon fas fa-info"></i> {{ $data['delivered_month_in_progress'][0]->orderSum }} {{ $Factory->curency }}</h1>    
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+      <div class="card bg-gradient-danger">
+        <div class="card-header border-transparent">
+          <h3 class="card-title">{{ __('general_content.remaining_month_trans_key') }}</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body ">
+          <h1><i class="icon fas fa-info"></i> {{ $data['remaining_order'][0]->orderSum-$data['delivered_month_in_progress'][0]->orderSum  }} {{ $Factory->curency }}</h1>    
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.col -->
 
     <!-- PRODUCT LIST -->
     <div class="col-md-4">

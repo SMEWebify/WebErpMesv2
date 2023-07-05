@@ -22,6 +22,7 @@ class HomeController extends Controller
     public function index()
     {
         $CurentYear = Carbon::now()->format('Y');
+        $CurentMonth = Carbon::now()->format('m');
 
         //DB information mustn't be empty.
         $Factory = Factory::first();
@@ -103,7 +104,18 @@ class HomeController extends Controller
         $data['orders_count'] = DB::table('orders')->count();
         $data['quality_non_conformities_count'] = DB::table('quality_non_conformities')->count();
         $data['user_count'] = DB::table('users')->count();
-        
+        $data['delivered_month_in_progress'] = DB::table('delivery_lines')
+                                                ->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
+                                                ->selectRaw('FLOOR(SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100))) AS orderSum')
+                                                ->whereMonth('delivery_lines.created_at', $CurentMonth)
+                                                ->get();
+        $data['remaining_order'] =  DB::table('order_lines')
+                                                ->selectRaw('
+                                                    FLOOR(SUM((selling_price * qty)-(selling_price * qty)*(discount/100))) AS orderSum
+                                                ')
+                                                ->whereMonth('delivery_date', $CurentMonth)
+                                                ->groupByRaw('MONTH(delivery_date) ')
+                                                ->get();
         //Quote data for chart
         $data['quotesDataRate'] = DB::table('quotes')
                                     ->select('statu', DB::raw('count(*) as QuoteCountRate'))

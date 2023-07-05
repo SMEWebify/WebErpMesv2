@@ -50,6 +50,8 @@ return [
     'no_product_trans_key'                     => 'Aucun produit, accédez à la page du produit pour ajouter un article',
     'announcement_trans_key'                   => 'Annonces',
     'order_to_be_delivered_trans_key'          => 'Commandes à livrée(s)',
+    'delivered_month_in_progress_trans_key'    => 'Total livré du mois',
+    'remaining_month_trans_key'                => 'Total restant à livrer',
     
     'companies_trans_key'                      => 'Companies',
 
@@ -108,6 +110,7 @@ return [
     'users_trans_key'                          => 'Users',
     'your_company_trans_key'                   => 'Your company',
     'licence_trans_key'                        => 'Licence',
+    'release_note_trans_key'                   => 'Notes de version',
 
     'search_results_trans_key'                 => 'Résulta de la recherche',
 ];
