@@ -36,7 +36,8 @@ pour passer en production, suivez ce lien : [wiki page (install en production)](
   
 -----------------
 Dashboard
-![image](https://user-images.githubusercontent.com/75578469/164035450-16391d88-1724-4bfa-ab25-bd5528f9f690.png)
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/c0767bbe-792d-46a5-9398-7e7a28a329d2)
+
 
 
 Gestion des devis et des commandes avec tâche
