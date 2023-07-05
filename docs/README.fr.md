@@ -6,8 +6,8 @@
 <p align="center">Web ERP et MES</p>
 
 <p align="center">
-  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
-  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/docs/README-fr.md">Français</a>
+  <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
+  <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/docs/README-fr.md">Français</a>
 </p>
 
 # Pourquoi WEM ? :monocle_face:
@@ -26,13 +26,13 @@ login : contact@wem-project.org
 Mot de passe : password
 
 # Instal :construction_worker:
-pour tester ou aider à développer suivez ce lien : [wiki page (install en dev)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-dev))
+pour tester ou aider à développer suivez ce lien : [wiki page (install en dev)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 
-pour passer en production, suivez ce lien : [wiki page (install en production)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-production))
+pour passer en production, suivez ce lien : [wiki page (install en production)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
 -----------------
 
-:building_construction: Project et fonctionnalités, suivez ce lien : : [wiki page](https://github.com/billyboy35/WebErpMesv2/wiki/Features)
+:building_construction: Project et fonctionnalités, suivez ce lien : : [wiki page](https://github.com/SMEWebify/WebErpMesv2/wiki/Features)
   
 -----------------
 Dashboard

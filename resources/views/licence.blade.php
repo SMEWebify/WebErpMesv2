@@ -11,7 +11,7 @@
     <p>
         <a href="https://opensource.org/licenses/MIT">MIT license</a><br/>
         <br/>
-        Copyright (c) 2022 <a href="https://github.com/billyboy35">billyboy35</a><br/>
+        Copyright (c) 2022 <a href="https://github.com/SMEWebify">SMEWebify</a><br/>
         <br/>
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal

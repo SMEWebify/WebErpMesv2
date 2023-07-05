@@ -6,8 +6,8 @@
 <p align="center">Web ERP and MES</p>
 
 <p align="center">
-  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
-  <a href="https://github.com/billyboy35/WebErpMesv2/blob/WEM-2.0/docs/README.fr.md">Français</a>
+  <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
+  <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/docs/README.fr.md">Français</a>
 </p>
 
 
@@ -28,13 +28,13 @@ login : contact@wem-project.org
 Password : password
 
 # Instal :construction_worker:
-for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-dev))
+for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 
-for run to production, follow this link :  [wiki page (install to run)](https://github.com/billyboy35/WebErpMesv2/wiki/Installation-Steps-(for-production))
+for run to production, follow this link :  [wiki page (install to run)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
 -----------------
 
-:building_construction: Project Feature, follow this link : [wiki page](https://github.com/billyboy35/WebErpMesv2/wiki/Features)
+:building_construction: Project Feature, follow this link : [wiki page](https://github.com/SMEWebify/WebErpMesv2/wiki/Features)
   
 -----------------
 Dashboard
