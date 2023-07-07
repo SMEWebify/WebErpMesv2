@@ -61,7 +61,7 @@ class GanttController extends Controller
                                 });
         $merge = $Orders->merge($OrderLines);
         
-        $tasks = Task::select('tasks.id', DB::raw('CONCAT(\'#\',tasks.id, \' \', tasks.label) as text'), DB::raw("(tasks.qty * tasks.unit_time + tasks.seting_time) AS duration"), 'tasks.progress', 'tasks.end_date AS end_date', DB::raw('CONCAT(\'l_\',tasks.order_lines_id) as parent'), DB::raw("methods_services.color as color"))
+        $tasks = Task::select('tasks.id', DB::raw('CONCAT(\'#\',tasks.id, \' \', tasks.label) as text'), DB::raw("(tasks.qty * tasks.unit_time + tasks.seting_time) AS duration"),  'tasks.end_date AS end_date', DB::raw('CONCAT(\'l_\',tasks.order_lines_id) as parent'), DB::raw("methods_services.color as color"))
                                 ->join('order_lines', 'tasks.order_lines_id', '=', 'order_lines.id')
                                 ->join('orders', 'order_lines.orders_id', '=', 'orders.id')
                                 ->join('methods_services', 'tasks.methods_services_id', '=', 'methods_services.id')
@@ -78,7 +78,6 @@ class GanttController extends Controller
                                         'id' => $tag->id,
                                         'text' => $tag->text,
                                         'duration' => $tag->duration,
-                                        'progress' => $tag->progress,
                                         'end_date' => $tag->end_date,
                                         'parent' => $tag->parent,
                                         'color' => $tag->color,

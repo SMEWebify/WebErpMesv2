@@ -129,7 +129,7 @@
         <!-- ./card-body -->
         <div class="card-footer">
           <div class="row">
-            <div class="col-sm-3 col-1">
+            <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
                 <h5 class="description-header">{{ $orderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
@@ -138,7 +138,7 @@
               <!-- /.description-block -->
           </div>
           <!-- /.col -->
-            <div class="col-sm-3 col-1">
+            <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
                 <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
@@ -147,7 +147,7 @@
               <!-- /.description-block -->
             </div>
             <!-- /.col -->
-            <div class="col-sm-3 col-1">
+            <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>-->
                 <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
@@ -156,7 +156,7 @@
               <!-- /.description-block -->
             </div>
             <!-- /.col -->
-            <div class="col-sm-3 col-1">
+            <div class="col-sm-3 col-3">
               <div class="description-block">
                 <!--<span class="description-percentage text-danger"><i class="fas fa-caret-down"></i></span>-->
                 <h5 class="description-header"> {{ $OrderTotalRevenue[0]->orderTotalRevenue }}  /{{ $EstimatedBudgets }} ({{ round($OrderTotalRevenue[0]->orderTotalRevenue / $EstimatedBudgets *100,2)}} %)</h5>
@@ -511,7 +511,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body ">
-          <h1><i class="icon fas fa-info"></i> {{ $data['delivered_month_in_progress'][0]->orderSum }} {{ $Factory->curency }}</h1>    
+          <h1><i class="icon fas fa-info"></i> {{ $data['delivered_month_in_progress'][0]->orderSum ?? 0}} {{ $Factory->curency }}</h1>    
         </div>
         <!-- /.card-body -->
       </div>
