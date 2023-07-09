@@ -18,7 +18,6 @@
 @stop
 
 @section('content')
-<div class="card">
   @include('include.alert-result')
     <div class="card card-primary">
       <div class="card-body">
@@ -192,8 +191,6 @@
       </div>
     <!-- /.card primary -->
     </div>
-  <!-- /.card --> 
-  </div>
 @stop
 
 @section('css')

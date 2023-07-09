@@ -85,7 +85,8 @@ class DeliverysRequest extends Component
                                                                                     ->orWhere('delivery_status', '=', '2');
                                                                             })
                                                                         ->whereHas('order', function($q){
-                                                                            $q->where('companies_id','like', '%'.$this->companies_id.'%');
+                                                                            $q->where('companies_id','like', '%'.$this->companies_id.'%')
+                                                                                ->where('type', '=', '1');
                                                                         })->get();
         return view('livewire.deliverys-request', [
             'DeliverysRequestsLineslist' => $DeliverysRequestsLineslist,

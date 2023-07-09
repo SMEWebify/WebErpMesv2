@@ -111,7 +111,7 @@
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
                             </th>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">External ID @include('include.sort-icon', ['field' => 'code'])</a>
                             </th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
@@ -168,7 +168,7 @@
                             <th>Order</th>
                             <th>Companie</th>
                             <th>External ID</th>
-                            <th>Product</th>
+                            <th>Label</th>
                             <th>Description</th>
                             <th>Qty</th>
                             <th>Scum qty</th>

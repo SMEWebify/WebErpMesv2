@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Products\Stocks;
 use Illuminate\Support\Facades\DB;
+use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
 use App\Http\Requests\Products\StoreStockRequest;
@@ -19,10 +20,25 @@ class StockController extends Controller
         $stocks = Stocks::withCount('StockLocation')->get();
         $userSelect = User::select('id', 'name')->get();
         $LastStock =  DB::table('stocks')->orderBy('id', 'desc')->first();
+        $StockLocationList = StockLocation::all();
+
+        //Select order line where not delivered or partialy delivered
+        $InternalOrderRequestsLineslist = OrderLines::where(
+                                                        function($query) {
+                                                            return $query
+                                                                ->where('delivery_status', '=', '1')
+                                                                ->orWhere('delivery_status', '=', '2');
+                                                        })
+                                                    ->whereHas('order', function($q){
+                                                        $q->where('type', '=', '2');
+                                                    })->get();
+
         return view('products/stocks-index', [
             'stocks' => $stocks,
             'userSelect' => $userSelect,
-            'LastStock' => $LastStock
+            'LastStock' => $LastStock,
+            'StockLocationList' => $StockLocationList,
+            'InternalOrderRequestsLineslist' => $InternalOrderRequestsLineslist
         ]);
     }
 
