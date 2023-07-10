@@ -13,9 +13,9 @@ class TimesAbsence extends Model
     protected $fillable = ['user_id',  'absence_type',  'absence_type_day',  'statu',  'start_date',  'end_date'];
 
     public function User()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
 
 

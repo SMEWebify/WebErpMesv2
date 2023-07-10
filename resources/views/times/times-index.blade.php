@@ -56,7 +56,11 @@
                     @if($TimesAbsence->absence_type_day  == 2)Workable day @endif
                     @if($TimesAbsence->absence_type_day  == 3)Worked day @endif
                   </td>
-                  <td>{{ $TimesAbsence->statu }}</td>
+                  <td>
+                    @if($TimesAbsence->statu  == 1)To validate @endif
+                    @if($TimesAbsence->statu  == 2)Validate @endif
+                    @if($TimesAbsence->statu  == 3)Unvalidate @endif
+                  </td>
                   <td>{{ $TimesAbsence->start_date }}</td>
                   <td>{{ $TimesAbsence->end_date }}</td>
                   <td class=" py-0 align-middle">
@@ -69,6 +73,19 @@
                       <form method="POST" action="{{ route('times.absence.update', ['id' => $TimesAbsence->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
+                          <div class="form-group">
+                            <label for="user_id">User</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                              </div>
+                              <select class="form-control" name="user_id" id="user_id">
+                                @foreach ($userSelect as $item)
+                                <option value="{{ $item->id }}" @if($TimesAbsence->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
                           <div class="form-group">
                             <label for="absence_type">Absence type</label>
                             <select class="form-control" name="absence_type" id="absence_type">
@@ -84,6 +101,14 @@
                                 <option value="1" @if($TimesAbsence->absence_type_day == 1  ) Selected @endif>Calendar</option>
                                 <option value="2" @if($TimesAbsence->absence_type_day == 2  ) Selected @endif>Workable day</option>
                                 <option value="3" @if($TimesAbsence->absence_type_day == 3  ) Selected @endif>Worked day</option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label for="statu">Statu</label>
+                            <select class="form-control" name="statu" id="statu">
+                                <option value="1" @if($TimesAbsence->statu == 1  ) Selected @endif>To validate</option>
+                                <option value="2" @if($TimesAbsence->statu == 2  ) Selected @endif>Validate</option>
+                                <option value="3" @if($TimesAbsence->statu == 3  ) Selected @endif>Unvalidate</option>
                             </select>
                           </div>
                           <div class="form-group">
@@ -128,6 +153,19 @@
           <form  method="POST" action="{{ route('times.absence.create') }}" class="form-horizontal">
             @csrf
             <div class="form-group">
+              <label for="user_id">User</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                </div>
+                <select class="form-control" name="user_id" id="user_id">
+                  @foreach ($userSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
               <label for="absence_type">Absence type</label>
               <select class="form-control" name="absence_type" id="absence_type">
                   <option value="1">Full day absence</option>
@@ -135,7 +173,6 @@
                   <option value="3">2 nd half day absence</option>
                   <option value="4">Absence in hours</option>
               </select>
-              <input type="hidden" name="user_id" id="user_id" value="{{ $user->id }}">
             </div>
             <div class="form-group">
               <label for="absence_type_day">Absence type day</label>

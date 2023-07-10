@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Times;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Times\TimesAbsence;
 use App\Http\Controllers\Controller;
@@ -23,6 +24,7 @@ class TimesController extends Controller
         $TimesMachineEvents = TimesMachineEvent::All();
         $TimesMachineEventsSelect = TimesMachineEvent::select('id', 'label')->orderBy('label')->get();
         $user = Auth::user();
+        $userSelect = User::select('id', 'name')->get();
         
         return view('times/times-index',[
             'TimesAbsences' => $TimesAbsences,
@@ -30,7 +32,8 @@ class TimesController extends Controller
             'TimesImproductTimes' => $TimesImproductTimes,
             'TimesMachineEvents' => $TimesMachineEvents,
             'TimesMachineEventsSelect' => $TimesMachineEventsSelect,
-            'user' => $user 
+            'user' => $user,
+            'userSelect' => $userSelect,
         ]);
     }
 }

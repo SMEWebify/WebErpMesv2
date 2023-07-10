@@ -18,7 +18,7 @@ class CreateTimesAbsencesTable extends Migration
             $table->integer('user_id');
 			$table->integer('absence_type');
             $table->integer('absence_type_day');
-            $table->integer('statu');
+            $table->integer('statu')->default(1);
 			$table->date('start_date');
 			$table->date('end_date');
             $table->timestamps();
