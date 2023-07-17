@@ -115,7 +115,7 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane active" id="LeaveRequest">
+            <div class="tab-pane" id="LeaveRequest">
                 <div class="row">
                     <div class="col-md-6 card-primary">
                         <div class="card-header">
