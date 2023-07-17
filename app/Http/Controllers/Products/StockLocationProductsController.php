@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Products\Stocks;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
+use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
 use App\Models\Products\StockLocationProducts;
@@ -43,6 +44,47 @@ class StockLocationProductsController extends Controller
                                                                 'addressing',
                                             ));
         return redirect()->route('products.stocklocation.show', ['id' => $StockLocationProduct->stock_locations_id])->with('success', 'Successfully created new stock line');
+    }
+
+    public function storeFromInternalOrder(StoreStockLocationProductsRequest $request)
+    {
+        $StockLocationProduct = StockLocationProducts::create($request->only('code',
+                                                                'user_id', 
+                                                                'stock_locations_id',
+                                                                'products_id', 
+                                                                'mini_qty',
+                                                                'end_date',
+                                                                'addressing',
+                                            ));
+
+        $stockMove = StockMove::create(['user_id' => $request->user_id, 
+                                        'qty' => $request->mini_qty,
+                                        'stock_location_products_id' =>  $StockLocationProduct->id, 
+                                        'order_line_id' =>$request->order_line_id,
+                                        'typ_move' => 12,
+                                        'component_price' => $request->component_price,
+                                    ]);
+
+        // update order line info
+        //same function from deliverys request livewire controler
+        $OrderLine = OrderLines::find($request->order_line_id);
+        $OrderLine->delivered_qty =  $request->mini_qty;
+        $OrderLine->delivered_remaining_qty = $OrderLine->delivered_remaining_qty - $request->mini_qty;
+        //if we are delivered all part
+        if($OrderLine->delivered_remaining_qty == 0){
+            $OrderLine->delivery_status = 3;
+            // update order statu info
+            // we must be check if all entry are delivered
+            //Orders::where('id',$OrderLine->orders_id)->update(['statu'=>2]);
+        }
+        else{
+            $OrderLine->delivery_status = 2;
+            // update order statu info
+            Orders::where('id',$OrderLine->orders_id)->update(['statu'=>3]);
+        }
+        $OrderLine->save();
+
+        return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
     }
 
     /**

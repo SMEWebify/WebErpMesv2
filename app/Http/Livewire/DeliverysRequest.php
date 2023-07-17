@@ -136,6 +136,7 @@ class DeliverysRequest extends Component
                         ]); 
 
                         // update order line info
+                        //same function from stock location product controller
                         $OrderLine = OrderLines::find($this->data[$key]['order_line_id']);
                         $OrderLine->delivered_qty =  $OrderLine->delivered_qty + $this->data[$key]['scumQty'];
                         $OrderLine->delivered_remaining_qty = $OrderLine->delivered_remaining_qty - $this->data[$key]['scumQty'];
