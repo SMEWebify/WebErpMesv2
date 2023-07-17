@@ -14,8 +14,8 @@
                     <form>
                     @csrf
                         <div class="card card-body">
-                            <div class="row">
-                                <div class="col-3">
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
                                     <label for="code">External ID</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -25,7 +25,7 @@
                                     </div>
                                     @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="label">Name of quote</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -35,7 +35,7 @@
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="user_id">User management</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -57,8 +57,8 @@
                                 <label for="InputWebSite">Customer information</label>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
                                     <label for="companies_id">Company</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -75,7 +75,7 @@
                                     </div>
                                     @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="customer_reference">Customer reference</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -86,8 +86,8 @@
                                     @error('customer_reference') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
                                     <label for="companies_addresses_id">Address</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -104,7 +104,7 @@
                                     </div>
                                     @error('companies_addresses_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="companies_contacts_id">Contact</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -128,8 +128,8 @@
                                 <label for="InputWebSite">Date & Payment information</label>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
                                     <label for="accounting_payment_conditions_id">Payment condition</label>
                                     <select class="form-control" wire:model="accounting_payment_conditions_id" name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
                                         <option value="">Select payement condition</option>
@@ -141,7 +141,7 @@
                                     </select>
                                     @error('accounting_payment_conditions_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="accounting_payment_methods_id">Payment methods</label>
                                     <select class="form-control" wire:model="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
                                         <option value="">Select payment methods</option>
@@ -154,8 +154,8 @@
                                     @error('accounting_payment_methods_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
                                     <label for="accounting_deliveries_id">Delevery method</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -172,7 +172,7 @@
                                     </div>
                                     @error('accounting_deliveries_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="label">Validity date</label>
                                     <input type="date" class="form-control" wire:model="validity_date" name="validity_date"  id="validity_date">
                                     @error('validity_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
