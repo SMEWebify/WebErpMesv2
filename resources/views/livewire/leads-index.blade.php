@@ -19,7 +19,7 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-12">
                                     <label for="companies_id">Company</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -37,8 +37,8 @@
                                     @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
                                     <label for="companies_addresses_id">Address</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -55,7 +55,7 @@
                                     </div>
                                     @error('companies_addresses_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="companies_contacts_id">Contact</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -75,8 +75,8 @@
                             </div>
                         </div>
                         <div class="card card-body">
-                            <div class="row">
-                                <div class="col-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
                                     <label for="source">Source</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -87,7 +87,7 @@
                                     @error('source') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="user_id">User management</label>
                                     
                                     <div class="input-group">

@@ -4,8 +4,8 @@
             <div class="card-body">
                 <form>
                     @csrf
-                    <div class="row">
-                        <div class="card-header">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
                             <label for="companies_id">Document type</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -19,9 +19,7 @@
                             </div>
                             @error('document_type') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3">
+                        <div class="form-group col-md-2">
                             <label for="companies_id">Sort Companie</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -38,7 +36,7 @@
                             </div>
                             @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-2">
                             <label for="code">External ID</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -48,7 +46,7 @@
                             </div>
                             @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                        <div class="col-2">
+                        <div class="form-group col-md-2">
                             <label for="label">Name of Delivery note</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -58,7 +56,7 @@
                             </div>
                             @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-2">
                             <label for="user_id">User management</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -75,9 +73,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="card-footer">
+                        <div class="form-group col-md-2">
                             <div class="input-group">
-                                <button type="Submit" wire:click.prevent="storePurchase()" class="btn btn-success">New purchase document</button>
+                                <br/>
+                                <button type="Submit" wire:click.prevent="storePurchase()" class="btn btn-success btn-block">New purchase document</button>
                             </div>
                         </div>
                     </div>

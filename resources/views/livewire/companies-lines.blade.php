@@ -13,8 +13,8 @@
                                         <form>
                                         @csrf
                                         <div class="card card-body">
-                                            <div class="row">
-                                                <div class="col-4">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-4">
                                                     <label for="code">External ID</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -24,7 +24,7 @@
                                                     </div>
                                                     @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="form-group col-md-4">
                                                     <label for="label">Name of company</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -34,7 +34,7 @@
                                                     </div>
                                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="form-group col-md-4">
                                                     <label for="user_id">Technical manager</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -55,8 +55,8 @@
                                             <div class="row">
                                                 <label for="InputWebSite">Site link</label>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-3">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-3">
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
@@ -65,7 +65,7 @@
                                                     </div>
                                                     @error('website') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
@@ -74,7 +74,7 @@
                                                     </div>
                                                     @error('fbsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
@@ -83,7 +83,7 @@
                                                     </div>
                                                     @error('twittersite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
@@ -98,16 +98,16 @@
                                             <div class="row">
                                                 <label for="siren">Administrative information</label>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-3">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-3">
                                                     <input type="text" class="form-control" name="siren" id="siren" wire:model="siren" placeholder="Reg Number">
                                                     @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="Naf code">
                                                     @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat" wire:model="intra_community_vat" placeholder="VAT number">
                                                     @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
@@ -117,8 +117,8 @@
                                             <div class="row">
                                                 <label for="siren">Client information</label>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-3">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-3">
                                                     <label for="discount">Discount :</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -128,12 +128,12 @@
                                                     </div>
                                                     @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <label for="account_general_customer">General Account</label>
                                                     <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" wire:model="account_general_customer" placeholder="General Account">
                                                     @error('account_general_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <label for="account_auxiliary_customer">Auxiliary Account</label>
                                                     <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" wire:model="account_auxiliary_customer" placeholder="Auxiliary account">
                                                     @error('account_auxiliary_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -144,8 +144,8 @@
                                             <div class="row">
                                                 <label for="siren">Supplier information</label>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-3">
+                                            <div class="form-row">
+                                                <div class="form-group col-md-3">
                                                     <label for="recept_controle">Reception control</label>
                                                     <select class="form-control" name="recept_controle" id="recept_controle" wire:model="recept_controle">
                                                         <option value="">Select control type</option>
@@ -154,12 +154,12 @@
                                                     </select>
                                                     @error('recept_controle') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <label for="account_general_supplier">General Account</label>
                                                     <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  wire:model="account_general_supplier" placeholder="General Account">
                                                     @error('account_general_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="form-group col-md-3">
                                                     <label for="account_auxiliary_supplier">Auxiliary Account</label>
                                                     <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  wire:model="account_auxiliary_supplier" placeholder="Auxiliary account">
                                                     @error('account_auxiliary_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror

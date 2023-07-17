@@ -4,8 +4,8 @@
         <form>
             @csrf
             <div class="card-body">
-                <div class="row">
-                    <div class="col-3">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
                         <label for="companies_id">Sort Companie</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -22,7 +22,7 @@
                         </div>
                         @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-3">
+                    <div class="form-group col-md-3">
                         <label for="code">External ID</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -32,7 +32,7 @@
                         </div>
                         @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-3">
+                    <div class="form-group col-md-3">
                         <label for="label">Name of Delivery note</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -42,7 +42,7 @@
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-3">
+                    <div class="form-group col-md-3">
                         <label for="user_id">User management</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -57,9 +57,7 @@
                         </div>
                         @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-3">
+                    <div class="form-group col-md-3">
                         <label for="companies_addresses_id">Adress</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -76,7 +74,7 @@
                         </div>
                         @error('companies_addresses_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-3">
+                    <div class="form-group col-md-3">
                         <label for="companies_contacts_id">Contact</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -93,7 +91,7 @@
                         </div>
                         @error('companies_contacts_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-3"><br/>
+                    <div class="form-group col-md-3"><br/>
                         <div class="input-group">
                             <button type="Submit" wire:click.prevent="storeDeliveryNote()" class="btn btn-success">New Delivery note</button>
                         </div>

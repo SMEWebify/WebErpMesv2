@@ -4,8 +4,8 @@
             <div class="card-body">
                 <form>
                     @csrf
-                    <div class="row">
-                        <div class="col-3">
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
                             <label for="companies_id">Sort Companie</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -22,7 +22,7 @@
                             </div>
                             @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="code">External ID</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -32,7 +32,7 @@
                             </div>
                             @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="user_id">User management</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -51,7 +51,7 @@
                     <div class="row">
                         <div class="card-footer">
                             <div class="input-group">
-                                <button type="Submit" wire:click.prevent="storeInvoice()" class="btn btn-success">New Invoice document</button>
+                                <button type="Submit" wire:click.prevent="storeInvoice()" class="btn btn-success btn-block">New Invoice document</button>
                             </div>
                         </div>
                     </div>

@@ -13,8 +13,8 @@
                     <form>
                         @csrf
                         <div class="card card-body">
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
                                     <label for="code">External ID</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -24,7 +24,7 @@
                                     </div>
                                     @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="label">Description</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -34,7 +34,7 @@
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="ind">Index</label>
                                     <input type="text" class="form-control"  wire:model="ind" name="ind"  id="ind" placeholder="Index">
                                     @error('ind') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -42,8 +42,8 @@
                             </div>
                         </div>
                         <div class="card card-body">
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
                                     <label for="methods_services_id">Services</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -60,7 +60,7 @@
                                     </div>
                                     @error('methods_services_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="methods_families_id">Family</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -77,7 +77,7 @@
                                     </div>
                                     @error('methods_families_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="methods_units_id">Unit</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -97,8 +97,8 @@
                             </div>
                         </div>
                         <div class="card card-body">
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
                                     <label for="purchased">Purchased</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -112,7 +112,7 @@
                                     </div>
                                     @error('purchased') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="sold">Sold</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -126,7 +126,7 @@
                                     </div>
                                     @error('sold') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="tracability_type">Tracability</label>
                                     <select class="form-control" wire:model="tracability_type" name="tracability_type" id="tracability_type">
                                         <option value="">Select type</option>
@@ -137,8 +137,8 @@
                                     @error('tracability_type') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ $Factory->curency }}</span>
@@ -147,7 +147,7 @@
                                     </div>
                                     @error('purchased_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ $Factory->curency }}</span>
@@ -161,8 +161,8 @@
                             <div class="row">
                                 <label for="material">Proprieties</label>
                             </div>
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fab fa-mdb"></i></span>
@@ -171,7 +171,7 @@
                                     </div>
                                     @error('material') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
@@ -180,7 +180,7 @@
                                     </div>
                                     @error('thickness') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
@@ -192,7 +192,7 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="x_size">X</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -202,7 +202,7 @@
                                     </div>
                                     @error('x_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="y_size">Y</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -212,7 +212,7 @@
                                     </div>
                                     @error('y_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <label for="z_size">Z</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -224,7 +224,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -233,7 +233,7 @@
                                     </div>
                                     @error('x_oversize') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -242,7 +242,7 @@
                                     </div>
                                     @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -254,15 +254,15 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <input type="number" class="form-control" wire:model="diameter" name="diameter" id="diameter" min="0" placeholder="Diameter" step=".001">
                                     @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <input type="number" class="form-control" wire:model="diameter_oversize" name="diameter_oversize" id="diameter_oversize" min="0" placeholder="Diameter_oversize" step=".001">
                                     @error('diameter_oversize') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <input type="number" class="form-control" wire:model="section_size" name="section_size" id="section_size" min="0" placeholder="Section size" step=".001">
                                     @error('section_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -272,16 +272,16 @@
                             <div class="row">
                                 <label for="qty_eco_min">Other information</label>
                             </div>
-                            <div class="row">
-                                <div class="col-4">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
                                     <input type="number" class="form-control" wire:model="qty_eco_min" name="qty_eco_min" id="qty_eco_min" min="0" placeholder="Qty eco min" step=".001">
                                     @error('qty_eco_min') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <input type="number" class="form-control" wire:model="qty_eco_max" name="qty_eco_max" id="qty_eco_max" min="0" placeholder="Qty eco max" step=".001">
                                     @error('qty_eco_max') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-4">
+                                <div class="form-group col-md-4">
                                     <textarea class="form-control" rows="3"  wire:model="comment" name="comment"  placeholder="Comment ..."></textarea>
                                     @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
