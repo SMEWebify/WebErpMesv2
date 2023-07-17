@@ -48,4 +48,5 @@ return [
     'users_trans_key'                          => 'Users',
     'your_company_trans_key'                   => 'Your company',
     'licence_trans_key'                        => 'Licence',
+    'release_note_trans_key'                   => 'Release notes',
 ];
