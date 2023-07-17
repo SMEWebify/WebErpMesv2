@@ -8,8 +8,8 @@
         <form wire:submit.prevent="storeTask({{ $Line->id }})">
         @endif
             <div class="card card-body">
-                <div class="row">
-                    <div class="col-2">
+                <div class="form-row">
+                    <div class="form-group col-md-2">
                         <label for="companies_id">Task type</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -23,7 +23,7 @@
                         </div>
                         @error('document_type') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="ordre">Sort order</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -35,7 +35,7 @@
                         </div>
                         @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="methods_services_id">Services</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -50,7 +50,7 @@
                         </div>
                         @error('methods_services_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="label">Label</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -60,7 +60,7 @@
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         @if($TaskType == 'BOM') 
                         <label for="component_id">Component</label>
                         <div class="input-group">
@@ -78,10 +78,10 @@
                         @endif 
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-2">
+                <div class="form-row">
+                    <div class="form-group col-md-2">
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         @if($TaskType == 'TechCut')
                         <label for="seting_time">Setting time</label>
                         <div class="input-group">
@@ -102,7 +102,7 @@
                         @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         @endif
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         @if($TaskType == 'TechCut')
                         <label for="unit_time">Unit time</label>
                         <div class="input-group">
@@ -114,7 +114,7 @@
                         @error('unit_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         @endif
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="unit_cost">Unit cost</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -123,7 +123,7 @@
                             <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="Unit cost" value="0" step=".001" min="0" wire:model="unit_cost">
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="unit_price">Unit price</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -133,7 +133,7 @@
                         </div>
                         @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         @if($TaskType == 'BOM' or $TaskType == 'TechCut')
                             @if($updateLines)
                             <button type="Submit" class="btn btn-warning">Update</button>
@@ -327,7 +327,7 @@
         @endif
             <div class="card card-body">
                 <div class="row">
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="subAssemblyOrdre">Sort order</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -339,7 +339,7 @@
                         @error('subAssemblyOrdre') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         <input type="hidden" name="{{ $idType }}" value="{{ $Line->id   }}">
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="subAssemblyComponentId">Component</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -354,7 +354,7 @@
                         </div>
                         @error('subAssemblyComponentId') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="subAssemblylabel">Label</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -364,7 +364,7 @@
                         </div>
                         @error('subAssemblylabel') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="subAssemblyQty">Quantity</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -374,7 +374,7 @@
                         </div>
                         @error('subAssemblyQty') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         <label for="subAssemblyUnit_price">Unit Price</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -383,7 +383,7 @@
                             <input type="number" class="form-control @error('subAssemblyUnit_price') is-invalid @enderror" name="subAssemblyUnit_price"  id="subAssemblyUnit_price" placeholder="Unit Price" value="0" step=".001" min="0" wire:model="subAssemblyUnit_price">
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2">
                         @if($updateLines)
                         <button type="Submit" class="btn btn-warning">Update</button>
                         @else
