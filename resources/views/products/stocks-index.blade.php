@@ -189,16 +189,13 @@
                       <td>{{ $InternalOrderRequestsLines->VAT['label'] }}</td>
                       <td>{{ $InternalOrderRequestsLines->delivery_date }}</td>
                       <td>
-                        <form  method="POST" action="{{ route('products.stockline.store.from.internal.order') }}" class="form-horizontal">
+                        <form  method="POST" action="{{ route('products.stockline.store') }}" class="form-horizontal">
                           @csrf
                           <input type="hidden" name="products_id" id="products_id" value="{{ $InternalOrderRequestsLines->product_id }}">
                           <input type="hidden" name="code" id="code" value="STOCK-{{ $InternalOrderRequestsLines->label }}">
                           <input type="hidden" name="stock_qty" id="stock_qty" value="{{ $InternalOrderRequestsLines->delivered_remaining_qty }}" >
                           <input type="hidden" name="mini_qty" id="mini_qty" value="{{ $InternalOrderRequestsLines->delivered_remaining_qty }}" >
-                          <input type="hidden" name="component_price" id="component_price" value="{{ $InternalOrderRequestsLines->selling_price }}" >
-                          <input type="hidden" name="order_line_id" id="order_line_id" value="{{ $InternalOrderRequestsLines->id }}" >
-                          
-                          
+
                           <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
                           <div class="form-group">
                             <label for="stock_locations_id">Chose stock location</label>

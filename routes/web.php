@@ -164,15 +164,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Stock/Location/{id}', 'App\Http\Controllers\Products\StockLocationController@show')->middleware(['auth'])->name('products.stocklocation.show');
         
         Route::post('/Stock/Location/product/create', 'App\Http\Controllers\Products\StockLocationProductsController@store')->middleware(['auth'])->name('products.stockline.store');
-        Route::post('/Stock/Location/product/create/internal-order', 'App\Http\Controllers\Products\StockLocationProductsController@storeFromInternalOrder')->middleware(['auth'])->name('products.stockline.store.from.internal.order');
-    
         Route::post('/Stock/Location/product/edit/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@update')->middleware(['auth'])->name('products.stockline.update');
         Route::get('/Stock/Location/product/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@show')->middleware(['auth'])->name('products.stockline.show');
 
         Route::post('/Stock/Location/product/entry', 'App\Http\Controllers\Products\StockLocationProductsController@entry')->middleware(['auth'])->name('products.stockline.entry');
         Route::post('/Stock/Location/product/sorting', 'App\Http\Controllers\Products\StockLocationProductsController@sorting')->middleware(['auth'])->name('products.stockline.sorting');
-
-        
         
         Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->middleware(['auth'])->name('products.show');
     });
