@@ -36,10 +36,10 @@
                 @csrf
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-6">
                         <label for="code" class="text-success">External ID :</label>  {{  $Order->code }}
                       </div>
-                      <div class="col-3">
+                      <div class="col-6">
                         @include('include.form.form-input-label',['label' =>'Name of order', 'Value' =>  $Order->label])
                       </div>
                     </div>
@@ -51,18 +51,18 @@
                       <label for="InputWebSite">Customer information</label>
                     </div>
                     <div class="row">
-                      <div class="col-5">
+                      <div class="col-6">
                         @include('include.form.form-select-companie',['companiesId' =>  $Order->companies_id])
                       </div>
-                      <div class="col-5">
+                      <div class="col-6">
                         @include('include.form.form-input-customerInfo',['customerReference' =>  $Order->customer_reference])
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-5">
+                      <div class="col-6">
                         @include('include.form.form-select-adress',['adressId' =>   $Order->companies_addresses_id])
                       </div>
-                      <div class="col-5">
+                      <div class="col-6">
                         @include('include.form.form-select-contact',['contactId' =>   $Order->companies_contacts_id])
                       </div>
                     </div>
@@ -78,18 +78,18 @@
                     </div>
                     <hr>
                     <div class="row">
-                      <div class="col-5">
+                      <div class="col-6">
                         @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Order->accounting_payment_conditions_id])
                       </div>
-                      <div class="col-5">
+                      <div class="col-6">
                           @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Order->accounting_payment_methods_id])
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-5">
+                      <div class="col-6">
                           @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Order->accounting_deliveries_id])
                       </div>
-                      <div class="col-5">
+                      <div class="col-6">
                         <label for="label">Delevery date</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                       </div>
@@ -98,7 +98,7 @@
                   @else
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-5">
+                      <div class="col-6">
                         <label for="label">Delevery date</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                       </div>

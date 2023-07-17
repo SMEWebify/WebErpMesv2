@@ -35,10 +35,10 @@
                 @csrf
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-4">
                         <label for="code" class="text-success">External ID :</label>  {{  $Delivery->code }}
                       </div>
-                      <div class="col-3">
+                      <div class="col-4">
                         <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
                           <x-slot name="prependSlot">
                               <div class="input-group-text bg-gradient-success">
@@ -49,7 +49,7 @@
                           <option value="2" @if(2 == $Delivery->statu ) Selected @endif >Sent</option>
                         </x-adminlte-select>
                       </div>
-                      <div class="col-3">
+                      <div class="col-4">
                         @include('include.form.form-input-label',['label' =>'Name of delivery', 'Value' =>  $Delivery->label])
                       </div>
                     </div>

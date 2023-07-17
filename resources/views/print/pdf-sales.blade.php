@@ -64,8 +64,8 @@
                 @endif
             </td>
             <td align="right" style="width: 40%;">
-                @if($Document->type == 1)
-                <h3>{{ $Document->companie['label'] }}</h3>
+                @if($Document->type == 1 || empty($Document->type))
+                <h3>{{ $Document->companie['label'] }} </h3>
                 <pre>
                     {{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
                     {{ $Document->adresse['adress'] }}
