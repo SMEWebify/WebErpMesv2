@@ -235,6 +235,11 @@ return [
             'input_name'    => 'searchVal' ,
         ],
         [
+            'text'     => 'users_trans_key',
+            'url'      => 'users',
+            'topnav_right'    => true,
+        ],
+        [
             'type'         => 'fullscreen-widget',
             'topnav_right' => true,
         ],
@@ -465,11 +470,6 @@ return [
             'text' => 'accouting_trans_key',
             'icon' => 'fas fa-piggy-bank',
             'url'  => 'accouting',
-        ],
-        [
-            'text'     => 'users_trans_key',
-            'url'      => 'users',
-            'icon'     => 'fas fa-users',
         ],
         [
             'text' => 'your_company_trans_key',
