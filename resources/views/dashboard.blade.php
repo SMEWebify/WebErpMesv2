@@ -132,7 +132,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
-                <h5 class="description-header">{{ $orderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
+                <h5 class="description-header">{{ $OrderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
                 <span class="description-text">{{ __('general_content.total_order_forcasted_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -141,7 +141,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
-                <h5 class="description-header">{{ $OrderTotalRevenue[0]->orderTotalRevenue }} {{ $Factory->curency }}</h5>
+                <h5 class="description-header">{{ $OrderTotalDelivered[0]->orderTotalDelivered }} {{ $Factory->curency }}</h5>
                 <span class="description-text">{{ __('general_content.total_order_delivered_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -150,7 +150,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>-->
-                <h5 class="description-header">10,390.90  {{ $Factory->curency }}</h5>
+                <h5 class="description-header">{{ $OrderTotaInvoiced[0]->orderTotaInvoiced }}   {{ $Factory->curency }}</h5>
                 <span class="description-text">{{ __('general_content.total_invoiced_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -670,8 +670,7 @@
       datasets: [
         {
           label               : 'Order revenues',
-          backgroundColor     : 'rgba(60,141,188,0.9)',
-          borderColor         : 'rgba(60,141,188,0.8)',
+          borderColor         : 'rgba(60,141,188,0.5)',
           pointRadius          : 5,
           pointColor          : '#3b8bba',
           pointStrokeColor    : 'rgba(60,141,188,1)',
@@ -695,8 +694,57 @@
                               @endfor ]
         },
         {
+          label               : 'Delivered revenues',
+          borderColor         : 'rgba(240, 173, 78,0.5)',
+          pointRadius          : 5,
+          pointColor          : '#f0ad4e',
+          pointStrokeColor    : 'rgba(240, 173, 78,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(240, 173, 78,1)',
+          data                : [
+                              @php ($j = 1)
+                              @for($iM =1;$iM<=12;$iM++)
+                                @foreach ($data['deliveryMonthlyRecap'] as $key => $item)
+                                @php ($j = 1)
+                                  @if($iM  == $item->month) 
+                                  "{{ $item->orderSum }}",
+                                    @php ($j = 2)
+                                    @break
+                                  @endif
+                                @endforeach
+                                @if($j == 1) 
+                                  0,
+                                  @php ($j = 1)
+                                @endif
+                              @endfor ]
+        },
+        {
+          label               : 'Invoiced revenues',
+          borderColor         : 'rgba(217, 83, 79,0.5)',
+          pointRadius          : 5,
+          pointColor          : '#d9534f',
+          pointStrokeColor    : 'rgba(217, 83, 79,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(217, 83, 79,1)',
+          data                : [
+                              @php ($j = 1)
+                              @for($iM =1;$iM<=12;$iM++)
+                                @foreach ($data['invoiceMonthlyRecap'] as $key => $item)
+                                @php ($j = 1)
+                                  @if($iM  == $item->month) 
+                                  "{{ $item->orderSum }}",
+                                    @php ($j = 2)
+                                    @break
+                                  @endif
+                                @endforeach
+                                @if($j == 1) 
+                                  0,
+                                  @php ($j = 1)
+                                @endif
+                              @endfor ]
+        },
+        {
           label               : 'Order targets ',
-          backgroundColor     : 'rgba(40, 167, 69, 1)',
           borderColor         : 'rgba(40, 167, 69, 1)',
           pointRadius         : 5,
           pointColor          : 'rgba(40, 167, 69, 1)',

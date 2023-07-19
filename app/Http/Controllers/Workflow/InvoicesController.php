@@ -32,7 +32,7 @@ class InvoicesController extends Controller
                                                             ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                                                             ->selectRaw('
                                                                 MONTH(invoice_lines.created_at) AS month,
-                                                                SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS orderSum
+                                                                SUM((order_lines.selling_price * invoice_lines.qty)-(order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100)) AS orderSum
                                                             ')
                                                             ->whereYear('invoice_lines.created_at', $CurentYear)
                                                             ->groupByRaw('MONTH(invoice_lines.created_at) ')
