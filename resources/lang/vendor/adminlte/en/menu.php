@@ -45,6 +45,7 @@ return [
     'settings_trans_key'                       => 'Settings',
     'methods_trans_key'                        => 'Methods',
     'accouting_trans_key'                      => 'Accouting',
+    'human_resources_trans_key'                 => 'Human resources',
     'users_trans_key'                          => 'Users',
     'your_company_trans_key'                   => 'Your company',
     'licence_trans_key'                        => 'Licence',

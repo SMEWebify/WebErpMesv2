@@ -45,7 +45,7 @@
                                 Work station id : {{ $UserProfil->work_station_id}}
                             </div>
                             <div class="card-body">
-                                Joined_date : {{ $UserProfil->joined_date}}
+                                Joined date : {{ $UserProfil->joined_date}}
                             </div>
                             <div class="card-body">
                                 Confirmation date : {{ $UserProfil->confirmation_date}}

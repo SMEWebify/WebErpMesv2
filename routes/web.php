@@ -200,6 +200,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/factory', 'App\Http\Controllers\Admin\FactoryController@index')->middleware(['auth'])->name('admin.factory');
     });
 
+    Route::group(['prefix' => 'human-resources'], function () {
+        Route::get('/', 'App\Http\Controllers\Admin\HumanResourcesController@index')->middleware(['auth'])->name('human.resources'); 
+        Route::post('/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->middleware(['auth'])->name('human.resources.update.user');
+    });
+
     Route::group(['prefix' => 'quality'], function () {
         //index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->middleware(['auth'])->name('quality');

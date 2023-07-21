@@ -472,6 +472,11 @@ return [
             'url'  => 'accouting',
         ],
         [
+            'text' => 'human_resources_trans_key',
+            'icon' => 'fas fa-users',
+            'url'  => 'human-resources',
+        ],
+        [
             'text' => 'your_company_trans_key',
             'url'  => 'admin/factory',
             'icon'    => 'fas fa-industry',

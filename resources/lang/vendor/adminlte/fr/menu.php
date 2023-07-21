@@ -45,6 +45,7 @@ return [
     'settings_trans_key'                       => 'Paramètres',
     'methods_trans_key'                        => 'Méthodes',
     'accouting_trans_key'                      => 'Comptabilité',
+    'human_resources_trans_key'                => 'Ressources humaine',
     'users_trans_key'                          => 'Utilisateurs',
     'your_company_trans_key'                   => 'Votre entreprise',
     'licence_trans_key'                        => 'Licence',
