@@ -26,6 +26,9 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
+            @if( $Purchase->companies_contacts_id == 0 & $Purchase->companies_addresses_id ==0)
+            <x-adminlte-alert theme="info" title="Info">Update valide address & contact</x-adminlte-alert>
+            @endif
             <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title"> Informations </h3>
@@ -113,7 +116,11 @@
                         Purchase
                       </td>
                       <td>
+                        @if( $Purchase->companies_contacts_id != 0 & $Purchase->companies_addresses_id !=0)
                         <x-ButtonTextPDF route="{{ route('pdf.purchase', ['Document' => $Purchase->id])}}" />
+                        @else
+                        Update valide address & contact
+                        @endif
                       </td>
                   </tr>
                 </table>

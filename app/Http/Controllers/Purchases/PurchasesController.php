@@ -88,8 +88,8 @@ class PurchasesController extends Controller
     public function showQuotation(PurchasesQuotation $id)
     {   
         $CompanieSelect = Companies::select('id', 'code','label')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
         $Factory = Factory::first();
         $previousUrl = route('purchase.quotation.show', ['id' => $id->id-1]);
         $nextUrl = route('purchase.quotation.show', ['id' => $id->id+1]);
@@ -112,8 +112,8 @@ class PurchasesController extends Controller
     public function showPurchase(Purchases $id)
     {   
         $CompanieSelect = Companies::select('id', 'code','label')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
+        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
         $PurchaseCalculator = new PurchaseCalculator($id);
         $totalPrice = $PurchaseCalculator->getTotalPrice();
         $previousUrl = route('purchase.show', ['id' => $id->id-1]);
