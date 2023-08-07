@@ -102,9 +102,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('orders.id')" role="button" href="#">Order @include('include.sort-icon', ['field' => 'orders_id'])</a>
-                            </th>
+                            <th>Order</th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('deliverys_id')" role="button" href="#">Delivery @include('include.sort-icon', ['field' => 'orders_id'])</a>
                             </th>
