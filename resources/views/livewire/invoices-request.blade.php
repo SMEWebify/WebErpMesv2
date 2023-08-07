@@ -106,9 +106,7 @@
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('deliverys_id')" role="button" href="#">Delivery @include('include.sort-icon', ['field' => 'orders_id'])</a>
                             </th>
-                            <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
-                            </th>
+                            <th>Companie</th>
                             <th>Code</th>
                             <th>Label</th>
                             <th>Qty</th>
