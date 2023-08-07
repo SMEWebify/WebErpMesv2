@@ -79,7 +79,9 @@ class TaskController extends Controller
                 }
             }
         }
-        return $request->status()->with('tasks')->get();
+
+        $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->with('tasks.service')->get();
+        return  $tasks;
     }
 
         /**
