@@ -15,7 +15,7 @@
             @foreach ($Users as $User)
             <div class="col-4">
               <x-adminlte-profile-widget name="{{ $User->name }}" desc="{{ $User->GetPrettyCreatedAttribute() }}" theme="primary"
-                img="../images/profiles/img_avatar.png">
+                img="{{ $User->adminlte_image() }}">
                 <x-adminlte-profile-col-item class="text-primary border-right" icon="far fa-envelope" title="E-mail" text="{{ $User->email }}" size=6 badge="primary"/>
                 <x-adminlte-profile-col-item class="text-danger" icon="fas fa-lg fa-phone" title="Phone" text="{{ $User->personnal_phone_number }}" size=6 badge="danger"/>
               </x-adminlte-profile-widget>

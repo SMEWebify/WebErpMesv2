@@ -202,6 +202,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'human-resources'], function () {
         Route::get('/', 'App\Http\Controllers\Admin\HumanResourcesController@index')->middleware(['auth'])->name('human.resources'); 
+        Route::get('/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowUser')->middleware(['auth'])->name('human.resources.show.user');
         Route::post('/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->middleware(['auth'])->name('human.resources.update.user');
     });
 

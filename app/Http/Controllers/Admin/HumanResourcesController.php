@@ -32,7 +32,25 @@ class HumanResourcesController extends Controller
         ]);
     }
 
-        /**
+    /**
+     * @return View
+     */
+    public function ShowUser($id)
+    {
+        $User = User::find($id);
+        $userSelect = User::select('id', 'name')->get();
+        $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
+        //DB information mustn't be empty.
+        $Factory = Factory::first();
+        return view('admin/users-show', [
+            'Factory' => $Factory,
+            'User' => $User,
+            'userSelect' => $userSelect,
+            'SectionsSelect' =>  $SectionsSelect,
+        ]);
+    }
+
+    /**
      * @return View
      */
     public function UpdateUser(Request $request, int $id)
@@ -51,6 +69,6 @@ class HumanResourcesController extends Controller
 
         $UserUpdate->save();
 
-        return redirect()->route('human.resources')->with('success', 'Successfully updated user inforamations');
+        return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', 'Successfully updated user inforamations');
     }
 }
