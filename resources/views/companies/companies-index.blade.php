@@ -8,8 +8,8 @@
         <h1>Companies list</h1>
       </div>
       <div class="col-sm-6">
-        <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalCompanie">
-          Add New Company
+        <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalCompanie">
+          New Company
         </button>
       </div>
     </div>

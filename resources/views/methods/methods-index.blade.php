@@ -165,7 +165,7 @@
                           <!-- /.form-group -->
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -296,7 +296,7 @@
               <!-- /.form-group -->
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -356,97 +356,97 @@
                     <!-- Modal {{ $MethodsRessource->id }} -->
                     <x-adminlte-modal id="MethodsRessource{{ $MethodsRessource->id }}" title="Update {{ $MethodsRessource->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                       <form method="POST" action="{{ route('methods.ressource.update', ['id' => $MethodsRessource->id]) }}" enctype="multipart/form-data">
-                            @csrf
-                            <div class="card-body">
-                              <div class="form-group">
-                                <label for="ordre">Sort order:</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
-                                  </div>
-                                  <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" min="0" value="{{ $MethodsRessource->ordre }}">
-                                </div>
+                        @csrf
+                        <div class="card-body">
+                          <div class="form-group">
+                            <label for="ordre">Sort order:</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                               </div>
-                              <div class="form-group">
-                                <label for="label">Label</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                  </div>
-                                  <input type="text" class="form-control"  name="label" id="label" placeholder="Label" value="{{ $MethodsRessource->label }}">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                  <label for="mask_time">Mask time ?</label>
-                                  <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-user-times"></i></span>
-                                    </div>
-                                    <select class="form-control" name="mask_time" id="mask_time">
-                                        <option value="2" @if($MethodsRessource->mask_time == 2  ) Selected @endif>No</option>
-                                        <option value="1" @if($MethodsRessource->mask_time == 1  ) Selected @endif>Yes</option>
-                                    </select>
-                                  </div>
-                              </div>
-                              <div class="form-group">
-                                <label for="capacity">Hour capacity by week</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
-                                  </div>
-                                  <input type="number" class="form-control" name="capacity" id="capacity" placeholder="110 h/week" value="{{ $MethodsRessource->capacity }}">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label for="color">Color</label>
-                                <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}">
-                              </div>
-                              <div class="form-group">
-                                
-                                <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="far fa-image"></i></span>
-                                  </div>
-                                  <div class="custom-file">
-                                      <input type="file" class="custom-file-input" name="picture" id="picture">
-                                      <label class="custom-file-label" for="picture">Choose file</label>
-                                  </div>
-                              </div>
-                              <div class="form-group">
-                                <label for="section_id">Section</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fas fa-industry"></i></span>
-                                  </div>
-                                  <select class="form-control" name="section_id" id="section_id">
-                                    @forelse ($SectionsSelect as $item)
-                                    <option value="{{ $item->id }}" @if($MethodsRessource->section_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
-                                    @empty
-                                    <option value="">No section, please add before</option>
-                                    @endforelse
-                                  </select>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label for="service_id">Services</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                  </div>
-                                  <select class="form-control" name="service_id" id="service_id">
-                                    @forelse ($ServicesSelect as $item)
-                                    <option value="{{ $item->id }}" @if($MethodsRessource->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
-                                    @empty
-                                    <option value="">No service</option>
-                                    @endforelse
-                                  </select>
-                                </div>
-                              </div>
-                              <!-- /.form-group -->
+                              <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" min="0" value="{{ $MethodsRessource->ordre }}">
                             </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="label">Label</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                              </div>
+                              <input type="text" class="form-control"  name="label" id="label" placeholder="Label" value="{{ $MethodsRessource->label }}">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                              <label for="mask_time">Mask time ?</label>
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user-times"></i></span>
+                                </div>
+                                <select class="form-control" name="mask_time" id="mask_time">
+                                    <option value="2" @if($MethodsRessource->mask_time == 2  ) Selected @endif>No</option>
+                                    <option value="1" @if($MethodsRessource->mask_time == 1  ) Selected @endif>Yes</option>
+                                </select>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="capacity">Hour capacity by week</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>
+                              </div>
+                              <input type="number" class="form-control" name="capacity" id="capacity" placeholder="110 h/week" value="{{ $MethodsRessource->capacity }}">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="color">Color</label>
+                            <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}">
+                          </div>
+                          <div class="form-group">
+                            
+                            <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-image"></i></span>
+                              </div>
+                              <div class="custom-file">
+                                  <input type="file" class="custom-file-input" name="picture" id="picture">
+                                  <label class="custom-file-label" for="picture">Choose file</label>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="section_id">Section</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-industry"></i></span>
+                              </div>
+                              <select class="form-control" name="section_id" id="section_id">
+                                @forelse ($SectionsSelect as $item)
+                                <option value="{{ $item->id }}" @if($MethodsRessource->section_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                @empty
+                                <option value="">No section, please add before</option>
+                                @endforelse
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="service_id">Services</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-list"></i></span>
+                              </div>
+                              <select class="form-control" name="service_id" id="service_id">
+                                @forelse ($ServicesSelect as $item)
+                                <option value="{{ $item->id }}" @if($MethodsRessource->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                @empty
+                                <option value="">No service</option>
+                                @endforelse
+                              </select>
+                            </div>
+                          </div>
+                          <!-- /.form-group -->
+                        </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -583,7 +583,7 @@
               <!-- /.form-group -->
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -670,7 +670,7 @@
                           <!-- /.form-group -->
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -747,7 +747,7 @@
                 </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -816,7 +816,7 @@
                           <!-- /.form-group -->
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -883,7 +883,7 @@
                 </select>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -973,7 +973,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -1037,7 +1037,7 @@
                   </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -1107,7 +1107,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -1170,7 +1170,7 @@
                 </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -1284,7 +1284,7 @@
                             </div>
                           </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
                       </x-adminlte-modal>
@@ -1382,7 +1382,7 @@
                   </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>

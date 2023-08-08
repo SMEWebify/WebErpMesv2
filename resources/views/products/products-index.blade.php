@@ -8,7 +8,7 @@
     <h1>Products list</h1>
   </div>
   <div class="col-sm-6">
-    <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalProduct">
+    <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalProduct">
       New product
     </button>
   </div>

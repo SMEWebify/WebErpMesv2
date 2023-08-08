@@ -284,8 +284,8 @@
                       </div>
                     </div>
                   </div>
-                  <div class="modal-footer">
-                    <button type="Submit" class="btn btn-primary">Save changes</button>
+                  <div class="card-footer">
+                    <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
                 </form>
               </div>

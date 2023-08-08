@@ -88,7 +88,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -154,7 +154,7 @@
                 </select>
               </div>
               <div class="card-footer">
-                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -213,7 +213,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -266,7 +266,7 @@
                 <input type="text" class="form-control" name="code_account"  id="code_account" placeholder="Code account">
               </div>
               <div class="card-footer">
-                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -345,7 +345,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                       </form>
                     </x-adminlte-modal>
@@ -404,7 +404,7 @@
                 </div>
               </div>
               <div class="card-footer">
-                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -506,7 +506,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -587,7 +587,7 @@
                 </select>
               </div>
               <div class="card-footer">
-                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -640,7 +640,7 @@
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
@@ -688,7 +688,7 @@
                 </div>
               </div>
               <div class="card-footer">
-                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                  <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>

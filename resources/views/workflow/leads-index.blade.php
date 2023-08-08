@@ -8,7 +8,7 @@
       <h1>Leads list</h1>
   </div>
   <div class="col-sm-6">
-      <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalLead">
+      <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalLead">
           New Lead
       </button>
   </div>
@@ -20,7 +20,6 @@
 @section('content')
 
 <div class="card-body">
-
   @livewire('leads-index')
 </div>
 @stop

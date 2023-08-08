@@ -194,7 +194,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="card-footer">
-                                                    <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                                                    <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
                                                 </div>
                                             </form>
                                             <div class="card-body">

@@ -554,7 +554,7 @@
                         </div>
                     </div>  
                     <div class="modal-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
                     </div>
                 </form>
             </div>
@@ -583,7 +583,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
                     </div>
                 </form>
@@ -783,7 +783,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="success" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
                     </form>
                 </div>

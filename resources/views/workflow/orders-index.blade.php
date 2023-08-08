@@ -8,7 +8,7 @@
         <h1>Orders list</h1>
       </div>
       <div class="col-sm-6">
-        <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalOrder">
+        <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalOrder">
           New Order
         </button>
       </div>

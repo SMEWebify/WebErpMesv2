@@ -15,7 +15,7 @@
                     @csrf
                         <div class="card card-body">
                             <div class="form-row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-4">
                                     <label for="code">External ID</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -25,7 +25,7 @@
                                     </div>
                                     @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-4">
                                     <label for="label">Name of quote</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -35,7 +35,7 @@
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-4">
                                     <label for="user_id">User management</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -190,7 +190,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="Submit" wire:click.prevent="storeQuote()" class="btn btn-success">Add</button>
+                            <button type="Submit" wire:click.prevent="storeQuote()" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i> Submit</button>
                         </div>
                     </form>
                 </div>

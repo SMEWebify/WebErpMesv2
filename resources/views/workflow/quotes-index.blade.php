@@ -8,7 +8,7 @@
         <h1>Quotes list</h1>
     </div>
     <div class="col-sm-6">
-        <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalQuote">
+        <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalQuote">
             New quote
         </button>
     </div>

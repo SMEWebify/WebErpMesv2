@@ -177,7 +177,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="button" wire:click.prevent="storeCompany()" class="btn btn-success">Add</button>
+                                            <button type="button" wire:click.prevent="storeCompany()" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i> Submit</button>
                                         </div>
                                     </form>
                                 </div>

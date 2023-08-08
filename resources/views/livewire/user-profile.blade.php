@@ -29,13 +29,13 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="success" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                     </div>
                 </form>
 
                 <form wire:submit.prevent="updateInformation">
-                    <div class="card card-info">
+                    <div class="card card-warning">
                         <div class="card-header">
                             <h3 class="card-title">Personnal information</h3>
                         </div>
@@ -226,7 +226,7 @@
                             </div>
                         </div> 
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="success" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                     </div>
                 </form>

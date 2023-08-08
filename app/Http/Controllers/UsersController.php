@@ -30,7 +30,7 @@ class UsersController extends Controller
         $TimesAbsences = TimesAbsence::where('user_id', Auth::user()->id)->get();
         return view('profile', [
             'UserProfil' => $UserProfil,
-            'TimesAbsences' => $TimesAbsences
+            'TimesAbsences' => $TimesAbsences,
         ]);
     }
 
