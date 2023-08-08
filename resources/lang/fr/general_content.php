@@ -100,7 +100,7 @@ return [
 
     //QUALITY
     'quality_trans_key'                        => 'Quality',
-    'non_conformities_trans_key'               => 'Non onformities',
+    'non_conformities_trans_key'               => 'Non conformities',
     
 
     'settings_trans_key'                       => 'Settings',
