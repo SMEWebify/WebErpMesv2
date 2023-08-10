@@ -19,6 +19,7 @@ use App\Models\Quality\QualityDerogation;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityControlDevice;
 use App\Models\Quality\QualityNonConformity;
+use App\Models\Admin\UserEmploymentContracts;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -108,7 +109,6 @@ class User extends Authenticatable
   
     public function adminlte_profile_url()
     {
-        
         return route('user.profile', $this->id);
     }
 
@@ -156,6 +156,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(QualityNonConformity::class);
     }
+    public function getNcCountAttribute()
+    {
+        return $this->quality_non_conformities()->count();
+    }
 
     public function absence_request()
     {
@@ -177,14 +181,29 @@ class User extends Authenticatable
         return $this->hasMany(Leads::class);
     }
 
+    public function getLeadsCountAttribute()
+    {
+        return $this->leads()->count();
+    }
+
     public function quotes()
     {
         return $this->hasMany(Quotes::class);
     }
 
+    public function getQuotesCountAttribute()
+    {
+        return $this->quotes()->count();
+    }
+
     public function orders()
     {
         return $this->hasMany(Orders::class);
+    }
+
+    public function getOrdersCountAttribute()
+    {
+        return $this->orders()->count();
     }
     
     public function tasks()
@@ -200,6 +219,11 @@ class User extends Authenticatable
     public function files()
     {
         return $this->hasMany(File::class);
+    }
+
+    public function userEmploymentContracts()
+    {
+        return $this->hasMany(UserEmploymentContracts::class);
     }
 
     public function getActivitylogOptions(): LogOptions

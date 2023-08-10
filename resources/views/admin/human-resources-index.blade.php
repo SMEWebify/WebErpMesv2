@@ -58,16 +58,16 @@
                     @endforeach
                 </tbody>
                 <tfoot>
-                <tr>
-                    <th>Name</th>
-                    <th>E-mail</th>
-                    <th>employment statu</th>
-                    <th>Job Title</th>
-                    <th>Gender</th>
-                    <th>Born date</th>
-                    <th>Statu</th>
-                    <th></th>
-                    <th>Created</th>
+                    <tr>
+                        <th>Name</th>
+                        <th>E-mail</th>
+                        <th>employment statu</th>
+                        <th>Job Title</th>
+                        <th>Gender</th>
+                        <th>Born date</th>
+                        <th>Statu</th>
+                        <th></th>
+                        <th>Created</th>
                     </tr>
                 </tfoot>
             </table>

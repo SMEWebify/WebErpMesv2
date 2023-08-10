@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsSection;
+use App\Models\Admin\UserEmploymentContracts;
+use App\Http\Requests\Admin\StoreUserEmploymentContractRequest;
+use App\Http\Requests\Admin\UpdateUserEmploymentContractRequest;
 
 class HumanResourcesController extends Controller
 {
@@ -40,6 +43,7 @@ class HumanResourcesController extends Controller
         $User = User::find($id);
         $userSelect = User::select('id', 'name')->get();
         $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
+        $UserEmploymentContracts = UserEmploymentContracts::where('user_id', $id)->get();
         //DB information mustn't be empty.
         $Factory = Factory::first();
         return view('admin/users-show', [
@@ -47,10 +51,12 @@ class HumanResourcesController extends Controller
             'User' => $User,
             'userSelect' => $userSelect,
             'SectionsSelect' =>  $SectionsSelect,
+            'UserEmploymentContracts' =>  $UserEmploymentContracts,
         ]);
     }
 
     /**
+     * @param Request $request
      * @return View
      */
     public function UpdateUser(Request $request, int $id)
@@ -71,4 +77,60 @@ class HumanResourcesController extends Controller
 
         return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', 'Successfully updated user inforamations');
     }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function storeUserEmploymentContract(StoreUserEmploymentContractRequest $request)
+    {
+        // Create Line
+        $UserEmploymentContract = UserEmploymentContracts::create([
+                                                                    'user_id'=>$request->user_id, 
+                                                                    'statu'=>$request->statu,  
+                                                                    'methods_section_id'=>$request->methods_section_id, 
+                                                                    'signature_date'=>$request->signature_date,  
+                                                                    'type_of_contract'=>$request->type_of_contract,  
+                                                                    'start_date'=>$request->start_date,  
+                                                                    'duration_trial_period'=>$request->duration_trial_period,  
+                                                                    'end_date'=>$request->end_date,  
+                                                                    'weekly_duration'=>$request->weekly_duration,  
+                                                                    'position'=>$request->position,  
+                                                                    'coefficient'=>$request->coefficient,  
+                                                                    'hourly_gross_salary'=>$request->hourly_gross_salary,  
+                                                                    'minimum_monthly_salary'=>$request->minimum_monthly_salary,  
+                                                                    'annual_gross_salary'=>$request->annual_gross_salary,  
+                                                                    'end_of_contract_reason'=>$request->end_of_contract_reason,
+                                                                ]);
+
+        return redirect()->route('human.resources.show.user', ['id' => $UserEmploymentContract->user_id])->with('success', 'Successfully add contract');
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function updateUserEmploymentContract(UpdateUserEmploymentContractRequest $request)
+    {
+        // Create Line
+        $UserEmploymentContract = UserEmploymentContracts::findOrFail($request->id);
+        $UserEmploymentContract->statu  =$request->statu;
+        $UserEmploymentContract->methods_section_id =$request->methods_section_id;
+        $UserEmploymentContract->signature_date  =$request->signature_date;
+        $UserEmploymentContract->type_of_contract  =$request->type_of_contract; 
+        $UserEmploymentContract->start_date = $request->start_date; 
+        $UserEmploymentContract->duration_trial_period = $request->duration_trial_period; 
+        $UserEmploymentContract->end_date = $request->end_date; 
+        $UserEmploymentContract->weekly_duration =$request->weekly_duration; 
+        $UserEmploymentContract->position = $request->position;
+        $UserEmploymentContract->coefficient =$request->coefficient;
+        $UserEmploymentContract->hourly_gross_salary =$request->hourly_gross_salary;
+        $UserEmploymentContract->minimum_monthly_salary =$request->minimum_monthly_salary;
+        $UserEmploymentContract->annual_gross_salary =$request->annual_gross_salary;
+        $UserEmploymentContract->end_of_contract_reason =$request->end_of_contract_reason;
+        $UserEmploymentContract->save();
+
+        return redirect()->route('human.resources.show.user', ['id' => $UserEmploymentContract->user_id])->with('success', 'Successfully update contract');
+    }
+    
 }

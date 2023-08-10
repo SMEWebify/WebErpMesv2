@@ -1226,69 +1226,68 @@
                     <!-- Modal {{ $MethodsTool->id }} -->
                     <x-adminlte-modal id="MethodsTool{{ $MethodsTool->id }}" title="Update {{ $MethodsTool->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                       <form method="POST" action="{{ route('methods.tool.update', ['id' => $MethodsTool->id]) }}" enctype="multipart/form-data">
-                          @csrf
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label for="label">Label</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
-                                <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsTool->label }}">
+                        @csrf
+                        <div class="card-body">
+                          <div class="form-group">
+                            <label for="label">Label</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="ETAT">Statu</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                </div>
-                                <select class="form-control" name="ETAT" id="ETAT">
-                                  <option value="1" @if($MethodsTool->ETAT == 1 ) Selected @endif>Unused</option>
-                                  <option value="2" @if($MethodsTool->ETAT == 2  ) Selected @endif>Used</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="cost">Cost</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">{{ $Factory->curency }}</span>
-                                </div>
-                                <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001" value="{{ $MethodsTool->cost }}">
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="qty">Quantity</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-times"></i></span>
-                                </div>
-                                <input type="numer" class="form-control" name="qty"  id="qty" placeholder="Qty" value="{{ $MethodsTool->qty }}">
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="end_date">End date</label>
-                              <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="Qty" value="{{ $MethodsTool->end_date }}" >
-                            </div>
-                            <div class="form-group">
-                              <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="far fa-image"></i></span>
-                                </div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="picture" id="picture">
-                                    <label class="custom-file-label" for="picture">Choose file</label>
-                                </div>
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsTool->label }}">
                             </div>
                           </div>
-                          <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <div class="form-group">
+                            <label for="ETAT">Statu</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                              </div>
+                              <select class="form-control" name="ETAT" id="ETAT">
+                                <option value="1" @if($MethodsTool->ETAT == 1 ) Selected @endif>Unused</option>
+                                <option value="2" @if($MethodsTool->ETAT == 2  ) Selected @endif>Used</option>
+                              </select>
+                            </div>
                           </div>
-                        </form>
-                      </x-adminlte-modal>
-                    </div>
+                          <div class="form-group">
+                            <label for="cost">Cost</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text">{{ $Factory->curency }}</span>
+                              </div>
+                              <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001" value="{{ $MethodsTool->cost }}">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="qty">Quantity</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-times"></i></span>
+                              </div>
+                              <input type="numer" class="form-control" name="qty"  id="qty" placeholder="Qty" value="{{ $MethodsTool->qty }}">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="end_date">End date</label>
+                            <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="Qty" value="{{ $MethodsTool->end_date }}" >
+                          </div>
+                          <div class="form-group">
+                            <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-image"></i></span>
+                              </div>
+                              <div class="custom-file">
+                                  <input type="file" class="custom-file-input" name="picture" id="picture">
+                                  <label class="custom-file-label" for="picture">Choose file</label>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="card-footer">
+                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                        </div>
+                      </form>
+                    </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty

@@ -204,6 +204,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Admin\HumanResourcesController@index')->middleware(['auth'])->name('human.resources'); 
         Route::get('/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowUser')->middleware(['auth'])->name('human.resources.show.user');
         Route::post('/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->middleware(['auth'])->name('human.resources.update.user');
+        Route::post('/contract/create', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserEmploymentContract')->middleware(['auth'])->name('human.resources.create.contract');
+        Route::post('/contract/update', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserEmploymentContract')->middleware(['auth'])->name('human.resources.update.contract');
     });
 
     Route::group(['prefix' => 'quality'], function () {

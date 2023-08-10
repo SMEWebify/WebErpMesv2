@@ -5,6 +5,7 @@ namespace App\Models\Methods;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Methods\MethodsRessources;
+use App\Models\Admin\UserEmploymentContracts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MethodsSection extends Model
@@ -23,4 +24,8 @@ class MethodsSection extends Model
         return $this->hasMany(MethodsRessources::class);
     }
 
+    public function userEmploymentContracts()
+    {
+        return $this->hasMany(UserEmploymentContracts::class);
+    }
 }

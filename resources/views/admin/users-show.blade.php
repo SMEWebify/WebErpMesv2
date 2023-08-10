@@ -20,9 +20,10 @@
                 <p class="text-muted text-center">{{ $User->job_title }}</p>
                 <p class="text-muted text-center">{{ $User->email }}</p>
                 <ul class="list-group list-group-unbordered mb-3">
-                <li class="list-group-item"><b>Quotes</b> <a class="float-right">{{ $User->quotes_count }}</a></li>
-                <li class="list-group-item"><b>Orders</b> <a class="float-right">{{ $User->orders_count }}</a></li>
-                <li class="list-group-item"><b>NC</b> <a class="float-right">{{ $User->quality_non_conformities_count }}</a></li>
+                    <li class="list-group-item"><b>Leads</b> <a class="float-right">{{ $User->getLeadsCountAttribute() }}</a></li>
+                    <li class="list-group-item"><b>Quotes</b> <a class="float-right">{{ $User->getQuotesCountAttribute() }}</a></li>
+                    <li class="list-group-item"><b>Orders</b> <a class="float-right">{{ $User->getOrdersCountAttribute() }}</a></li>
+                    <li class="list-group-item"><b>NC</b> <a class="float-right">{{ $User->getNcCountAttribute() }}</a></li>
                 </ul>
             </div>
         </div>
@@ -61,10 +62,13 @@
     </div>
 
     <div class="col-md-9">
+        
+        @include('include.alert-result')
         <div class="card">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">HR information</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">HR information</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contract" data-toggle="tab">Contract</a></li>
                 </ul>
             </div>
             <div class="card-body">
@@ -196,6 +200,367 @@
                                 <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
                             </div>
                         </form>
+                    </div>
+                    <div class="tab-pane" id="contract">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="table-responsive p-0">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Statu</th>
+                                                <th>Type of contract</th>
+                                                <th>Start date</th>
+                                                <th>Weekly duration</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($UserEmploymentContracts as $UserEmploymentContract)
+                                            <tr>
+                                                <td>
+                                                    @if($UserEmploymentContract->statu == 1) <span class="badge badge-warning">On trial</span> @endif
+                                                    @if($UserEmploymentContract->statu == 2)<span class="badge badge-success">Asset</span> @endif
+                                                    @if($UserEmploymentContract->statu == 3)<span class="badge badge-danger">Closed</span> @endif
+                                                </td>
+                                                <td>{{ $UserEmploymentContract->type_of_contract }}</td>
+                                                <td>{{ $UserEmploymentContract->start_date }}</td>
+                                                <td>{{ $UserEmploymentContract->weekly_duration }}</td>
+                                                <td class="py-0 align-middle">
+                                                    <!-- Button Modal -->
+                                                    <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#UserEmploymentContract{{ $UserEmploymentContract->id }}">
+                                                    <i class="fa fa-lg fa-fw  fa-edit"></i>
+                                                    </button>
+                                                    <!-- Modal {{ $UserEmploymentContract->id }} -->
+                                                        <x-adminlte-modal id="UserEmploymentContract{{ $UserEmploymentContract->id }}" title="Update {{ $UserEmploymentContract->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                                                        <form method="POST" action="{{ route('human.resources.update.contract', ['id' => $UserEmploymentContract->id]) }}" enctype="multipart/form-data">
+                                                            @csrf
+                                                            <div class="card-body">
+                                                                <input type="hidden" name="user_id" id="user_id" value="{{ $User->id }}">
+                                                                <div class="form-group">
+                                                                    <label for="statu">Statu</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                        </div>
+                                                                        <select class="form-control" name="statu" id="statu">
+                                                                            <option value="1" @if($UserEmploymentContract->statu == 1  ) Selected @endif>On trial</option>
+                                                                            <option value="2" @if($UserEmploymentContract->statu == 2  ) Selected @endif>Asset</option>
+                                                                            <option value="3" @if($UserEmploymentContract->statu == 3  ) Selected @endif>Closed</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="methods_section_id">Section concern:</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                        </div>
+                                                                        <select class="form-control" name="methods_section_id" id="methods_section_id">
+                                                                            @forelse ($SectionsSelect as $item)
+                                                                            <option value="{{ $item->id }}" @if($UserEmploymentContract->methods_section_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                                                            @empty
+                                                                            <option value="">No section, please add before</option>
+                                                                            @endforelse
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="signature_date">Signature date :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                                        </div>
+                                                                        <input type="date" class="form-control"   name="signature_date"  id="signature_date" value="{{ $UserEmploymentContract->signature_date }}">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="type_of_contract">Type of contract :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"  name="type_of_contract" id="type_of_contract" value="{{ $UserEmploymentContract->type_of_contract }}" placeholder="Type of contract">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="start_date">Start date :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                                        </div>
+                                                                        <input type="date" class="form-control"   name="start_date"  id="start_date" value="{{ $UserEmploymentContract->start_date }}">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="duration_trial_period">Duration trial period :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="fas fa-stopwatch"> Day(s)</i></span>
+                                                                        </div>
+                                                                        <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="Duration trial period" value="{{ $UserEmploymentContract->duration_trial_period }}" step="1" min="0">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="start_date">End date :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                                        </div>
+                                                                        <input type="date" class="form-control"   name="end_date"  id="end_date" value="{{ $UserEmploymentContract->end_date }}" >
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="weekly_duration">Weekly duration :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="fas fa-stopwatch"> Hour(s)</i></span>
+                                                                        </div>
+                                                                        <input type="number" class="form-control"  name="weekly_duration" id="weekly_duration" placeholder="Weekly duration" value="{{ $UserEmploymentContract->weekly_duration }}" step="1" min="0">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="position">Position :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"  name="position" id="position" placeholder="Position" value="{{ $UserEmploymentContract->position }}">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="coefficient">Coefficient :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                        </div>
+                                                                        <input type="text" class="form-control"  name="coefficient" id="coefficient" placeholder="Coefficient"  value="{{ $UserEmploymentContract->coefficient }}">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="hourly_gross_salary">Hourly gross salary :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                                        </div>
+                                                                        <input type="number" class="form-control"  name="hourly_gross_salary" id="hourly_gross_salary" placeholder="Hourly gross salary"  value="{{ $UserEmploymentContract->hourly_gross_salary }}" step="1" min="0">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="minimum_monthly_salary">Minimum monthly salary :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                                        </div>
+                                                                        <input type="number" class="form-control"  name="minimum_monthly_salary" id="minimum_monthly_salary" placeholder="Minimum monthly salary"  value="{{ $UserEmploymentContract->minimum_monthly_salary }}" step="1" min="0">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                                <div class="form-group">
+                                                                    <label for="annual_gross_salary">Annual gross salary :</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                                        </div>
+                                                                        <input type="number" class="form-control"  name="annual_gross_salary" id="annual_gross_salary" placeholder="Annual gross salary"  value="{{ $UserEmploymentContract->annual_gross_salary }}" step="1" min="0">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.form-group -->
+                                                            </div>
+                                                            <div class="card-footer">
+                                                                <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                                                            </div>
+                                                        </form>
+                                                    </x-adminlte-modal>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Statu</th>
+                                                <th>Type of contract</th>
+                                                <th>Start date</th>
+                                                <th>Weekly duration</th>
+                                                <th></th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card card-secondary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">New contract</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <form method="POST" action="{{ route('human.resources.create.contract', ['id' => $User->id]) }}" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="card-body">
+                                                <input type="hidden" name="user_id" id="user_id" value="{{ $User->id }}">
+                                                <div class="form-group">
+                                                    <label for="statu">Statu</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                        </div>
+                                                        <select class="form-control" name="statu" id="statu">
+                                                            <option value="1">On trial</option>
+                                                            <option value="2">Asset</option>
+                                                            <option value="3">Closed</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="methods_section_id">Section concern:</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                        </div>
+                                                        <select class="form-control" name="methods_section_id" id="methods_section_id">
+                                                            @forelse ($SectionsSelect as $item)
+                                                            <option value="{{ $item->id }}">{{ $item->label }}</option>
+                                                            @empty
+                                                            <option value="">No section, please add before</option>
+                                                            @endforelse
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="signature_date">Signature date :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                        </div>
+                                                        <input type="date" class="form-control"   name="signature_date"  id="signature_date">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="type_of_contract">Type of contract :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control"  name="type_of_contract" id="type_of_contract" placeholder="Type of contract">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="start_date">Start date :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                        </div>
+                                                        <input type="date" class="form-control"   name="start_date"  id="start_date">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="duration_trial_period">Duration trial period :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-stopwatch"> Day(s)</i></span>
+                                                        </div>
+                                                        <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="Duration trial period" step="1" min="0">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="start_date">End date :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                        </div>
+                                                        <input type="date" class="form-control"   name="end_date"  id="end_date">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="weekly_duration">Weekly duration :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-stopwatch"> Hour(s)</i></span>
+                                                        </div>
+                                                        <input type="number" class="form-control"  name="weekly_duration" id="weekly_duration" placeholder="Weekly duration" step="1" min="0">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="position">Position :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control"  name="position" id="position" placeholder="Position">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="coefficient">Coefficient :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control"  name="coefficient" id="coefficient" placeholder="Coefficient">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="hourly_gross_salary">Hourly gross salary :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                        </div>
+                                                        <input type="number" class="form-control"  name="hourly_gross_salary" id="hourly_gross_salary" placeholder="Hourly gross salary" step="1" min="0">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="minimum_monthly_salary">Minimum monthly salary :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                        </div>
+                                                        <input type="number" class="form-control"  name="minimum_monthly_salary" id="minimum_monthly_salary" placeholder="Minimum monthly salary" step="1" min="0">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                                <div class="form-group">
+                                                    <label for="annual_gross_salary">Annual gross salary :</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                        </div>
+                                                        <input type="number" class="form-control"  name="annual_gross_salary" id="annual_gross_salary" placeholder="Annual gross salary" step="1" min="0">
+                                                    </div>
+                                                </div>
+                                                <!-- /.form-group -->
+                                            </div>
+                                            <div class="card-footer">
+                                                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
                     </div>
                 </div>
             </div>
