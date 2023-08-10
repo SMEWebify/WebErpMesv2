@@ -1,4 +1,4 @@
-<div class="card-body">
+<div>
     <div class="card">
         @include('include.alert-result')
         <form>
@@ -172,8 +172,8 @@
                     </tfoot>
                 </table>
             </div>
-        <!-- /.card -->
-        </div>
-    </form>
+        </form>
+    <!-- /.card -->
+    </div>
 <!-- /.card-body -->
 </div>

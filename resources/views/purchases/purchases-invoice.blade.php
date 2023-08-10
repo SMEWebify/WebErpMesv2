@@ -4,9 +4,7 @@
 
 @section('content_header')
   <div class="row mb-2">
-    <div class="col-sm-6">
-        <h1>Purchases invoive</h1>
-    </div>
+    <h1>Purchases invoive</h1>
   </div>
 @stop
 
@@ -34,9 +32,7 @@
       </div>
     </div>
     <div class="col-md-9">
-      <div class="card">
-        @livewire('purchases-invoice-index')
-      </div>
+      @livewire('purchases-invoice-index')
     </div>
   </div>
 

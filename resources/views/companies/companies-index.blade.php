@@ -4,14 +4,7 @@
 
 @section('content_header')
     <div class="row mb-2">
-      <div class="col-sm-6">
         <h1>Companies list</h1>
-      </div>
-      <div class="col-sm-6">
-        <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalCompanie">
-          New Company
-        </button>
-      </div>
     </div>
 @stop
 
@@ -69,9 +62,6 @@
         </div>
       </div>
       <div class="col-md-9">
-        <div class="card">
-          @include('include.alert-result')
-          
           @livewire('companies-lines')
         </div>
       </div>

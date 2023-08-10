@@ -1,5 +1,5 @@
 
-<div class="card-body">
+<div>
     <!-- Modal -->
     <div wire:ignore.self class="modal fade" id="ModalQuote" tabindex="-1" role="dialog" aria-labelledby="ModalQuoteTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -197,78 +197,92 @@
             </div>
         </div>
     </div>
+
     <!-- End Modal -->
     <div class="card">
-        @include('include.search-card')
-        <div class="table-responsive p-0">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">ID @include('include.sort-icon', ['field' => 'code'])</a>
-                        </th>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Project @include('include.sort-icon', ['field' => 'label'])</a>
-                        </th>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Company @include('include.sort-icon', ['field' => 'companies_id'])</a>
-                        </th>
-                        <th>Customer Re</th>
-                        <th>Lines count</th>
-                        <th>Total price</th>
-                        <th>Status</th>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created @include('include.sort-icon', ['field' => 'created_at'])</a>
-                        </th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($Quoteslist as $Quote)
-                    <tr>
-                        <td>{{ $Quote->code }}</td>
-                        <td>{{ $Quote->label }}</td>
-                        <td>
-                            <x-CompanieButton id="{{ $Quote->companies_id }}" label="{{ $Quote->companie['label'] }}"  />
-                        </td>
-                        <td>{{ $Quote->customer_reference }}</td>
-                        <td>{{ $Quote->quote_lines_count }}</td>
-                        <td>{{ $Quote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
-                        <td>
-                            @if(1 == $Quote->statu )   <span class="badge badge-info"> Open</span>@endif
-                            @if(2 == $Quote->statu )  <span class="badge badge-warning">Send</span>@endif
-                            @if(3 == $Quote->statu )  <span class="badge badge-success">Win</span>@endif
-                            @if(4 == $Quote->statu )  <span class="badge badge-danger">Lost</span>@endif
-                            @if(5 == $Quote->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                            @if(6 == $Quote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
-                        </td>
-                        <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
-                        <td>
-                            <x-ButtonTextView route="{{ route('quotes.show', ['id' => $Quote->id])}}" />
-                            <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" />
-                        </td>
-                    </tr>
-                    @empty
-                        <x-EmptyDataLine col="8" text="No quotes found ..."  />
-                    @endforelse
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>ID</th>
-                        <th>Project</th>
-                        <th>Company</th>
-                        <th>Customer Ref</th>
-                        <th>Lines count</th>
-                        <th>Total price</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Action</th>
-                    </tr>
-                </tfoot>
-            </table>
+        @include('include.alert-result')
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    @include('include.search-card')
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalQuote">
+                        New quote
+                    </button>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">ID @include('include.sort-icon', ['field' => 'code'])</a>
+                            </th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Project @include('include.sort-icon', ['field' => 'label'])</a>
+                            </th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Company @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            </th>
+                            <th>Customer Re</th>
+                            <th>Lines count</th>
+                            <th>Total price</th>
+                            <th>Status</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($Quoteslist as $Quote)
+                        <tr>
+                            <td>{{ $Quote->code }}</td>
+                            <td>{{ $Quote->label }}</td>
+                            <td>
+                                <x-CompanieButton id="{{ $Quote->companies_id }}" label="{{ $Quote->companie['label'] }}"  />
+                            </td>
+                            <td>{{ $Quote->customer_reference }}</td>
+                            <td>{{ $Quote->quote_lines_count }}</td>
+                            <td>{{ $Quote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
+                            <td>
+                                @if(1 == $Quote->statu )   <span class="badge badge-info"> Open</span>@endif
+                                @if(2 == $Quote->statu )  <span class="badge badge-warning">Send</span>@endif
+                                @if(3 == $Quote->statu )  <span class="badge badge-success">Win</span>@endif
+                                @if(4 == $Quote->statu )  <span class="badge badge-danger">Lost</span>@endif
+                                @if(5 == $Quote->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                                @if(6 == $Quote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                            </td>
+                            <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
+                            <td>
+                                <x-ButtonTextView route="{{ route('quotes.show', ['id' => $Quote->id])}}" />
+                                <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" />
+                            </td>
+                        </tr>
+                        @empty
+                            <x-EmptyDataLine col="8" text="No quotes found ..."  />
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Project</th>
+                            <th>Company</th>
+                            <th>Customer Ref</th>
+                            <th>Lines count</th>
+                            <th>Total price</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            {{ $Quoteslist->links() }}
+        <!-- /.card-body -->
         </div>
-        {{ $Quoteslist->links() }}
     <!-- /.card -->
     </div>
-<!-- /.card-body -->
+<!-- /.div -->
 </div>

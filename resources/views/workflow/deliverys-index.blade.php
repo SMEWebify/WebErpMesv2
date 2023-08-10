@@ -34,9 +34,7 @@
       </div>
     </div>
     <div class="col-md-9">
-      <div class="card">
         @livewire('deliverys-index')
-      </div>
     </div>
   </div>
 </div>

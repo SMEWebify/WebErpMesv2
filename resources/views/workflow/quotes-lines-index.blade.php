@@ -4,9 +4,7 @@
 
 @section('content_header')
   <div class="row mb-2">
-    <div class="col-sm-6">
-        <h1>Quotes lines list</h1>
-    </div>
+    <h1>Quotes lines list</h1>
   </div>
 @stop
 
@@ -14,10 +12,7 @@
 
 @section('content')
 
-<div class="card">
-  @livewire('quotes-lines-index')
-<!-- /.card -->
-</div>
+@livewire('quotes-lines-index')
 
 @stop
 

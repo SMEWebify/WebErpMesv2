@@ -1,4 +1,4 @@
-<div class="card-body">
+<div >
     <div class="card">
         @include('include.alert-result')
         <form>
@@ -98,88 +98,88 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body table-responsive p-0">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">Order @include('include.sort-icon', ['field' => 'orders_id'])</a>
-                            </th>
-                            <th>Companie</th>
-                            <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">External ID @include('include.sort-icon', ['field' => 'code'])</a>
-                            </th>
-                            <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
-                            </th>
-                            <th>Qty</th>
-                            <th>Scum qty</th>
-                            <th>Unit</th>
-                            <th>Selling price</th>
-                            <th>Discount</th>
-                            <th>VAT type</th>
-                            <th>Delivery date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($DeliverysRequestsLineslist as $DeliverysRequestsLine)
-                        <tr>
-                            <td>
-                                <x-OrderButton id="{{ $DeliverysRequestsLine->order['id'] }}" code="{{ $DeliverysRequestsLine->order['code'] }}"  />
-                            </td>
-                            <td>
-                                @if($DeliverysRequestsLine->order->type == 1 )
-                                <x-CompanieButton id="{{ $DeliverysRequestsLine->order->companies_id }}" label="{{ $DeliverysRequestsLine->order->companie['label'] }}"  />
-                                @else
-                                Internal order
-                                @endif
-                            </td>
-                            <td>{{ $DeliverysRequestsLine->code }}</td>
-                            <td>{{ $DeliverysRequestsLine->label }}</td>
-                            <td>
-                                {{ $DeliverysRequestsLine->delivered_remaining_qty }}
-                            </td>
-                            <td>
-                                <input class="form-control" wire:model="data.{{ $DeliverysRequestsLine->id }}.scumQty" placeholder="Quantity" type="number">
-                            </td>
-                            <td>{{ $DeliverysRequestsLine->Unit['label'] }}</td>
-                            <td>{{ $DeliverysRequestsLine->selling_price }}</td>
-                            <td>{{ $DeliverysRequestsLine->discount }}</td>
-                            <td>{{ $DeliverysRequestsLine->VAT['label'] }}</td>
-                            <td>{{ $DeliverysRequestsLine->delivery_date }}</td>
-                            <td>
-                                <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model="data.{{ $DeliverysRequestsLine->id }}.order_line_id" id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  type="checkbox">
-                                    <label for="data.{{ $DeliverysRequestsLine->id }}.order_line_id" class="custom-control-label">Add to new delivery note</label>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                            <x-EmptyDataLine col="15" text="No request found ..."  />
-                        @endforelse
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th>Order</th>
-                            <th>Companie</th>
-                            <th>External ID</th>
-                            <th>Label</th>
-                            <th>Description</th>
-                            <th>Qty</th>
-                            <th>Scum qty</th>
-                            <th>Unit</th>
-                            <th>Selling price</th>
-                            <th>Discount</th>
-                            <th>VAT type</th>
-                            <th>Delivery date</th>
-                            <th>Action</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        <!-- /.card -->
+        </form>
+        <div class="card-body table-responsive p-0">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">Order @include('include.sort-icon', ['field' => 'orders_id'])</a>
+                        </th>
+                        <th>Companie</th>
+                        <th>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">External ID @include('include.sort-icon', ['field' => 'code'])</a>
+                        </th>
+                        <th>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                        </th>
+                        <th>Qty</th>
+                        <th>Scum qty</th>
+                        <th>Unit</th>
+                        <th>Selling price</th>
+                        <th>Discount</th>
+                        <th>VAT type</th>
+                        <th>Delivery date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($DeliverysRequestsLineslist as $DeliverysRequestsLine)
+                    <tr>
+                        <td>
+                            <x-OrderButton id="{{ $DeliverysRequestsLine->order['id'] }}" code="{{ $DeliverysRequestsLine->order['code'] }}"  />
+                        </td>
+                        <td>
+                            @if($DeliverysRequestsLine->order->type == 1 )
+                            <x-CompanieButton id="{{ $DeliverysRequestsLine->order->companies_id }}" label="{{ $DeliverysRequestsLine->order->companie['label'] }}"  />
+                            @else
+                            Internal order
+                            @endif
+                        </td>
+                        <td>{{ $DeliverysRequestsLine->code }}</td>
+                        <td>{{ $DeliverysRequestsLine->label }}</td>
+                        <td>
+                            {{ $DeliverysRequestsLine->delivered_remaining_qty }}
+                        </td>
+                        <td>
+                            <input class="form-control" wire:model="data.{{ $DeliverysRequestsLine->id }}.scumQty" placeholder="Quantity" type="number">
+                        </td>
+                        <td>{{ $DeliverysRequestsLine->Unit['label'] }}</td>
+                        <td>{{ $DeliverysRequestsLine->selling_price }}</td>
+                        <td>{{ $DeliverysRequestsLine->discount }}</td>
+                        <td>{{ $DeliverysRequestsLine->VAT['label'] }}</td>
+                        <td>{{ $DeliverysRequestsLine->delivery_date }}</td>
+                        <td>
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model="data.{{ $DeliverysRequestsLine->id }}.order_line_id" id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  type="checkbox">
+                                <label for="data.{{ $DeliverysRequestsLine->id }}.order_line_id" class="custom-control-label">Add to new delivery note</label>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                        <x-EmptyDataLine col="13" text="No request found ..."  />
+                    @endforelse
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Order</th>
+                        <th>Companie</th>
+                        <th>External ID</th>
+                        <th>Label</th>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th>Scum qty</th>
+                        <th>Unit</th>
+                        <th>Selling price</th>
+                        <th>Discount</th>
+                        <th>VAT type</th>
+                        <th>Delivery date</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
-    </form>
+    <!-- /.card -->
+    </div>
 <!-- /.card-body -->
 </div>

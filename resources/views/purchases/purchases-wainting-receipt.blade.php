@@ -14,10 +14,7 @@
 
 @section('content')
 
-<div class="card">
-  @livewire('purchases-wainting-receipt')
-<!-- /.card -->
-</div>
+@livewire('purchases-wainting-receipt')
 
 @stop
 

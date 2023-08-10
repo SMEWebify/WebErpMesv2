@@ -1,4 +1,4 @@
-<div class="card-body">
+<div>
     <!-- Modal -->
     <div wire:ignore.self class="modal fade" id="ModalProduct" tabindex="-1" role="dialog" aria-labelledby="ModalProductTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -299,72 +299,84 @@
     <!-- End Modal -->
 
     <div class="card">
-        @include('include.search-card')
-        <div class="card-body table-responsive p-0">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
-                        </th>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
-                        </th>
-                        <th>Created At</th>
-                        <th>Sold</th>
-                        <th>Purchase</th>
-                        <th></th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($Products as $Product)
-                    <tr>
-                        <td>{{ $Product->code }}</td>
-                        <td>{{ $Product->label }}</td>
-                        <td>{{ $Product->GetPrettyCreatedAttribute() }}</td>
-                        <td>
-                            @if($Product->sold == 1 )
-                            <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
-                            @else
-                            <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
-                            @endif
-                        </td>
-                        <td>
-                            @if($Product->purchased == 1 )
-                            <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
-                            @else
-                            <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
-                            @endif
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks {{  $Product->getTaskCountAttribute() }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <x-ButtonTextView route="{{ route('products.show', ['id' => $Product->id])}}" />
-                        </td>
-                    </tr>
-                    @empty
-                        <x-EmptyDataLine col="6" text=" No lines found ..."  />
-                    @endforelse
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>Code</th>
-                        <th>Label</th>
-                        <th>Created At</th>
-                        <th>Sold</th>
-                        <th>Purchase</th>
-                        <th></th>
-                        <th>Action</th>
-                    </tr>
-                </tfoot>
-            </table>
-        <!-- /.col-sm-12 -->
+        @include('include.alert-result')
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    @include('include.search-card')
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalProduct">
+                        New product
+                    </button>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                            </th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                            </th>
+                            <th>Created At</th>
+                            <th>Sold</th>
+                            <th>Purchase</th>
+                            <th></th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($Products as $Product)
+                        <tr>
+                            <td>{{ $Product->code }}</td>
+                            <td>{{ $Product->label }}</td>
+                            <td>{{ $Product->GetPrettyCreatedAttribute() }}</td>
+                            <td>
+                                @if($Product->sold == 1 )
+                                <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
+                                @else
+                                <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($Product->purchased == 1 )
+                                <span class="badge badge-success"><i class="fa fa-lg fa-fw  fa-check"></i></span>
+                                @else
+                                <span class="badge badge-danger"><i class="fa fa-lg fa-fw  fa-times"></i></span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> Tasks {{  $Product->getTaskCountAttribute() }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <x-ButtonTextView route="{{ route('products.show', ['id' => $Product->id])}}" />
+                            </td>
+                        </tr>
+                        @empty
+                            <x-EmptyDataLine col="6" text=" No lines found ..."  />
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Code</th>
+                            <th>Label</th>
+                            <th>Created At</th>
+                            <th>Sold</th>
+                            <th>Purchase</th>
+                            <th></th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        <!-- /.card-body -->
         </div>
     <!-- /.card -->
     </div>
-<!-- /.card-body -->
+<!-- /.div -->
 </div>

@@ -1,5 +1,5 @@
 
-<div class="card-body">
+<div>
     <!-- Modal -->
     <div wire:ignore.self class="modal fade" id="ModalOrder" tabindex="-1" role="dialog" aria-labelledby="ModalOrderTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -213,80 +213,94 @@
     </div>
     <!-- End Modal -->
 
+    <!-- End Modal -->
     <div class="card">
-        @include('include.search-card')
-        <div class="card-body table-responsive p-0">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
-                        </th>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
-                        </th>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
-                        </th>
-                        <th>Customer reference</th>
-                        <th>Lines count</th>
-                        <th>Total price</th>
-                        <th>Statu</th>
-                        <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
-                        </th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($Orderslist as $Order)
-                    <tr>
-                        <td>{{ $Order->code }}</td>
-                        <td>{{ $Order->label }}</td>
-                        <td>
-                            @if($Order->type == 1 )
-                            <x-CompanieButton id="{{ $Order->companies_id }}" label="{{ $Order->companie['label'] }}"  />
-                            @else
-                            Internal order
-                            @endif
-                        </td>
-                        <td>{{ $Order->customer_reference }}</td>
-                        <td>{{ $Order->order_lines_count }}</td>
-                        <td>{{ $Order->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
-                        <td>
-                            @if(1 == $Order->statu )   <span class="badge badge-info"> Open</span>@endif
-                            @if(2 == $Order->statu )  <span class="badge badge-warning">In progress</span>@endif
-                            @if(3 == $Order->statu )  <span class="badge badge-success">Delivered</span>@endif
-                            @if(4 == $Order->statu )  <span class="badge badge-danger">Partly delivered</span>@endif
-                        </td>
-                        <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
-                        <td>
-                            <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
-                            <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
-                        </td>
-                    </tr>
-                    @empty
-                        <x-EmptyDataLine col="8" text="No order found ..."  />
-                    @endforelse
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>Code</th>
-                        <th>Label</th>
-                        <th>Companie</th>
-                        <th>Customer reference</th>
-                        <th>Lines count</th>
-                        <th>Total price</th>
-                        <th>Statu</th>
-                        <th>Created At</th>
-                        <th>Action</th>
-                    </tr>
-                </tfoot>
-            </table>
+        @include('include.alert-result')
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    @include('include.search-card')
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalOrder">
+                        New Order
+                    </button>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                            </th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                            </th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            </th>
+                            <th>Customer reference</th>
+                            <th>Lines count</th>
+                            <th>Total price</th>
+                            <th>Statu</th>
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($Orderslist as $Order)
+                        <tr>
+                            <td>{{ $Order->code }}</td>
+                            <td>{{ $Order->label }}</td>
+                            <td>
+                                @if($Order->type == 1 )
+                                <x-CompanieButton id="{{ $Order->companies_id }}" label="{{ $Order->companie['label'] }}"  />
+                                @else
+                                Internal order
+                                @endif
+                            </td>
+                            <td>{{ $Order->customer_reference }}</td>
+                            <td>{{ $Order->order_lines_count }}</td>
+                            <td>{{ $Order->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
+                            <td>
+                                @if(1 == $Order->statu )   <span class="badge badge-info"> Open</span>@endif
+                                @if(2 == $Order->statu )  <span class="badge badge-warning">In progress</span>@endif
+                                @if(3 == $Order->statu )  <span class="badge badge-success">Delivered</span>@endif
+                                @if(4 == $Order->statu )  <span class="badge badge-danger">Partly delivered</span>@endif
+                            </td>
+                            <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
+                            <td>
+                                <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
+                                <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
+                            </td>
+                        </tr>
+                        @empty
+                            <x-EmptyDataLine col="8" text="No order found ..."  />
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Code</th>
+                            <th>Label</th>
+                            <th>Companie</th>
+                            <th>Customer reference</th>
+                            <th>Lines count</th>
+                            <th>Total price</th>
+                            <th>Statu</th>
+                            <th>Created At</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <!-- /.row -->
+            {{ $Orderslist->links() }}
+        <!-- /.card-body -->
         </div>
-        <!-- /.row -->
-        {{ $Orderslist->links() }}
-    <!-- /.card -->
+        <!-- /.card -->
     </div>
-<!-- /.card-body -->
+<!-- /.div -->
 </div>

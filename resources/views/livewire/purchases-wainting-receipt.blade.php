@@ -1,4 +1,4 @@
-<div class="card-body">
+<div>
     <div class="card">
         @include('include.alert-result')
             <div class="card-body">
@@ -67,7 +67,7 @@
                     </div>
                 </form>
             </div>
-            <div class="table-responsive p-0">
+            <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                     <thead>
                         <tr>
