@@ -9,7 +9,7 @@ return [
     'dashboard_trans_key'                      => 'Dashboard',
     'companies_trans_key'                      => 'Companies',
     'leads_trans_key'                          => 'Leads',
-    'quote_trans_key'                          => 'Quote',
+    'quote_trans_key'                          => 'Quotes',
     'quotes_list_trans_key'                    => 'quotes list',
     'quotes_lines_list_trans_key'              => 'quotes lines list',
     'orders_trans_key'                         => 'Orders',
