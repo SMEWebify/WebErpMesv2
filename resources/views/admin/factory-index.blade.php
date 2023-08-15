@@ -13,6 +13,9 @@
             <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Factory settings</a></li>
             <li class="nav-item"><a class="nav-link" href="#Announcement" data-toggle="tab">Announcement</a></li>
             <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Workflow settings</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Role" data-toggle="tab">Roles</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Permissions" data-toggle="tab">Permissions</a></li>
+            <li class="nav-item"><a class="nav-link" href="#RoleInPermissions" data-toggle="tab">Roles in Permissions</a></li>
             <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">Estimated Budget</a></li>
             <li class="nav-item"><a class="nav-link" href="#CustomerImport" data-toggle="tab">Customer Import</a></li>
         </ul>
@@ -561,7 +564,7 @@
             <div class="tab-pane " id="Announcement">
                 @include('include.alert-result')
                 <form method="POST" action="{{ route('admin.factory.announcement.create') }}" enctype="multipart/form-data">
-                @csrf
+                    @csrf
                     <div class="card card-secondary">
                         <div class="card-header">
                             <h3 class="card-title">Make an announcement</h3>
@@ -631,6 +634,259 @@
             <div class="tab-pane " id="Kanban">
                 <x-InfocalloutComponent note="The first line will be used for the default status of new tasks. The last line is used for finished task, ready for delivery note"  />
                 @livewire('kanban-setting')
+            </div>
+            <div class="tab-pane " id="Role">
+                @include('include.alert-result')
+                <form method="POST" action="{{ route('admin.factory.role.store') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title">Make a new Role</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <label for="label" >Role Name :</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    </div>
+                                    <input type="Text" class="form-control" id="name" name="name" placeholder="Role Name" >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Role list</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-capitalize">Role Name</th>
+                                        <th class="text-capitalize">Permissions</th>
+                                        <th class="text-capitalize">Created</th>
+                                        <th class="text-capitalize text-right" >Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($Roles as $Role)
+                                    <tr>
+                                        <td>{{ $Role->name }}</td>
+                                        <td>
+                                            <div class="row">
+                                                @forelse ($Role->permissions->pluck('name') as $RolePermission)
+                                                <div class="col-2">
+                                                    <button type="button" class="btn btn-block btn-outline-success  btn-sm disabled">{{ $RolePermission}}</button>
+                                                </div>
+                                                @empty
+                                                
+                                                <button type="button" class="btn btn-block btn-outline-danger  btn-sm disabled">no Permissions</button>
+                                                    
+                                                </div>
+                                                @endforelse
+                                            </div>
+                                        </td>
+                                        <td>{{ $Role->created_at }}</td>
+                                        <td class="text-right">
+                                            <!-- Button Modal -->
+                                            <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Role{{ $Role->id }}">
+                                                <i class="fa fa-lg fa-fw  fa-edit"></i>
+                                            </button>
+                                            <!-- Modal {{ $Role->id }} -->
+                                            <x-adminlte-modal id="Role{{ $Role->id }}" title="Update {{ $Role->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                                                <form method="POST" action="{{ route('admin.factory.role.update', ['id' => $Role->id]) }}" enctype="multipart/form-data">
+                                                    @csrf
+                                                    
+                                                    <div class="row">
+                                                        <label for="label" >Role Name :</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                            </div>
+                                                            <input type="Text" class="form-control" id="name" name="name" placeholder="Role Name" value="{{ $Role->name }}">
+                                                        </div>
+                                                    </div>
+                                                    @forelse ($Permissions as $Permission)
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input" type="checkbox" name="permission[]" id="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" @if($Role->permissions->contains($Permission)) checked @endif value="{{ $Permission->id }}">
+                                                                <label for="Role{{ $Role->id }}checkDefault{{ $Permission->id }}" class="custom-control-label">{{ $Permission->name }}</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @empty
+                                                    <div class="row">
+                                                        <p> No Permissions, please add before</p>
+                                                    </div>
+                                                    @endforelse
+                                                    <div class="card-footer">
+                                                        <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                                                    </div>
+                                                </form>
+                                            </x-adminlte-modal>
+                                            <x-ButtonTextDelete route="{{ route('admin.factory.role.destroy', ['role' => $Role->id]) }}" />
+                                        </td>
+                                    </tr>
+                                    @empty
+                                        <x-EmptyDataLine col="4" text="No line found ..."  />
+                                    @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th class="text-capitalize">Role Name</th>
+                                        <th class="text-capitalize">Permissions</th>
+                                        <th class="text-capitalize">Created</th>
+                                        <th class="text-capitalize text-right" >Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane " id="Permissions">
+                @include('include.alert-result')
+                <form method="POST" action="{{ route('admin.factory.permissions.store') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title">Make a new Permissions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label for="role">Permissions name :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <select class="form-control" name="name" id="name">
+                                            <option value="companies-menu">companies-menu</option>
+                                            <option value="leads-menu">leads-menu</option>
+                                            <option value="quotes-menu">quotes-menu</option>
+                                            <option value="orders-menu">orders-menu</option>
+                                            <option value="scheduling-menu">scheduling-menu</option>
+                                            <option value="deliverys-menu">deliverys-menu</option>
+                                            <option value="invoices-menu">invoices-menu</option>
+                                            <option value="products-menu">products-menu</option>
+                                            <option value="purchases-menu">purchases-menu</option>
+                                            <option value="quality-menu">quality-menu</option>
+                                            <option value="settings-time-menu">settings-time-menu</option>
+                                            <option value="methods-menu">methods-menu</option>
+                                            <option value="accouting-menu">accouting-menu</option>
+                                            <option value="human-resources-menu">human-resources-menu</option>
+                                            <option value="your-company-menu">your-company-menu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                        </div>
+                    </div>
+                </form>
+
+
+                <div class="card card-secondary">
+                    <div class="card-header">
+                        <h3 class="card-title">Permissions list</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-capitalize">Permission Name</th>
+                                        <!--<th class="text-capitalize">Groupe Name</th>-->
+                                        <th class="text-capitalize">Created</th>
+                                        <th class="text-capitalize text-right" >Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($Permissions as $Permission)
+                                    <tr>
+                                        <td>{{ $Permission->name }}</td>
+                                        <!--<td>{{ $Permission->groupe_name }}</td>-->
+                                        <td>{{ $Permission->created_at }}</td>
+                                        <td class="text-right">
+                                            <x-ButtonTextDelete route="{{ route('admin.factory.permissions.destroy', ['permission' => $Permission->id]) }}" />
+                                        </td>
+                                    </tr>
+                                    @empty
+                                        <x-EmptyDataLine col="4" text="No line found ..."  />
+                                    @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th class="text-capitalize">Permission Name</th>
+                                        <!--<th class="text-capitalize">Groupe Name</th>-->
+                                        <th class="text-capitalize">Created</th>
+                                        <th class="text-capitalize text-right" >Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="RoleInPermissions">
+                @include('include.alert-result')
+                <form method="POST" action="{{ route('admin.factory.rolepermissions.store') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title">Add role in Permissions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label for="role">Role name :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <select class="form-control" name="role_id" id="role_id">
+                                            @forelse ($Roles as $Role)
+                                                <option value="{{ $Role->id }}">{{ $Role->name }}</option>
+                                            @empty
+                                                <option value=""> No roles, please add before</option>
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            @forelse ($Permissions as $Permission)
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" name="permission[]" id="checkDefault{{ $Permission->id }}" value="{{ $Permission->id }}">
+                                        <label for="checkDefault{{ $Permission->id }}" class="custom-control-label">{{ $Permission->name }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="row">
+                                <p> No Permissions, please add before</p>
+                            </div>
+                            @endforelse
+                            
+                        </div>
+                        <div class="card-footer">
+                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="tab-pane " id="EstimatedBudget">
                 <x-InfocalloutComponent note="Used for dashboard chart."  />

@@ -294,15 +294,18 @@ return [
             'text'    => 'companies_trans_key',
             'icon'    => 'far fa-building',
             'url'     => 'companies',
+            'can'     => ['companies-menu'],
         ],
         [
             'text'        => 'leads_trans_key',
             'url'         => 'leads',
             'icon'        => 'fas fa-globe',
+            'can'         => ['leads-menu'],
         ],
         [
             'text'    => 'quote_trans_key',
             'icon'    => 'fas fa-calculator',
+            'can'  => ['quotes-menu'],
             'submenu' => [
                 [
                     'text' => 'quotes_list_trans_key',
@@ -318,6 +321,7 @@ return [
             'text'    => 'orders_trans_key',
             'icon'    => 'fas fa-shopping-cart',
             'url'  => 'orders',
+            'can'  => ['quotes-menu'],
             'submenu' => [
                 [
                     'text' => 'orders_list_trans_key',
@@ -332,6 +336,7 @@ return [
         [
             'text'    => 'scheduling_trans_key',
             'icon' => 'fas fa-calendar-alt',
+            'can'  => ['scheduling-menu'],
             'submenu' => [
                 [
                     'text' => 'order_calendar_trans_key',
@@ -371,6 +376,7 @@ return [
         [
             'text'    => 'delivery_notes_trans_key',
             'icon'    => 'fas fa-receipt',
+            'can'  => ['deliverys-menu'],
             'submenu' => [
                 [
                     'text' => 'deliverys_notes_request_trans_key',
@@ -385,6 +391,7 @@ return [
         [
             'text'    => 'invoices_trans_key',
             'icon'    => 'fas fa-calculator',
+            'can'  => ['invoices-menu'],
             'submenu' => [
                 [
                     'text' => 'invoices_request_trans_key',
@@ -400,6 +407,7 @@ return [
         [
             'text'    => 'product_trans_key',
             'icon'    => 'fas fa-barcode',
+            'can'  => ['products-menu'],
             'submenu' => [
                 [
                     'text' => 'product_list_trans_key',
@@ -418,6 +426,7 @@ return [
         [
             'text'    => 'purchase_trans_key',
             'icon'    => 'fas fa-cash-register',
+            'can'  => ['purchases-menu'],
             'submenu' => [
                 [
                     'text' => 'purchase_request_trans_key',
@@ -454,32 +463,38 @@ return [
             'text' => 'quality_trans_key',
             'icon'    => 'fas fa-ruler-combined',
             'url'  => 'quality',
+            'can'  => ['quality-menu'],
         ],
         ['header' => 'settings_trans_key'],
         [
             'text' => 'Setting times',
             'icon'    => 'fas fa-user-clock',
             'url'  => 'times',
+            'can'  => ['settings-time-menu'],
         ],
         [
             'text' => 'methods_trans_key',
             'icon'   => 'fas fa-cogs',
             'url'  => 'methods',
+            'can'  => ['methods-menu'],
         ],
         [
             'text' => 'accouting_trans_key',
             'icon' => 'fas fa-piggy-bank',
             'url'  => 'accouting',
+            'can'  => ['accouting-menu'],
         ],
         [
             'text' => 'human_resources_trans_key',
             'icon' => 'fas fa-users',
             'url'  => 'human-resources',
+            'can'  => ['human-resources-menu'],
         ],
         [
             'text' => 'your_company_trans_key',
             'url'  => 'admin/factory',
             'icon'    => 'fas fa-industry',
+            'can'  => ['your-company-menu'],
         ],
         ['header' => 'W.E.M.'],
         [

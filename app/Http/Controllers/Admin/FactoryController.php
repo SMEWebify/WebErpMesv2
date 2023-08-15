@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Factory;
 use App\Models\Admin\Announcement;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Accounting\AccountingVat;
+use Spatie\Permission\Models\Permission;
 use App\Http\Requests\Admin\UpdateFactoryRequest;
 use App\Http\Requests\Admin\StoreAnnouncementRequest;
 
@@ -19,12 +21,16 @@ class FactoryController extends Controller
     {
         $AnnouncementLines = Announcement::get()->All();
         $VATSelect  =  AccountingVat::select('id', 'label')->orderBy('rate')->get();
+        $Roles = Role::all();
+        $Permissions = Permission::all();
         $Factory  =  Factory::firstOrCreate(
                                     ['id' =>'1',],
                                 );
                         return view('admin/factory-index', [
                             'AnnouncementLines' => $AnnouncementLines,
                             'VATSelect' => $VATSelect,
+                            'Roles' => $Roles,
+                            'Permissions' => $Permissions,
                             'Factory' => $Factory,
                         ]);
     }

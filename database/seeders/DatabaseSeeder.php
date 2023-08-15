@@ -12,10 +12,11 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Companies\CompaniesContacts;
+use Database\Seeders\CreateAdminUserSeeder;
 use App\Models\Companies\CompaniesAddresses;
 use Database\Seeders\MethodsUnitTableSeeder;
-use App\Models\Accounting\AccountingDelivery;
 
+use App\Models\Accounting\AccountingDelivery;
 use Database\Seeders\MethodsSectionTableSeeder;
 use Database\Seeders\MethodsServicesTableSeeder;
 use App\Models\Accounting\AccountingPaymentMethod;
@@ -33,9 +34,14 @@ class DatabaseSeeder extends Seeder
         /**Some table depends on other table. Follow the attached order to seed data
          * 
          */
+        //Methodes informations 
+        $this->call([
+            MethodsServicesTableSeeder::class,
+            MethodsUnitTableSeeder::class,
+            MethodsSectionTableSeeder::class,
+            CreateAdminUserSeeder::class,
+        ]);
 
-        //user
-        User::factory()->count(2)->create();
         //companies informations
         Companies::factory()->count(50)->create();
         CompaniesContacts::factory()->count(200)->create();
@@ -49,12 +55,7 @@ class DatabaseSeeder extends Seeder
         *Accouting allocation seeder
         */
 
-        //Methodes informations 
-        $this->call([
-            MethodsServicesTableSeeder::class,
-            MethodsUnitTableSeeder::class,
-            MethodsSectionTableSeeder::class,
-        ]);
+        
         /*
         *Famillies  seeder
         *Section  seeder

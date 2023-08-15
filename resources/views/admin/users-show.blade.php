@@ -17,7 +17,13 @@
                 <img class="profile-user-img img-fluid img-circle" src="{{ $User->adminlte_image() }}" alt="User profile picture">
                 </div>
                 <h3 class="profile-username text-center">{{ $User->name }}</h3>
-                <p class="text-muted text-center">{{ $User->job_title }}</p>
+                <p class="text-muted text-center">
+                    @if(!empty($User->getRoleNames()))
+                    @foreach($User->getRoleNames() as $v)
+                        <label class="badge badge-success">{{ $v }}</label>
+                    @endforeach
+                    @endif
+                </p>
                 <p class="text-muted text-center">{{ $User->email }}</p>
                 <ul class="list-group list-group-unbordered mb-3">
                     <li class="list-group-item"><b>Leads</b> <a class="float-right">{{ $User->getLeadsCountAttribute() }}</a></li>
@@ -84,6 +90,22 @@
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
                                         <input type="text" class="form-control"  name="job_title" id="job_title" placeholder="Job title" value="{{ $User->job_title }}">
+                                    </div>
+                                </div>
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <label for="role">Role :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <select class="form-control" name="role" id="role">
+                                            @forelse ($Roles as $Role)
+                                            <option value="{{ $Role->name }}" @if($User->getRoleNames() == $Role->name  ) Selected @endif>{{ $Role->name }}</option>
+                                            @empty
+                                            <option value="">No role, please add before</option>
+                                            @endforelse
+                                        </select>
                                     </div>
                                 </div>
                                 <!-- /.form-group -->

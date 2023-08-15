@@ -198,6 +198,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/factory/announcement/delete/{id}', 'App\Http\Controllers\Admin\FactoryController@deleteAnnouncement')->middleware(['auth'])->name('admin.factory.announcement.delete');
         Route::post('/factory/update', 'App\Http\Controllers\Admin\FactoryController@update')->middleware(['auth'])->name('admin.factory.update');
         Route::get('/factory', 'App\Http\Controllers\Admin\FactoryController@index')->middleware(['auth'])->name('admin.factory');
+
+        Route::post('/factory/role/store', 'App\Http\Controllers\Admin\RoleController@store')->middleware(['auth'])->name('admin.factory.role.store');
+        Route::post('/factory/role/update/{id}', 'App\Http\Controllers\Admin\RoleController@update')->middleware(['auth'])->name('admin.factory.role.update');
+        Route::get('/factory/role/delete/{role}', 'App\Http\Controllers\Admin\RoleController@destroy')->middleware(['auth'])->name('admin.factory.role.destroy');
+        Route::post('/factory/permissions/store', 'App\Http\Controllers\Admin\PermissionController@store')->middleware(['auth'])->name('admin.factory.permissions.store');
+        Route::get('/factory/permissions/delete/{permission}', 'App\Http\Controllers\Admin\PermissionController@destroy')->middleware(['auth'])->name('admin.factory.permissions.destroy');
+        
+        Route::post('/factory/role/permissions/store', 'App\Http\Controllers\Admin\RoleController@RolePemissionStore')->middleware(['auth'])->name('admin.factory.rolepermissions.store');
+        
+        
     });
 
     Route::group(['prefix' => 'human-resources'], function () {

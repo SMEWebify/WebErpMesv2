@@ -19,6 +19,7 @@
                         <th>E-mail</th>
                         <th>employment statu</th>
                         <th>Job Title</th>
+                        <th>Role</th>
                         <th>Gender</th>
                         <th>Born date</th>
                         <th>Statu</th>
@@ -38,6 +39,13 @@
                             @if(4 == $User->employment_status )  <span class="badge badge-info">Self-employed</span>@endif
                         </td>
                         <td>{{ $User->job_title ?? 'Undefined'}}</td>
+                        <td>
+                            @if(!empty($User->getRoleNames()))
+                            @foreach($User->getRoleNames() as $v)
+                                <label class="badge badge-success">{{ $v }}</label>
+                            @endforeach
+                            @endif
+                        </td>
                         <td>
                             @if(1 == $User->gender ) Male 
                             @elseif(2 == $User->gender ) Female
@@ -63,6 +71,7 @@
                         <th>E-mail</th>
                         <th>employment statu</th>
                         <th>Job Title</th>
+                        <th>Role</th>
                         <th>Gender</th>
                         <th>Born date</th>
                         <th>Statu</th>

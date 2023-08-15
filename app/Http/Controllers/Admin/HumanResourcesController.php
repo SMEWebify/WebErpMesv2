@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsSection;
 use App\Models\Admin\UserEmploymentContracts;
@@ -44,11 +46,13 @@ class HumanResourcesController extends Controller
         $userSelect = User::select('id', 'name')->get();
         $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
         $UserEmploymentContracts = UserEmploymentContracts::where('user_id', $id)->get();
+        $Roles = Role::all();
         //DB information mustn't be empty.
         $Factory = Factory::first();
         return view('admin/users-show', [
             'Factory' => $Factory,
             'User' => $User,
+            'Roles' => $Roles,
             'userSelect' => $userSelect,
             'SectionsSelect' =>  $SectionsSelect,
             'UserEmploymentContracts' =>  $UserEmploymentContracts,
@@ -73,7 +77,10 @@ class HumanResourcesController extends Controller
         $UserUpdate->section_id = $request->section_id;
         $UserUpdate->statu = $request->statu;
 
+        DB::table('model_has_roles')->where('model_id',$id)->delete();
         $UserUpdate->save();
+
+        $UserUpdate->assignRole($request->role);
 
         return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', 'Successfully updated user inforamations');
     }
