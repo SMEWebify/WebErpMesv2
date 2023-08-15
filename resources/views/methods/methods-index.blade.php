@@ -172,7 +172,7 @@
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="9" text="No lines found ..."  />
+                  <x-EmptyDataLine col="9" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -453,7 +453,7 @@
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="10" text="No lines found ..."  />
+                  <x-EmptyDataLine col="10" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -677,7 +677,7 @@
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="6" text="No lines found ..."  />
+                <x-EmptyDataLine col="6" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -823,13 +823,7 @@
                   </td>
                 </tr>
                 @empty
-                <tr>
-                  <td colspan="4">
-                    <div class="flex justify-center items-center">
-                        <i class="fa fa-lg fa-fw  fa-inbox"></i><span class="font-medium py-8 text-cool-gray-400 text-x1"> No Location found ...</span>
-                    </div>
-                  </td>
-                </tr>
+                <x-EmptyDataLine col="4" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -980,7 +974,7 @@
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="9" text="No lines found ..."  />
+                <x-EmptyDataLine col="9" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -1114,7 +1108,7 @@
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="4" text="No lines found ..."  />
+                <x-EmptyDataLine col="4" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -1291,7 +1285,7 @@
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="8" text="No lines found ..."  />
+                <x-EmptyDataLine col="8" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>

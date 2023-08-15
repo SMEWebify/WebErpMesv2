@@ -95,7 +95,7 @@
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="6" text="No lines found ..."  />
+                  <x-EmptyDataLine col="6" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -220,7 +220,7 @@
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="4" text="No lines found ..."  />
+                  <x-EmptyDataLine col="4" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -352,7 +352,7 @@
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="7" text="No lines found ..."  />
+                  <x-EmptyDataLine col="7" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -513,7 +513,7 @@
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="7" text="No lines found ..."  />
+                  <x-EmptyDataLine col="7" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>
@@ -647,7 +647,7 @@
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="3" text="No lines found ..."  />
+                  <x-EmptyDataLine col="3" text="No data available in table"  />
                 @endforelse
               </tbody>
               <tfoot>

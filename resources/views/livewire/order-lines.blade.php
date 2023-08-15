@@ -253,7 +253,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             </td>
                         </tr>
                         @empty
-                            <x-EmptyDataLine col="12" text="No line found ..."  />
+                            <x-EmptyDataLine col="12" text="No data available in table"  />
                         @endforelse
                     </tbody>
                     <tfoot>

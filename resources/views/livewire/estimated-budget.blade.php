@@ -373,7 +373,7 @@
                             </td>
                         </tr>
                         @empty
-                            <x-EmptyDataLine col="14" text="No line found ..."  />
+                            <x-EmptyDataLine col="14" text="No data available in table"  />
                         @endforelse
                     </tbody>
                     <tfoot>
