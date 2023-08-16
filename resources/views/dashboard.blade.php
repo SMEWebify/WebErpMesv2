@@ -7,8 +7,15 @@
 @stop
 
 @section('content')
-<div class="row">
-  
+
+  @if($userRoleCount < 1)
+  <div class="row">
+      <x-InfocalloutComponent note="your account currently have no role defined and the menu has a reduced display.  Contact the administrator or use user demo login =>
+      LOGIN: contact@wem-project.org
+      PASSWORD: password"  />
+  </div>
+  @endif
+  <div class="row">
     <div class="col-lg-2 col-6">
       <x-adminlte-small-box title="{{$data['suppliers_count']}}" 
                             text="{{ __('general_content.client_trans_key') }}" 

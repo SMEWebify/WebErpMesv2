@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
@@ -11,6 +12,7 @@ use App\Models\Products\Products;
 use App\Models\Admin\Announcement;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Admin\EstimatedBudgets;
 use App\Models\Methods\MethodsServices;
 
@@ -24,6 +26,9 @@ class HomeController extends Controller
         $CurentYear = Carbon::now()->format('Y');
         $CurentMonth = Carbon::now()->format('m');
 
+        // check if user had role
+        $user = User::find(Auth::user()->id);
+        $userRoleCount = $user->getRoleNames()->count();
         //DB information mustn't be empty.
         $Factory = Factory::first();
         if(!$Factory){
@@ -194,6 +199,7 @@ class HomeController extends Controller
                                                 ->get();
 
         return view('dashboard', [
+            'userRoleCount' => $userRoleCount,
             'Factory' => $Factory,
             'Announcement' => $Announcement,
             'LastProducts' => $LastProducts,
