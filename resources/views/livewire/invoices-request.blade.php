@@ -33,7 +33,7 @@
                         </div>
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="label">Name of Delivery note</label>
+                        <label for="label">Name of new invoice</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
