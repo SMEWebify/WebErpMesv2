@@ -7,7 +7,7 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\Leads;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
-use App\Models\Admin\Announcement;
+use App\Models\Admin\Announcements;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
@@ -123,9 +123,9 @@ class User extends Authenticatable
         return date('d F Y', strtotime($this->created_at));
     }
 
-    public function Announcement()
+    public function Announcements()
     {
-        return $this->hasMany(Announcement::class);
+        return $this->hasMany(Announcements::class);
     }
 
     public function companie()

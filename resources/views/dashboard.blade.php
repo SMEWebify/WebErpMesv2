@@ -10,7 +10,7 @@
 
   @if($userRoleCount < 1)
   <div class="row">
-      <x-InfocalloutComponent note="your account currently have no role defined and the menu has a reduced display.  Contact the administrator or use user demo login =>
+      <x-InfocalloutComponent note="your account currently have no role defined and the menu has a reduced display.  Contact the administrator or use user demo login for demo page =>
       LOGIN: contact@wem-project.org
       PASSWORD: password"  />
   </div>

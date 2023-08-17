@@ -213,7 +213,6 @@
     </div>
     <!-- End Modal -->
 
-    <!-- End Modal -->
     <div class="card">
         @include('include.alert-result')
         <div class="card-body">

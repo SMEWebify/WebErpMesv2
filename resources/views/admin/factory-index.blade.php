@@ -11,7 +11,7 @@
     <div class="card-header p-2">
         <ul class="nav nav-pills">
             <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Factory settings</a></li>
-            <li class="nav-item"><a class="nav-link" href="#Announcement" data-toggle="tab">Announcement</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Announcement" data-toggle="tab">Announcements</a></li>
             <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Workflow settings</a></li>
             <li class="nav-item"><a class="nav-link" href="#Role" data-toggle="tab">Roles</a></li>
             <li class="nav-item"><a class="nav-link" href="#Permissions" data-toggle="tab">Permissions</a></li>
@@ -592,7 +592,7 @@
                 </form>
                 <div class="card card-secondary">
                     <div class="card-header">
-                        <h3 class="card-title">Announcement list</h3>
+                        <h3 class="card-title">Announcements list</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive p-0">

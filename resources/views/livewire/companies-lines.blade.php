@@ -184,7 +184,8 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- End Modal -->
+                
                 <div class="card">
                     @include('include.alert-result')
                     <div class="card-body">

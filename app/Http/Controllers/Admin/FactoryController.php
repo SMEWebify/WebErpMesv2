@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Factory;
-use App\Models\Admin\Announcement;
+use App\Models\Admin\Announcements;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +19,7 @@ class FactoryController extends Controller
      */
     public function index()
     {
-        $AnnouncementLines = Announcement::get()->All();
+        $AnnouncementLines = Announcements::get()->All();
         $VATSelect  =  AccountingVat::select('id', 'label')->orderBy('rate')->get();
         $Roles = Role::all();
         $Permissions = Permission::all();
@@ -85,7 +85,7 @@ class FactoryController extends Controller
     public function storeAnnouncement(StoreAnnouncementRequest $request)
     {
         // Create Line
-        $AnnouncementCreated = Announcement::create([
+        $AnnouncementCreated = Announcements::create([
                                                     'title'=>$request->title,  
                                                     'user_id'=>Auth::id(),    
                                                     'comment'=>$request->comment, 
@@ -101,7 +101,7 @@ class FactoryController extends Controller
     public function deleteAnnouncement($id)
     {
         // Delete Line
-        $AnnouncementDelete= Announcement::where('id', $id)->delete();
+        $AnnouncementDelete= Announcements::where('id', $id)->delete();
 
         return redirect()->route('admin.factory')->with('success', 'Successfully delete announcement');
     }

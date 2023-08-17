@@ -9,7 +9,7 @@ use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
-use App\Models\Admin\Announcement;
+use App\Models\Admin\Announcements;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +43,7 @@ class HomeController extends Controller
         $data['quality_non_conformities_count'] = DB::table('quality_non_conformities')->count();
         $data['user_count'] = DB::table('users')->count();
         
-        $Announcement = Announcement::latest()->first();
+        $Announcement = Announcements::latest()->first();
 
         //Estimated Budgets data for chart
         $data['estimatedBudget'] = EstimatedBudgets::where('year', $CurentYear)->get();
