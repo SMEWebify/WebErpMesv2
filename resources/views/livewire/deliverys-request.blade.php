@@ -166,7 +166,6 @@
                         <th>Companie</th>
                         <th>External ID</th>
                         <th>Label</th>
-                        <th>Description</th>
                         <th>Qty</th>
                         <th>Scum qty</th>
                         <th>Unit</th>
