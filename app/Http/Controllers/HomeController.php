@@ -93,6 +93,7 @@ class HomeController extends Controller
                                                                 SUM((order_lines.selling_price * invoice_lines.qty)-(order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100)) AS orderSum
                                                             ')
                                                             ->whereYear('invoice_lines.created_at', $CurentYear)
+                                                            ->groupByRaw('MONTH(invoice_lines.created_at) ')
                                                             ->get();
 
         //Total ForCast
