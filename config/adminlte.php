@@ -341,32 +341,34 @@ return [
                 [
                     'text' => 'order_calendar_trans_key',
                     'url'  => 'production/calendar',
-                ],[
-                    'text'    => 'tasks_trans_key',
+                    'icon_color' => 'warning',
+                ],
+                [
+                    'text' => 'load_planning_trans_key',
+                    'url'  => 'production/load-planning',
+                    'icon_color' => 'success',
+                ],
+                [
+                    'text' => 'tasks_list_trans_key',
+                    'url'  => 'production/Task',
                     'icon_color' => 'primary',
-                    'submenu' => [
-                        [
-                            'text' => 'tasks_statu_trans_key',
-                            'url'  => 'production/Task/Statu',
-                            'icon_color' => 'primary',
-                            'label'       => 'Beta',
-                            'label_color' => 'danger',
-                        ],
-                        [
-                            'text' => 'tasks_list_trans_key',
-                            'url'  => 'production/Task',
-                            'icon_color' => 'primary',
-                        ],
-                    ]
-                    
+                ],
+                [
+                    'text' => 'tasks_statu_trans_key',
+                    'url'  => 'production/Task/Statu',
+                    'icon_color' => 'primary',
+                    'label'       => 'Beta',
+                    'label_color' => 'danger',
                 ],
                 [
                     'text' => 'workflow_trans_key',
                     'url'  => 'production/kanban',
+                    'icon_color' => 'primary',
                 ],
                 [
                     'text' => 'gantt_trans_key',
                     'url'  => 'production/gantt',
+                    'icon_color' => 'info',
                     'label'       => 'Beta',
                     'label_color' => 'danger',
                 ],

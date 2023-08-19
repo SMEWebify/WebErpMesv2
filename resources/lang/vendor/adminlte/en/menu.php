@@ -17,6 +17,7 @@ return [
     'orders_lines_list_trans_key'              => 'Orders lines list',
     'scheduling_trans_key'                     => 'Scheduling',
     'order_calendar_trans_key'                 => 'Order calendar',
+    'load_planning_trans_key'                  => 'Load planning',
     'tasks_trans_key'                          => 'Tasks',
     'tasks_list_trans_key'                     => 'Tasks list',
     'tasks_statu_trans_key'                    => 'Task management',

@@ -48,7 +48,7 @@
                             <td>@if($Task->methods_units_id ) {{ $Task->Unit['label'] }}@endif</td>
                             <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
-                            <td>{{ $Task->getTotalLogTime() }} h</td>
+                            <td>{{ $Task->TotalTime() }} h</td>
                             <td>
                                 @if($Task->progress() > 100 )
                                     <x-adminlte-progress theme="teal" value="100" with-label animated/>

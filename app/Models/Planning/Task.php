@@ -116,9 +116,17 @@ class Task extends Model
         return $this->belongsTo(Status::class, 'status_id');
     }
 
+    public function GetOrderQtyLine()
+    {
+        $OrderLine = OrderLines::find($this->order_lines_id);
+        if(empty($OrderLine->qty)) $LineQty = 0;
+        else $LineQty = $OrderLine->qty;
+        return $LineQty;
+    }
+
     public function ProductTime()
     {
-        return $this->qty*$this->unit_time;
+        return $this->GetOrderQtyLine()*$this->unit_time;
     }
 
     public function Margin()
@@ -128,7 +136,7 @@ class Task extends Model
 
     public function TotalTime()
     {
-        return $this->qty*$this->unit_time+$this->seting_time;
+        return $this->ProductTime()+$this->seting_time;
     }
 
     public function taskActivities()

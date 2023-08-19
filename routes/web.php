@@ -190,6 +190,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->middleware(['auth'])->name('production.kanban');
         Route::get('/calendar', 'App\Http\Controllers\Planning\CalendarController@index')->middleware(['auth'])->name('production.calendar');
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->middleware(['auth'])->name('production.gantt');
+        
+        Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->middleware(['auth'])->name('production.load.planning');
     });
 
     Route::group(['prefix' => 'admin'], function () {
