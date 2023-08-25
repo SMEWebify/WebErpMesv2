@@ -6,8 +6,6 @@
     <h1>User list</h1>
 @stop
 
-
-
 @section('content')
     <div class="card">
         <!-- /.card-header -->

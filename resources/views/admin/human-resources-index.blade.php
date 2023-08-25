@@ -15,6 +15,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Name</th>
                         <th>E-mail</th>
                         <th>employment statu</th>
@@ -30,7 +31,15 @@
                 <tbody>
                     @foreach ($Users as $User)
                     <tr>
-                        <td>{{ $User->name }}</td>
+                        <td>
+                            @if(Cache::has('user-is-online-' . $User->id))
+                                <span class="badge badge-success">Online</span>
+                            @else
+                                <span class="badge badge-secondary">Offline</span>
+                            @endif 
+                        </td>
+                        <td>
+                            {{ $User->name }}</td>
                         <td>{{ $User->email }}</td>
                         <td>
                             @if(1 == $User->employment_status )   <span class="badge badge-danger">Undefined</span>@endif
@@ -67,6 +76,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th></th>
                         <th>Name</th>
                         <th>E-mail</th>
                         <th>employment statu</th>

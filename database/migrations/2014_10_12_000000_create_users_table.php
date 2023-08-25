@@ -75,6 +75,7 @@ class CreateUsersTable extends Migration
             $table->boolean('users_notification')->default(1);
             $table->boolean('quotes_notification')->default(1);
             $table->boolean('orders_notification')->default(1);
+            $table->timestamp('last_seen')->nullable();
             $table->rememberToken();
             $table->timestamps();
 
