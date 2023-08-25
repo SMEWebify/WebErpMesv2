@@ -2,6 +2,7 @@
 
 namespace App\Models\Workflow;
 
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
@@ -10,8 +11,8 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Companies\CompaniesContacts;
 
+use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
@@ -96,7 +97,7 @@ class Orders extends Model
 
     public function GetPrettyCreatedAttribute()
     {
-        return date('d F Y', strtotime($this->created_at));
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
 
     public function getTotalPriceAttribute()
