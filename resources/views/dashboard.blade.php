@@ -19,6 +19,7 @@
     </div>
   </div>
   @endif
+
   <div class="row">
     <div class="col-lg-2 col-6">
       <x-adminlte-small-box title="{{$data['suppliers_count']}}" 
@@ -152,7 +153,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
-                <h5 class="description-header">{{ $OrderTotalDelivered[0]->orderTotalDelivered }} {{ $Factory->curency }}</h5>
+                <h5 class="description-header">{{ $orderTotalDelivered }} {{ $Factory->curency }}</h5>
                 <span class="description-text">{{ __('general_content.total_order_delivered_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -161,7 +162,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>-->
-                <h5 class="description-header">{{ $OrderTotaInvoiced[0]->orderTotaInvoiced }}   {{ $Factory->curency }}</h5>
+                <h5 class="description-header">{{ $orderTotaInvoiced }}   {{ $Factory->curency }}</h5>
                 <span class="description-text">{{ __('general_content.total_invoiced_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -170,7 +171,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block">
                 <!--<span class="description-percentage text-danger"><i class="fas fa-caret-down"></i></span>-->
-                <h5 class="description-header"> {{ $OrderTotalRevenue[0]->orderTotalRevenue }}  /{{ $EstimatedBudgets }} ({{ round($OrderTotalRevenue[0]->orderTotalRevenue / $EstimatedBudgets *100,2)}} %)</h5>
+                <h5 class="description-header"> {{ $orderTotaInvoiced }}  /{{ $EstimatedBudgets }} ({{ round($orderTotaInvoiced / $EstimatedBudgets *100,2)}} %)</h5>
                 <span class="description-text">{{ __('general_content.goal_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -266,10 +267,7 @@
       <!-- /.card -->
     </div>
     <!-- /.col-md-2 -->
-  </div>
-  <!-- /.row -->
 
-  <div class="row">
     <div class="col-md-4">
       <div class="card">
         <div class="card-header">
@@ -299,155 +297,149 @@
         <!-- /.card-body -->
       </div>
       <!-- /.card -->
-  </div>
-  <!-- /.row -->
+    </div>
+    <!-- /.col-md-4 -->
 
-  <div class="col-md-4">
-    <!-- TABLE: LATEST QUOTES -->
-    <div class="card  bg-gradient-success">
-      <div class="card-header border-transparent">
-        <h3 class="card-title">{{ __('general_content.latest_quotes_trans_key') }}</h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button type="button" class="btn btn-tool" data-card-widget="remove">
-            <i class="fas fa-times"></i>
-          </button>
+    <div class="col-md-4">
+      <!-- TABLE: LATEST QUOTES -->
+      <div class="card  bg-gradient-success">
+        <div class="card-header border-transparent">
+          <h3 class="card-title">{{ __('general_content.latest_quotes_trans_key') }}</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table m-0">
-            <thead>
-            <tr>
-              <th>{{ __('general_content.id_trans_key') }}</th>
-              <th>{{ __('general_content.customer_trans_key') }}</th>
-              <th>{{ __('general_content.status_trans_key') }}</th>
-              <th>{{ __('general_content.total_price_trans_key') }}</th>
-              <th>{{ __('general_content.created_at_trans_key') }}</th>
-              <th>{{ __('general_content.assigned_trans_key') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-              @forelse ($LastQuotes as $LastQuote)
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table m-0">
+              <thead>
               <tr>
-                <td>
-                  <x-QuoteButton id="{{ $LastQuote->id }}" code="{{ $LastQuote->code }}"  />
-                </td>
-                <td>
-                  <x-CompanieButton id="{{ $LastQuote->companies_id }}" label="{{ $LastQuote->companie['label'] }}"  />
-                </td>
-                <td>
-                  @if(1 == $LastQuote->statu )   <span class="badge badge-info"> Open</span>@endif
-                  @if(2 == $LastQuote->statu )  <span class="badge badge-warning">Send</span>@endif
-                  @if(3 == $LastQuote->statu )  <span class="badge badge-success">Win</span>@endif
-                  @if(4 == $LastQuote->statu )  <span class="badge badge-danger">Lost</span>@endif
-                  @if(5 == $LastQuote->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                  @if(6 == $LastQuote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
-                </td>
-                <td>{{ $LastQuote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
-                <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
-                <td>{{ $LastQuote->UserManagement['name'] }}</td>
+                <th>{{ __('general_content.id_trans_key') }}</th>
+                <th>{{ __('general_content.customer_trans_key') }}</th>
+                <th>{{ __('general_content.status_trans_key') }}</th>
+                <th>{{ __('general_content.total_price_trans_key') }}</th>
+                <th>{{ __('general_content.created_at_trans_key') }}</th>
+                <th>{{ __('general_content.assigned_trans_key') }}</th>
               </tr>
-              <!-- /.item -->
-              @empty
+              </thead>
+              <tbody>
+                @forelse ($LastQuotes as $LastQuote)
+                <tr>
+                  <td>
+                    <x-QuoteButton id="{{ $LastQuote->id }}" code="{{ $LastQuote->code }}"  />
+                  </td>
+                  <td>
+                    <x-CompanieButton id="{{ $LastQuote->companies_id }}" label="{{ $LastQuote->companie['label'] }}"  />
+                  </td>
+                  <td>
+                    @if(1 == $LastQuote->statu )   <span class="badge badge-info"> Open</span>@endif
+                    @if(2 == $LastQuote->statu )  <span class="badge badge-warning">Send</span>@endif
+                    @if(3 == $LastQuote->statu )  <span class="badge badge-success">Win</span>@endif
+                    @if(4 == $LastQuote->statu )  <span class="badge badge-danger">Lost</span>@endif
+                    @if(5 == $LastQuote->statu )  <span class="badge badge-secondary">Closed</span>@endif
+                    @if(6 == $LastQuote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                  </td>
+                  <td>{{ $LastQuote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
+                  <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
+                  <td>{{ $LastQuote->UserManagement['name'] }}</td>
+                </tr>
+                <!-- /.item -->
+                @empty
+                <tr>
+                  <td colspan="4">{{ __('general_content.no_quote_trans_key') }}</td>
+                </tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+          <!-- /.table-responsive -->
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+          <a href="{{ route('quotes') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
+        </div>
+        <!-- /.card-footer -->
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.col-md-4 -->
+
+    <!-- TABLE: LATEST ORDERS -->
+    <div class="col-md-4">
+      <div class="card  bg-gradient-info">
+        <div class="card-header border-transparent">
+          <h3 class="card-title">{{ __('general_content.latest_orders_trans_key') }}</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table m-0">
+              <thead>
               <tr>
-                <td colspan="4">{{ __('general_content.no_quote_trans_key') }}</td>
+                <th>{{ __('general_content.id_trans_key') }}</th>
+                <th>{{ __('general_content.customer_trans_key') }}</th>
+                <th>{{ __('general_content.status_trans_key') }}</th>
+                <th>{{ __('general_content.total_price_trans_key') }}</th>
+                <th>{{ __('general_content.created_at_trans_key') }}</th>
+                <th>{{ __('general_content.assigned_trans_key') }}</th>
+              </tr>
+              </thead>
+              <tbody>
+                @forelse ($LastOrders as $LastOrder)
+                <tr>
+                  <td>
+                    <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
+                  <td>
+                    @if($LastOrder->type == 1 )
+                    <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
+                    @else
+                    {{ __('general_content.internal_order_trans_key') }}
+                    @endif
+                  </td>
+                  <td>
+                    @if(1 == $LastOrder->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
+                    @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
+                    @if(3 == $LastOrder->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
+                    @if(4 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
+                  </td>
+                  <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
+                  <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
+                  <td>{{ $LastOrder->UserManagement['name'] }}</td>
+                </tr>
+                <!-- /.item -->
+                @empty
+              <tr>
+                <td colspan="4">{{ __('general_content.no_order_trans_key') }}</td>
               </tr>
               @endforelse
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.table-responsive -->
         </div>
-        <!-- /.table-responsive -->
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+          <a href="{{ route('orders') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
+        </div>
+        <!-- /.card-footer -->
       </div>
-      <!-- /.card-body -->
-      <div class="card-footer clearfix">
-        <a href="{{ route('quotes') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
-      </div>
-      <!-- /.card-footer -->
+      <!-- /.card -->
     </div>
-    <!-- /.card -->
-  </div>
-  <!-- /.col -->
-   <!-- TABLE: LATEST ORDERS -->
-   <div class="col-md-4">
-    <div class="card  bg-gradient-info">
-      <div class="card-header border-transparent">
-        <h3 class="card-title">{{ __('general_content.latest_orders_trans_key') }}</h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button type="button" class="btn btn-tool" data-card-widget="remove">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table m-0">
-            <thead>
-            <tr>
-              <th>{{ __('general_content.id_trans_key') }}</th>
-              <th>{{ __('general_content.customer_trans_key') }}</th>
-              <th>{{ __('general_content.status_trans_key') }}</th>
-              <th>{{ __('general_content.total_price_trans_key') }}</th>
-              <th>{{ __('general_content.created_at_trans_key') }}</th>
-              <th>{{ __('general_content.assigned_trans_key') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-              @forelse ($LastOrders as $LastOrder)
-              <tr>
-                <td>
-                  <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
-                <td>
-                  @if($LastOrder->type == 1 )
-                  <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
-                  @else
-                  {{ __('general_content.internal_order_trans_key') }}
-                  @endif
-                </td>
-                <td>
-                  @if(1 == $LastOrder->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
-                  @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                  @if(3 == $LastOrder->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
-                  @if(4 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
-                </td>
-                <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
-                <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
-                <td>{{ $LastOrder->UserManagement['name'] }}</td>
-              </tr>
-              <!-- /.item -->
-              @empty
-            <tr>
-              <td colspan="4">{{ __('general_content.no_order_trans_key') }}</td>
-            </tr>
-            @endforelse
-            </tbody>
-          </table>
-        </div>
-        <!-- /.table-responsive -->
-      </div>
-      <!-- /.card-body -->
-      <div class="card-footer clearfix">
-        <a href="{{ route('orders') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
-      </div>
-      <!-- /.card-footer -->
-    </div>
-    <!-- /.card -->
-  </div>
-  <!-- /.col -->
-</div>
-<!-- /.row -->
-
-  <!-- Main row -->
-  <div class="row">
-    
-   
+    <!-- /.col -->
 
     <!-- SERVICE GOAL -->
     <div class="col-md-4">
@@ -680,7 +672,7 @@
       labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','November','December' ],
       datasets: [
         {
-          label               : 'Order revenues',
+          label               : 'Order forcasted',
           borderColor         : 'rgba(60,141,188,0.5)',
           pointRadius          : 5,
           pointColor          : '#3b8bba',

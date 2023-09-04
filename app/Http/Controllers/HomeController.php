@@ -106,22 +106,16 @@ class HomeController extends Controller
                                                         ->get();
 
         //Total Delivered
-        $orderTotalDelivered = DB::table('delivery_lines')->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
-                                                        ->selectRaw('FLOOR(SUM((order_lines.selling_price * delivery_lines.qty)-(order_lines.selling_price * delivery_lines.qty)*(order_lines.discount/100))) AS orderTotalDelivered')
-                                                        ->whereMonth('delivery_lines.created_at', $CurentMonth)
-                                                        ->get();
+        $orderTotalDelivered =0;
+        foreach ($data['deliveryMonthlyRecap'] as $key => $item){
+            $orderTotalDelivered += $item->orderSum;
+        }
 
         //Total Invoiced
-        $orderTotaInvoiced = DB::table('invoice_lines')->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
-                                                        ->selectRaw('FLOOR(SUM((order_lines.selling_price * invoice_lines.qty)-(order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100))) AS orderTotaInvoiced')
-                                                        ->whereMonth('invoice_lines.created_at', $CurentMonth)
-                                                        ->get();
-
-        //TotalRevenue
-        $orderTotalRevenue = DB::table('invoice_lines')->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
-                                                        ->selectRaw('FLOOR(SUM((order_lines.selling_price * invoice_lines.qty)-(order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100))) AS orderTotalRevenue')
-                                                        ->whereYear('invoice_lines.created_at', $CurentYear)
-                                                        ->get();
+        $orderTotaInvoiced =0;
+        foreach ($data['invoiceMonthlyRecap'] as $key => $item){
+            $orderTotaInvoiced += $item->orderSum;
+        }
 
         //Order incoming end date
         // we use in future deadline trait for this
@@ -207,9 +201,8 @@ class HomeController extends Controller
             'LastQuotes' => $LastQuotes,
             'LastOrders' =>  $LastOrders,
             'OrderTotalForCast' =>  $orderTotalForCast,
-            'OrderTotalDelivered' =>  $orderTotalDelivered ,
-            'OrderTotaInvoiced' =>  $orderTotaInvoiced,
-            'OrderTotalRevenue' => $orderTotalRevenue,
+            'orderTotalDelivered' =>  $orderTotalDelivered ,
+            'orderTotaInvoiced' =>  $orderTotaInvoiced,
             'LateOrdersCount' =>  $LateOrdersCount,
             'incomingOrders' =>  $incomingOrders,
             'incomingOrdersCount' => $incomingOrdersCount,
