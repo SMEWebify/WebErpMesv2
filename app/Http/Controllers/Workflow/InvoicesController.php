@@ -97,4 +97,12 @@ class InvoicesController extends Controller
 
         return redirect()->route('invoices.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
     }
+
+    /**
+     * @return View
+     */
+    public function export()
+    {   
+        return view('workflow/invoice-lines-export');
+    }
 }

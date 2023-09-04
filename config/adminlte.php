@@ -403,6 +403,10 @@ return [
                     'text' => 'invoices_list_trans_key',
                     'url'  => 'invoices',
                 ],
+                [
+                    'text' => 'export_invoices_lines_list_trans_key',
+                    'url'  => 'invoices/export',
+                ],
             ]
         ],
         ['header' => 'others_trans_key'],

@@ -151,6 +151,7 @@
                   @empty
                     <x-EmptyDataLine col="8" text="No line in this invoince found ..."  />
                   @endforelse
+                </tbody>
                 <tfoot>
                   <tr>
                     <th>Order</th>
@@ -164,7 +165,6 @@
                     <th>Invoice status</th>
                   </tr>
                 </tfoot>
-              </tbody>
             </table>
           </div>
           <!-- /.col -->

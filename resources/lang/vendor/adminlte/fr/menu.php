@@ -29,6 +29,7 @@ return [
     'invoices_trans_key'                       => 'Factures',
     'invoices_request_trans_key'               => 'Demande de facture',
     'invoices_list_trans_key'                  => 'Liste des factures',
+    'export_invoices_lines_list_trans_key'     => 'Export des ligne de facture',
     'others_trans_key'                         => 'Autre',
     'product_trans_key'                        => 'Article',
     'product_list_trans_key'                   => 'Liste de articles',

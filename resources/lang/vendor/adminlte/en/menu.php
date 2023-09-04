@@ -29,6 +29,7 @@ return [
     'invoices_trans_key'                       => 'Invoices',
     'invoices_request_trans_key'               => 'Invoices  request',
     'invoices_list_trans_key'                  => 'Invoices  list',
+    'export_invoices_lines_list_trans_key'     => 'Export invoices line',
     'others_trans_key'                         => 'Others',
     'product_trans_key'                        => 'Product',
     'product_list_trans_key'                   => 'Product list',
