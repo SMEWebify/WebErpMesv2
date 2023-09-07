@@ -182,6 +182,7 @@ class HomeController extends Controller
         $data['delivered_month_in_progress'] = DB::table('delivery_lines')
                                                 ->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
                                                 ->selectRaw('FLOOR(SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100))) AS orderSum')
+                                                ->whereYear('delivery_lines.created_at', '=', $CurentYear)
                                                 ->whereMonth('delivery_lines.created_at', $CurentMonth)
                                                 ->get();
                                                 
@@ -189,6 +190,7 @@ class HomeController extends Controller
                                                 ->selectRaw('
                                                     FLOOR(SUM((selling_price * qty)-(selling_price * qty)*(discount/100))) AS orderSum
                                                 ')
+                                                ->whereYear('delivery_date', '=', $CurentYear)
                                                 ->whereMonth('delivery_date', $CurentMonth)
                                                 ->groupByRaw('MONTH(delivery_date) ')
                                                 ->get();
