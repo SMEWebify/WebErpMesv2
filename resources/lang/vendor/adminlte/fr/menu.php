@@ -6,6 +6,7 @@ return [
     'language_trans_key'                       => 'Langue',
     'english_trans_key'                        => 'Anglais',
     'french_trans_key'                         => 'Français',
+    'vietnamese_trans_key'                     => 'Vietnamien',
     'dashboard_trans_key'                      => 'Tableau de bord',
     'companies_trans_key'                      => 'Sociétés',
     'leads_trans_key'                          => 'Leads',

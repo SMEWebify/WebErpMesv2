@@ -274,6 +274,11 @@ return [
                     'text'=>'french_trans_key',
                     'icon' => 'flag-icon flag-icon-fr',
                     'url'=> 'fr',
+                ],
+                [
+                    'text'=>'vietnamese_trans_key',
+                    'icon' => 'flag-icon flag-icon-fr',
+                    'url'=> 'vi',
                 ]
             ]
         ],
