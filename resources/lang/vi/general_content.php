@@ -7,7 +7,7 @@ return [
     'in_progress_trans_key'                    => 'Tiến trình',
     'finished_trans_key'                       => 'Đã kết thúc',
     'delivered_trans_key'                      => 'Đã giao hàng',
-    'partly_delivered_trans_key'               => 'Partly delivered',
+    'partly_delivered_trans_key'               => 'Giao hàng một phần',
 
     //GENERAL HEADER TABLE
     'id_trans_key'                             => 'ID',
@@ -16,15 +16,15 @@ return [
     'customer_trans_key'                       => 'Khách hàng',
     'status_trans_key'                         => 'Trạng thái',
     'total_price_trans_key'                    => 'Tổng giá',
-    'created_at_trans_key'                     => 'Created at',
+    'created_at_trans_key'                     => 'Tạo lúc',
     'assigned_trans_key'                       => 'Assigned',
-    'action_trans_key'                         => 'Actions',
+    'action_trans_key'                         => 'Chức năng',
 
     // BUTTON
     'view_all_trans_key'                       => 'Xem toàn bộ',
 
     //DASHBOARD
-    'dashboard_trans_key'                      => 'Dashboard',
+    'dashboard_trans_key'                      => 'Bảng điều khiển',
     'client_trans_key'                         => 'Khách hàng',
     'suppliers_trans_key'                      => 'Nhà cung cấp',
     'view_details_trans_key'                   => 'Xem chi tiết',
@@ -54,22 +54,22 @@ return [
     'remaining_month_trans_key'                => 'Total remaining to deliver',
     
 
-    'companies_trans_key'                      => 'Companies',
+    'companies_trans_key'                      => 'Công ty',
 
-    'leads_trans_key'                          => 'Leads',
+    'leads_trans_key'                          => 'Cơ hội',
 
-    'quote_trans_key'                          => 'Quote',
-    'quotes_list_trans_key'                    => 'quotes list',
+    'quote_trans_key'                          => 'Báo giá',
+    'quotes_list_trans_key'                    => 'danh sách báo giá',
     'quotes_lines_list_trans_key'              => 'quotes lines list',
     
-    'orders_trans_key'                         => 'Orders',
-    'orders_list_trans_key'                    => 'Orders list',
+    'orders_trans_key'                         => 'Đơn đặt',
+    'orders_list_trans_key'                    => 'Danh sách đơn đặt',
     'orders_lines_list_trans_key'              => 'Orders lines list',
     'internal_order_trans_key'                 => 'Internal order',
     
 
 
-    'scheduling_trans_key'                     => 'Scheduling',
+    'scheduling_trans_key'                     => 'Lịch',
     'order_calendar_trans_key'                 => 'Order calendar',
     'tasks_trans_key'                          => 'Tâches',
     'tasks_list_trans_key'                     => 'Tasks list',
@@ -85,11 +85,11 @@ return [
     'others_trans_key'                         => 'Others',
 
     //PRODUCT
-    'product_trans_key'                        => 'Product',
-    'purchased_price_trans_key'                => 'Purchased price',
-    'selling_price_trans_key'                  => 'Selling price ',
+    'product_trans_key'                        => 'Sản phẩm',
+    'purchased_price_trans_key'                => 'Giá mua',
+    'selling_price_trans_key'                  => 'Giá bán',
     
-    'product_list_trans_key'                   => 'Product list',
+    'product_list_trans_key'                   => 'Danh sách sản phẩm',
     'stock_trans_key'                          => 'Stock',
     'inventory_trans_key'                      => 'Inventory',
     'purchase_trans_key'                       => 'Purchase',
