@@ -27,7 +27,7 @@ login : contact@wem-project.org
 
 Password : password
 
-# Instal :construction_worker:
+# Install :construction_worker:
 for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 
 for run to production, follow this link :  [wiki page (install to run)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
