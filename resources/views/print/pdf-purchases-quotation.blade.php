@@ -52,10 +52,10 @@
                 <pre>
                 {{ $Factory->address }}
                 {{ $Factory->zipcode }} {{ $Factory->city }}
-                Phone : {{ $Factory->phone_number }}
-                Mail : {{ $Factory->mail }}
+                {{ __('general_content.phone_trans_key') }} : {{ $Factory->phone_number }}
+                {{ __('general_content.email_trans_key') }} : {{ $Factory->mail }}
                 <br /><br />
-        Date: {{ date('Y-m-d') }}
+        {{ __('general_content.date_trans_key') }} : {{ date('Y-m-d') }}
                 </pre>
             </td>
             <td align="center">
@@ -71,8 +71,8 @@
                     {{ $Document->adresse['adress'] }}
                     {{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }}
                     {{ $Document->adresse['country'] }}
-                    Phone : {{ $Document->contact['number'] }}
-                    Mail : {{ $Document->contact['mail'] }}
+                    {{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
+                    {{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
                 </pre>
             </td>
         </tr>
@@ -86,10 +86,10 @@
     <table width="100%">
         <thead>
             <tr>
-                <th align="left">Order</th>
-                <th align="left">Description</th>
-                <th align="left">Qty</th>
-                <th align="left">Unit price</th>
+                <th align="left">{{ __('general_content.order_trans_key') }}</th>
+                <th align="left">{{ __('general_content.description_trans_key') }}</th>
+                <th align="left">{{ __('general_content.qty_trans_key') }}</th>
+                <th align="left">{{ __('general_content.price_trans_key') }}</th>
                 <th align="left">Total price</th>
             </tr>
         </thead>
@@ -103,7 +103,7 @@
                 <td>.............{{ $Factory->curency }}</td>
             </tr>
             @empty
-                <x-EmptyDataLine col="5" text="No line in this delivery found ..."  />
+                <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
             @endforelse
         </tbody>
     </table>
@@ -112,7 +112,7 @@
         <tr>
             <td align="left" style="width: 50%;">
                 @if($Document->comment)
-                <p class="lead"><strong>Comment :</strong></p>
+                <p class="lead"><strong>{{ __('general_content.comment_trans_key') }} :</strong></p>
                 <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
                     {{  $Document->comment }}
                 </p>

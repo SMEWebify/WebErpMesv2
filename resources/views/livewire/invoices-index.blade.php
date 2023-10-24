@@ -8,21 +8,21 @@
                 <thead>
                     <tr>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">{{__('general_content.id_trans_key') }} @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">{{__('general_content.customer_trans_key') }} @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
-                        <th>Lines count</th>
-                        <th>Total price</th>
-                        <th>Statu</th>
+                        <th>{{__('general_content.lines_count_trans_key') }}</th>
+                        <th>{{__('general_content.total_price_trans_key') }}</th>
+                        <th>{{__('general_content.status_trans_key') }}</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
                         </th>
-                        <th>Action</th>
+                        <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,31 +36,35 @@
                         <td>{{ $Invoice->invoice_lines_count }}</td>
                         <td>{{ $Invoice->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                         <td>
-                            @if(1 == $Invoice->statu )  <span class="badge badge-info">In progress</span>@endif
+                            @if(1 == $Invoice->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
                             @if(2 == $Invoice->statu )  <span class="badge badge-warning">Sent</span>@endif
-                            @if(3 == $Invoice->statu )  <span class="badge badge-success">Invoiced</span>@endif
-                            @if(4 == $Invoice->statu )  <span class="badge badge-danger">Partially invoiced</span>@endif
+                            @if(3 == $Invoice->statu )  <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>@endif
+                            @if(4 == $Invoice->statu )  <span class="badge badge-danger">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
                         </td>
                         <td>{{ $Invoice->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('invoices.show', ['id' => $Invoice->id])}}" />
                             <x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" />
+                            <a class="btn btn-warning btn-sm" href="{{ route('pdf.facturex', ['Document' => $Invoice->id])}}">
+                                <i class="fas fa-file-pdf"></i>
+                                Factur-X
+                            </a>
                         </td>
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="8" text="No Invoice found ..."  />
+                        <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Code</th>
-                        <th>Label</th>
-                        <th>Companie</th>
-                        <th>Lines count</th>
-                        <th>Total price</th>
-                        <th>Statu</th>
-                        <th>Created At</th>
-                        <th>Action</th>
+                        <th>{{__('general_content.id_trans_key') }}</th>
+                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{__('general_content.customer_trans_key') }}</th>
+                        <th>{{__('general_content.lines_count_trans_key') }}</th>
+                        <th>{{__('general_content.total_price_trans_key') }}</th>
+                        <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
                 </tfoot>
             </table>

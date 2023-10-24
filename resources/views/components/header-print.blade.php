@@ -4,7 +4,7 @@
         <strong>{{ $factoryName }}</strong><br>
         {{ $factoryAddress }}<br>
         {{ $factoryZipcode }}, {{ $factoryCity }}<br>
-        Phone: {{ $factoryPhoneNumber }}<br>
+        {{ __('general_content.phone_trans_key') }}: {{ $factoryPhoneNumber }}<br>
         Email: {{ $factoryMail }}
     </address>
 </div>
@@ -16,7 +16,7 @@
         {{ $companieAdress }}<br>
         {{ $companieZipcode }}, {{ $companieCity }}<br>
         {{ $companieCountry }}<br>
-        Phone: {{ $companieNumber }}<br>
+        {{ __('general_content.phone_trans_key') }}: {{ $companieNumber }}<br>
         Email: {{ $companieMail }}
     </address>
 </div>

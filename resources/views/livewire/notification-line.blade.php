@@ -1,7 +1,7 @@
 <div class="col-md-9">
     <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title">Unread List</h3>
+            <h3 class="card-title">{{ __('general_content.unread_list_trans_key') }}</h3>
         </div>
         <div class="card-body">
             @forelse ($Notificationlist as $key => $not)
@@ -11,15 +11,15 @@
                 </a>
                 <a class="btn btn-info btn-sm" wire:click="Read('{{ $not['id'] }}')"  href="#">
                     <i class="fas fa-folder"></i>
-                    Read
+                    {{ __('general_content.read_trans_key') }}
                 </a>
                 <hr>
             @empty
-                <x-EmptyDataLine col="12" text="No notification  ..."  />
+                <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />
             @endforelse
             <a class="btn btn-info btn-sm" wire:click="allRead()"  href="#">
                 <i class="fas fa-folder"></i>
-                All Read
+                {{ __('general_content.all_read_trans_key') }}
             </a>
         </div>
     </div>

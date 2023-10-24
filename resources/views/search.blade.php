@@ -14,7 +14,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>{{__('general_content.code_trans_key') }}</th>
+                        <th>{{__('general_content.id_trans_key') }}</th>
                         <th>{{__('general_content.label_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
@@ -38,12 +38,12 @@
                         </td>
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="4" text="No data available in table"  />
+                        <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>{{__('general_content.code_trans_key') }}</th>
+                        <th>{{__('general_content.id_trans_key') }}</th>
                         <th>{{__('general_content.label_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>

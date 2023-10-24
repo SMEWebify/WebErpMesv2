@@ -1,23 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Task list')
+@section('title', __('general_content.tasks_list_trans_key'))
 
 @section('content_header')
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Task list</h1>
-      </div>
-    </div>
+  <h1>{{ __('general_content.tasks_list_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')
 
 @section('content')
-
 <div class="card-body">
-
   @livewire('task-statu', ['id' =>$TaskId])
-
 </div>
 @stop
 

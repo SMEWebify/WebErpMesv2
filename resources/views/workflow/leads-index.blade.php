@@ -1,15 +1,15 @@
 @extends('adminlte::page')
 
-@section('title', 'Leads')
+@section('title', __('general_content.leads_trans_key'))
 
 @section('content_header')
 <div class="row mb-2">
   <div class="col-sm-6">
-      <h1>Leads list</h1>
+      <h1>{{ __('general_content.leads_trans_key')}}</h1>
   </div>
   <div class="col-sm-6">
       <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalLead">
-          New Lead
+        {{ __('general_content.new_leads_trans_key')}}
       </button>
   </div>
 </div>
@@ -18,10 +18,7 @@
 @section('right-sidebar')
 
 @section('content')
-
-<div class="card-body">
   @livewire('leads-index')
-</div>
 @stop
 
 @section('css')

@@ -52,10 +52,10 @@
                 <pre>
                 {{ $Factory->address }}
                 {{ $Factory->zipcode }} {{ $Factory->city }}
-                Phone : {{ $Factory->phone_number }}
-                Mail : {{ $Factory->mail }}
+                {{ __('general_content.phone_trans_key') }} : {{ $Factory->phone_number }}
+                {{ __('general_content.email_trans_key') }} : {{ $Factory->mail }}
                 <br /><br />
-        Date: {{ date('Y-m-d') }}
+        {{ __('general_content.date_trans_key') }} : {{ date('Y-m-d') }}
                 </pre>
             </td>
             <td align="center">
@@ -71,8 +71,8 @@
                     {{ $Document->adresse['adress'] }}
                     {{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }}
                     {{ $Document->adresse['country'] }}
-                    Phone : {{ $Document->contact['number'] }}
-                    Mail : {{ $Document->contact['mail'] }}
+                    {{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
+                    {{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
                 </pre>
             </td>
         </tr>
@@ -86,14 +86,14 @@
     <table width="100%">
         <thead>
             <tr>
-                <th align="left">Order</th>
-                <th align="left">Description</th>
-                <th align="left">Qty</th>
-                <th align="left">Unit</th>
-                <th align="left">Selling price</th>
-                <th align="left">Discount</th>
-                <th align="left">VAT</th>
-                <th align="left">Delivery date</th>
+                <th align="left">{{ __('general_content.order_trans_key') }}</th>
+                <th align="left">{{ __('general_content.description_trans_key') }}</th>
+                <th align="left">{{ __('general_content.qty_trans_key') }}</th>
+                <th align="left">{{ __('general_content.unit_trans_key') }}</th>
+                <th align="left">{{ __('general_content.price_trans_key') }}</th>
+                <th align="left">{{ __('general_content.discount_trans_key') }}</th>
+                <th align="left">{{ __('general_content.vat_trans_key') }}</th>
+                <th align="left">{{ __('general_content.delivery_date_trans_key') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -112,11 +112,11 @@
                 @if($DocumentLine->OrderLine->delivery_date )
                 <td>{{ $DocumentLine->OrderLine->delivery_date }}</td>
                 @else
-                <td>No date</td>
+                <td>-</td>
                 @endif
             </tr>
             @empty
-                <x-EmptyDataLine col="7" text="No line in this delivery found ..."  />
+                <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
             @endforelse
         </tbody>
     </table>
@@ -124,16 +124,44 @@
     <table width="100%">
         <tr>
             <td align="left" style="width: 50%;">
+                @if($Document->type == 1)
+                <p class="lead"><strong>{{ __('general_content.payment_methods_trans_key') }}:</strong> {{ $Document->payment_method['label'] }}</p>
+                <p class="lead"><strong>{{ __('general_content.payment_conditions_trans_key') }}:</strong> {{ $Document->payment_condition['label'] }}</p>
+                @endif
                 @if($Document->comment)
-                <p class="lead"><strong>Comment :</strong></p>
+                <p class="lead"><strong>{{ __('general_content.comment_trans_key') }} :</strong></p>
                 <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
                     {{  $Document->comment }}
                 </p>
                 @endif
             </td>
+            <td align="right" style="width: 50%;">
+                <table width="80%">
+                    <tr>
+                        <th align="right" style="width:50%">Subtotal:</th>
+                        <td align="right" style="width:30%">{{ $subPrice }} {{ $Factory->curency }} </td>
+                    </tr>
+                    @forelse($vatPrice as $key => $value)
+                    <tr>
+                        <td align="right" style="width:50%">Tax <?= $vatPrice[$key][0] ?> %</td>
+                        <td align="right" style="width:30%"><?= $vatPrice[$key][1] ?> {{ $Factory->curency }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td align="right" style="width:50%">No Tax</td>
+                        <td align="right" style="width:30%"> </td>
+                    </tr>
+                    @endforelse
+                    <tr>
+                        <th align="right" style="width:50%">Total:</th>
+                        <td align="right" style="width:30%">{{ $totalPrices }} {{ $Factory->curency }}</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
 </div>
+
 
 <div class="information" style="position: absolute; bottom: 0;">
     <table width="100%">

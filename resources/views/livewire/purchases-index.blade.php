@@ -8,20 +8,20 @@
                 <thead>
                     <tr>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">{{__('general_content.id_trans_key') }} @include('include.sort-icon', ['field' => 'code'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">Companie @include('include.sort-icon', ['field' => 'companies_id'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')"   role="button" href="#">{{__('general_content.id_trans_key') }} @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
-                        <th>Lines count</th>
-                        <th>Statu</th>
+                        <th>{{__('general_content.lines_count_trans_key') }}</th>
+                        <th>{{__('general_content.status_trans_key') }}</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">Created At @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
                         </th>
-                        <th>Action</th>
+                        <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,11 +34,11 @@
                         </td>
                         <td>{{ $Purchase->purchase_lines_count }}</td>
                         <td>
-                            @if(1 == $Purchase->statu )  <span class="badge badge-info">In progress</span>@endif
-                            @if(2 == $Purchase->statu )  <span class="badge badge-warning">Ordered</span>@endif
-                            @if(3 == $Purchase->statu )  <span class="badge badge-success">Partly received</span>@endif
-                            @if(4 == $Purchase->statu )  <span class="badge badge-danger">Received</span>@endif
-                            @if(5 == $Purchase->statu )  <span class="badge badge-danger">Canceled</span>@endif
+                            @if(1 == $Purchase->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
+                            @if(2 == $Purchase->statu )  <span class="badge badge-warning">{{ __('general_content.ordered_trans_key') }}</span>@endif
+                            @if(3 == $Purchase->statu )  <span class="badge badge-success">{{ __('general_content.partly_received_trans_key') }}</span>@endif
+                            @if(4 == $Purchase->statu )  <span class="badge badge-danger">{{ __('general_content.rceived_trans_key') }}</span>@endif
+                            @if(5 == $Purchase->statu )  <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span>@endif
                         </td>
                         <td>{{ $Purchase->GetPrettyCreatedAttribute() }}</td>
                         <td>
@@ -49,18 +49,18 @@
                         </td>
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="8" text="No Purchase found ..."  />
+                        <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Code</th>
-                        <th>Label</th>
-                        <th>Companie</th>
-                        <th>Lines count</th>
-                        <th>Statu</th>
-                        <th>Created At</th>
-                        <th>Action</th>
+                        <th>{{__('general_content.id_trans_key') }}</th>
+                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{__('general_content.customer_trans_key') }}</th>
+                        <th>{{__('general_content.lines_count_trans_key') }}</th>
+                        <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
                 </tfoot>
             </table>

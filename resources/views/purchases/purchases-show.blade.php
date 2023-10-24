@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Purchase')
+@section('title', __('general_content.purchase_trans_key'))
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="Purchase : {{  $Purchase->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  h1="{{  __('general_content.purchase_trans_key') }} : {{  $Purchase->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('right-sidebar')
@@ -15,8 +15,8 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">Purchase info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">Purchase lines</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">{{  __('general_content.purchase_info_trans_key') }}</a></li> 
+      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">{{  __('general_content.purchase_lines_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -27,18 +27,18 @@
           <div class="col-md-9">
             @include('include.alert-result')
             @if( $Purchase->companies_contacts_id == 0 & $Purchase->companies_addresses_id ==0)
-            <x-adminlte-alert theme="info" title="Info">Update valide address & contact</x-adminlte-alert>
+            <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
             @endif
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <form method="POST" action="{{ route('purchase.update', ['id' => $Purchase->id]) }}" enctype="multipart/form-data">
                 @csrf 
                   <div class="card card-body">
                     <div class="row">
                       <div class="col-3">
-                        <label for="code" class="text-success">External ID :</label>  {{  $Purchase->code }}
+                        <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}
                       </div>
                       <div class="col-3">
                         <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
@@ -47,21 +47,21 @@
                                   <i class="fas fa-exclamation"></i>
                               </div>
                           </x-slot>
-                          <option value="1" @if(1 == $Purchase->statu ) Selected @endif >In progress</option>
-                          <option value="2" @if(2 == $Purchase->statu ) Selected @endif >Ordered</option>
-                          <option value="3" @if(3 == $Purchase->statu ) Selected @endif >Partly received</option>
-                          <option value="4" @if(4 == $Purchase->statu ) Selected @endif >Received</option>
-                          <option value="5" @if(5 == $Purchase->statu ) Selected @endif >Canceled</option>
+                          <option value="1" @if(1 == $Purchase->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
+                          <option value="2" @if(2 == $Purchase->statu ) Selected @endif >{{ __('general_content.ordered_trans_key') }}</option>
+                          <option value="3" @if(3 == $Purchase->statu ) Selected @endif >{{ __('general_content.partly_received_trans_key') }}</option>
+                          <option value="4" @if(4 == $Purchase->statu ) Selected @endif >{{ __('general_content.rceived_trans_key') }}</option>
+                          <option value="5" @if(5 == $Purchase->statu ) Selected @endif >{{ __('general_content.canceled_trans_key') }}</option>
                         </x-adminlte-select>
                       </div>
                       <div class="col-3">
-                        @include('include.form.form-input-label',['label' =>'Name of purchase order', 'Value' =>  $Purchase->label])
+                        @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_trans_key'), 'Value' =>  $Purchase->label])
                       </div>
                     </div>
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Supplier information</label>
+                      <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
                     </div>
                     <div class="row">
                       <div class="col-5">
@@ -86,7 +86,7 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="Submit" class="btn btn-primary">Save changes</button>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </form>
             </div>
@@ -94,7 +94,7 @@
           <div class="col-md-3">
             <div class="card card-secondary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
@@ -107,19 +107,19 @@
             </div>
             <div class="card card-warning">
               <div class="card-header">
-                <h3 class="card-title"> Options </h3>
+                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                   <tr>
                       <td style="width:50%"> 
-                        Purchase
+                        {{ __('general_content.purchase_trans_key') }}
                       </td>
                       <td>
                         @if( $Purchase->companies_contacts_id != 0 & $Purchase->companies_addresses_id !=0)
                         <x-ButtonTextPDF route="{{ route('pdf.purchase', ['Document' => $Purchase->id])}}" />
                         @else
-                        Update valide address & contact
+                        {{  __('general_content.update_valide_trans_key') }}
                         @endif
                       </td>
                   </tr>
@@ -136,15 +136,15 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Order</th>
-                  <th>Description</th>
-                  <th>Supplier ref</th>
-                  <th>Qty</th>
-                  <th>Qty Reciept</th>
-                  <th>Qty Invoice</th>
-                  <th>Selling price</th>
-                  <th>Discount</th>
-                  <th>Total selling price</th>
+                  <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
+                  <th>{{ __('general_content.price_trans_key') }}</th>
+                  <th>{{ __('general_content.discount_trans_key') }}</th>
+                  <th>{{ __('general_content.total_selling_trans_key') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -163,19 +163,19 @@
                     <td>{{ $PurchaseLine->total_selling_price }} {{ $Factory->curency }}</td>
                   </tr>
                 @empty
-                  <x-EmptyDataLine col="7" text="No Lines in this purchase order ..."  />
+                  <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
                 <tfoot>
                   <tr>
-                    <th>Order</th>
-                    <th>Description</th>
-                    <th>Supplier ref</th>
-                    <th>Qty</th>
-                    <th>Qty Reciept</th>
-                    <th>Qty Invoice</th>
-                    <th>Selling price</th>
-                    <th>Discount</th>
-                    <th>Total selling price</th>
+                    <th>{{ __('general_content.order_trans_key') }}</th>
+                    <th>{{ __('general_content.description_trans_key') }}</th>
+                    <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
+                    <th>{{ __('general_content.price_trans_key') }}</th>
+                    <th>{{ __('general_content.discount_trans_key') }}</th>
+                    <th>{{ __('general_content.total_selling_trans_key') }}</th>
                   </tr>
                 </tfoot>
               </tbody>

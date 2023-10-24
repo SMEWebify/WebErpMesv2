@@ -1,4 +1,4 @@
 <a class="btn btn-primary btn-sm" href="{{ $route }}">
     <i class="fas fa-folder"></i>
-    View
+    {{ __('general_content.view_trans_key') }}
 </a>

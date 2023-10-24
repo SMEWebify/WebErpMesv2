@@ -1,26 +1,20 @@
 @extends('adminlte::page')
 
-@section('title', 'Workflow')
+@section('title', __('general_content.workflow_trans_key'))
 
 @section('content_header')
-    
-    <div class="row mb-2">
-        <div class="col-sm-6">
-        <h1>Workflow board</h1>
-        </div>
-    </div>
-
+<div class="row mb-2">
+    <h1>{{ __('general_content.workflow_trans_key') }}</h1>
+</div>
 @stop
 
 @section('right-sidebar')
 
 @section('content')
-
-    <x-InfocalloutComponent note="The views are configured in the 'Your company' page."  />
+    <x-InfocalloutComponent note="{{ __('general_content.workflow_info_1_trans_key') }}"  />
     <div id="card" class="card">
         <kanban-board :initial-data="{{ $tasks }}"></kanban-board>
     </div>
-
 @stop
 
 @section('css')

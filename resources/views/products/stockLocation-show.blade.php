@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock')
+@section('title', __('general_content.stock_trans_key')) 
 
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1> Stock line for {{ $StockLocation->label }} location stock</h1>
+        <h1>{{ $StockLocation->label }} {{__('general_content.stock_location_trans_key') }}</h1> 
       </div>
       <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{ route('products.stock') }}">Stock list</a></li>
-              <li class="breadcrumb-item"><a href="{{ route('products.stock.show', ['id' => $StockLocation->stocks_id]) }}">Stock {{ $Stock->label }}</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('products.stock') }}">{{ __('general_content.stock_list_trans_key') }}</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('products.stock.show', ['id' => $StockLocation->stocks_id]) }}">{{__('general_content.stock_trans_key') }} {{ $Stock->label }}</a></li>
           </ol>
       </div>
     </div>
@@ -23,21 +23,21 @@
         <div class="row">
           <div class="col-md-8 card-primary">
             <div class="card-header">
-                <h3 class="card-title">Stocks location product list</h3>
+                <h3 class="card-title">{{ __('general_content.stock_location_product_list_trans_key') }}</h3>
             </div>
             <div class="card-body table-responsive p-0">
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th>Code</th>
-                    <th>User management</th>
-                    <th>Product</th>
-                    <th>Qty</th>
+                    <th>{{__('general_content.id_trans_key') }}</th>
+                    <th>{{ __('general_content.user_management_trans_key') }}</th>
+                    <th>{{ __('general_content.product_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
                     <!--<th>Qty reserve</th>-->
-                    <th>Qty mini</th>
-                    <th>End date</th>
-                    <th>Addressing</th>
-                    <th>Action</th>
+                    <th>{{ __('general_content.qty_mini_trans_key') }}</th>
+                    <th>{{ __('general_content.end_date_trans_key') }}</th>
+                    <th>{{ __('general_content.addressing_trans_key') }}</th>
+                    <th>{{__('general_content.action_trans_key') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -65,7 +65,7 @@
                         <form method="POST" action="{{ route('products.stockline.update', ['id' => $StockLocationsProduct->id]) }}" >
                           @csrf
                             <div class="form-group">
-                              <label for="service_id">User management</label>
+                              <label for="service_id">{{ __('general_content.user_management_trans_key') }}</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-list"></i></span>
@@ -78,45 +78,45 @@
                               </div>
                             </div>
                             <div class="form-group">
-                              <label for="mini_qty">Mini qty :</label>
+                              <label for="mini_qty">{{ __('general_content.qty_mini_trans_key') }} :</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-times"></i></span>
                                 </div>
-                                <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="Mini qty ex: 1.50" step=".001" value="{{ $StockLocationsProduct->mini_qty }}">
+                                <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="{{ __('general_content.qty_mini_trans_key') }} ex: 1.50" step=".001" value="{{ $StockLocationsProduct->mini_qty }}">
                                 <input type="hidden" name="stock_locations_id"  id="stock_locations_id"  value="{{ $StockLocationsProduct->stock_locations_id }}">
                               </div>
                             </div>
                             <div class="form-group">
-                              <label for="end_date">End date</label>
+                              <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                               <input type="date" class="form-control" name="end_date"  id="end_date" value="{{ $StockLocationsProduct->end_date }}">
                             </div>
                             <div class="form-group">
-                              <label for="addressing">Addressing</label>
-                              <input type="text" class="form-control" name="addressing" id="addressing" placeholder="Addressing" value="{{ $StockLocationsProduct->addressing }}">
+                              <label for="addressing">{{ __('general_content.addressing_trans_key') }}</label>
+                              <input type="text" class="form-control" name="addressing" id="addressing" placeholder="{{ __('general_content.addressing_trans_key') }}" value="{{ $StockLocationsProduct->addressing }}">
                             </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
                       </x-adminlte-modal>
                     </td>
                   </tr>
                   @empty
-                  <x-EmptyDataLine col="9" text="No data available in table"  />
+                  <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th>Code</th>
-                    <th>User management</th>
-                    <th>Product</th>
-                    <th>Qty</th>
+                    <th>{{__('general_content.id_trans_key') }}</th>
+                    <th>{{ __('general_content.user_management_trans_key') }}</th>
+                    <th>{{ __('general_content.product_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
                     <!--<th>Qty reserve</th>-->
-                    <th>Qty mini</th>
-                    <th>End date</th>
-                    <th>Addressing</th>
-                    <th>Action</th>
+                    <th>{{ __('general_content.qty_mini_trans_key') }}</th>
+                    <th>{{ __('general_content.end_date_trans_key') }}</th>
+                    <th>{{ __('general_content.addressing_trans_key') }}</th>
+                    <th>{{__('general_content.action_trans_key') }}</th>
                   </tr>
                 </tfoot>
               </table>
@@ -125,80 +125,80 @@
           <!-- /.col-md-8 card-secondary-->
           </div>
           <div class="col-md-4 card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">New stock product line</h3>
-              </div>
-
-              <div class="card-body">
-                <form  method="POST" action="{{ route('products.stockline.store') }}" class="form-horizontal">
-                  @csrf
-                  <div class="form-group">
-                    <label for="code">External ID</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                      </div>
-                      <input type="text" class="form-control" name="code" id="code" placeholder="External ID" value="STOCK-PRODUCT-{{ $LastStockLocationProduct->id ?? '0' }}">
-                      <input type="hidden" name="stock_locations_id" id="stock_locations_id" value="{{ $StockLocation->id }}">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="user_id">User management</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                      </div>
-                      <select class="form-control" name="user_id" id="user_id">
-                        @foreach ($userSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="products_id">Product</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                          <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                      </div>
-                      <select class="form-control" name="products_id" id="products_id">
-                        @foreach ($ProductSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->code }}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="mini_qty">Mini qty :</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                          <span class="input-group-text"><i class="fas fa-times"></i></span>
-                      </div>
-                      <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="Mini qty ex: 1.50" step=".001">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="end_date">End date</label>
-                    <input type="date" class="form-control" name="end_date"  id="end_date" >
-                  </div>
-                  <div class="form-group">
-                    <label for="addressing">Addressing</label>
-                    <input type="text" class="form-control" name="addressing" id="addressing" placeholder="Addressing">
-                  </div>
-                  <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
-                  </div>
-                </form>
-              <!-- /.card body -->
-              </div>
-            <!-- /.card secondary -->
+            <div class="card-header">
+              <h3 class="card-title">{{ __('general_content.new_stock_location_product_trans_key') }}</h3>
             </div>
-          <!-- /.row -->
+
+            <div class="card-body">
+              <form  method="POST" action="{{ route('products.stockline.store') }}" class="form-horizontal">
+                @csrf
+                <div class="form-group">
+                  <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                    </div>
+                    <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="STOCK-PRODUCT-{{ $LastStockLocationProduct->id ?? '0' }}">
+                    <input type="hidden" name="stock_locations_id" id="stock_locations_id" value="{{ $StockLocation->id }}">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    </div>
+                    <select class="form-control" name="user_id" id="user_id">
+                      @foreach ($userSelect as $item)
+                      <option value="{{ $item->id }}">{{ $item->name }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="products_id">{{ __('general_content.product_trans_key') }}</label> 
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                    </div>
+                    <select class="form-control" name="products_id" id="products_id">
+                      @foreach ($ProductSelect as $item)
+                      <option value="{{ $item->id }}">{{ $item->code }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="mini_qty">{{ __('general_content.qty_mini_trans_key') }} :</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-times"></i></span>
+                    </div>
+                    <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="{{ __('general_content.qty_mini_trans_key') }} ex: 1.50" step=".001">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
+                  <input type="date" class="form-control" name="end_date"  id="end_date" >
+                </div>
+                <div class="form-group">
+                  <label for="addressing">{{ __('general_content.addressing_trans_key') }}</label>
+                  <input type="text" class="form-control" name="addressing" id="addressing" placeholder="{{ __('general_content.addressing_trans_key') }}">
+                </div>
+                <div class="card-footer">
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                </div>
+              </form>
+            <!-- /.card body -->
+            </div>
+          <!-- /.card secondary -->
           </div>
-        <!-- /.card body -->
+        <!-- /.row -->
         </div>
-      <!-- /.card primary -->
+      <!-- /.card body -->
       </div>
+    <!-- /.card primary -->
+    </div>
 @stop
 
 @section('css')

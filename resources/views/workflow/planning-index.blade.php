@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Load planning')
+@section('title', __('general_content.load_planning_trans_key'))
 
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Load planning</h1>
+        <h1>{{__('general_content.load_planning_trans_key') }}</h1>
       </div>
       <div class="col-sm-6">
         <!-- Button Modal -->
         <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#taskCalculationDate">
-          Number of Task to be recalculate ({{ $countTaskNullDate }})
+          {{__('general_content.gantt_info_1_trans_key') }}  ({{ $countTaskNullDate }})
         </button>
       </div>
     </div>
@@ -23,7 +23,7 @@
   <div class="card">
     <div class="card-body">
         <x-adminlte-alert theme="info" title="Info">
-          Currently the charge per day is stuck at 16 hours
+          {{__('general_content.load_planning_info_1_trans_key') }}
         </x-adminlte-alert>
     </div>
   </div>
@@ -33,7 +33,7 @@
         <thead>
           <tr>
               <th></th>
-              <th>Service</th>
+              <th>{{__('general_content.service_trans_key') }}</th>
               @foreach ($possibleDates as $singleDay)
                   <th>{{ $singleDay }}</th>
               @endforeach
@@ -86,6 +86,5 @@
 @stop
 
 @section('js')
-
 @stop
 

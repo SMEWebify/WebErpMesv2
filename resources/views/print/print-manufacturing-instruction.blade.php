@@ -10,7 +10,7 @@
         <div class="col-sm-6">
         <a class="btn btn-primary btn-sm" href="{{ url()->previous() }}">
             <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalQuote">
-            Back
+            {{ __('general_content.back_trans_key') }}
             </button>
         </a>
         </div>
@@ -30,7 +30,7 @@
                     <!-- title row -->
                     <div class="row">
                         <div class="col-12">
-                        <h4><small class="float-right">Date: {{ date('Y-m-d') }}</small>
+                        <h4><small class="float-right">{{ __('general_content.date_trans_key') }} : {{ date('Y-m-d') }}</small>
                         </h4>
                         </div>
                         <!-- /.col -->
@@ -72,7 +72,7 @@
                             factoryMail="{{ $Factory->mail }}"
 
                             
-                            companieLabel="INTERNAL ORDER"
+                            companieLabel="{{__('general_content.internal_order_trans_key') }}"
                             companieCivility=" "
                             companieFirstName=" "
                             companieName=" "
@@ -101,12 +101,12 @@
                                         {{ $DocumentLine->code }} <br/>
                                         {{ $DocumentLine->label }}
                                     </th>
-                                    <th>Qty : {{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</th>
+                                    <th>{{ __('general_content.qty_trans_key') }} : {{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</th>
                                     <th>Time limit :
                                         @if($DocumentLine->delivery_date )
                                             {{ $DocumentLine->delivery_date }}
                                         @else
-                                            No date
+                                            N/A
                                         @endif
                                     </th>
                                 </tr>
@@ -116,20 +116,20 @@
                                         @forelse($DocumentLine->TechnicalCut as $TechnicalCut)
                                                         <tr>
                                                             <td class="align-middle" rowspan="3">
-                                                                Ord. {{ $TechnicalCut->ordre }}
+                                                                {{ __('general_content.sort_trans_key') }}. {{ $TechnicalCut->ordre }}
                                                             </td>
-                                                            <td>Label : {{ $TechnicalCut->label }}</td>
-                                                            <td>User :</td>
+                                                            <td>{{ __('general_content.label_trans_key') }} : {{ $TechnicalCut->label }}</td>
+                                                            <td>{{ __('general_content.user_trans_key') }} :</td>
                                                             <td>...............</td>
-                                                            <td>Total Time</td>
+                                                            <td>{{ __('general_content.total_time_trans_key') }}</td>
                                                             <td>{{ $TechnicalCut->TotalTime() }}</td>
                                                             <td rowspan="3">
-                                                                Visa :
+                                                                {{ __('general_content.visa_trans_key') }} :
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>{{ $TechnicalCut->service['label'] }}</td>
-                                                            <td>Ressource :</td>
+                                                            <td>{{ __('general_content.ressource_trans_key') }} :</td>
                                                             <td></td>
                                                             <td>Time spent</td>
                                                             <td></td>
@@ -140,25 +140,25 @@
                                                                 {!! DNS1D::getBarcodeHTML(strval($TechnicalCut->id), $Factory->task_barre_code) !!}
                                                             </td>
                                                             <td>{{ $TechnicalCut->service['code'] }}</td>
-                                                            <td colspan="6">Comment :</td>
+                                                            <td colspan="6">{{ __('general_content.comment_trans_key') }} :</td>
                                                         </tr>
                                                     
                                         @empty
-                                            <x-EmptyDataLine col="3" text="No technical detail ..."  />
+                                            <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
                                         @endforelse 
 
                                         @forelse($DocumentLine->BOM as $BOM)
                                                         <tr>
                                                             <td class="align-middle" rowspan="3">
-                                                                Ord. {{ $BOM->ordre }}
+                                                                {{ __('general_content.sort_trans_key') }}. {{ $BOM->ordre }}
                                                             </td>
-                                                            <td>Label : {{ $BOM->label }}</td>
-                                                            <td>Supplier :</td>
+                                                            <td>{{ __('general_content.label_trans_key') }} : {{ $BOM->label }}</td>
+                                                            <td>{{ __('general_content.supplier_trans_key') }}  :</td>
                                                             <td>...............</td>
                                                             <td></td>
                                                             <td></td>
                                                             <td rowspan="3">
-                                                                Visa :
+                                                                {{ __('general_content.visa_trans_key') }} :
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -172,17 +172,17 @@
                                                             <td class="align-middle">
                                                                 {!! DNS1D::getBarcodeHTML(strval($BOM->id), $Factory->task_barre_code) !!}
                                                             </td>
-                                                            <td colspan="6">Comment :</td>
+                                                            <td colspan="6">{{ __('general_content.comment_trans_key') }} :</td>
                                                         </tr>
                                                     
                                         @empty
-                                            <x-EmptyDataLine col="3" text="No BOM detail ..."  />
+                                            <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
                                         @endforelse 
                                         </table>
                                     </td>
                                 </tr>
                                 @empty
-                                    <x-EmptyDataLine col="3" text="No line ..."  />
+                                    <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
                                 @endforelse
                             </thead>
                         </table>

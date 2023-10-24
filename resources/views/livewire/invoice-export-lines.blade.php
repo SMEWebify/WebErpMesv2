@@ -31,17 +31,17 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Order</th>
-                            <th>Invoice</th>
-                            <th>Companie</th>
-                            <th>External ID</th>
-                            <th>Description</th>
-                            <th>Qty</th>
-                            <th>Unit</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                            <th>VAT type</th>
-                            <th>Select to export</th>
+                            <th>{{ __('general_content.order_trans_key') }}</th>
+                            <th>{{ __('general_content.invoice_trans_key') }}</th>
+                            <th>{{__('general_content.customer_trans_key') }}</th>
+                            <th>{{ __('general_content.external_id_trans_key') }}</th>
+                            <th>{{ __('general_content.description_trans_key') }}</th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.unit_trans_key') }}</th>
+                            <th>{{ __('general_content.price_trans_key') }}</th>
+                            <th>{{ __('general_content.discount_trans_key') }}</th>
+                            <th>{{ __('general_content.vat_trans_key') }}</th>
+                            <th>{{ __('general_content.select_to_export_trans_key') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,27 +64,27 @@
                             <td>
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input" wire:model="selectedInvoiceLine.{{ $InvoiceExportLines->id }}" id="{{ $InvoiceExportLines->id }}.invoice_line_id"  type="checkbox">
-                                    <label for="{{ $InvoiceExportLines->id }}.invoice_line_id" class="custom-control-label">Add to export</label>
+                                    <label for="{{ $InvoiceExportLines->id }}.invoice_line_id" class="custom-control-label">{{ __('general_content.add_export_trans_key') }}</label>
                                 </div>
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="8" text="No line in this invoince found ..."  />
+                        <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th>Order</th>
-                            <th>Invoice</th>
-                            <th>Companie</th>
-                            <th>External ID</th>
-                            <th>Description</th>
-                            <th>Qty</th>
-                            <th>Unit</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                            <th>VAT type</th>
-                            <th>Select to export</th>
+                            <th>{{ __('general_content.order_trans_key') }}</th>
+                            <th>{{ __('general_content.invoice_trans_key') }}</th>
+                            <th>{{__('general_content.customer_trans_key') }}</th>
+                            <th>{{ __('general_content.external_id_trans_key') }}</th>
+                            <th>{{ __('general_content.description_trans_key') }}</th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.unit_trans_key') }}</th>
+                            <th>{{ __('general_content.price_trans_key') }}</th>
+                            <th>{{ __('general_content.discount_trans_key') }}</th>
+                            <th>{{ __('general_content.vat_trans_key') }}</th>
+                            <th>{{ __('general_content.select_to_export_trans_key') }}</th>
                         </tr>
                     </tfoot>
                 </table>

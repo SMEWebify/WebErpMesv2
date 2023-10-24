@@ -1,13 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Deliverys request list')
+@section('title', __('general_content.deliverys_notes_request_trans_key'))
 
 @section('content_header')
-  <div class="row mb-2">
-    <div class="col-sm-6">
-        <h1>Deliverys request</h1>
-    </div>
-  </div>
+<div class="row mb-2">
+  <h1>{{__('general_content.deliverys_notes_request_trans_key') }}</h1>
+</div>
 @stop
 
 @section('right-sidebar')

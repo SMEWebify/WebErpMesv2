@@ -1,17 +1,17 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock')
+@section('title', __('general_content.stock_trans_key')) 
 
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1> Stock line for {{ $StockLocationProduct->code }}  stock</h1>
+        <h1>{{ $StockLocationProduct->code }}  {{ __('general_content.stock_location_trans_key') }}</h1>
       </div>
       <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="{{ route('products.stock') }}">Stock list</a></li>
-              <li class="breadcrumb-item"><a href="{{ route('products.stock.show', ['id' => $StockLocation->stocks_id]) }}">Stock {{ $Stock->label }}</a></li>
-              <li class="breadcrumb-item"><a href="{{ route('products.stocklocation.show', ['id' => $StockLocationProduct->stock_locations_id]) }}">Stock location {{ $StockLocation->label }}</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('products.stock') }}">{{ __('general_content.stock_list_trans_key') }}</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('products.stock.show', ['id' => $StockLocation->stocks_id]) }}">{{ __('general_content.stock_trans_key') }} {{ $Stock->label }}</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('products.stocklocation.show', ['id' => $StockLocationProduct->stock_locations_id]) }}">{{ __('general_content.stock_location_trans_key') }} {{ $StockLocation->label }}</a></li>
           </ol>
       </div>
     </div>
@@ -31,24 +31,24 @@
                 <x-adminlte-info-box title="Sortings" text="{{ $StockLocationProduct->getTotalSortingStockMove() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
               </div>
               <div class="col-12 col-sm-4">
-                <x-adminlte-info-box title="Current Qty" text="{{ $StockLocationProduct->getCurrentStockMove() }} item(s)" icon="fa fa-database" theme="success"/>
+                <x-adminlte-info-box title="Current {{__('general_content.qty_trans_key') }}" text="{{ $StockLocationProduct->getCurrentStockMove() }} item(s)" icon="fa fa-database" theme="success"/>
               </div>
             </div>
             <div class="card-header">
-                <h3 class="card-title">Stocks location product list</h3>
+                <h3 class="card-title">{{ __('general_content.stock_location_product_list_trans_key') }}</h3>
             </div>
             <div class="card-body table-responsive p-0">
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th>User</th>
-                    <th>Date time</th>
-                    <th>Qty</th>
-                    <th>Order</th>
-                    <th>Task</th>
-                    <th>Purchase</th>
-                    <th>Type</th>
-                    <th>Price</th>
+                    <th>{{ __('general_content.user_trans_key') }}</th>
+                    <th>{{__('general_content.date_time_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
+                    <th>{{ __('general_content.order_trans_key') }}</th>
+                    <th>{{ __('general_content.task_trans_key') }}</th>
+                    <th>{{__('general_content.purchase_trans_key') }}</th>
+                    <th>{{ __('general_content.type_trans_key') }}</th>
+                    <th>{{ __('general_content.price_trans_key') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -61,36 +61,36 @@
                     <td></td>
                     <td></td>
                     <td>
-                      @if(1 == $StockMove->typ_move )Inventories @endif
-                      @if(2 == $StockMove->typ_move )Task allocation @endif
-                      @if(3 == $StockMove->typ_move )Purchase order reception @endif
-                      @if(4 == $StockMove->typ_move )Inter-stock mvts @endif
-                      @if(5 == $StockMove->typ_move )Manual Stock reception @endif
-                      @if(6 == $StockMove->typ_move )Manual Stock dispatching @endif
-                      @if(7 == $StockMove->typ_move )Reservation @endif
-                      @if(8 == $StockMove->typ_move )Reservation cancellation @endif
-                      @if(9 == $StockMove->typ_move )Part delivery @endif
-                      @if(10 == $StockMove->typ_move )In production @endif
-                      @if(11 == $StockMove->typ_move )Reservation of a component in production @endif
-                      @if(12 == $StockMove->typ_move )Manufactured component entry @endif
-                      @if(13 == $StockMove->typ_move )Direct inventory @endif
+                      @if(1 == $StockMove->typ_move ){{__('general_content.inventories_trans_key') }} @endif
+                      @if(2 == $StockMove->typ_move ){{__('general_content.task_allocation_trans_key') }} @endif
+                      @if(3 == $StockMove->typ_move ){{__('general_content.purchase_order_reception_trans_key') }} @endif
+                      @if(4 == $StockMove->typ_move ){{__('general_content.inter_stock_mvts_trans_key') }} @endif
+                      @if(5 == $StockMove->typ_move ){{__('general_content.manual_stock_recep_trans_key') }} @endif
+                      @if(6 == $StockMove->typ_move ){{__('general_content.manual_stock_dispatching_trans_key') }} @endif
+                      @if(7 == $StockMove->typ_move ){{__('general_content.reservation_trans_key') }} @endif
+                      @if(8 == $StockMove->typ_move ){{__('general_content.reservation_cancellation_trans_key') }} @endif
+                      @if(9 == $StockMove->typ_move ){{__('general_content.part_delivery_trans_key') }} @endif
+                      @if(10 == $StockMove->typ_move ){{__('general_content.in_production_trans_key') }} @endif
+                      @if(11 == $StockMove->typ_move ){{__('general_content.reservation_component_production_trans_key') }} @endif
+                      @if(12 == $StockMove->typ_move ){{__('general_content.manufactured_component_entry_trans_key') }} @endif
+                      @if(13 == $StockMove->typ_move ){{__('general_content.direct_inventory_trans_key') }} @endif
                     </td>
                     <td></td>
                   </tr>
                   @empty
-                    <x-EmptyDataLine col="9" text="No data available in table"  />
+                    <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th>User</th>
-                    <th>Date time</th>
-                    <th>Qty</th>
-                    <th>Order</th>
-                    <th>Task</th>
-                    <th>Purchase</th>
-                    <th>Type</th>
-                    <th>Price</th>
+                    <th>{{ __('general_content.user_trans_key') }}</th>
+                    <th>{{__('general_content.date_time_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
+                    <th>{{ __('general_content.order_trans_key') }}</th>
+                    <th>{{ __('general_content.task_trans_key') }}</th>
+                    <th>{{__('general_content.purchase_trans_key') }}</th>
+                    <th>{{ __('general_content.type_trans_key') }}</th>
+                    <th>{{ __('general_content.price_trans_key') }}</th>
                   </tr>
                 </tfoot>
               </table>
@@ -101,27 +101,27 @@
           <div class="col-md-4">
             <div class="card card-secondary">
               <div class="card-header">
-                <h3 class="card-title">New entry stock line</h3>
+                <h3 class="card-title">{{__('general_content.new_entry_stock_trans_key') }}</h3>
               </div>
               <div class="card-body">
                 <form  method="POST" action="{{ route('products.stockline.entry') }}" class="form-horizontal">
                   @csrf
                   <div class="form-group">
-                    <label for="typ_move">Move Type</label>
+                    <label for="typ_move">{{__('general_content.move_Type_trans_key') }}</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-list"></i></span>
                       </div>
                       <select class="form-control" name="typ_move" id="typ_move">
-                        <option value="5" >Manual Stock reception</option>
-                        <option value="1" >Inventories</option>
-                        <option value="3" >Purchase order reception</option>
-                        <option value="12" >Manufactured component entry</option>
+                        <option value="5" >{{__('general_content.manual_stock_recep_trans_key') }}</option>
+                        <option value="1" >{{__('general_content.inventories_trans_key') }}</option>
+                        <option value="3" >{{__('general_content.purchase_order_reception_trans_key') }}</option>
+                        <option value="12" >{{__('general_content.manufactured_component_entry_trans_key') }}</option>
                       </select>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="qty">Qty :</label>
+                    <label for="qty">{{__('general_content.qty_trans_key') }} :</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-times"></i></span>
@@ -132,7 +132,7 @@
                     </div>
                   </div>
                   <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                   </div>
                 </form>
               <!-- /.card body -->
@@ -142,26 +142,26 @@
 
             <div class="card card-warning">
               <div class="card-header">
-                <h3 class="card-title">New sorting stock line</h3>
+                <h3 class="card-title">{{__('general_content.new_sorting_stock_trans_key') }}</h3>
               </div>
 
               <div class="card-body">
                 <form  method="POST" action="{{ route('products.stockline.sorting') }}" class="form-horizontal">
                   @csrf
                   <div class="form-group">
-                    <label for="typ_move">Move Type</label>
+                    <label for="typ_move">{{__('general_content.move_Type_trans_key') }}</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-list"></i></span>
                       </div>
                       <select class="form-control" name="typ_move" id="typ_move">
-                        <option value="6" >Manual Stock dispatching</option>
-                        <option value="9" >Part delivery</option>
+                        <option value="6" >{{__('general_content.manual_stock_dispatching_trans_key') }}</option>
+                        <option value="9" >{{__('general_content.part_delivery_trans_key') }}</option>
                       </select>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="qty">Qty :</label>
+                    <label for="qty">{{__('general_content.qty_trans_key') }} :</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-times"></i></span>
@@ -172,7 +172,7 @@
                     </div>
                   </div>
                   <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                   </div>
                 </form>
               <!-- /.card body -->

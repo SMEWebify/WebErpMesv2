@@ -8,6 +8,6 @@
                 <i class="fas fa-lg fa-file-alt text-primary"></i>
             </div>
         </div>
-        <textarea class="form-control" rows="5" name="comment"  placeholder="Enter ..." >{{  $comment }}</textarea>
+        <textarea class="form-control" rows="5" name="comment"  placeholder="..." >{{  $comment }}</textarea>
     </div>
 </div>

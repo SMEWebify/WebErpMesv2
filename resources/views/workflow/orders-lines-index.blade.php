@@ -1,17 +1,17 @@
 @extends('adminlte::page')
 
-@section('title', 'Orders list')
+@section('title', __('general_content.orders_lines_list_trans_key'))
 
 @section('content_header')
-  <h1>Orders lines list</h1>
+<div class="row mb-2">
+  <h1>{{ __('general_content.orders_lines_list_trans_key') }}</h1>
+</div>
 @stop
 
 @section('right-sidebar')
 
 @section('content')
-
 @livewire('orders-lines-index')
-
 @stop
 
 @section('css')

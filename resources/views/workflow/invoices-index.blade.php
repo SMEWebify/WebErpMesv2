@@ -1,25 +1,20 @@
 @extends('adminlte::page')
 
-@section('title', 'Invoices list')
+@section('title', __('general_content.invoices_list_trans_key'))
 
 @section('content_header')
-  <div class="row mb-2">
-    <div class="col-sm-6">
-        <h1>Invoices list</h1>
-    </div>
-  </div>
+  <h1>{{ __('general_content.invoices_list_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')
 
 @section('content')
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="donutChart" width="400" height="400"></canvas>
@@ -27,7 +22,7 @@
       </div>
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
@@ -38,10 +33,8 @@
       @livewire('invoices-index')
     </div>
   </div>
-
 <!-- /.card -->
 </div>
-
 @stop
 
 @section('css')

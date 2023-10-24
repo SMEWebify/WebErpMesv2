@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Products')
+@section('title', __('general_content.products_trans_key'))
 
 @section('content_header')
 <div class="row mb-2">
-  <h1>Products list</h1>
+  <h1>{{__('general_content.product_list_trans_key')}}</h1>
 </div>
 @stop
 

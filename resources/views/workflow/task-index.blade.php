@@ -1,30 +1,25 @@
 @extends('adminlte::page')
 
-@section('title', 'Task list')
+@section('title', __('general_content.tasks_list_trans_key'))
 
 @section('content_header')
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Task list</h1>
-      </div>
-    </div>
+  <h1>{{ __('general_content.tasks_list_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')
 
 @section('content')
-
 <div class="card-body">
   @livewire('task-lines')
-  <x-InfocalloutComponent note="You can add a generic task that is not linked to an order. These are not displayed in the workflow."  />
+  <x-InfocalloutComponent note="{{ __('general_content.tasks_info_1_trans_key') }}"  />
   <div class="card card-primary collapsed-card">
     <div class="card-header">
-      <h3 class="card-title">Add generic task</h3>
+      <h3 class="card-title">{{ __('general_content.add_generic_task_trans_key') }}</h3>
       <div class="card-tools">
-        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
           <i class="fas fa-plus"></i>
         </button>
-        <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+        <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
           <i class="fas fa-times"></i>
         </button>
       </div>

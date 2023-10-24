@@ -1,23 +1,23 @@
 @extends('adminlte::page')
 
-@section('title', 'Your companie')
+@section('title', __('general_content.your_company_trans_key'))
 
 @section('content_header')
-    <h1>Your companie</h1>
+    <h1>{{ __('general_content.your_company_trans_key') }}</h1>
 @stop
 
 @section('content')
 <div class="card">
     <div class="card-header p-2">
         <ul class="nav nav-pills">
-            <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">Factory settings</a></li>
-            <li class="nav-item"><a class="nav-link" href="#Announcement" data-toggle="tab">Announcements</a></li>
-            <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">Workflow settings</a></li>
-            <li class="nav-item"><a class="nav-link" href="#Role" data-toggle="tab">Roles</a></li>
-            <li class="nav-item"><a class="nav-link" href="#Permissions" data-toggle="tab">Permissions</a></li>
-            <li class="nav-item"><a class="nav-link" href="#RoleInPermissions" data-toggle="tab">Roles in Permissions</a></li>
-            <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">Estimated Budget</a></li>
-            <li class="nav-item"><a class="nav-link" href="#CustomerImport" data-toggle="tab">Customer Import</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#Settings" data-toggle="tab">{{ __('general_content.factory_settings_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Announcement" data-toggle="tab">{{ __('general_content.announcements_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Kanban" data-toggle="tab">{{ __('general_content.workflow_settings_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Role" data-toggle="tab">{{ __('general_content.roles_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#Permissions" data-toggle="tab">{{ __('general_content.permissions_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#RoleInPermissions" data-toggle="tab">{{ __('general_content.role_in_permissions_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">{{ __('general_content.estimated_budget_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#CustomerImport" data-toggle="tab">{{ __('general_content.customer_import_trans_key') }}</a></li>
         </ul>
     </div>
     <div class="card-body">
@@ -28,12 +28,12 @@
                 @csrf
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">General informations</h3>
+                            <h3 class="card-title">{{ __('general_content.general_information_trans_key') }}</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -41,49 +41,49 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <label for="name">Name of company</label>
+                                    <label for="name">{{ __('general_content.name_company_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-building"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" name="name"  id="name" value="{{ $Factory->name }}" placeholder="Name of company">
+                                        <input type="text" class="form-control" name="name"  id="name" value="{{ $Factory->name }}" placeholder="{{ __('general_content.name_company_trans_key') }}">
                                     </div>
                                 </div>
                             </div>
                             <hr>
                             <div class="row">
                                 <div class="col-12">
-                                    <label for="address">address</label>
+                                    <label for="address">{{ __('general_content.adress_name_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" name="address"  id="address" value="{{ $Factory->address }}"  placeholder="address">
+                                        <input type="text" class="form-control" name="address"  id="address" value="{{ $Factory->address }}"  placeholder="{{ __('general_content.adress_name_trans_key') }}">
                                     </div>
                                 </div>
                             </div>
                             <hr>
                             <div class="row">
                                 <div class="col-4">
-                                    <label for="zipcode">Zip code</label>
+                                    <label for="zipcode">{{ __('general_content.postal_code_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-map"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" name="zipcode"  id="zipcode"  value="{{ $Factory->zipcode }}"  placeholder="Zip code">
+                                        <input type="text" class="form-control" name="zipcode"  id="zipcode"  value="{{ $Factory->zipcode }}"  placeholder="{{ __('general_content.postal_code_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <label for="city">City</label>
+                                    <label for="city">{{ __('general_content.capacity_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-city"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" name="city"  id="city" value="{{ $Factory->city }}"  placeholder="City">
+                                        <input type="text" class="form-control" name="city"  id="city" value="{{ $Factory->city }}"  placeholder="{{ __('general_content.capacity_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <label for="country">Country</label>
+                                    <label for="country">{{ __('general_content.country_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-globe-africa"></i></span>
@@ -340,30 +340,30 @@
                             <hr>
                             <div class="row">
                                 <div class="col-4">
-                                    <label for="phone_number">Phone number</label>
+                                    <label for="phone_number">{{ __('general_content.phone_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" name="phone_number"  id="phone_number"  value="{{ $Factory->phone_number }}"  placeholder="Phone number">
+                                        <input type="text" class="form-control" name="phone_number"  id="phone_number"  value="{{ $Factory->phone_number }}"  placeholder="{{ __('general_content.phone_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <label for="mail">E-mail</label>
+                                    <label for="mail">{{ __('general_content.email_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">@</span>
                                         </div>
-                                        <input type="email" class="form-control" name="mail"  id="mail" value="{{ $Factory->mail }}"  placeholder="E-mail">
+                                        <input type="email" class="form-control" name="mail"  id="mail" value="{{ $Factory->mail }}"  placeholder="{{ __('general_content.email_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <label for="web_site">Web site</label>
+                                    <label for="web_site">{{ __('general_content.web_link_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
                                         </div>
-                                        <input type="text" class="form-control"  name="web_site" id="web_site" value="{{ $Factory->web_site }}" placeholder="Web site link">
+                                        <input type="text" class="form-control"  name="web_site" id="web_site" value="{{ $Factory->web_site }}" placeholder="{{ __('general_content.web_link_trans_key') }}">
                                     </div>
                                 </div>
                             </div>
@@ -371,12 +371,12 @@
                     </div>
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Administrative information</h3>
+                            <h3 class="card-title">{{ __('general_content.administrative_information_trans_key') }}</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -384,28 +384,28 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-3">
-                                    <input type="text" class="form-control" name="siren" id="siren" value="{{ $Factory->siren }}" placeholder="Siren">
+                                    <input type="text" class="form-control" name="siren" id="siren" value="{{ $Factory->siren }}" placeholder="{{ __('general_content.siren_trans_key') }}">
                                 </div>
                                 <div class="col-3">
-                                    <input type="text" class="form-control" name="nat_regis_num" id="nat_regis_num" value="{{ $Factory->nat_regis_num }}" placeholder="Nat regis num">
+                                    <input type="text" class="form-control" name="nat_regis_num" id="nat_regis_num" value="{{ $Factory->nat_regis_num }}" placeholder="{{ __('general_content.nat_regis_number_trans_key') }}">
                                 </div>
                                 <div class="col-3">
-                                    <input type="text" class="form-control" name="vat_num" id="vat_num" value="{{ $Factory->vat_num }}" placeholder="VAT number">
+                                    <input type="text" class="form-control" name="vat_num" id="vat_num" value="{{ $Factory->vat_num }}" placeholder="{{ __('general_content.vat_number_trans_key') }}">
                                 </div>
                                 <div class="col-3">
-                                    <input type="text" class="form-control" name="share_capital" id="share_capital" value="{{ $Factory->share_capital }}" placeholder="Share capital">
+                                    <input type="text" class="form-control" name="share_capital" id="share_capital" value="{{ $Factory->share_capital }}" placeholder="{{ __('general_content.share_capital_trans_key') }}">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Default value</h3>
+                            <h3 class="card-title">{{ __('general_content.default_value_trans_key') }}</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -413,26 +413,26 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-8">
-                                    <label for="add_day_validity_quote">Additional day of validity of the offer</label>
+                                    <label for="add_day_validity_quote">{{ __('general_content.add_value_day_offer_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">+</span>
                                         </div>
                                         <input type="number" class="form-control" name="add_day_validity_quote" id="add_day_validity_quote" value="{{ $Factory->add_day_validity_quote }}" >
                                         <div class="input-group-append">
-                                            <span class="input-group-text">Day</span>
+                                            <span class="input-group-text">{{ __('general_content.day_trans_key') }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-8">
-                                    <label for="add_delivery_delay_order">Additional day delivery delay</label>
+                                    <label for="add_delivery_delay_order">{{ __('general_content.add_value_day_delivery_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">+</span>
                                         </div>
                                         <input type="number" class="form-control" name="add_delivery_delay_order" id="add_delivery_delay_order" value="{{ $Factory->add_delivery_delay_order }}" >
                                         <div class="input-group-append">
-                                            <span class="input-group-text">Day</span>
+                                            <span class="input-group-text">{{ __('general_content.day_trans_key') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -440,13 +440,13 @@
                             <hr>
                             <div class="row">
                                         <div class="col-8">
-                                            <label for="accounting_vats_id">VAT type</label>
+                                            <label for="accounting_vats_id">{{ __('general_content.vat_trans_key') }}</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                                 </div>
                                                 <select class="form-control"  name="accounting_vats_id" id="accounting_vats_id">
-                                                    <option value="" >Select VAT</option>
+                                                    <option value="" >{{ __('general_content.select_vat_trans_key') }}</option>
                                                     @foreach ($VATSelect as $item)
                                                     <option value="{{ $item->id }}" @if($item->id == $Factory->accounting_vats_id ) Selected @endif >{{ $item->label }}</option>
                                                     @endforeach
@@ -454,7 +454,7 @@
                                             </div>
                                         </div>
                                         <div class="col-8">
-                                            <label for="curency">Curency</label>
+                                            <label for="curency">{{ __('general_content.curency_trans_key') }}</label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">$</span>
@@ -471,12 +471,12 @@
                     </div>
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Repots setting</h3>
+                            <h3 class="card-title">{{ __('general_content.repots_setting_trans_key') }}</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -485,7 +485,7 @@
                             <div class="row">
                                 <div class="col-3">
                                     <div class="form-group">
-                                        <label for="pdf_header_font_color">Header font Color</label>
+                                        <label for="pdf_header_font_color">{{ __('general_content.header_font_color_trans_key') }}</label>
                                         <input type="color" class="form-control"  name="pdf_header_font_color" id="pdf_header_font_color" value="{{ $Factory->pdf_header_font_color }}">
                                     </div>
                                 </div>
@@ -494,12 +494,12 @@
                     </div>
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Logo file</h3>
+                            <h3 class="card-title">{{ __('general_content.picture_trans_key') }}</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -517,7 +517,7 @@
                                     </div>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" name="picture" id="picture">
-                                        <label class="custom-file-label" for="picture">Choose file  (peg,png,jpg,gif,svg | max: 10 240 Ko)</label>
+                                        <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}  (peg,png,jpg,gif,svg | max: 10 240 Ko)</label>
                                     </div>
                                 </div>
                             </div>
@@ -525,19 +525,19 @@
                     </div>  
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Manufacturing information</h3>
+                            <h3 class="card-title">{{ __('general_content.manufacturing_information_trans_key') }}</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="col-8">
-                                <label for="task_barre_code">Code bare type for declare task</label>
+                                <label for="task_barre_code">{{ __('general_content.bare_code_type_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-barcode"></i></span>
@@ -557,7 +557,7 @@
                         </div>
                     </div>  
                     <div class="modal-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                     </div>
                 </form>
             </div>
@@ -567,17 +567,17 @@
                     @csrf
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Make an announcement</h3>
+                            <h3 class="card-title">{{ __('general_content.make_an_announcement_trans_key') }}</h3>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-3">
-                                    <label for="title">Title</label>
+                                    <label for="title">{{ __('general_content.title_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" name="title"  id="title" placeholder="Title">
+                                        <input type="text" class="form-control" name="title"  id="title" placeholder="{{ __('general_content.title_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="col-9">
@@ -586,22 +586,22 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
                     </div>
                 </form>
                 <div class="card card-secondary">
                     <div class="card-header">
-                        <h3 class="card-title">Announcements list</h3>
+                        <h3 class="card-title">{{ __('general_content.announcements_trans_key') }}</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive p-0">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
-                                        <th>Text</th>
-                                        <th>Action</th>
+                                        <th>{{ __('general_content.title_trans_key') }}</th>
+                                        <th>{{ __('general_content.text_trans_key') }}</th>
+                                        <th>{{__('general_content.action_trans_key') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -616,14 +616,14 @@
                                         </td>
                                     </tr>
                                     @empty
-                                        <x-EmptyDataLine col="3" text="No data available in table"  />
+                                        <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
                                     @endforelse
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>Title</th>
-                                        <th>Text</th>
-                                        <th>Action</th>
+                                        <th>{{ __('general_content.title_trans_key') }}</th>
+                                        <th>{{ __('general_content.text_trans_key') }}</th>
+                                        <th>{{__('general_content.action_trans_key') }}</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -632,7 +632,7 @@
                 </div>
             </div>
             <div class="tab-pane " id="Kanban">
-                <x-InfocalloutComponent note="The first line will be used for the default status of new tasks. The last line is used for finished task, ready for delivery note"  />
+                <x-InfocalloutComponent note="{{__('general_content.kanban_setting_note_trans_key') }}"  />
                 @livewire('kanban-setting')
             </div>
             <div class="tab-pane " id="Role">
@@ -641,38 +641,38 @@
                     @csrf
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Make a new Role</h3>
+                            <h3 class="card-title">{{__('general_content.make_new_role_trans_key') }}</h3>
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <label for="label" >Role Name :</label>
+                                <label for="label" >{{__('general_content.role_trans_key') }} :</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                     </div>
-                                    <input type="Text" class="form-control" id="name" name="name" placeholder="Role Name" >
+                                    <input type="Text" class="form-control" id="name" name="name" placeholder="{{__('general_content.role_trans_key') }}" >
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
                     </div>
                 </form>
                 
                 <div class="card card-secondary">
                     <div class="card-header">
-                        <h3 class="card-title">Role list</h3>
+                        <h3 class="card-title">{{__('general_content.role_trans_key') }}</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive p-0">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-capitalize">Role Name</th>
-                                        <th class="text-capitalize">Permissions</th>
-                                        <th class="text-capitalize">Created</th>
-                                        <th class="text-capitalize text-right" >Actions</th>
+                                        <th class="text-capitalize">{{__('general_content.role_trans_key') }}</th>
+                                        <th class="text-capitalize">{{__('general_content.permissions_trans_key') }}</th>
+                                        <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
+                                        <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -686,10 +686,7 @@
                                                     <button type="button" class="btn btn-block btn-outline-success  btn-sm disabled">{{ $RolePermission}}</button>
                                                 </div>
                                                 @empty
-                                                
-                                                <button type="button" class="btn btn-block btn-outline-danger  btn-sm disabled">no Permissions</button>
-                                                    
-                                                </div>
+                                                <button type="button" class="btn btn-block btn-outline-danger  btn-sm disabled">{{__('general_content.no_permissions_trans_key') }}</button>
                                                 @endforelse
                                             </div>
                                         </td>
@@ -705,7 +702,7 @@
                                                     @csrf
                                                     
                                                     <div class="row">
-                                                        <label for="label" >Role Name :</label>
+                                                        <label for="label" >{{__('general_content.role_trans_key') }} :</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
@@ -724,11 +721,11 @@
                                                     </div>
                                                     @empty
                                                     <div class="row">
-                                                        <p> No Permissions, please add before</p>
+                                                        <p>{{ __('general_content.no_permissions_trans_key') }}</p>
                                                     </div>
                                                     @endforelse
                                                     <div class="card-footer">
-                                                        <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                                                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                                     </div>
                                                 </form>
                                             </x-adminlte-modal>
@@ -736,15 +733,15 @@
                                         </td>
                                     </tr>
                                     @empty
-                                        <x-EmptyDataLine col="4" text="No data available in table"  />
+                                        <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                                     @endforelse
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th class="text-capitalize">Role Name</th>
-                                        <th class="text-capitalize">Permissions</th>
-                                        <th class="text-capitalize">Created</th>
-                                        <th class="text-capitalize text-right" >Actions</th>
+                                        <th class="text-capitalize">{{__('general_content.role_trans_key') }}</th>
+                                        <th class="text-capitalize">{{__('general_content.permissions_trans_key') }}</th>
+                                        <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
+                                        <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -758,13 +755,13 @@
                     @csrf
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Make a new Permissions</h3>
+                            <h3 class="card-title">{{ __('general_content.make_new_permissions_trans_key') }}</h3>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- /.form-group -->
                                 <div class="form-group">
-                                    <label for="role">Permissions name :</label>
+                                    <label for="role">{{ __('general_content.permission_trans_key') }} :</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
@@ -791,7 +788,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
                     </div>
                 </form>
@@ -799,17 +796,17 @@
 
                 <div class="card card-secondary">
                     <div class="card-header">
-                        <h3 class="card-title">Permissions list</h3>
+                        <h3 class="card-title">{{ __('general_content.permission_trans_key') }}</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive p-0">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-capitalize">Permission Name</th>
+                                        <th class="text-capitalize">{{ __('general_content.permission_trans_key') }}</th>
                                         <!--<th class="text-capitalize">Groupe Name</th>-->
-                                        <th class="text-capitalize">Created</th>
-                                        <th class="text-capitalize text-right" >Actions</th>
+                                        <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
+                                        <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -823,15 +820,15 @@
                                         </td>
                                     </tr>
                                     @empty
-                                        <x-EmptyDataLine col="4" text="No data available in table"  />
+                                        <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                                     @endforelse
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th class="text-capitalize">Permission Name</th>
+                                        <th class="text-capitalize">{{ __('general_content.permission_trans_key') }}</th>
                                         <!--<th class="text-capitalize">Groupe Name</th>-->
-                                        <th class="text-capitalize">Created</th>
-                                        <th class="text-capitalize text-right" >Actions</th>
+                                        <th class="text-capitalize">{{ __('general_content.created_at_trans_key') }}</th>
+                                        <th class="text-capitalize text-right" >{{ __('general_content.action_trans_key') }}</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -845,13 +842,13 @@
                     @csrf
                     <div class="card card-secondary">
                         <div class="card-header">
-                            <h3 class="card-title">Add role in Permissions</h3>
+                            <h3 class="card-title">{{__('general_content.add_role_permission_trans_key') }}</h3>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- /.form-group -->
                                 <div class="form-group">
-                                    <label for="role">Role name :</label>
+                                    <label for="role">{{__('general_content.role_trans_key') }} :</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
@@ -860,7 +857,7 @@
                                             @forelse ($Roles as $Role)
                                                 <option value="{{ $Role->id }}">{{ $Role->name }}</option>
                                             @empty
-                                                <option value=""> No roles, please add before</option>
+                                                <option value="">{{ __('general_content.no_role_trans_key') }}</option>
                                             @endforelse
                                         </select>
                                     </div>
@@ -877,13 +874,13 @@
                             </div>
                             @empty
                             <div class="row">
-                                <p> No Permissions, please add before</p>
+                                <p>{{ __('general_content.no_permissions_trans_key') }}</p>
                             </div>
                             @endforelse
                             
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
                     </div>
                 </form>
@@ -896,13 +893,13 @@
                 @include('include.alert-result')
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Select your file</h3>
+                        <h3 class="card-title">{{ __('general_content.choose_file_trans_key') }}</h3>
                     </div>
                     <form method="POST" action="{{ route('companies.import') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                             {{-- Placeholder, sm size and prepend icon --}}
-                            <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="Choose a .csv file...">
+                            <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="{{ __('general_content.choose_csv_trans_key') }}">
                                 <x-slot name="prependSlot">
                                     <div class="input-group-text bg-lightblue">
                                         <i class="fas fa-upload"></i>
@@ -912,15 +909,15 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">Header line ?</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input-switch name="header" data-on-text="YES" data-off-text="NO" data-on-color="teal" checked/>
+                                    <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text={{ __('general_content.no_trans_key') }} data-on-color="teal" checked/>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">External ID</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.external_id_trans_key') }}</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="code" placeholder="set CSV col number" required type="number">
+                                    <x-adminlte-input name="code" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number">
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-red">
                                                 <i class="fas fa-hashtag"></i>
@@ -930,9 +927,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">Name of company</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.name_company_trans_key') }}</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="label" placeholder="set CSV col number" required type="number" min=0>
+                                    <x-adminlte-input name="label" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-red">
                                                 <i class="fas fa-hashtag"></i>
@@ -942,9 +939,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">Web site link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.web_link_trans_key') }}</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="website" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="website" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -954,9 +951,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">Facebook link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Facebook</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="fbsite" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="fbsite" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -966,9 +963,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">Twitter link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">X</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="twittersite" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="twittersite" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -978,9 +975,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">Linkedin link</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">Linkedin</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="lkdsite" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="lkdsite" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -992,7 +989,7 @@
                             <div class="row">
                                 <div class="col-4 text-right"><label class="col-form-label">Siren</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="siren" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="siren" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -1004,7 +1001,7 @@
                             <div class="row">
                                 <div class="col-4 text-right"><label class="col-form-label">Naf Code</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="naf_code" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="naf_code" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -1014,9 +1011,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">VAT number</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.vat_number_trans_key') }}</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="intra_community_vat" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="intra_community_vat" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -1026,9 +1023,9 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-4 text-right"><label class="col-form-label">Discount</label></div>
+                                <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.discount_trans_key') }}</label></div>
                                 <div class="col-8">
-                                    <x-adminlte-input name="discount" placeholder="set CSV col number"  type="number" min=0>
+                                    <x-adminlte-input name="discount" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                         <x-slot name="appendSlot">
                                             <div class="input-group-text bg-blue">
                                                 <i class="fas fa-hashtag"></i>
@@ -1039,7 +1036,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
                     </form>
                 </div>

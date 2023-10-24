@@ -1,11 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'Quote')
+@section('title', __('general_content.quote_trans_key'))
 
 @section('content_header')
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-    <x-Content-header-previous-button  h1="Quote : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
+    <x-Content-header-previous-button  h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
 @stop
+
+
 
 @section('right-sidebar')
 
@@ -16,9 +18,9 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">Quote info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Quote lines</a></li>
-      <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">Lines Import</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -31,24 +33,24 @@
             @include('include.alert-result')
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <form method="POST" action="{{ route('quotes.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
                 @csrf 
                 <div class="card card-body">
                   <div class="row">
                       <div class="col-6">
-                        <label for="code" class="text-success">External ID :</label>  {{  $Quote->code }}
+                        <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Quote->code }}
                       </div>
                       <div class="col-6">
-                        @include('include.form.form-input-label',['label' =>'Name of quote', 'Value' =>  $Quote->label])
+                        @include('include.form.form-input-label',['label' =>__('general_content.name_quote_trans_key'), 'Value' =>  $Quote->label])
                       </div>
                     </div>
                   </div>
                 @if($Quote->companie['active'] == 1)
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite" class="text-info">Customer information</label>
+                      <label for="InputWebSite" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
                     </div>
                     <hr>
                     <div class="row">
@@ -75,7 +77,7 @@
                   @endif
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Date & Payment information</label>
+                      <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
                     </div>
                     <hr>
                     <div class="row">
@@ -91,7 +93,7 @@
                           @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Quote->accounting_deliveries_id])
                       </div>
                       <div class="col-6">
-                        <label for="label">Validity date</label>
+                        <label for="label">{{ __('general_content.validity_date_trans_key') }}</label>
                         <div class="input-group">
                           <div class="input-group-text bg-gradient-secondary">
                             <i class="fas fa-calendar-day"></i>
@@ -107,7 +109,7 @@
                     </div>
                   </div>
                   <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </form>
             </div>
@@ -115,7 +117,7 @@
           <div class="col-md-3">
             <div class="card card-secondary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <div class="card-body">
                 @include('include.sub-total-price')
@@ -123,7 +125,7 @@
             </div>
             <div class="card card-warning">
               <div class="card-header">
-                <h3 class="card-title"> Options </h3>
+                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
@@ -135,7 +137,7 @@
             </div>
             <div class="card card-info">
               <div class="card-header">
-                <h3 class="card-title"> Documents </h3>
+                <h3 class="card-title">{{ __('general_content.documents_trans_key') }}</h3>
               </div>
                 <div class="card-body">
                     <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
@@ -147,23 +149,23 @@
                             <div class="custom-file">
                               <input type="hidden" name="quote_id" value="{{ $Quote->id }}" >
                               <input type="file" name="file" class="custom-file-input" id="chooseFile">
-                              <label class="custom-file-label" for="chooseFile">Choose file</label>
+                              <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
                             </div>
                             <div class="input-group-append">
                               <button type="submit" name="submit" class="btn btn-success">
-                                Upload
+                                {{ __('general_content.upload_trans_key') }} 
                               </button>
                             </div>
                           </div>
                     </form>
-                    <h5 class="mt-5 text-muted">Attached files</h5>
+                    <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
                     <ul class="list-unstyled">
                       @forelse ( $Quote->files as $file)
                       <li>
                         <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
                       </li>
                       @empty
-                        No file
+                        {{ __('general_content.no_data_trans_key') }}
                       @endforelse
                     </ul>
               </div>
@@ -206,7 +208,7 @@
           <div class="col-md-6">
             <div class="card-secondary">
               <div class="card-header">
-                <h3 class="card-title"> {{ __('Total price by service') }} </h3>
+                <h3 class="card-title">{{ __('Total price by service') }}</h3>
               </div>
               <div class="card-body">
                 <canvas id="PriceDonutChart" width="400" height="400"></canvas>
@@ -221,17 +223,17 @@
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')
         @if($Quote->statu == 1)
-        <x-InfocalloutComponent note="The unit value are defined in the methods section and the value of the default VAT are defined in the accounting section. If there is no discount column, the default value will be 0 %."  />
+        <x-InfocalloutComponent note="{{ __('general_content.csv_quote_info_trans_key') }}"  />
 
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Select your file</h3>
+                <h3 class="card-title">{{ __('general_content.choose_file_trans_key') }}</h3>
             </div>
             <form method="POST" action="{{ route('quotes.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">
                     {{-- Placeholder, sm size and prepend icon --}}
-                    <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="Choose a .csv file...">
+                    <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="{{ __('general_content.choose_csv_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text bg-lightblue">
                                 <i class="fas fa-upload"></i>
@@ -241,15 +243,15 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">Header line ?</label></div>
+                        <div class="col-4 text-right"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input-switch name="header" data-on-text="YES" data-off-text="NO" data-on-color="teal" checked/>
+                            <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text={{ __('general_content.no_trans_key') }} data-on-color="teal" checked/>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">External ID</label></div>
+                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.external_id_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input name="code" placeholder="set CSV col number" required type="number">
+                            <x-adminlte-input name="code" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number">
                                 <x-slot name="appendSlot">
                                     <div class="input-group-text bg-red">
                                         <i class="fas fa-hashtag"></i>
@@ -259,9 +261,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">Description</label></div>
+                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.description_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input name="label" placeholder="set CSV col number" required type="number" min=0>
+                            <x-adminlte-input name="label" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
                                 <x-slot name="appendSlot">
                                     <div class="input-group-text bg-red">
                                         <i class="fas fa-hashtag"></i>
@@ -271,9 +273,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">Qty</label></div>
+                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.qty_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input name="qty" placeholder="set CSV col number" required type="number" min=0>
+                            <x-adminlte-input name="qty" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
                                 <x-slot name="appendSlot">
                                   <div class="input-group-text bg-red">
                                         <i class="fas fa-hashtag"></i>
@@ -283,9 +285,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">Selling price</label></div>
+                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.price_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input name="selling_price" placeholder="set CSV col number" required type="number" min=0>
+                            <x-adminlte-input name="selling_price" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
                                 <x-slot name="appendSlot">
                                   <div class="input-group-text bg-red">
                                         <i class="fas fa-hashtag"></i>
@@ -295,9 +297,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">Discount</label></div>
+                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.discount_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input name="discount" placeholder="set CSV col number"  type="number" min=0>
+                            <x-adminlte-input name="discount" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                 <x-slot name="appendSlot">
                                     <div class="input-group-text bg-blue">
                                         <i class="fas fa-hashtag"></i>
@@ -307,9 +309,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">Delivery date</label></div>
+                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.delivery_date_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input name="delivery_date" placeholder="set CSV col number"  type="number" min=0>
+                            <x-adminlte-input name="delivery_date" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
                                 <x-slot name="appendSlot">
                                     <div class="input-group-text bg-blue">
                                         <i class="fas fa-hashtag"></i>
@@ -320,13 +322,13 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </div>
             </form>
         </div>
         @else
         <x-adminlte-alert theme="info" title="Info">
-            The document status does not allow adding / modifying / deleting lines.
+            {{ __('general_content.info_statu_trans_key') }}
         </x-adminlte-alert>
         @endif
     </div>

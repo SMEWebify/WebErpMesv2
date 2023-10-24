@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Quote list')
+@section('title', __('general_content.quotes_list_trans_key'))
 
 @section('content_header')
   <div class="row mb-2">
-    <h1>Quotes list</h1>
+    <h1>{{__('general_content.quotes_list_trans_key') }}</h1>
   </div>
 @stop
 
@@ -54,7 +54,7 @@
               @if(2 == $item->statu )  "Send", @endif
               @if(3 == $item->statu )  "Win", @endif
               @if(4 == $item->statu )  "Lost", @endif
-              @if(5 == $item->statu )  "Closed", @endif
+              @if(5 == $item->statu )  "{{__('general_content.closed_trans_key') }}", @endif
               @if(6 == $item->statu )  "Obsolete", @endif
         @endforeach
       ],

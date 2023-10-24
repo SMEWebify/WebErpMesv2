@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Orders list')
+@section('title', __('general_content.orders_list_trans_key'))
 
 @section('content_header')
-    <div class="row mb-2">
-      <h1>Orders list</h1>
-    </div>
+  <div class="row mb-2">
+    <h1>{{ __('general_content.orders_list_trans_key') }}</h1>
+  </div>
 @stop
 
 @section('right-sidebar')
@@ -16,7 +16,7 @@
     <div class="col-md-3">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="donutChart" width="400" height="400"></canvas>
@@ -24,7 +24,7 @@
       </div>
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
@@ -52,8 +52,8 @@
         @foreach ($data['ordersDataRate'] as $item)
               @if(1 == $item->statu )  "Open", @endif
               @if(2 == $item->statu )  "In progress", @endif
-              @if(3 == $item->statu )  "Delivered", @endif
-              @if(4 == $item->statu )  "Partly delivered", @endif
+              @if(3 == $item->statu )  "{{ __('general_content.delivered_trans_key') }}", @endif
+              @if(4 == $item->statu )  "{{ __('general_content.partly_delivered_trans_key') }}", @endif
         @endforeach
       ],
       datasets: [

@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Task for ' . $Document->code .' - Line #'. $LineInfo->id .' '. $LineInfo->label  )
+@section('title', __('general_content.tasks_trans_key') .''. $Document->code .' - #'. $LineInfo->id .' '. $LineInfo->label  )
 
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Task for {{ $Document->code }} - Line #{{  $LineInfo->id }} {{  $LineInfo->label }}</h1>
+        <h1>{{ __('general_content.tasks_trans_key') }} {{ $Document->code }} - #{{  $LineInfo->id }} {{  $LineInfo->label }}</h1>
       </div>
       <div class="col-sm-6">
         <a class="btn btn-primary btn-sm" href="{{ url()->previous() }}#Lines">
           <button type="button" class="btn btn-primary float-sm-right">
-            Back
+            {{ __('general_content.back_trans_key') }} 
           </button>
         </a>
       </div>

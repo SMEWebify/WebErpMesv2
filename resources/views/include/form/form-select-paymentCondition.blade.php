@@ -1,4 +1,4 @@
-<x-adminlte-select name="accounting_payment_conditions_id" label="Payment condition" label-class="text-lightblue" igroup-size="sm">
+<x-adminlte-select name="accounting_payment_conditions_id" label="{{ __('general_content.payment_conditions_trans_key') }}" label-class="text-lightblue" igroup-size="sm">
     <x-slot name="prependSlot">
         <div class="input-group-text bg-gradient-secondary">
             <i class="fas fa-cash-register"></i>

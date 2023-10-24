@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Invoice lines export')
+@section('title', __('general_content.invoices_export_trans_key'))
 
 @section('content_header')
-  <h1>Invoice lines export</h1>
+  <h1>{{ __('general_content.invoices_export_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')

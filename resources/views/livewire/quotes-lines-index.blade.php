@@ -12,22 +12,22 @@
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('quotes_id')" role="button" href="#">Quote @include('include.sort-icon', ['field' => 'quotes_id'])</a>
                             </th>
-                            <th>Sort</th>
+                            <th>{{ __('general_content.sort_trans_key') }}</th>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">Code @include('include.sort-icon', ['field' => 'code'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">{{__('general_content.id_trans_key') }} @include('include.sort-icon', ['field' => 'code'])</a>
                             </th>
-                            <th>Product</th>
+                            <th>{{ __('general_content.product_trans_key') }}</th>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">Label @include('include.sort-icon', ['field' => 'label'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                             </th>
-                            <th>Qty</th>
-                            <th>Unit</th>
-                            <th>Selling price</th>
-                            <th>Discount</th>
-                            <th>VAT type</th>
-                            <th>Delivery date</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.unit_trans_key') }}</th>
+                            <th>{{ __('general_content.price_trans_key') }}</th>
+                            <th>{{ __('general_content.discount_trans_key') }}</th>
+                            <th>{{ __('general_content.vat_trans_key') }}</th>
+                            <th>{{ __('general_content.delivery_date_trans_key') }}</th>
+                            <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{__('general_content.action_trans_key') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,36 +49,36 @@
                             <td>{{ $QuoteLine->VAT['label'] }}</td>
                             <td>{{ $QuoteLine->delivery_date }}</td>
                             <td>
-                                @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> Open</span>@endif
-                                @if(2 == $QuoteLine->statu )  <span class="badge badge-warning">Send</span>@endif
-                                @if(3 == $QuoteLine->statu )  <span class="badge badge-success">Win</span>@endif
-                                @if(4 == $QuoteLine->statu )  <span class="badge badge-danger">Lost</span>@endif
-                                @if(5 == $QuoteLine->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                                @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                                @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> {{ __('general_content.open_trans_key') }}</span>@endif
+                                @if(2 == $QuoteLine->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
+                                @if(3 == $QuoteLine->statu )  <span class="badge badge-success">{{ __('general_content.win_trans_key') }}</span>@endif
+                                @if(4 == $QuoteLine->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif
+                                @if(5 == $QuoteLine->statu )  <span class="badge badge-secondary">{{ __('general_content.closed_trans_key') }}</span>@endif
+                                @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">{{ __('general_content.obsolete_trans_key') }}</span>@endif
                             </td>
                             <td>
                                 <x-ButtonTextView route="{{ route('quotes.show', ['id' => $QuoteLine->quotes_id])}}" />
                             </td>
                         </tr>
                         @empty
-                            <x-EmptyDataLine col="13" text="No quotes lines found ..."  />
+                            <x-EmptyDataLine col="13" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Quote</th>
-                            <th>Sort</th>
-                            <th>External ID</th>
-                            <th>Product</th>
-                            <th>Description</th>
-                            <th>Qty</th>
-                            <th>Unit</th>
-                            <th>Selling price</th>
-                            <th>Discount</th>
-                            <th>VAT type</th>
-                            <th>Delivery date</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>{{ __('general_content.sort_trans_key') }}</th>
+                            <th>{{ __('general_content.external_id_trans_key') }}</th>
+                            <th>{{ __('general_content.product_trans_key') }}</th>
+                            <th>{{ __('general_content.description_trans_key') }}</th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.unit_trans_key') }}</th>
+                            <th>{{ __('general_content.price_trans_key') }}</th>
+                            <th>{{ __('general_content.discount_trans_key') }}</th>
+                            <th>{{ __('general_content.vat_trans_key') }}</th>
+                            <th>{{ __('general_content.delivery_date_trans_key') }}</th>
+                            <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{__('general_content.action_trans_key') }}</th>
                         </tr>
                     </tfoot>
                 </table>

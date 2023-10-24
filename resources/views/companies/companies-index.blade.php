@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Companies')
+@section('title', __('general_content.companies_list_trans_key'))
 
 @section('content_header')
-    <div class="row mb-2">
-        <h1>Companies list</h1>
-    </div>
+  <div class="row mb-2">
+      <h1>{{__('general_content.companies_list_trans_key') }}</h1>
+  </div>
 @stop
 
 @section('right-sidebar')
@@ -16,7 +16,7 @@
       <div class="col-md-3">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title"> Stats </h3>
+            <h3 class="card-title">{{__('general_content.statistiques_trans_key') }}</h3> 
           </div>
           <div class="card-body">
             <canvas id="donutChart" width="400" height="400"></canvas>
@@ -24,15 +24,15 @@
         </div>
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title"> Latest company added </h3>
+            <h3 class="card-title">{{__('general_content.latest_companies_trans_key') }}</h3>
           </div>
           <div class="card-body">
             <div class="table-responsive">
               <table class="table m-0">
                 <thead>
                 <tr>
-                  <th>code</th>
-                  <th>label</th>
+                  <th>{{__('general_content.id_trans_key') }}</th>
+                  <th>{{__('general_content.label_trans_key') }}</th>
                   <th></th>
                 </tr>
                 </thead>
@@ -41,17 +41,12 @@
                   <tr>
                     <td>{{ $LastComapnie->code }}</td>
                     <td>{{ $LastComapnie->label }}</td>
-                    <td>
-                      <a class="btn btn-primary btn-sm" href="{{ route('companies.show', ['id' => $LastComapnie->id])}}">
-                        <i class="fas fa-folder"></i>
-                        View
-                      </a>
-                    </td>
+                    <td><x-ButtonTextView route="{{ route('companies.show', ['id' => $LastComapnie->id])}}" /></td>
                   </tr>
                   <!-- /.item -->
                   @empty
                 <tr>
-                  <td colspan="4">No compnanies</td>
+                  <x-EmptyDataLine col="4" text={{ __('general_content.no_data_trans_key') }}"  />
                 </tr>
                 @endforelse
                 </tbody>

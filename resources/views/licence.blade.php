@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Licence')
+@section('title', __('general_content.licence_trans_key'))
 
 @section('content_header')
-    <h1>Licence</h1>
+<h1>{{ __('general_content.licence_trans_key') }}</h1>
 @stop
 
 @section('content')

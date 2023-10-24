@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock')
+@section('title', __('general_content.stock_trans_key')) 
 
 @section('content_header')
-    <h1>Stock</h1>
+    <h1>{{ __('general_content.stock_list_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')
@@ -15,17 +15,17 @@
         <div class="row">
           <div class="col-md-6 card-primary">
             <div class="card-header">
-                <h3 class="card-title">Stocks list</h3>
+                <h3 class="card-title">{{ __('general_content.stock_list_trans_key') }}</h3>
             </div>
             <div class="card-body table-responsive p-0">
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th>External ID</th>
-                    <th>Desciption</th>
-                    <th>Lines count</th>
-                    <th>Created At</th>
-                    <th>Action</th>
+                    <th>{{ __('general_content.external_id_trans_key') }}</th>
+                    <th>{{ __('general_content.description_trans_key') }}</th>
+                    <th>{{__('general_content.lines_count_trans_key') }}</th>
+                    <th>{{__('general_content.created_at_trans_key') }}</th>
+                    <th>{{__('general_content.action_trans_key') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -50,16 +50,16 @@
                           @csrf
                           <div class="card-body">
                             <div class="form-group">
-                              <label for="label">Label</label>
+                              <label for="label">{{__('general_content.label_trans_key') }}</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 </div>
-                                <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $stock->label }}">
+                                <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $stock->label }}">
                               </div>
                             </div>
                             <div class="form-group">
-                              <label for="service_id">User management</label>
+                              <label for="service_id">{{ __('general_content.user_management_trans_key') }}</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-list"></i></span>
@@ -73,23 +73,23 @@
                             </div>
                           </div>
                           <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
                       </x-adminlte-modal>
                     </td>
                   </tr>
                   @empty
-                  <x-EmptyDataLine col="4" text="No data available in table"  />
+                  <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th>External ID</th>
-                    <th>Desciption</th>
-                    <th>Lines count</th>
-                    <th>Created At</th>
-                    <th>Action</th>
+                    <th>{{ __('general_content.external_id_trans_key') }}</th>
+                    <th>{{ __('general_content.description_trans_key') }}</th>
+                    <th>{{__('general_content.lines_count_trans_key') }}</th>
+                    <th>{{__('general_content.created_at_trans_key') }}</th>
+                    <th>{{__('general_content.action_trans_key') }}</th>
                   </tr>
                 </tfoot>
               </table>
@@ -99,22 +99,22 @@
 
           <div class="col-md-6 card-secondary">
               <div class="card-header">
-                <h3 class="card-title">New Stock</h3>
+                <h3 class="card-title">{{ __('general_content.new_stock_trans_key') }}</h3>
               </div>
               <div class="card-body">
                 <form  method="POST" action="{{ route('products.stock.store') }}" class="form-horizontal">
                   @csrf
                   <div class="form-group">
-                    <label for="code">External ID</label>
+                    <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                       </div>
-                      <input type="text" class="form-control" name="code" id="code" placeholder="External ID" value="STOCK-{{ $LastStock->id ?? '0' }}">
+                      <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="STOCK-{{ $LastStock->id ?? '0' }}">
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="label">Description</label>
+                    <label for="label">{{ __('general_content.description_trans_key') }}</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-tags"></i></span>
@@ -123,7 +123,7 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="user_id">User management</label>
+                    <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -136,7 +136,7 @@
                     </div>
                   </div>
                   <div class="card-footer">
-                      <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                      <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                   </div>
                 </form>
               <!-- /.card body -->
@@ -152,30 +152,30 @@
 
       <div class="col-md-12 card-info">
         <div class="card-header">
-          <h3 class="card-title">New Stock</h3>
+          <h3 class="card-title">{{ __('general_content.new_stock_trans_key') }}</h3>
         </div>
         <div class="card-body table-responsive p-0">
           <table class="table table-hover">
               <thead>
                   <tr>
-                      <th>Order</th>
-                      <th>Companie</th>
-                      <th>External ID</th>
-                      <th>Label</th>
-                      <th>Qty</th>
-                      <th>Unit</th>
-                      <th>Selling price</th>
-                      <th>Discount</th>
-                      <th>VAT type</th>
-                      <th>Delivery date</th>
-                      <th>Action</th>
+                      <th>{{ __('general_content.order_trans_key') }}</th>
+                      <th>{{__('general_content.customer_trans_key') }}</th>
+                      <th>{{ __('general_content.external_id_trans_key') }}</th>
+                      <th>{{__('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.qty_trans_key') }}</th>
+                      <th>{{ __('general_content.unit_trans_key') }}</th>
+                      <th>{{ __('general_content.price_trans_key') }}</th>
+                      <th>{{ __('general_content.discount_trans_key') }}</th>
+                      <th>{{ __('general_content.vat_trans_key') }}</th>
+                      <th>{{ __('general_content.delivery_date_trans_key') }}</th>
+                      <th>{{__('general_content.action_trans_key') }}</th>
                   </tr>
               </thead>
               <tbody>
                   @forelse ($InternalOrderRequestsLineslist as $InternalOrderRequestsLines)
                   <tr>
                       <td><x-OrderButton id="{{ $InternalOrderRequestsLines->order['id'] }}" code="{{ $InternalOrderRequestsLines->order['code'] }}"  /></td>
-                      <td>Internal order</td>
+                      <td>{{ __('general_content.internal_order_trans_key') }}</td>
                       <td>{{ $InternalOrderRequestsLines->code }}</td>
                       <td>{{ $InternalOrderRequestsLines->label }}</td>
                       <td>
@@ -215,23 +215,23 @@
                       </td>
                   </tr>
                   @empty
-                      <x-EmptyDataLine col="14" text="No request found ..."  />
+                      <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
               </tbody>
               <tfoot>
                   <tr>
-                      <th>Order</th>
-                      <th>Companie</th>
-                      <th>External ID</th>
-                      <th>Label</th>
-                      <th>Description</th>
-                      <th>Qty</th>
-                      <th>Unit</th>
-                      <th>Selling price</th>
-                      <th>Discount</th>
-                      <th>VAT type</th>
-                      <th>Delivery date</th>
-                      <th>Action</th>
+                      <th>{{ __('general_content.order_trans_key') }}</th>
+                      <th>{{__('general_content.customer_trans_key') }}</th>
+                      <th>{{ __('general_content.external_id_trans_key') }}</th>
+                      <th>{{__('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.description_trans_key') }}</th>
+                      <th>{{ __('general_content.qty_trans_key') }}</th>
+                      <th>{{ __('general_content.unit_trans_key') }}</th>
+                      <th>{{ __('general_content.price_trans_key') }}</th>
+                      <th>{{ __('general_content.discount_trans_key') }}</th>
+                      <th>{{ __('general_content.vat_trans_key') }}</th>
+                      <th>{{ __('general_content.delivery_date_trans_key') }}</th>
+                      <th>{{__('general_content.action_trans_key') }}</th>
                   </tr>
               </tfoot>
           </table>

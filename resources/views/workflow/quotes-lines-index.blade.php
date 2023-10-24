@@ -1,11 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Quotes lines list')
+@section('title', __('general_content.quotes_lines_list_trans_key'))
 
 @section('content_header')
-  <div class="row mb-2">
-    <h1>Quotes lines list</h1>
-  </div>
+  <h1>{{ __('general_content.quotes_lines_list_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')

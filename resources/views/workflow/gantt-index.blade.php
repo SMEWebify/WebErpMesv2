@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Gantt')
+@section('title', __('general_content.gantt_trans_key'))
 
 @section('content_header')
 	<div class="row mb-2">
 		<div class="col-sm-6">
-			<h1>Gantt</h1>
+			<h1>{{__('general_content.gantt_trans_key') }}</h1>
 		</div>
 		<div class="col-sm-6">
 			<!-- Button Modal -->
 			<button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#taskCalculationDate">
-				Number of Task to be recalculate ({{ $countTaskNullDate }})
+				{{__('general_content.gantt_info_1_trans_key') }} ({{ $countTaskNullDate }})
 			</button>
 		</div>
 	</div>

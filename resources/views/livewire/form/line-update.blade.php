@@ -1,17 +1,17 @@
 
     <div class="form-row">
         <div class="form-group col-md-2">
-            <label for="ordre">Sort order:</label>
+            <label for="ordre">{{ __('general_content.sort_trans_key') }} :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                 </div>
-                <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="Enter order" min="0" wire:model="ordre">
+                <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model="ordre">
             </div>
             @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
-            <label for="product_id">Product</label>
+            <label for="product_id">{{ __('general_content.delivery_date_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-barcode"></i></span>
@@ -24,33 +24,33 @@
             </div>
         </div>
         <div class="form-group col-md-2">
-            <label for="qty">Quantity :</label>
+            <label for="qty">{{ __('general_content.qty_trans_key') }} :</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-times"></i></span>
                 </div>
-                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="Quantity" min="0" wire:model="qty">
+                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="{{ __('general_content.qty_trans_key') }}" min="0" wire:model="qty">
             </div>
             @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
-            <label for="selling_price">Selling price :</label>
+            <label for="selling_price">{{ __('general_content.price_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">{{ $Factory->curency }}</span>
                 </div>
-                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="Selling price" min="0" wire:model="selling_price" step=".001">
+                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="{{ __('general_content.price_trans_key') }}" min="0" wire:model="selling_price" step=".001">
             </div>
             @error('selling_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
-            <label for="accounting_vats_id">VAT type</label>
+            <label for="accounting_vats_id">{{ __('general_content.vat_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                 </div>
                 <select class="form-control @error('accounting_vats_id') is-invalid @enderror" name="accounting_vats_id" id="accounting_vats_id"  wire:model="accounting_vats_id">
-                    <option value="" >Select VAT</option>
+                    <option value="" >{{ __('general_content.select_vat_trans_key') }}</option>
                     @foreach ($VATSelect as $item)
                         <option value="{{ $item->id }}" >{{ $item->label }}</option>
                     @endforeach
@@ -60,32 +60,32 @@
         </div>
         <div class="form-group col-md-2">
             <br/>
-            <button type="submit" class="btn btn-success btn-block">Update</button>
+            <button type="submit" class="btn btn-success btn-block">{{ __('general_content.update_trans_key') }}</button>
         </div>
     </div>
     <div class="row">
         <div class="form-group col-md-2">
-            <label for="code">External ID</label>
+            <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </div>
-                <input type="text" class="form-control @error('code') is-invalid @enderror" id="code" placeholder="Enter external ID" wire:model="code">
+                <input type="text" class="form-control @error('code') is-invalid @enderror" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" wire:model="code">
             </div>
             @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
-            <label for="label">Description :</label>
+            <label for="label">{{ __('general_content.description_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
-                <input type="text" class="form-control @error('label') is-invalid @enderror" id="label" placeholder="Description" wire:model="label">
+                <input type="text" class="form-control @error('label') is-invalid @enderror" id="label" placeholder="{{ __('general_content.description_trans_key') }}" wire:model="label">
             </div>
             @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
-            <label for="methods_units_id">Unit</label>
+            <label for="methods_units_id">{{ __('general_content.unit_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-ruler"></i></span>
@@ -98,23 +98,23 @@
             </div>
         </div>
         <div class="form-group col-md-2">
-            <label for="discount">Discount :</label>
+            <label for="discount">{{ __('general_content.discount_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                 </div>
-                <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="Discount" wire:model="discount" step=".01">
+                <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="{{ __('general_content.discount_trans_key') }}" wire:model="discount" step=".01">
             </div>
             @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
-            <label for="delivery_date">Delevery date</label>
+            <label for="delivery_date">{{ __('general_content.delivery_date_trans_key') }}</label>
             <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model="delivery_date">
             @error('delivery_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
             <br/>
-            <button onclick="location.reload();"  class="btn btn-primary btn-block">Refresh Page</button>
+            <button onclick="location.reload();"  class="btn btn-primary btn-block">{{ __('general_content.refresh_trans_key') }}</button>
         </div>
     </div>
 </form>

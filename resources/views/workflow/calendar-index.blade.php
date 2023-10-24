@@ -1,21 +1,19 @@
 @extends('adminlte::page')
 
-@section('title', 'Calendar')
+@section('title', __('general_content.order_calendar_trans_key'))
 
 @section('content_header')
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Calendar</h1>
-      </div>
-    </div>
+  <h1>{{__('general_content.order_calendar_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')
 
 @section('content')
 
-<div class="card-body">
-  @livewire('calendar')
+<div class="card">
+  <div class="card-body">
+    @livewire('calendar')
+  </div>
 </div>
 @stop
 

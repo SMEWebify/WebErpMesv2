@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Purchase Receipt')
+@section('title', __('general_content.po_receipt_trans_key')) 
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="Purchase Receipt: {{  $PurchaseReceipt->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases.receipt') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  h1="{{ __('general_content.po_receipt_trans_key') }}: {{  $PurchaseReceipt->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases.receipt') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('right-sidebar')
@@ -15,8 +15,8 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">Purchase receipt info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">Purchase receipt lines</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">{{ __('general_content.purchase_receipt_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">{{ __('general_content.purchase_receipt_lines_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -28,14 +28,14 @@
             @include('include.alert-result')
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <form method="POST" action="{{ route('receipt.update', ['id' => $PurchaseReceipt->id]) }}" enctype="multipart/form-data">
                 @csrf 
                   <div class="card card-body">
                     <div class="row">
                       <div class="col-3">
-                        <label for="code" class="text-success">External ID :</label>  {{  $PurchaseReceipt->code }}
+                        <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $PurchaseReceipt->code }}
                       </div>
                       <div class="col-3">
                         <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
@@ -44,16 +44,16 @@
                                   <i class="fas fa-exclamation"></i>
                               </div>
                           </x-slot>
-                          <option value="1" @if(1 == $PurchaseReceipt->statu ) Selected @endif >In progress</option>
-                          <option value="2" @if(2 == $PurchaseReceipt->statu ) Selected @endif >Close</option>
+                          <option value="1" @if(1 == $PurchaseReceipt->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
+                          <option value="2" @if(2 == $PurchaseReceipt->statu ) Selected @endif >{{ __('general_content.closed_trans_key') }}</option>
                         </x-adminlte-select>
                       </div>
                       <div class="col-3">
-                        @include('include.form.form-input-label',['label' =>'Name of reciept', 'Value' =>  $PurchaseReceipt->label])
+                        @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_reciept_trans_key'), 'Value' =>  $PurchaseReceipt->label])
                       </div>
 
                       <div class="col-3">
-                        <x-adminlte-input name="delivery_note_number" label="Delivery note number" placeholder="Delivery note number" value="{{  $PurchaseReceipt->delivery_note_number }}" label-class="text-success">
+                        <x-adminlte-input name="delivery_note_number" label="{{ __('general_content.delivery_note_number_trans_key') }}" placeholder="{{ __('general_content.delivery_note_number_trans_key') }}" value="{{  $PurchaseReceipt->delivery_note_number }}" label-class="text-success">
                           <x-slot name="prependSlot">
                             <div class="input-group-text bg-gradient-success">
                                   <i class="fas fa-tags"></i>
@@ -65,11 +65,11 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Supplier information</label>
+                      <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
                     </div>
                     <div class="row">
                       <div class="col-5">
-                        <label for="companies_id">Companie</label>
+                        <label for="companies_id">{{ __('general_content.companie_trans_key') }}</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
                             <a class="btn btn-primary btn-sm" href="{{ route('companies.show', ['id' => $PurchaseReceipt->companie->id])}}">
@@ -87,7 +87,7 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="Submit" class="btn btn-primary">Save changes</button>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </form>
             </div>
@@ -95,7 +95,7 @@
           <div class="col-md-3">
             <div class="card card-secondary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
@@ -106,13 +106,13 @@
             </div>
             <div class="card card-warning">
               <div class="card-header">
-                <h3 class="card-title"> Options </h3>
+                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                   <tr>
                       <td style="width:50%"> 
-                        Receipt
+                        {{ __('general_content.po_receipt_trans_key') }}
                       </td>
                       <td>
                         <x-ButtonTextPDF route="{{ route('pdf.receipt', ['Document' => $PurchaseReceipt->id])}}" />
@@ -131,13 +131,13 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Purchase Order</th>
-                  <th>Order</th>
-                  <th>Description</th>
-                  <th>Supplier ref</th>
-                  <th>Qty</th>
-                  <th>Qty purchase</th>
-                  <th>Qty receipt</th>
+                  <th>{{ __('general_content.purchase_order_trans_key') }}</th>
+                  <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_purchase_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -159,17 +159,17 @@
                     <td>{{ $PurchaseReceiptLine->receipt_qty }}</td>
                   </tr>
                 @empty
-                  <x-EmptyDataLine col="7" text="No Lines in this purchase reciept ..."  />
+                  <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}."  />
               @endforelse
                 <tfoot>
                   <tr>
-                    <th>Purchase Order</th>
-                    <th>Order</th>
-                    <th>Description</th>
-                    <th>Supplier ref</th>
-                    <th>Qty</th>
-                    <th>Qty purchase</th>
-                    <th>Qty receipt</th>
+                    <th>{{ __('general_content.purchase_order_trans_key') }}</th>
+                    <th>{{ __('general_content.order_trans_key') }}</th>
+                    <th>{{ __('general_content.description_trans_key') }}</th>
+                    <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_purchase_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                   </tr>
                 </tfoot>
               </tbody>

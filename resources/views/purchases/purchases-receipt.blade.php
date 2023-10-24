@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Purchases Waiting Receipt')
+@section('title', __('general_content.po_receipt_trans_key'))
 
 @section('content_header')
   <div class="row mb-2">
-    <h1>Purchases Receipt</h1>
+    <h1>{{ __('general_content.po_receipt_trans_key') }}</h1>
   </div>
 @stop
 
@@ -17,7 +17,7 @@
     <div class="col-md-3">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="donutChart" width="400" height="400"></canvas>
@@ -25,7 +25,7 @@
       </div>
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="donutChart" width="400" height="400"></canvas>

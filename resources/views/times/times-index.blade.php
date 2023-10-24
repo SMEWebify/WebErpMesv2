@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', __('general_content.times_setting_trans_key'))
 
 @section('content_header')
-    <h1>Times setting</h1>
+    <h1>{{ __('general_content.times_setting_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')
@@ -14,10 +14,10 @@
   @include('include.alert-result')
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Absence" data-toggle="tab">Absence</a></li>
-      <li class="nav-item"><a class="nav-link" href="#BanckHoliday" data-toggle="tab">Banck holiday</a></li>
-      <li class="nav-item"><a class="nav-link" href="#ImproductTime" data-toggle="tab">Improduct time</a></li>
-      <li class="nav-item"><a class="nav-link" href="#MachineEvent" data-toggle="tab">Machine event</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Absence" data-toggle="tab">{{ __('general_content.absence_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#BanckHoliday" data-toggle="tab">{{ __('general_content.banck_holiday_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#ImproductTime" data-toggle="tab">{{ __('general_content.improduct_time_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#MachineEvent" data-toggle="tab">{{ __('general_content.machine_event_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -26,18 +26,18 @@
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Absence Request</h3>
+              <h3 class="card-title">{{ __('general_content.leave_request_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>User</th>
-                  <th>Type</th>
-                  <th>Type of day</th>
-                  <th>Statu</th>
-                  <th>Start date</th>
-                  <th>End date</th>
+                  <th>{{ __('general_content.user_trans_key') }}</th>
+                  <th>{{ __('general_content.type_trans_key') }}</th>
+                  <th>{{ __('general_content.type_of_day_trans_key') }}</th>
+                  <th>{{__('general_content.status_trans_key') }}</th>
+                  <th>{{ __('general_content.start_date_trans_key') }}</th>
+                  <th>{{ __('general_content.end_date_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -46,20 +46,20 @@
                 <tr>
                   <td>{{ $TimesAbsence->User['name'] }}</td>
                   <td>
-                    @if($TimesAbsence->absence_type  == 1)Full day absence @endif
-                    @if($TimesAbsence->absence_type  == 2)1 st half day absence @endif
-                    @if($TimesAbsence->absence_type  == 3)2 nd half day absence @endif
-                    @if($TimesAbsence->absence_type  == 4)Absence in hours @endif
+                    @if($TimesAbsence->absence_type  == 1){{ __('general_content.full_day_absence_trans_key') }} @endif
+                    @if($TimesAbsence->absence_type  == 2){{ __('general_content.1_half_day_absence_trans_key') }} @endif
+                    @if($TimesAbsence->absence_type  == 3){{ __('general_content.2_half_day_absence_trans_key') }} @endif
+                    @if($TimesAbsence->absence_type  == 4){{ __('general_content.absence_in_hours_trans_key') }} @endif
                   </td>
                   <td>
-                    @if($TimesAbsence->absence_type_day  == 1)Calendar @endif
-                    @if($TimesAbsence->absence_type_day  == 2)Workable day @endif
-                    @if($TimesAbsence->absence_type_day  == 3)Worked day @endif
+                    @if($TimesAbsence->absence_type_day  == 1){{ __('general_content.calendar_trans_key') }} @endif
+                    @if($TimesAbsence->absence_type_day  == 2){{ __('general_content.workable_day_trans_key') }} @endif
+                    @if($TimesAbsence->absence_type_day  == 3){{ __('general_content.worked_day_trans_key') }} @endif
                   </td>
                   <td>
-                    @if($TimesAbsence->statu  == 1)To validate @endif
-                    @if($TimesAbsence->statu  == 2)Validate @endif
-                    @if($TimesAbsence->statu  == 3)Unvalidate @endif
+                    @if($TimesAbsence->statu  == 1){{ __('general_content.to_validate_trans_key') }} @endif
+                    @if($TimesAbsence->statu  == 2){{ __('general_content.validate_trans_key') }} @endif
+                    @if($TimesAbsence->statu  == 3){{ __('general_content.unvalidate_trans_key') }} @endif
                   </td>
                   <td>{{ $TimesAbsence->start_date }}</td>
                   <td>{{ $TimesAbsence->end_date }}</td>
@@ -74,7 +74,7 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="user_id">User</label>
+                            <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -87,58 +87,58 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="absence_type">Absence type</label>
+                            <label for="absence_type">{{ __('general_content.absence_type_trans_key') }}</label>
                             <select class="form-control" name="absence_type" id="absence_type">
-                                <option value="1" @if($TimesAbsence->absence_type == 1  ) Selected @endif>Full day absence</option>
-                                <option value="2" @if($TimesAbsence->absence_type == 2  ) Selected @endif>1 st half day absence</option>
-                                <option value="3" @if($TimesAbsence->absence_type == 3  ) Selected @endif>2 nd half day absence</option>
-                                <option value="4" @if($TimesAbsence->absence_type == 4  ) Selected @endif>Absence in hours</option>
+                                <option value="1" @if($TimesAbsence->absence_type == 1  ) Selected @endif>{{ __('general_content.full_day_absence_trans_key') }}</option>
+                                <option value="2" @if($TimesAbsence->absence_type == 2  ) Selected @endif>{{ __('general_content.1_half_day_absence_trans_key') }}</option>
+                                <option value="3" @if($TimesAbsence->absence_type == 3  ) Selected @endif>{{ __('general_content.2_half_day_absence_trans_key') }}</option>
+                                <option value="4" @if($TimesAbsence->absence_type == 4  ) Selected @endif>{{ __('general_content.absence_in_hours_trans_key') }}</option>
                             </select>
                           </div>
                           <div class="form-group">
-                            <label for="absence_type_day">Absence type day</label>
+                            <label for="absence_type_day">{{ __('general_content.absence_type_day_trans_key') }}</label>
                             <select class="form-control" name="absence_type_day" id="absence_type_day">
-                                <option value="1" @if($TimesAbsence->absence_type_day == 1  ) Selected @endif>Calendar</option>
-                                <option value="2" @if($TimesAbsence->absence_type_day == 2  ) Selected @endif>Workable day</option>
-                                <option value="3" @if($TimesAbsence->absence_type_day == 3  ) Selected @endif>Worked day</option>
+                                <option value="1" @if($TimesAbsence->absence_type_day == 1  ) Selected @endif>{{ __('general_content.calendar_trans_key') }}</option>
+                                <option value="2" @if($TimesAbsence->absence_type_day == 2  ) Selected @endif>{{ __('general_content.workable_day_trans_key') }}</option>
+                                <option value="3" @if($TimesAbsence->absence_type_day == 3  ) Selected @endif>{{ __('general_content.worked_day_trans_key') }}</option>
                             </select>
                           </div>
                           <div class="form-group">
-                            <label for="statu">Statu</label>
+                            <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                             <select class="form-control" name="statu" id="statu">
-                                <option value="1" @if($TimesAbsence->statu == 1  ) Selected @endif>To validate</option>
-                                <option value="2" @if($TimesAbsence->statu == 2  ) Selected @endif>Validate</option>
-                                <option value="3" @if($TimesAbsence->statu == 3  ) Selected @endif>Unvalidate</option>
+                                <option value="1" @if($TimesAbsence->statu == 1  ) Selected @endif>{{ __('general_content.to_validate_trans_key') }}</option>
+                                <option value="2" @if($TimesAbsence->statu == 2  ) Selected @endif>{{ __('general_content.validate_trans_key') }}</option>
+                                <option value="3" @if($TimesAbsence->statu == 3  ) Selected @endif>{{ __('general_content.unvalidate_trans_key') }}</option>
                             </select>
                           </div>
                           <div class="form-group">
-                            <label for="start_date">Start date</label>
+                            <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
                             <input type="date" class="form-control" name="start_date"  id="start_date" value="{{ $TimesAbsence->start_date }}">
                           </div>
                           <div class="form-group">
-                            <label for="end_date">End date</label>
+                            <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                             <input type="date" class="form-control" name="end_date"  id="end_date" value="{{ $TimesAbsence->end_date }}">
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="7" text="No data available in table"  />
+                  <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>User</th>
-                  <th>Type</th>
-                  <th>Type of day</th>
-                  <th>Statu</th>
-                  <th>Start date</th>
-                  <th>End date</th>
+                  <th>{{ __('general_content.user_trans_key') }}</th>
+                  <th>{{ __('general_content.type_trans_key') }}</th>
+                  <th>{{ __('general_content.type_of_day_trans_key') }}</th>
+                  <th>{{__('general_content.status_trans_key') }}</th>
+                  <th>{{ __('general_content.start_date_trans_key') }}</th>
+                  <th>{{ __('general_content.end_date_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -148,12 +148,12 @@
         </div>
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New absence request</h3>
+            <h3 class="card-title">{{ __('general_content.new_absence_request_trans_key') }}</h3>
           </div>
           <form  method="POST" action="{{ route('times.absence.create') }}" class="form-horizontal">
             @csrf
             <div class="form-group">
-              <label for="user_id">User</label>
+              <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -166,32 +166,32 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="absence_type">Absence type</label>
+              <label for="absence_type">{{ __('general_content.absence_type_trans_key') }}</label>
               <select class="form-control" name="absence_type" id="absence_type">
-                  <option value="1">Full day absence</option>
-                  <option value="2">1 st half day absence</option>
-                  <option value="3">2 nd half day absence</option>
-                  <option value="4">Absence in hours</option>
+                  <option value="1">{{ __('general_content.full_day_absence_trans_key') }}</option>
+                  <option value="2">{{ __('general_content.1_half_day_absence_trans_key') }}</option>
+                  <option value="3">{{ __('general_content.2_half_day_absence_trans_key') }}</option>
+                  <option value="4">{{ __('general_content.absence_in_hours_trans_key') }}</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="absence_type_day">Absence type day</label>
+              <label for="absence_type_day">{{ __('general_content.absence_type_day_trans_key') }}</label>
               <select class="form-control" name="absence_type_day" id="absence_type_day">
-                  <option value="1">Calendar</option>
-                  <option value="2">Workable day</option>
-                  <option value="3">Worked day</option>
+                  <option value="1">{{ __('general_content.calendar_trans_key') }}</option>
+                  <option value="2">{{ __('general_content.workable_day_trans_key') }}</option>
+                  <option value="3">{{ __('general_content.worked_day_trans_key') }}</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="start_date">Start date</label>
+              <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
               <input type="date" class="form-control" name="start_date"  id="start_date" >
             </div>
             <div class="form-group">
-              <label for="end_date">End date</label>
+              <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
               <input type="date" class="form-control" name="end_date"  id="end_date" >
             </div>
             <div class="card-footer">
-              <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
           </form>
         </div>
@@ -204,15 +204,15 @@
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Banck Holidays list</h3>
+              <h3 class="card-title">{{ __('general_content.banck_holiday_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>Fixed</th>
-                  <th>date</th>
-                  <th>label</th>
+                  <th>{{__('general_content.fixed_trans_key') }}</th>
+                  <th>{{__('general_content.date_trans_key') }}</th>
+                  <th>{{__('general_content.label_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -220,8 +220,8 @@
                 @forelse ($TimesBanckHolidays as $TimesBanckHoliday)
                 <tr>
                   <td>
-                    @if($TimesBanckHoliday->fixed  == 1)Yes @endif
-                    @if($TimesBanckHoliday->fixed  == 2)No @endif
+                    @if($TimesBanckHoliday->fixed  == 1){{ __('general_content.yes_trans_key') }} @endif
+                    @if($TimesBanckHoliday->fixed  == 2){{ __('general_content.no_trans_key') }} @endif
                   </td>
                   <td>{{ $TimesBanckHoliday->date }}</td>
                   <td>{{ $TimesBanckHoliday->label }}</td>
@@ -236,42 +236,42 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $TimesBanckHoliday->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $TimesBanckHoliday->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="fixed">Fixed</label>
+                            <label for="fixed">{{__('general_content.fixed_trans_key') }}</label>
                             <select class="form-control" name="fixed" id="fixed">
-                                <option value="2" @if($TimesBanckHoliday->fixed == 2 ) Selected @endif>No</option>
-                                <option value="1" @if($TimesBanckHoliday->fixed == 1 ) Selected @endif>Yes</option>
+                                <option value="2" @if($TimesBanckHoliday->fixed == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                <option value="1" @if($TimesBanckHoliday->fixed == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                             </select>
                           </div>
                           <div class="form-group">
-                            <label for="date">Date</label>
+                            <label for="date">{{__('general_content.date_trans_key') }}</label>
                             <input type="date" class="form-control" name="date"  id="date" value="{{ $TimesBanckHoliday->date }}">
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="4" text="No data available in table"  />
+                  <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>Fixed</th>
-                  <th>date</th>
-                  <th>label</th>
+                  <th>{{__('general_content.fixed_trans_key') }}</th>
+                  <th>{{__('general_content.date_trans_key') }}</th>
+                  <th>{{__('general_content.label_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -281,33 +281,33 @@
         </div>
         <div class="col-md-6 card-secondary">
             <div class="card-header">
-              <h3 class="card-title">New Banck Holiday</h3>
+              <h3 class="card-title">{{__('general_content.new_banck_holiday_trans_key') }}</h3>
             </div>
             <form  method="POST" action="{{ route('times.banckholiday.create') }}" class="form-horizontal">
               @csrf
               
               <div class="form-group">
-                <label for="label">Label</label>
+                <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="fixed">Fixed</label>
+                <label for="fixed">{{__('general_content.fixed_trans_key') }}</label>
                 <select class="form-control" name="fixed" id="fixed">
-                    <option value="2">No</option>
-                    <option value="1">Yes</option>
+                    <option value="2">{{ __('general_content.no_trans_key') }}</option>
+                    <option value="1">{{ __('general_content.yes_trans_key') }}</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="date">Date</label>
+                <label for="date">{{__('general_content.date_trans_key') }}</label>
                 <input type="date" class="form-control" name="date"  id="date" >
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
           </form>
         </div>
@@ -320,16 +320,16 @@
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Improduct time list</h3>
+              <h3 class="card-title">{{ __('general_content.improduct_time_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>Desciption</th>
-                  <th>Machine statu</th>
-                  <th>Resource required</th>
-                  <th>Mask time</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{__('general_content.machine_statu_trans_key') }}</th>
+                  <th>{{__('general_content.resource_required_trans_key') }}</th>
+                  <th>{{__('general_content.mask_time_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -339,12 +339,12 @@
                   <td>{{ $TimesImproductTime->label }}</td>
                   <td>{{ $TimesImproductTime->MachineEvent['label'] }}</td>
                   <td>
-                    @if($TimesImproductTime->resources_required  == 1)Yes @endif
-                    @if($TimesImproductTime->resources_required  == 2)No @endif
+                    @if($TimesImproductTime->resources_required  == 1){{ __('general_content.yes_trans_key') }} @endif
+                    @if($TimesImproductTime->resources_required  == 2){{ __('general_content.no_trans_key') }} @endif
                   </td>
                   <td>
-                    @if($TimesImproductTime->mask_time  == 1)Yes @endif
-                    @if($TimesImproductTime->mask_time  == 2)No @endif
+                    @if($TimesImproductTime->mask_time  == 1){{ __('general_content.yes_trans_key') }} @endif
+                    @if($TimesImproductTime->mask_time  == 2){{ __('general_content.no_trans_key') }} @endif
                   </td>
                   <td class=" py-0 align-middle">
                     <!-- Button Modal -->
@@ -357,16 +357,16 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $TimesImproductTime->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $TimesImproductTime->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="times_machine_events_id">Machine status</label>
+                            <label for="times_machine_events_id">{{__('general_content.machine_statu_trans_key') }}</label>
                             <select class="form-control" name="times_machine_events_id" id="times_machine_events_id">
                                 @foreach ($TimesMachineEventsSelect as $item)
                                 <option value="{{ $item->id }}" @if($TimesImproductTime->times_machine_events_id == $item->id ) Selected @endif>{{ $item->label }}</option>
@@ -375,42 +375,42 @@
                             </select>
                           </div>
                           <div class="form-group">
-                            <label for="resources_required">Ressource required</label>
+                            <label for="resources_required">{{__('general_content.resource_required_trans_key') }}</label>
                             <select class="form-control" name="resources_required" id="resources_required">
-                                <option value="2" @if($TimesImproductTime->resources_required == 2 ) Selected @endif>No</option>
-                                <option value="1" @if($TimesImproductTime->resources_required == 1 ) Selected @endif>Yes</option>
+                                <option value="2" @if($TimesImproductTime->resources_required == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                <option value="1" @if($TimesImproductTime->resources_required == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                             </select>
                           </div>
                           <div class="form-group">
-                            <label for="mask_time">Mask time</label>
+                            <label for="mask_time">{{__('general_content.mask_time_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                               </div>
                               <select class="form-control" name="mask_time" id="mask_time">
-                                  <option value="2" @if($TimesImproductTime->mask_time == 2 ) Selected @endif>No</option>
-                                  <option value="1" @if($TimesImproductTime->mask_time == 1 ) Selected @endif>Yes</option>
+                                  <option value="2" @if($TimesImproductTime->mask_time == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                  <option value="1" @if($TimesImproductTime->mask_time == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                               </select>
                             </div>
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="5" text="No data available in table"  />
+                  <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>Desciption</th>
-                  <th>Machine statu</th>
-                  <th>Resource required</th>
-                  <th>Mask time</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{__('general_content.machine_statu_trans_key') }}</th>
+                  <th>{{__('general_content.resource_required_trans_key') }}</th>
+                  <th>{{__('general_content.mask_time_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -420,21 +420,21 @@
         </div>
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New Improduct time</h3>
+            <h3 class="card-title">{{__('general_content.new_improduct_time_trans_key') }}</h3>
           </div>
           <form  method="POST" action="{{ route('times.improducttime.create') }}" class="form-horizontal">
             @csrf
             <div class="form-group">
-              <label for="label">Label</label>
+              <label for="label">{{__('general_content.label_trans_key') }}</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
-                <input type="text" class="form-control" name="label"  id="label" placeholder="Label" >
+                <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" >
               </div>
             </div>
             <div class="form-group">
-              <label for="times_machine_events_id">Machine status</label>
+              <label for="times_machine_events_id">{{__('general_content.machine_statu_trans_key') }}</label>
               <select class="form-control" name="times_machine_events_id" id="times_machine_events_id">
                   @foreach ($TimesMachineEventsSelect as $item)
                   <option value="{{ $item->id }}">{{ $item->label }}</option>
@@ -443,26 +443,26 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="resources_required">Ressource required</label>
+              <label for="resources_required">{{__('general_content.resource_required_trans_key') }}</label>
               <select class="form-control" name="resources_required" id="resources_required">
-                  <option value="2">No</option>
-                  <option value="1">Yes</option>
+                  <option value="2">{{ __('general_content.no_trans_key') }}</option>
+                  <option value="1">{{ __('general_content.yes_trans_key') }}</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="mask_time">Mask time</label>
+              <label for="mask_time">{{__('general_content.mask_time_trans_key') }}</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                 </div>
                 <select class="form-control" name="mask_time" id="mask_time">
-                    <option value="2">No</option>
-                    <option value="1">Yes</option>
+                    <option value="2">{{ __('general_content.no_trans_key') }}</option>
+                    <option value="1">{{ __('general_content.yes_trans_key') }}</option>
                 </select>
               </div>
             </div>
             <div class="card-footer">
-              <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
           </form>
         </div>
@@ -475,18 +475,18 @@
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Machine events list</h3>
+              <h3 class="card-title">{{ __('general_content.machine_event_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>External ID</th>
-                  <th>Order</th>
-                  <th>Desciption</th>
-                  <th>Mask time</th>
-                  <th>Color</th>
-                  <th>Statu</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{__('general_content.mask_time_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
+                  <th>{{__('general_content.status_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -497,15 +497,15 @@
                   <td>{{ $TimesMachineEvent->ordre }}</td>
                   <td>{{ $TimesMachineEvent->label }}</td>
                   <td>
-                    @if($TimesMachineEvent->mask_time  == 1)Yes @endif
-                    @if($TimesMachineEvent->mask_time  == 2)No @endif
+                    @if($TimesMachineEvent->mask_time  == 1){{ __('general_content.yes_trans_key') }} @endif 
+                    @if($TimesMachineEvent->mask_time  == 2){{ __('general_content.no_trans_key') }} @endif
                   </td>
                   <td><input type="color" class="form-control"  name="color" id="color" value="{{ $TimesMachineEvent->color }}"></td>
                   <td>
-                    @if($TimesMachineEvent->etat  == 1)Stop @endif
-                    @if($TimesMachineEvent->etat  == 2)Setup @endif
-                    @if($TimesMachineEvent->etat  == 3)Run @endif
-                    @if($TimesMachineEvent->etat  == 4)Off @endif
+                    @if($TimesMachineEvent->etat  == 1){{ __('general_content.stop_trans_key') }} @endif
+                    @if($TimesMachineEvent->etat  == 2){{ __('general_content.setup_trans_key') }} @endif
+                    @if($TimesMachineEvent->etat  == 3){{ __('general_content.run_trans_key') }} @endif
+                    @if($TimesMachineEvent->etat  == 4){{ __('general_content.off_trans_key') }} @endif
                   </td>
                   <td class=" py-0 align-middle">
                     <!-- Button Modal -->
@@ -518,7 +518,7 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="ordre">Sort order:</label>
+                            <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
@@ -527,59 +527,59 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $TimesMachineEvent->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $TimesMachineEvent->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="mask_time">Mask time</label>
+                            <label for="mask_time">{{__('general_content.mask_time_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                               </div>
                               <select class="form-control" name="mask_time" id="mask_time">
-                                  <option value="2"  @if($TimesMachineEvent->mask_time == 2 ) Selected @endif>No</option>
-                                  <option value="1"  @if($TimesMachineEvent->mask_time == 1 ) Selected @endif>Yes</option>
+                                  <option value="2"  @if($TimesMachineEvent->mask_time == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                  <option value="1"  @if($TimesMachineEvent->mask_time == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                               </select>
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="color">Color</label>
+                            <label for="color">{{ __('general_content.color_trans_key') }}</label>
                             <input type="color" class="form-control"  name="color" id="color" value="{{ $TimesMachineEvent->color }}">
                           </div>
                           <div class="form-group">
-                            <label for="etat">Status</label>
+                            <label for="etat">{{ __('general_content.status_trans_key') }}</label>
                             <select class="form-control" name="etat" id="etat">
-                                <option value="1" @if($TimesMachineEvent->etat == 1 ) Selected @endif>Stop</option>
-                                <option value="2" @if($TimesMachineEvent->etat == 2 ) Selected @endif>Setup</option>
-                                <option value="3" @if($TimesMachineEvent->etat == 3 ) Selected @endif>Run</option>
-                                <option value="4" @if($TimesMachineEvent->etat == 4 ) Selected @endif>Off</option>
+                                <option value="1" @if($TimesMachineEvent->etat == 1 ) Selected @endif>{{ __('general_content.stop_trans_key') }}</option>
+                                <option value="2" @if($TimesMachineEvent->etat == 2 ) Selected @endif>{{ __('general_content.setup_trans_key') }}</option>
+                                <option value="3" @if($TimesMachineEvent->etat == 3 ) Selected @endif>{{ __('general_content.run_trans_key') }}</option>
+                                <option value="4" @if($TimesMachineEvent->etat == 4 ) Selected @endif>{{ __('general_content.off_trans_key') }}</option>
                             </select>
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="7" text="No data available in table"  />
+                  <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>External ID</th>
-                  <th>Order</th>
-                  <th>Desciption</th>
-                  <th>Mask time</th>
-                  <th>Color</th>
-                  <th>Statu</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{__('general_content.mask_time_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
+                  <th>{{__('general_content.status_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -589,21 +589,21 @@
         </div>
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New machine event type</h3>
+            <h3 class="card-title">{{ __('general_content.new_machine_event_trans_key') }}</h3>
           </div>
           <form  method="POST" action="{{ route('times.machineevent.create') }}" class="form-horizontal">
             @csrf
             <div class="form-group">
-              <label for="code">External ID</label>
+              <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </div>
-                <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
+                <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
               </div>
             </div>
             <div class="form-group">
-              <label for="ordre">Sort order:</label>
+              <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
@@ -612,41 +612,41 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="label">Label</label>
+              <label for="label">{{__('general_content.label_trans_key') }}</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
-                <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
               </div>
             </div>
             <div class="form-group">
-              <label for="mask_time">Mask time</label>
+              <label for="mask_time">{{__('general_content.mask_time_trans_key') }}</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                 </div>
                 <select class="form-control" name="mask_time" id="mask_time">
-                    <option value="2">No</option>
-                    <option value="1">Yes</option>
+                    <option value="2">{{ __('general_content.no_trans_key') }}</option>
+                    <option value="1">{{ __('general_content.yes_trans_key') }}</option>
                 </select>
               </div>
             </div>
             <div class="form-group">
-              <label for="color">Color</label>
+              <label for="color">{{ __('general_content.color_trans_key') }}</label>
               <input type="color" class="form-control"  name="color" id="color" >
             </div>
             <div class="form-group">
-              <label for="etat">Status</label>
+              <label for="etat">{{ __('general_content.status_trans_key') }}</label>
               <select class="form-control" name="etat" id="etat">
-                  <option value="1">Stop</option>
-                  <option value="2">Setup</option>
-                  <option value="3">Run</option>
-                  <option value="4">Off</option>
+                  <option value="1">{{ __('general_content.stop_trans_key') }}</option>
+                  <option value="2">{{ __('general_content.setup_trans_key') }}</option>
+                  <option value="3">{{ __('general_content.run_trans_key') }}</option>
+                  <option value="4">{{ __('general_content.off_trans_key') }}</option>
               </select>
             </div>
             <div class="card-footer">
-              <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
           </form>
         </div>

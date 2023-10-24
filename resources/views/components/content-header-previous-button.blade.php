@@ -4,9 +4,9 @@
     </div>
     <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="{{ $previous }}">Previous</a></li>
-            <li class="breadcrumb-item"><a href="{{ $list }}">Back to lists</a></li>
-            <li class="breadcrumb-item"><a href="{{ $next }}">Next</a></li>
+            <li class="breadcrumb-item"><a href="{{ $previous }}">{{ __('general_content.previous_trans_key') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ $list }}">{{ __('general_content.back_to_list_trans_key') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ $next }}">{{ __('general_content.next_trans_key') }}</a></li>
         </ol>
     </div>
 </div>

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Products')
+@section('title', __('general_content.products_trans_key'))
 
 @section('content_header')
   <x-Content-header-previous-button  h1="{{ $Product->label }}" previous="{{ $previousUrl }}" list="{{ route('products') }}" next="{{ $nextUrl }}"/>
@@ -14,10 +14,10 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab">Detail</a></li>
-      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">Technical cut + BOM {{ $Product->getTaskCountAttribute() }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">Quotes list</a></li>
-      <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">Orders list</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab">{{ __('general_content.product_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">{{ __('general_content.tech_bom_trans_key') }} {{ $Product->getTaskCountAttribute() }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -29,7 +29,7 @@
             @include('include.alert-result')
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <form method="POST" action="{{ route('products.update', ['id' => $Product->id]) }}" enctype="multipart/form-data">
                 @csrf
@@ -37,72 +37,72 @@
                     <div class="row">
                         <div class="col-4">
                           <div class="text-muted">
-                            <label for="label">External ID</label>
+                            <label for="label">{{ __('general_content.external_id_trans_key') }}</label>
                               <b class="d-block">{{ $Product->code }}</b>
                             </p>
                           </div>
                         </div>
                         <div class="col-4">
-                            <label for="label">Description</label>
+                            <label for="label">{{ __('general_content.description_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                 </div>
-                                <input type="text" class="form-control" value="{{ $Product->label }}" name="label"  id="label" placeholder="Label/Desciption of product">
+                                <input type="text" class="form-control" value="{{ $Product->label }}" name="label"  id="label" placeholder="{{ __('general_content.description_trans_key') }}">
                             </div>
                         </div>
                         <div class="col-4">
-                            <label for="ind">Index</label>
-                            <input type="text" class="form-control" value="{{ $Product->ind }}"   name="ind"  id="ind" placeholder="Index">
+                            <label for="ind">{{ __('general_content.index_trans_key') }}</label>
+                            <input type="text" class="form-control" value="{{ $Product->ind }}"   name="ind"  id="ind" placeholder="{{ __('general_content.index_trans_key') }}">
                         </div>
                     </div>
                   </div>
                   <div class="card card-body">
                     <div class="row">
                         <div class="col-4">
-                            <label for="methods_services_id">Services</label>
+                            <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label> 
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-list"></i></span>
                                 </div>
                                 <select class="form-control" name="methods_services_id" id="methods_services_id">
-                                    <option value="">Select service</option>
+                                    <option value="">{{ __('general_content.select_service_trans_key') }}</option>
                                     @forelse ($ServicesSelect as $item)
                                     <option value="{{ $item->id }}" @if($Product->methods_services_id == $item->id ) Selected @endif  >{{ $item->label }}</option>
                                     @empty
-                                        <option value="">No service, go to methods page for add</option>
+                                        <option value="">{{ __('general_content.no_service_trans_key') }}</option>
                                     @endforelse
                                 </select>
                             </div>
                         </div>
                         <div class="col-4">
-                            <label for="methods_families_id">Family</label>
+                            <label for="methods_families_id">{{ __('general_content.select_family_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-grip-horizontal"></i></span>
                                 </div>
                                 <select class="form-control" name="methods_families_id" id="methods_families_id">
-                                    <option value="">Select familie</option>
+                                    <option value="">{{ __('general_content.family_trans_key') }}</option>
                                     @forelse ($FamiliesSelect as $item)
                                     <option value="{{ $item->id }}" @if($Product->methods_families_id == $item->id ) Selected @endif >{{ $item->label }}</option>
                                     @empty
-                                        <option value="">No families, go to methods page for add</option>
+                                        <option value="">{{ __('general_content.no_family_trans_key') }}</option>
                                     @endforelse
                                 </select>
                             </div>
                         </div>
                         <div class="col-4">
-                            <label for="methods_units_id">Unit</label>
+                            <label for="methods_units_id">{{ __('general_content.unit_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                                 </div>
                                 <select class="form-control" name="methods_units_id" id="methods_units_id">
-                                    <option value="">Select unit</option>
+                                    <option value="">{{ __('general_content.select_unit_trans_key') }}</option>
                                     @forelse ($UnitsSelect as $item)
                                     <option value="{{ $item->id }}" @if($Product->methods_units_id == $item->id ) Selected @endif>{{ $item->label }}</option>
                                     @empty
-                                        <option value="">No units, go to methods page for add</option>
+                                        <option value="">{{ __('general_content.no_unit_trans_key') }}</option>
                                     @endforelse
                                 </select>
                             </div>
@@ -112,38 +112,38 @@
                   <div class="card card-body">
                     <div class="row">
                         <div class="col-4">
-                            <label for="purchased">Purchased</label>
+                            <label for="purchased">{{ __('general_content.purchased_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                 </div>
                                 <select class="form-control" name="purchased" id="purchased">
-                                    <option value="">Select statu</option>
-                                    <option value="2" @if($Product->purchased == 2 ) Selected @endif>No</option>
-                                    <option value="1" @if($Product->purchased == 1 ) Selected @endif>Yes</option>
+                                    <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
+                                    <option value="2" @if($Product->purchased == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                    <option value="1" @if($Product->purchased == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-4">
-                            <label for="sold">Sold</label>
+                            <label for="sold">{{ __('general_content.sold_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                 </div>
                                 <select class="form-control" name="sold" id="sold">
-                                    <option value="">Select statu</option>
-                                    <option value="2" @if($Product->sold == 2 ) Selected @endif>No</option>
-                                    <option value="1" @if($Product->sold == 1 ) Selected @endif>Yes</option>
+                                    <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
+                                    <option value="2" @if($Product->sold == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                    <option value="1" @if($Product->sold == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-4">
-                            <label for="tracability_type">Tracability</label>
+                            <label for="tracability_type">{{ __('general_content.tracability_trans_key') }}</label>
                             <select class="form-control" name="tracability_type" id="tracability_type">
-                                <option value="">Select type</option>
-                                <option value="1" @if($Product->tracability_type == 1 ) Selected @endif>No traceability</option>
-                                <option value="2" @if($Product->tracability_type == 2 ) Selected @endif>With batch number</option>
-                                <option value="3" @if($Product->tracability_type == 3 ) Selected @endif>With serial number</option>
+                                <option value="">{{ __('general_content.select_type_trans_key') }}</option>
+                                <option value="1" @if($Product->tracability_type == 1 ) Selected @endif>{{ __('general_content.no_traceability_trans_key') }}</option>
+                                <option value="2" @if($Product->tracability_type == 2 ) Selected @endif>{{ __('general_content.with_batch_number_trans_key') }}</option>
+                                <option value="3" @if($Product->tracability_type == 3 ) Selected @endif>{{ __('general_content.with_serial_number_trans_key') }}</option>
                             </select>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">{{ $Factory->curency }}</span>
                                 </div>
-                                <input type="number" class="form-control" value="{{ $Product->purchased_price }}"  name="purchased_price" id="purchased_price" placeholder="Purchased price" step=".001">
+                                <input type="number" class="form-control" value="{{ $Product->purchased_price }}"  name="purchased_price" id="purchased_price" placeholder="{{ __('general_content.purchased_price_trans_key') }}" step=".001">
                             </div>
                         </div>
                         <div class="col-4">
@@ -161,14 +161,14 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">{{ $Factory->curency }}</span>
                                 </div>
-                                <input type="number" class="form-control"  value="{{ $Product->selling_price }}" name="selling_price" id="selling_price" placeholder="Selling price" step=".001">
+                                <input type="number" class="form-control"  value="{{ $Product->selling_price }}" name="selling_price" id="selling_price" placeholder="{{ __('general_content.price_trans_key') }}" step=".001">
                             </div>
                         </div>
                     </div>
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                        <label for="material">Proprieties</label>
+                        <label for="material">{{ __('general_content.proprieties_trans_key') }}</label>
                     </div>
                     <div class="row">
                         <div class="col-4">
@@ -176,7 +176,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fab fa-mdb"></i></span>
                                 </div>
-                                <input type="text" class="form-control" value="{{ $Product->material }}" name="material" id="material" placeholder="Material">
+                                <input type="text" class="form-control" value="{{ $Product->material }}" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
                             </div>
                         </div>
                         <div class="col-4">
@@ -184,7 +184,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
                                 </div>
-                                <input type="number" class="form-control" value="{{ $Product->thickness }}" name="thickness" id="thickness" placeholder="Thickness" step=".001">
+                                <input type="number" class="form-control" value="{{ $Product->thickness }}" name="thickness" id="thickness"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
                             </div>
                         </div>
                         <div class="col-4">
@@ -192,7 +192,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
                                 </div>
-                                <input type="number" class="form-control" value="{{ $Product->weight }}" name="weight" id="weight" placeholder="Weight" step=".001">
+                                <input type="number" class="form-control" value="{{ $Product->weight }}" name="weight" id="weight"  placeholder="{{ __('general_content.weight_trans_key') }}" step=".001">
                             </div>
                         </div>
                     </div>
@@ -204,7 +204,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                 </div>
-                                <input type="number" class="form-control" value="{{ $Product->x_size }}" name="x_size" id="x_size" placeholder="X size" step=".001">
+                                <input type="number" class="form-control" value="{{ $Product->x_size }}" name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
                             </div>
                         </div>
                         <div class="col-4">
@@ -213,7 +213,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                 </div>
-                                <input type="number" class="form-control" value="{{ $Product->y_size }}"  name="y_size" id="y_size" placeholder="Y size" step=".001">
+                                <input type="number" class="form-control" value="{{ $Product->y_size }}"  name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
                             </div>
                         </div>
                         <div class="col-4">
@@ -222,7 +222,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                 </div>
-                                <input type="number" class="form-control" value="{{ $Product->z_size }}" name="z_size" id="z_size" placeholder="Z size" step=".001">
+                                <input type="number" class="form-control" value="{{ $Product->z_size }}" name="z_size" id="z_size"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
                             </div>
                         </div>
                     </div>
@@ -233,30 +233,30 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                             </div>
-                            <input type="number" class="form-control"  value="{{ $Product->x_oversize }}" name="x_oversize" id="x_oversize" placeholder="X oversize" step=".001">
+                            <input type="number" class="form-control"  value="{{ $Product->x_oversize }}" name="x_oversize" id="x_oversize"  placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
                         </div></div>
                         <div class="col-4">
                           <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                             </div>
-                            <input type="number" class="form-control" value="{{ $Product->y_oversize }}" name="y_oversize" id="y_oversize" placeholder="Y oversize" step=".001">
+                            <input type="number" class="form-control" value="{{ $Product->y_oversize }}" name="y_oversize" id="y_oversize"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
                         </div></div>
                         <div class="col-4">
                           <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                             </div>
-                            <input type="number" class="form-control" value="{{ $Product->z_oversize }}" name="z_oversize" id="z_oversize" placeholder="Z oversize" step=".001">
+                            <input type="number" class="form-control" value="{{ $Product->z_oversize }}" name="z_oversize" id="z_oversize"  placeholder="{{ __('general_content.z_oversize_trans_key') }}" step=".001">
                         </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4">
-                          <input type="number" class="form-control" value="{{ $Product->diameter }}" name="diameter" id="diameter" placeholder="Diameter" step=".001">
+                          <input type="number" class="form-control" value="{{ $Product->diameter }}" name="diameter" id="diameter"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
                         </div>
                         <div class="col-4">
-                          <input type="number" class="form-control" value="{{ $Product->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize" placeholder="Diameter_oversize" step=".001">
+                          <input type="number" class="form-control" value="{{ $Product->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
                         </div>
                         <div class="col-4">
                           <input type="number" class="form-control" value="{{ $Product->section_size }}" name="section_size" id="section_size" placeholder="Section size" step=".001">
@@ -265,7 +265,7 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                        <label for="qty_eco_min">Other information</label>
+                        <label for="qty_eco_min">{{ __('general_content.other_information_trans_key') }}</label>
                     </div>
                     <hr>
                     <div class="row">
@@ -285,7 +285,7 @@
                     </div>
                   </div>
                   <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
                 </form>
               </div>
@@ -293,14 +293,14 @@
             <div class="col-md-3">
               <div class="card card-secondary">
                 <div class="card-header">
-                  <h3 class="card-title"> Informations </h3>
+                  <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
                 </div>
                 <div class="card-body">
-                  <p class="text-muted">External ID : {{ $Product->code }} </p>
+                  <p class="text-muted">{{ __('general_content.external_id_trans_key') }} : {{ $Product->code }} </p>
                   <div class="row"> 
                     <div class="col-12 col-sm-4">
                       <div class="text-muted">
-                      <p class="text-sm">Unit
+                      <p class="text-sm">{{ __('general_content.unit_trans_key') }}
                         <b class="d-block">{{ $Product->Unit['label'] }}</b>
                       </p>
                       </div>
@@ -312,7 +312,7 @@
                   <div class="row"> 
                     <div class="col-12 col-sm-4">
                       <div class="text-muted">
-                      <p class="text-sm">Selling price
+                      <p class="text-sm">{{ __('general_content.price_trans_key') }}
                         <b class="d-block">{{ $Product->selling_price }} {{ $Factory->curency }}</b>
                       </p>
                       </div>
@@ -325,7 +325,7 @@
                   <div class="row">
                     <div class="col-12 col-sm-4">
                       <div class="text-muted">
-                      <p class="text-sm">Purchased price
+                      <p class="text-sm">{{ __('general_content.purchased_price_trans_key') }}
                         <b class="d-block">{{ $Product->purchased_price }} {{ $Factory->curency }}</b>
                       </p>
                       </div>
@@ -338,7 +338,7 @@
                   <div class="row">
                     <div class="col-12 col-sm-4">
                       <div class="text-muted">
-                      <p class="text-sm">Quantité eco min
+                      <p class="text-sm">{{ __('general_content.quantite_eco_min_trans_key') }}
                         <b class="d-block">{{ $Product->qty_eco_min }}</b>
                       </p>
                       </div>
@@ -351,7 +351,7 @@
                   <div class="row">
                     <div class="col-12 col-sm-4">
                       <div class="text-muted">
-                      <p class="text-sm">Quantité eco max
+                      <p class="text-sm">{{ __('general_content.quantite_eco_max_trans_key') }}
                         <b class="d-block">{{ $Product->qty_eco_max }}</b>
                       </p>
                       </div>
@@ -363,7 +363,7 @@
               </div>
               <div class="card card-info">
                 <div class="card-header">
-                  <h3 class="card-title"> Product image </h3>
+                  <h3 class="card-title">{{ __('general_content.picture_file_trans_key') }}</h3>
                 </div>
                 <div class="card-body">
                   @if($Product->picture)
@@ -371,7 +371,7 @@
                   @endif
                   <form action="{{ route('products.update.image') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                    <label for="picture">{{ __('general_content.picture_file_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="far fa-image"></i></span>
@@ -379,10 +379,10 @@
                         <div class="custom-file">
                             <input type="hidden" name="id" value="{{ $Product->id }}">
                             <input type="file" class="custom-file-input" name="picture" id="picture">
-                            <label class="custom-file-label" for="picture">Choose file</label>
+                            <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
                         </div>
                         <div class="input-group-append">
-                            <button type="submit" class="btn btn-success">Upload</button>
+                            <button type="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
                         </div>
                     </div>
                   </form>
@@ -390,7 +390,7 @@
               </div>
               <div class="card card-info">
                 <div class="card-header">
-                  <h3 class="card-title"> Documents </h3>
+                  <h3 class="card-title"> {{ __('general_content.documents_trans_key') }} </h3>
                 </div>
                   <div class="card-body">
                       <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
@@ -402,31 +402,31 @@
                             <div class="custom-file">
                               <input type="hidden" name="product_id" value="{{ $Product->id }}" >
                               <input type="file" name="file" class="custom-file-input" id="chooseFile">
-                              <label class="custom-file-label" for="chooseFile">Choose file</label>
+                              <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
                             </div>
                             <div class="input-group-append">
-                              <button type="submit" name="submit" class="btn btn-success">Upload</button>
+                              <button type="submit" name="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
                             </div>
                           </div>
                       </form>
-                      <h5 class="mt-5 text-muted">Attached files</h5>
+                      <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
                       <ul class="list-unstyled">
                         @forelse ( $Product->files as $file)
                         <li>
                           <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
                         </li>
                         @empty
-                          No file
+                          {{ __('general_content.no_data_trans_key') }}
                         @endforelse
                       </ul>
                 </div>
               </div>
               <div class="card card-warning">
                 <div class="card-header">
-                  <h3 class="card-title"> Options </h3>
+                  <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
                 </div>
                 <div class="card-body">
-                  <a href="{{ route('products.duplicate', ['id' => $Product->id])}}" class="btn btn-default"><i class="fa fa-copy"></i> Duplicate product</a>
+                  <a href="{{ route('products.duplicate', ['id' => $Product->id])}}" class="btn btn-default"><i class="fa fa-copy"></i> {{ __('general_content.duplicate_product_trans_key') }}</a>
                 </div>
               </div>
             </div>

@@ -16,7 +16,7 @@
     <div class="col-md-3">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="donutChart" width="400" height="400"></canvas>
@@ -24,7 +24,7 @@
       </div>
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>

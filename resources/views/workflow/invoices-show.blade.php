@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Invoice')
+@section('title', __('general_content.invoices_trans_key'))
 
 @section('content_header')
-  <x-Content-header-previous-button  h1="Invoice : {{  $Invoice->code }}" previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  h1="{{ __('general_content.invoices_trans_key') }} : {{  $Invoice->code }}" previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"/>
 @stop
 
 
@@ -16,8 +16,8 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Invoice" data-toggle="tab">Invoice info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#InvoiceLines" data-toggle="tab">Invoice lines</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Invoice" data-toggle="tab">{{ __('general_content.invoice_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#InvoiceLines" data-toggle="tab">{{ __('general_content.invoice_lines_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -29,28 +29,28 @@
             @include('include.alert-result')
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <form method="POST" action="{{ route('invoices.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
                     <div class="row">
                       <div class="col-4">
-                        <label for="code" class="text-success">External ID :</label>  {{  $Invoice->code }}
+                        <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Invoice->code }}
                       </div>
                       <div class="col-4">
-                        <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
+                        <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                           <x-slot name="prependSlot">
                               <div class="input-group-text bg-gradient-success">
                                   <i class="fas fa-exclamation"></i>
                               </div>
                           </x-slot>
-                          <option value="1" @if(1 == $Invoice->statu ) Selected @endif >In progress</option>
-                          <option value="2" @if(2 == $Invoice->statu ) Selected @endif >Sent</option>
+                          <option value="1" @if(1 == $Invoice->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
+                          <option value="2" @if(2 == $Invoice->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
                         </x-adminlte-select>
                       </div>
                       <div class="col-4">
-                        @include('include.form.form-input-label',['label' =>'Name of invoice', 'Value' =>  $Invoice->label])
+                        @include('include.form.form-input-label',['label' => __('general_content.label_trans_key'), 'Value' =>  $Invoice->label])
                       </div>
                     </div>
                   </div>
@@ -59,8 +59,8 @@
                       <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
                     </div>
                   </div>
-                  <div class="modal-footer">
-                    <button type="Submit" class="btn btn-primary">Save changes</button>
+                  <div class="card-footer">
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </form>
             </div>
@@ -68,21 +68,21 @@
           <div class="col-md-3">
             <div class="card card-secondary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <div class="card-body">
-                    Invoice created at :  {{ $Invoice->GetPrettyCreatedAttribute() }}
+                    {{ __('general_content.created_at_trans_key') }} : {{ $Invoice->GetPrettyCreatedAttribute() }}
                   </div>
                   <div class="card-body">
-                    Companie name :  <x-CompanieButton id="{{ $Invoice->companie['id'] }}" label="{{ $Invoice->companie['label'] }}"  />
+                    {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $Invoice->companie['id'] }}" label="{{ $Invoice->companie['label'] }}"  />
                   </div>
                   <div class="card-body">
-                    Adress name :   {{ $Invoice->adresse['label'] }} - {{ $Invoice->adresse['adress'] }}
+                    {{ __('general_content.adress_name_trans_key') }} :   {{ $Invoice->adresse['label'] }} - {{ $Invoice->adresse['adress'] }}
                   </div>
                   <div class="card-body">
-                    Contact name :  {{ $Invoice->contact['first_name'] }} - {{ $Invoice->contact['name'] }}
+                    {{ __('general_content.contact_name_trans_key') }} :  {{ $Invoice->contact['first_name'] }} - {{ $Invoice->contact['name'] }}
                   </div>
                 </div>
               </div>
@@ -92,13 +92,13 @@
             </div>
             <div class="card card-warning">
               <div class="card-header">
-                <h3 class="card-title"> Options </h3>
+                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                     <tr>
                         <td style="width:50%"> 
-                          Invoice
+                          {{ __('general_content.invoices_trans_key') }}
                         </td>
                         <td>
                           <x-ButtonTextPDF route="{{ route('pdf.invoice', ['Document' => $Invoice->id])}}" />
@@ -117,15 +117,15 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Order</th>
-                  <th>External ID</th>
-                  <th>Description</th>
-                  <th>Qty</th>
-                  <th>Unit</th>
-                  <th>Price</th>
-                  <th>Discount</th>
-                  <th>VAT</th>
-                  <th>Invoice status</th>
+                  <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
+                  <th>{{ __('general_content.unit_trans_key') }}</th>
+                  <th>{{ __('general_content.price_trans_key') }}</th>
+                  <th>{{ __('general_content.discount_trans_key') }}</th>
+                  <th>{{ __('general_content.vat_trans_key') }}</th>
+                  <th>{{ __('general_content.invoice_status_trans_key') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,27 +142,27 @@
                     <td>{{ $InvoiceLine->OrderLine['discount'] }} %</td>
                     <td>{{ $InvoiceLine->OrderLine->VAT['rate'] }} %</td>
                     <td>
-                      @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">In progress</span>@endif
-                      @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">Sent</span>@endif
-                      @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">Invoiced</span>@endif
-                      @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-success">Partially invoiced</span>@endif
+                      @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif 
+                      @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">{{ __('general_content.send_trans_key') }}</span>@endif
+                      @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.invoiced_trans_key') }}</span>@endif
+                      @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-success">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
                     </td>
                   </tr>
                   @empty
-                    <x-EmptyDataLine col="8" text="No line in this invoince found ..."  />
+                    <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th>Order</th>
-                    <th>External ID</th>
-                    <th>Description</th>
-                    <th>Qty</th>
-                    <th>Unit</th>
-                    <th>Price</th>
-                    <th>Discount</th>
-                    <th>VAT</th>
-                    <th>Invoice status</th>
+                    <th>{{ __('general_content.order_trans_key') }}</th>
+                    <th>{{ __('general_content.external_id_trans_key') }}</th>
+                    <th>{{ __('general_content.description_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
+                    <th>{{ __('general_content.unit_trans_key') }}</th>
+                    <th>{{ __('general_content.price_trans_key') }}</th>
+                    <th>{{ __('general_content.discount_trans_key') }}</th>
+                    <th>{{ __('general_content.vat_trans_key') }}</th>
+                    <th>{{ __('general_content.invoice_status_trans_key') }}</th>
                   </tr>
                 </tfoot>
             </table>

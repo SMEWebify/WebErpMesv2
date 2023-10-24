@@ -186,12 +186,12 @@ class TaskManage extends Component
     public function storeTask($idLine  = null){
         $this->validate();
         //custom rule if is BOM for check if service or component is not empty
-        if($this->TaskType == 'BOM'&& (is_null($this->component_id) || $this->component_id == "Select Component" || empty($this->component_id))){
+        if($this->TaskType == 'BOM'&& (is_null($this->component_id) || $this->component_id == __('general_content.select_component_trans_key') || empty($this->component_id))){
 
             // Set Flash Message
             session()->flash('error', 'Please select Component.');
         }
-        elseif($this->methods_services_id == 'Select Services' || is_null($this->methods_services_id)){
+        elseif($this->methods_services_id == __('general_content.select_service_trans_key') || is_null($this->methods_services_id)){
             // Set Flash Message
             session()->flash('error', 'Please select service.');
         }

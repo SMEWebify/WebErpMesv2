@@ -1,23 +1,23 @@
 @extends('adminlte::page')
 
-@section('title', 'Order')
+@section('title', __('general_content.orders_trans_key'))
 
 @section('content_header')
   <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-  <x-Content-header-previous-button  h1="Order : {{  $Order->code }}" previous="{{ $previousUrl }}" list="{{ route('orders') }}" next="{{ $nextUrl }}"/>
+  <x-Content-header-previous-button  h1="{{ __('general_content.orders_trans_key') }} : {{  $Order->code }}" previous="{{ $previousUrl }}" list="{{ route('orders') }}" next="{{ $nextUrl }}"/>
 @stop
 
 @section('right-sidebar')
 
 @section('content')
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
 
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">Order info</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">Order lines</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.order_line_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -30,17 +30,17 @@
             @include('include.alert-result')
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <form method="POST" action="{{ route('orders.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
                     <div class="row">
                       <div class="col-6">
-                        <label for="code" class="text-success">External ID :</label>  {{  $Order->code }}
+                        <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Order->code }}
                       </div>
                       <div class="col-6">
-                        @include('include.form.form-input-label',['label' =>'Name of order', 'Value' =>  $Order->label])
+                        @include('include.form.form-input-label',['label' =>__('general_content.name_order_trans_key'), 'Value' =>  $Order->label])
                       </div>
                     </div>
                   </div>
@@ -48,7 +48,7 @@
                   @if($Order->companie['active'] == 1)
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Customer information</label>
+                      <label for="InputWebSite">{{ __('general_content.customer_info_trans_key') }}</label>
                     </div>
                     <div class="row">
                       <div class="col-6">
@@ -74,7 +74,7 @@
                   @endif
                   <div class="card card-body">
                     <div class="row">
-                      <label for="InputWebSite">Date & Payment information</label>
+                      <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
                     </div>
                     <hr>
                     <div class="row">
@@ -90,7 +90,7 @@
                           @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Order->accounting_deliveries_id])
                       </div>
                       <div class="col-6">
-                        <label for="label">Delevery date</label>
+                        <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                       </div>
                     </div>
@@ -99,7 +99,7 @@
                   <div class="card card-body">
                     <div class="row">
                       <div class="col-6">
-                        <label for="label">Delevery date</label>
+                        <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                       </div>
                     </div>
@@ -111,7 +111,7 @@
                     </div>
                   </div>
                   <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </form>
             </div>
@@ -120,16 +120,16 @@
             @if($Order->quote_id)
             <div class="card card-info">
               <div class="card-header ">
-                <h3 class="card-title"> Historical </h3>
+                <h3 class="card-title">{{ __('general_content.historical_trans_key') }}</h3>
               </div>
               <div class="card-body">
-                Order Create from <x-QuoteButton id="{{ $Order->quote_id }}" code="{{ $Order->Quote->code }}"  />
+                {{ __('general_content.order_create_from_trans_key') }} <x-QuoteButton id="{{ $Order->quote_id }}" code="{{ $Order->Quote->code }}"  />
               </div>
             </div>
             @endif
             <div class="card card-secondary">
               <div class="card-header">
-                <h3 class="card-title"> Informations </h3>
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <div class="card-body">
                 @include('include.sub-total-price')
@@ -137,31 +137,22 @@
             </div>
             <div class="card card-warning">
               <div class="card-header">
-                <h3 class="card-title"> Options </h3>
+                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                     @if($Order->type == 1)
                     <tr>
-                        <td style="width:50%"> 
-                          Order 
-                        </td>
-                        <td>
-                          <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
-                        </td>
+                        <td style="width:50%">{{  __('general_content.orders_trans_key') }}</td>
+                        <td><x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" /></td>
                     </tr>
                     <tr>
-                      <td style="width:50%">
-                        Order confirm </td>
-                      <td>
-                        <x-ButtonTextPDF route="{{ route('pdf.orders.confirm', ['Document' => $Order->id])}}" />
-                      </td>
+                      <td style="width:50%">{{  __('general_content.order_confirm_trans_key') }}</td>
+                      <td><x-ButtonTextPDF route="{{ route('pdf.orders.confirm', ['Document' => $Order->id])}}" /></td>
                     </tr>
                     @endif
                     <tr>
-                      <td style="width:50%">
-                        Manufacturing instruction 
-                      </td>
+                      <td style="width:50%">{{  __('general_content.mnaufacturing_instruction_trans_key') }}</td>
                       <td>
                         <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print</a>
                       </td>
@@ -172,7 +163,7 @@
             
             <div class="card card-info">
               <div class="card-header">
-                <h3 class="card-title"> Documents </h3>
+                <h3 class="card-title"> {{ __('general_content.documents_trans_key') }} </h3>
               </div>
                 <div class="card-body">
                       <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
@@ -184,23 +175,23 @@
                             <div class="custom-file">
                               <input type="hidden" name="order_id" value="{{ $Order->id }}" >
                               <input type="file" name="file" class="custom-file-input" id="chooseFile">
-                              <label class="custom-file-label" for="chooseFile">Choose file</label>
+                              <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
                             </div>
                             <div class="input-group-append">
                               <button type="submit" name="submit" class="btn btn-success">
-                                Upload
+                                {{ __('general_content.upload_trans_key') }} 
                               </button>
                             </div>
                           </div>
                       </form>
-                    <h5 class="mt-5 text-muted">Attached files</h5>
+                    <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
                     <ul class="list-unstyled">
                       @forelse ( $Order->files as $file)
                       <li>
                         <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
                       </li>
                       @empty
-                        No file
+                        {{ __('general_content.no_data_trans_key') }}
                       @endforelse
                     </ul>
               </div>

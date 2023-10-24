@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Human resources')
+@section('title', __('general_content.human_resources_trans_key'))
 
 @section('content_header')
-    <h1>Human resources</h1>
+    <h1>{{ __('general_content.human_resources_trans_key') }}</h1>
 @stop
 
 @section('content')
@@ -16,16 +16,16 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Name</th>
-                        <th>E-mail</th>
-                        <th>employment statu</th>
-                        <th>Job Title</th>
-                        <th>Role</th>
-                        <th>Gender</th>
-                        <th>Born date</th>
-                        <th>Statu</th>
+                        <th>{{ __('general_content.name_trans_key') }}</th>
+                        <th>{{ __('general_content.email_trans_key') }}</th>
+                        <th>{{ __('general_content.employment_statu_trans_key') }}</th>
+                        <th>{{ __('general_content.job_title_trans_key') }}</th>
+                        <th>{{ __('general_content.role_trans_key') }}</th>
+                        <th>{{ __('general_content.gender_trans_key') }}</th>
+                        <th>{{ __('general_content.born_date_trans_key') }}</th>
+                        <th>{{__('general_content.status_trans_key') }}</th>
                         <th></th>
-                        <th>Created</th>
+                        <th>{{__('general_content.created_at_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,21 +33,21 @@
                     <tr>
                         <td>
                             @if(Cache::has('user-is-online-' . $User->id))
-                                <span class="badge badge-success">Online</span>
+                                <span class="badge badge-success">{{__('general_content.online_trans_key') }}</span>
                             @else
-                                <span class="badge badge-secondary">Offline</span>
+                                <span class="badge badge-secondary">{{__('general_content.offline_trans_key') }}</span>
                             @endif 
                         </td>
                         <td>
                             {{ $User->name }}</td>
                         <td>{{ $User->email }}</td>
                         <td>
-                            @if(1 == $User->employment_status )   <span class="badge badge-danger">Undefined</span>@endif
-                            @if(2 == $User->employment_status )  <span class="badge badge-success">worker</span>@endif
-                            @if(3 == $User->employment_status )  <span class="badge badge-warning">Employee</span>@endif
-                            @if(4 == $User->employment_status )  <span class="badge badge-info">Self-employed</span>@endif
+                            @if(1 == $User->employment_status )   <span class="badge badge-danger">{{__('general_content.undefined_trans_key') }}</span>@endif
+                            @if(2 == $User->employment_status )  <span class="badge badge-success">{{__('general_content.worker_trans_key') }}</span>@endif
+                            @if(3 == $User->employment_status )  <span class="badge badge-warning">{{__('general_content.employee_trans_key') }}</span>@endif
+                            @if(4 == $User->employment_status )  <span class="badge badge-info">{{__('general_content.self_employed_trans_key') }}</span>@endif
                         </td>
-                        <td>{{ $User->job_title ?? 'Undefined'}}</td>
+                        <td>{{ $User->job_title ?? __('general_content.undefined_trans_key')}}</td>
                         <td>
                             @if(!empty($User->getRoleNames()))
                             @foreach($User->getRoleNames() as $v)
@@ -56,16 +56,16 @@
                             @endif
                         </td>
                         <td>
-                            @if(1 == $User->gender ) Male 
-                            @elseif(2 == $User->gender ) Female
-                            @elseif(3 == $User->gender ) Other 
-                            @else Undefined
+                            @if(1 == $User->gender ) {{__('general_content.male_trans_key') }} 
+                            @elseif(2 == $User->gender ) {{__('general_content.female_trans_key') }}
+                            @elseif(3 == $User->gender ) {{__('general_content.other_trans_key') }} 
+                            @else {{__('general_content.undefined_trans_key') }}
                             @endif
                         </td>
-                        <td>{{ $User->born_date ?? 'Undefined' }}</td>
+                        <td>{{ $User->born_date ?? __('general_content.undefined_trans_key') }}</td>
                         <td>
-                            @if(1 == $User->statu )  <span class="badge badge-success">Active</span>@endif
-                            @if(2 == $User->statu )  <span class="badge badge-danger">Inactive</span>@endif
+                            @if(1 == $User->statu )  <span class="badge badge-success">{{__('general_content.active_trans_key') }}</span>@endif
+                            @if(2 == $User->statu )  <span class="badge badge-danger">{{__('general_content.inactive_trans_key') }}</span>@endif
                         </td>
                         <td>
                             <x-ButtonTextView route="{{ route('human.resources.show.user', ['id' => $User->id])}}" />
@@ -77,16 +77,16 @@
                 <tfoot>
                     <tr>
                         <th></th>
-                        <th>Name</th>
-                        <th>E-mail</th>
-                        <th>employment statu</th>
-                        <th>Job Title</th>
-                        <th>Role</th>
-                        <th>Gender</th>
-                        <th>Born date</th>
-                        <th>Statu</th>
+                        <th>{{ __('general_content.name_trans_key') }}</th>
+                        <th>{{ __('general_content.email_trans_key') }}</th>
+                        <th>{{ __('general_content.employment_statu_trans_key') }}</th>
+                        <th>{{ __('general_content.job_title_trans_key') }}</th>
+                        <th>{{ __('general_content.role_trans_key') }}</th>
+                        <th>{{ __('general_content.gender_trans_key') }}</th>
+                        <th>{{ __('general_content.born_date_trans_key') }}</th>
+                        <th>{{__('general_content.status_trans_key') }}</th>
                         <th></th>
-                        <th>Created</th>
+                        <th>{{__('general_content.created_at_trans_key') }}</th>
                     </tr>
                 </tfoot>
             </table>

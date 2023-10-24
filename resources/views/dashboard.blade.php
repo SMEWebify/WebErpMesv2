@@ -338,12 +338,12 @@
                     <x-CompanieButton id="{{ $LastQuote->companies_id }}" label="{{ $LastQuote->companie['label'] }}"  />
                   </td>
                   <td>
-                    @if(1 == $LastQuote->statu )   <span class="badge badge-info"> Open</span>@endif
-                    @if(2 == $LastQuote->statu )  <span class="badge badge-warning">Send</span>@endif
-                    @if(3 == $LastQuote->statu )  <span class="badge badge-success">Win</span>@endif
-                    @if(4 == $LastQuote->statu )  <span class="badge badge-danger">Lost</span>@endif
-                    @if(5 == $LastQuote->statu )  <span class="badge badge-secondary">Closed</span>@endif
-                    @if(6 == $LastQuote->statu )   <span class="badge badge-secondary">Obsolete</span>@endif
+                    @if(1 == $LastQuote->statu )   <span class="badge badge-info"> {{ __('general_content.open_trans_key') }}</span>@endif
+                    @if(2 == $LastQuote->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
+                    @if(3 == $LastQuote->statu )  <span class="badge badge-success">{{ __('general_content.win_trans_key') }}</span>@endif
+                    @if(4 == $LastQuote->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif
+                    @if(5 == $LastQuote->statu )  <span class="badge badge-secondary">{{ __('general_content.closed_trans_key') }}</span>@endif
+                    @if(6 == $LastQuote->statu )   <span class="badge badge-secondary">{{ __('general_content.obsolete_trans_key') }}</span>@endif
                   </td>
                   <td>{{ $LastQuote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                   <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
@@ -469,12 +469,12 @@
                   if($Task->methods_id == $ServiceGoal->id){
                     $width = 100/($ServiceGoal->tasks_count/ $Task->total_task);
                     
-                    if($Task->title ==  __('general_content.open_trans_key') ){ $class = 'bg-danger';}
-                    elseif($Task->title ==  __('general_content.started_trans_key') ){ $class = 'bg-warning';}
-                    elseif($Task->title ==  __('general_content.in_progress_trans_key') ){ $class = 'bg-primary';}
-                    elseif($Task->title ==  __('general_content.finished_trans_key') ){ $class = 'bg-success';}
-                    else{ $class = 'bg-info';}
-                    echo '<div class="progress-bar '.   $class  .'" style="width: '.  $width  .'%">'. $Task->title .' - '. $Task->total_task .'</div>' ;
+                    if($Task->title ==  __('general_content.open_trans_key') ){ $class = 'bg-danger'; $title = __('general_content.open_trans_key');}
+                    elseif($Task->title ==  __('general_content.started_trans_key') ){ $class = 'bg-warning';$title = __('general_content.started_trans_key');}
+                    elseif($Task->title ==  __('general_content.in_progress_trans_key') ){ $class = 'bg-primary';$title = __('general_content.in_progress_trans_key');}
+                    elseif($Task->title ==  __('general_content.finished_trans_key') ){ $class = 'bg-success';$title = __('general_content.finished_trans_key');}
+                    else{ $class = 'bg-info';$title = $Task->title;}
+                    echo '<div class="progress-bar '.   $class  .'" style="width: '.  $width  .'%">'. $title .' - '. $Task->total_task .'</div>' ;
                   }
                 }
                 @endphp

@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Methods')
+@section('title', __('general_content.methods_trans_key')) 
 
 @section('content_header')
-    <h1>Methods</h1>
+    <h1>{{ __('general_content.methods_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar')
@@ -15,37 +15,36 @@
 
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Services" data-toggle="tab">Services</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Ressources" data-toggle="tab">Ressources</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Section" data-toggle="tab">Section</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Location" data-toggle="tab">Location in workshop</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Units" data-toggle="tab">Units</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Families" data-toggle="tab">Families</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Tools" data-toggle="tab">Tools</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Services" data-toggle="tab">{{ __('general_content.service_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Ressources" data-toggle="tab">{{ __('general_content.ressources_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Section" data-toggle="tab">{{ __('general_content.sections_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Location" data-toggle="tab">{{ __('general_content.location_in_workshop_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Units" data-toggle="tab">{{ __('general_content.units_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Families" data-toggle="tab">{{ __('general_content.families_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Tools" data-toggle="tab">{{ __('general_content.tools_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
   <div class="tab-content p-3">
-    <div class="tab-pane active" id="Services">
-      <x-InfocalloutComponent note="In the Type scrolling list, indicate whether the service is productive (manufacturing operation) or actually involves the procurement of raw materials or supplies, is a service completed externally, i.e. by a subcontractor, or is a composed component. The service type is then used to filter data when creating a list of tasks, a bill of materials, etc. 
-      For raw materials, a distinction is also made between bars, plates and blocks. The screen used to detail raw materials may look different, depending on the raw material type."  />
+    <div class="tab-pane active" id="{{ __('general_content.service_trans_key') }}">
+      <x-InfocalloutComponent note="{{ __('general_content.service_info_trans_key') }}"  />
       <div class="row">
         <div class="col-md-8 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Service type list</h3>
+              <h3 class="card-title">{{ __('general_content.service_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
               <tr>
-                <th>Picture</th>
-                <th>Sort</th>
-                <th>External ID</th>
-                <th>Desciption</th>
-                <th>Type</th>
-                <th>Hourly rate</th>
-                <th>Margin</th>
-                <th>Color</th>
+                <th>{{ __('general_content.picture_trans_key') }}</th>
+                <th>{{ __('general_content.sort_trans_key') }}</th>
+                <th>{{ __('general_content.external_id_trans_key') }}</th>
+                <th>{{ __('general_content.description_trans_key') }}</th>
+                <th>{{ __('general_content.type_trans_key') }}</th>
+                <th>{{ __('general_content.hourly_rate_trans_key') }}</th>
+                <th>{{ __('general_content.margin_trans_key') }}</th>
+                <th>{{ __('general_content.color_trans_key') }}</th>
                 <th></th>
               </tr>
               </thead>
@@ -61,14 +60,14 @@
                   <td>{{ $MethodsService->code }}</td>
                   <td>{{ $MethodsService->label }}</td>
                   <td>
-                    @if($MethodsService->type  == 1)Productive @endif
-                    @if($MethodsService->type  == 2)Raw material @endif
-                    @if($MethodsService->type  == 3)Raw material (Sheet) @endif
-                    @if($MethodsService->type  == 4)Raw material (Profil) @endif
-                    @if($MethodsService->type  == 5)Raw material (block) @endif
-                    @if($MethodsService->type  == 6)Supplies @endif
-                    @if($MethodsService->type  == 7)Sub-contracting @endif
-                    @if($MethodsService->type  == 8)Composed component @endif
+                    @if($MethodsService->type  == 1){{ __('general_content.productive_trans_key') }} @endif
+                    @if($MethodsService->type  == 2){{ __('general_content.raw_material_trans_key') }} @endif
+                    @if($MethodsService->type  == 3){{ __('general_content.raw_material_sheet_trans_key') }} @endif
+                    @if($MethodsService->type  == 4){{ __('general_content.raw_material_profil_trans_key') }} @endif
+                    @if($MethodsService->type  == 5){{ __('general_content.raw_material_block_trans_key') }} @endif
+                    @if($MethodsService->type  == 6){{ __('general_content.supplies_trans_key') }} @endif
+                    @if($MethodsService->type  == 7){{ __('general_content.sub_contracting_trans_key') }} @endif
+                    @if($MethodsService->type  == 8){{ __('general_content.composed_component_trans_key') }} @endif
                   </td>
                   <td>{{ $MethodsService->hourly_rate }}</td>
                   <td>{{ $MethodsService->margin }}</td>
@@ -84,52 +83,52 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="ordre">Sort order:</label>
+                            <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                               </div>
-                              <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" min="0" value="{{ $MethodsService->ordre }}">
+                              <input type="number" class="form-control" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" value="{{ $MethodsService->ordre }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control"  name="label" id="label" placeholder="Label" value="{{ $MethodsService->label }}">
+                              <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsService->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                              <label for="type">Type</label>
+                              <label for="type">{{ __('general_content.type_trans_key') }}</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                 </div>
                                 <select class="form-control" name="type" id="type">
-                                    <option value="1" @if($MethodsService->type == 1 ) Selected @endif>Productive</option>
-                                    <option value="2" @if($MethodsService->type == 2 ) Selected @endif>Raw material</option>
-                                    <option value="3" @if($MethodsService->type == 3 ) Selected @endif>Raw material (Sheet)</option>
-                                    <option value="4" @if($MethodsService->type == 4 ) Selected @endif>Raw material (Profil)</option>
-                                    <option value="5" @if($MethodsService->type == 5 ) Selected @endif>Raw material (block)</option>
-                                    <option value="6" @if($MethodsService->type == 6 ) Selected @endif>Purchase</option>
-                                    <option value="7" @if($MethodsService->type == 7 ) Selected @endif>Sub-contracting</option>
-                                    <option value="8" @if($MethodsService->type == 8 ) Selected @endif>Composed component</option>
+                                    <option value="1" @if($MethodsService->type == 1 ) Selected @endif>{{ __('general_content.productive_trans_key') }}</option>
+                                    <option value="2" @if($MethodsService->type == 2 ) Selected @endif>{{ __('general_content.raw_material_trans_key') }}</option>
+                                    <option value="3" @if($MethodsService->type == 3 ) Selected @endif>{{ __('general_content.raw_material_sheet_trans_key') }}</option>
+                                    <option value="4" @if($MethodsService->type == 4 ) Selected @endif>{{ __('general_content.raw_material_profil_trans_key') }}</option>
+                                    <option value="5" @if($MethodsService->type == 5 ) Selected @endif>{{ __('general_content.raw_material_block_trans_key') }}</option>
+                                    <option value="6" @if($MethodsService->type == 6 ) Selected @endif>{{ __('general_content.supplies_trans_key') }}</option>
+                                    <option value="7" @if($MethodsService->type == 7 ) Selected @endif>{{ __('general_content.sub_contracting_trans_key') }}</option>
+                                    <option value="8" @if($MethodsService->type == 8 ) Selected @endif>{{ __('general_content.composed_component_trans_key') }}</option>
                                 </select>
                               </div>
                           </div>
                           <div class="form-group">
-                            <label for="hourly_rate">Hourly rate</label>
+                            <label for="hourly_rate">{{ __('general_content.hourly_rate_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
-                                  <span class="input-group-text">{{ $Factory->curency }}/H</span>
+                                  <span class="input-group-text">{{ $Factory->curency }}/h</span>
                               </div>
                               <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001" value="{{ $MethodsService->hourly_rate }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="margin">Margin :</label>
+                            <label for="margin">{{ __('general_content.margin_trans_key') }} :</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-percentage"></i></span>
@@ -138,53 +137,55 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="color">Color</label>
+                            <label for="color">{{ __('general_content.color_trans_key') }}</label>
                             <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}">
                           </div>
                           <div class="form-group">
-                            <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="far fa-image"></i></span>
                               </div>
                               <div class="custom-file">
                                   <input type="file" class="custom-file-input" name="picture" id="picture">
-                                  <label class="custom-file-label" for="picture">Choose file</label>
+                                  <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
                               </div>
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="compannie_id">Supplier</label>
+                            <label for="compannie_id">{{ __('general_content.supplier_trans_key') }}</label>
                               <select class="form-control" name="compannie_id" id="compannie_id">
-                                <option value="NULL">None</option>
-                                @foreach ($CompaniesSelect as $item)
-                                <option value="{{ $item->id }}"  @if($MethodsService->compannie_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
-                                @endforeach
+                                <option value="NULL">-</option>
+                                @forelse ($CompaniesSelect as $item)
+                                <option value="{{ $item->id }}">{{ $item->label }}</option>
+                                @empty
+                                <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
+                                @endforelse
                               </select>
                           </div>
                           <!-- /.form-group -->
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="9" text="No data available in table"  />
+                  <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>Picture</th>
-                  <th>Order</th>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Type</th>
-                  <th>Hourly rate</th>
-                  <th>Margin</th>
-                  <th>Color</th>
+                  <th>{{ __('general_content.picture_trans_key') }}</th>
+                  <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.type_trans_key') }}</th>
+                  <th>{{ __('general_content.hourly_rate_trans_key') }}</th>
+                  <th>{{ __('general_content.margin_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -200,67 +201,67 @@
         </div>
         <div class="col-md-4 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New Service</h3>
+            <h3 class="card-title">{{__('general_content.new_service_trans_key') }}</h3>
           </div>
           <div class="card-body">
             <form method="POST" action="{{ route('methods.service.create') }}" enctype="multipart/form-data">
               @csrf
                 <div class="form-group">
-                  <label for="code">External ID</label>
+                  <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                     </div>
-                    <input type="text" class="form-control"  name="code" id="code" placeholder="External ID">
+                    <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="ordre">Sort order:</label>
+                  <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                     </div>
-                    <input type="number" class="form-control" name="ordre" id="ordre" min="0" placeholder="Order">
+                    <input type="number" class="form-control" name="ordre" id="ordre" min="0" placeholder="{{ __('general_content.sort_trans_key') }}">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="label">Label</label>
+                  <label for="label">{{__('general_content.label_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                    <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
+                    <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
                   </div>
                 </div>
                 <div class="form-group">
-                    <label for="type">Type</label>
+                    <label for="type">{{ __('general_content.type_trans_key') }}</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                       </div>
                       <select class="form-control" name="type" id="type">
-                          <option value="1">Productive</option>
-                          <option value="2">Raw material</option>
-                          <option value="3">Raw material (Sheet)</option>
-                          <option value="4">Raw material (Profil)</option>
-                          <option value="5">Raw material (block)</option>
-                          <option value="6">Purchase</option>
-                          <option value="7">Sub-contracting</option>
-                          <option value="8">Composed component</option>
+                          <option value="1">{{ __('general_content.productive_trans_key') }}</option>
+                          <option value="2">{{ __('general_content.raw_material_trans_key') }}</option>
+                          <option value="3">{{ __('general_content.raw_material_sheet_trans_key') }}</option>
+                          <option value="4">{{ __('general_content.raw_material_profil_trans_key') }}</option>
+                          <option value="5">{{ __('general_content.raw_material_block_trans_key') }}</option>
+                          <option value="6">{{ __('general_content.supplies_trans_key') }}</option>
+                          <option value="7">{{ __('general_content.sub_contracting_trans_key') }}</option>
+                          <option value="8">{{ __('general_content.composed_component_trans_key') }}</option>
                       </select>
                     </div>
                 </div>
                 <div class="form-group">
-                  <label for="hourly_rate">Hourly rate</label>
+                  <label for="hourly_rate">{{ __('general_content.hourly_rate_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">{{ $Factory->curency }}/H</span>
+                        <span class="input-group-text">{{ $Factory->curency }}/h</span>
                     </div>
                     <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="margin">Margin :</label>
+                  <label for="margin">{{ __('general_content.margin_trans_key') }} :</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-percentage"></i></span>
@@ -269,34 +270,35 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="color">Color</label>
+                  <label for="color">{{ __('general_content.color_trans_key') }}</label>
                   <input type="color" class="form-control"  name="color" id="color" >
                 </div>
                 <div class="form-group">
-                  <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                  <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="far fa-image"></i></span>
                     </div>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" name="picture" id="picture">
-                        <label class="custom-file-label" for="picture">Choose file</label>
+                        <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
                     </div>
-                  
                 </div>
                 <div class="form-group">
-                  <label for="compannie_id">Supplier</label>
+                  <label for="compannie_id">Supplier (no mandatory)</label>
                     <select class="form-control" name="compannie_id" id="compannie_id">
-                      <option value="NULL">None</option>
-                      @foreach ($CompaniesSelect as $item)
+                      <option value="NULL">-</option>
+                      @forelse ($CompaniesSelect as $item)
                       <option value="{{ $item->id }}">{{ $item->label }}</option>
-                      @endforeach
+                      @empty
+                      <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
+                      @endforelse
                     </select>
                 </div>
               <!-- /.form-group -->
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -308,25 +310,25 @@
     </div>
     <!-- /.tab-pane -->
     <div class="tab-pane" id="Ressources">
-      <x-InfocalloutComponent note="Depending on your working method, resources may be employees or machines or a mixture of both. In any case, you must indicate for each of them the maximum number of working hours per day as well as the services that they can complete."  />
+      <x-InfocalloutComponent note="{{ __('general_content.ressource_info_trans_key') }}"  />
       <div class="row">
         <div class="col-md-8 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Ressources type list</h3>
+              <h3 class="card-title">{{ __('general_content.ressources_trans_key') }}</h3>
           </div>
           <div class="card-body ">
             <table  class="table">
               <thead>
               <tr>
-                <th>Picture</th>
-                <th>Sort</th>
-                <th>External ID</th>
-                <th>Desciption</th>
-                <th>Mask time</th>
-                <th>Capacity</th>
-                <th>Section</th>
-                <th>Color</th>
-                <th>Service</th>
+                <th>{{ __('general_content.picture_trans_key') }}</th>
+                <th>{{ __('general_content.sort_trans_key') }}</th>
+                <th>{{ __('general_content.external_id_trans_key') }}</th>
+                <th>{{ __('general_content.description_trans_key') }}</th>
+                <th>{{__('general_content.mask_time_trans_key') }}</th>
+                <th>{{__('general_content.capacity_trans_key') }}</th>
+                <th>{{ __('general_content.section_trans_key') }}</th>
+                <th>{{ __('general_content.color_trans_key') }}</th>
+                <th>{{ __('general_content.service_trans_key') }}</th>
               </tr>
               </thead>
               <tbody>
@@ -341,8 +343,8 @@
                   <td>{{ $MethodsRessource->code }}</td>
                   <td>{{ $MethodsRessource->label }}</td>
                   <td>
-                    @if($MethodsRessource->mask_time == 1  ) Yes @endif
-                    @if($MethodsRessource->mask_time == 2  ) No @endif
+                    @if($MethodsRessource->mask_time == 1  ) {{ __('general_content.yes_trans_key') }} @endif
+                    @if($MethodsRessource->mask_time == 2  ) {{ __('general_content.no_trans_key') }} @endif
                   </td>
                   <td>{{ $MethodsRessource->capacity }} h/w</td>
                   <td>{{ $MethodsRessource->section['label'] }}</td>
@@ -359,32 +361,32 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="ordre">Sort order:</label>
+                            <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                               </div>
-                              <input type="number" class="form-control" name="ordre" id="ordre" placeholder="Order" min="0" value="{{ $MethodsRessource->ordre }}">
+                              <input type="number" class="form-control" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" value="{{ $MethodsRessource->ordre }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control"  name="label" id="label" placeholder="Label" value="{{ $MethodsRessource->label }}">
+                              <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsRessource->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                              <label for="mask_time">Mask time ?</label>
+                              <label for="mask_time">{{__('general_content.mask_time_trans_key') }} ?</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                                 </div>
                                 <select class="form-control" name="mask_time" id="mask_time">
-                                    <option value="2" @if($MethodsRessource->mask_time == 2  ) Selected @endif>No</option>
-                                    <option value="1" @if($MethodsRessource->mask_time == 1  ) Selected @endif>Yes</option>
+                                    <option value="2" @if($MethodsRessource->mask_time == 2  ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                    <option value="1" @if($MethodsRessource->mask_time == 1  ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                                 </select>
                               </div>
                           </div>
@@ -398,23 +400,23 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="color">Color</label>
+                            <label for="color">{{ __('general_content.color_trans_key') }}</label>
                             <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}">
                           </div>
                           <div class="form-group">
                             
-                            <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="far fa-image"></i></span>
                               </div>
                               <div class="custom-file">
                                   <input type="file" class="custom-file-input" name="picture" id="picture">
-                                  <label class="custom-file-label" for="picture">Choose file</label>
+                                  <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
                               </div>
                           </div>
                           <div class="form-group">
-                            <label for="section_id">Section</label>
+                            <label for="section_id">{{ __('general_content.section_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-industry"></i></span>
@@ -423,13 +425,13 @@
                                 @forelse ($SectionsSelect as $item)
                                 <option value="{{ $item->id }}" @if($MethodsRessource->section_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                 @empty
-                                <option value="">No section, please add before</option>
+                                <option value="">{{ __('general_content.no_section_trans_key') }}</option>
                                 @endforelse
                               </select>
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="service_id">Services</label>
+                            <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
@@ -438,7 +440,7 @@
                                 @forelse ($ServicesSelect as $item)
                                 <option value="{{ $item->id }}" @if($MethodsRessource->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                 @empty
-                                <option value="">No service</option>
+                                <option value="">{{ __('general_content.no_service_trans_key') }}</option>
                                 @endforelse
                               </select>
                             </div>
@@ -446,27 +448,27 @@
                           <!-- /.form-group -->
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                  <x-EmptyDataLine col="10" text="No data available in table"  />
+                  <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>Picture</th>
-                  <th>Sort</th>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Mask time</th>
-                  <th>Capacity</th>
-                  <th>Section</th>
-                  <th>Color</th>
-                  <th>Service</th>
+                  <th>{{ __('general_content.picture_trans_key') }}</th>
+                  <th>{{ __('general_content.sort_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{__('general_content.mask_time_trans_key') }}</th>
+                  <th>{{__('general_content.capacity_trans_key') }}</th>
+                  <th>{{ __('general_content.section_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
+                  <th>{{ __('general_content.service_trans_key') }}</th>
                 </tr>
               </tfoot>
             </table>
@@ -481,47 +483,47 @@
       </div>
       <div class="col-md-4 card-secondary">
         <div class="card-header">
-          <h3 class="card-title">New Ressource</h3>
+          <h3 class="card-title">{{ __('general_content.new_ressource_trans_key') }}</h3>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('methods.ressource.create')}}" enctype="multipart/form-data">
               @csrf
                 <div class="form-group">
-                  <label for="code">External ID</label>
+                  <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                     </div>
-                    <input type="text" class="form-control"  name="code" id="code" placeholder="External ID">
+                    <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="ordre">Sort order:</label>
+                  <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                     </div>
-                    <input type="number" class="form-control" name="ordre" id="ordre" min="0" placeholder="Order">
+                    <input type="number" class="form-control" name="ordre" id="ordre" min="0" placeholder="{{ __('general_content.sort_trans_key') }}">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="label">Label</label>
+                  <label for="label">{{__('general_content.label_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
-                    <input type="text" class="form-control"  name="label" id="label" placeholder="Label">
+                    <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
                   </div>
                 </div>
                 <div class="form-group">
-                    <label for="mask_time">Mask time ?</label>
+                    <label for="mask_time">{{__('general_content.mask_time_trans_key') }} ?</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-user-times"></i></span>
                       </div>
                       <select class="form-control" name="mask_time" id="mask_time">
-                          <option value="2">No</option>
-                          <option value="1">Yes</option>
+                          <option value="2">{{ __('general_content.no_trans_key') }}</option>
+                          <option value="1">{{ __('general_content.yes_trans_key') }}</option>
                       </select>
                     </div>
                 </div>
@@ -535,23 +537,23 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="color">Color</label>
+                  <label for="color">{{ __('general_content.color_trans_key') }}</label>
                   <input type="color" class="form-control"  name="color" id="color" >
                 </div>
                 <div class="form-group">
                   
-                  <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                  <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="far fa-image"></i></span>
                     </div>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" name="picture" id="picture">
-                        <label class="custom-file-label" for="picture">Choose file</label>
+                        <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
                     </div>
                 </div>
                 <div class="form-group">
-                  <label for="section_id">Section</label>
+                  <label for="section_id">{{ __('general_content.section_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-industry"></i></span>
@@ -560,13 +562,13 @@
                       @forelse ($SectionsSelect as $item)
                       <option value="{{ $item->id }}">{{ $item->label }}</option>
                       @empty
-                      <option value="">No section, please add before</option>
+                      <option value="">{{ __('general_content.no_section_trans_key') }}</option>
                       @endforelse
                     </select>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="service_id">Services</label>
+                  <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-list"></i></span>
@@ -575,7 +577,7 @@
                       @forelse ($ServicesSelect as $item)
                       <option value="{{ $item->id }}">{{ $item->label }}</option>
                       @empty
-                      <option value="">No service</option>
+                      <option value="">{{ __('general_content.no_service_trans_key') }}</option>
                       @endforelse
                     </select>
                   </div>
@@ -583,7 +585,7 @@
               <!-- /.form-group -->
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -595,21 +597,21 @@
     </div>
     <!-- /.tab-pane -->
     <div class="tab-pane" id="Section">
-      <x-InfocalloutComponent note="The Sections function allows you to define all the sections making up your company, i.e. the physical zones where work stations and operators are grouped together according to their job and cost."  />
+      <x-InfocalloutComponent note="{{ __('general_content.section_info_trans_key') }}"  />
       <div class="row">
         <div class="col-md-8 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Section type list</h3>
+              <h3 class="card-title">{{ __('general_content.sections_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>Sort</th>
-                  <th>External ID</th>
-                  <th>Description</th>
-                  <th>User</th>
-                  <th>Color</th>
+                  <th>{{ __('general_content.sort_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.user_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -632,7 +634,7 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="ordre">Sort order:</label>
+                            <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
@@ -641,21 +643,21 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsSection->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsSection->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="color">Color</label>
+                            <label for="color">{{ __('general_content.color_trans_key') }}</label>
                             <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsSection->color }}">
                           </div>
                           
                           <div class="form-group">
-                            <label for="user_id">User management</label>
+                            <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -670,23 +672,23 @@
                           <!-- /.form-group -->
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="6" text="No data available in table"  />
+                <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>Sort</th>
-                  <th>External ID</th>
-                  <th>Description</th>
-                  <th>User</th>
-                  <th>Color</th>
+                  <th>{{ __('general_content.sort_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.user_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -696,13 +698,13 @@
         </div>
         <div class="col-md-4 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New Section</h3>
+            <h3 class="card-title">{{ __('general_content.new_section_trans_key') }}</h3>
           </div>
           <div class="card-body">
             <form  method="POST" action="{{ route('methods.section.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
-                <label for="ordre">Sort order:</label>
+                <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
@@ -711,30 +713,30 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="code">External ID</label>
+                <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
+                  <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="label">Label</label>
+                <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="color">Color</label>
+                <label for="color">{{ __('general_content.color_trans_key') }}</label>
                 <input type="color" class="form-control"  name="color" id="color" >
               </div>
               
               <div class="form-group">
-                <label for="user_id">User management</label>
+                <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -747,7 +749,7 @@
                 </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -762,16 +764,16 @@
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Location in workshop list</h3>
+              <h3 class="card-title">{{ __('general_content.location_in_workshop_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Ressource</th>
-                  <th>Color</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.ressource_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -793,20 +795,20 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsLocation->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsLocation->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="color">Color</label>
+                            <label for="color">{{ __('general_content.color_trans_key') }}</label>
                             <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsLocation->color }}">
                           </div>
                           <div class="form-group">
-                            <label for="ressource_id">Ressource</label>
+                            <label for="ressource_id">{{ __('general_content.ressource_trans_key') }}</label>
                             <select class="form-control" name="ressource_id" id="ressource_id">
                               @foreach ($RessourcesSelect as $item)
                               <option value="{{ $item->id }}" @if($MethodsLocation->ressource_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
@@ -816,22 +818,22 @@
                           <!-- /.form-group -->
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="4" text="No data available in table"  />
+                <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Ressource</th>
-                  <th>Color</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.ressource_trans_key') }}</th>
+                  <th>{{ __('general_content.color_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -841,35 +843,35 @@
         </div>
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New location</h3>
+            <h3 class="card-title">{{ __('general_content.new_location_trans_key') }}</h3>
           </div>
           <div class="card-body">
             <form  method="POST" action="{{ route('methods.location.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
-                <label for="code">External ID</label>
+                <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
+                  <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="label">Label</label>
+                <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="color">Color</label>
+                <label for="color">{{ __('general_content.color_trans_key') }}</label>
                 <input type="color" class="form-control"  name="color" id="color" >
               </div>
               <div class="form-group">
-                <label for="ressource_id">Ressource</label>
+                <label for="ressource_id">{{ __('general_content.ressource_trans_key') }}</label>
                 <select class="form-control" name="ressource_id" id="ressource_id">
                   @foreach ($RessourcesSelect as $item)
                   <option value="{{ $item->id }}">{{ $item->label }}</option>
@@ -877,7 +879,7 @@
                 </select>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -889,19 +891,19 @@
     </div>
     <!-- /.tab-pane -->
     <div class="tab-pane" id="Units">
-      <x-InfocalloutComponent note="You must enter all units you may have to work with in your business. This may be Parts, Meters, Kilograms, etc."  />
+      <x-InfocalloutComponent note="{{ __('general_content.unit_info_trans_key') }}"  />
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Units type list</h3>
+              <h3 class="card-title">{{ __('general_content.units_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>External ID</th>
-                  <th>Description</th>
-                  <th>Type</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.type_trans_key') }}</th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -912,11 +914,11 @@
                   <td>{{ $MethodsUnit->code }}</td>
                   <td>{{ $MethodsUnit->label }}</td>
                   <td>
-                    @if($MethodsUnit->type  == 1) Mass @endif
-                    @if($MethodsUnit->type  == 2) Length @endif
-                    @if($MethodsUnit->type  == 3) Aera @endif
-                    @if($MethodsUnit->type  == 4) Volume @endif
-                    @if($MethodsUnit->type  == 5) Other @endif
+                    @if($MethodsUnit->type  == 1) {{ __('general_content.mass_trans_key') }} @endif
+                    @if($MethodsUnit->type  == 2) {{ __('general_content.length_trans_key') }} @endif
+                    @if($MethodsUnit->type  == 3) {{ __('general_content.aera_trans_key') }} @endif
+                    @if($MethodsUnit->type  == 4) {{ __('general_content.volume_trans_key') }} @endif
+                    @if($MethodsUnit->type  == 5) {{ __('general_content.other_trans_key') }} @endif
                   </td>
                   <td>
                     <div class="custom-control custom-radio">
@@ -935,53 +937,53 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsUnit->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsUnit->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="type">Type</label>
+                            <label for="type">{{ __('general_content.type_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                               </div>
                               <select class="form-control" name="type" id="type">
-                                  <option value="1" @if($MethodsUnit->type == 1  ) Selected @endif>Mass</option>
-                                  <option value="2" @if($MethodsUnit->type == 2  ) Selected @endif>Length</option>
-                                  <option value="3" @if($MethodsUnit->type == 3  ) Selected @endif>Aera</option>
-                                  <option value="4" @if($MethodsUnit->type == 4  ) Selected @endif>Volume</option>
-                                  <option value="5" @if($MethodsUnit->type == 5  ) Selected @endif>Other</option>
+                                  <option value="1" @if($MethodsUnit->type == 1  ) Selected @endif>{{ __('general_content.mass_trans_key') }}</option>
+                                  <option value="2" @if($MethodsUnit->type == 2  ) Selected @endif>{{ __('general_content.length_trans_key') }}</option>
+                                  <option value="3" @if($MethodsUnit->type == 3  ) Selected @endif>{{ __('general_content.aera_trans_key') }}</option>
+                                  <option value="4" @if($MethodsUnit->type == 4  ) Selected @endif>{{ __('general_content.volume_trans_key') }}</option>
+                                  <option value="5" @if($MethodsUnit->type == 5  ) Selected @endif>{{ __('general_content.other_trans_key') }}</option>
                               </select>
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="month_end">By default</label>
+                            <label for="month_end">{{__('general_content.by_default_trans_key') }}</label>
                             <select class="form-control" name="default" id="default">
-                                <option value="0" @if($MethodsUnit->default == 0) selected @endif>No</option>
-                                <option value="1" @if($MethodsUnit->default == 1) selected @endif>Yes</option>
+                                <option value="0" @if($MethodsUnit->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                <option value="1" @if($MethodsUnit->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                             </select>
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="9" text="No data available in table"  />
+                <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>External ID</th>
-                  <th>Description</th>
-                  <th>Type</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.type_trans_key') }}</th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -992,46 +994,46 @@
         </div>
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New Units</h3>
+            <h3 class="card-title">{{ __('general_content.new_unit_trans_key') }}</h3>
           </div>
           <div class="card-body">
             <form  method="POST" action="{{ route('methods.unit.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
-                <label for="code">External ID</label>
+                <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
+                  <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="label">Label</label>
+                <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                  <label for="type">Type</label>
+                  <label for="type">{{ __('general_content.type_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                     </div>
                     <select class="form-control" name="type" id="type">
-                        <option value="1">Mass</option>
-                        <option value="2">Length</option>
-                        <option value="3">Aera</option>
-                        <option value="4">Volume</option>
-                        <option value="5">Other</option>
+                        <option value="1">{{ __('general_content.mass_trans_key') }}</option>
+                        <option value="2">{{ __('general_content.length_trans_key') }}</option>
+                        <option value="3">{{ __('general_content.aera_trans_key') }}</option>
+                        <option value="4">{{ __('general_content.volume_trans_key') }}</option>
+                        <option value="5">{{ __('general_content.other_trans_key') }}</option>
                     </select>
                   </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -1043,19 +1045,19 @@
     </div>
     <!-- /.tab-pane -->
     <div class="tab-pane" id="Families">
-      <x-InfocalloutComponent note="Defining subgroups per service allows filtering components at later stages."  />
+      <x-InfocalloutComponent note="{{ __('general_content.family_info_trans_key') }}"  />
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Famillies type list</h3>
+              <h3 class="card-title">{{ __('general_content.families_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Service</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.service_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -1076,16 +1078,16 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsFamilie->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsFamilie->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="service_id">Services</label>
+                            <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
@@ -1094,28 +1096,28 @@
                                 @forelse ($ServicesSelect as $item)
                                 <option value="{{ $item->id }}" @if($MethodsFamilie->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                 @empty
-                                <option value="">No service, please add one before</option>
+                                <option value="">{{ __('general_content.no_service_trans_key') }}</option>
                                 @endforelse
                               </select>
                             </div>
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="4" text="No data available in table"  />
+                <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Service</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.service_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -1125,31 +1127,31 @@
         </div>
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New family</h3>
+            <h3 class="card-title">{{ __('general_content.new_family_trans_key') }}</h3>
           </div>
           <div class="card-body">
             <form  method="POST" action="{{ route('methods.family.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
-                <label for="code">External ID</label>
+                <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
+                  <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="label">Label</label>
+                <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="service_id">Services</label>
+                <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-list"></i></span>
@@ -1158,13 +1160,13 @@
                     @forelse ($ServicesSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @empty
-                    <option value="">No service, please add one before</option>
+                    <option value="">{{ __('general_content.no_service_trans_key') }}</option>
                     @endforelse
                   </select>
                 </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>
@@ -1179,19 +1181,19 @@
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">Tools list</h3>
+              <h3 class="card-title">{{ __('general_content.tools_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>Picture</th>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Etat</th>
-                  <th>Cost</th>
-                  <th>End Date</th>
-                  <th>Qty</th>
+                  <th>{{ __('general_content.picture_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.etat_trans_key') }}</th>
+                  <th>{{ __('general_content.cost_trans_key') }}</th>
+                  <th>{{ __('general_content.end_date_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -1206,8 +1208,8 @@
                   <td>{{ $MethodsTool->code }}</td>
                   <td>{{ $MethodsTool->label }}</td>
                   <td>
-                    @if($MethodsTool->ETAT  == 1)Unsed @endif
-                    @if($MethodsTool->ETAT  == 2)Used @endif
+                    @if($MethodsTool->ETAT  == 1) {{ __('general_content.unsed_trans_key') }} @endif
+                    @if($MethodsTool->ETAT  == 2) {{ __('general_content.used_trans_key') }} @endif
                   </td>
                   <td>{{ $MethodsTool->cost }}</td>
                   <td>{{ $MethodsTool->end_date }}</td>
@@ -1223,80 +1225,80 @@
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
-                            <label for="label">Label</label>
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-tags"></i></span>
                               </div>
-                              <input type="text" class="form-control" name="label"  id="label" placeholder="Label" value="{{ $MethodsTool->label }}">
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $MethodsTool->label }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="ETAT">Statu</label>
+                            <label for="ETAT">{{ __('general_content.statu_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                               </div>
                               <select class="form-control" name="ETAT" id="ETAT">
-                                <option value="1" @if($MethodsTool->ETAT == 1 ) Selected @endif>Unused</option>
-                                <option value="2" @if($MethodsTool->ETAT == 2  ) Selected @endif>Used</option>
+                                <option value="1" @if($MethodsTool->ETAT == 1 ) Selected @endif>{{ __('general_content.unsed_trans_key') }}</option>
+                                <option value="2" @if($MethodsTool->ETAT == 2  ) Selected @endif>{{ __('general_content.used_trans_key') }}</option>
                               </select>
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="cost">Cost</label>
+                            <label for="cost">{{ __('general_content.cost_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text">{{ $Factory->curency }}</span>
                               </div>
-                              <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001" value="{{ $MethodsTool->cost }}">
+                              <input type="number" class="form-control" name="cost"  id="cost" placeholder="{{ __('general_content.cost_trans_key') }}" step=".001" value="{{ $MethodsTool->cost }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="qty">Quantity</label>
+                            <label for="qty">{{ __('general_content.qty_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-times"></i></span>
                               </div>
-                              <input type="numer" class="form-control" name="qty"  id="qty" placeholder="Qty" value="{{ $MethodsTool->qty }}">
+                              <input type="numer" class="form-control" name="qty"  id="qty" placeholder="{{__('general_content.qty_trans_key') }}" value="{{ $MethodsTool->qty }}">
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="end_date">End date</label>
-                            <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="Qty" value="{{ $MethodsTool->end_date }}" >
+                            <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
+                            <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="{{__('general_content.qty_trans_key') }}" value="{{ $MethodsTool->end_date }}" >
                           </div>
                           <div class="form-group">
-                            <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="far fa-image"></i></span>
                               </div>
                               <div class="custom-file">
                                   <input type="file" class="custom-file-input" name="picture" id="picture">
-                                  <label class="custom-file-label" for="picture">Choose file</label>
+                                  <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
                               </div>
                           </div>
                         </div>
                         <div class="card-footer">
-                          <x-adminlte-button class="btn-flat" type="submit" label="Update" theme="info" icon="fas fa-lg fa-save"/>
+                          <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
                     </x-adminlte-modal>
                   </td>
                 </tr>
                 @empty
-                <x-EmptyDataLine col="8" text="No data available in table"  />
+                <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th>Picture</th>
-                  <th>External ID</th>
-                  <th>Desciption</th>
-                  <th>Etat</th>
-                  <th>Cost</th>
-                  <th>End Date</th>
-                  <th>Qty</th>
+                  <th>{{ __('general_content.picture_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.description_trans_key') }}</th>
+                  <th>{{ __('general_content.etat_trans_key') }}</th>
+                  <th>{{ __('general_content.cost_trans_key') }}</th>
+                  <th>{{ __('general_content.end_date_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -1306,76 +1308,76 @@
         </div>
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">New tool</h3>
+            <h3 class="card-title">{{ __('general_content.new_tool_trans_key') }}</h3>
           </div>
           <div class="card-body">
             <form  method="POST" action="{{ route('methods.tool.create') }}" class="form-horizontal" enctype="multipart/form-data">
               @csrf
               <div class="form-group">
-                <label for="code">External ID</label>
+                <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="code" id="code" placeholder="External ID">
+                  <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="label">Label</label>
+                <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-tags"></i></span>
                   </div>
-                  <input type="text" class="form-control" name="label"  id="label" placeholder="Label">
+                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="ETAT">Statu</label>
+                <label for="ETAT">{{ __('general_content.statu_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                   </div>
                   <select class="form-control" name="ETAT" id="ETAT">
-                    <option value="1">Unused</option>
-                    <option value="2">Used</option>
+                    <option value="1">{{ __('general_content.unsed_trans_key') }}</option>
+                    <option value="2">{{ __('general_content.used_trans_key') }}</option>
                   </select>
                 </div>
               </div>
               <div class="form-group">
-                <label for="cost">Cost</label>
+                <label for="cost">{{ __('general_content.cost_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text">{{ $Factory->curency }}</span>
                   </div>
-                  <input type="number" class="form-control" name="cost"  id="cost" placeholder="Cost" step=".001">
+                  <input type="number" class="form-control" name="cost"  id="cost" placeholder="{{ __('general_content.cost_trans_key') }}" step=".001">
                 </div>
               </div>
               <div class="form-group">
-                <label for="qty">Quantity</label>
+                <label for="qty">{{ __('general_content.qty_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-times"></i></span>
                   </div>
-                  <input type="numer" class="form-control" name="qty"  id="qty" placeholder="Qty" >
+                  <input type="numer" class="form-control" name="qty"  id="qty" placeholder="{{__('general_content.qty_trans_key') }}" >
                 </div>
               </div>
               <div class="form-group">
-                <label for="end_date">End date</label>
-                <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="Qty" >
+                <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
+                <input type="date" class="form-control" name="end_date"  id="end_date">
               </div>
               <div class="form-group">
-                <label for="picture">Logo file</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
+                <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="far fa-image"></i></span>
                   </div>
                   <div class="custom-file">
                       <input type="file" class="custom-file-input" name="picture" id="picture">
-                      <label class="custom-file-label" for="picture">Choose file</label>
+                      <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
                   </div>
               </div>
               <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="Submit" theme="danger" icon="fas fa-lg fa-save"/>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
             </form>
           </div>

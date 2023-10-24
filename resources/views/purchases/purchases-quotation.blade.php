@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Purchases quotation request')
+@section('title', __('general_content.requests_for_quotation_list_trans_key'))
 
 @section('content_header')
   <div class="row mb-2">
-      <h1>Purchases quotation request</h1>
+      <h1>{{ __('general_content.requests_for_quotation_list_trans_key') }}</h1>
   </div>
 @stop
 
@@ -17,7 +17,7 @@
     <div class="col-md-3">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="donutChart" width="400" height="400"></canvas>
@@ -25,7 +25,7 @@
       </div>
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title"> Statistiques </h3>
+          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <canvas id="donutChart" width="400" height="400"></canvas>
@@ -56,8 +56,8 @@
           @foreach ($data['purchasesQuotationDataRate'] as $item)
                 @if(1 == $item->statu )  "In progress", @endif
                 @if(2 == $item->statu )  "Sent", @endif
-                @if(3 == $item->statu )  "Partly received", @endif
-                @if(4 == $item->statu )  "Received", @endif
+                @if(3 == $item->statu )  "{{ __('general_content.partly_received_trans_key') }}", @endif
+                @if(4 == $item->statu )  "{{ __('general_content.rceived_trans_key') }}", @endif
                 @if(5 == $item->statu )  "PO partly created", @endif
                 @if(5 == $item->statu )  "PO Created", @endif
           @endforeach
