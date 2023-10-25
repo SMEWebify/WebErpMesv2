@@ -371,6 +371,7 @@ return [
     'documents_trans_key'                      => 'Documents',
     'choose_file_trans_key'                    => 'Choose file',
     'picture_file_trans_key'                   => 'Picture file',
+    'stl_file_trans_key'                       => 'STL file',
     'attached_file_trans_key'                  => 'Attached files',
     'add_to_document_trans_key'                => 'Add to new document',
     

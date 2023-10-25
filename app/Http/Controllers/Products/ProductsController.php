@@ -84,15 +84,39 @@ class ProductsController extends Controller
         if($request->hasFile('picture')){
             $Product = Products::findOrFail($request->id);
             $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/products'), $filename);
-            $Product->update(['picture' => $filename]);
+            $oringalFileName = $request->file->getClientOriginalName();
+            $fileName = time() . '_' .  $oringalFileName;
+            $request->picture->move(public_path('images/products'), $fileName);
+            $Product->update(['picture' => $fileName]);
             $Product->save();
 
             return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated image');
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }
+    }
+
+        /**
+     * @param Request $request
+     * @return View
+     */
+    public function StoreStl(Request $request)
+    {
+        if($request->hasFile('stl')){
+            //$type = $request->file->getClientMimeType();
+            //$size = $request->file->getSize();
+            $Product = Products::findOrFail($request->id);
+            $file =  $request->file('stl');
+            $fileName = auth()->id() . '' . time() . '.stl';
+            $request->stl->move(public_path('stl'), $fileName);
+            $Product->update(['stl_file' => $fileName]);
+            $Product->save();
+
+            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated stl');
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no stl selected']);
         }
     }
 

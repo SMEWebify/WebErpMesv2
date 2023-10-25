@@ -42,6 +42,7 @@ class CreateProductsTable extends Migration
             $table->decimal('diameter_oversize', 10, 3)->nullable();
             $table->decimal('section_size', 10, 3)->nullable();
 			$table->string('picture')->nullable();
+			$table->string('stl_file')->nullable();
             $table->timestamps();
         });
     }
