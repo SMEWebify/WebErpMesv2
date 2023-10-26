@@ -101,8 +101,6 @@ return [
     'internal_trans_key'                       => 'Interne',
     'external_trans_key'                       => 'Externe',
     'waiting_customer_data_trans_key'          => 'En attente de données client',
-    'male_trans_key'                           => 'Homme',
-    'female_trans_key'                         => 'Femme',
     'married_trans_key'                        => 'Marié',
     'single_trans_key'                         => 'Seul',
     'divorced_trans_key'                       => 'Divorcé',
@@ -157,7 +155,6 @@ return [
     'invoice_status_trans_key'                 => 'Statut de la facture',
     'delivered_qty_trans_key'                  => 'Qt livrée',
     'remaining_qty_trans_key'                  => 'Qt restante',
-    'purchase_receipt_trans_key'               => 'Reçu d\achat',
     'addressing_trans_key'                     => 'Adresage',
 
     'supplier_ref_trans_key'                   => 'Référence Vendeur',
@@ -285,7 +282,6 @@ return [
     'estimated_budget_trans_key'               => 'Objectif CA',
     'customer_import_trans_key'                => 'Import client',
     'kanban_setting_note_trans_key'            => 'La première ligne sera utilisée pour le statut par défaut des nouvelles tâches. La dernière ligne est utilisée pour la tâche terminée, prête pour le bon de livraison',
-    'no_permissions_trans_key'                 => 'Aucune permission',
     'make_new_role_trans_key'                  => 'Créer un rôle',
 
     // CARD HEADER
@@ -315,7 +311,6 @@ return [
     //SELECT
     'select_vat_trans_key'                     => 'Selectionner TVA',
     'select_product_trans_key'                 => 'Selectionner produit',
-    'select_unit_trans_key'                    => 'Selectionner Unité',
     'user_management_trans_key'                => 'Utilisateur responsable',
     'select_user_management_trans_key'         => 'Selectionner l\'utilisateur',
     'select_company_trans_key'                 => 'Selectionner société',
@@ -383,7 +378,6 @@ return [
     'contacts_trans_key'                       => 'Contacts',
     'first_name_trans_key'                     => 'Prénom',
     'civility_trans_key'                       => 'Civilité',
-    'phone_trans_key'                          => 'Téléphone',
     'email_trans_key'                          => 'E-mail',
     'date_trans_key'                           => 'Date',
     'comment_trans_key'                        => 'Commentaire',
@@ -491,7 +485,7 @@ return [
     'late_orders_trans_key'                    => 'Comandes en retards',
     'no_late_orders_trans_key'                 => 'Aucune.',
     'goal_task_trans_key'                      => 'Achèvement des tâches',
-    'no_task_trans_key'                        => 'Aucun service, accédez aux méthodes d\'ajout.',
+    'no_dash_task_trans_key'                   => 'Aucun service, accédez aux méthodes d\'ajout.',
     'total_order_forcasted_trans_key'          => 'COMMANDE TOTALE PRÉVUE',
     'total_order_delivered_trans_key'          => 'COMMANDE TOTALE LIVREE',
     'total_invoiced_trans_key'                 => 'TOTAL FACTURÉ',
@@ -545,7 +539,6 @@ return [
     'name_order_trans_key'                     => 'Nom de la commande',
     'historical_trans_key'                     => 'Historique',
     'order_create_from_trans_key'              => 'Commande créée à partir de ',
-    'order_confirm_trans_key'                  => 'Confirmation de commande',
     'mnaufacturing_instruction_trans_key'      => 'Instruction de fabrication',
     'order_type_trans_key'                     => 'Type de commande',
     'customer_type_order_trans_key'            => 'Commande client',
@@ -768,7 +761,6 @@ return [
     'joined_date_trans_key'                    => 'Date d\'adhésion',
     'confirmation_date_trans_key'              => 'Date de confirmation',
     'notification_choice_trans_key'            => 'Choix des notifications',
-    'new_companie_trans_key'                   => 'Nouvelle société',
     'new_user_trans_key'                       => 'Nouvel utilisateur',
     'new_absence_request_trans_key'            => 'Nouvelle demande d\'absence',
 

@@ -101,8 +101,6 @@ return [
     'internal_trans_key'                       => 'Internal',
     'external_trans_key'                       => 'External',
     'waiting_customer_data_trans_key'          => 'Waiting Customer Data',
-    'male_trans_key'                           => 'Male',
-    'female_trans_key'                         => 'Female',
     'married_trans_key'                        => 'Married',
     'single_trans_key'                         => 'Single',
     'divorced_trans_key'                       => 'Divorced',
@@ -157,7 +155,6 @@ return [
     'invoice_status_trans_key'                 => 'Invoice status',
     'delivered_qty_trans_key'                  => 'Delivered qty',
     'remaining_qty_trans_key'                  => 'Remaining qty',
-    'purchase_receipt_trans_key'               => 'Purchase Receipt',
     'addressing_trans_key'                     => 'Addressing',
     
     'supplier_ref_trans_key'                   => 'Supplier ref',
@@ -285,7 +282,6 @@ return [
     'estimated_budget_trans_key'               => 'Estimated Budget',
     'customer_import_trans_key'                => 'Customer import',
     'kanban_setting_note_trans_key'            => 'The first line will be used for the default status of new tasks. The last line is used for finished task, ready for delivery note',
-    'no_permissions_trans_key'                 => 'No permissions',
     'make_new_role_trans_key'                  => 'Make a new Role',
     
     // CARD HEADER
@@ -315,7 +311,6 @@ return [
     //SELECT
     'select_vat_trans_key'                     => 'Select VAT',
     'select_product_trans_key'                 => 'Select Product',
-    'select_unit_trans_key'                    => 'Select Unit',
     'user_management_trans_key'                => 'User management',
     'select_user_management_trans_key'         => 'Select user management',
     'select_company_trans_key'                 => 'Select company',
@@ -383,7 +378,6 @@ return [
     'contacts_trans_key'                       => 'Contacts',
     'first_name_trans_key'                     => 'First name',
     'civility_trans_key'                       => 'Civility',
-    'phone_trans_key'                          => 'Phone',
     'email_trans_key'                          => 'E-mail',
     'date_trans_key'                           => 'Date',
     'comment_trans_key'                        => 'Comment',
@@ -491,7 +485,7 @@ return [
     'late_orders_trans_key'                    => 'Late orders',
     'no_late_orders_trans_key'                 => 'No late orders.',
     'goal_task_trans_key'                      => 'Goal Task Completion',
-    'no_task_trans_key'                        => 'No service go to Methods for add.',
+    'no_dash_task_trans_key'                   => 'No service go to Methods for add.',
     'total_order_forcasted_trans_key'          => 'TOTAL ORDER FORCASTED',
     'total_order_delivered_trans_key'          => 'TOTAL ORDER DELIVERED',
     'total_invoiced_trans_key'                 => 'TOTAL INVOICED',
@@ -545,7 +539,6 @@ return [
     'name_order_trans_key'                     => 'Name of order',
     'historical_trans_key'                     => 'Historical',
     'order_create_from_trans_key'              => 'Order Create from',
-    'order_confirm_trans_key'                  => 'Order confirm',
     'mnaufacturing_instruction_trans_key'      => 'Manufacturing instruction',
     'order_type_trans_key'                     => 'Order type',
     'customer_type_order_trans_key'            => 'Customer sales order',
@@ -768,7 +761,6 @@ return [
     'joined_date_trans_key'                    => 'Joined date',
     'confirmation_date_trans_key'              => 'Confirmation date',
     'notification_choice_trans_key'            => 'Notification choice',
-    'new_companie_trans_key'                   => 'New companie',
     'new_user_trans_key'                       => 'New user',
     'new_absence_request_trans_key'            => 'New absence request',
 

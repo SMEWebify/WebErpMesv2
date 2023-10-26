@@ -483,7 +483,7 @@
               <!-- /.progress-group -->
               @empty
               <div class="progress-group">
-                {{ __('general_content.no_task_trans_key') }}
+                {{ __('general_content.no_dash_task_trans_key') }}
               </div>
               <!-- /.progress-group -->
               @endforelse
