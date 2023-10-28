@@ -2,12 +2,63 @@
     <div>
         @include('include.alert-result')
         <div class="card">
-            <div class="card-body">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
+            <div class="row">
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
+                        </div>
+                        <input type="text" class="form-control" wire:model="search" placeholder="{{ __('general_content.search_task_trans_key') }}">
                     </div>
-                    <input type="text" class="form-control" wire:model="search" placeholder="{{ __('general_content.search_task_trans_key') }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                </div>
+                                <select class="form-control" name="searchIdService" id="searchIdService" wire:model="searchIdService">
+                                    <option value="">{{ __('general_content.select_service_trans_key') }}</option>
+                                    @forelse ($ServicesSelect as $item)
+                                    <option value="{{ $item->id }}">{{ $item->label }}</option>
+                                    @empty
+                                    <option value="">{{ __('general_content.no_service_trans_key') }}</option>
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="searchIdService">{{ __('general_content.status_trans_key') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                </div>
+                                <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model="searchIdStatus">
+                                    <option value="" selected>{{ __('general_content.select_type_trans_key') }}</option>
+                                    @forelse ($StatusSelect as $item)
+                                    <option value="{{ $item->id }}">{{ $item->title }}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="ShowGenericTask">{{ __('general_content.show_generic_task_trans_key') }}</label>
+                            <input type="checkbox" id="ShowGenericTask" wire:model="ShowGenericTask" style=" display:flex; align-items:center;">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="table-responsive p-0">

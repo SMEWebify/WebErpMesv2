@@ -124,6 +124,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    
                     @forelse ($DeliverysRequestsLineslist as $DeliverysRequestsLine)
                     <tr>
                         <td>

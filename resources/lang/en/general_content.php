@@ -412,6 +412,7 @@ return [
     'by_default_trans_key'                     => 'By default', 
     'document_type_trans_key'                  => 'Document type',
     'add_export_trans_key'                     => 'Add to export',
+    'show_generic_task_trans_key'              => 'Show generic task',
     
     'auxiliary_account_trans_key'              => 'Auxiliary Account',
     'general_account_trans_key'                => 'General Account',

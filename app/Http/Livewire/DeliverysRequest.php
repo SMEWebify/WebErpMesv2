@@ -75,7 +75,7 @@ class DeliverysRequest extends Component
         $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
-
+        
         //Select order line where not delivered or partialy delivered
         $DeliverysRequestsLineslist = $this->DeliverysRequestsLineslist = OrderLines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                                                         ->where(
@@ -88,6 +88,9 @@ class DeliverysRequest extends Component
                                                                             $q->where('companies_id','like', '%'.$this->companies_id.'%')
                                                                                 ->where('type', '=', '1');
                                                                         })->get();
+
+        
+
         return view('livewire.deliverys-request', [
             'DeliverysRequestsLineslist' => $DeliverysRequestsLineslist,
             'AddressSelect' => $AddressSelect,
