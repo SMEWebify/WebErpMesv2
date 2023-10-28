@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Times\TimesAbsence;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationsController extends Controller
@@ -61,8 +62,10 @@ class NotificationsController extends Controller
     public function show()
     {
         $UserProfil = User::find(Auth::user()->id);
+        $TimesAbsences = TimesAbsence::where('user_id', Auth::user()->id)->get();
         return view('profile', [
-            'UserProfil' => $UserProfil
+            'UserProfil' => $UserProfil,
+            'TimesAbsences' => $TimesAbsences,
         ]);
     }
 }
