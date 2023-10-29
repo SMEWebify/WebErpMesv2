@@ -358,6 +358,7 @@ return [
     'edit_line_trans_key'                      => 'Editer la ligne',
     'delete_line_trans_key'                    => 'Effacer la ligne',
     'break_down_task_trans_key'                => 'Décomposer les taches de l\'article',
+    'create_product_trans_key'                 => 'Créer article à partir de cette ligne',
 
     //LABEL
     'customer_info_trans_key'                  => 'Information client',

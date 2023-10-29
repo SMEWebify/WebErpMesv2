@@ -358,6 +358,7 @@ return [
     'edit_line_trans_key'                      => 'Edit line',
     'delete_line_trans_key'                    => 'Delete line',
     'break_down_task_trans_key'                => 'Break down the article task',
+    'create_product_trans_key'                 => 'Create item from this line',
 
     //LABEL
     'customer_info_trans_key'                  => 'Customer information',

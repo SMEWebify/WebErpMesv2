@@ -244,6 +244,10 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                             @else
                                             <p class="dropdown-item "><span class="text-info">Order curently {{ __('general_content.in_progress_trans_key') }}</span></p>
                                             @endif
+
+                                            @if($OrderLine->code && $OrderLine->label)
+                                            <a href="#" class="dropdown-item" wire:click="CreatProduct({{$OrderLine->id}})" ><span class="text-success"><i class="fa fa-lg fa-fw fas fa-barcode"></i>{{ __('general_content.create_product_trans_key') }}</span></a>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="btn-group btn-group-sm">

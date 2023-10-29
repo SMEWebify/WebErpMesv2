@@ -230,6 +230,10 @@
                                             @else
                                                 <p class="dropdown-item "><span class="text-info">{{ __('general_content.quote_not_open_trans_key') }}</span></p>
                                             @endif
+
+                                            @if($QuoteLine->code && $QuoteLine->label)
+                                            <a href="#" class="dropdown-item" wire:click="CreatProduct({{$QuoteLine->id}})" ><span class="text-success"><i class="fa fa-lg fa-fw fas fa-barcode"></i>{{ __('general_content.create_product_trans_key') }}</span></a>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="btn-group btn-group-sm">

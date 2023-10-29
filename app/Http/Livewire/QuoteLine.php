@@ -17,6 +17,7 @@ use App\Models\Methods\MethodsUnits;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
+use App\Models\Methods\MethodsFamilies;
 use App\Models\Planning\SubAssembly;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
@@ -226,7 +227,72 @@ class QuoteLine extends Component
             $newSubAssembly->save();
         }
     }
+    
+    public function CreatProduct($id){
 
+        $ServiceComponent = MethodsServices::where('type', 8)->first();
+        $FamilieComponent = MethodsFamilies::where('service_id', $ServiceComponent->id)->first();
+
+        if(!empty($ServiceComponent->id) && !empty($FamilieComponent->id)){
+            //get data to dulicate for new order
+            $QuoteLineData = Quotelines::find($id);
+            $newProduct = Products::create([
+                'code'=>$QuoteLineData->code,
+                'label'=>$QuoteLineData->label,
+                'methods_services_id'=> $ServiceComponent->id,
+                'methods_families_id'=> $FamilieComponent->id,
+                'purchased'=> 2,
+                'purchased_price'=> 1,
+                'sold'=> 1,
+                'selling_price'=> $QuoteLineData->selling_price,
+                'methods_units_id'=>$QuoteLineData->methods_units_id,
+                'tracability_type'=>1,
+                
+            ]);
+            //update info that order line as task
+            $QuoteLineData->product_id = $newProduct->id;
+            $QuoteLineData->save();
+
+            //add line detail
+            $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $id)->first();
+            $newProductDetail = Products::findOrFail($newProduct->id);
+            $newProductDetail->material = $QuoteLineDetailData->material;
+            $newProductDetail->thickness = $QuoteLineDetailData->thickness;
+            $newProductDetail->weight = $QuoteLineDetailData->weight;
+            $newProductDetail->x_size = $QuoteLineDetailData->x_size;
+            $newProductDetail->y_size = $QuoteLineDetailData->y_size;
+            $newProductDetail->z_size = $QuoteLineDetailData->z_size;
+            $newProductDetail->x_oversize = $QuoteLineDetailData->x_oversize;
+            $newProductDetail->y_oversize = $QuoteLineDetailData->y_oversize;
+            $newProductDetail->z_oversize = $QuoteLineDetailData->z_oversize;
+            $newProductDetail->diameter = $QuoteLineDetailData->diameter;
+            $newProductDetail->diameter_oversize = $QuoteLineDetailData->diameter_oversize;
+            $newProductDetail->save();
+
+            $Tasks = Task::where('quote_lines_id', $id)->get();
+            foreach ($Tasks as $Task) 
+            {
+                $newTask = $Task->replicate();
+                $newTask->products_id = $newProduct->id;
+                $newTask->quote_lines_id = null;
+                $newTask->save();
+            }
+            
+            $SubAssemblyLine = SubAssembly::where('quote_lines_id', $id)->get();
+            foreach ($SubAssemblyLine as $SubAssembly) 
+            {
+                $newSubAssembly = $SubAssembly->replicate();
+                $newSubAssembly->products_id = $newProduct->id;
+                $newSubAssembly->quote_lines_id = null;
+                $newSubAssembly->save();
+            }
+            
+            session()->flash('success','Product created Successfully');
+        }
+        else{
+            session()->flash('error','No component service or family');
+        }
+    }
     
     public function breakDown($id){
         $Quoteline = Quotelines::findOrFail($id);
@@ -349,9 +415,9 @@ class QuoteLine extends Component
                         'order_lines_id'=>$newOrderline->id,
                         'x_size'=>$QuoteLineDetailData->x_size,
                         'y_size'=>$QuoteLineDetailData->y_size,
-                        'Z_size'=>$QuoteLineDetailData->Z_size,
+                        'z_size'=>$QuoteLineDetailData->z_size,
                         'x_oversize'=>$QuoteLineDetailData->x_oversize,
-                        'Y_oversize'=>$QuoteLineDetailData->Y_oversize,
+                        'y_oversize'=>$QuoteLineDetailData->y_oversize,
                         'z_oversize'=>$QuoteLineDetailData->z_oversize,
                         'diameter'=>$QuoteLineDetailData->diameter,
                         'diameter_oversize'=>$QuoteLineDetailData->diameter_oversize,
@@ -382,7 +448,7 @@ class QuoteLine extends Component
                     {
                         $newSubAssembly = $SubAssembly->replicate();
                         $newSubAssembly->order_lines_id = $newOrderline->id;
-                        $newTask->quote_lines_id = null;
+                        $newSubAssembly->quote_lines_id = null;
                         $newSubAssembly->save();
                     }
 
