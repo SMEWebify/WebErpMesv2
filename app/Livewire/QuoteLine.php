@@ -392,7 +392,7 @@ class QuoteLine extends Component
                 foreach ($this->data as $key => $item) {
 
                     //get data to dulicate for new order
-                    $QuoteLineData = Quotelines::find($this->data[$key]['quote_line_id']);
+                    $QuoteLineData = Quotelines::find($key);
                     $newOrderline = Orderlines::create([
                         'orders_id'=>$OrdersCreated->id,
                         'ordre'=>$QuoteLineData->ordre,
@@ -410,7 +410,7 @@ class QuoteLine extends Component
                     ]);
 
                     //add line detail
-                    $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $this->data[$key]['quote_line_id'])->first();
+                    $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $key)->first();
                     $newOrderLineDetail = OrderLineDetails::create([
                         'order_lines_id'=>$newOrderline->id,
                         'x_size'=>$QuoteLineDetailData->x_size,
@@ -428,7 +428,7 @@ class QuoteLine extends Component
                         'cad_file'=>$QuoteLineDetailData->cad_file,
                     ]);
 
-                    $Tasks = Task::where('quote_lines_id', $this->data[$key]['quote_line_id'])->get();
+                    $Tasks = Task::where('quote_lines_id', $key)->get();
                     foreach ($Tasks as $Task) 
                     {
                         $newTask = $Task->replicate();
@@ -443,7 +443,7 @@ class QuoteLine extends Component
                         
                     }
                     
-                    $SubAssemblyLine = SubAssembly::where('quote_lines_id', $this->data[$key]['quote_line_id'])->get();
+                    $SubAssemblyLine = SubAssembly::where('quote_lines_id', $key)->get();
                     foreach ($SubAssemblyLine as $SubAssembly) 
                     {
                         $newSubAssembly = $SubAssembly->replicate();

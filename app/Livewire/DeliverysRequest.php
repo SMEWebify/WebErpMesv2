@@ -105,6 +105,8 @@ class DeliverysRequest extends Component
         
         //check if line exist
         $i = 0;
+        
+        
         foreach ($this->data as $key => $item) {
             if(array_key_exists("order_line_id",$this->data[$key])){
                 if($this->data[$key]['order_line_id'] != false ){
@@ -132,7 +134,7 @@ class DeliverysRequest extends Component
                         // Create delivery line
                         $DeliveryLines = DeliveryLines::create([
                             'deliverys_id' => $DeliveryCreated->id,
-                            'order_line_id' => $this->data[$key]['order_line_id'], 
+                            'order_line_id' => $key, 
                             'ordre' => $this->ordre,
                             'qty' => $this->data[$key]['scumQty'],
                             'statu' => 1
@@ -140,7 +142,7 @@ class DeliverysRequest extends Component
 
                         // update order line info
                         //same function from stock location product controller
-                        $OrderLine = OrderLines::find($this->data[$key]['order_line_id']);
+                        $OrderLine = OrderLines::find($key);
                         $OrderLine->delivered_qty =  $OrderLine->delivered_qty + $this->data[$key]['scumQty'];
                         $OrderLine->delivered_remaining_qty = $OrderLine->delivered_remaining_qty - $this->data[$key]['scumQty'];
                         //if we are delivered all part
