@@ -63,7 +63,7 @@
                             <td>{{ $InvoiceExportLines->OrderLine->VAT['rate'] }} %</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" wire:model="selectedInvoiceLine.{{ $InvoiceExportLines->id }}" id="{{ $InvoiceExportLines->id }}.invoice_line_id"  type="checkbox">
+                                    <input class="custom-control-input" wire:model.live="selectedInvoiceLine.{{ $InvoiceExportLines->id }}" id="{{ $InvoiceExportLines->id }}.invoice_line_id"  type="checkbox">
                                     <label for="{{ $InvoiceExportLines->id }}.invoice_line_id" class="custom-control-label">{{ __('general_content.add_export_trans_key') }}</label>
                                 </div>
                             </td>

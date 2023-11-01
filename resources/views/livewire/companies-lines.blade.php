@@ -20,7 +20,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control @error('code') is-invalid @enderror" wire:model="code" name="code" id="code" placeholder="AAA000">
+                                                    <input type="text" class="form-control @error('code') is-invalid @enderror"  wire:model.live="code" name="code" id="code" placeholder="AAA000">
                                                 </div>
                                                 @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
@@ -30,7 +30,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-building"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control @error('label') is-invalid @enderror" wire:model="label" name="label"  id="label" placeholder="{{ __('general_content.name_company_trans_key') }}">
+                                                    <input type="text" class="form-control @error('label') is-invalid @enderror"  wire:model.live="label" name="label"  id="label" placeholder="{{ __('general_content.name_company_trans_key') }}">
                                                 </div>
                                                 @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
@@ -40,7 +40,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                                     </div>
-                                                    <select class="form-control" name="user_id" id="user_id" wire:model="user_id">
+                                                    <select class="form-control" name="user_id" id="user_id"  wire:model.live="user_id">
                                                         <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                                                     @foreach ($userSelect as $item)
                                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -61,7 +61,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control"  name="website" id="website" wire:model="website" placeholder="Web site">
+                                                    <input type="text" class="form-control"  name="website" id="website"  wire:model.live="website" placeholder="Web site">
                                                 </div>
                                                 @error('website') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
@@ -70,7 +70,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control"  name="fbsite" id="fbsite" wire:model="fbsite"  placeholder="Facebook">
+                                                    <input type="text" class="form-control"  name="fbsite" id="fbsite"  wire:model.live="fbsite"  placeholder="Facebook">
                                                 </div>
                                                 @error('fbsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
@@ -79,7 +79,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
                                                     </div>
-                                                    <input type="text" class="form-control"  name="twittersite" id="twittersite" wire:model="twittersite" placeholder="X">
+                                                    <input type="text" class="form-control"  name="twittersite" id="twittersite"  wire:model.live="twittersite" placeholder="X">
                                                 </div>
                                                 @error('twittersite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
@@ -88,7 +88,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
                                                     </div>
-                                                <input type="text" class="form-control"  name="lkdsite" id="lkdsite" wire:model="lkdsite" placeholder="Linkedin">
+                                                <input type="text" class="form-control"  name="lkdsite" id="lkdsite"  wire:model.live="lkdsite" placeholder="Linkedin">
                                                 </div>
                                                 @error('lkdsite') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
@@ -100,15 +100,15 @@
                                         </div>
                                         <div class="form-row">
                                             <div class="form-group col-md-3">
-                                                <input type="text" class="form-control" name="siren" id="siren" wire:model="siren" placeholder="{{ __('general_content.reg_number_trans_key') }}">
+                                                <input type="text" class="form-control" name="siren" id="siren"  wire:model.live="siren" placeholder="{{ __('general_content.reg_number_trans_key') }}">
                                                 @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-3">
-                                                <input type="text" class="form-control" name="naf_code" id="naf_code" wire:model="naf_code" placeholder="{{ __('general_content.naf_code_trans_key') }}">
+                                                <input type="text" class="form-control" name="naf_code" id="naf_code"  wire:model.live="naf_code" placeholder="{{ __('general_content.naf_code_trans_key') }}">
                                                 @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-3">
-                                                <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat" wire:model="intra_community_vat" placeholder="{{ __('general_content.vat_number_trans_key') }}">
+                                                <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  wire:model.live="intra_community_vat" placeholder="{{ __('general_content.vat_number_trans_key') }}">
                                                 @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
@@ -124,18 +124,18 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                                     </div>
-                                                    <input type="number" class="form-control" name="discount" id="discount" wire:model="discount" placeholder="{{ __('general_content.discount_trans_key') }}">
+                                                    <input type="number" class="form-control" name="discount" id="discount"  wire:model.live="discount" placeholder="{{ __('general_content.discount_trans_key') }}">
                                                 </div>
                                                 @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label for="account_general_customer">{{ __('general_content.general_account_trans_key') }}</label>
-                                                <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" wire:model="account_general_customer" placeholder="{{ __('general_content.general_account_trans_key') }}">
+                                                <input type="number" class="form-control" name="account_general_customer" id="account_general_customer"  wire:model.live="account_general_customer" placeholder="{{ __('general_content.general_account_trans_key') }}">
                                                 @error('account_general_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label for="account_auxiliary_customer">{{ __('general_content.auxiliary_account_trans_key') }}</label>
-                                                <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" wire:model="account_auxiliary_customer" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
+                                                <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer"  wire:model.live="account_auxiliary_customer" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
                                                 @error('account_auxiliary_customer') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
@@ -147,7 +147,7 @@
                                         <div class="form-row">
                                             <div class="form-group col-md-3">
                                                 <label for="recept_controle">{{ __('general_content.reception_control_trans_key') }}</label>
-                                                <select class="form-control" name="recept_controle" id="recept_controle" wire:model="recept_controle">
+                                                <select class="form-control" name="recept_controle" id="recept_controle"  wire:model.live="recept_controle">
                                                     <option value="">{{ __('general_content.select_control_type_trans_key') }}</option>
                                                     <option value="1">{{ __('general_content.yes_trans_key') }}</option>
                                                     <option value="2">{{ __('general_content.no_trans_key') }}</option>
@@ -156,12 +156,12 @@
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label for="account_general_supplier">{{ __('general_content.general_account_trans_key') }}</label>
-                                                <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  wire:model="account_general_supplier" placeholder="{{ __('general_content.general_account_trans_key') }}">
+                                                <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"   wire:model.live="account_general_supplier" placeholder="{{ __('general_content.general_account_trans_key') }}">
                                                 @error('account_general_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label for="account_auxiliary_supplier">{{ __('general_content.auxiliary_account_trans_key') }}</label>
-                                                <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  wire:model="account_auxiliary_supplier" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
+                                                <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"   wire:model.live="account_auxiliary_supplier" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
                                                 @error('account_auxiliary_supplier') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>
@@ -170,7 +170,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <label>{{ __('general_content.comment_trans_key') }}</label>
-                                                <textarea class="form-control" rows="3" name="comment"  wire:model="comment" placeholder="..."></textarea>
+                                                <textarea class="form-control" rows="3" name="comment"   wire:model.live="comment" placeholder="..."></textarea>
                                                 @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>

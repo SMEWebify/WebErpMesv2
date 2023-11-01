@@ -7,11 +7,11 @@
             @if($OrderStatu == 1)
                 @if($updateLines)
                 <form wire:submit.prevent="update">
-                            <input type="hidden" wire:model="order_lines_id">
+                            <input type="hidden" wire:model.live="order_lines_id">
                             @include('livewire.form.line-update')
                 @else
                 <form wire:submit.prevent="storeOrderLine">
-                            <input type="hidden"  name="orders_id"  id="orders_id" value="1" wire:model="orders_id" >
+                            <input type="hidden"  name="orders_id"  id="orders_id" value="1" wire:model.live="orders_id" >
                             @include('livewire.form.line-create')
                 @endif
             @else

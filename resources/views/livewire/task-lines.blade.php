@@ -8,7 +8,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
                         </div>
-                        <input type="text" class="form-control" wire:model="search" placeholder="{{ __('general_content.search_task_trans_key') }}">
+                        <input type="text" class="form-control" wire:model.live="search" placeholder="{{ __('general_content.search_task_trans_key') }}">
                     </div>
                 </div>
             </div>
@@ -21,7 +21,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-list"></i></span>
                                 </div>
-                                <select class="form-control" name="searchIdService" id="searchIdService" wire:model="searchIdService">
+                                <select class="form-control" name="searchIdService" id="searchIdService" wire:model.live="searchIdService">
                                     <option value="">{{ __('general_content.select_service_trans_key') }}</option>
                                     @forelse ($ServicesSelect as $item)
                                     <option value="{{ $item->id }}">{{ $item->label }}</option>
@@ -41,7 +41,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-list"></i></span>
                                 </div>
-                                <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model="searchIdStatus">
+                                <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
                                     <option value="" selected>{{ __('general_content.select_type_trans_key') }}</option>
                                     @forelse ($StatusSelect as $item)
                                     <option value="{{ $item->id }}">{{ $item->title }}</option>
@@ -56,7 +56,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="ShowGenericTask">{{ __('general_content.show_generic_task_trans_key') }}</label>
-                            <input type="checkbox" id="ShowGenericTask" wire:model="ShowGenericTask" style=" display:flex; align-items:center;">
+                            <input type="checkbox" id="ShowGenericTask" wire:model.live="ShowGenericTask" style=" display:flex; align-items:center;">
                         </div>
                     </div>
                 </div>

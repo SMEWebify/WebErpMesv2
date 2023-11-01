@@ -5,7 +5,7 @@
         <div class="input-group-prepend">
             <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
         </div>
-        <input type="text" class="form-control" wire:model="search" placeholder="{{ __('general_content.search_task_trans_key') }}">
+        <input type="text" class="form-control" wire:model.live="search" placeholder="{{ __('general_content.search_task_trans_key') }}">
     </div>
   </div>
 
@@ -114,7 +114,7 @@
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-times"></i></span>
                           </div>
-                          <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model="addGoodQt">
+                          <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.live="addGoodQt">
                           <span class="input-group-append">
                             <button type="submit" class="btn btn-info btn-flat">Set</button>
                           </span>
@@ -131,7 +131,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-times"></i></span>
                         </div>
-                        <input type="number" class="form-control @error('addBadQt') is-invalid @enderror" id="addBadQt" placeholder="{{ __('general_content.quantity_rejected_trans_key') }}" min="0" wire:model="addBadQt">
+                        <input type="number" class="form-control @error('addBadQt') is-invalid @enderror" id="addBadQt" placeholder="{{ __('general_content.quantity_rejected_trans_key') }}" min="0" wire:model.live="addBadQt">
                         <span class="input-group-append">
                           <button type="submit" class="btn btn-info btn-flat">Set</button>
                         </span>

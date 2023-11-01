@@ -11,7 +11,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-building"></i></span>
                             </div>
-                            <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
+                            <select class="form-control" wire:model.live="companies_id" name="companies_id" id="companies_id">
                                 <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                             @forelse ($CompaniesSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -28,7 +28,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
+                            <input type="text" class="form-control" wire:model.live="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                         </div>
                         @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -38,7 +38,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model="label" name="label"  id="label"  placeholder="{{ __('general_content.name_of_deliverys_notes_trans_key') }}" required>
+                            <input type="text" class="form-control" wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_of_deliverys_notes_trans_key') }}" required>
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -48,7 +48,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" wire:model="user_id" name="user_id" id="user_id">
+                            <select class="form-control" wire:model.live="user_id" name="user_id" id="user_id">
                                 <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                             @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -63,7 +63,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                             </div>
-                            <select class="form-control" wire:model="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
+                            <select class="form-control" wire:model.live="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
                                 <option value="">{{ __('general_content.select_address_trans_key') }}</option>
                             @forelse ($AddressSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
@@ -80,7 +80,7 @@
                             <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" wire:model="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
+                            <select class="form-control" wire:model.live="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
                                 <option value="">{{ __('general_content.select_contact_trans_key') }}</option>
                             @forelse ($ContactSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
@@ -143,7 +143,7 @@
                             {{ $DeliverysRequestsLine->delivered_remaining_qty }}
                         </td>
                         <td>
-                            <input class="form-control" wire:model="data.{{ $DeliverysRequestsLine->id }}.scumQty" placeholder="{{ __('general_content.qty_trans_key') }}" type="number">
+                            <input class="form-control" wire:model.live="data.{{ $DeliverysRequestsLine->id }}.scumQty" placeholder="{{ __('general_content.qty_trans_key') }}" type="number">
                         </td>
                         <td>{{ $DeliverysRequestsLine->Unit['label'] }}</td>
                         <td>{{ $DeliverysRequestsLine->selling_price }}</td>
@@ -152,7 +152,7 @@
                         <td>{{ $DeliverysRequestsLine->delivery_date }}</td>
                         <td>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model="data.{{ $DeliverysRequestsLine->id }}.order_line_id" id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  type="checkbox">
+                                <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model.live="data.{{ $DeliverysRequestsLine->id }}.order_line_id" id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  type="checkbox">
                                 <label for="data.{{ $DeliverysRequestsLine->id }}.order_line_id" class="custom-control-label">Add to new delivery note</label>
                             </div>
                         </td>

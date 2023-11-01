@@ -5,11 +5,11 @@
             @if($QuoteStatu == 1)
                 @if($updateLines)
                 <form wire:submit.prevent="updateQuoteLine">
-                            <input type="hidden" wire:model="quote_lines_id">
+                            <input type="hidden" wire:model.live="quote_lines_id">
                             @include('livewire.form.line-update')
                 @else
                 <form wire:submit.prevent="storeQuoteLine">
-                            <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model="quotes_id" >
+                            <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model.live="quotes_id" >
                             @include('livewire.form.line-create')
                 @endif
             @else
@@ -243,7 +243,7 @@
                             </td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $QuoteLine->id }}" wire:model="data.{{ $QuoteLine->id }}.quote_line_id" id="data.{{ $QuoteLine->id }}.quote_line_id"  type="checkbox">
+                                    <input class="custom-control-input" value="{{ $QuoteLine->id }}" wire:model.live="data.{{ $QuoteLine->id }}.quote_line_id" id="data.{{ $QuoteLine->id }}.quote_line_id"  type="checkbox">
                                     <label for="data.{{ $QuoteLine->id }}.quote_line_id" class="custom-control-label">+</label>
                                 </div>
                             </td>

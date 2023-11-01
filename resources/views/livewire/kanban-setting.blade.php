@@ -11,7 +11,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
-                            <select class="form-control @error('title') is-invalid @enderror" name="title" id="title"  wire:model="title">
+                            <select class="form-control @error('title') is-invalid @enderror" name="title" id="title"  wire:model.live="title">
                                 <option value="" selected>{{ __('general_content.select_type_trans_key') }}</option>
                                 <option value="Open" >{{ __('general_content.open_trans_key') }}</option>
                                 <option value="Started" >{{ __('general_content.started_trans_key') }}</option>
@@ -32,7 +32,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="number" class="form-control @error('order') is-invalid @enderror" id="order" placeholder="{{ __('general_content.sort_trans_key') }}" wire:model="order">
+                            <input type="number" class="form-control @error('order') is-invalid @enderror" id="order" placeholder="{{ __('general_content.sort_trans_key') }}" wire:model.live="order">
                         </div>
                         @error('order') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>

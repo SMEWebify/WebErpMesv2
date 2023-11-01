@@ -13,7 +13,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
-                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model="year">
+                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model.live="year">
                                 <option value="" >{{ __('general_content.select_year_trans_key') }}</option>
                                 <option value="2021" >2021</option>
                                 <option value="2022" >2022</option>
@@ -35,7 +35,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model="amount1">
+                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model.live="amount1">
                         </div>
                         @error('amount1') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -45,7 +45,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model="amount2">
+                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model.live="amount2">
                         </div>
                         @error('amount2') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -55,7 +55,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model="amount3">
+                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model.live="amount3">
                         </div>
                         @error('amount3') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -65,7 +65,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model="amount4">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model.live="amount4">
                         </div>
                         @error('amount4') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -81,7 +81,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model="amount5">
+                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model.live="amount5">
                         </div>
                         @error('amount5') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -91,7 +91,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model="amount6">
+                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model.live="amount6">
                         </div>
                         @error('amount6') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -101,7 +101,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model="amount7">
+                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model.live="amount7">
                         </div>
                         @error('amount7') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -111,7 +111,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model="amount8">
+                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model.live="amount8">
                         </div>
                         @error('amount8') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -127,7 +127,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model="amount9">
+                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model.live="amount9">
                         </div>
                         @error('amount9') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -137,7 +137,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model="amount10">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model.live="amount10">
                         </div>
                         @error('amount10') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -147,7 +147,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model="amount11">
+                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model.live="amount11">
                         </div>
                         @error('amount11') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -157,7 +157,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model="amount12">
+                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model.live="amount12">
                         </div>
                         @error('amount12') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -172,7 +172,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
-                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model="year">
+                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model.live="year">
                                 <option value="" >{{ __('general_content.select_year_trans_key') }}</option>
                                 <option value="2021" >2021</option>
                                 <option value="2022" >2022</option>
@@ -194,7 +194,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model="amount1">
+                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model.live="amount1">
                         </div>
                         @error('amount1') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -204,7 +204,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model="amount2">
+                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model.live="amount2">
                         </div>
                         @error('amount2') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -214,7 +214,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model="amount3">
+                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model.live="amount3">
                         </div>
                         @error('amount3') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -224,7 +224,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model="amount4">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model.live="amount4">
                         </div>
                         @error('amount4') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -240,7 +240,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model="amount5">
+                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model.live="amount5">
                         </div>
                         @error('amount5') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -250,7 +250,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model="amount6">
+                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model.live="amount6">
                         </div>
                         @error('amount6') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -260,7 +260,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model="amount7">
+                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model.live="amount7">
                         </div>
                         @error('amount7') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -270,7 +270,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model="amount8">
+                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model.live="amount8">
                         </div>
                         @error('amount8') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -285,7 +285,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model="amount9">
+                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model.live="amount9">
                         </div>
                         @error('amount9') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -295,7 +295,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model="amount10">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model.live="amount10">
                         </div>
                         @error('amount10') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -305,7 +305,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model="amount11">
+                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model.live="amount11">
                         </div>
                         @error('amount11') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -315,7 +315,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model="amount12">
+                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model.live="amount12">
                         </div>
                         @error('amount12') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>

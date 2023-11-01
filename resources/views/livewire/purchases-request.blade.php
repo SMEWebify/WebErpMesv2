@@ -11,7 +11,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <select class="form-control"  wire:click.prevent="changeDocument()" wire:model="document_type" name="document_type" id="document_type">
+                            <select class="form-control"  wire:click.prevent="changeDocument()" wire:model.live="document_type" name="document_type" id="document_type">
                                 <option value="">{{ __('general_content.select_document_trans_key') }}</option>
                                 <option value="PU">{{ __('general_content.purchase_order_trans_key') }}</option>
                                 <option value="PQ">{{ __('general_content.purchase_quotation_trans_key') }}</option>
@@ -25,7 +25,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-building"></i></span>
                             </div>
-                            <select class="form-control" wire:model="companies_id" name="companies_id" id="companies_id">
+                            <select class="form-control" wire:model.live="companies_id" name="companies_id" id="companies_id">
                                 <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                             @forelse ($CompaniesSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -42,7 +42,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
+                            <input type="text" class="form-control" wire:model.live="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                         </div>
                         @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -52,7 +52,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model="label" name="label"  id="label"  placeholder="{{ __('general_content.name_of_deliverys_notes_trans_key') }}" required>
+                            <input type="text" class="form-control" wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_of_deliverys_notes_trans_key') }}" required>
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -62,7 +62,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" wire:model="user_id" name="user_id" id="user_id">
+                            <select class="form-control" wire:model.live="user_id" name="user_id" id="user_id">
                                 <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                             @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -110,7 +110,7 @@
                         <td>@if($PurchasesRequestsLines->methods_services_id ) {{ $PurchasesRequestsLines->service['label'] }}@endif</td>
                         <td>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" value="{{ $PurchasesRequestsLines->id }}" wire:model="data.{{ $PurchasesRequestsLines->id }}.task_id" id="data.{{ $PurchasesRequestsLines->id }}.task_id"  type="checkbox">
+                                <input class="custom-control-input" value="{{ $PurchasesRequestsLines->id }}" wire:model.live="data.{{ $PurchasesRequestsLines->id }}.task_id" id="data.{{ $PurchasesRequestsLines->id }}.task_id"  type="checkbox">
                                 <label for="data.{{ $PurchasesRequestsLines->id }}.task_id" class="custom-control-label">{{ __('general_content.add_to_document_trans_key') }} </label>
                             </div>
                         </td>
