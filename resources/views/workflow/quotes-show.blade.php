@@ -71,6 +71,10 @@
                     </div>
                   </div>
                   @else
+                  <input type="hidden" name="companies_id" value="{{ $Quote->companies_id }}">
+                  <input type="hidden" name="customer_reference" value="{{ $Quote->customer_reference }}">
+                  <input type="hidden" name="companies_addresses_id" value="{{ $Quote->companies_addresses_id }}">
+                  <input type="hidden" name="companies_contacts_id" value="{{ $Quote->companies_contacts_id }}">
                   <x-adminlte-alert theme="info" title="Info">
                     The customer <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
                   </x-adminlte-alert>
