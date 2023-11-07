@@ -598,6 +598,7 @@ return [
     'bill_of_materials_trans_key'              => 'Nomenclature',
     'bom_trans_key'                            => 'BOM',
     'generic_trans_key'                        => 'Générique',
+    'end_date_trans_key'                       => 'Date de fin',
 
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Bons de livraisons',

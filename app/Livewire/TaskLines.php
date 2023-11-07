@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
@@ -17,12 +18,13 @@ class TaskLines extends Component
     public $search = '';
     public $searchIdService = '';
     public $searchIdStatus = '';
-    public $sortField = 'created_at'; // default sorting field
-    public $sortAsc = false; // default sort direction
+    public $sortField = 'end_date'; // default sorting field
+    public $sortAsc = true; // default sort direction
     public $ShowGenericTask = false;
 
     public $Tasklist;
     public $Factory = [];
+    public $todayDate = '';
 
     public function sortBy($field)
     {
@@ -42,6 +44,7 @@ class TaskLines extends Component
     public function mount() 
     {
         $this->Factory = Factory::first();
+        $this->todayDate = Carbon::today();
     }
 
     public function render()

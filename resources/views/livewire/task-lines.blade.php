@@ -80,6 +80,7 @@
                             <th>{{ __('general_content.total_time_trans_key') }}</th>
                             <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{__('general_content.end_date_trans_key') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,8 +93,18 @@
                                 {{__('general_content.generic_trans_key') }} 
                                 @endif
                             </td>
-                            <td><a href="{{ route('production.task.statu.id', ['id' => $Task->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $Task->id }} - {{ $Task->label }}</td>
-                            <td>@if($Task->component_id ) {{ $Task->Component['label'] }}@endif</td>
+                            <td>
+                                <a href="{{ route('production.task.statu.id', ['id' => $Task->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                                #{{ $Task->id }} - {{ $Task->label }}
+                                @if($Task->component_id )
+                                    - {{ $Task->Component['label'] }}
+                                @endif
+                            </td>
+                            <td>
+                                @if($Task->component_id ) 
+                                <x-ButtonTextView route="{{ route('products.show', ['id' => $Task->component_id])}}" />
+                                @endif
+                            </td>
                             <td @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
                             <td>{{ $Task->qty }}</td>
                             <td>@if($Task->methods_units_id ) {{ $Task->Unit['label'] }}@endif</td>
@@ -108,6 +119,13 @@
                                 @endif
                             </td>
                             <td>{{ $Task->status['title'] }}</td>
+                            @if($todayDate->format("Y-m-d") > $Task->getFormattedEndDateAttribute() )
+                            <td class="bg-danger color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td>
+                            @elseif($todayDate->format("Y-m-d") == $Task->getFormattedEndDateAttribute() )
+                            <td class="bg-orange color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td> 
+                            @else
+                            <td class="bg-success color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td>
+                            @endif 
                         </tr>
                         @empty
                             <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
@@ -126,6 +144,7 @@
                             <th>{{ __('general_content.total_time_trans_key') }}</th>
                             <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{__('general_content.end_date_trans_key') }}</th>
                         </tr>
                     </tfoot>
                 </table>

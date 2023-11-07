@@ -53,6 +53,7 @@ class Task extends Model
                             'diameter',
                             'diameter_oversize',
                             'to_schedule',
+                            'end_date',
                             'material', 
                             'thickness', 
                             'weight', 
@@ -188,6 +189,11 @@ class Task extends Model
         return   TaskActivities::where('task_id', $this->id)
                                 ->where('type', 5)
                                 ->sum('bad_qt');
+    }
+
+    public function getFormattedEndDateAttribute()
+    {
+        return date('Y-m-d', strtotime($this->end_date));
     }
 
     public function GetPrettyCreatedAttribute()

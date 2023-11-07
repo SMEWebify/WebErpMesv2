@@ -598,6 +598,7 @@ return [
     'bill_of_materials_trans_key'              => 'Bill of materials',
     'bom_trans_key'                            => 'BOM',
     'generic_trans_key'                        => 'Generic',
+    'end_date_trans_key'                       => 'End Date',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Delivery notes',
