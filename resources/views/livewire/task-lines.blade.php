@@ -119,7 +119,9 @@
                                 @endif
                             </td>
                             <td>{{ $Task->status['title'] }}</td>
-                            @if($todayDate->format("Y-m-d") > $Task->getFormattedEndDateAttribute() )
+                            @if($Task->type != 1 & $Task->type != 7)
+                            <td class="bg-info color-palette">{{ $Task->service['label'] }}</td>
+                            @elseif($todayDate->format("Y-m-d") > $Task->getFormattedEndDateAttribute() )
                             <td class="bg-danger color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td>
                             @elseif($todayDate->format("Y-m-d") == $Task->getFormattedEndDateAttribute() )
                             <td class="bg-orange color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td> 
