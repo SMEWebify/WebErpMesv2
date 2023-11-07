@@ -216,10 +216,28 @@
         @include('include.alert-result')
         <div class="card-body">
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     @include('include.search-card')
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            </div>
+                            <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
+                                <option value="" selected>{{ __('general_content.select_statu_trans_key') }}</option>
+                                <option value="1">{{ __('general_content.open_trans_key') }}</option>
+                                <option value="2">{{ __('general_content.in_progress_trans_key') }}</option>
+                                <option value="3">{{ __('general_content.delivered_trans_key') }}</option>
+                                <option value="4">{{ __('general_content.partly_delivered_trans_key') }}</option>
+                                <!--<option value="5">{{ __('Stopped') }}</option>-->
+                                <!--<option value="6">{{ __('general_content.canceled_trans_key') }}</option>-->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
                     <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalOrder">
                         {{ __('general_content.new_order_trans_key') }}
                     </button>

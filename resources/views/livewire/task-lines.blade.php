@@ -42,7 +42,7 @@
                                     <span class="input-group-text"><i class="fas fa-list"></i></span>
                                 </div>
                                 <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
-                                    <option value="" selected>{{ __('general_content.select_type_trans_key') }}</option>
+                                    <option value="" selected>{{ __('general_content.select_statu_trans_key') }}</option>
                                     @forelse ($StatusSelect as $item)
                                     <option value="{{ $item->id }}">{{ $item->title }}</option>
                                     @empty

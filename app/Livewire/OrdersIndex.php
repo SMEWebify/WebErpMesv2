@@ -25,7 +25,8 @@ class OrdersIndex extends Component
     public $search = '';
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
-    
+    public $searchIdStatus = '';
+
     public $userSelect = [];
     public $LastOrder = '1';
 
@@ -125,12 +126,14 @@ class OrdersIndex extends Component
         if(is_numeric($this->idCompanie)){
             $Orders = Orders::withCount('OrderLines')
                             ->where('companies_id', $this->idCompanie)
+                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
                             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                             ->paginate(15);
         }
         else{
             $Orders = Orders::withCount('OrderLines')
                             ->where('label','like', '%'.$this->search.'%')
+                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
                             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                             ->paginate(15);
         }

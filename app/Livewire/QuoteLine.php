@@ -121,7 +121,9 @@ class QuoteLine extends Component
 
     public function render()
     {
-        $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('quotes_id', '=', $this->quotes_id)->where('label','like', '%'.$this->search.'%')->get();
+        $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                                                            ->where('quotes_id', '=', $this->quotes_id)
+                                                            ->where('label','like', '%'.$this->search.'%')->get();
         
         return view('livewire.quote-lines', [
             'QuoteLineslist' => $QuoteLineslist,
