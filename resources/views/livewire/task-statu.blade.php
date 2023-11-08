@@ -77,8 +77,6 @@
               <h3 class="text-primary">
                 <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  /> - {{ __('general_content.task_trans_key') }}  #{{ $Task->id }} {{ $Task->service['label'] }} 
               </h3>
-              
-              
               <hr>
               <div class="row">
                 @if($lastTaskActivities)
@@ -139,6 +137,12 @@
                     @error('addBadQt') <span class="text-danger">{{ $message }}<br/></span>@enderror
                   </form>
                 </div>
+              </div>
+              <hr>
+              <div class="text-muted">
+                <p class="text-sm">{{ __('general_content.end_date_trans_key') }}  
+                  <b class="d-block">{{ $Task->getFormattedEndDateAttribute() }}</b>
+                </p>
               </div>
               <hr>
               <div class="text-muted">

@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use stdClass;
+use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
@@ -12,8 +13,8 @@ use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
-use App\Models\Methods\MethodsServices;
 use App\Models\Planning\SubAssembly;
+use App\Models\Methods\MethodsServices;
 
 class TaskManage extends Component
 {
@@ -54,9 +55,7 @@ class TaskManage extends Component
     public $UnitsSelect = [];
     public $ProductSelect  = [];
     public $ComponentSelect  = [];
-
-
-
+    public $todayDate = '';
 
     // Validation Rules
     protected $rules = [
@@ -131,6 +130,7 @@ class TaskManage extends Component
             $this->order_lines_id = $idLine;
         }
 
+        $this->todayDate = Carbon::today();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
         $this->Factory = Factory::first();
         $status =  Status::select('id')->orderBy('order')->first();

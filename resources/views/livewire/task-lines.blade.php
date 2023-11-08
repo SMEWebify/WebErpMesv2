@@ -66,6 +66,8 @@
                     <thead>
                         <tr>
                             <th>{{ __('general_content.order_trans_key') }}</th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                             </th>
@@ -74,9 +76,8 @@
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('methods_units_id')" role="button" href="#">{{__('general_content.service_trans_key') }} @include('include.sort-icon', ['field' => 'methods_units_id'])</a>
                             </th>
                             <th>{{ __('general_content.qty_trans_key') }}</th>
-                            <th>{{ __('general_content.unit_trans_key') }}</th>
-                            <th>{{ __('general_content.cost_trans_key') }}</th>
-                            <th>{{ __('general_content.price_trans_key') }}</th>
+                            <th>{{ __('general_content.setting_time_trans_key') }}</th>
+                            <th>{{ __('general_content.unit_time_trans_key') }}</th>
                             <th>{{ __('general_content.total_time_trans_key') }}</th>
                             <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
@@ -88,11 +89,13 @@
                         <tr > 
                             <td>
                                 @if($Task->OrderLines ?? null)
-                                    <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />
+                                    <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  /> 
                                 @else
                                 {{__('general_content.generic_trans_key') }} 
                                 @endif
                             </td>
+                            <td>@if($Task->OrderLines ?? null){{ $Task->OrderLines->qty }} x @endif</td>
+                            <td>@if($Task->OrderLines ?? null){{ $Task->OrderLines->label }}@endif</td>
                             <td>
                                 <a href="{{ route('production.task.statu.id', ['id' => $Task->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
                                 #{{ $Task->id }} - {{ $Task->label }}
@@ -105,19 +108,12 @@
                                 <x-ButtonTextView route="{{ route('products.show', ['id' => $Task->component_id])}}" />
                                 @endif
                             </td>
-                            <td @if($Task->methods_services_id ) style="color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
+                            <td @if($Task->methods_services_id ) style="background-color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
                             <td>{{ $Task->qty }}</td>
-                            <td>@if($Task->methods_units_id ) {{ $Task->Unit['label'] }}@endif</td>
-                            <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
-                            <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
+                            <td>{{ $Task->seting_time }} h</td>
+                            <td>{{ $Task->unit_time }} h</td>
                             <td>{{ $Task->TotalTime() }} h</td>
-                            <td>
-                                @if($Task->progress() > 100 )
-                                    <x-adminlte-progress theme="teal" value="100" with-label animated/>
-                                @else
-                                    <x-adminlte-progress theme="teal" value="{{ $Task->progress() }}" with-label animated/>
-                                @endif
-                            </td>
+                            <td><x-adminlte-progress theme="teal" value="{{ $Task->progress() }}" with-label animated/></td>
                             <td>{{ $Task->status['title'] }}</td>
                             @if($Task->type != 1 & $Task->type != 7)
                             <td class="bg-info color-palette">{{ $Task->service['label'] }}</td>
@@ -126,7 +122,7 @@
                             @elseif($todayDate->format("Y-m-d") == $Task->getFormattedEndDateAttribute() )
                             <td class="bg-orange color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td> 
                             @else
-                            <td class="bg-success color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td>
+                            <td class="bg-primary color-palette">{{ $Task->getFormattedEndDateAttribute() }}</td>
                             @endif 
                         </tr>
                         @empty
@@ -136,13 +132,14 @@
                     <tfoot>
                         <tr>
                             <th>{{ __('general_content.order_trans_key') }}</th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
                             <th>{{ __('general_content.description_trans_key') }}</th>
                             <th>{{ __('general_content.product_trans_key') }}</th>
                             <th>{{ __('general_content.service_trans_key') }}</th>
                             <th>{{ __('general_content.qty_trans_key') }}</th>
-                            <th>{{ __('general_content.unit_trans_key') }}</th>
-                            <th>{{ __('general_content.cost_trans_key') }}</th>
-                            <th>{{ __('general_content.price_trans_key') }}</th>
+                            <th>{{ __('general_content.setting_time_trans_key') }}</th>
+                            <th>{{ __('general_content.unit_time_trans_key') }}</th>
                             <th>{{ __('general_content.total_time_trans_key') }}</th>
                             <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>

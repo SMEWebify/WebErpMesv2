@@ -172,11 +172,14 @@
                             <th>{{ __('general_content.service_trans_key') }}</th>
                             <th>{{ __('general_content.setting_time_trans_key') }}</th>
                             <th>{{ __('general_content.unit_time_trans_key') }}</th>
+                            <th>{{ __('general_content.total_time_trans_key') }}</th>
+                            <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{ __('general_content.cost_trans_key') }}</th>
                             <th>{{ __('general_content.margin_trans_key') }}</th>
                             <th>{{ __('general_content.price_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
                             <th>{{__('general_content.action_trans_key') }}</th>
+                            <th>{{__('general_content.end_date_trans_key') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -185,9 +188,11 @@
                             <td><a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $TechLine->id }}</a></td>
                             <td>{{ $TechLine->ordre }}</td>
                             <td>{{ $TechLine->label }}</td>
-                            <td>{{ $TechLine->service['label'] }}</td>
+                            <td @if($TechLine->methods_services_id ) style="background-color: {{ $TechLine->service['color'] }};" @endif >@if($TechLine->methods_services_id ) {{ $TechLine->service['label'] }}@endif</td>
                             <td>{{ $TechLine->seting_time }} h</td>
                             <td>{{ $TechLine->unit_time }} h</td>
+                            <td>{{ $TechLine->TotalTime() }} h</td>
+                            <td><x-adminlte-progress theme="teal" value="{{ $TechLine->progress() }}" with-label animated/></td>
                             <td>{{ $TechLine->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $TechLine->Margin() }} %</td>
                             <td>{{ $TechLine->unit_price }} {{ $Factory->curency }}</td>
@@ -208,6 +213,15 @@
                                     </div>
                                 </div>
                             </td>
+                            @if($TechLine->type != 1 & $TechLine->type != 7)
+                            <td class="bg-info color-palette">{{ $TechLine->service['label'] }}</td>
+                            @elseif($todayDate->format("Y-m-d") > $TechLine->getFormattedEndDateAttribute() )
+                            <td class="bg-danger color-palette">{{ $TechLine->getFormattedEndDateAttribute() }}</td>
+                            @elseif($todayDate->format("Y-m-d") == $TechLine->getFormattedEndDateAttribute() )
+                            <td class="bg-orange color-palette">{{ $TechLine->getFormattedEndDateAttribute() }}</td> 
+                            @else
+                            <td class="bg-primary color-palette">{{ $TechLine->getFormattedEndDateAttribute() }}</td>
+                            @endif 
                         </tr>
                         @empty
                         <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
@@ -268,7 +282,7 @@
                             <td>#{{ $BOMline->id }}</td>
                             <td>{{ $BOMline->ordre }}</td>
                             <td>{{ $BOMline->label }}</td>
-                            <td>{{ $BOMline->service['label'] }}</td>
+                            <td @if($BOMline->methods_services_id ) style="background-color: {{ $BOMline->service['color'] }};" @endif >@if($BOMline->methods_services_id ) {{ $BOMline->service['label'] }}@endif</td>
                             <td>{{ $BOMline->Component['code'] }}</td>
                             <td>{{ $BOMline->qty }}</td>
                             <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>

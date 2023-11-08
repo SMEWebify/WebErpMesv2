@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class Task extends Model
 {
@@ -193,7 +194,10 @@ class Task extends Model
 
     public function getFormattedEndDateAttribute()
     {
-        return date('Y-m-d', strtotime($this->end_date));
+        if(!is_null($this->end_date)){
+            return date('Y-m-d', strtotime($this->end_date));
+        }
+        return "NULL";
     }
 
     public function GetPrettyCreatedAttribute()
