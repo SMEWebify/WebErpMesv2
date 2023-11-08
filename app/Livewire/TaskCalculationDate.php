@@ -28,18 +28,17 @@ class TaskCalculationDate extends Component
     {
         $countLines = DB::table('order_lines')
                                 ->join('orders', 'order_lines.orders_id', '=', 'orders.id')
-                                ->where('orders.statu', '=', 1)
-                                ->Orwhere('orders.statu', '=', 2)
+                                ->where('order_lines.tasks_status', '!=', 4)
                                 ->orderBy('order_lines.internal_delay')
                                 ->count();
 
         $OrderLines = OrderLines::with('order')
                                 ->join('orders', 'order_lines.orders_id', '=', 'orders.id')
-                                ->where('orders.statu', '=', 1)
-                                ->Orwhere('orders.statu', '=', 2)
+                                ->where('order_lines.tasks_status', '!=', 4)
                                 ->orderBy('order_lines.internal_delay')
                                 ->select('order_lines.*')
                                 ->get();
+                                
 
         //value to substrac
         $totalTaskLineTime = 0;
