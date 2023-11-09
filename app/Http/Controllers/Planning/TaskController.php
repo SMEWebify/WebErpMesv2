@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Planning;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
@@ -11,6 +12,8 @@ use App\Models\Workflow\Quotes;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Planning\TaskActivities;
 
 class TaskController extends Controller
 {
@@ -72,10 +75,34 @@ class TaskController extends Controller
             'columns' => ['required', 'array']
         ]);
 
+        $StatusInProgessId = Status::select('id')->where('title', 'In Progress')->first();
+        $StatusFinishId = Status::select('id')->where('title', 'Finished')->first();
+
         foreach ($request->columns as $status) {
             foreach ($status['tasks'] as $i => $task) {
                 if ($task['status_id'] !== $status['id']) {
                     Task::find($task['id'])->update(['status_id' => $status['id']]);
+
+                    if($status['id'] == $StatusInProgessId->id){
+                         // Create Line
+                        TaskActivities::create([
+                            'task_id'=> $task['id'],
+                            'user_id'=> Auth::user()->id,
+                            'type'=>'1',
+                            'timestamp' =>Carbon::now(),
+                            'comment'=>'',
+                        ]);
+                    }
+                    elseif($status['id'] == $StatusFinishId->id){
+                        // Create Line
+                        TaskActivities::create([
+                            'task_id'=> $task['id'],
+                            'user_id'=> Auth::user()->id,
+                            'type'=>'3',
+                            'timestamp' =>Carbon::now(),
+                            'comment'=>'',
+                        ]);
+                    }
                 }
             }
         }

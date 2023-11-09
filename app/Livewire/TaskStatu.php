@@ -56,7 +56,6 @@ class TaskStatu extends Component
             $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
             $this->Task = Task::with('OrderLines.order')->find($this->search);
         }
-                            
         
         return view('livewire.task-statu', [
             'Task' => $this->Task,

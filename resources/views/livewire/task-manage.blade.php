@@ -235,6 +235,8 @@
                             <th></th>
                             <th>{{ $Line->getTechnicalCutTotalSettingTimeAttribute() }} h</th>
                             <th>{{ $Line->getTechnicalCutTotalUnitTimeAttribute() }} h</th>
+                            <th></th>
+                            <th></th>
                             <th>{{ $Line->getTechnicalCutTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
                             <th>{{ $Line->getTechnicalCutTMarginAttribute() }} %</th>
                             <th>{{ $Line->getTechnicalCutTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
