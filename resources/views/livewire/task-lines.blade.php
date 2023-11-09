@@ -126,7 +126,7 @@
                             @endif 
                         </tr>
                         @empty
-                            <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
+                            <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>

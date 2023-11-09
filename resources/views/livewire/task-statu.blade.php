@@ -139,10 +139,33 @@
                 </div>
               </div>
               <hr>
-              <div class="text-muted">
-                <p class="text-sm">{{ __('general_content.end_date_trans_key') }}  
-                  <b class="d-block">{{ $Task->getFormattedEndDateAttribute() }}</b>
-                </p>
+              <div class="row">
+                <div class="col-2 text-muted">
+                  <p class="text-sm">{{ __('general_content.end_date_trans_key') }}  
+                    <b class="d-block">{{ $Task->getFormattedEndDateAttribute() }}</b>
+                  </p>
+                </div>
+                <div class="col-2 text-muted">
+                  <div class="form-group">
+                    <label for="not_recalculate">Not Recalculate</label>
+                    <input type="checkbox" id="not_recalculate" wire:model.live="not_recalculate" style=" display:flex; align-items:center;">
+                </div>
+                </div>
+                <div class="col-8 text-muted">
+                  <form wire:submit.prevent="updateDateTask">
+                    <label for="end_date">{{ __('general_content.end_date_trans_key') }} :</label>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                        </div>
+                        <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" id="end_date"  wire:model.live="end_date">
+                        <span class="input-group-append">
+                          <button type="submit" class="btn btn-info btn-flat">Set</button>
+                        </span>
+                      </div>
+                    @error('end_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                  </form>
+                </div>
               </div>
               <hr>
               <div class="text-muted">

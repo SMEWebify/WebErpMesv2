@@ -27,7 +27,10 @@ class TaskStatu extends Component
     
     public $addGoodQt = 0;
     public $addBadQt = 0;
-    
+    public $not_recalculate = true;
+    private $RecalculateBooleanValue = 0;
+    public $end_date;
+
     // Validation Rules
     protected $rules = [
         'addGoodQt' =>'required|numeric|min:0',
@@ -42,6 +45,7 @@ class TaskStatu extends Component
         $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
         $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
         $this->Task = Task::with('OrderLines.order')->find($this->search);
+       // $this->end_date = $this->Task->end_date;
     }
 
     public function render()
@@ -152,5 +156,15 @@ class TaskStatu extends Component
 
         // Set Flash Message
         session()->flash('success','Log activitie added successfully');
+    }
+
+    public function updateDateTask(){
+        if($this->not_recalculate) $this->RecalculateBooleanValue = 1;
+        Task::find($this->search)->fill([
+            'not_recalculate'=>$this->RecalculateBooleanValue,
+            'end_date'=>$this->end_date,
+        ])->save();
+
+        session()->flash('success','Date Updated Successfully');
     }
 }

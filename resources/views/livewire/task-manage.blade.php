@@ -136,7 +136,7 @@
                     <div class="form-group col-md-2">
                         @if($TaskType == 'BOM' or $TaskType == 'TechCut')
                             @if($updateLines)
-                            `<x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>`
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             @else
                             <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
                             @endif

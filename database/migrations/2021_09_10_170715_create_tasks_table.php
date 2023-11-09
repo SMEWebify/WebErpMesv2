@@ -52,6 +52,7 @@ class CreateTasksTable extends Migration
 			$table->decimal('diameter_oversize', 10, 3)->nullable();
 			$table->integer('to_schedule')->nullable();
 			$table->dateTime('end_date')->nullable();
+			$table->boolean('not_recalculate')->default(0);
 			$table->string('material')->nullable();
 			$table->decimal('thickness', 10, 3)->nullable();
 			$table->decimal('weight', 10, 3)->nullable();

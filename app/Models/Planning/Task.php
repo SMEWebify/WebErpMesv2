@@ -55,6 +55,7 @@ class Task extends Model
                             'diameter_oversize',
                             'to_schedule',
                             'end_date',
+                            'not_recalculate',
                             'material', 
                             'thickness', 
                             'weight', 

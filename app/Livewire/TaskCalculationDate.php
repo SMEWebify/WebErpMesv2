@@ -55,6 +55,7 @@ class TaskCalculationDate extends Component
             // first substrac not working time from 18:00 to 0:00
             $totalTaskLineTime += 3600*7;
             $Tasks = Task::where('order_lines_id', '=', $Line->id)
+                        ->where('not_recalculate', '=', 0)
                         ->where(function (Builder $query) {
                             return $query->where('tasks.type', 1)
                                         ->orWhere('tasks.type', 7);

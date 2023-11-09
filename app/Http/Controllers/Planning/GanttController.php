@@ -17,9 +17,12 @@ class GanttController extends Controller
      */
     public function index()
     {
-        $countTaskNullDate = DB::table('tasks')
-                                ->whereNull('end_date')
+        $countTaskNullDate = Task::whereNull('end_date')
                                 ->whereNotNull('order_lines_id')
+                                ->where(function (Builder $query) {
+                                    return $query->where('tasks.type', 1)
+                                                ->orWhere('tasks.type', 7);
+                                })
                                 ->count();
         return view('workflow/gantt-index', compact('countTaskNullDate'));
     }
