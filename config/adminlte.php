@@ -343,11 +343,11 @@ return [
             'icon' => 'fas fa-calendar-alt',
             'can'  => ['scheduling-menu'],
             'submenu' => [
-                [
+                /*[
                     'text' => 'order_calendar_trans_key',
                     'url'  => 'production/calendar',
                     'icon_color' => 'warning',
-                ],
+                ],*/
                 [
                     'text' => 'load_planning_trans_key',
                     'url'  => 'production/load-planning',
