@@ -84,7 +84,7 @@ class ProductsController extends Controller
         if($request->hasFile('picture')){
             $Product = Products::findOrFail($request->id);
             $file =  $request->file('picture');
-            $oringalFileName = $request->file->getClientOriginalName();
+            $oringalFileName = $file->getClientOriginalName();
             $fileName = time() . '_' .  $oringalFileName;
             $request->picture->move(public_path('images/products'), $fileName);
             $Product->update(['picture' => $fileName]);
