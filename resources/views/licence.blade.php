@@ -7,7 +7,8 @@
 @stop
 
 @section('content')
-<div class="content px-2">
+<div class="float-right"><img src="/vendor/adminlte/dist/img/simple-logo -R.PNG" alt="WEM" class="brand-image  elevation-3"></div>
+<div class="content px-20">
     <p>
         <a href="https://opensource.org/licenses/MIT">MIT license</a><br/>
         <br/>
