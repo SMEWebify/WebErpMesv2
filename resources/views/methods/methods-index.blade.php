@@ -141,18 +141,6 @@
                             <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}">
                           </div>
                           <div class="form-group">
-                            <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
-                            <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="far fa-image"></i></span>
-                              </div>
-                              <div class="custom-file">
-                                  <input type="file" class="custom-file-input" name="picture" id="picture">
-                                  <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group">
                             <label for="compannie_id">{{ __('general_content.supplier_trans_key') }}</label>
                               <select class="form-control" name="compannie_id" id="compannie_id">
                                 <option value="NULL">-</option>
@@ -169,6 +157,25 @@
                           <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
+                      <div class="card-body">
+                        <form action="{{ route('methods.service.update.picture', ['id' => $MethodsService->id]) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <label for="picture">{{ __('general_content.picture_file_trans_key') }}</label>(peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-image"></i></span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="hidden" name="id" value="{{ $MethodsService->id }}">
+                                    <input type="file" class="custom-file-input" name="picture" id="picture">
+                                    <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
+                                </div>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                                </div>
+                            </div>
+                        </form>
+                      </div>
                     </x-adminlte-modal>
                   </td>
                 </tr>

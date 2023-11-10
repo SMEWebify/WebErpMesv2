@@ -49,16 +49,31 @@ class ServicesController extends Controller
         $Service->compannie_id=$request->compannie_id;
         $Service->save();
 
-    /* if($request->hasFile('picture')){
+        return redirect()->route('methods')->with('success', 'Successfully updated service.');
+    }
+
+        /**
+     * @param Request $request
+     * @return View
+     */
+    public function StoreImage($idQuote,Request $request)
+    {
+        
+        $request->validate([
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+        ]);
+        
+        if($request->hasFile('picture')){
+            $Service = MethodsServices::findOrFail($request->id);
             $file =  $request->file('picture');
             $filename = time() . '_' . $file->getClientOriginalName();
             $request->picture->move(public_path('images/methods'), $filename);
             $Service->update(['picture' => $filename]);
             $Service->save();
+            return redirect()->route('methods')->with('success', 'Successfully updated service.');
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
-        }*/
-        return redirect()->route('methods')->with('success', 'Successfully updated service.');
+        }
     }
 }

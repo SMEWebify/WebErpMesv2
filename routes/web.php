@@ -255,6 +255,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/Family/edit/{id}', 'App\Http\Controllers\Methods\FamiliesController@update')->middleware(['auth'])->name('methods.family.update');
         Route::post('/Service/create', 'App\Http\Controllers\Methods\ServicesController@store')->middleware(['auth'])->name('methods.service.create');
         Route::post('/Service/edit/{id}', 'App\Http\Controllers\Methods\ServicesController@update')->middleware(['auth'])->name('methods.service.update');
+        Route::post('/Service/edit/{id}/image', 'App\Http\Controllers\Methods\ServicesController@StoreImage')->middleware(['auth'])->name('methods.service.update.picture');
         Route::post('/Section/create', 'App\Http\Controllers\Methods\SectionsController@store')->middleware(['auth'])->name('methods.section.create');
         Route::post('/Section/edit/{id}', 'App\Http\Controllers\Methods\SectionsController@update')->middleware(['auth'])->name('methods.section.update');
         Route::post('/Ressources/create', 'App\Http\Controllers\Methods\RessourcesController@store')->middleware(['auth'])->name('methods.ressource.create');
