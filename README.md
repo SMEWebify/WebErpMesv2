@@ -1,9 +1,7 @@
 <p align="center">
-  <img width="460" height="300" src="https://user-images.githubusercontent.com/75578469/127404015-3706b77f-dea3-4acb-a722-06f483de95a9.png">
+    <img src="https://github.com/SMEWebify/WebErpMesv2/assets/75578469/536ad6ff-e27e-41ca-bac1-00c6662ca827">
 </p>
 
-
-<p align="center">Web ERP and MES</p>
 
 <p align="center">
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
