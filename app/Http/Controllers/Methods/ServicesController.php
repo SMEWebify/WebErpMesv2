@@ -52,11 +52,11 @@ class ServicesController extends Controller
         return redirect()->route('methods')->with('success', 'Successfully updated service.');
     }
 
-        /**
+    /**
      * @param Request $request
      * @return View
      */
-    public function StoreImage($idQuote,Request $request)
+    public function StoreImage(Request $request)
     {
         
         $request->validate([

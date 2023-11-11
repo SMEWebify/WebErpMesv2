@@ -260,6 +260,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/Section/edit/{id}', 'App\Http\Controllers\Methods\SectionsController@update')->middleware(['auth'])->name('methods.section.update');
         Route::post('/Ressources/create', 'App\Http\Controllers\Methods\RessourcesController@store')->middleware(['auth'])->name('methods.ressource.create');
         Route::post('/Ressources/edit/{id}', 'App\Http\Controllers\Methods\RessourcesController@update')->middleware(['auth'])->name('methods.ressource.update');
+        Route::post('/Ressources/edit/{id}/image', 'App\Http\Controllers\Methods\RessourcesController@StoreImage')->middleware(['auth'])->name('methods.ressource.update.picture');
         Route::post('/Location/create', 'App\Http\Controllers\Methods\LocationsController@store')->middleware(['auth'])->name('methods.location.create');
         Route::post('/Location/edit/{id}', 'App\Http\Controllers\Methods\LocationsController@update')->middleware(['auth'])->name('methods.location.update');
         Route::post('/Tool/create', 'App\Http\Controllers\Methods\ToolsController@store')->middleware(['auth'])->name('methods.tool.create');

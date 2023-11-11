@@ -48,16 +48,32 @@ class RessourcesController extends Controller
         $Ressource->service_id=$request->service_id;
         $Ressource->save();
 
-    /* if($request->hasFile('picture')){
+        return redirect()->route('methods')->with('success', 'Successfully updated ressource.');
+    }
+
+    
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function StoreImage(Request $request)
+    {
+        
+        $request->validate([
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+        ]);
+        
+        if($request->hasFile('picture')){
+            $Service = MethodsRessources::findOrFail($request->id);
             $file =  $request->file('picture');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/methods'), $filename);
-            $Ressource->update(['picture' => $filename]);
-            $Ressource->save();
+            $request->picture->move(public_path('images/ressources'), $filename);
+            $Service->update(['picture' => $filename]);
+            $Service->save();
+            return redirect()->route('methods')->with('success', 'Successfully updated ressource.');
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
-        }*/
-        return redirect()->route('methods')->with('success', 'Successfully updated ressource.');
+        }
     }
 }

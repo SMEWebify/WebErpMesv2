@@ -26,7 +26,7 @@
   </div>
   <!-- /.card-header -->
   <div class="tab-content p-3">
-    <div class="tab-pane active" id="{{ __('general_content.service_trans_key') }}">
+    <div class="tab-pane active" id="Services">
       <x-InfocalloutComponent note="{{ __('general_content.service_info_trans_key') }}"  />
       <div class="row">
         <div class="col-md-8 card-primary">
@@ -323,8 +323,8 @@
           <div class="card-header">
               <h3 class="card-title">{{ __('general_content.ressources_trans_key') }}</h3>
           </div>
-          <div class="card-body ">
-            <table  class="table">
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover">
               <thead>
               <tr>
                 <th>{{ __('general_content.picture_trans_key') }}</th>
@@ -411,18 +411,6 @@
                             <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsRessource->color }}">
                           </div>
                           <div class="form-group">
-                            
-                            <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
-                            <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="far fa-image"></i></span>
-                              </div>
-                              <div class="custom-file">
-                                  <input type="file" class="custom-file-input" name="picture" id="picture">
-                                  <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
-                              </div>
-                          </div>
-                          <div class="form-group">
                             <label for="section_id">{{ __('general_content.section_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
@@ -458,6 +446,25 @@
                           <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
+                      <div class="card-body">
+                        <form action="{{ route('methods.ressource.update.picture', ['id' => $MethodsRessource->id]) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <label for="picture">{{ __('general_content.picture_file_trans_key') }}</label>(peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-image"></i></span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="hidden" name="id" value="{{ $MethodsRessource->id }}">
+                                    <input type="file" class="custom-file-input" name="picture" id="picture">
+                                    <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
+                                </div>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                                </div>
+                            </div>
+                        </form>
+                      </div>
                     </x-adminlte-modal>
                   </td>
                 </tr>
