@@ -22,7 +22,6 @@ class Calendar extends Component
                                 return $order;
                             });
         $this->events = json_encode($events);
-                                            
         return view('livewire.calendar');
     }
 }
