@@ -109,15 +109,27 @@ class OrdersIndex extends Component
     public function changeLabel(){
 
         $this->userSelect = User::select('id', 'name')->get();
-        $this->LastOrder =  Orders::orderBy('id', 'desc')->first();
+        $this->LastOrder = Orders::orderBy('id', 'desc')->first();
 
         if($this->type == 1){ 
-            $this->code = "OR-". $this->LastOrder->id;
-            $this->label = "OR-". $this->LastOrder->id;
+            if($this->LastOrder == Null){
+                $this->code = "OR-0";
+                $this->label = "OR-0";
+            }
+            else{
+                $this->code = "OR-". $this->LastOrder->id;
+                $this->label = "OR-". $this->LastOrder->id;
+            }
         }
-        elseif($this->type == 2){
-            $this->code = "INT-". $this->LastOrder->id;
-            $this->label = "INT-". $this->LastOrder->id;
+        elseif($this->type == 2){ 
+            if($this->LastOrder == Null){
+                $this->code = "INT-0";
+                $this->label = "INT-0";
+            }
+            else{
+                $this->code = "INT-". $this->LastOrder->id;
+                $this->label = "INT-". $this->LastOrder->id;
+            }
         }
     }
 
