@@ -210,66 +210,72 @@ class OrderLine extends Component
     public function CreatProduct($id){
 
         $ServiceComponent = MethodsServices::where('type', 8)->first();
-        $FamilieComponent = MethodsFamilies::where('service_id', $ServiceComponent->id)->first();
+        if(!empty($ServiceComponent->id)){
+            
+            $FamilieComponent = MethodsFamilies::where('service_id', $ServiceComponent->id)->first();
 
-        if(!empty($ServiceComponent->id) && !empty($FamilieComponent->id)){
-            //get data to dulicate for new order
-            $OrderlineData = Orderlines::find($id);
-            $newProduct = Products::create([
-                'code'=>$OrderlineData->code,
-                'label'=>$OrderlineData->label,
-                'methods_services_id'=> $ServiceComponent->id,
-                'methods_families_id'=> $FamilieComponent->id,
-                'purchased'=> 2,
-                'purchased_price'=> 1,
-                'sold'=> 1,
-                'selling_price'=> $OrderlineData->selling_price,
-                'methods_units_id'=>$OrderlineData->methods_units_id,
-                'tracability_type'=>1,
+            if(!empty($FamilieComponent->id)){
+                //get data to dulicate for new order
+                $OrderlineData = Orderlines::find($id);
+                $newProduct = Products::create([
+                    'code'=>$OrderlineData->code,
+                    'label'=>$OrderlineData->label,
+                    'methods_services_id'=> $ServiceComponent->id,
+                    'methods_families_id'=> $FamilieComponent->id,
+                    'purchased'=> 2,
+                    'purchased_price'=> 1,
+                    'sold'=> 1,
+                    'selling_price'=> $OrderlineData->selling_price,
+                    'methods_units_id'=>$OrderlineData->methods_units_id,
+                    'tracability_type'=>1,
+                    
+                ]);
+                //update info that order line as task
+                $OrderlineData->product_id = $newProduct->id;
+                $OrderlineData->save();
+
+                //add line detail
+                $OrderLineDetailData = OrderLineDetails::where('order_lines_id', $id)->first();
+                $newProductDetail = Products::findOrFail($newProduct->id);
+                $newProductDetail->material = $OrderLineDetailData->material;
+                $newProductDetail->thickness = $OrderLineDetailData->thickness;
+                $newProductDetail->weight = $OrderLineDetailData->weight;
+                $newProductDetail->x_size = $OrderLineDetailData->x_size;
+                $newProductDetail->y_size = $OrderLineDetailData->y_size;
+                $newProductDetail->z_size = $OrderLineDetailData->z_size;
+                $newProductDetail->x_oversize = $OrderLineDetailData->x_oversize;
+                $newProductDetail->y_oversize = $OrderLineDetailData->y_oversize;
+                $newProductDetail->z_oversize = $OrderLineDetailData->z_oversize;
+                $newProductDetail->diameter = $OrderLineDetailData->diameter;
+                $newProductDetail->diameter_oversize = $OrderLineDetailData->diameter_oversize;
+                $newProductDetail->save();
+
+                $Tasks = Task::where('order_lines_id', $id)->get();
+                foreach ($Tasks as $Task) 
+                {
+                    $newTask = $Task->replicate();
+                    $newTask->products_id = $newProduct->id;
+                    $newTask->order_lines_id = null;
+                    $newTask->save();
+                }
                 
-            ]);
-            //update info that order line as task
-            $OrderlineData->product_id = $newProduct->id;
-            $OrderlineData->save();
-
-            //add line detail
-            $OrderLineDetailData = OrderLineDetails::where('order_lines_id', $id)->first();
-            $newProductDetail = Products::findOrFail($newProduct->id);
-            $newProductDetail->material = $OrderLineDetailData->material;
-            $newProductDetail->thickness = $OrderLineDetailData->thickness;
-            $newProductDetail->weight = $OrderLineDetailData->weight;
-            $newProductDetail->x_size = $OrderLineDetailData->x_size;
-            $newProductDetail->y_size = $OrderLineDetailData->y_size;
-            $newProductDetail->z_size = $OrderLineDetailData->z_size;
-            $newProductDetail->x_oversize = $OrderLineDetailData->x_oversize;
-            $newProductDetail->y_oversize = $OrderLineDetailData->y_oversize;
-            $newProductDetail->z_oversize = $OrderLineDetailData->z_oversize;
-            $newProductDetail->diameter = $OrderLineDetailData->diameter;
-            $newProductDetail->diameter_oversize = $OrderLineDetailData->diameter_oversize;
-            $newProductDetail->save();
-
-            $Tasks = Task::where('order_lines_id', $id)->get();
-            foreach ($Tasks as $Task) 
-            {
-                $newTask = $Task->replicate();
-                $newTask->products_id = $newProduct->id;
-                $newTask->order_lines_id = null;
-                $newTask->save();
+                $SubAssemblyLine = SubAssembly::where('order_lines_id', $id)->get();
+                foreach ($SubAssemblyLine as $SubAssembly) 
+                {
+                    $newSubAssembly = $SubAssembly->replicate();
+                    $newSubAssembly->products_id = $newProduct->id;
+                    $newSubAssembly->order_lines_id = null;
+                    $newSubAssembly->save();
+                }
+                
+                session()->flash('success','Product created Successfully');
             }
-            
-            $SubAssemblyLine = SubAssembly::where('order_lines_id', $id)->get();
-            foreach ($SubAssemblyLine as $SubAssembly) 
-            {
-                $newSubAssembly = $SubAssembly->replicate();
-                $newSubAssembly->products_id = $newProduct->id;
-                $newSubAssembly->order_lines_id = null;
-                $newSubAssembly->save();
+            else{
+                session()->flash('error','No component familly');
             }
-            
-            session()->flash('success','Product created Successfully');
         }
         else{
-            session()->flash('error','No component service or family');
+            session()->flash('error','No component service');
         }
     }
 
