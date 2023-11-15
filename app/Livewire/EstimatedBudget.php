@@ -124,7 +124,7 @@ class EstimatedBudget extends Component
                 'amount12'=>$this->amount12,
             ]);
             // Reset Form Fields After Creating line
-            return redirect()->to(route('admin.factory').'#EstimatedBudget')->with('success', 'Successfully created new task');
+            session()->flash('success', 'Successfully created new task');
     }
 
     public function editEstimatedBudget($id){
