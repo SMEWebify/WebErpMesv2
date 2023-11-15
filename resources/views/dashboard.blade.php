@@ -144,7 +144,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block border-right">
                 <!--<<span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>-->
-                <h5 class="description-header">{{ $OrderTotalForCast[0]->orderTotalForCast }} {{ $Factory->curency }}</h5>
+                <h5 class="description-header">{{ $OrderTotalForCast[0]->orderTotalForCast  ?? 0 }}  {{ $Factory->curency }}</h5>
                 <span class="description-text">{{ __('general_content.total_order_forcasted_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
@@ -533,7 +533,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body ">
-          <h1><i class="icon fas fa-info"></i> {{ $data['remaining_order'][0]->orderSum-$data['delivered_month_in_progress'][0]->orderSum  }} {{ $Factory->curency }}</h1>    
+          <h1><i class="icon fas fa-info"></i> {{ $data['remaining_order'][0]->orderSum ?? 0 -$data['delivered_month_in_progress'][0]->orderSum   ?? 0}}  {{ $Factory->curency }}</h1>    
         </div>
         <!-- /.card-body -->
       </div>
