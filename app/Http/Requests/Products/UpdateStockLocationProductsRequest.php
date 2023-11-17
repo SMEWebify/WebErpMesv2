@@ -25,6 +25,7 @@ class UpdateStockLocationProductsRequest extends FormRequest
     {
         return [
             //
+            'mini_qty' =>'numeric|min:0',
         ];
     }
 }

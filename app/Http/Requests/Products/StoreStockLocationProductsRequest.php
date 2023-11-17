@@ -27,6 +27,7 @@ class StoreStockLocationProductsRequest extends FormRequest
             //
             'code' =>'required|unique:stock_location_products',
             'stock_locations_id' =>'required',
+            'mini_qty' =>'numeric|min:0',
         ];
     }
 }

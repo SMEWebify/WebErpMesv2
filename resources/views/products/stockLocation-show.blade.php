@@ -83,7 +83,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-times"></i></span>
                                 </div>
-                                <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="{{ __('general_content.qty_mini_trans_key') }} ex: 1.50" step=".001" value="{{ $StockLocationsProduct->mini_qty }}">
+                                <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="{{ __('general_content.qty_mini_trans_key') }} ex: 1" step="1" value="{{ $StockLocationsProduct->mini_qty }}">
                                 <input type="hidden" name="stock_locations_id"  id="stock_locations_id"  value="{{ $StockLocationsProduct->stock_locations_id }}">
                               </div>
                             </div>
@@ -174,7 +174,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-times"></i></span>
                     </div>
-                    <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="{{ __('general_content.qty_mini_trans_key') }} ex: 1.50" step=".001">
+                    <input type="number" class="form-control" name="mini_qty" id="mini_qty" placeholder="{{ __('general_content.qty_mini_trans_key') }} ex: 1" step="1">
                   </div>
                 </div>
                 <div class="form-group">
