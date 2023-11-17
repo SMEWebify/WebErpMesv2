@@ -348,7 +348,8 @@ return [
     'no_section_trans_key'                     => 'Aucune section, veuillez ajouter une section',
     'no_role_trans_key'                        => 'Aucun role, veuillez ajouter un role',
     'no_permissions_trans_key'                 => 'Aucune permission, veuillez ajouter une permission',
-    
+    'no_stock_location_trans_key'              => 'Aucune location de stock',
+
     //LINK
     'back_trans_key'                           => 'Retour',
     'back_to_list_trans_key'                   => 'Retour à la list',
@@ -637,6 +638,7 @@ return [
     'stock_list_trans_key'                     => 'Stock liste',
     'stock_location_trans_key'                 => 'Stocks emplacement',
     'stock_location_list_trans_key'            => 'Stocks emplacement liste',
+    'location_trans_key'                       => 'emplacement',
     'stock_location_product_list_trans_key'    => 'Stocks emplacement produit liste',
     'new_stock_location_product_trans_key'     => 'Nouvelle ligne de stock produit ',
     'new_stock_location_trans_key'             => 'Nouveau emplacement de stock',

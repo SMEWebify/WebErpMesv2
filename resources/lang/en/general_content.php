@@ -348,6 +348,7 @@ return [
     'no_section_trans_key'                     => 'No section, please add section before',
     'no_role_trans_key'                        => 'No role, please add before',
     'no_permissions_trans_key'                 => 'No permissions, please add before',
+    'no_stock_location_trans_key'              => 'No stock location, please add before',
 
     //LINK
     'back_trans_key'                           => 'Back',
@@ -636,6 +637,7 @@ return [
     'stock_trans_key'                          => 'Stock',
     'stock_list_trans_key'                     => 'Stock list',
     'stock_location_trans_key'                 => 'Stocks location',
+    'location_trans_key'                       => 'Location',
     'stock_location_list_trans_key'            => 'Stocks location list',
     'stock_location_product_list_trans_key'    => 'Stocks location product list',
     'new_stock_location_product_trans_key'     => 'New stock product line',

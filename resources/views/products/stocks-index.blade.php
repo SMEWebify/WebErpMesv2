@@ -80,7 +80,7 @@
                     </td>
                   </tr>
                   @empty
-                  <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
@@ -197,15 +197,17 @@
                           <input type="hidden" name="order_line_id" id="order_line_id" value="{{ $InternalOrderRequestsLines->id }}" >
                           <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
                           <div class="form-group">
-                            <label for="stock_locations_id">Chose stock location</label>
+                            <label for="stock_locations_id">{{ __('general_content.stock_location_list_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                               </div>
                               <select class="form-control" name="stock_locations_id" id="stock_locations_id">
                                 @forelse ($StockLocationList as $StockLocation)
-                                <option value="{{ $StockLocation->id }}">Stock : {{ $StockLocation->Stocks->code }}| Location : {{ $StockLocation->code }} </option>
-                                @endforeach
+                                <option value="{{ $StockLocation->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocation->Stocks->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
+                                @empty
+                                {{ __('general_content.no_stock_location_trans_key') }}
+                                @endforelse
                               </select>
                               <x-adminlte-button class="btn-flat" type="submit" label="Add" theme="success" icon="fas fa-lg fa-save"/>
                             </div>
