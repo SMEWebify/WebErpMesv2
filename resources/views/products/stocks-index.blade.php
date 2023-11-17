@@ -197,6 +197,7 @@
                           <input type="hidden" name="order_line_id" id="order_line_id" value="{{ $InternalOrderRequestsLines->id }}" >
                           <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
                           <div class="form-group">
+                            @if($InternalOrderRequestsLines->product_id)
                             <label for="stock_locations_id">{{ __('general_content.stock_location_list_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
@@ -211,6 +212,9 @@
                               </select>
                               <x-adminlte-button class="btn-flat" type="submit" label="Add" theme="success" icon="fas fa-lg fa-save"/>
                             </div>
+                            @else
+                              {{ __('general_content.no_product_in_line_stock_trans_key') }}
+                            @endif
                           </div>
                           
                         </form>

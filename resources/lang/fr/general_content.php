@@ -645,6 +645,8 @@ return [
     'new_stock_trans_key'                      => 'Nouveau stock',
     'new_entry_stock_trans_key'                => 'Nouvelle ligne entré stock',
     'new_sorting_stock_trans_key'              => 'Nouvelle ligne sortie stock',
+    'no_product_in_line_stock_trans_key'       => 'Aucun produit rataché à la ligne de commande',
+    
     
     'inventory_trans_key'                      => 'Inventory',
 
