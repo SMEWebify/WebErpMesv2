@@ -26,6 +26,7 @@ class StoreStockLocationProductsRequest extends FormRequest
         return [
             //
             'code' =>'required|unique:stock_location_products',
+            'stock_locations_id' =>'required',
         ];
     }
 }

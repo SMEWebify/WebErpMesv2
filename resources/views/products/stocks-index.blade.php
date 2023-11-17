@@ -206,7 +206,7 @@
                                 @forelse ($StockLocationList as $StockLocation)
                                 <option value="{{ $StockLocation->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocation->Stocks->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
                                 @empty
-                                {{ __('general_content.no_stock_location_trans_key') }}
+                                <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
                                 @endforelse
                               </select>
                               <x-adminlte-button class="btn-flat" type="submit" label="Add" theme="success" icon="fas fa-lg fa-save"/>
