@@ -46,7 +46,31 @@ class ToolsController extends Controller
         $Tool->qty=$request->qty;
         $Tool->save();
 
-
         return redirect()->route('methods')->with('success', 'Successfully updated tool.');
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function StoreImage(Request $request)
+    {
+        
+        $request->validate([
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+        ]);
+        
+        if($request->hasFile('picture')){
+            $Service = MethodsTools::findOrFail($request->id);
+            $file =  $request->file('picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->picture->move(public_path('images/methods'), $filename);
+            $Service->update(['picture' => $filename]);
+            $Service->save();
+            return redirect()->route('methods')->with('success', 'Successfully updated tool.');
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
+        }
     }
 }

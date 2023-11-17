@@ -265,6 +265,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/Location/edit/{id}', 'App\Http\Controllers\Methods\LocationsController@update')->middleware(['auth'])->name('methods.location.update');
         Route::post('/Tool/create', 'App\Http\Controllers\Methods\ToolsController@store')->middleware(['auth'])->name('methods.tool.create');
         Route::post('/Tool/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->middleware(['auth'])->name('methods.tool.update');
+        Route::post('/Tool/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->middleware(['auth'])->name('methods.tool.update.picture');
     });
 
     Route::group(['prefix' => 'notifications'], function () {

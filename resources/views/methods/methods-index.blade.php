@@ -1216,7 +1216,7 @@
                 <tr>
                   <td> 
                     @if($MethodsTool->picture )
-                    <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/tools/'. $MethodsTool->picture) }}">
+                    <img alt="Tool" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'. $MethodsTool->picture) }}">
                     @endif
                   </td>
                   <td>{{ $MethodsTool->code }}</td>
@@ -1281,22 +1281,30 @@
                             <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
                             <input type="date" class="form-control" name="end_date"  id="end_date" placeholder="{{__('general_content.qty_trans_key') }}" value="{{ $MethodsTool->end_date }}" >
                           </div>
-                          <div class="form-group">
-                            <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
-                            <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="far fa-image"></i></span>
-                              </div>
-                              <div class="custom-file">
-                                  <input type="file" class="custom-file-input" name="picture" id="picture">
-                                  <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
-                              </div>
-                          </div>
                         </div>
                         <div class="card-footer">
                           <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
                       </form>
+                      <div class="card-body">
+                        <form action="{{ route('methods.tool.update.picture', ['id' => $MethodsTool->id]) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <label for="picture">{{ __('general_content.picture_file_trans_key') }}</label>(peg,png,jpg,gif,svg | max: 10 240 Ko)
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-image"></i></span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="hidden" name="id" value="{{ $MethodsTool->id }}">
+                                    <input type="file" class="custom-file-input" name="picture" id="picture">
+                                    <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
+                                </div>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                                </div>
+                            </div>
+                        </form>
+                      </div>
                     </x-adminlte-modal>
                   </td>
                 </tr>
