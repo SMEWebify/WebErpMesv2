@@ -109,39 +109,43 @@ class QuoteLinesController extends Controller
 
             $idDefautUnitMethode = MethodsUnits::where('default',1)->first();
             $idDefautAccountingVat =AccountingVat::where('default',1)->first();
+            if(!empty($idDefautUnitMethode->id) && !empty($idDefautAccountingVat->id)){
+                foreach ($importData_arr as $importData) {
+                    if($maxKey>=count($importData)){
+                        //no column match
+                        return redirect()->route('quotes.show', ['id' =>  $idQuote])->withErrors('imports failed, no column match');
+                    }
+                    
+                
+                    try {
+                        $NewQuoteLine = Quotelines::create([
+                            'quotes_id'=>$idQuote,
+                            //'ordre'=> array_key_exists($request->ordre,  $importData) ? $importData[$request->ordre] : null,
+                            'code'=>utf8_encode($importData[$request->code]),
+                            'label'=>array_key_exists($request->label,  $importData) ? $importData[$request->label] : null,
+                            'qty'=>array_key_exists($request->qty,  $importData) ? $importData[$request->qty] : null,
+                            'methods_units_id'=>$idDefautUnitMethode->id,
+                            'selling_price'=>array_key_exists($request->selling_price,  $importData) ? $importData[$request->selling_price] : null,
+                            'discount'=>array_key_exists($request->discount,  $importData) ? $importData[$request->discount] : null,
+                            'accounting_vats_id'=>$idDefautAccountingVat->id,
+                            'delivery_date'=>array_key_exists($request->delivery_date,  $importData) ? $importData[$request->delivery_date] : null,
+                        ]);
+                        
+                        //add line detail
+                        QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
 
-            foreach ($importData_arr as $importData) {
-                if($maxKey>=count($importData)){
-                    //no column match
-                    return redirect()->route('quotes.show', ['id' =>  $idQuote])->withErrors('imports failed, no column match');
+                        $j++;
+                    } catch (\Exception $e) {
+                        dd($e);
+                    }
                 }
                 
-            
-                try {
-                    $NewQuoteLine = Quotelines::create([
-                        'quotes_id'=>$idQuote,
-                        //'ordre'=> array_key_exists($request->ordre,  $importData) ? $importData[$request->ordre] : null,
-                        'code'=>utf8_encode($importData[$request->code]),
-                        'label'=>array_key_exists($request->label,  $importData) ? $importData[$request->label] : null,
-                        'qty'=>array_key_exists($request->qty,  $importData) ? $importData[$request->qty] : null,
-                        'methods_units_id'=>$idDefautUnitMethode->id,
-                        'selling_price'=>array_key_exists($request->selling_price,  $importData) ? $importData[$request->selling_price] : null,
-                        'discount'=>array_key_exists($request->discount,  $importData) ? $importData[$request->discount] : null,
-                        'accounting_vats_id'=>$idDefautAccountingVat->id,
-                        'delivery_date'=>array_key_exists($request->delivery_date,  $importData) ? $importData[$request->delivery_date] : null,
-                    ]);
-                    
-                    //add line detail
-                    QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
-
-                    $j++;
-                } catch (\Exception $e) {
-                    dd($e);
-                }
+                return redirect()->route('quotes.show', ['id' =>  $idQuote])->with('success', 'Successfully imports,'. $j .' lines added.');
             }
-            
-            return redirect()->route('quotes.show', ['id' =>  $idQuote])->with('success', 'Successfully imports companies,'. $j .' lines added.');
-
+            else {
+                //no value default for MethodsUnits & AccountingVat
+                return redirect()->route('quotes.show', ['id' =>  $idQuote])->withErrors('imports failed, unit or accounting vat default');
+            }
         } else {
             //no file was uploaded
             return redirect()->route('quotes.show', ['id' =>  $idQuote])->withErrors('imports failed, no file');

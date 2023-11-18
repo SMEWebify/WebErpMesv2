@@ -61,6 +61,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         //order line
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->middleware(['auth'])->name('orders.update.detail.line');
         Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->middleware(['auth'])->name('orders.update.detail.picture');
+        Route::post('/{idOrder}/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->middleware(['auth'])->name('orders.import');
     });
 
     Route::group(['prefix' => 'deliverys'], function () {

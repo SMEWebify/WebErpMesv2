@@ -7,8 +7,6 @@
     <x-Content-header-previous-button  h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
 @stop
 
-
-
 @section('right-sidebar')
 
 @section('content')
@@ -249,7 +247,7 @@
                     <div class="row">
                         <div class="col-4 text-right"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
                         <div class="col-8">
-                            <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text={{ __('general_content.no_trans_key') }} data-on-color="teal" checked/>
+                            <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
                         </div>
                     </div>
                     <div class="row">
@@ -335,7 +333,7 @@
             {{ __('general_content.info_statu_trans_key') }}
         </x-adminlte-alert>
         @endif
-    </div>
+      </div>
   </div>
   <!-- /.card-body -->
 </div>
