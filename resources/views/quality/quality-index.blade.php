@@ -26,8 +26,8 @@
       <div class="card-body">
         <x-InfocalloutComponent note="{{ __('general_content.action_note_trans_key') }}"  />
         @include('include.alert-result')
-        <div class="row">
-          <table  class="table  table-striped">
+        <div class="card-body table-responsive p-0">
+          <table class="table  table-striped table-hover">
             <thead>
             <tr>
               <th>{{ __('general_content.external_id_trans_key') }}</th>
@@ -198,7 +198,7 @@
         <!-- /.row -->
         </div>
         <div class="row">
-          <div class="col-5">
+          <div class="form-group col-md-5">
           {{ $QualityActions->links() }}
           </div>
         <!-- /.row -->
@@ -213,8 +213,8 @@
         <form method="POST" action="{{ route('quality.action.create')}}" >
           <div class="card-body">
             @csrf
-            <div class="form-group row">
-              <div class="col-4">
+            <div class="form-row">
+              <div class="form-group col-md-4">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -223,7 +223,7 @@
                   <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="ACT-{{ $LastAction->id ?? '0' }}">
                 </div>
               </div>
-              <div class="col-4">
+              <div class="form-group col-md-4">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -232,7 +232,7 @@
                   <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
-              <div class="col-4">
+              <div class="form-group col-md-4">
                 <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -247,8 +247,8 @@
                 </div>
               </div>
             </div>
-            <div class="form-group row">
-              <div class="col-3">
+            <div class="form-row">
+              <div class="form-group col-md-3">
                 <label for="type">{{ __('general_content.type_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -260,7 +260,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-3">
+              <div class="form-group col-md-3">
                 <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -273,11 +273,11 @@
                   </select>
                 </div>
               </div>
-              <div class="col-3">
+              <div class="form-group col-md-3">
                 <label for="color">{{ __('general_content.color_trans_key') }}</label>
                 <input type="color" class="form-control"  name="color" id="color" >
               </div>
-              <div class="col-3">
+              <div class="form-group col-md-3">
                 <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
                 <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
                   <option value="null">-</option>
@@ -289,15 +289,15 @@
               <!-- /.row -->
             </div>
             <div class="row">
-              <div class="col-3">
+              <div class="form-group col-md-3">
                 <label>{{ __('general_content.problem_description_trans_key') }}</label>
                 <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..."></textarea>
               </div>
-              <div class="col-3">
+              <div class="form-group col-md-3">
                 <label>{{ __('general_content.cause_description_trans_key') }}</label>
                 <textarea class="form-control" rows="3" name="cause"  placeholder="..."></textarea>
               </div>
-              <div class="col-3">
+              <div class="form-group col-md-3">
                 <label>{{ __('general_content.action_description_trans_key') }}</label>
                 <textarea class="form-control" rows="3" name="action"  placeholder="..."></textarea>
               </div>
@@ -306,7 +306,7 @@
             </div>
           </div>
           <div class="card-footer">
-              <div class="form-group row">
+              <div class="form-row">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
           </div>
@@ -318,8 +318,8 @@
     <div class="tab-pane" id="Derogations">
       @include('include.alert-result')
       <div class="card-body">
-        <div class="row">
-          <table  class="table  table-striped">
+        <div class="card-body table-responsive p-0">
+          <table class="table  table-striped table-hover">
             <thead>
               <tr>
                 <th>{{ __('general_content.external_id_trans_key') }}</th>
@@ -390,79 +390,79 @@
                     <form method="POST" action="{{ route('quality.derogation.update', ['id' => $QualityDerogation->id]) }}" enctype="multipart/form-data">
                       @csrf
                       <div class="card-body">
-                        <div class="form-group">
-                          <label for="label">{{__('general_content.label_trans_key') }}</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                          <div class="form-group">
+                            <label for="label">{{__('general_content.label_trans_key') }}</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                              </div>
+                              <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $QualityDerogation->label }}">
                             </div>
-                            <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $QualityDerogation->label }}">
                           </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                          <div class="form-group">
+                            <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                              </div>
+                              <select class="form-control" name="statu" id="statu">
+                                <option value="1"  @if($QualityDerogation->statu == 1  ) Selected @endif>{{ __('general_content.in_progress_trans_key') }}</option>
+                                <option value="2"  @if($QualityDerogation->statu == 2  ) Selected @endif>{{ __('general_content.waiting_customer_data_trans_key') }}</option>
+                                <option value="3"  @if($QualityDerogation->statu == 3  ) Selected @endif>{{ __('general_content.validate_trans_key') }}</option>
+                                <option value="4"  @if($QualityDerogation->statu == 4  ) Selected @endif>{{ __('general_content.canceled_trans_key') }}</option>
+                              </select>
                             </div>
-                            <select class="form-control" name="statu" id="statu">
-                              <option value="1"  @if($QualityDerogation->statu == 1  ) Selected @endif>{{ __('general_content.in_progress_trans_key') }}</option>
-                              <option value="2"  @if($QualityDerogation->statu == 2  ) Selected @endif>{{ __('general_content.waiting_customer_data_trans_key') }}</option>
-                              <option value="3"  @if($QualityDerogation->statu == 3  ) Selected @endif>{{ __('general_content.validate_trans_key') }}</option>
-                              <option value="4"  @if($QualityDerogation->statu == 4  ) Selected @endif>{{ __('general_content.canceled_trans_key') }}</option>
-                            </select>
                           </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="type">{{ __('general_content.type_trans_key') }}</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                          <div class="form-group">
+                            <label for="type">{{ __('general_content.type_trans_key') }}</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                              </div>
+                              <select class="form-control" name="type" id="type">
+                                <option value="1" @if($QualityDerogation->type == 1  ) Selected @endif>{{ __('general_content.internal_trans_key') }}</option>
+                                <option value="2" @if($QualityDerogation->type == 2  ) Selected @endif>{{ __('general_content.external_trans_key') }}</option>
+                              </select>
                             </div>
-                            <select class="form-control" name="type" id="type">
-                              <option value="1" @if($QualityDerogation->type == 1  ) Selected @endif>{{ __('general_content.internal_trans_key') }}</option>
-                              <option value="2" @if($QualityDerogation->type == 2  ) Selected @endif>{{ __('general_content.external_trans_key') }}</option>
-                            </select>
                           </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="fas fa-user"></i></span>
+                          <div class="form-group">
+                            <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                              </div>
+                              <select class="form-control" name="user_id" id="user_id">
+                                @foreach ($userSelect as $item)
+                                <option value="{{ $item->id }}"  @if($QualityDerogation->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
+                                @endforeach
+                              </select>
                             </div>
-                            <select class="form-control" name="user_id" id="user_id">
-                              @foreach ($userSelect as $item)
-                              <option value="{{ $item->id }}"  @if($QualityDerogation->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
+                          </div>
+                          <div class="form-group">
+                            <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
+                            <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
+                              <option value="null">-</option>
+                              @foreach ($NonConformitysSelect as $item)
+                              <option value="{{ $item->id }}"  @if($QualityDerogation->quality_non_conformitie_id == $item->id  ) Selected @endif>{{ $item->code }}</option>
                               @endforeach
                             </select>
                           </div>
-                        </div>
-                        <div class="form-group">
-                          <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
-                          <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
-                            <option value="null">-</option>
-                            @foreach ($NonConformitysSelect as $item)
-                            <option value="{{ $item->id }}"  @if($QualityDerogation->quality_non_conformitie_id == $item->id  ) Selected @endif>{{ $item->code }}</option>
-                            @endforeach
-                          </select>
-                        </div>
-                        <div class="form-group">
-                          <label>{{ __('general_content.problem_description_trans_key') }}</label>
-                          <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..." required>{{ $QualityDerogation->pb_descp }}</textarea>
-                        </div>
-                        <div class="form-group">
-                          <label>{{ __('general_content.proposal_description_trans_key') }}</label>
-                          <textarea class="form-control" rows="3" name="proposal"  placeholder="..." required>{{ $QualityDerogation->proposal }}</textarea>
-                        </div>
-                        <div class="form-group">
-                          <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
-                          <textarea class="form-control" rows="3" name="reply"  placeholder="..." required>{{ $QualityDerogation->reply }}</textarea>
-                        </div>
-                        <div class="form-group">
-                          <label>{{ __('general_content.decision_description_trans_key') }}</label>
-                          <textarea class="form-control" rows="3" name="decision"  placeholder="..." required>{{ $QualityDerogation->decision }}</textarea>
-                        </div>
+                          <div class="form-group">
+                            <label>{{ __('general_content.problem_description_trans_key') }}</label>
+                            <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..." required>{{ $QualityDerogation->pb_descp }}</textarea>
+                          </div>
+                          <div class="form-group">
+                            <label>{{ __('general_content.proposal_description_trans_key') }}</label>
+                            <textarea class="form-control" rows="3" name="proposal"  placeholder="..." required>{{ $QualityDerogation->proposal }}</textarea>
+                          </div>
+                          <div class="form-group">
+                            <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
+                            <textarea class="form-control" rows="3" name="reply"  placeholder="..." required>{{ $QualityDerogation->reply }}</textarea>
+                          </div>
+                          <div class="form-group">
+                            <label>{{ __('general_content.decision_description_trans_key') }}</label>
+                            <textarea class="form-control" rows="3" name="decision"  placeholder="..." required>{{ $QualityDerogation->decision }}</textarea>
+                          </div>
                       </div>
                       <div class="card-footer">
                         <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -491,7 +491,7 @@
         <!-- /.row -->
         </div>
         <div class="row">
-          <div class="col-5">
+          <div class="form-group col-md-5">
           {{ $QualityDerogations->links() }}
           </div>
         <!-- /.row -->
@@ -506,8 +506,8 @@
         <form method="POST" action="{{ route('quality.derogation.create')}}" >  
           <div class="card-body">
             @csrf
-            <div class="form-group row">
-              <div class="col-2">
+            <div class="form-row">
+              <div class="form-group col-md-2">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -516,7 +516,7 @@
                   <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="DER-{{ $LastDerogation->id ?? '0' }}  ">
                 </div>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -525,7 +525,7 @@
                   <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label for="type">{{ __('general_content.type_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -537,7 +537,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -551,7 +551,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -564,7 +564,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
                 <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
                   <option value="null">-</option>
@@ -573,19 +573,19 @@
                   @endforeach
                 </select>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label>{{ __('general_content.problem_description_trans_key') }}</label>
                 <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..." required></textarea>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label>{{ __('general_content.proposal_description_trans_key') }}</label>
                 <textarea class="form-control" rows="3" name="proposal"  placeholder="..." required></textarea>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
                 <textarea class="form-control" rows="3" name="reply"  placeholder="..." required></textarea>
               </div>
-              <div class="col-2">
+              <div class="form-group col-md-2">
                 <label>{{ __('general_content.decision_description_trans_key') }}</label>
                 <textarea class="form-control" rows="3" name="decision"  placeholder="..." required></textarea>
               </div>
@@ -594,7 +594,7 @@
             </div>
           </div>
           <div class="card-footer">
-            <div class="form-group row">
+            <div class="form-row">
               <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
           <!-- /.row -->
@@ -608,8 +608,8 @@
       <div class="card-body">
         <x-InfocalloutComponent note="{{ __('general_content.non_conformitie_note_trans_key') }}"  />
         @include('include.alert-result')
-        <div class="row">
-          <table  class="table  table-striped">
+        <div class="card-body table-responsive p-0">
+          <table class="table  table-striped table-hover">
             <thead>
             <tr>
               <th>{{ __('general_content.external_id_trans_key') }}</th>
@@ -749,7 +749,7 @@
                           </select>
                         </div>
                         <div class="row">
-                          <div class="col-4">
+                          <div class="form-group col-md-4">
                             <label for="failure_id">{{ __('general_content.failure_type_trans_key') }}</label>
                             <select class="form-control" name="failure_id" id="failure_id">
                               @foreach ($FailuresSelect as $item)
@@ -757,7 +757,7 @@
                               @endforeach
                             </select>
                           </div>
-                          <div class="col-4">
+                          <div class="form-group col-md-4">
                             <label for="causes_id">{{ __('general_content.cause_type_trans_key') }}</label>
                             <select class="form-control" name="causes_id" id="causes_id">
                               @foreach ($CausesSelect as $item)
@@ -765,7 +765,7 @@
                               @endforeach
                             </select>
                           </div>
-                          <div class="col-4">
+                          <div class="form-group col-md-4">
                             <label for="correction_id">{{ __('general_content.correction_type_trans_key') }}</label> 
                             <select class="form-control" name="correction_id" id="correction_id">
                               @foreach ($CorrectionsSelect as $item)
@@ -775,15 +775,15 @@
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-4">
+                          <div class="form-group col-md-4">
                             <label>{{ __('general_content.failure_comment_trans_key') }}</label>
                             <textarea class="form-control" rows="3" name="failure_comment"  placeholder="..." required>{{ $QualityNonConformity->failure_comment}}</textarea>
                           </div>
-                          <div class="col-4">
+                          <div class="form-group col-md-4">
                               <label>{{ __('general_content.cause_comment_trans_key') }}</label>
                               <textarea class="form-control" rows="3" name="causes_comment"  placeholder="..." required>{{ $QualityNonConformity->causes_comment}}</textarea>
                           </div>
-                          <div class="col-4">
+                          <div class="form-group col-md-4">
                             <label>{{ __('general_content.correction_comment_trans_key') }}</label> 
                             <textarea class="form-control" rows="3" name="correction_comment"  placeholder="..." required>{{ $QualityNonConformity->correction_comment}}</textarea>
                           </div>
@@ -820,7 +820,7 @@
         <!-- /.row -->
         </div>
         <div class="row">
-          <div class="col-5">
+          <div class="form-group col-md-5">
           {{ $QualityNonConformitys->links() }}
           </div>
         <!-- /.row -->
@@ -835,8 +835,8 @@
         <form method="POST" action="{{ route('quality.nonConformitie.create')}}" > 
           <div class="card-body">
             @csrf
-            <div class="form-group row">
-              <div class="col-4">
+            <div class="form-row">
+              <div class="form-group col-md-4">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -845,7 +845,7 @@
                   <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="NC-{{ $LastNonConformity->id ?? '0' }}  ">
                 </div>    
               </div>
-              <div class="col-4">
+              <div class="form-group col-md-4">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -854,7 +854,7 @@
                   <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
                 </div>
               </div>
-              <div class="col-4">
+              <div class="form-group col-md-4">
                 <label for="type">{{ __('general_content.type_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -866,7 +866,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-4">
+              <div class="form-group col-md-4">
                 <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -880,7 +880,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-4">
+              <div class="form-group col-md-4">
                 <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -893,7 +893,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-4">
+              <div class="form-group col-md-4">
                 <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -906,7 +906,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-12">
+              <div class="form-group col-md-12">
                 <label for="companie_id">{{ __('general_content.companie_concern_trans_key') }}</label>
                 <select class="form-control" name="companie_id" id="companie_id">
                   @foreach ($CompaniesSelect as $item)
@@ -914,9 +914,9 @@
                   @endforeach
                 </select>
               </div>
-              <div class="col-12">
+              <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="col-4">
+                  <div class="form-group col-md-4">
                     <label for="failure_id">{{ __('general_content.failure_type_trans_key') }}</label>
                     <select class="form-control" name="failure_id" id="failure_id">
                       @foreach ($FailuresSelect as $item)
@@ -924,7 +924,7 @@
                       @endforeach
                     </select>
                   </div>
-                  <div class="col-4">
+                  <div class="form-group col-md-4">
                     <label for="causes_id">{{ __('general_content.cause_type_trans_key') }}</label>
                     <select class="form-control" name="causes_id" id="causes_id">
                       @foreach ($CausesSelect as $item)
@@ -932,7 +932,7 @@
                       @endforeach
                     </select>
                   </div>
-                  <div class="col-4">
+                  <div class="form-group col-md-4">
                     <label for="correction_id">{{ __('general_content.correction_type_trans_key') }}</label>
                     <select class="form-control" name="correction_id" id="correction_id">
                       @foreach ($CorrectionsSelect as $item)
@@ -942,17 +942,17 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12">
+              <div class="form-group col-md-12">
                 <div class="row">
-                  <div class="col-4">
+                  <div class="form-group col-md-4">
                     <label>{{ __('general_content.failure_comment_trans_key') }}</label>
                     <textarea class="form-control" rows="3" name="failure_comment"  placeholder="..." required></textarea>
                   </div>
-                  <div class="col-4">
+                  <div class="form-group col-md-4">
                     <label>{{ __('general_content.cause_comment_trans_key') }}</label>
                     <textarea class="form-control" rows="3" name="causes_comment"  placeholder="..." required></textarea>
                   </div>
-                  <div class="col-4">
+                  <div class="form-group col-md-4">
                     <label>{{ __('general_content.correction_comment_trans_key') }}</label>
                     <textarea class="form-control" rows="3" name="correction_comment"  placeholder="..." required></textarea>
                   </div>
@@ -962,7 +962,7 @@
             </div>
           </div>
           <div class="card-footer">
-            <div class="form-group row">
+            <div class="form-row">
               <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
           <!-- /.row -->
@@ -981,7 +981,7 @@
               <h3 class="card-title">{{ __('general_content.measuring_devices_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
-            <table class="table table-hover">
+            <table class="table  table-striped table-hover">
               <thead>
               <tr>
                 <th>{{ __('general_content.external_id_trans_key') }}</th>
@@ -1012,7 +1012,7 @@
                       <form method="POST" action="{{ route('quality.device.update', ['id' => $QualityControlDevice->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                          <div class="col-6">
+                          <div class="form-group col-md-6">
                             <label for="label">{{__('general_content.label_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
@@ -1021,7 +1021,7 @@
                               <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $QualityControlDevice->label }}">
                             </div>
                           </div>
-                          <div class="col-6">
+                          <div class="form-group col-md-6">
                             <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
@@ -1036,7 +1036,7 @@
                           </div>
                         </div>
                         <div class="row">
-                          <div class="col-6">
+                          <div class="form-group col-md-6">
                             <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
@@ -1049,7 +1049,7 @@
                               </select>
                             </div>
                           </div>
-                          <div class="col-6">
+                          <div class="form-group col-md-6">
                             <label for="label">{{ __('general_content.serial_number_trans_key') }}</label>
                             <input type="text" class="form-control"  name="serial_number" id="serial_number" placeholder="{{ __('general_content.serial_number_trans_key') }}" value="{{ $QualityControlDevice->serial_number }}">
                           </div>
@@ -1096,7 +1096,7 @@
           <!-- /.card-body -->
           </div>
           <div class="row">
-            <div class="col-5">
+            <div class="form-group col-md-5">
             {{ $QualityControlDevices->links() }}
             </div>
           <!-- /.row -->
@@ -1111,7 +1111,7 @@
             <form method="POST" action="{{ route('quality.device.create')}}" enctype="multipart/form-data">
               @csrf
               <div class="row">
-                <div class="col-4">
+                <div class="form-group col-md-4">
                   <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
@@ -1120,7 +1120,7 @@
                     <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="form-group col-md-4">
                   <label for="label">{{__('general_content.label_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
@@ -1129,7 +1129,7 @@
                     <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="form-group col-md-4">
                   <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
@@ -1144,7 +1144,7 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-4">
+                <div class="form-group col-md-4">
                   <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
@@ -1157,7 +1157,7 @@
                     </select>
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="form-group col-md-4">
                   <label for="label">{{ __('general_content.serial_number_trans_key') }}</label>
                   <input type="text" class="form-control"  name="serial_number" id="serial_number" placeholder="{{ __('general_content.serial_number_trans_key') }}">
                 </div>
