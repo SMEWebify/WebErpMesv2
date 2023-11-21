@@ -36,6 +36,12 @@ return new class extends Migration
             #Business partnerships
             #Events and webinars
             #Traditional Advertising
+            $table->integer('priority')->default(3);
+            #1 = Burning
+            #2 = Hot
+            #3 = Lukewarm 
+            #4 = Cold
+            $table->string('campaign');
 			$table->text('comment', 65535)->nullable();
             $table->timestamps();
         });

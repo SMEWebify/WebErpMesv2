@@ -110,7 +110,11 @@ return [
     'ms_trans_key'                             => 'Ms',
     'mr_trans_key'                             => 'Mr',
     'mrs_trans_key'                            => 'Mrs',
-    
+    'burning_trans_key'                        => 'Burning',
+    'hot_trans_key'                            => 'Hot',
+    'lukewarm_trans_key'                       => 'Lukewarm',
+    'cold_trans_key'                           => 'Cold',
+
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
     'id_trans_key'                             => 'ID',
@@ -452,6 +456,8 @@ return [
     'nic_num_trans_key'                        => 'NIC num', 
     'move_Type_trans_key'                      => 'Move Type',
     'source_trans_key'                         => 'Source',
+    'priority_trans_key'                       => 'Priority',
+    'campaign_trans_key'                       => 'Campaign',
     'part_trans_key'                           => 'part(s)',
     'curency_trans_key'                        => 'Curency',
     'repots_setting_trans_key'                 => 'Repots setting',

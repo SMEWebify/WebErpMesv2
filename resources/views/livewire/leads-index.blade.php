@@ -11,13 +11,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        @csrf
-                        
                         <div class="card card-body">
-                            <div class="row">
-                                <label for="InputWebSite">{{ __('general_content.customer_info_trans_key') }}</label>
-                            </div>
-                            <hr>
                             <div class="row">
                                 <div class="col-12">
                                     <label for="companies_id">{{ __('general_content.companie_trans_key') }}</label>
@@ -86,7 +80,20 @@
                                     </div>
                                     @error('source') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                
+                                <div class="form-group col-md-6">
+                                    <label for="campaign">{{ __('general_content.campaign_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" wire:model.live="campaign"  name="campaign" id="campaign" placeholder="{{ __('general_content.campaign_trans_key') }}" >
+                                    </div>
+                                    @error('campaign') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-body">
+                            <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
                                     
@@ -102,6 +109,21 @@
                                         </select>
                                     </div>
                                     @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="priority">{{ __('general_content.priority_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-text bg-gradient-success">
+                                            <i class="fas fa-exclamation"></i>
+                                        </div>
+                                        <select class="form-control" wire:model.live="priority" name="priority" id="priority">
+                                            <option value="1" >{{ __('general_content.burning_trans_key') }}</option>
+                                            <option value="2" >{{ __('general_content.hot_trans_key') }}</option>
+                                            <option value="3" >{{ __('general_content.lukewarm_trans_key') }}</option>
+                                            <option value="4" >{{ __('general_content.cold_trans_key') }}</option>
+                                        </select>
+                                    </div>
+                                    @error('priority') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
                         </div>
@@ -135,8 +157,10 @@
                         <th>{{ __('general_content.adress_name_trans_key') }}</th>
                         <th>{{ __('general_content.user_trans_key') }}</th>
                         <th>{{ __('general_content.source_trans_key') }}</th>
+                        <th>{{ __('general_content.priority_trans_key') }}</th>
+                        <th>{{ __('general_content.campaign_trans_key') }}</th>
                         <th>
-                            <a class="btn btn-secondary" wire:click.prevent="sortBy('statu')" role="button" href="#">Status @include('include.sort-icon', ['field' => 'statu'])</a>
+                            <a class="btn btn-secondary" wire:click.prevent="sortBy('statu')" role="button" href="#">{{ __('general_content.status_trans_key') }} @include('include.sort-icon', ['field' => 'statu'])</a>
                         </th>
                         <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
@@ -150,6 +174,13 @@
                         <td>{{ $Leads->adresse['adress'] }} {{ $Leads->adresse['zipcode'] }}  {{ $Leads->adresse['city'] }}</td>
                         <td>{{ $Leads->UserManagement['name'] }}</td>
                         <td>{{ $Leads->source }}</td>
+                        <td>
+                            @if(1 == $Leads->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
+                            @if(2 == $Leads->priority )  <span class="badge badge-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
+                            @if(3 == $Leads->priority )  <span class="badge badge-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
+                            @if(4 == $Leads->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
+                        </td>
+                        <td>{{ $Leads->campaign }}</td>
                         <td>
                             @if(1 == $Leads->statu )  <span class="badge badge-info">{{ __('general_content.new_trans_key') }}</span>@endif
                             @if(2 == $Leads->statu )  <span class="badge badge-warning">{{ __('general_content.assigned_trans_key') }}</span>@endif
@@ -169,7 +200,7 @@
                         </td>
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="8" text=" {{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="10" text=" {{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
@@ -180,6 +211,8 @@
                         <th>{{ __('general_content.adress_name_trans_key') }}</th>
                         <th>{{ __('general_content.user_trans_key') }}</th>
                         <th>{{ __('general_content.source_trans_key') }}</th>
+                        <th>{{ __('general_content.priority_trans_key') }}</th>
+                        <th>{{ __('general_content.campaign_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>

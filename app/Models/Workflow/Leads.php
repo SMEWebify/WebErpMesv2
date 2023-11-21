@@ -20,6 +20,8 @@ class Leads extends Model
         'user_id',
         'status',
         'source',
+        'priority',
+        'campaign',
         'comment',
     ];
 

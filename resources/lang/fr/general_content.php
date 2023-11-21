@@ -110,6 +110,10 @@ return [
     'ms_trans_key'                             => 'Ms',
     'mr_trans_key'                             => 'Mr',
     'mrs_trans_key'                            => 'Mrs',
+    'burning_trans_key'                        => 'Bouillant',
+    'hot_trans_key'                            => 'Chaud',
+    'lukewarm_trans_key'                       => 'Tiède',
+    'cold_trans_key'                           => 'Froid',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',
@@ -452,6 +456,8 @@ return [
     'nic_num_trans_key'                        => 'NIC Numéro', 
     'move_Type_trans_key'                      => 'Type de mouvement',
     'source_trans_key'                         => 'Source',
+    'priority_trans_key'                       => 'Priorité',
+    'campaign_trans_key'                       => 'Campagne',
     'part_trans_key'                           => 'pièce(s)',
     'curency_trans_key'                        => 'Devise',
     'repots_setting_trans_key'                 => 'Paramètre de rapports',

@@ -26,6 +26,8 @@ class LeadsIndex extends Component
     public $companies_addresses_id; 
     public $user_id;
     public $source;
+    public $priority = 3;
+    public $campaign;
     public $comment;
 
     public $idCompanie = '';
@@ -45,7 +47,9 @@ class LeadsIndex extends Component
             'companies_id'=>'required',
             'companies_contacts_id'=>'required',
             'companies_addresses_id'=>'required',
+            'user_id'=>'required',
             'source'=>'required',
+            'priority'=>'required',
         ];
 
     public function render()
@@ -85,6 +89,8 @@ class LeadsIndex extends Component
                         'companies_addresses_id'=>$this->companies_addresses_id,   
                         'user_id'=>$this->user_id,   
                         'source'=>$this->source,   
+                        'priority'=>$this->priority,   
+                        'campaign'=>$this->campaign, 
                         'comment'=>$this->comment, 
         ]);
 
