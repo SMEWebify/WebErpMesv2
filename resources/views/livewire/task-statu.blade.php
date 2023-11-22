@@ -221,6 +221,12 @@
                   @endif
                 </div>
               </div>
+              <hr>
+              <div class="row">
+                <div class="col-12">
+                  <a href="#" class="dropdown-item " wire:click="createNC({{$Task->id}}, {{$Task->OrderLines->order->companies_id}}, {{$Task->methods_services_id}})" ><span class="text-warning"><i class="fa fa-light fa-fw  fa-exclamation"></i>{{ __('general_content.new_non_conformitie_trans_key') }}</span></a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

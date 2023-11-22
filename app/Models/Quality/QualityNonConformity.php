@@ -9,9 +9,11 @@ use App\Models\Quality\QualityCause;
 use App\Models\Quality\QualityAction;
 use App\Models\Quality\QualityFailure;
 use App\Models\Methods\MethodsServices;
+use App\Models\Planning\Task;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Quality\QualityCorrection;
 use App\Models\Quality\QualityDerogation;
+use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QualityNonConformity extends Model
@@ -31,7 +33,10 @@ class QualityNonConformity extends Model
                         'correction_id',  
                         'correction_comment', 
                         'causes_comment',  
-                        'companie_id'];
+                        'companie_id',  
+                        'order_lines_id',  
+                        'task_id',
+                        'qty'];
 
     public function service()
     {
@@ -73,9 +78,14 @@ class QualityNonConformity extends Model
         return $this->belongsTo(Companies::class, 'companie_id');
     }
 
-    public function Task()
+    public function orderLine()
     {
-        return $this->hasMany(Task::class);
+        return $this->belongsTo(OrderLines::class, 'order_lines_id');
+    }
+
+    public function task()
+    {
+        return $this->belongsTo(Task::class, 'task_id');
     }
 
     public function files()

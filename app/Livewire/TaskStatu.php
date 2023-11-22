@@ -10,6 +10,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
+use App\Models\Quality\QualityNonConformity;
 
 class TaskStatu extends Component
 {
@@ -166,4 +167,19 @@ class TaskStatu extends Component
 
         session()->flash('success','Date Updated Successfully');
     }
+
+    public function createNC($id, $companie_id, $id_service){
+        $NewNonConformity = QualityNonConformity::create([
+            'code'=> "NC-TASK-#". $id,
+            'label'=>"NC-TASK-#". $id,
+            'statu'=>1,
+            'type'=>1,
+            'user_id'=>Auth::id(),
+            'service_id' =>$id_service,
+            'companie_id'=>$companie_id,
+            'task_id'=>$id,
+        ]);
+
+return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
+}
 }

@@ -26,9 +26,6 @@ class UpdateQualityNonConformityRequest extends FormRequest
         return [
             //
             'label'=>'required',
-            'failure_comment'=>'required',
-            'causes_comment'=>'required',
-            'correction_comment'=>'required',
         ];
     }
 }

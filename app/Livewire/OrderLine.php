@@ -8,13 +8,16 @@ use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
+use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
+use App\Models\Quality\QualityNonConformity;
 
 class OrderLine extends Component
 {
@@ -372,5 +375,19 @@ class OrderLine extends Component
         }catch(\Exception $e){
             session()->flash('error',"Something goes wrong while deleting Line");
         }
+    }
+
+    public function createNC($id, $companie_id){
+                    $NewNonConformity = QualityNonConformity::create([
+                        'code'=> "NC-OR-#". $this->orders_id,
+                        'label'=>"NC-L-#". $id,
+                        'statu'=>1,
+                        'type'=>1,
+                        'user_id'=>Auth::id(),
+                        'companie_id'=>$companie_id,
+                        'order_lines_id'=>$id,
+                    ]);
+
+        return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
     }
 }

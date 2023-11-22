@@ -56,7 +56,6 @@ class CreateTasksTable extends Migration
 			$table->string('material')->nullable();
 			$table->decimal('thickness', 10, 3)->nullable();
 			$table->decimal('weight', 10, 3)->nullable();
-			$table->integer('quality_non_conformities_id')->nullable();
 			$table->integer('methods_tools_id')->nullable();
             $table->timestamps();
         });

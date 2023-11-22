@@ -14,6 +14,7 @@ use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderLines extends Model
@@ -69,6 +70,11 @@ class OrderLines extends Model
     public function OrderLineDetails()
     {
         return $this->hasOne(OrderLineDetails::class, 'order_lines_id');
+    }
+
+    public function QualityNonConformity()
+    {
+        return $this->hasMany(QualityNonConformity::class);
     }
 
     public function StockMove()

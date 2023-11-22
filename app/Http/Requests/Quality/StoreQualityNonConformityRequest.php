@@ -27,9 +27,6 @@ class StoreQualityNonConformityRequest extends FormRequest
             //
             'code' =>'required|unique:quality_non_conformities',
             'label'=>'required',
-            'failure_comment'=>'required',
-            'causes_comment'=>'required',
-            'correction_comment'=>'required',
         ];
     }
 }

@@ -18,16 +18,25 @@ class CreateQualityNonConformitiesTable extends Migration
             $table->string('code');
 			$table->string('label');
 			$table->integer('statu');
+            #1 => In Progress
+            #2 => Wainting customer data
+            #3 => Validate
+            #4 => Canceled
 			$table->integer('type');
+            #1 => Internal
+            #2 => External
 			$table->integer('user_id');
-			$table->integer('service_id');
-			$table->integer('failure_id');
-			$table->text('failure_comment', 65535);
-			$table->integer('causes_id');
-			$table->text('causes_comment', 65535);
-			$table->integer('correction_id');
-			$table->text('correction_comment', 65535);
-			$table->integer('companie_id');
+			$table->integer('service_id')->nullable();
+			$table->integer('failure_id')->nullable();
+			$table->text('failure_comment', 65535)->nullable();
+			$table->integer('causes_id')->nullable();
+			$table->text('causes_comment', 65535)->nullable();
+			$table->integer('correction_id')->nullable();
+			$table->text('correction_comment', 65535)->nullable();
+			$table->integer('companie_id')->nullable();
+			$table->integer('order_lines_id')->nullable();
+			$table->integer('task_id')->nullable();
+			$table->integer('qty')->nullable();
             $table->timestamps();
         });
     }

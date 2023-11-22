@@ -59,7 +59,6 @@ class Task extends Model
                             'material', 
                             'thickness', 
                             'weight', 
-                            'quality_non_conformities_id',
                             'methods_tools_id'];
 
     protected $appends = ["open"];
@@ -101,7 +100,7 @@ class Task extends Model
 
     public function QualityNonConformity()
     {
-        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformities_id');
+        return $this->hasMany(QualityNonConformity::class);
     }
 
     public function MethodsTools()

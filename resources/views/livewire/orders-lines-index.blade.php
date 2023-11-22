@@ -10,7 +10,7 @@
                     <thead>
                         <tr>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">Order @include('include.sort-icon', ['field' => 'orders_id'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('orders_id')" role="button" href="#">{{__('general_content.order_trans_key') }}  @include('include.sort-icon', ['field' => 'orders_id'])</a>
                             </th>
                             <th>{{ __('general_content.sort_trans_key') }}</th>
                             <th>

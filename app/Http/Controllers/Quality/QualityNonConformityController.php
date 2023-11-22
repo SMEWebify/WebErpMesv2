@@ -50,6 +50,7 @@ class QualityNonConformityController extends Controller
         $QualityNonConformity->correction_id=$request->correction_id;
         $QualityNonConformity->correction_comment=$request->correction_comment;
         $QualityNonConformity->companie_id=$request->companie_id;
+        $QualityNonConformity->qty=$request->qty;
         $QualityNonConformity->save();
         return redirect()->route('quality')->with('success', 'Successfully updated non conformitie.');
     }

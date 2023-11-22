@@ -247,7 +247,6 @@ class TaskManage extends Component
                                 'material', 
                                 'thickness', 
                                 'weight', 
-                                'quality_non_conformities_id',
                                 'methods_tools_id']);
 
             if($this->idType == 'order_lines_id'){
