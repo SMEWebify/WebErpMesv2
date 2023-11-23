@@ -47,6 +47,7 @@
 
 <div class="information">
     <table width="100%">
+        <tr>
             <td align="left" style="width: 40%;">
                 <h3>{{ $Factory->name }}</h3>
                 <pre>
@@ -76,7 +77,6 @@
                 </pre>
             </td>
         </tr>
-
     </table>
 </div>
 <br/>

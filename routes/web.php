@@ -117,6 +117,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/purchase/quotation/{Document}', 'App\Http\Controllers\PrintController@getPurchaseQuotationPdf')->middleware(['auth'])->name('pdf.purchase.quotation');
         Route::get('/purchase/{Document}', 'App\Http\Controllers\PrintController@getPurchasePdf')->middleware(['auth'])->name('pdf.purchase');
         Route::get('/receipt/{Document}', 'App\Http\Controllers\PrintController@getReceiptPdf')->middleware(['auth'])->name('pdf.receipt');
+        Route::get('/nc/{Document}', 'App\Http\Controllers\PrintController@getNCPdf')->middleware(['auth'])->name('pdf.nc');
     });
 
     Route::group(['prefix' => 'accouting'], function () {

@@ -20,6 +20,7 @@ use horstoeko\zugferd\ZugferdProfiles;
 use App\Models\Purchases\PurchaseReceipt;
 
 use App\Models\Purchases\PurchasesQuotation;
+use App\Models\Quality\QualityNonConformity;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
 use horstoeko\zugferd\codelists\ZugferdPaymentMeans;
@@ -332,7 +333,7 @@ class PrintController extends Controller
         return $pdf->stream();
     }
 
-        /**
+    /**
      * @param $Document
      * @return View
      */
@@ -346,5 +347,19 @@ class PrintController extends Controller
         $pdf = PDF::loadView('print/pdf-purchases-reciept', compact('typeDocumentName','Document', 'Factory','image'));
         return $pdf->stream();
     }
+
+    /**
+     * @param $Document
+     * @return View
+     */
+    public function getNCPdf(QualityNonConformity $Document)
+    {
+        $typeDocumentName = __('general_content.non_conformitie_trans_key');
+        $Factory = Factory::first();
+        $image= $this->getImageFactoryPath($Factory);
+        $pdf = PDF::loadView('print/pdf-nc', compact('typeDocumentName','Document', 'Factory','image'));
+        return $pdf->stream();
+    }
+    
     
 }

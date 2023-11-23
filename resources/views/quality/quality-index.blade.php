@@ -621,7 +621,7 @@
                 <th>{{__('general_content.order_trans_key') }}</th>
                 <th>{{__('general_content.task_trans_key') }}</th>
                 <th>{{__('general_content.created_at_trans_key') }}</th>
-                <th></th>
+                <th>{{__('general_content.action_trans_key') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -856,6 +856,8 @@
                       </div>
                     </form>
                   </x-adminlte-modal>
+                  
+                  <x-ButtonTextPDF route="{{ route('pdf.nc', ['Document' => $QualityNonConformity->id])}}" />
                 </td>
               </tr>
               @empty
@@ -873,7 +875,7 @@
                 <th>{{__('general_content.order_trans_key') }}</th>
                 <th>{{__('general_content.task_trans_key') }}</th>
                 <th>{{__('general_content.created_at_trans_key') }}</th>
-                <th></th>
+                <th>{{__('general_content.action_trans_key') }}</th>
               </tr>
             </tfoot>
           </table>
