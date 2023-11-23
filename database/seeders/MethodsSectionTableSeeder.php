@@ -37,14 +37,14 @@ class MethodsSectionTableSeeder extends Seeder
                 'code' => 'BENDWORK', 
                 'ordre' => '5', 
                 'label' => 'Bending WorkShop',
-                'user_id' => '7', 
+                'user_id' => '1', 
                 'color' => '#411fea',
             ),
             array(
                 'code' => 'LASERWORK', 
                 'ordre' => '6', 
                 'label' => 'Laser WorkShop',
-                'user_id' => '6', 
+                'user_id' => '1', 
                 'color' => '#ed07e6',
             ),
     );
