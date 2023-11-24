@@ -13,7 +13,8 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Actions" data-toggle="tab">{{ __('general_content.action_trans_key') }}</a></li> 
+      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li> 
+      <li class="nav-item"><a class="nav-link" href="#Actions" data-toggle="tab">{{ __('general_content.action_trans_key') }}</a></li> 
       <li class="nav-item"><a class="nav-link" href="#Derogations" data-toggle="tab">{{ __('general_content.derogations_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#NonConformities" data-toggle="tab">{{ __('general_content.non_conformities_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#MeasuringDevices" data-toggle="tab">{{ __('general_content.measuring_devices_trans_key') }}</a></li>
@@ -22,7 +23,25 @@
   </div>
   <!-- /.card-header -->
   <div class="tab-content p-3">
-    <div class="tab-pane active" id="Actions">
+    <div class="tab-pane active" id="Dashboard">
+      <div class="row">
+        <div class="col-4">
+          <canvas id="actionChart" height="100"></canvas>
+          <canvas id="derogationChart" height="100"></canvas>
+          <canvas id="nonConformityChart" height="100"></canvas>
+        </div>
+
+        <div class="col-4">
+          <canvas id="topGeneratorsChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="col-4">
+            <!-- Nuage de points -->
+            <canvas id="radarChart" width="400" height="400"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="Actions">
       <div class="card-body">
         <x-InfocalloutComponent note="{{ __('general_content.action_note_trans_key') }}"  />
         @include('include.alert-result')
@@ -1580,4 +1599,153 @@
 @stop
 
 @section('js')
+<script>
+  // Fonction pour créer un graphique empilé
+  function createStackedBarChart(canvasId, data) {
+      var ctx = document.getElementById(canvasId).getContext('2d');
+      
+      var options = {
+          plugins: {
+              datalabels: {
+                  color: 'white',
+                  display: function(context) {
+                      return context.dataset.data[context.dataIndex] > 0;
+                  }
+              }
+          },
+          scales: {
+              x: {
+                  stacked: true
+              },
+              y: {
+                  stacked: true
+              }
+          }
+      };
+
+      return new Chart(ctx, {
+          type: 'horizontalBar',
+          data: data,
+          options: options
+      });
+  }
+
+  // Données pour Quality Derogation
+  var derogationData = {
+      labels: ['{{ __('general_content.derogations_trans_key') }}'],
+      datasets: [
+          {
+            label: '{{ __('general_content.internal_trans_key') }}',
+            data:  [{{ $internalDerogationRate }}],
+            backgroundColor: ['rgba(75, 192, 192, 1)',],
+            stack: 'Stack 0',
+          },
+          {
+            label: '{{ __('general_content.external_trans_key') }}',
+            data:  [{{ $externalDerogationRate }}],
+            backgroundColor: ['rgb(255, 205, 86)',],
+            stack: 'Stack 0',
+          }
+      ]
+  };
+
+  // Données pour Quality Non-Conformity
+  var nonConformityData = {
+      labels: ['{{ __('general_content.non_conformities_trans_key') }}'],
+      datasets: [
+          {
+            label: '{{ __('general_content.internal_trans_key') }}',
+            data: [{{ $internalNonConformityRate }}],
+            backgroundColor: ['rgba(75, 192, 192, 1)'],
+            stack: 'Stack 0',
+          },
+          {
+            label: '{{ __('general_content.external_trans_key') }}',
+            data:  [{{ $externalNonConformityRate }}],
+            backgroundColor: ['rgb(255, 205, 86)',],
+            stack: 'Stack 0',
+          }
+      ]
+  };
+
+  // Données pour Quality Action
+  var actionData = {
+      labels: ['{{ __('general_content.action_trans_key') }}'],
+      datasets: [
+          {
+              label: '{{ __('general_content.internal_trans_key') }}',
+              data: [{{ $internalActionRate }}],
+              backgroundColor: ['rgba(75, 192, 192, 1)'],
+              stack: 'Stack 0',
+          },
+          {
+              label: '{{ __('general_content.external_trans_key') }}',
+              data: [{{ $externalActionRate }}],
+              backgroundColor: ['rgb(255, 205, 86)',],
+              stack: 'Stack 0',
+          }
+      ]
+  };
+
+  // Créer les graphiques empilés
+  createStackedBarChart('derogationChart', derogationData);
+  createStackedBarChart('nonConformityChart', nonConformityData);
+  createStackedBarChart('actionChart', actionData);
+
+  var ctx = document.getElementById('topGeneratorsChart').getContext('2d');
+    var topGeneratorsChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: @json($chartData),
+        options: {
+          scales: {
+            x: {
+              beginAtZero: true,
+                      stepSize: 1,
+            },
+            y: {
+              beginAtZero: true,
+                      stepSize: 1,
+            }
+          }
+        },
+    });
+
+  // Diagramme Radar
+  var radarChart = new Chart(document.getElementById('radarChart'), {
+      type: 'radar',
+      data: {
+        labels: ["{{ __('general_content.in_progress_trans_key') }}", "{{ __('general_content.waiting_customer_data_trans_key') }}",  "{{ __('general_content.validate_trans_key') }}","{{ __('general_content.canceled_trans_key') }}",],
+          datasets: [{
+              label: '{{ __('general_content.derogations_trans_key') }}',
+              data: {!! json_encode(array_values($derogationStatusCounts)) !!},
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgb(255, 99, 132)',
+              borderWidth: 1
+          },
+          {
+              label: '{{ __('general_content.non_conformities_trans_key') }}',
+              data: {!! json_encode(array_values($nonConformityStatusCounts)) !!},
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+          },
+          {
+              label: '{{ __('general_content.action_trans_key') }}',
+              data: {!! json_encode(array_values($actionStatusCounts)) !!},
+              backgroundColor: 'rgb(255, 205, 86, 0.2)',
+              borderColor: 'rgb(255, 205, 86)',
+              borderWidth: 1
+          }]
+      },
+        options: {
+          scale: {
+                  ticks: {
+                      min: 0,
+                      stepSize: 1,
+                      suggestedMax: 5
+                  }
+            }
+      }
+  });
+</script>
 @stop
