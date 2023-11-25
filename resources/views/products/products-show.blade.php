@@ -18,9 +18,12 @@
       <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">{{ __('general_content.tech_bom_trans_key') }} {{ $Product->getTaskCountAttribute() }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#viewer" data-toggle="tab">viewer</a></li>
-
-      
+      @if($Product->stl_file)
+      <li class="nav-item"><a class="nav-link" href="#StepViewer" data-toggle="tab">Stl {{ __('general_content.viewer_file_trans_key') }}</a></li>
+      @endif
+      @if($Product->svg_file)
+      <li class="nav-item"><a class="nav-link" href="#SVGViewer" data-toggle="tab">SVG {{ __('general_content.viewer_file_trans_key') }}</a></li>
+      @endif
     </ul>
   </div>
   <!-- /.card-header -->
@@ -418,6 +421,31 @@
               </div>
               <div class="card card-info">
                 <div class="card-header">
+                  <h3 class="card-title">{{ __('general_content.svg_file_trans_key') }}</h3>
+                </div>
+                <div class="card-body">
+                  <form action="{{ route('products.update.svg') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <label for="chooseFile">{{ __('general_content.svg_file_trans_key') }}</label> (.svg | max: 10 240 Ko)
+                    
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-file"></i></span>
+                      </div>
+                      <div class="custom-file">
+                        <input type="hidden" name="id" value="{{ $Product->id }}" >
+                        <input type="file" name="svg" class="custom-file-input" id="svg">
+                        <label class="custom-file-label" for="svg">{{ __('general_content.choose_file_trans_key') }}</label>
+                      </div>
+                      <div class="input-group-append">
+                        <button type="submit" name="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                      </div>
+                    </div>
+                </form>
+                </div>
+              </div>
+              <div class="card card-info">
+                <div class="card-header">
                   <h3 class="card-title"> {{ __('general_content.documents_trans_key') }} </h3>
                 </div>
                   <div class="card-body">
@@ -469,8 +497,8 @@
       <div class="tab-pane" id="order">
         @livewire('orders-lines-index' , ['product_id' => $Product->id ])
       </div>
-      <div class="tab-pane" id="viewer">
-                
+      @if($Product->stl_file)
+      <div class="tab-pane" id="StepViewer">
         <script type="importmap">
           {
               "imports": {
@@ -479,101 +507,16 @@
                   "orbit-controls": "{{ asset('js/OrbitControls.js') }}"
               }
           }
-      </script>
-
-      <!-- La div où sera affiché le rendu Three.js -->
-      <div id="scene-container" style="width: 100%;  overflow: hidden;"></div>
-
-        <script type="module">
-          // Récupérer l'élément conteneur par son ID
-          const container = document.getElementById('scene-container');
-
-          // Ajouter un gestionnaire d'événements pour redimensionner la fenêtre
-          window.addEventListener( 'resize', onWindowResize );
-
-          // Importation des modules ES6
-          import * as THREE from '{{ asset('js/three.module.js') }}';
-          import { STLLoader } from '{{ asset('js/STLLoader.js') }}';
-          import { OrbitControls  } from '{{ asset('js/OrbitControls.js') }}';
-
-          // Récupérer l'ID du produit à partir de Blade
-          const productStlFile = '{{ $Product->stl_file }}';
-          // Charger le modèle 3D en utilisant l'ID du produit
-          const modelUrl = `{{ asset('stl/') }}/${productStlFile}`;
-          // Créer une scène Three.js
-          const scene = new THREE.Scene();
-          // Définir la couleur de fond de la scène (par exemple, un fond gris foncé)
-          scene.background = new THREE.Color(0x333333);
-          // Créer une caméra
-          const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-          //ajouter un éclairage ambiant 
-          const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.3); // Couleur blanche, intensité 0.5
-          directionalLight.position.set(1, 1, 1).normalize(); // Position de la lumière
-          directionalLight.shadow.bias = -0.01;
-          scene.add(directionalLight);
-
-           // Créer un rendu
-          const renderer = new THREE.WebGLRenderer();
-          renderer.setSize( window.innerWidth, window.innerHeight );
-          document.body.appendChild( renderer.domElement );
-
-          // Créez un contrôle d'orbite
-          const controls = new OrbitControls(camera, renderer.domElement);
-				  controls.listenToKeyEvents( window ); // optional
-          controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-          controls.dampingFactor = 0.05;
-          controls.screenSpacePanning = false;
-          controls.minDistance = 50;
-          controls.maxDistance = 500;
-
-          function animate() {
-            requestAnimationFrame( animate );
-
-            // Mettez à jour les contrôles
-            controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
-
-            renderer.render( scene, camera );
-          };
-
-          const loadObject = () => {
-              const loader = new STLLoader();
-              let group, mesh; 
-              // Créer un chargeur STL
-              loader.load(modelUrl, function (geometry) {
-                  group = new THREE.Group()
-                  scene.add(group)
-
-                  const material = new THREE.MeshPhongMaterial({ color: 0xFFF2CC, specular: 0xffffff , shininess: 50 })
-                  mesh = new THREE.Mesh(geometry, material)
-                  mesh.position.set(0, 0, 5); // Placez la caméra à une position appropriée
-                  mesh.lookAt(mesh.position); // Orientez la caméra vers le modèle
-                  mesh.scale.set(1, 1, 1)
-                  mesh.castShadow = true
-                  mesh.receiveShadow = true
-
-                  geometry.center()
-                  group.add(mesh)
-              })
-          }
-
-          function onWindowResize() {
-
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-
-            renderer.setSize( window.innerWidth, window.innerHeight );
-
-            }
-
-          // Ajouter le rendu à l'élément conteneur
-          container.appendChild(renderer.domElement);
-
-          animate();
-
-          loadObject(); // Chargez votre objet STL
         </script>
-
+        <!-- La div où sera affiché le rendu Three.js -->
+        <div id="scene-container" style="width: 100%;  overflow: hidden;"></div>
       </div>
+      @endif
+      @if($Product->svg_file)
+      <div class="tab-pane" id="SVGViewer">
+        <img src="{{ asset('svg/') }}/{{ $Product->svg_file }}" width="800" height="800">
+      </div>
+      @endif
     </div>
   </div>
 </div>
@@ -583,4 +526,92 @@
 @stop
 
 @section('js')
+<script type="module">
+  // Récupérer l'élément conteneur par son ID
+  const container = document.getElementById('scene-container');
+
+  // Ajouter un gestionnaire d'événements pour redimensionner la fenêtre
+  window.addEventListener( 'resize', onWindowResize );
+
+  // Importation des modules ES6
+  import * as THREE from '{{ asset('js/three.module.js') }}';
+  import { STLLoader } from '{{ asset('js/STLLoader.js') }}';
+  import { OrbitControls  } from '{{ asset('js/OrbitControls.js') }}';
+
+  // Récupérer l'ID du produit à partir de Blade
+  const productStlFile = '{{ $Product->stl_file }}';
+  // Charger le modèle 3D en utilisant l'ID du produit
+  const modelUrl = `{{ asset('stl/') }}/${productStlFile}`;
+  // Créer une scène Three.js
+  const scene = new THREE.Scene();
+  // Définir la couleur de fond de la scène (par exemple, un fond gris foncé)
+  scene.background = new THREE.Color(0x333333);
+  // Créer une caméra
+  const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+  //ajouter un éclairage ambiant 
+  const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.3); // Couleur blanche, intensité 0.5
+  directionalLight.position.set(1, 1, 1).normalize(); // Position de la lumière
+  directionalLight.shadow.bias = -0.01;
+  scene.add(directionalLight);
+
+  // Créer un rendu
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  document.body.appendChild( renderer.domElement );
+
+  // Créez un contrôle d'orbite
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.listenToKeyEvents( window ); // optional
+  controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+  controls.dampingFactor = 0.05;
+  controls.screenSpacePanning = false;
+  controls.minDistance = 50;
+  controls.maxDistance = 500;
+
+  function animate() {
+    requestAnimationFrame( animate );
+
+    // Mettez à jour les contrôles
+    controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+
+    renderer.render( scene, camera );
+  };
+
+  const loadObject = () => {
+      const loader = new STLLoader();
+      let group, mesh; 
+      // Créer un chargeur STL
+      loader.load(modelUrl, function (geometry) {
+          group = new THREE.Group()
+          scene.add(group)
+
+          const material = new THREE.MeshPhongMaterial({ color: 0xFFF2CC, specular: 0xffffff , shininess: 50 })
+          mesh = new THREE.Mesh(geometry, material)
+          mesh.position.set(0, 0, 5); // Placez la caméra à une position appropriée
+          mesh.lookAt(mesh.position); // Orientez la caméra vers le modèle
+          mesh.scale.set(1, 1, 1)
+          mesh.castShadow = true
+          mesh.receiveShadow = true
+
+          geometry.center()
+          group.add(mesh)
+      })
+  }
+
+  function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+    }
+
+  // Ajouter le rendu à l'élément conteneur
+  container.appendChild(renderer.domElement);
+
+  animate();
+
+  loadObject(); // Chargez votre objet STL
+</script>
 @stop

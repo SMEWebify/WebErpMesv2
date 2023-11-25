@@ -97,7 +97,7 @@ class ProductsController extends Controller
         }
     }
 
-        /**
+    /**
      * @param Request $request
      * @return View
      */
@@ -117,6 +117,29 @@ class ProductsController extends Controller
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no stl selected']);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function StoreSvg(Request $request)
+    {
+        if($request->hasFile('svg')){
+            //$type = $request->file->getClientMimeType();
+            //$size = $request->file->getSize();
+            $Product = Products::findOrFail($request->id);
+            $file =  $request->file('svg');
+            $fileName = auth()->id() . '' . time() . '.svg';
+            $request->svg->move(public_path('svg'), $fileName);
+            $Product->update(['svg_file' => $fileName]);
+            $Product->save();
+
+            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated svg');
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no svg selected']);
         }
     }
 

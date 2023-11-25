@@ -47,7 +47,8 @@ class Products extends Model
                             'diameter_oversize',
                             'section_size',
                             'picture',
-                            'stl_file',];
+                            'stl_file',
+                            'svg_file',];
 
     public function service()
     {

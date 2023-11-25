@@ -43,6 +43,7 @@ class CreateProductsTable extends Migration
             $table->decimal('section_size', 10, 3)->nullable();
 			$table->string('picture')->nullable();
 			$table->string('stl_file')->nullable();
+			$table->string('svg_file')->nullable();
             $table->timestamps();
         });
     }
