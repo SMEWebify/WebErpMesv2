@@ -374,6 +374,9 @@
                     </tfoot>
                 </table>
             </div>
+            <!-- /.row -->
+            {{ $Products->links() }}
+            <!-- /.card-body -->
         <!-- /.card-body -->
         </div>
     <!-- /.card -->
