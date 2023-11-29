@@ -23,7 +23,7 @@ class CreateMethodsRessourcesTable extends Migration
 			$table->decimal('capacity', 11, 3);
 			$table->integer('section_id');
 			$table->string('color');
-			$table->integer('service_id');
+			$table->integer('methods_services_id');
 			$table->text('comment', 65535)->nullable();
             $table->timestamps();
         });

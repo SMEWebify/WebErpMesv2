@@ -16,7 +16,7 @@ class RessourcesController extends Controller
      */
     public function store(StoreRessourceRequest $request)
     {
-        $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label','mask_time', 'capacity','section_id', 'color', 'service_id'));
+        $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label','mask_time', 'capacity','section_id', 'color', 'methods_services_id'));
         if($request->hasFile('picture')){
             $Ressource = MethodsRessources::findOrFail($Ressource->id);
             $file =  $request->file('picture');
@@ -45,7 +45,7 @@ class RessourcesController extends Controller
         $Ressource->capacity=$request->capacity;
         $Ressource->section_id=$request->section_id;
         $Ressource->color=$request->color;
-        $Ressource->service_id=$request->service_id;
+        $Ressource->methods_services_id=$request->methods_services_id;
         $Ressource->save();
 
         return redirect()->route('methods')->with('success', 'Successfully updated ressource.');

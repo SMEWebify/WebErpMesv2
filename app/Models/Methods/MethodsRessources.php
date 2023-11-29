@@ -2,6 +2,7 @@
 
 namespace App\Models\Methods;
 
+use App\Models\Planning\Task;
 use App\Models\Methods\MethodsSection;
 use App\Models\Methods\MethodsLocation;
 use App\Models\Methods\MethodsServices;
@@ -12,11 +13,17 @@ class MethodsRessources extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ordre', 'code',  'label',  'picture', 'mask_time', 'capacity',  'section_id',  'color',  'service_id',  'comment'];
+    protected $fillable = ['ordre', 'code',  'label',  'picture', 'mask_time', 'capacity',  'section_id',  'color',  'methods_services_id',  'comment'];
 
     public function service()
     {
-        return $this->belongsTo(MethodsServices::class, 'service_id');
+        return $this->belongsTo(MethodsServices::class, 'methods_services_id');
+    }
+
+    public function tasks() {
+        return $this->belongsToMany(Task::class)
+                    ->withPivot(['autoselected_ressource', 'userforced_ressource'])
+                    ->withTimestamps();
     }
 
     public function section()

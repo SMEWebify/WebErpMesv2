@@ -27,7 +27,7 @@ class StoreFamilyRequest extends FormRequest
             //
             'code' =>'required|unique:methods_families',
             'label'=>'required',
-            'service_id'=>'required',
+            'methods_services_id'=>'required',
         ];
     }
 }

@@ -570,8 +570,9 @@ return [
 
     //GANTT
     'gantt_trans_key'                          => 'Gantt',
-    'gantt_info_1_trans_key'                   => 'Number of Task to be recalculate',
-    
+    'gantt_info_1_trans_key'                   => 'Number of Task to be recalculate for date',
+    'gantt_info_2_trans_key'                   => 'Number of Task to be recalculate for ressource',
+
     //TASK
     'tasks_trans_key'                          => 'Tasks',
     'tasks_list_trans_key'                     => 'Tasks list',
@@ -599,6 +600,7 @@ return [
     'search_task_trans_key'                    => 'Search Task',
     'calculate_task_trans_key'                 => 'Calculate Task(s)',
     'calculate_date_task_trans_key'            => 'Task Calculation Date',
+    'calculate_ressource_task_trans_key'       => 'Task Calculation Ressource',
     'add_sub_assembly_trans_key'               => 'Add sub assembly',
     'sub_assembly_trans_key'                   => 'Sub assembly',
     'component_trans_key'                      => 'Component',

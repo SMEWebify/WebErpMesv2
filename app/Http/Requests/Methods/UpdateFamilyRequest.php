@@ -26,7 +26,7 @@ class UpdateFamilyRequest extends FormRequest
         return [
             //
             'label'=>'required',
-            'service_id'=>'required',
+            'methods_services_id'=>'required',
         ];
     }
 }

@@ -17,7 +17,7 @@ class CreateMethodsFamiliesTable extends Migration
             $table->id();
             $table->string('code');
 			$table->string('label');
-			$table->integer('service_id');
+			$table->integer('methods_services_id');
             $table->timestamps();
         });
     }

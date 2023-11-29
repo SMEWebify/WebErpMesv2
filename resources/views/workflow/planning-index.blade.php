@@ -4,10 +4,16 @@
 
 @section('content_header')
     <div class="row mb-2">
-      <div class="col-sm-6">
+      <div class="col-sm-8">
         <h1>{{__('general_content.load_planning_trans_key') }}</h1>
       </div>
-      <div class="col-sm-6">
+      <div class="col-sm-2">
+        <!-- Button Modal -->
+        <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#taskCalculationRessource">
+          {{__('general_content.gantt_info_2_trans_key') }}   ({{ $countTaskNullRessource }})
+        </button>
+      </div>
+      <div class="col-sm-2">
         <!-- Button Modal -->
         <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#taskCalculationDate">
           {{__('general_content.gantt_info_1_trans_key') }}  ({{ $countTaskNullDate }})

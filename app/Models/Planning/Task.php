@@ -16,11 +16,12 @@ use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use App\Models\Planning\TaskActivities;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Methods\MethodsRessources;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
@@ -66,6 +67,12 @@ class Task extends Model
     public function service()
     {
         return $this->belongsTo(MethodsServices::class, 'methods_services_id');
+    }
+
+    public function resources() {
+        return $this->belongsToMany(MethodsRessources::class, 'task_resources')
+                    ->withPivot(['autoselected_ressource', 'userforced_ressource'])
+                    ->withTimestamps();
     }
 
     public function QuoteLines()

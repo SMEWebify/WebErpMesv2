@@ -75,6 +75,7 @@
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('methods_units_id')" role="button" href="#">{{__('general_content.service_trans_key') }} @include('include.sort-icon', ['field' => 'methods_units_id'])</a>
                             </th>
+                            <th>{{__('general_content.ressource_trans_key') }}</th>
                             <th>{{ __('general_content.qty_trans_key') }}</th>
                             <th>{{ __('general_content.setting_time_trans_key') }}</th>
                             <th>{{ __('general_content.unit_time_trans_key') }}</th>
@@ -109,6 +110,13 @@
                                 @endif
                             </td>
                             <td @if($Task->methods_services_id ) style="background-color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
+                            <td>
+                                @if($Task->resources)
+                                    @foreach($Task->resources as $resource)
+                                        <li>{{ $resource->label }}</li>
+                                    @endforeach
+                                @endif
+                            </td>
                             <td>{{ $Task->qty }}</td>
                             <td>{{ $Task->seting_time }} h</td>
                             <td>{{ $Task->unit_time }} h</td>
@@ -137,6 +145,7 @@
                             <th>{{ __('general_content.description_trans_key') }}</th>
                             <th>{{ __('general_content.product_trans_key') }}</th>
                             <th>{{ __('general_content.service_trans_key') }}</th>
+                            <th>{{__('general_content.ressource_trans_key') }}</th>
                             <th>{{ __('general_content.qty_trans_key') }}</th>
                             <th>{{ __('general_content.setting_time_trans_key') }}</th>
                             <th>{{ __('general_content.unit_time_trans_key') }}</th>

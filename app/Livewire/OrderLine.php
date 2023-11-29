@@ -215,7 +215,7 @@ class OrderLine extends Component
         $ServiceComponent = MethodsServices::where('type', 8)->first();
         if(!empty($ServiceComponent->id)){
             
-            $FamilieComponent = MethodsFamilies::where('service_id', $ServiceComponent->id)->first();
+            $FamilieComponent = MethodsFamilies::where('methods_services_id', $ServiceComponent->id)->first();
 
             if(!empty($FamilieComponent->id)){
                 //get data to dulicate for new order

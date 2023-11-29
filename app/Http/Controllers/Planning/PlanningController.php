@@ -13,6 +13,9 @@ class PlanningController extends Controller
 {
     public function index()
     {
+        // Dans votre contrôleur ou ailleurs où vous avez besoin de cette information
+        $countTaskNullRessource = Task::whereNotNull('order_lines_id')->whereDoesntHave('resources')->count();
+
         // Collect Tasks
         $taches = Task::with('service')
                         ->where('end_date', '>=', now())
@@ -22,7 +25,7 @@ class PlanningController extends Controller
                                         ->orWhere('tasks.type', 7);
                         })->get();
         
-        if($taches->count() < 1){
+        if($taches->count() < 1 && $countTaskNullRessource < 1){
             return redirect()->route('production.task')->with('error', 'No tosk in planning');
         }
 
@@ -103,7 +106,7 @@ class PlanningController extends Controller
         }
 
         // Extract all unique dates from each array into $rateChargePerServiceDay
-        $allDatesUniques = [];
+        $allDatesUniques = [Carbon::now()->format('Y-m-d')];
         foreach ($rateChargePerServiceDay as $ratePerService) {
             $datesService = array_keys($ratePerService);
             $allDatesUniques = array_merge($allDatesUniques, $datesService);
@@ -126,6 +129,6 @@ class PlanningController extends Controller
         }
 
         
-        return view('workflow/planning-index', compact('taches', 'countTaskNullDate', 'tasksPerServiceDay', 'structureRateLoad', 'services', 'possibleDates'));
+        return view('workflow/planning-index', compact('taches', 'countTaskNullRessource', 'countTaskNullDate', 'tasksPerServiceDay', 'structureRateLoad', 'services', 'possibleDates'));
     }
 }

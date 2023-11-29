@@ -10,11 +10,11 @@ class MethodsFamilies extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code',  'label',  'service_id'];
+    protected $fillable = ['code',  'label',  'methods_services_id'];
 
     public function service()
     {
-        return $this->belongsTo(MethodsServices::class, 'service_id');
+        return $this->belongsTo(MethodsServices::class, 'methods_services_id');
     }
 
     public function Product()

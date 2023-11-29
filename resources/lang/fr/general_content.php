@@ -570,7 +570,8 @@ return [
 
     //GANTT
     'gantt_trans_key'                          => 'Gantt',
-    'gantt_info_1_trans_key'                   => 'Nombre de tâches à recalculer',
+    'gantt_info_1_trans_key'                   => 'Nombre de date de tâches à recalculer',
+    'gantt_info_2_trans_key'                   => 'Nombre de ressources de tâches à recalculer',
 
     //TASK
     'tasks_trans_key'                          => 'Tâches',
@@ -598,7 +599,8 @@ return [
     'bad_part_qty_trans_key'                   => 'Nombre de pièce mauvaise',
     'search_task_trans_key'                    => 'Recherche une tâche',
     'calculate_task_trans_key'                 => 'Calculer les tâches',
-    'calculate_date_task_trans_key'            => 'Calcul de la date de la tâche',
+    'calculate_date_task_trans_key'            => 'Calcul des dates des tâches',
+    'calculate_ressource_task_trans_key'       => 'Calcul des ressources des tâches',
     'add_sub_assembly_trans_key'               => 'Ajouter un sous-assemblage',
     'sub_assembly_trans_key'                   => 'Sous-assemblage',
     'component_trans_key'                      => 'Composant',

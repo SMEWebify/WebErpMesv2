@@ -175,7 +175,7 @@ class TaskStatu extends Component
             'statu'=>1,
             'type'=>1,
             'user_id'=>Auth::id(),
-            'service_id' =>$id_service,
+            'methods_services_id' =>$id_service,
             'companie_id'=>$companie_id,
             'task_id'=>$id,
         ]);

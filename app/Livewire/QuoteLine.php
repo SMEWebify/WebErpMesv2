@@ -233,7 +233,7 @@ class QuoteLine extends Component
     public function CreatProduct($id){
 
         $ServiceComponent = MethodsServices::where('type', 8)->first();
-        $FamilieComponent = MethodsFamilies::where('service_id', $ServiceComponent->id)->first();
+        $FamilieComponent = MethodsFamilies::where('methods_services_id', $ServiceComponent->id)->first();
 
         if(!empty($ServiceComponent->id) && !empty($FamilieComponent->id)){
             //get data to dulicate for new order

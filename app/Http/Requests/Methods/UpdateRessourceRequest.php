@@ -29,7 +29,7 @@ class UpdateRessourceRequest extends FormRequest
             'label'=>'required',
             'capacity'=>'required',
             'section_id'=>'required',
-            'service_id'=>'required',
+            'methods_services_id'=>'required',
             'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }

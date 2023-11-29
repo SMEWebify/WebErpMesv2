@@ -426,14 +426,14 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+                            <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
                               </div>
-                              <select class="form-control" name="service_id" id="service_id">
+                              <select class="form-control" name="methods_services_id" id="methods_services_id">
                                 @forelse ($ServicesSelect as $item)
-                                <option value="{{ $item->id }}" @if($MethodsRessource->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @if($MethodsRessource->methods_services_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                 @empty
                                 <option value="">{{ __('general_content.no_service_trans_key') }}</option>
                                 @endforelse
@@ -582,12 +582,12 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+                  <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-list"></i></span>
                     </div>
-                    <select class="form-control" name="service_id" id="service_id">
+                    <select class="form-control" name="methods_services_id" id="methods_services_id">
                       @forelse ($ServicesSelect as $item)
                       <option value="{{ $item->id }}">{{ $item->label }}</option>
                       @empty
@@ -1101,14 +1101,14 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+                            <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
                               </div>
-                              <select class="form-control" name="service_id" id="service_id">
+                              <select class="form-control" name="methods_services_id" id="methods_services_id">
                                 @forelse ($ServicesSelect as $item)
-                                <option value="{{ $item->id }}" @if($MethodsFamilie->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @if($MethodsFamilie->methods_services_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                 @empty
                                 <option value="">{{ __('general_content.no_service_trans_key') }}</option>
                                 @endforelse
@@ -1165,12 +1165,12 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+                <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-list"></i></span>
                   </div>
-                  <select class="form-control" name="service_id" id="service_id">
+                  <select class="form-control" name="methods_services_id" id="methods_services_id">
                     @forelse ($ServicesSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @empty
