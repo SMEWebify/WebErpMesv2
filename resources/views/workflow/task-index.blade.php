@@ -40,7 +40,19 @@
 @stop
 
 @section('css')
+<style>
+  /* Custom CSS to make the tooltip background transparent */
+  .tooltip-inner {
+      background-color: rgba(0, 0, 0, 0.1); 
+      color: #fff;
+  }
+</style>
 @stop
 
 @section('js')
+<script>
+  $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();   
+  });
+</script>
 @stop

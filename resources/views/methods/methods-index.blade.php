@@ -53,7 +53,7 @@
                 <tr>
                   <td>
                     @if($MethodsService->picture )
-                    <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'.$MethodsService->picture) }}">
+                    <img alt="Service" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'.$MethodsService->picture) }}">
                     @endif
                   </td>
                   <td>{{ $MethodsService->ordre }}</td>
@@ -343,7 +343,7 @@
                 <tr>
                   <td>
                     @if($MethodsRessource->picture )
-                    <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/ressources/'.$MethodsRessource->picture) }}">
+                    <img alt="Ressource" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/ressources/'.$MethodsRessource->picture) }}">
                     @endif
                   </td>
                   <td>{{ $MethodsRessource->ordre }}</td>

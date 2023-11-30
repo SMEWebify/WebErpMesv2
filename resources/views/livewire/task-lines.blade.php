@@ -109,13 +109,30 @@
                                 <x-ButtonTextView route="{{ route('products.show', ['id' => $Task->component_id])}}" />
                                 @endif
                             </td>
-                            <td @if($Task->methods_services_id ) style="background-color: {{ $Task->service['color'] }};" @endif >@if($Task->methods_services_id ) {{ $Task->service['label'] }}@endif</td>
+                            <td @if($Task->methods_services_id ) style="background-color: {{ $Task->service['color'] }};" @endif >
+
+                                @if($Task->methods_services_id )
+                                    @if( $Task->service['picture'])
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $Task->service['picture']) }}'>">
+                                            <span>{{ $Task->service['label'] }}</span>
+                                        </p>
+                                    @else
+                                        {{ $Task->service['label'] }}
+                                    @endif
+                                @endif
+                            </td>
                             <td>
+                                <ul>
                                 @if($Task->resources)
                                     @foreach($Task->resources as $resource)
-                                        <li>{{ $resource->label }}</li>
+                                        @if($resource->picture )
+                                            <li data-toggle="tooltip" data-html="true" title="<img alt='Ressource' class='profile-user-img' src='{{ asset('/images/ressources/'. $resource->picture) }}'>">{{ $resource->label }}</li>
+                                        @else
+                                            <li>{{ $resource->label }}</li>
+                                        @endif
                                     @endforeach
                                 @endif
+                                </ul>
                             </td>
                             <td>{{ $Task->qty }}</td>
                             <td>{{ $Task->seting_time }} h</td>

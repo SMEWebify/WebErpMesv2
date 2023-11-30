@@ -188,7 +188,17 @@
                             <td><a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $TechLine->id }}</a></td>
                             <td>{{ $TechLine->ordre }}</td>
                             <td>{{ $TechLine->label }}</td>
-                            <td @if($TechLine->methods_services_id ) style="background-color: {{ $TechLine->service['color'] }};" @endif >@if($TechLine->methods_services_id ) {{ $TechLine->service['label'] }}@endif</td>
+                            <td @if($TechLine->methods_services_id ) style="background-color: {{ $TechLine->service['color'] }};" @endif >
+                                @if($TechLine->methods_services_id )
+                                    @if( $TechLine->service['picture'])
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $TechLine->service['picture']) }}'>">
+                                            <span>{{ $TechLine->service['label'] }}</span>
+                                        </p>
+                                    @else
+                                        {{ $TechLine->service['label'] }}
+                                    @endif
+                                @endif
+                            </td>
                             <td>{{ $TechLine->seting_time }} h</td>
                             <td>{{ $TechLine->unit_time }} h</td>
                             <td>{{ $TechLine->TotalTime() }} h</td>
@@ -284,7 +294,17 @@
                             <td>#{{ $BOMline->id }}</td>
                             <td>{{ $BOMline->ordre }}</td>
                             <td>{{ $BOMline->label }}</td>
-                            <td @if($BOMline->methods_services_id ) style="background-color: {{ $BOMline->service['color'] }};" @endif >@if($BOMline->methods_services_id ) {{ $BOMline->service['label'] }}@endif</td>
+                            <td @if($BOMline->methods_services_id ) style="background-color: {{ $BOMline->service['color'] }};" @endif >
+                                @if($BOMline->methods_services_id )
+                                    @if( $BOMline->service['picture'])
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $BOMline->service['picture']) }}'>">
+                                            <span>{{ $BOMline->service['label'] }}</span>
+                                        </p>
+                                    @else
+                                        {{ $BOMline->service['label'] }}
+                                    @endif
+                                @endif
+                            </td>
                             <td>{{ $BOMline->Component['code'] }}</td>
                             <td>{{ $BOMline->qty }}</td>
                             <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>
