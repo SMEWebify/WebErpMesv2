@@ -36,14 +36,13 @@ pour passer en production, suivez ce lien : [wiki page (install en production)](
   
 -----------------
 Dashboard
-![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/c0767bbe-792d-46a5-9398-7e7a28a329d2)
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/07840f20-081d-47d3-b892-14f86b5ecc44)
 
+Devis et commande avec gestion des taches en Kanban
+![image](https://user-images.githubusercontent.com/75578469/177055327-68b3ba66-163d-4838-9ced-e1c6944ecbd1.png)
 
-
-Gestion des devis et des commandes avec tâche
-![image](https://user-images.githubusercontent.com/75578469/164035570-33da9040-7df4-4551-bb69-7ec88e80673b.png)
-![image](https://user-images.githubusercontent.com/75578469/164035711-504ac598-9385-486b-98f0-87a6a0a3b24a.png)
-![image](https://user-images.githubusercontent.com/75578469/177055341-330a2ca4-61f4-4293-9774-42b05d7165ee.png)
+Qualité
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/5510ee89-2257-4906-94f5-273cf8315322)
 
 
 
