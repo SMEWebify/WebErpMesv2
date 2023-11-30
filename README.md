@@ -38,12 +38,12 @@ for run to production, follow this link :  [wiki page (install to run)](https://
 Dashboard
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/07840f20-081d-47d3-b892-14f86b5ecc44)
 
-
-
-Quote & Order management with task
-![image](https://user-images.githubusercontent.com/75578469/164035570-33da9040-7df4-4551-bb69-7ec88e80673b.png)
-![image](https://user-images.githubusercontent.com/75578469/164035711-504ac598-9385-486b-98f0-87a6a0a3b24a.png)
+Quote & Order management with task kanban
 ![image](https://user-images.githubusercontent.com/75578469/177055327-68b3ba66-163d-4838-9ced-e1c6944ecbd1.png)
+
+Quality
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/5510ee89-2257-4906-94f5-273cf8315322)
+
 
 
 
