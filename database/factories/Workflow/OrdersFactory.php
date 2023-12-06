@@ -34,6 +34,7 @@ class OrdersFactory extends Factory
 
         return [
             //
+            'uuid' => $this->faker->uuid(),
             'code' => $this->code,
 			'label' => $this->code,
 			'customer_reference' => $this->faker->words(7,true) ,

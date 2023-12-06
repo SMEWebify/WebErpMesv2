@@ -161,7 +161,20 @@
                       <td>
                         <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print</a>
                       </td>
-                  </tr>
+                    </tr>
+                    
+                    @if($Order->type == 1)
+                    <tr>
+                      <td colspan="2">
+                        @if($Order->uuid)
+                        <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
+                        <p>
+                          <input type="text" class="form-control"  value="{{ Request::root() }}/guest/order/{{  $Order->uuid }}">
+                        </p>
+                        @endif
+                      </td>
+                    </tr>
+                    @endif
                 </table>
               </div>
             </div>

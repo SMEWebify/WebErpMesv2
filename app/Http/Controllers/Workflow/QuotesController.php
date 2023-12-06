@@ -107,7 +107,7 @@ class QuotesController extends Controller
      */
     public function update(UpdateQuoteRequest $request)
     {
-        $Quote = Quotes::find($request->id);
+        $Quote = Quotes::findOrFail($request->id);
         $Quote->label=$request->label;
         $Quote->customer_reference=$request->customer_reference;
         $Quote->companies_id=$request->companies_id;

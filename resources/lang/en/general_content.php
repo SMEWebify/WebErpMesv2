@@ -376,6 +376,7 @@ return [
     'svg_file_trans_key'                       => 'SVG file',
     'viewer_file_trans_key'                    => 'Viewer',
     'attached_file_trans_key'                  => 'Attached files',
+    'public_link_trans_key'                    => 'Public link',
     'add_to_document_trans_key'                => 'Add to new document',
     
     'companie_name_trans_key'                  => 'Companie name',

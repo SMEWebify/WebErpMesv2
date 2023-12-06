@@ -235,8 +235,8 @@ return [
             'input_name'    => 'searchVal' ,
         ],
         [
-            'text'     => 'users_trans_key',
-            'url'      => 'users',
+            'text'            => 'users_trans_key',
+            'url'             => 'users',
             'topnav_right'    => true,
         ],
         [

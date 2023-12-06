@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Site Maintenance</title>
+<title>Link error</title>
 <style>
     body { text-align: center; padding: 150px; }
     h1 { font-size: 50px; }
@@ -11,9 +11,9 @@
 
 <article>
     <img src="/vendor/adminlte/dist/img/simple-logo -R.PNG" alt="WEM">
-    <h1>We&rsquo;ll be back soon!</h1>
+    <h1>Oops, wrong address</h1>
     <div>
-        <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always go to <a href="https://github.com/SMEWebify/WebErpMesv2">GIT</a>, otherwise we&rsquo;ll be back online shortly!</p>
+        <p>Sorry for the inconvenience, it seems that the link you are trying seems incorrect. If you need to you can always go to <a href="https://github.com/SMEWebify/WebErpMesv2">GIT</a> !</p>
         <p>&mdash; The Team</p>
     </div>
 </article>

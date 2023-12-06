@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Quotes;
@@ -133,6 +134,7 @@ class QuotesIndex extends Component
         $this->validate();
             // Create Line
             $QuotesCreated = Quotes::create([
+                                            'uuid'=> Str::uuid(),
                                             'code'=>$this->code,  
                                             'label'=>$this->label,  
                                             'customer_reference'=>$this->customer_reference, 

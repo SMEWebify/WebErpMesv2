@@ -35,4 +35,14 @@ class Factory extends Model
     {
         return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
     }
+
+    public function getImageFactoryPath(){
+        // Example image is located at `public/images/factory`
+        if($this->picture){
+            return base64_encode(file_get_contents(public_path('images/factory/'.$this->picture)));
+        }
+        else{
+            return null;
+        }
+    }
 }

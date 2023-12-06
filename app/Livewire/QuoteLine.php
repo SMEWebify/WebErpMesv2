@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
@@ -14,11 +15,11 @@ use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
-use App\Models\Methods\MethodsFamilies;
-use App\Models\Planning\SubAssembly;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
 use League\CommonMark\Extension\SmartPunct\Quote;
@@ -371,6 +372,7 @@ class QuoteLine extends Component
 
              // Create order
             $OrdersCreated = Orders::create([
+                'uuid'=> Str::uuid(),
                 'code'=>$orderCode,  
                 'label'=>$QuoteData->label,  
                 'customer_reference'=>$QuoteData->customer_reference, 

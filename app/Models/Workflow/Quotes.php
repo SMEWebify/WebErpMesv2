@@ -23,7 +23,8 @@ class Quotes extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['code', 
+    protected $fillable = ['uuid',
+                            'code', 
                             'label', 
                             'customer_reference',
                             'companies_id', 
@@ -86,6 +87,11 @@ class Quotes extends Model
         return $this->hasMany(File::class);
     }
     
+    public function GetshortCreatedAttribute()
+    {
+        return date('d F Y', strtotime($this->created_at));
+    }
+
     public function GetPrettyCreatedAttribute()
     {
         return Carbon::parse($this->created_at)->diffForHumans();

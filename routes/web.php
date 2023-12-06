@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => LaravelLocalization::setLocale(),
                             'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]], function(){
 
+    Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->middleware(['guest'])->name('guest.quote.show');
+    Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->middleware(['guest'])->name('guest.order.show');
+    Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->middleware(['guest'])->name('guest');
+
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth'])->name('dashboard');
 
     Route::group(['prefix' => 'companies'], function () {

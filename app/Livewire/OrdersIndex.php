@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
@@ -187,6 +188,7 @@ class OrdersIndex extends Component
 
         // Create Line
         $OrdersCreated = Orders::create([
+                                        'uuid'=> Str::uuid(),
                                         'code'=>$this->code,  
                                         'label'=>$this->label,  
                                         'customer_reference'=>$this->customer_reference, 
