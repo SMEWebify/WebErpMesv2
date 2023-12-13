@@ -44,7 +44,7 @@ class SearchController extends Controller
                         ->orderByModel([
                             Companies::class, Quotes::class, Orders::class, Deliverys::class, Invoices::class,Products::class,
                         ])
-                        ->get($keyword);
+                        ->search($keyword);
 
         return view('search', compact('results', 'keyword'));
         
