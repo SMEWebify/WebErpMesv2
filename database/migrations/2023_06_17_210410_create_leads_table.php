@@ -41,7 +41,7 @@ return new class extends Migration
             #2 = Hot
             #3 = Lukewarm 
             #4 = Cold
-            $table->string('campaign');
+            $table->string('campaign')->nullable();
 			$table->text('comment', 65535)->nullable();
             $table->timestamps();
         });
