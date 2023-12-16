@@ -114,6 +114,11 @@ return [
     'hot_trans_key'                            => 'Hot',
     'lukewarm_trans_key'                       => 'Lukewarm',
     'cold_trans_key'                           => 'Cold',
+    'quote_made_trans_key'                     => 'Quote made',
+    'negotiation_trans_key'                    => 'Negotiation',
+    'closed_won_trans_key'                     => 'Closed-won',
+    'closed_lost_trans_key'                    => 'Closed-lost',
+    'informational_trans_key'                  => 'Informational', 
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
@@ -227,6 +232,8 @@ return [
     'no_data_trans_key'                        => 'No data available in table',
 
     //TAB
+    'opportunity_info_trans_key'               => 'Opportunity info',
+
     'quote_info_trans_key'                     => 'Quote info',
     'quote_line_trans_key'                     => 'Quote lines',
     'lines_import_trans_key'                   => 'Lines Import',
@@ -477,6 +484,9 @@ return [
     'collapse_trans_key'                       => 'Collapse',
     'remove_trans_key'                         => 'Remove',
 
+    'probality_trans_key'                      => 'Probality',
+    'budget_trans_key'                         => 'Budget',
+
     //NOTIFICATION
     'unread_list_trans_key'                    => ' Unread List',
     'read_trans_key'                           => ' Read',
@@ -531,6 +541,13 @@ return [
     'leads_trans_key'                          => 'Leads',
     'new_leads_trans_key'                      => 'New Lead',
     
+    //OPPORTUNITIES
+    'opportunities_trans_key'                  => 'Opportunities',
+    'new_opportunities_trans_key'              => 'New opportunity',
+    'name_opportunity_trans_key'               => 'Name of opportunity',
+    'opportunity_trans_key'                    => 'Opportunity',
+
+    //QUOTES
     'quote_trans_key'                          => 'Quote',
     'quotes_list_trans_key'                    => 'Quotes list',
     'quotes_lines_list_trans_key'              => 'Quotes lines list',
@@ -542,6 +559,7 @@ return [
     'choose_csv_trans_key'                     => 'Choose a .csv file...',
     'csv_quote_info_trans_key'                 => 'The unit value are defined in the methods section and the value of the default VAT are defined in the accounting section. If there is no discount column, the default value will be 0 %.', 
     
+    //ORDERS
     'orders_trans_key'                         => 'Orders',
     'orders_list_trans_key'                    => 'Orders list',
     'orders_lines_list_trans_key'              => 'Orders lines list',

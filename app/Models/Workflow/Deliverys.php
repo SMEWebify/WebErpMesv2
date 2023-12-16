@@ -59,6 +59,7 @@ class Deliverys extends Model
         return $this->hasMany(DeliveryLines::class)->orderBy('ordre');
     }
 
+    // Relationship with the files associated with the Quote
     public function files()
     {
         return $this->hasMany(File::class);

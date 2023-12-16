@@ -23,6 +23,7 @@ class FileUpload extends Controller
             'type' => $type,
             'size' => $size,
             'companies_id' => $request->companie_id,
+            'opportunities_id' => $request->opportunities_id,
             'quotes_id' => $request->quote_id,
             'orders_id' => $request->order_id,
             'deliverys_id' => $request->delivery_id,

@@ -172,6 +172,7 @@ class Products extends Model
         return $this->hasMany(QuoteLines::class);
     }
 
+    // Relationship with the files associated with the Quote
     public function files()
     {
         return $this->hasMany(File::class);

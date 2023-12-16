@@ -4,4 +4,4 @@
             <i class="fas fa-tags"></i>
         </div>
     </x-slot>
-  </x-adminlte-input>
+</x-adminlte-input>

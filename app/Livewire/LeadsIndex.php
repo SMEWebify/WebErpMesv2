@@ -4,9 +4,12 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Workflow\Leads;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Workflow\Opportunities;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 
@@ -21,6 +24,7 @@ class LeadsIndex extends Component
     
     private $Leadslist;
     
+    public $id;
     public $companies_id='';
     public $companies_contacts_id;   
     public $companies_addresses_id; 
@@ -42,15 +46,15 @@ class LeadsIndex extends Component
         $this->sortField = $field;
     }
 
-        // Validation Rules
-        protected $rules = [
-            'companies_id'=>'required',
-            'companies_contacts_id'=>'required',
-            'companies_addresses_id'=>'required',
-            'user_id'=>'required',
-            'source'=>'required',
-            'priority'=>'required',
-        ];
+    // Validation Rules
+    protected $rules = [
+        'companies_id'=>'required',
+        'companies_contacts_id'=>'required',
+        'companies_addresses_id'=>'required',
+        'user_id'=>'required',
+        'source'=>'required',
+        'priority'=>'required',
+    ];
 
     public function render()
     {
@@ -102,11 +106,29 @@ class LeadsIndex extends Component
         Leads::where('id',$leadId)->update(['statu'=>'3']);
     }
 
-    public function convertToQuote($leadId){
-        Leads::where('id',$leadId)->update(['statu'=>'4']);
-    }
-
     public function lost($leadId){
         Leads::where('id',$leadId)->update(['statu'=>'5']);
+    }
+
+    public function storeOpportunity($leadId){
+        
+        Leads::where('id',$leadId)->update(['statu'=>'4']);
+
+        $LeadToStore = Leads::find($leadId);
+
+        // Create opportunity
+        $OpportunityCreated = Opportunities::create([
+                        'uuid'=> Str::uuid(),
+                        'companies_id'=>$LeadToStore->companies_id,  
+                        'companies_contacts_id'=>$LeadToStore->companies_contacts_id,    
+                        'companies_addresses_id'=>$LeadToStore->companies_addresses_id,   
+                        'user_id'=>Auth::id(),    
+                        'label'=>'#LEAD'. $leadId .'#'. $LeadToStore->source .'#'. $LeadToStore->campaign ,
+                        'leads_id'=>$leadId, 
+                        'budget'=>0,   
+                        'probality'=>50, 
+        ]);
+        
+        return redirect()->route('opportunities.show', ['id' => $OpportunityCreated->id])->with('success', 'Successfully created new opportunity');
     }
 }

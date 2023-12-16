@@ -76,7 +76,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="source"  name="source" id="source" placeholder="{{ __('general_content.source_trans_key') }}" >
+                                        <input type="text" class="form-control @error('source') is-invalid @enderror" wire:model.live="source"  name="source" id="source" placeholder="{{ __('general_content.source_trans_key') }}" >
                                     </div>
                                     @error('source') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -86,7 +86,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="campaign"  name="campaign" id="campaign" placeholder="{{ __('general_content.campaign_trans_key') }}" >
+                                        <input type="text" class="form-control @error('campaign') is-invalid @enderror" wire:model.live="campaign"  name="campaign" id="campaign" placeholder="{{ __('general_content.campaign_trans_key') }}" >
                                     </div>
                                     @error('campaign') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -193,7 +193,7 @@
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <div class="dropdown-menu">
                                     <a href="#" class="dropdown-item" wire:click="inProgress({{$Leads->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i>{{ __('general_content.in_progress_trans_key') }}</span></a>
-                                    <a href="#" class="dropdown-item " wire:click="convertToQuote({{$Leads->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i>{{ __('general_content.converted_trans_key') }}</span></a>
+                                    <a href="#" class="dropdown-item " wire:click="storeOpportunity({{$Leads->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i>{{ __('general_content.converted_trans_key') }}</span></a>
                                     <a href="#" class="dropdown-item" wire:click="lost({{$Leads->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.lost_trans_key') }}</span></a>
                                 </div>
                             </div>

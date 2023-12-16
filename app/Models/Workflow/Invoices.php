@@ -69,6 +69,7 @@ class Invoices extends Model
         return $invoiceCalculator->getTotalPrice();
     }
 
+    // Relationship with the files associated with the Quote
     public function files()
     {
         return $this->hasMany(File::class);

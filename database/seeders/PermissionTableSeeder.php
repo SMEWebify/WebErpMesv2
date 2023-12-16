@@ -18,6 +18,7 @@ class PermissionTableSeeder  extends Seeder
         $permissions = [
                         'companies-menu',
                         'leads-menu',
+                        'opportunities-menu',
                         'quotes-menu',
                         'orders-menu',
                         'scheduling-menu',

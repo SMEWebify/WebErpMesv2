@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => LaravelLocalization::setLocale(),
                             'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]], function(){
 
-    Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->middleware(['guest'])->name('guest.quote.show');
-    Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->middleware(['guest'])->name('guest.order.show');
-    Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->middleware(['guest'])->name('guest');
+    Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->name('guest.quote.show');
+    Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->name('guest.order.show');
+    Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
 
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth'])->name('dashboard');
 
@@ -41,6 +41,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'leads'], function () {
         //leads
         Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->middleware(['auth'])->name('leads'); 
+    });
+
+    Route::group(['prefix' => 'opportunities'], function () {
+        //opportunities
+        Route::get('/', 'App\Http\Controllers\Workflow\OpportunitiesController@index')->middleware(['auth'])->name('opportunities'); 
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->middleware(['auth'])->name('opportunities.show');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->middleware(['auth'])->name('opportunities.update');
     });
 
     Route::group(['prefix' => 'quotes'], function () {

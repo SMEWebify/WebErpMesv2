@@ -10,6 +10,7 @@ return [
     'dashboard_trans_key'                      => 'Tableau de bord',
     'companies_trans_key'                      => 'Sociétés',
     'leads_trans_key'                          => 'Leads',
+    'opportunities_trans_key'                  => 'Opportunités',
     'quote_trans_key'                          => 'Devis',
     'quotes_list_trans_key'                    => 'Liste des devis',
     'quotes_lines_list_trans_key'              => 'Liste des ligne de devis',

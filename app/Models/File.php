@@ -9,6 +9,7 @@ use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\Opportunities;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Quality\QualityNonConformity;
@@ -24,6 +25,7 @@ class File extends Model
         'type',
         'size',
         'companies_id',
+        'opportunities_id',
         'quotes_id',
         'orders_id',
         'deliverys_id',
@@ -43,6 +45,11 @@ class File extends Model
     public function quotes()
     {
         return $this->belongsTo(Quotes::class, 'quotes_id');
+    }
+
+    public function Opportunities()
+    {
+        return $this->belongsTo(Opportunities::class, 'opportunities_id');
     }
 
     public function order()

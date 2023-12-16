@@ -114,6 +114,11 @@ return [
     'hot_trans_key'                            => 'Chaud',
     'lukewarm_trans_key'                       => 'Tiède',
     'cold_trans_key'                           => 'Froid',
+    'quote_made_trans_key'                     => 'Devis réalisé',
+    'negotiation_trans_key'                    => 'Négotiation',
+    'closed_won_trans_key'                     => 'Fermé-gagné',
+    'closed_lost_trans_key'                    => 'Fermé-perdu',
+    'informational_trans_key'                  => 'Informationnel', 
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',
@@ -227,6 +232,8 @@ return [
     'no_data_trans_key'                         => 'Aucune données',
 
     //TAB
+    'opportunity_info_trans_key'               => 'Oportunité info',
+
     'quote_info_trans_key'                     => 'Information du devis',
     'quote_line_trans_key'                     => 'Ligne du devis',
     'lines_import_trans_key'                   => 'Importation de lignes',
@@ -477,6 +484,9 @@ return [
     'collapse_trans_key'                       => 'Réduire',
     'remove_trans_key'                         => 'Retirer',
 
+    'probality_trans_key'                      => 'Probabilité',
+    'budget_trans_key'                         => 'Budget',
+
     //NOTIFICATION
     'unread_list_trans_key'                    => ' Liste non lus',
     'read_trans_key'                           => ' Lus',
@@ -531,6 +541,13 @@ return [
     'leads_trans_key'                          => 'Leads',
     'new_leads_trans_key'                      => 'Nouveau Lead',
 
+    //OPPORTUNITIES
+    'opportunities_trans_key'                  => 'Oportunités',
+    'new_opportunities_trans_key'              => 'Nouvelle Oportunité',
+    'name_opportunity_trans_key'               => 'Nom de l\'oportunité',
+    'opportunity_trans_key'                    => 'Oportunité',
+
+    //QUOTES
     'quote_trans_key'                          => 'Devis',
     'quotes_list_trans_key'                    => 'Liste des devis',
     'quotes_lines_list_trans_key'              => 'Lignes de devis',
@@ -542,6 +559,7 @@ return [
     'choose_csv_trans_key'                     => 'Choisir un fichier csv ...',
     'csv_quote_info_trans_key'                 => 'La valeur unitaire est définie dans la section méthodes et la valeur de la TVA par défaut est définie dans la section comptabilité. S\'il n\'y a pas de colonne de remise, la valeur par défaut sera 0 %.', 
     
+    //ORDERS
     'orders_trans_key'                         => 'Commandes',
     'orders_list_trans_key'                    => 'Liste des commandes',
     'orders_lines_list_trans_key'              => 'Lignes de commande',

@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\PurchaseLines;
@@ -47,6 +48,12 @@ class Purchases extends Model
     public function PurchaseLines()
     {
         return $this->hasMany(PurchaseLines::class)->orderBy('ordre');
+    }
+
+    // Relationship with the files associated with the Quote
+    public function files()
+    {
+        return $this->hasMany(File::class);
     }
 
     public function GetPrettyCreatedAttribute()

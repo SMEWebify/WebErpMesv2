@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('type');
             $table->string('size');
             $table->integer('companies_id')->nullable();
+            $table->integer('opportunities_id')->nullable();
             $table->integer('quotes_id')->nullable();
             $table->integer('orders_id')->nullable();
             $table->integer('deliverys_id')->nullable();

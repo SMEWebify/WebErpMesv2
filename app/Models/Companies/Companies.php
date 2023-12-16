@@ -99,6 +99,7 @@ class Companies extends Model
         return $this->Orders()->count();
     }
 
+    // Relationship with the files associated with the Quote
     public function files()
     {
         return $this->hasMany(File::class);

@@ -91,6 +91,7 @@ class Orders extends Model
         return $this->hasMany(OrderLines::class)->orderBy('ordre');
     }
 
+    // Relationship with the files associated with the Quote
     public function files()
     {
         return $this->hasMany(File::class);
@@ -101,6 +102,7 @@ class Orders extends Model
         return date('d F Y', strtotime($this->created_at));
     }
     
+    //Get Created attribute like '	06 December 2023'
     public function GetPrettyCreatedAttribute()
     {
         return Carbon::parse($this->created_at)->diffForHumans();

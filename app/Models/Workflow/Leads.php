@@ -48,4 +48,10 @@ class Leads extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    //Get Created attribute like '	06 December 2023'
+    public function GetPrettyCreatedAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
+    }
 }

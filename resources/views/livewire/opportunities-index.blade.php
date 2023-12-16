@@ -1,11 +1,10 @@
-
 <div>
     <!-- Modal -->
-    <div wire:ignore.self class="modal fade" id="ModalQuote" tabindex="-1" role="dialog" aria-labelledby="ModalQuoteTitle" aria-hidden="true">
+    <div wire:ignore.self class="modal fade" id="ModalOpportunity" tabindex="-1" role="dialog" aria-labelledby="ModalOpportunityTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content ">
                 <div class="modal-header bg-success">
-                    <h5 class="modal-title" id="ModalQuoteTitle">{{ __('general_content.new_quote_trans_key') }}</h5>
+                    <h5 class="modal-title" id="ModalOpportunityTitle">{{ __('general_content.new_opportunities_trans_key') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -15,27 +14,17 @@
                     @csrf
                         <div class="card card-body">
                             <div class="form-row">
-                                <div class="form-group col-md-4">
-                                    <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                                        </div>
-                                        <input type="text" class="form-control"  wire:model.live="code"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" >
-                                    </div>
-                                    @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="label">{{ __('general_content.name_quote_trans_key') }}</label>
+                                <div class="form-group col-md-6">
+                                    <label for="label">{{ __('general_content.name_opportunity_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
-                                        <input type="text" class="form-control"  wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_quote_trans_key') }}" required>
+                                        <input type="text" class="form-control"  wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_opportunity_trans_key') }}" required>
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-6">
                                     <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -43,7 +32,7 @@
                                         </div>
                                         <select class="form-control"  wire:model.live="user_id" name="user_id" id="user_id">
                                             <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
-                                            @foreach ($userSelect as $item)
+                                            @foreach ($UsersSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endforeach
                                         </select>
@@ -54,17 +43,17 @@
                         </div>
                         <div class="card card-body">
                             <div class="row">
-                                <label for="InputWebSite">{{ __('general_content.customer_info_trans_key') }}</label>
+                                <label for="CutomerInfo">{{ __('general_content.customer_info_trans_key') }}</label>
                             </div>
                             <hr>
                             <div class="form-row">
-                                <div class="form-group col-md-6">
+                                <div class="col-12">
                                     <label for="companies_id">{{ __('general_content.companie_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-building"></i></span>
                                         </div>
-                                        <select class="form-control"  wire:model.live="companies_id" name="companies_id" id="companies_id">
+                                        <select class="form-control" wire:model.change="companies_id" name="companies_id" id="companies_id">
                                             <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                                             @forelse ($CompanieSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -75,16 +64,6 @@
                                     </div>
                                     @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label for="customer_reference">{{ __('general_content.customer_reference_trans_key') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
-                                        </div>
-                                        <input type="text" class="form-control"  wire:model.live="customer_reference" name="customer_reference"  id="customer_reference" placeholder="{{ __('general_content.customer_reference_trans_key') }}">
-                                    </div>
-                                    @error('customer_reference') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
@@ -93,12 +72,12 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                                         </div>
-                                        <select class="form-control"  wire:model.live="companies_addresses_id"  name="companies_addresses_id" id="companies_addresses_id">
+                                        <select class="form-control" wire:model.change="companies_addresses_id"  name="companies_addresses_id" id="companies_addresses_id">
                                             <option value="">{{ __('general_content.select_address_trans_key') }}</option>
                                             @forelse ($AddressSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
                                             @empty
-                                            <option value="">{{ __('general_content.no_address_trans_key') }}</option>
+                                            <option value="">{{ __('general_content.no_contact_trans_key') }}</option>
                                         @endforelse
                                         </select>
                                     </div>
@@ -110,7 +89,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control"  wire:model.live="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
+                                        <select class="form-control" wire:model.change="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
                                             <option value="">{{ __('general_content.select_contact_trans_key') }}</option>
                                             @forelse ($ContactSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
@@ -125,57 +104,29 @@
                         </div>
                         <div class="card card-body">
                             <div class="row">
-                                <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
+                                <label for="GeneralInfo">{{ __('general_content.general_information_trans_key') }}</label>
                             </div>
                             <hr>
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="accounting_payment_conditions_id">{{ __('general_content.payment_conditions_trans_key') }}</label>
-                                    <select class="form-control"  wire:model.live="accounting_payment_conditions_id" name="accounting_payment_conditions_id" id="accounting_payment_conditions_id">
-                                        <option value="">{{ __('general_content.select_payement_condition_trans_key') }}</option>
-                                        @forelse ($AccountingConditionSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
-                                        @empty
-                                            <option value="">{{ __('general_content.no_payment_conditions_trans_key') }}</option>
-                                        @endforelse
-                                    </select>
-                                    @error('accounting_payment_conditions_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="accounting_payment_methods_id">{{ __('general_content.select_payement_methods_trans_key') }}</label>
-                                    <select class="form-control"  wire:model.live="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id">
-                                        <option value="">{{ __('general_content.select_payement_methods_trans_key') }}</option>
-                                        @forelse ($AccountingMethodsSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
-                                        @empty
-                                            <option value="">{{ __('general_content.no_payment_methods_trans_key') }}</option>
-                                        @endforelse
-                                    </select>
-                                    @error('accounting_payment_methods_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="accounting_deliveries_id">{{ __('general_content.delevery_method_trans_key') }}</label>
+                                    <label for="accounting_vats_id">{{ __('general_content.probality_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                                            <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                         </div>
-                                        <select class="form-control"  wire:model.live="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id">
-                                            <option value="">{{ __('general_content.select_delivery_trans_key') }}</option>
-                                        @forelse ($AccountingDeleveriesSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
-                                        @empty
-                                            <option value="">{{ __('general_content.no_delivery_trans_key') }}</option>
-                                        @endforelse
-                                        </select>
+                                        <input type="number" class="form-control @error('probality') is-invalid @enderror" wire:model.live="probality" name="probality"  id="probality"  placeholder="50" required>
                                     </div>
-                                    @error('accounting_deliveries_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                    @error('probality') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="label">{{ __('general_content.validity_date_trans_key') }}</label>
-                                    <input type="date" class="form-control"  wire:model.live="validity_date" name="validity_date"  id="validity_date">
-                                    @error('validity_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                    <label for="accounting_vats_id">{{ __('general_content.budget_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">{{ $Factory->curency }}</span>
+                                        </div>
+                                        <input type="number" class="form-control @error('budget') is-invalid @enderror" id="budget" placeholder="0" min="0" wire:model.live="budget" step=".001" value="0">
+                                    </div>
+                                    @error('budget') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
                         </div>
@@ -190,7 +141,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('general_content.close_trans_key') }}</button>
-                            <button type="Submit" wire:click.prevent="storeQuote()" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
+                            <button type="Submit" wire:click.prevent="storeOpportunity()" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
                         </div>
                     </form>
                 </div>
@@ -198,7 +149,7 @@
         </div>
     </div>
     <!-- End Modal -->
-    
+
     <div class="card">
         @include('include.alert-result')
         <div class="card-body">
@@ -214,19 +165,19 @@
                             </div>
                             <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
                                 <option value="" selected>{{ __('general_content.select_statu_trans_key') }}</option>
-                                <option value="1">{{ __('general_content.open_trans_key') }}</option>
-                                <option value="2">{{ __('general_content.send_trans_key') }}</option>
-                                <option value="3">{{ __('general_content.win_trans_key') }}</option>
-                                <option value="4">{{ __('general_content.lost_trans_key') }}</option>
-                                <option value="5">{{ __('general_content.closed_trans_key') }}</option>
-                                <option value="6">{{ __('general_content.obsolete_trans_key') }}</option>
+                                <option value="1">{{ __('general_content.new_trans_key') }}</option>
+                                <option value="2">{{ __('general_content.quote_made_trans_key') }}</option>
+                                <option value="3">{{ __('general_content.negotiation_trans_key') }}</option>
+                                <option value="4">{{ __('general_content.closed_won_trans_key') }}</option>
+                                <option value="5">{{ __('general_content.closed_lost_trans_key') }}</option>
+                                <option value="6">{{ __('general_content.informational_trans_key') }}</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalQuote">
-                        {{ __('general_content.new_quote_trans_key') }}
+                    <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalOpportunity">
+                        {{ __('general_content.new_opportunities_trans_key') }}
                     </button>
                 </div>
             </div>
@@ -235,18 +186,13 @@
                     <thead>
                         <tr>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('code')" role="button" href="#">{{__('general_content.id_trans_key') }} @include('include.sort-icon', ['field' => 'code'])</a>
-                            </th>
-                            <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                             </th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')" role="button" href="#">{{__('general_content.customer_trans_key') }} @include('include.sort-icon', ['field' => 'companies_id'])</a>
                             </th>
-                            <th>{{__('general_content.code_trans_key') }}</th>
-                            <th>{{__('general_content.lines_count_trans_key') }}</th>
-                            <th>{{__('general_content.total_price_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{ __('general_content.user_trans_key') }}</th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }}@include('include.sort-icon', ['field' => 'created_at'])</a>
                             </th>
@@ -254,28 +200,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($Quoteslist as $Quote)
+                        @forelse ($Opportunities as $Opportunity)
                         <tr>
-                            <td>{{ $Quote->code }}</td>
-                            <td>{{ $Quote->label }}</td>
+                            <td>{{ $Opportunity->label }}</td>
                             <td>
-                                <x-CompanieButton id="{{ $Quote->companies_id }}" label="{{ $Quote->companie['label'] }}"  />
+                                <x-CompanieButton id="{{ $Opportunity->companies_id }}" label="{{ $Opportunity->companie['label'] }}"  />
                             </td>
-                            <td>{{ $Quote->customer_reference }}</td>
-                            <td>{{ $Quote->quote_lines_count }}</td>
-                            <td>{{ $Quote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                             <td>
-                                @if(1 == $Quote->statu )   <span class="badge badge-info"> {{ __('general_content.open_trans_key') }}</span>@endif
-                                @if(2 == $Quote->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
-                                @if(3 == $Quote->statu )  <span class="badge badge-success">{{ __('general_content.win_trans_key') }}</span>@endif
-                                @if(4 == $Quote->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif
-                                @if(5 == $Quote->statu )  <span class="badge badge-secondary">{{ __('general_content.closed_trans_key') }}</span>@endif
-                                @if(6 == $Quote->statu )   <span class="badge badge-secondary">{{ __('general_content.obsolete_trans_key') }}</span>@endif
+                                @if(1 == $Opportunity->statu )   <span class="badge badge-info"> {{ __('general_content.new_trans_key') }}</span>@endif
+                                @if(2 == $Opportunity->statu )  <span class="badge badge-primary">{{ __('general_content.quote_made_trans_key') }}</span>@endif
+                                @if(3 == $Opportunity->statu )  <span class="badge badge-warning">{{ __('general_content.negotiation_trans_key') }}</span>@endif
+                                @if(4 == $Opportunity->statu )  <span class="badge badge-success">{{ __('general_content.closed_won_trans_key') }}</span>@endif
+                                @if(5 == $Opportunity->statu )  <span class="badge badge-danger">{{ __('general_content.closed_lost_trans_key') }}</span>@endif
+                                @if(6 == $Opportunity->statu )   <span class="badge badge-secondary">{{ __('general_content.informational_trans_key') }}</span>@endif
                             </td>
-                            <td>{{ $Quote->GetPrettyCreatedAttribute() }}</td>
+                            <td>{{ $Opportunity->UserManagement['name'] }}</td>
+                            <td>{{ $Opportunity->GetPrettyCreatedAttribute() }}</td>
                             <td>
-                                <x-ButtonTextView route="{{ route('quotes.show', ['id' => $Quote->id])}}" />
-                                <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" />
+                                <x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Opportunity->id])}}" />
                             </td>
                         </tr>
                         @empty
@@ -284,23 +226,19 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th>{{__('general_content.id_trans_key') }} </th>
                             <th>{{__('general_content.label_trans_key') }}</th>
                             <th>{{__('general_content.customer_trans_key') }}</th>
-                            <th>{{__('general_content.code_trans_key') }}</th>
-                            <th>{{__('general_content.lines_count_trans_key') }}</th>
-                            <th>{{__('general_content.total_price_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{ __('general_content.user_trans_key') }}</th>
                             <th>{{__('general_content.created_at_trans_key') }}</th>
                             <th>{{__('general_content.action_trans_key') }}</th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
-            {{ $Quoteslist->links() }}
+            {{ $Opportunities->links() }}
         <!-- /.card-body -->
         </div>
     <!-- /.card -->
     </div>
-<!-- /.div -->
 </div>

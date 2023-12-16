@@ -769,6 +769,7 @@
                                         <select class="form-control" name="name" id="name">
                                             <option value="companies-menu">companies-menu</option>
                                             <option value="leads-menu">leads-menu</option>
+                                            <option value="opportunities-menu">opportunities-menu</option>
                                             <option value="quotes-menu">quotes-menu</option>
                                             <option value="orders-menu">orders-menu</option>
                                             <option value="scheduling-menu">scheduling-menu</option>

@@ -308,6 +308,12 @@ return [
             'can'         => ['leads-menu'],
         ],
         [
+            'text'        => 'opportunities_trans_key',
+            'url'         => 'opportunities',
+            'icon'        => 'fa fa-tags',
+            'can'         => ['opportunities-menu'],
+        ],
+        [
             'text'    => 'quote_trans_key',
             'icon'    => 'fas fa-calculator',
             'can'  => ['quotes-menu'],
