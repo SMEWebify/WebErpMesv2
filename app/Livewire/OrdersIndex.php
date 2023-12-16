@@ -97,6 +97,14 @@ class OrdersIndex extends Component
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastOrder =  Orders::orderBy('id', 'desc')->first();
 
+        $accounting_payment_conditions = AccountingPaymentConditions::select('id')->where( 'default', 1)->first(); 
+        $accounting_payment_methods = AccountingPaymentMethod::select('id')->where( 'default', 1)->first(); 
+        $accounting_deliveries = AccountingDelivery::select('id')->where( 'default', 1)->first(); 
+
+        $this->accounting_payment_conditions_id = ($accounting_payment_conditions->id ?? 0); 
+        $this->accounting_payment_methods_id = ($accounting_payment_methods->id  ?? 0);  
+        $this->accounting_deliveries_id = ($accounting_deliveries->id  ?? 0); 
+
         if($this->LastOrder == Null){
             $this->code = "OR-0";
             $this->label = "OR-0";

@@ -81,6 +81,14 @@ class QuotesIndex extends Component
         $this->user_id = Auth::id();
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastQuote =  Quotes::orderBy('id', 'desc')->first();
+        
+        $accounting_payment_conditions = AccountingPaymentConditions::select('id')->where( 'default', 1)->first(); 
+        $accounting_payment_methods = AccountingPaymentMethod::select('id')->where( 'default', 1)->first(); 
+        $accounting_deliveries = AccountingDelivery::select('id')->where( 'default', 1)->first(); 
+
+        $this->accounting_payment_conditions_id = ($accounting_payment_conditions->id ?? 0); 
+        $this->accounting_payment_methods_id = ($accounting_payment_methods->id  ?? 0);  
+        $this->accounting_deliveries_id = ($accounting_deliveries->id  ?? 0); 
 
         if($this->LastQuote == Null){
             $this->code = "QT-0";
@@ -113,9 +121,9 @@ class QuotesIndex extends Component
         $CompanieSelect = Companies::select('id', 'code','label')->where('active', 1)->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
-        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
-        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
-        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
+        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label', 'default')->get();
+        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label', 'default')->get();
+        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label', 'default')->get();
         $Factory = Factory::first();
 
         return view('livewire.quotes-index')->with([
