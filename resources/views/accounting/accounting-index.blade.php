@@ -39,6 +39,7 @@
                   <th>{{__('general_content.number_of_day_trans_key') }}</th>
                   <th>{{__('general_content.end_of_month_trans_key') }}</th>
                   <th></th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -51,6 +52,12 @@
                   <td>
                     @if($PaymentCondition->month_end  == 1) Yes @endif
                     @if($PaymentCondition->month_end  == 2) No @endif
+                  </td>
+                  <td>
+                    <div class="custom-control custom-radio">
+                      <input class="custom-control-input" type="radio" id="customRadioPaymentCondition{{ $PaymentCondition->id }}" name="customRadioPaymentCondition"  @if( $PaymentCondition->default == 1 ) checked @endif disabled>
+                      <label for="customRadioPaymentCondition{{ $PaymentCondition->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                    </div>
                   </td>
                   <td class=" py-0 align-middle">
                     <!-- Button Modal {{ $PaymentCondition->id }} -->
@@ -84,6 +91,13 @@
                             <select class="form-control" name="month_end" id="month_end">
                                 <option value="2" @if($PaymentCondition->month_end == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                 <option value="1" @if($PaymentCondition->month_end == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label for="month_end">{{__('general_content.by_default_trans_key') }}</label>
+                            <select class="form-control" name="default" id="default">
+                                <option value="0" @if($PaymentCondition->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                <option value="1" @if($PaymentCondition->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                             </select>
                           </div>
                         </div>
@@ -180,6 +194,7 @@
                   <th>{{ __('general_content.description_trans_key') }}</th>
                   <th>{{__('general_content.code_account_trans_key') }}</th>
                   <th></th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -188,6 +203,12 @@
                   <td>{{ $PaymentMethod->code }}</td>
                   <td>{{ $PaymentMethod->label }}</td>
                   <td>{{ $PaymentMethod->code_account }}</td>
+                  <td>
+                    <div class="custom-control custom-radio">
+                      <input class="custom-control-input" type="radio" id="customRadioPaymentMethod{{ $PaymentMethod->id }}" name="customRadioPaymentMethod"  @if( $PaymentMethod->default == 1 ) checked @endif disabled>
+                      <label for="customRadioPaymentMethod{{ $PaymentMethod->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                    </div>
+                  </td>
                   <td class=" py-0 align-middle">
                     <!-- Button Modal {{ $PaymentMethod->id }} -->
                     <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#PaymentMethod{{ $PaymentMethod->id }}">
@@ -210,6 +231,13 @@
                           <div class="form-group">
                             <label for="code_account">{{__('general_content.code_account_trans_key') }}</label>
                             <input type="text" class="form-control" name="code_account"  id="code_account" placeholder="{{__('general_content.code_account_trans_key') }}" value="{{ $PaymentMethod->code_account }}">
+                          </div>
+                          <div class="form-group">
+                            <label for="month_end">{{__('general_content.by_default_trans_key') }}</label>
+                            <select class="form-control" name="default" id="default">
+                                <option value="0" @if($PaymentMethod->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                <option value="1" @if($PaymentMethod->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
+                            </select>
                           </div>
                         </div>
                         <div class="card-footer">
@@ -304,8 +332,8 @@
                   <td>{{ $VAT->rate }}</td>
                   <td>
                     <div class="custom-control custom-radio">
-                      <input class="custom-control-input" type="radio" id="customRadio{{ $VAT->id }}" name="customRadio"  @if( $VAT->default == 1 ) checked @endif disabled>
-                      <label for="customRadio{{ $VAT->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                      <input class="custom-control-input" type="radio" id="customRadioVAT{{ $VAT->id }}" name="customRadioVAT"  @if( $VAT->default == 1 ) checked @endif disabled>
+                      <label for="customRadioVAT{{ $VAT->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
                     </div>
                   </td>
                   <td class=" py-0 align-middle">
@@ -612,6 +640,7 @@
                   <th>{{ __('general_content.external_id_trans_key') }}</th>
                   <th>{{ __('general_content.description_trans_key') }}</th>
                   <th></th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -619,6 +648,12 @@
                 <tr>
                   <td>{{ $Delevery->code }}</td>
                   <td>{{ $Delevery->label }}</td>
+                  <td>
+                    <div class="custom-control custom-radio">
+                      <input class="custom-control-input" type="radio" id="customRadioDelevery{{ $Delevery->id }}" name="customRadioDelevery"  @if( $Delevery->default == 1 ) checked @endif disabled>
+                      <label for="customRadioDelevery{{ $Delevery->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                    </div>
+                  </td>
                   <td class=" py-0 align-middle">
                     <!-- Button Modal {{ $Delevery->id }} -->
                     <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Delevery{{ $Delevery->id }}">
@@ -637,6 +672,13 @@
                               </div>
                               <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Delevery->label }}">
                             </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="month_end">{{__('general_content.by_default_trans_key') }}</label>
+                            <select class="form-control" name="default" id="default">
+                                <option value="0" @if($Delevery->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                <option value="1" @if($Delevery->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
+                            </select>
                           </div>
                         </div>
                         <div class="card-footer">

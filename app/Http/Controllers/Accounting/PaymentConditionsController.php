@@ -30,11 +30,13 @@ class PaymentConditionsController extends Controller
      */
     public function update(UpdatePaymentConditionRequest $request)
     {
+        if($request->default == 1) AccountingPaymentConditions::query()->update(['default' => 0]);
         $PaymentCondition = AccountingPaymentConditions::find($request->id);
         $PaymentCondition->label=$request->label;
         $PaymentCondition->number_of_month=$request->number_of_month;
         $PaymentCondition->number_of_day=$request->number_of_day;
         $PaymentCondition->month_end=$request->month_end;
+        $PaymentCondition->default=$request->default;
         $PaymentCondition->save();
         return redirect()->route('accounting')->with('success', 'Successfully updated payment condition mode.');
     }

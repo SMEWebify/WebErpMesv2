@@ -9,5 +9,5 @@ class AccountingPaymentMethod extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code',  'label',  'code_account'];
+    protected $fillable = ['code',  'label',  'code_account',  'default'];
 }

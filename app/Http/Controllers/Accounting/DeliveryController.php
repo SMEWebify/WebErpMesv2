@@ -26,8 +26,10 @@ class DeliveryController extends Controller
      */
     public function update(UpdateDeliveryRequest $request)
     {
+        if($request->default == 1) AccountingDelivery::query()->update(['default' => 0]);
         $AccountingDelivery = AccountingDelivery::find($request->id);
         $AccountingDelivery->label=$request->label;
+        $AccountingDelivery->default=$request->default;
         $AccountingDelivery->save();
         return redirect()->route('accounting')->with('success', 'Successfully updated delevery mode.');
     }

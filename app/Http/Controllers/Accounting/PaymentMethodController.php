@@ -28,9 +28,11 @@ class PaymentMethodController extends Controller
      */
     public function update(UpdatePaymentMethodRequest $request)
     {
+        if($request->default == 1) AccountingPaymentMethod::query()->update(['default' => 0]);
         $PaymentMethod = AccountingPaymentMethod::find($request->id);
         $PaymentMethod->label=$request->label;
         $PaymentMethod->code_account=$request->code_account;
+        $PaymentMethod->default=$request->default;
         $PaymentMethod->save();
         return redirect()->route('accounting')->with('success', 'Successfully updated payment method mode.');
     }

@@ -9,5 +9,5 @@ class AccountingPaymentConditions extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code',  'label',  'number_of_month',  'number_of_day',  'month_end'];
+    protected $fillable = ['code',  'label',  'number_of_month',  'number_of_day',  'month_end',  'default'];
 }

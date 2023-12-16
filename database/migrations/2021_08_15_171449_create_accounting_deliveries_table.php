@@ -17,6 +17,7 @@ class CreateAccountingDeliveriesTable extends Migration
             $table->id();
 			$table->string('code');
 			$table->string('label');
+            $table->integer('default')->default(0);
             $table->timestamps();
         });
     }

@@ -20,6 +20,7 @@ class CreateAccountingPaymentConditionsTable extends Migration
 			$table->integer('number_of_month');
 			$table->integer('number_of_day');
 			$table->integer('month_end');
+            $table->integer('default')->default(0);
             $table->timestamps();
         });
     }
