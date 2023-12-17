@@ -42,4 +42,51 @@
 @stop
 
 @section('js')
+
+<script>
+//-------------
+//- PIE CHART -
+//-------------
+  var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+  var donutData        = {
+      labels: [
+        @foreach ($data['opportunitiesDataRate'] as $item)
+              @if(1 == $item->statu )  "New", @endif
+              @if(2 == $item->statu )  "Quote made", @endif
+              @if(3 == $item->statu )  "Negotiation", @endif
+              @if(4 == $item->statu )  "Closed-won", @endif
+              @if(5 == $item->statu )  "Closed-lost", @endif
+              @if(6 == $item->statu )  "Informational", @endif
+        @endforeach
+      ],
+      datasets: [
+        {
+          data: [
+                @foreach ($data['opportunitiesDataRate'] as $item)
+                "{{ $item->OpportunitiesCountRate }}",
+                @endforeach
+              ], 
+              backgroundColor: [
+                  'rgba(23, 162, 184, 1)',
+                  'rgba(255, 193, 7, 1)',
+                  'rgba(40, 167, 69, 1)',
+                  'rgba(220, 53, 69, 1)',
+                  'rgba(108, 117, 125, 1)',
+                  'rgba(0, 123, 255, 1)',
+              ],
+        }
+      ]
+    }
+    var donutOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'pie',
+      data: donutData,
+      options: donutOptions
+    })
+  </script>
 @stop

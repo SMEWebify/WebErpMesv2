@@ -143,7 +143,7 @@
                 </p>
                 @forelse($Opportunity->Quotes as $Quote)
                   <hr>
-                  <x-ButtonTextView route="{{ route('quotes.show', ['id' => $Quote->id])}}" />
+                  <x-QuoteButton id="{{ $Quote->id }}" code="{{ $Quote->code }}"  />
                   <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /><br/>
                 @empty
                 {{ __('general_content.no_data_trans_key') }}

@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Quotes;
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -26,8 +27,15 @@ class OpportunitiesController extends Controller
      * @return View
      */
     public function index()
-    {    
-        return view('workflow/opportunities-index');
+    {   
+        //Quote data for chart
+        $data['opportunitiesDataRate'] = DB::table('opportunities')
+                                    ->select('statu', DB::raw('count(*) as OpportunitiesCountRate'))
+                                    ->groupBy('statu')
+                                    ->get();
+
+
+        return view('workflow/opportunities-index')->with('data',$data);
     }
 
     /**
