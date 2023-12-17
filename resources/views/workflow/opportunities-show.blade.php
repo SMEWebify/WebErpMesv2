@@ -25,6 +25,7 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Opportunity">
+        @livewire('arrow-steps.arrow-opportunity', ['OpportunityId' => $Opportunity->id, 'OpportunityStatu' => $Opportunity->statu])
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -129,16 +130,26 @@
                 @endif
               </div>
             </div>
-            <!--<div class="card card-warning">
+            <div class="card card-warning">
               <div class="card-header">
                 <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
               <div class="card-body ">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ModalQuote">
-                  {{ __('general_content.new_quote_trans_key') }}
-              </button>
+                <p>
+                  <a class="btn btn-success btn-sm" href="{{ route('opportunities.store.quote', ['id' => $Opportunity->id ]) }}">
+                    <i class="fas fa-folder"></i>
+                    {{ __('general_content.new_quote_trans_key') }}
+                  </a>
+                </p>
+                @forelse($Opportunity->Quotes as $Quote)
+                  <hr>
+                  <x-ButtonTextView route="{{ route('quotes.show', ['id' => $Quote->id])}}" />
+                  <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /><br/>
+                @empty
+                {{ __('general_content.no_data_trans_key') }}
+                @endforelse
               </div>
-            </div>-->
+            </div>
             <div class="card card-info">
               <div class="card-header">
                 <h3 class="card-title">{{ __('general_content.documents_trans_key') }}</h3>

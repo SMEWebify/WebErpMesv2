@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Leads;
+use App\Models\Workflow\Quotes;
 use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
@@ -61,10 +62,16 @@ class Opportunities extends Model
         return $this->belongsTo(Leads::class, 'leads_id');
     }
 
-    // Relationship with the files associated with the Quote
+    // Relationship with the files associated with the Opportunities
     public function files()
     {
         return $this->hasMany(File::class);
+    }
+
+    // Relationship with the quotes associated with the Opportunities
+    public function quotes()
+    {
+        return $this->hasMany(Quotes::class);
     }
 
     //Get Created attribute like '	06 December 2023'

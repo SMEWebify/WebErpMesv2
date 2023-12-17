@@ -30,6 +30,4 @@ class ArrowOrder extends Component
             session()->flash('error',"Something goes wrong on update statu");
         }
     }
-
-
 }

@@ -33,6 +33,7 @@ class Quotes extends Model
                             'validity_date',  
                             'statu',  
                             'user_id',  
+                            'opportunities_id',  
                             'accounting_payment_conditions_id',  
                             'accounting_payment_methods_id',  
                             'accounting_deliveries_id',  
@@ -88,6 +89,12 @@ class Quotes extends Model
         return $this->hasMany(File::class);
     }
     
+    // Relationship with the opportunities associated with the Quote
+    public function opportunities()
+    {
+        return $this->belongsTo(Opportunities::class, 'opportunities_id');
+    }
+
     public function GetshortCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

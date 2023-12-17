@@ -31,6 +31,7 @@ class CreateQuotesTable extends Migration
             #5 = Closed
             #6 = Obsolete
 			$table->integer('user_id');
+			$table->integer('opportunities_id')->nullable();
 			$table->integer('accounting_payment_conditions_id');
 			$table->integer('accounting_payment_methods_id');
 			$table->integer('accounting_deliveries_id');

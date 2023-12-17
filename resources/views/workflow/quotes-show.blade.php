@@ -122,6 +122,21 @@
                 <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
               <div class="card-body">
+                @if($Quote->opportunities_id)
+                <div class="text-muted">
+                  <h3>{{__('general_content.opportunity_trans_key')}} #{{ $Quote->opportunities->label }} </h3><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Quote->opportunities_id])}}" />
+                  
+                  <p class="text-sm">{{ __('general_content.user_trans_key') }}
+                    <b class="d-block">{{ $Quote->opportunities->UserManagement['name'] }}</b>
+                  </p>
+                  <p class="text-sm">{{ __('general_content.probality_trans_key') }}
+                    <b class="d-block">{{ $Quote->opportunities->probality }} %</b> 
+                  </p>
+                  <p class="text-sm">{{ __('general_content.budget_trans_key') }}
+                    <b class="d-block">{{ $Quote->opportunities->budget }}</b>
+                  </p>
+                </div>
+                @endif
                 @include('include.sub-total-price')
               </div>
             </div>

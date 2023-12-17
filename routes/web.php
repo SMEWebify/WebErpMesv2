@@ -48,6 +48,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Workflow\OpportunitiesController@index')->middleware(['auth'])->name('opportunities'); 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->middleware(['auth'])->name('opportunities.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->middleware(['auth'])->name('opportunities.update');
+        Route::get('/store/quote/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@storeQuote')->middleware(['auth'])->name('opportunities.store.quote');
+
+        
     });
 
     Route::group(['prefix' => 'quotes'], function () {
