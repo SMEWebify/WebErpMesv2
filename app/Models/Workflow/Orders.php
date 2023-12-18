@@ -38,7 +38,7 @@ class Orders extends Model
                             'accounting_payment_methods_id',  
                             'accounting_deliveries_id',  
                             'comment',
-                            'quote_id',
+                            'quotes_id',
                             'type',
                         ];
 
@@ -83,7 +83,7 @@ class Orders extends Model
 
     public function Quote()
     {
-        return $this->belongsTo(Quotes::class, 'quote_id');
+        return $this->belongsTo(Quotes::class, 'quotes_id');
     }
 
     public function OrderLines()

@@ -5,12 +5,13 @@ namespace App\Models\Workflow;
 use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
+use App\Models\Workflow\Orders;
 use App\Services\QuoteCalculator;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
-use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
@@ -93,6 +94,12 @@ class Quotes extends Model
     public function opportunities()
     {
         return $this->belongsTo(Opportunities::class, 'opportunities_id');
+    }
+
+    // Relationship with the Orders associated with the Quote
+    public function Orders()
+    {
+        return $this->hasMany(Orders::class);
     }
 
     public function GetshortCreatedAttribute()

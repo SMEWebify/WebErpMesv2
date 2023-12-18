@@ -385,7 +385,7 @@ class QuoteLine extends Component
                 'accounting_payment_methods_id'=>$QuoteData->accounting_payment_methods_id,   
                 'accounting_deliveries_id'=>$QuoteData->accounting_deliveries_id,   
                 'comment'=>$QuoteData->comment,
-                'quote_id'=>$QuoteData->id, 
+                'quotes_id'=>$QuoteData->id, 
             ]);
 
             

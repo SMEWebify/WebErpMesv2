@@ -110,6 +110,10 @@ class OpportunitiesController extends Controller
         $accounting_payment_methods = ($accounting_payment_methods->id  ?? 0);  
         $accounting_deliveries = ($accounting_deliveries->id  ?? 0);
 
+        if($accounting_payment_conditions == 0 || $accounting_payment_conditions == 0  || $accounting_payment_conditions == 0 ){
+            return redirect()->route('opportunities.show', ['id' =>  $id->id])->with('error', 'No default settings');
+        }
+
         // Create Line
         $QuotesCreated = Quotes::create([
                                         'uuid'=> Str::uuid(),
@@ -128,6 +132,9 @@ class OpportunitiesController extends Controller
         // notification for all user in database
         $users = User::where('quotes_notification', 1)->get();
         Notification::send($users, new QuoteNotification($QuotesCreated));
+
+        //change opp statu
+        Opportunities::where('id', $id->id)->update(['statu'=>2]);
 
         //change statu companie
         Companies::where('id', $id->companies_id)->update(['statu_customer'=>2]);

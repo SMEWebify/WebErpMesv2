@@ -122,13 +122,13 @@
             </div>
           </div>
           <div class="col-md-3">
-            @if($Order->quote_id)
+            @if($Order->quotes_id)
             <div class="card card-info">
               <div class="card-header ">
                 <h3 class="card-title">{{ __('general_content.historical_trans_key') }}</h3>
               </div>
               <div class="card-body">
-                {{ __('general_content.order_create_from_trans_key') }} <x-QuoteButton id="{{ $Order->quote_id }}" code="{{ $Order->Quote->code }}"  />
+                {{ __('general_content.order_create_from_trans_key') }} <x-QuoteButton id="{{ $Order->quotes_id }}" code="{{ $Order->Quote->code }}"  />
               </div>
             </div>
             @endif
@@ -136,7 +136,7 @@
               <div class="card-header">
                 <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
               </div>
-              <div class="card-body">
+              <div class="card-body table-responsive p-0">
                 @include('include.sub-total-price')
               </div>
             </div>

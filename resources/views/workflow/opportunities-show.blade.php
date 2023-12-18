@@ -18,7 +18,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Opportunity" data-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
-      <!--<li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }}</a></li>-->
+      <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -109,9 +109,9 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
+            <div class="card card-info">
+              <div class="card-header ">
+                <h3 class="card-title">{{ __('general_content.historical_trans_key') }}</h3>
               </div>
               <div class="card-body">
                 @if($Opportunity->leads_id)
@@ -189,6 +189,54 @@
         </div>
       </div>   
       <div class="tab-pane " id="Lines">
+        <div class="timeline timeline-inverse">
+          <div class="time-label">
+            <span class="bg-danger"> 10 Feb. 2014</span>
+          </div>
+          <div>
+            <i class="fas fa-envelope bg-primary"></i>
+            <div class="timeline-item">
+              <span class="time"><i class="far fa-clock"></i> 12:05</span>
+              <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+              <div class="timeline-body">
+                Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
+                weebly ning heekya handango imeem plugg dopplr jibjab, movity
+                jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
+                quora plaxo ideeli hulu weebly balihoo...
+              </div>
+            </div>
+          </div>
+          <div>
+            <i class="fas fa-user bg-info"></i>
+            <div class="timeline-item">
+              <span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
+              <h3 class="timeline-header border-0"><a href="#">Sarah Young</a> accepted your friend request
+              </h3>
+            </div>
+          </div>
+          <div>
+            <i class="fas fa-comments bg-warning"></i>
+            <div class="timeline-item">
+              <span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
+              <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
+              <div class="timeline-body">
+                Take me to your leader!
+                Switzerland is small and neutral!
+                We are more like Germany, ambitious and misunderstood!
+              </div>
+            </div>
+          </div>
+          <div class="time-label">
+            <span class="bg-success">3 Jan. 2014</span>
+          </div>
+          <div>
+            <i class="fas fa-camera bg-purple"></i>
+            <div class="timeline-item">
+            <span class="time"><i class="far fa-clock"></i> 2 days ago</span>
+            <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
+            <div class="timeline-body">
+            </div>
+          </div>
       </div>
   </div>
   <!-- /.card-body -->

@@ -117,9 +117,9 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
+            <div class="card card-info">
+              <div class="card-header ">
+                <h3 class="card-title">{{ __('general_content.historical_trans_key') }}</h3>
               </div>
               <div class="card-body">
                 @if($Quote->opportunities_id)
@@ -137,21 +137,49 @@
                   </p>
                 </div>
                 @endif
-                @include('include.sub-total-price')
               </div>
+            </div>
+            <div class="card card-secondary">
+              <div class="card-header">
+                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
+              </div>
+              <div class="card-body table-responsive p-0">
+              @include('include.sub-total-price')
+            </div>
             </div>
             <div class="card card-warning">
               <div class="card-header">
                 <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
-              <div class="card-body ">
-                <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" />
-                @if($Quote->uuid)
-                <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
-                <p>
-                  <input type="text" class="form-control"  value="{{ Request::root() }}/guest/quote/{{  $Quote->uuid }}">
-                </p>
-                @endif
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                  <tr>
+                    <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>
+                    <td><x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /></td>
+                  </tr>
+                  @if($Quote->uuid)
+                  <tr>
+                    <td colspan="2">
+                      <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
+                      <p>
+                        <input type="text" class="form-control"  value="{{ Request::root() }}/guest/quote/{{  $Quote->uuid }}">
+                      </p>
+                    </td>
+                  </tr>
+                  @endif
+                  @forelse($Quote->Orders as $Order)
+                  <tr>
+                      <td style="width:50%"><x-OrderButton id="{{ $Order->id }}" code="{{ $Order->code }}"  /></td>
+                      <td><x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" /></td>
+                  </tr>
+                  @empty
+                  <tr>
+                    <td colspan="2">
+                        {{ __('general_content.no_data_trans_key') }}
+                    </td>
+                  </tr>
+                  @endforelse
+                </table>
               </div>
             </div>
             <div class="card card-info">
@@ -166,7 +194,7 @@
                           <span class="input-group-text"><i class="far fa-file"></i></span>
                         </div>
                         <div class="custom-file">
-                          <input type="hidden" name="quote_id" value="{{ $Quote->id }}" >
+                          <input type="hidden" name="quotes_id" value="{{ $Quote->id }}" >
                           <input type="file" name="file" class="custom-file-input" id="chooseFile">
                           <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
                         </div>
