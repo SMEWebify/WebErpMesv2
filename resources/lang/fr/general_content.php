@@ -119,6 +119,15 @@ return [
     'closed_won_trans_key'                     => 'Fermé-gagné',
     'closed_lost_trans_key'                    => 'Fermé-perdu',
     'informational_trans_key'                  => 'Informationnel', 
+    'activity_maketing_trans_key'              => 'Activité marketing', 
+    'email_send_trans_key'                     => 'Envois d\'e-mail',
+    'pre_sakes_aactivity_trans_key'            => 'Avant vente',
+    'sales_activity_trans_key'                 => 'Activité commercial',
+    'sales_telephone_call_trans_key'           => 'Appel téléphonique',
+    'no_start_trans_key'                       => 'Non commencé',
+    'internal_meeting_trans_key'               => 'Réunion interne',
+    'onsite_visite_trans_key'                  => 'Visite sur site',
+    'sales_meeting_trans_key'                  => 'Rendez vous commercial',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',
@@ -148,6 +157,7 @@ return [
     'capacity_trans_key'                       => 'Capacité',
     'etat_trans_key'                           => 'Etat',
     'cost_trans_key'                           => 'Coût',
+    'due_date_trans_key'                       => 'Date d\'échéance',
 
     'order_trans_key'                          => 'Commmande',
     'external_id_trans_key'                    => 'ID externe',
@@ -229,10 +239,13 @@ return [
     'no_tax_trans_key'                         => 'Aucune taxe',
 
     //GENERAL CONTENT TABLE
-    'no_data_trans_key'                         => 'Aucune données',
+    'no_data_trans_key'                        => 'Aucune données',
 
     //TAB
     'opportunity_info_trans_key'               => 'Oportunité info',
+    'activities_trans_key'                     => 'Activités',
+    'events_trans_key'                         => 'Evenements',
+    'timeline_trans_key'                       => 'TimeLine',
 
     'quote_info_trans_key'                     => 'Information du devis',
     'quote_line_trans_key'                     => 'Ligne du devis',
@@ -546,6 +559,8 @@ return [
     'new_opportunities_trans_key'              => 'Nouvelle Oportunité',
     'name_opportunity_trans_key'               => 'Nom de l\'oportunité',
     'opportunity_trans_key'                    => 'Oportunité',
+    'new_activity_trans_key'                   => 'Nouvelle activité',
+    'new_event_trans_key'                      => 'Nouveau événement',
 
     //QUOTES
     'quote_trans_key'                          => 'Devis',

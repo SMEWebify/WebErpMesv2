@@ -49,8 +49,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->middleware(['auth'])->name('opportunities.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->middleware(['auth'])->name('opportunities.update');
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@storeQuote')->middleware(['auth'])->name('opportunities.store.quote');
-
-        
+        Route::post('/store/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@store')->middleware(['auth'])->name('opportunities.store.activity');
+        Route::post('/update/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@update')->middleware(['auth'])->name('opportunities.update.activity');
+        Route::post('/store/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@store')->middleware(['auth'])->name('opportunities.store.event');
+        Route::post('/update/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@update')->middleware(['auth'])->name('opportunities.update.event');
     });
 
     Route::group(['prefix' => 'quotes'], function () {

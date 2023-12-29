@@ -119,6 +119,15 @@ return [
     'closed_won_trans_key'                     => 'Closed-won',
     'closed_lost_trans_key'                    => 'Closed-lost',
     'informational_trans_key'                  => 'Informational', 
+    'activity_maketing_trans_key'              => 'Activity maketing', 
+    'email_send_trans_key'                     => 'Email Send',
+    'pre_sakes_aactivity_trans_key'            => 'Pre-sakes activity',
+    'sales_activity_trans_key'                 => 'Sales activity',
+    'sales_telephone_call_trans_key'           => 'Sales telephone call',
+    'no_start_trans_key'                       => 'No start',
+    'internal_meeting_trans_key'               => 'Internal Meeting',
+    'onsite_visite_trans_key'                  => 'Onsite visite',
+    'sales_meeting_trans_key'                  => 'Sales Meeting',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
@@ -148,6 +157,7 @@ return [
     'capacity_trans_key'                       => 'Capacity',
     'etat_trans_key'                           => 'Etat',
     'cost_trans_key'                           => 'Unit Cost',
+    'due_date_trans_key'                       => 'Due date',
     
     'order_trans_key'                          => 'Order',
     'external_id_trans_key'                    => 'External ID',
@@ -233,6 +243,9 @@ return [
 
     //TAB
     'opportunity_info_trans_key'               => 'Opportunity info',
+    'activities_trans_key'                     => 'Activities',
+    'events_trans_key'                         => 'Events',
+    'timeline_trans_key'                       => 'TimeLine',
 
     'quote_info_trans_key'                     => 'Quote info',
     'quote_line_trans_key'                     => 'Quote lines',
@@ -546,6 +559,8 @@ return [
     'new_opportunities_trans_key'              => 'New opportunity',
     'name_opportunity_trans_key'               => 'Name of opportunity',
     'opportunity_trans_key'                    => 'Opportunity',
+    'new_activity_trans_key'                   => 'New activity',
+    'new_event_trans_key'                      => 'New event',
 
     //QUOTES
     'quote_trans_key'                          => 'Quote',
