@@ -17,7 +17,9 @@ use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
+use App\Models\Workflow\OpportunitiesEventsLogs;
 use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Workflow\OpportunitiesActivitiesLogs;
 use App\Models\Accounting\AccountingPaymentConditions;
 use App\Http\Requests\Workflow\UpdateOpportunityRequest;
 
@@ -47,6 +49,8 @@ class OpportunitiesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->where('active', 1)->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $Activities = OpportunitiesActivitiesLogs::orderBy('id')->get();
+        $Events = OpportunitiesEventsLogs::orderBy('id')->get();
         $previousUrl = route('opportunities.show', ['id' => $id->id-1]);
         $nextUrl = route('opportunities.show', ['id' => $id->id+1]);
 
@@ -64,6 +68,8 @@ class OpportunitiesController extends Controller
             'Factory' => $Factory,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'ActivitiesList' =>  $Activities,
+            'EventsList' =>  $Events,
         ]);
     }
 
