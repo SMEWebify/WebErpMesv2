@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
+use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
@@ -66,14 +67,6 @@ class OpportunitiesController extends Controller
         // Organiser les données pour la timeline
         $timelineData = [];
 
-        // Ajouter l'opportunité initiale
-        $timelineData[] = [
-            'date' => $opportunite->created_at->format('d M Y'),
-            'icon' => 'fa fa-tags bg-primary',
-            'content' => "Opportunité créée",
-            'details' => $opportunite->GetPrettyCreatedAttribute(),
-        ];
-
         // Ajouter les leads s'il y en a
         if ($opportunite->lead) {
             $timelineData[] = [
@@ -118,6 +111,19 @@ class OpportunitiesController extends Controller
 
         // Ajouter les devis s'il y en a
         foreach ($opportunite->quotes as $quote) {
+
+            // Ajouter les commandes issues des devis
+            $orders = Orders::where('quotes_id', $quote->id)->get();
+
+            foreach ($orders as $order) {
+                $timelineData[] = [
+                    'date' => $order->created_at->format('d M Y'),
+                    'icon' => 'fas fa-shopping-cart bg-secondary',
+                    'content' => __('general_content.order_trans_key') ." ". $order->label . " - ". __('general_content.total_price_trans_key') ." : ". $order->getTotalPriceAttribute() . " ". $Factory->curency,
+                    'details' => $order->GetPrettyCreatedAttribute(),
+                ];
+            }
+
             $timelineData[] = [
                 'date' => $quote->created_at->format('d M Y'),
                 'icon' => 'fas fa-calculator  bg-success', 
@@ -126,8 +132,16 @@ class OpportunitiesController extends Controller
             ];
         }
 
+                // Ajouter l'opportunité initiale
+                $timelineData[] = [
+                    'date' => $opportunite->created_at->format('d M Y'),
+                    'icon' => 'fa fa-tags bg-primary',
+                    'content' => "Opportunité créée",
+                    'details' => $opportunite->GetPrettyCreatedAttribute(),
+                ];
+
          // Trier le tableau par date
-         usort($timelineData, function ($a, $b) {
+        usort($timelineData, function ($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
         });
  
