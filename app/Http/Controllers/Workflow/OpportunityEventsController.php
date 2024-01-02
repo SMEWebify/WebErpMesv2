@@ -16,8 +16,8 @@ class OpportunityEventsController extends Controller
      */
     public function store(StoreOpportunityEventRequest $request)
     {
-        $Event =  OpportunitiesEventsLogs::create($request->only('opportunites_id','label', 'type','start_date','end_date', 'comment'));
-        return redirect()->route('opportunities.show', ['id' =>  $Event->opportunites_id])->with('success', 'Successfully created event.');
+        $Event =  OpportunitiesEventsLogs::create($request->only('opportunities_id','label', 'type','start_date','end_date', 'comment'));
+        return redirect()->route('opportunities.show', ['id' =>  $Event->opportunities_id])->with('success', 'Successfully created event.');
     }
 
     /**
@@ -34,6 +34,6 @@ class OpportunityEventsController extends Controller
         $Event->comment=$request->comment;
         $Event->save();
 
-        return redirect()->route('opportunities.show', ['id' =>  $Event->opportunites_id])->with('success', 'Successfully updated event.');
+        return redirect()->route('opportunities.show', ['id' =>  $Event->opportunities_id])->with('success', 'Successfully updated event.');
     }
 }

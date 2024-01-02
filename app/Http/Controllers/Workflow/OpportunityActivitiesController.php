@@ -16,8 +16,8 @@ class OpportunityActivitiesController extends Controller
      */
     public function store(StoreOpportunityActivityRequest $request)
     {
-        $Activity =  OpportunitiesActivitiesLogs::create($request->only('opportunites_id','label', 'type','priority','due_date', 'comment'));
-        return redirect()->route('opportunities.show', ['id' =>  $Activity->opportunites_id])->with('success', 'Successfully created activity.');
+        $Activity =  OpportunitiesActivitiesLogs::create($request->only('opportunities_id','label', 'type','priority','due_date', 'comment'));
+        return redirect()->route('opportunities.show', ['id' =>  $Activity->opportunities_id])->with('success', 'Successfully created activity.');
     }
 
     /**
@@ -35,6 +35,6 @@ class OpportunityActivitiesController extends Controller
         $Activity->comment=$request->comment;
         $Activity->save();
 
-        return redirect()->route('opportunities.show', ['id' =>  $Activity->opportunites_id])->with('success', 'Successfully updated activity.');
+        return redirect()->route('opportunities.show', ['id' =>  $Activity->opportunities_id])->with('success', 'Successfully updated activity.');
     }
 }

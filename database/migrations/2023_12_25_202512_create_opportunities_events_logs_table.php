@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('opportunities_events_logs', function (Blueprint $table) {
             $table->id();
-			$table->integer('opportunites_id');
+			$table->integer('opportunities_id');
 			$table->string('label');
             $table->integer('type')->default(1);
             #1 = Activity maketing

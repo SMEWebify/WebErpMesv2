@@ -60,6 +60,79 @@ class OpportunitiesController extends Controller
             return redirect()->route('admin.factory')->with('error', 'Please check factory information');
         }
 
+        // Récupérer l'opportunité avec les relations nécessaires
+        $opportunite = $id->load('lead', 'activities', 'events', 'quotes');
+
+        // Organiser les données pour la timeline
+        $timelineData = [];
+
+        // Ajouter l'opportunité initiale
+        $timelineData[] = [
+            'date' => $opportunite->created_at->format('d M Y'),
+            'icon' => 'fa fa-tags bg-primary',
+            'content' => "Opportunité créée",
+            'details' => $opportunite->GetPrettyCreatedAttribute(),
+        ];
+
+        // Ajouter les leads s'il y en a
+        if ($opportunite->lead) {
+            $timelineData[] = [
+                'date' => $opportunite->lead->created_at->format('d M Y'),
+                'icon' => 'fas fa-globe bg-info',
+                'content' =>  "Lead " . $opportunite->lead->campaign,
+                'details' => $opportunite->lead->GetPrettyCreatedAttribute(),
+            ];
+        }
+
+        // Ajouter les événements s'il y en a
+        foreach ($opportunite->events as $event) {
+
+            if($event->type  == 1) $type = __('general_content.activity_maketing_trans_key') ;
+            if($event->type  == 2) $type = __('general_content.internal_meeting_trans_key') ;
+            if($event->type  == 3) $type = __('general_content.onsite_visite_trans_key') ;
+            if($event->type  == 4) $type = __('general_content.sales_meeting_trans_key') ;
+
+            $timelineData[] = [
+                'date' => $event->created_at->format('d M Y'),
+                'icon' => 'fas fa-calendar-alt  bg-danger',
+                'content' => $event->label ." - " .  $type,
+                'details' => $event->GetPrettyCreatedAttribute(),
+            ];
+        }
+
+        // Ajouter les activités s'il y en a
+        foreach ($opportunite->activities as $activity) {
+            if($activity->type  == 1) $type = __('general_content.activity_maketing_trans_key');
+            if($activity->type  == 2) $type = __('general_content.email_send_trans_key');
+            if($activity->type  == 3) $type = __('general_content.pre_sakes_aactivity_trans_key');
+            if($activity->type  == 4) $type = __('general_content.sales_activity_trans_key');
+            if($activity->type  == 5) $type = __('general_content.sales_telephone_call_trans_key');
+
+            $timelineData[] = [
+                'date' => $activity->created_at->format('d M Y'),
+                'icon' => 'fas fa-comments bg-warning',
+                'content' => $activity->label ." - " .  $type,
+                'details' => $activity->GetPrettyCreatedAttribute(),
+            ];
+        }
+
+        // Ajouter les devis s'il y en a
+        foreach ($opportunite->quotes as $quote) {
+            $timelineData[] = [
+                'date' => $quote->created_at->format('d M Y'),
+                'icon' => 'fas fa-calculator  bg-success', 
+                'content' => __('general_content.quote_trans_key') ." ". $quote->label . " - ". __('general_content.total_price_trans_key') ." : ". $quote->getTotalPriceAttribute() . " ". $Factory->curency,
+                'details' => $quote->GetPrettyCreatedAttribute(),
+            ];
+        }
+
+         // Trier le tableau par date
+         usort($timelineData, function ($a, $b) {
+            return strtotime($b['date']) - strtotime($a['date']);
+        });
+ 
+         // Passer les données à la vue
+
         return view('workflow/opportunities-show', [
             'Opportunity' => $id,
             'CompanieSelect' => $CompanieSelect,
@@ -70,6 +143,7 @@ class OpportunitiesController extends Controller
             'nextUrl' =>  $nextUrl,
             'ActivitiesList' =>  $Activities,
             'EventsList' =>  $Events,
+            'timelineData' => $timelineData,
         ]);
     }
 

@@ -2,15 +2,16 @@
 
 namespace App\Models\Workflow;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OpportunitiesActivitiesLogs extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'opportunites_id',
+        'opportunities_id',
         'label',
         'type',
         'statu',
@@ -21,6 +22,13 @@ class OpportunitiesActivitiesLogs extends Model
 
     public function opportunity()
     {
-        return $this->belongsTo(User::class, 'opportunites_id');
+        return $this->belongsTo(User::class, 'opportunities_id');
+    }
+
+    
+    //Get Created attribute like '	06 December 2023'
+    public function GetPrettyCreatedAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
 }

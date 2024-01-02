@@ -11,6 +11,8 @@ use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Workflow\OpportunitiesEventsLogs;
+use App\Models\Workflow\OpportunitiesActivitiesLogs;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Opportunities extends Model
@@ -72,6 +74,18 @@ class Opportunities extends Model
     public function quotes()
     {
         return $this->hasMany(Quotes::class);
+    }
+
+    // Relationship with the activities associated with the Opportunities
+    public function activities()
+    {
+        return $this->hasMany(OpportunitiesActivitiesLogs::class);
+    }
+
+    // Relationship with the events associated with the Opportunities
+    public function events()
+    {
+        return $this->hasMany(OpportunitiesEventsLogs::class);
     }
 
     //Get Created attribute like '	06 December 2023'

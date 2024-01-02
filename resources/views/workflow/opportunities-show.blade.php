@@ -18,6 +18,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Opportunity" data-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#TimeLine" data-toggle="tab">TimeLine</a></li>
       <li class="nav-item"><a class="nav-link" href="#Activities" data-toggle="tab">{{ __('general_content.activities_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Events" data-toggle="tab">{{ __('general_content.events_trans_key') }}</a></li>
     </ul>
@@ -189,6 +190,34 @@
           </div>
         </div>
       </div>   
+      <div class="tab-pane " id="TimeLine">
+        <div class="timeline timeline-inverse">
+          @php
+              $previousDate = null;
+          @endphp
+
+          @foreach($timelineData as $item)
+            @if ($item['date'] != $previousDate)
+            <div class="time-label">
+                <span class="bg-info">{{ $item['date'] }}</span>
+            </div>
+            @endif
+            <div>
+                <i class="{{ $item['icon'] }}"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="far fa-clock"></i> {{ $item['details'] }}</span>
+                    <h3 class="timeline-header">{{ $item['content'] }}</h3>
+                </div>
+            </div>
+            @php
+              $previousDate = $item['date'];
+            @endphp
+        @endforeach
+          <div>
+            <i class="far fa-clock bg-gray"></i>
+          </div>
+        </div>
+      </div>
       <div class="tab-pane " id="Activities">
         <div class="row">
           <div class="col-md-6 card-primary">
@@ -340,7 +369,7 @@
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
                     <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" >
-                    <input type="hidden"  name="opportunites_id"  id="opportunites_id" value="{{ $Opportunity->id }}" >
+                    <input type="hidden"  name="opportunities_id"  id="opportunities_id" value="{{ $Opportunity->id }}" >
                   </div>
                 </div>
                 <div class="form-group">
@@ -500,7 +529,7 @@
                         <span class="input-group-text"><i class="fas fa-tags"></i></span>
                     </div>
                     <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" >
-                    <input type="hidden"  name="opportunites_id"  id="opportunites_id" value="{{ $Opportunity->id }}" >
+                    <input type="hidden"  name="opportunities_id"  id="opportunities_id" value="{{ $Opportunity->id }}" >
                   </div>
                 </div>
                 <div class="form-group">
@@ -537,59 +566,10 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane " id="Lines">
-        <div class="timeline timeline-inverse">
-          <div class="time-label">
-            <span class="bg-danger"> 10 Feb. 2014</span>
-          </div>
-          <div>
-            <i class="fas fa-envelope bg-primary"></i>
-            <div class="timeline-item">
-              <span class="time"><i class="far fa-clock"></i> 12:05</span>
-              <h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
-              <div class="timeline-body">
-                Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
-                weebly ning heekya handango imeem plugg dopplr jibjab, movity
-                jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
-                quora plaxo ideeli hulu weebly balihoo...
-              </div>
-            </div>
-          </div>
-          <div>
-            <i class="fas fa-user bg-info"></i>
-            <div class="timeline-item">
-              <span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
-              <h3 class="timeline-header border-0"><a href="#">Sarah Young</a> accepted your friend request
-              </h3>
-            </div>
-          </div>
-          <div>
-            <i class="fas fa-comments bg-warning"></i>
-            <div class="timeline-item">
-              <span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
-              <h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
-              <div class="timeline-body">
-                Take me to your leader!
-                Switzerland is small and neutral!
-                We are more like Germany, ambitious and misunderstood!
-              </div>
-            </div>
-          </div>
-          <div class="time-label">
-            <span class="bg-success">3 Jan. 2014</span>
-          </div>
-          <div>
-            <i class="fas fa-camera bg-purple"></i>
-            <div class="timeline-item">
-            <span class="time"><i class="far fa-clock"></i> 2 days ago</span>
-            <h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
-            <div class="timeline-body">
-            </div>
-          </div>
-      </div>
-  </div>
+
+    </div>
   <!-- /.card-body -->
-</div>
+  </div>
 <!-- /.card -->
 
 @stop
