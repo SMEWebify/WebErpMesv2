@@ -2,6 +2,7 @@
 
 namespace App\Models\Workflow;
 
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Orders;
@@ -65,9 +66,15 @@ class Deliverys extends Model
         return $this->hasMany(File::class);
     }
 
-    public function GetPrettyCreatedAttribute()
+    public function GetshortCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+    
+    //Get Created attribute like '	06 December 2023'
+    public function GetPrettyCreatedAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
 
     public function getActivitylogOptions(): LogOptions

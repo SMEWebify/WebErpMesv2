@@ -8,10 +8,13 @@ use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\Opportunities;
 use App\Notifications\QuoteNotification;
 use App\Models\Companies\CompaniesContacts;
@@ -116,12 +119,47 @@ class OpportunitiesController extends Controller
             $orders = Orders::where('quotes_id', $quote->id)->get();
 
             foreach ($orders as $order) {
+
+                // Ajouter les lignes de commande
+                $orderLines = OrderLines::where('orders_id', $order->id)->get();
+
+                // Tableau pour suivre les IDs des livraisons déjà ajoutées à la timeline
+                $addedDeliveries = [];
+
+                foreach ($orderLines as $orderLine) {
+                    
+                    // Ajouter les livraisons associées à la ligne de commande (uniquement si elles n'ont pas déjà été ajoutées)
+                    $deliveryLines = DeliveryLines::where('order_line_id', $orderLine->id)->get();
+
+                    foreach ($deliveryLines as $deliveryLine) {
+                        $deliveryId = $deliveryLine->deliverys_id;
+
+                        if (!in_array($deliveryId, $addedDeliveries)) {
+                            $delivery = Deliverys::find($deliveryId);
+
+                            if ($delivery) {
+                                $timelineData[] = [
+                                    'date' => $delivery->created_at->format('d M Y'),
+                                    'icon' => 'fas fa-truck bg-warning',
+                                    'content' => __('general_content.delivery_notes_trans_key') ." - ".  $delivery->label ,
+                                    'details' => $delivery->GetPrettyCreatedAttribute(),
+                                ];
+
+                                // Ajouter l'ID de la livraison à la liste des livraisons déjà ajoutées
+                                $addedDeliveries[] = $deliveryId;
+                            }
+                        }
+                    }
+                }
+
                 $timelineData[] = [
                     'date' => $order->created_at->format('d M Y'),
                     'icon' => 'fas fa-shopping-cart bg-secondary',
                     'content' => __('general_content.order_trans_key') ." ". $order->label . " - ". __('general_content.total_price_trans_key') ." : ". $order->getTotalPriceAttribute() . " ". $Factory->curency,
                     'details' => $order->GetPrettyCreatedAttribute(),
                 ];
+                
+               
             }
 
             $timelineData[] = [
