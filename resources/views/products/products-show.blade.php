@@ -15,7 +15,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab">{{ __('general_content.product_info_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">{{ __('general_content.tech_bom_trans_key') }} {{ $Product->getTaskCountAttribute() }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">{{ __('general_content.tech_bom_trans_key') }} {{ $Product->getAllTaskCountAttribute() }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }}</a></li>
       @if($Product->stl_file)

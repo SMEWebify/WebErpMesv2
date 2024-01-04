@@ -82,8 +82,8 @@ class OrderLines extends Model
         return $this->hasMany(StockMove::class);
     }
 
-    public function getTaskCountAttribute()
-    {
+    public function getAllTaskCountAttribute()
+    {        
         $taskCount =  $this->Task()->count();
         $subAssemblyCount = $this->SubAssembly()->count();
         return '('. $taskCount .') ('. $subAssemblyCount .')';
@@ -170,6 +170,22 @@ class OrderLines extends Model
         }
 
         return round((1-($this->getBOMTotalUnitCostAttribute()/$this->getBOMTotalUnitPricettribute()))*100,2);
+    }
+
+    public function getAveragePercentProgressTaskAttribute()
+    {
+        $SumPercentTech = $this->TechnicalCut->reduce(function ($SumPercent, $TechnicalCut) {
+            return $SumPercent + $TechnicalCut->progress();
+            },0);
+
+        $SumPercentBOM = $this->BOM->reduce(function ($SumPercent, $BOM) {
+                return $SumPercent + $BOM->progress();
+                },0);
+
+        $TotalCountTask = $this->Task()->count();
+        if($TotalCountTask <= 0 ) $TotalCountTask = 1;
+
+        return ($SumPercentTech +  $SumPercentBOM)/$TotalCountTask;
     }
 
     public function SubAssembly()

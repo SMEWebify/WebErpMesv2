@@ -350,7 +350,7 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $Product->getTaskCountAttribute() }}</span>
+                                    <span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $Product->getAllTaskCountAttribute() }}</span>
                                 </div>
                             </td>
                             <td>

@@ -234,7 +234,7 @@
                             @endif 
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
@@ -250,6 +250,7 @@
                             <th>{{ $Line->getTechnicalCutTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
                             <th>{{ $Line->getTechnicalCutTMarginAttribute() }} %</th>
                             <th>{{ $Line->getTechnicalCutTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
+                            <th></th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -329,7 +330,7 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>

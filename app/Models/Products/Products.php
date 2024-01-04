@@ -75,7 +75,7 @@ class Products extends Model
         return $this->hasMany(Task::class, 'products_id')->orderBy('ordre');
     }
 
-    public function getTaskCountAttribute()
+    public function getAllTaskCountAttribute()
     {
         $taskCount =  $this->Task()->count();
         $subAssemblyCount = $this->SubAssembly()->count();

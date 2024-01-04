@@ -237,7 +237,7 @@
                                         </div>
                                     </div>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('task.manage', ['id_type'=> 'quote_lines_id', 'id_page'=>  $QuoteLine->quotes_id, 'id_line' => $QuoteLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $QuoteLine->getTaskCountAttribute() }}</span></a></button>
+                                        <a href="{{ route('task.manage', ['id_type'=> 'quote_lines_id', 'id_page'=>  $QuoteLine->quotes_id, 'id_line' => $QuoteLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $QuoteLine->getAllTaskCountAttribute() }}</span></a></button>
                                     </div>
                                 </div>
                             </td>

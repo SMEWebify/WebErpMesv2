@@ -63,7 +63,7 @@ class QuoteLines extends Model
         return $this->hasOne(QuoteLineDetails::class, 'quote_lines_id');
     }
 
-    public function getTaskCountAttribute()
+    public function getAllTaskCountAttribute()
     {
         $taskCount =  $this->Task()->count();
         $subAssemblyCount = $this->SubAssembly()->count();

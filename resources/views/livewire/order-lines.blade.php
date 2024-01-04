@@ -70,9 +70,18 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             <td>{{ $OrderLine->delivery_date }}</td>
                             <td>
                                 @if(1 == $OrderLine->tasks_status )  <span class="badge badge-info">{{ __('general_content.no_task_trans_key') }}</span>@endif
-                                @if(2 == $OrderLine->tasks_status )  <span class="badge badge-warning">{{ __('general_content.created_trans_key') }}</span>@endif
-                                @if(3 == $OrderLine->tasks_status )  <span class="badge badge-success">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                                @if(4 == $OrderLine->tasks_status )  <span class="badge badge-danger">{{ __('general_content.finished_task_trans_key') }}</span>@endif
+                                @if(2 == $OrderLine->tasks_status )  
+                                    <span class="badge badge-warning">{{ __('general_content.created_trans_key') }}</span> 
+                                    <x-adminlte-progress theme="teal" value="{{ $OrderLine->getAveragePercentProgressTaskAttribute() }}" with-label animated/>
+                                @endif
+                                @if(3 == $OrderLine->tasks_status )  
+                                    <span class="badge badge-success">{{ __('general_content.in_progress_trans_key') }}</span>
+                                    <x-adminlte-progress theme="teal" value="{{ $OrderLine->getAveragePercentProgressTaskAttribute() }}" with-label animated/>
+                                @endif
+                                @if(4 == $OrderLine->tasks_status )  
+                                    <span class="badge badge-danger">{{ __('general_content.finished_task_trans_key') }}</span>
+                                    <x-adminlte-progress theme="teal" value="{{ $OrderLine->getAveragePercentProgressTaskAttribute() }}" with-label animated/>
+                                @endif
                             </td>
                             <td>
                                 @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
@@ -252,7 +261,8 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                         </div>
                                     </div>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $OrderLine->getTaskCountAttribute() }}</span></a></button>
+                                        <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $OrderLine->getAllTaskCountAttribute() }}</span></a>
+                                        
                                     </div>
                                 </div>
                             </td>
