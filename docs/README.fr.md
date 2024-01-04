@@ -1,9 +1,6 @@
 <p align="center">
-  <img width="460" height="300" src="https://user-images.githubusercontent.com/75578469/127404015-3706b77f-dea3-4acb-a722-06f483de95a9.png">
+    <img src="https://github.com/SMEWebify/WebErpMesv2/assets/75578469/536ad6ff-e27e-41ca-bac1-00c6662ca827">
 </p>
-
-
-<p align="center">Web ERP et MES</p>
 
 <p align="center">
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
@@ -38,8 +35,8 @@ pour passer en production, suivez ce lien : [wiki page (install en production)](
 Dashboard
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/07840f20-081d-47d3-b892-14f86b5ecc44)
 
-Devis et commande avec gestion des taches en Kanban
-![image](https://user-images.githubusercontent.com/75578469/177055327-68b3ba66-163d-4838-9ced-e1c6944ecbd1.png)
+Historique du flux de travail
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/b110f47e-c232-4da7-9862-b6b27e3f582a)
 
 Qualité
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/5510ee89-2257-4906-94f5-273cf8315322)
