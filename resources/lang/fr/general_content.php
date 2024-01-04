@@ -312,6 +312,7 @@ return [
     'statistiques_trans_key'                   => 'Statistiques',
     'informations_trans_key'                   => 'Informations',
     'options_trans_key'                        => 'Options',
+    'charts_trans_key'                         => 'Graphiques',
 
     // BUTTON    
     'view_trans_key'                           => 'Voir',

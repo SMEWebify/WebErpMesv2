@@ -312,7 +312,8 @@ return [
     'statistiques_trans_key'                   => 'Statistiques',
     'informations_trans_key'                   => 'Informations',
     'options_trans_key'                        => 'Options',
-    
+    'charts_trans_key'                         => 'Charts',
+
     // BUTTON
     'view_trans_key'                           => 'View',
     'print_trans_key'                          => 'Print',

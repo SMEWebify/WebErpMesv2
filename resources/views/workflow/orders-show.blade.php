@@ -18,6 +18,7 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.order_line_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
     </ul>
   </div>
@@ -216,7 +217,11 @@
             </div>
           </div>
         </div>
-      
+      </div>   
+      <div class="tab-pane " id="Lines">
+        @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date])
+      </div> 
+      <div class="tab-pane" id="Charts">
         <div class="row">
           <div class="col-md-6">
             <div class="card-secondary">
@@ -261,10 +266,7 @@
             </div>
           </div>
         </div>
-      </div>     
-      <div class="tab-pane " id="Lines">
-        @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date])
-      </div> 
+      </div>  
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')
         @if($Order->statu == 1)
@@ -388,152 +390,161 @@
 
 @section('js')
   <script type="text/javascript">
-  //-------------
-  //- PIE CHART 1 -
-  //-------------
-  var donutChartCanvas = $('#productDonutChart').get(0).getContext('2d')
-  var donutData        = {
-      labels: [
-        @foreach ($TotalServiceProductTime as $item)
-        "{{ $item[0] }} - {{ $item[1] }}h",
-        @endforeach
-      ],
-      datasets: [
-        {
-          data: [
-                @foreach ($TotalServiceProductTime as $item)
-                "{{ $item[1] }}",
-                @endforeach
-              ], 
-              backgroundColor: [
-                @foreach ($TotalServiceProductTime as $item)
-                "{{ $item[2] }}",
-                @endforeach
-              ],
-        }
-      ]
-    }
+  $('a[href="#Charts"]').on('shown.bs.tab', function () {
+    //-------------
+    //- PIE CHART 1 -
+    //-------------
+    var productDonutChartCanvas  = $('#productDonutChart').get(0).getContext('2d')
+    var productDonutData         = {
+        labels: [
+          @foreach ($TotalServiceProductTime as $item)
+          "{{ $item[0] }} - {{ $item[1] }}h",
+          @endforeach
+        ],
+        datasets: [
+          {
+            data: [
+                  @foreach ($TotalServiceProductTime as $item)
+                  "{{ $item[1] }}",
+                  @endforeach
+                ], 
+                backgroundColor: [
+                  @foreach ($TotalServiceProductTime as $item)
+                  "{{ $item[2] }}",
+                  @endforeach
+                ],
+          }
+        ]
+      }
 
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    new Chart(donutChartCanvas, {
-      type: 'pie',
-      data: donutData,
-      options: {
-                  maintainAspectRatio : false,
-                  responsive : true, 
-              }
-    })
+      //Create pie or douhnut chart
+      // You can switch between pie and douhnut using the method below.
+      var productDonutChart = new Chart(productDonutChartCanvas , {
+        type: 'pie',
+        data: productDonutData ,
+        options: {
+                    maintainAspectRatio : false,
+                    responsive : true, 
+                }
+      })
 
-  //-------------
-  //- PIE CHART 2 -
-  //-------------
-  var donutChartCanvas = $('#settingDonutChart').get(0).getContext('2d')
-  var donutData        = {
-      labels: [
-        @foreach ($TotalServiceSettingTime as $item)
-        "{{ $item[0] }} - {{ $item[1] }}h",
-        @endforeach
-      ],
-      datasets: [
-        {
-          data: [
-                @foreach ($TotalServiceSettingTime as $item)
-                "{{ $item[1] }}",
-                @endforeach
-              ], 
-              backgroundColor: [
-                @foreach ($TotalServiceSettingTime as $item)
-                "{{ $item[2] }}",
-                @endforeach
-              ],
-        }
-      ]
-    }
+    //-------------
+    //- PIE CHART 2 -
+    //-------------
+    var settingDonutChartCanvas  = $('#settingDonutChart').get(0).getContext('2d')
+    var settingDonutData         = {
+        labels: [
+          @foreach ($TotalServiceSettingTime as $item)
+          "{{ $item[0] }} - {{ $item[1] }}h",
+          @endforeach
+        ],
+        datasets: [
+          {
+            data: [
+                  @foreach ($TotalServiceSettingTime as $item)
+                  "{{ $item[1] }}",
+                  @endforeach
+                ], 
+                backgroundColor: [
+                  @foreach ($TotalServiceSettingTime as $item)
+                  "{{ $item[2] }}",
+                  @endforeach
+                ],
+          }
+        ]
+      }
 
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    new Chart(donutChartCanvas, {
-      type: 'pie',
-      data: donutData,
-      options: {
-                  maintainAspectRatio : false,
-                  responsive : true, 
-              }
-    })
+      //Create pie or douhnut chart
+      // You can switch between pie and douhnut using the method below.
+      var settingDonutChart = new Chart(settingDonutChartCanvas , {
+        type: 'pie',
+        data: settingDonutData ,
+        options: {
+                    maintainAspectRatio : false,
+                    responsive : true, 
+                }
+      })
 
-  //-------------
-  //- PIE CHART 3 -
-  //-------------
-  var donutChartCanvas = $('#CostDonutChart').get(0).getContext('2d')
-  var donutData        = {
-      labels: [
-        @foreach ($TotalServiceCost as $item)
-        "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
-        @endforeach
-      ],
-      datasets: [
-        {
-          data: [
-                @foreach ($TotalServiceCost as $item)
-                "{{ $item[1] }}",
-                @endforeach
-              ], 
-              backgroundColor: [
-                @foreach ($TotalServiceCost as $item)
-                "{{ $item[2] }}",
-                @endforeach
-              ],
-        }
-      ]
-    }
+    //-------------
+    //- PIE CHART 3 -
+    //-------------
+    var costDonutChartCanvas  = $('#CostDonutChart').get(0).getContext('2d')
+    var costDonutData         = {
+        labels: [
+          @foreach ($TotalServiceCost as $item)
+          "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
+          @endforeach
+        ],
+        datasets: [
+          {
+            data: [
+                  @foreach ($TotalServiceCost as $item)
+                  "{{ $item[1] }}",
+                  @endforeach
+                ], 
+                backgroundColor: [
+                  @foreach ($TotalServiceCost as $item)
+                  "{{ $item[2] }}",
+                  @endforeach
+                ],
+          }
+        ]
+      }
 
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    new Chart(donutChartCanvas, {
-      type: 'pie',
-      data: donutData,
-      options: {
-                  maintainAspectRatio : false,
-                  responsive : true, 
-              }
-    })
+      //Create pie or douhnut chart
+      // You can switch between pie and douhnut using the method below.
+      var costDonutChart = new Chart(costDonutChartCanvas , {
+        type: 'pie',
+        data: costDonutData ,
+        options: {
+                    maintainAspectRatio : false,
+                    responsive : true, 
+                }
+      })
 
-  //-------------
-  //- PIE CHART 4 -
-  //-------------
-  var donutChartCanvas = $('#PriceDonutChart').get(0).getContext('2d')
-  var donutData        = {
-      labels: [
-        @foreach ($TotalServicePrice as $item)
-        "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
-        @endforeach
-      ],
-      datasets: [
-        {
-          data: [
-                @foreach ($TotalServicePrice as $item)
-                "{{ $item[1] }}",
-                @endforeach
-              ], 
-              backgroundColor: [
-                @foreach ($TotalServicePrice as $item)
-                "{{ $item[2] }}",
-                @endforeach
-              ],
-        }
-      ]
-    }
+    //-------------
+    //- PIE CHART 4 -
+    //-------------
+    var priceDonutChartCanvas  = $('#PriceDonutChart').get(0).getContext('2d')
+    var priceDonutData        = {
+        labels: [
+          @foreach ($TotalServicePrice as $item)
+          "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
+          @endforeach
+        ],
+        datasets: [
+          {
+            data: [
+                  @foreach ($TotalServicePrice as $item)
+                  "{{ $item[1] }}",
+                  @endforeach
+                ], 
+                backgroundColor: [
+                  @foreach ($TotalServicePrice as $item)
+                  "{{ $item[2] }}",
+                  @endforeach
+                ],
+          }
+        ]
+      }
 
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    new Chart(donutChartCanvas, {
-      type: 'pie',
-      data: donutData,
-      options: {
-                  maintainAspectRatio : false,
-                  responsive : true, 
-              }
-    })
+      //Create pie or douhnut chart
+      // You can switch between pie and douhnut using the method below.
+      var priceDonutChart = new Chart(priceDonutChartCanvas , {
+        type: 'pie',
+        data: priceDonutData,
+        options: {
+                    maintainAspectRatio : false,
+                    responsive : true, 
+                }
+      })
+
+      $('a[href="#Charts"]').on('shown.bs.tab', function () {
+          productDonutChart.update();
+          settingDonutChart.update();
+          costDonutChart.update();
+          priceDonutChart.update();
+      });
+    });
   </script>
 @stop
