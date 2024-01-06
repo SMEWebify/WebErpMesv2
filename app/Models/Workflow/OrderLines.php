@@ -175,12 +175,17 @@ class OrderLines extends Model
     public function getAveragePercentProgressTaskAttribute()
     {
         $SumPercentTech = $this->TechnicalCut->reduce(function ($SumPercent, $TechnicalCut) {
-            return $SumPercent + $TechnicalCut->progress();
+            if($TechnicalCut->progress() > 100) $TechnicalCutPerCent = 100;
+            else  $TechnicalCutPerCent = $TechnicalCut->progress();
+
+            return $SumPercent + $TechnicalCutPerCent;
             },0);
 
         $SumPercentBOM = $this->BOM->reduce(function ($SumPercent, $BOM) {
-                return $SumPercent + $BOM->progress();
-                },0);
+            if($BOM->progress() > 100) $BOMPerCent = 100;
+            else  $BOMPerCent = $BOM->progress();
+                return $SumPercent + $BOMPerCent;
+            },0);
 
         $TotalCountTask = $this->Task()->count();
         if($TotalCountTask <= 0 ) $TotalCountTask = 1;
