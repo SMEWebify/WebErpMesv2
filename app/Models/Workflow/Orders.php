@@ -114,6 +114,21 @@ class Orders extends Model
         return $orderCalculator->getTotalPrice();
     }
 
+    public function getAveragePercentProgressLinesAttribute()
+    {
+        $SumPercent = $this->OrderLines->reduce(function ($SumPercentLine, $OrderLine) {
+            if($OrderLine->getAveragePercentProgressTaskAttribute() > 100) $OrderLinePerCent = 100;
+            else  $OrderLinePerCent = $OrderLine->getAveragePercentProgressTaskAttribute();
+
+            return $SumPercentLine + $OrderLinePerCent;
+            },0);
+
+        $TotalCountLines = $this->OrderLines()->count();
+        if($TotalCountLines <= 0 ) $TotalCountLines = 1;
+
+        return $SumPercent/$TotalCountLines;
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logOnly(['code', 'label', 'statu']);

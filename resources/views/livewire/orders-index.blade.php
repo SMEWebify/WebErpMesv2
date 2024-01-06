@@ -258,6 +258,7 @@
                             </th>
                             <th>{{__('general_content.code_trans_key') }}</th>
                             <th>{{__('general_content.lines_count_trans_key') }}</th>
+                            <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.total_price_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
                             <th>
@@ -280,6 +281,7 @@
                             </td>
                             <td>{{ $Order->customer_reference }}</td>
                             <td>{{ $Order->order_lines_count }}</td>
+                            <td><x-adminlte-progress theme="teal" value="{{ $Order->getAveragePercentProgressLinesAttribute() }}" with-label animated/></td>
                             <td>{{ $Order->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                             <td>
                                 @if(1 == $Order->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
@@ -294,7 +296,7 @@
                             </td>
                         </tr>
                         @empty
-                            <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
+                            <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
@@ -304,6 +306,7 @@
                             <th>{{__('general_content.customer_trans_key') }}</th>
                             <th>{{__('general_content.code_trans_key') }}</th>
                             <th>{{__('general_content.lines_count_trans_key') }}</th>
+                            <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.total_price_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
                             <th>{{__('general_content.created_at_trans_key') }}</th>
