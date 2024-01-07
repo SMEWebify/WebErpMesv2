@@ -124,7 +124,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
+                    @php $i=1 @endphp
                     @forelse ($DeliverysRequestsLineslist as $DeliverysRequestsLine)
                     <tr>
                         <td>

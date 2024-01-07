@@ -335,10 +335,7 @@ return [
             'can'  => ['quotes-menu'],
             'submenu' => [
                 [
-                    'text' => 'orders_list_trans_key',
-                    'url'  => 'orders',
-                ],
-                [
+                    'key'  => 'orders_lines_list',
                     'text' => 'orders_lines_list_trans_key',
                     'url'  => 'orders/lines',
                 ],
@@ -387,14 +384,11 @@ return [
             ]
         ],
         [
+            'key'  => 'delivery_notes',
             'text'    => 'delivery_notes_trans_key',
             'icon'    => 'fas fa-receipt',
             'can'  => ['deliverys-menu'],
             'submenu' => [
-                [
-                    'text' => 'deliverys_notes_request_trans_key',
-                    'url'  => 'deliverys/request',
-                ],
                 [
                     'text' => 'deliverys_notes_list_trans_key',
                     'url'  => 'deliverys',
@@ -402,14 +396,11 @@ return [
             ]
         ],
         [
+            'key'  => 'invoices',
             'text'    => 'invoices_trans_key',
             'icon'    => 'fas fa-calculator',
             'can'  => ['invoices-menu'],
             'submenu' => [
-                [
-                    'text' => 'invoices_request_trans_key',
-                    'url'  => 'invoices/request',
-                ],
                 [
                     'text' => 'invoices_list_trans_key',
                     'url'  => 'invoices',
@@ -446,10 +437,7 @@ return [
             'can'  => ['purchases-menu'],
             'submenu' => [
                 [
-                    'text' => 'purchase_request_trans_key',
-                    'url'  => 'purchases/request',
-                ],
-                [
+                    'key'  => 'requests_for_quotation',
                     'text' => 'requests_for_quotation_list_trans_key',
                     'url'  => 'purchases/quotation',
                 ],
@@ -458,18 +446,12 @@ return [
                     'url'  => 'purchases',
                 ],
                 [
-                    'text' => 'waiting_to_receipt_trans_key',
-                    'url'  => 'purchases/waiting/receipt',
-                ],
-                [
+                    'key'  => 'po_receipt',
                     'text' => 'po_receipt_trans_key',
                     'url'  => 'purchases/receipt',
                 ],
                 [
-                    'text' => 'waiting_to_invoice_trans_key',
-                    'url'  => 'purchases/waiting/invoice',
-                ],
-                [
+                    'key'  => 'invoice_supplier',
                     'text' => 'invoice_supplier_trans_key',
                     'url'  => 'purchases/invoice',
                 ],

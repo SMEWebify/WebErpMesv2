@@ -19,6 +19,7 @@ class PurchasesWaintingInvoice extends Component
     public $sortField = 'id'; // default sorting field
     public $sortAsc = true; // default sort direction
     
+    public $label;
     public $LastInvoice= '0';
     public $document_type = 'PU-IN';
 
