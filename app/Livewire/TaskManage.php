@@ -33,15 +33,18 @@ class TaskManage extends Component
     public $label;
     public $subAssemblylabel;
     public $methods_services_id;
+    public $methods_services_margin = 0;
+    public $methods_services_hourly_rate = 0;
     public $component_id;
     public $subAssemblyComponentId;
     public $type;
     public $qty;
+    public $line_qty;
     public $subAssemblyQty = 0;
-    public $seting_time = 0;
-    public $unit_time = 0;
-    public $unit_cost = 0;
-    public $unit_price = 0;
+    public $seting_time = 0.00;
+    public $unit_time = 0.00;
+    public $unit_cost = 0.00;
+    public $unit_price = 0.00;
     public $subAssemblyUnit_price = 0;
     public $methods_units_id = 0;
 
@@ -88,13 +91,18 @@ class TaskManage extends Component
 
     public function ChangeCodelabel()
     {
-        $Service = MethodsServices::select('id', 'ordre', 'label')->where('id', $this->methods_services_id)->get();
+        $Service = MethodsServices::select('id', 'ordre', 'label', 'margin' , 'hourly_rate')->where('id', $this->methods_services_id)->get();
         if(count($Service) > 0){
             $this->label =  $Service[0]->label;
             $this->ordre =  $Service[0]->ordre;
+            $this->methods_services_margin = $Service[0]->margin;
+            $this->methods_services_hourly_rate = $Service[0]->hourly_rate;
         }else{
             $this->label = '';
             $this->ordre =10;
+            $this->methods_services_margin =0;
+            $this->methods_services_hourly_rate =0;
+            
         }
     }
 
@@ -113,6 +121,18 @@ class TaskManage extends Component
         }
     }
     
+    public function componentCost()
+    {
+        $Product = Products::select('id',  'label', 'purchased_price')->where('id', $this->component_id)->get();
+        $this->unit_cost =  round($Product[0]->purchased_price,2);
+        $this->unit_price = round((float)$this->unit_cost * (1+((float)$this->methods_services_margin/100)),2);
+    }
+
+    public function changeInputValues()
+    {
+        $this->unit_cost = round(((float)$this->seting_time/ (float)$this->line_qty + (float)$this->unit_time) * (float)$this->methods_services_hourly_rate,2);
+        $this->unit_price = round((float)$this->unit_cost * (1+((float)$this->methods_services_margin/100)),2);
+    }
 
     public function mount($idType, $idPage, $idLine) 
     {
@@ -151,19 +171,23 @@ class TaskManage extends Component
         if($this->idType == 'products_id'){
             $Line = Products::findOrFail($this->idLine);
             $this->qty = 1 ;
+            $this->line_qty = 1;
+            $Line->qty = 1;
         }
         elseif($this->idType == 'quote_lines_id'){
             $Line = Quotelines::findOrFail($this->idLine);
             $this->qty = 1 ;
+            $this->line_qty = $Line->qty;
         }
         elseif($this->idType == 'order_lines_id'){
             $Line = OrderLines::findOrFail($this->idLine);
             $this->qty = 1 ;
+            $this->line_qty = $Line->qty;
         }
         else{
             $Line = new stdClass();
             $Line->id = null;
-            $Line->qty = 0;
+            $Line->qty = 1;
         }
 
         return view('livewire.task-manage',[

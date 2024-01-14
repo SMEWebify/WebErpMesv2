@@ -41,7 +41,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
-                            <select class="form-control @error('methods_services_id') is-invalid @enderror" wire:click.prevent="ChangeCodelabel()" name="methods_services_id" id="methods_services_id" wire:model.live="methods_services_id" required>
+                            <select class="form-control @error('methods_services_id') is-invalid @enderror" wire:click.prevent="ChangeCodelabel()" name="methods_services_id" id="methods_services_id" wire:change="changeInputValues" wire:model.live="methods_services_id" required>
                             <option>{{ __('general_content.select_service_trans_key') }}</option>
                                 @foreach ($ServicesSelect as $item)
                                 <option value="{{ $item->id }}-{{ $item->type }}" data-txt="{{ $item->label }}">{{ $item->code }}</option>
@@ -67,7 +67,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                             </div>
-                            <select class="form-control @error('component_id') is-invalid @enderror" name="component_id" id="component_id"  wire:model.live="component_id" >
+                            <select class="form-control @error('component_id') is-invalid @enderror" name="component_id" id="component_id"  wire:change="componentCost" wire:model.live="component_id" >
                                 <option>{{ __('general_content.select_component_trans_key') }}</option>
                                 @foreach ($ProductSelect as $item)
                                 <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->code }}</option>
@@ -88,7 +88,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-stopwatch"> {{__('general_content.hour_trans_key') }}</i></span>
                             </div>
-                            <input type="number" class="form-control @error('seting_time') is-invalid @enderror" name="seting_time"  id="seting_time" placeholder="{{ __('general_content.setting_time_trans_key') }}" value="0" step=".001"  min="0"  wire:model.live="seting_time" >
+                            <input type="number" class="form-control @error('seting_time') is-invalid @enderror" name="seting_time"  id="seting_time" placeholder="{{ __('general_content.setting_time_trans_key') }}" value="0" step=".001"  min="0" wire:change="changeInputValues"  wire:model.defer="seting_time" >
                         </div>
                         @error('seting_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         @else 
@@ -109,7 +109,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-stopwatch"> {{__('general_content.hour_trans_key') }}</i></span>
                             </div>
-                            <input type="number" class="form-control @error('unit_time') is-invalid @enderror" name="unit_time"  id="unit_time" placeholder="{{ __('general_content.unit_time_trans_key') }}" value="0" step=".001"  min="0" wire:model.live="unit_time" >
+                            <input type="number" class="form-control @error('unit_time') is-invalid @enderror" name="unit_time"  id="unit_time" placeholder="{{ __('general_content.unit_time_trans_key') }}" value="0" step=".001"  min="0" wire:change="changeInputValues" wire:model.defer="unit_time" >
                         </div>
                         @error('unit_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         @endif
@@ -120,8 +120,9 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="{{ __('general_content.cost_trans_key') }}" value="0" step=".001" min="0" wire:model.live="unit_cost">
-                        </div>
+                            <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="{{ __('general_content.cost_trans_key') }}" value="0" step=".001" min="0" wire:model.defer="unit_cost">
+                        </div> 
+                        <p>({{ $seting_time  }} h /{{ $Line->qty  }} + {{ $unit_time }} h) x {{ $methods_services_hourly_rate }} {{ $Factory->curency }} / h = {{ ((float)$seting_time / (float)$Line->qty + (float)$unit_time) * (float)$methods_services_hourly_rate }}
                     </div>
                     <div class="form-group col-md-2">
                         <label for="unit_price">{{ __('general_content.price_trans_key') }}</label>
@@ -131,6 +132,7 @@
                             </div>
                             <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price"  id="unit_price" placeholder="{{ __('general_content.unit_time_trans_key') }}" value="0" step=".001" min="0" wire:model.live="unit_price">
                         </div>
+                        <p>{{ $unit_cost  }} {{ $Factory->curency }} x {{ $methods_services_margin }} %  = {{ round( (float)$unit_cost*(1+((float)$methods_services_margin/100)),2) }}</p>
                         @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="form-group col-md-2">

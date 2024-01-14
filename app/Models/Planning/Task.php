@@ -140,7 +140,7 @@ class Task extends Model
 
     public function Margin()
     {
-        return (1-($this->unit_cost/$this->unit_price))*100;
+        return round((($this->unit_price/$this->unit_cost)-1)*100,2);
     }
 
     public function TotalTime()

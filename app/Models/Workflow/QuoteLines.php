@@ -113,7 +113,7 @@ class QuoteLines extends Model
         if($this->getTechnicalCutTotalUnitPricettribute() <= 0 ){
             return 0;
         }
-        return round((1-($this->getTechnicalCutTotalUnitCostAttribute()/$this->getTechnicalCutTotalUnitPricettribute()))*100,2);
+        return round((($this->getTechnicalCutTotalUnitPricettribute()/$this->getTechnicalCutTotalUnitCostAttribute())-1)*100,2);
     }
 
     public function BOM()
@@ -149,7 +149,7 @@ class QuoteLines extends Model
         if($this->getBOMTotalUnitPricettribute() <= 0 ){
             return 0;
         }
-        return round((1-($this->getBOMTotalUnitCostAttribute()/$this->getBOMTotalUnitPricettribute()))*100,2);
+        return round((($this->getBOMTotalUnitPricettribute()/$this->getBOMTotalUnitCostAttribute())-1)*100,2);
     }
 
     public function SubAssembly()

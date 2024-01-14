@@ -70,7 +70,7 @@
                     @if($MethodsService->type  == 8){{ __('general_content.composed_component_trans_key') }} @endif
                   </td>
                   <td>{{ $MethodsService->hourly_rate }}</td>
-                  <td>{{ $MethodsService->margin }}</td>
+                  <td>{{ $MethodsService->margin }} %</td>
                   <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}"></td>
                   <td class="py-0 align-middle">
                     <!-- Button Modal -->
