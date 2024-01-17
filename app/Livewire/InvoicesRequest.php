@@ -144,14 +144,9 @@ class InvoicesRequest extends Component
                         //if we are invoiced all part
                         if($OrderLine->invoiced_remaining_qty == 0){
                             $OrderLine->invoice_status = 3;
-                            // update order statu info
-                            // we must be check if all entry are invoiced
-                            //Orders::where('id',$OrderLine->orders_id)->update(['statu'=>2]);
                         }
                         else{
                             $OrderLine->invoice_status = 2;
-                            // update order statu info
-                            //Orders::where('id',$OrderLine->orders_id)->update(['statu'=>3]);
                         }
                         $OrderLine->save();
 

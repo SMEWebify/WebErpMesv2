@@ -18,6 +18,7 @@
                         </th>
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.invoice_status_trans_key') }}</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
                         </th>
@@ -37,6 +38,12 @@
                             @if(1 == $Delivery->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
                             @if(2 == $Delivery->statu )  <span class="badge badge-success">Sent</span>@endif
                         </td>
+                        <td>
+                            @if(1 == $Delivery->invoice_status )  <span class="badge badge-info">{{ __('general_content.chargeable_trans_key') }}</span>@endif
+                            @if(2 == $Delivery->invoice_status )  <span class="badge badge-danger">{{ __('general_content.not_chargeable_trans_key') }}</span>@endif
+                            @if(3 == $Delivery->invoice_status )  <span class="badge badge-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
+                            @if(4 == $Delivery->invoice_status )  <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>@endif
+                        </td>
                         <td>{{ $Delivery->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('deliverys.show', ['id' => $Delivery->id])}}" />
@@ -54,6 +61,7 @@
                         <th>{{__('general_content.customer_trans_key') }}</th>
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.invoice_status_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
