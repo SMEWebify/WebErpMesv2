@@ -118,6 +118,7 @@
               <thead>
                 <tr>
                   <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.delivery_notes_trans_key') }}</th>
                   <th>{{ __('general_content.external_id_trans_key') }}</th>
                   <th>{{ __('general_content.description_trans_key') }}</th>
                   <th>{{ __('general_content.qty_trans_key') }}</th>
@@ -134,6 +135,9 @@
                     <td>
                       <x-OrderButton id="{{ $InvoiceLine->orderLine->order['id'] }}" code="{{ $InvoiceLine->orderLine->order['code'] }}"  />
                     </td>
+                    <td>
+                      <x-DeliveryButton id="{{ $InvoiceLine->deliveryLine->delivery['id'] }}" code="{{ $InvoiceLine->deliveryLine->delivery['code'] }}"  />
+                    </td>
                     <td>{{ $InvoiceLine->orderLine['code'] }}</td>
                     <td>{{ $InvoiceLine->orderLine['label'] }}</td>
                     <td>{{ $InvoiceLine->qty }}</td>
@@ -149,12 +153,13 @@
                     </td>
                   </tr>
                   @empty
-                    <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
                   <tr>
                     <th>{{ __('general_content.order_trans_key') }}</th>
+                    <th>{{ __('general_content.delivery_notes_trans_key') }}</th>
                     <th>{{ __('general_content.external_id_trans_key') }}</th>
                     <th>{{ __('general_content.description_trans_key') }}</th>
                     <th>{{ __('general_content.qty_trans_key') }}</th>

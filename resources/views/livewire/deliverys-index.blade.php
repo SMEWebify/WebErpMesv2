@@ -36,7 +36,7 @@
                         <td>{{ $Delivery->delivery_lines_count }}</td>
                         <td>
                             @if(1 == $Delivery->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                            @if(2 == $Delivery->statu )  <span class="badge badge-success">Sent</span>@endif
+                            @if(2 == $Delivery->statu )  <span class="badge badge-success">{{ __('general_content.send_trans_key') }}</span>@endif
                         </td>
                         <td>
                             @if(1 == $Delivery->invoice_status )  <span class="badge badge-info">{{ __('general_content.chargeable_trans_key') }}</span>@endif

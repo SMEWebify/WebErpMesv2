@@ -3,11 +3,12 @@
 namespace App\Models\Workflow;
 
 use App\Models\Workflow\Invoices;
-use App\Models\Workflow\OrderLines;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\DeliveryLines;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class InvoiceLines extends Model
 {
@@ -30,6 +31,11 @@ class InvoiceLines extends Model
     public function orderLine()
     {
         return $this->belongsTo(OrderLines::class, 'order_line_id');
+    }
+
+    public function deliveryLine()
+    {
+        return $this->belongsTo(DeliveryLines::class, 'delivery_line_id');
     }
 
     public function GetPrettyCreatedAttribute()

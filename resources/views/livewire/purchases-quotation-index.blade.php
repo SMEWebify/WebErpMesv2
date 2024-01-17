@@ -36,7 +36,7 @@
                         <td>{{ $PurchaseQuotation->purchase_quotation_lines_count }}</td>
                         <td>
                             @if(1 == $PurchaseQuotation->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                            @if(2 == $PurchaseQuotation->statu )  <span class="badge badge-warning">Sent</span>@endif
+                            @if(2 == $PurchaseQuotation->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
                             @if(3 == $PurchaseQuotation->statu )  <span class="badge badge-success">{{ __('general_content.partly_received_trans_key') }}</span>@endif
                             @if(4 == $PurchaseQuotation->statu )  <span class="badge badge-danger">{{ __('general_content.rceived_trans_key') }}</span>@endif
                             @if(5 == $PurchaseQuotation->statu )  <span class="badge badge-danger">PO partly created</span>@endif

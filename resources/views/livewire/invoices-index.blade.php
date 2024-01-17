@@ -37,7 +37,7 @@
                         <td>{{ $Invoice->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                         <td>
                             @if(1 == $Invoice->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                            @if(2 == $Invoice->statu )  <span class="badge badge-warning">Sent</span>@endif
+                            @if(2 == $Invoice->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
                             @if(3 == $Invoice->statu )  <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>@endif
                             @if(4 == $Invoice->statu )  <span class="badge badge-danger">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
                         </td>
