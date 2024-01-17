@@ -146,8 +146,8 @@
                             <td>{{ $InvoicesRequestsLine->orderLine->VAT['label'] }} %</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $InvoicesRequestsLine->id }}" wire:model.live="data.{{ $InvoicesRequestsLine->id }}.deliverys_id" id="data.{{ $InvoicesRequestsLine->id }}.deliverys_id"  type="checkbox">
-                                    <label for="data.{{ $InvoicesRequestsLine->id }}.deliverys_id" class="custom-control-label">{{ __('general_content.add_to_document_trans_key') }}</label>
+                                    <input class="custom-control-input" value="{{ $InvoicesRequestsLine->id }}" wire:model.live="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id" id="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id"  type="checkbox">
+                                    <label for="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id" class="custom-control-label">{{ __('general_content.add_to_document_trans_key') }}</label>
                                 </div>
                             </td>
                         </tr>

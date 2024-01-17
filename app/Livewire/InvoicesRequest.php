@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Workflow\Invoices;
+use App\Events\DeliveryLineUpdated;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Support\Facades\Auth;
@@ -99,8 +100,8 @@ class InvoicesRequest extends Component
         //check if line exist
         $i = 0;
         foreach ($this->data as $key => $item) {
-            if(array_key_exists("deliverys_id",$this->data[$key])){
-                if($this->data[$key]['deliverys_id'] != false ){
+            if(array_key_exists("deliveryLine_id",$this->data[$key])){
+                if($this->data[$key]['deliveryLine_id'] != false ){
                     $i++;
                 }
             }
@@ -120,22 +121,25 @@ class InvoicesRequest extends Component
             // Create invoice note lines
             foreach ($this->data as $key => $item) {
                 //check if add line to new delivery note is aviable
-                if(array_key_exists("deliverys_id",$this->data[$key])){
-                    if($this->data[$key]['deliverys_id'] != false ){
+                if(array_key_exists("deliveryLine_id",$this->data[$key])){
+                    if($this->data[$key]['deliveryLine_id'] != false ){
                         //if not best to find request value, but we cant send hidden data with livewire
                         //How pass order_line_id & qty delivered ?
-                        $DeliveryLine = DeliveryLines::find($this->data[$key]['deliverys_id']);
-                        $DeliveryLine->invoice_status = 4; 
-                        $DeliveryLine->save();
+                        $DeliveryLine = DeliveryLines::find($key);
                         // Create  invoice line
                         $InvoiceLines = InvoiceLines::create([
                             'invoices_id' => $InvoiceCreated->id,
                             'order_line_id' => $DeliveryLine->order_line_id, 
-                            'delivery_line_id' => $this->data[$key]['deliverys_id'], 
+                            'delivery_line_id' => $DeliveryLine->id, 
                             'ordre' => $this->ordre,
                             'qty' => $DeliveryLine->qty,
                             'statu' => 1
                         ]); 
+                        
+                        $DeliveryLine->invoice_status = 4; 
+                        $DeliveryLine->save();
+                        
+                        event(new DeliveryLineUpdated($DeliveryLine->id));
 
                         // update order line info
                         $OrderLine = OrderLines::find($DeliveryLine->order_line_id);
