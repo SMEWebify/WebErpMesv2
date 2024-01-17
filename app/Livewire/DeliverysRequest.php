@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use App\Models\Workflow\Orders;
+use App\Events\OrderLineUpdated;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
@@ -148,16 +149,17 @@ class DeliverysRequest extends Component
                         //if we are delivered all part
                         if($OrderLine->delivered_remaining_qty == 0){
                             $OrderLine->delivery_status = 3;
+                            $OrderLine->save();
                             // update order statu info
                             // we must be check if all entry are delivered
-                            //Orders::where('id',$OrderLine->orders_id)->update(['statu'=>2]);
+                            event(new OrderLineUpdated($OrderLine->id));
                         }
                         else{
                             $OrderLine->delivery_status = 2;
+                            $OrderLine->save();
                             // update order statu info
-                            Orders::where('id',$OrderLine->orders_id)->update(['statu'=>3]);
+                            event(new OrderLineUpdated($OrderLine->id));
                         }
-                        $OrderLine->save();
 
                         $this->ordre= $this->ordre+10;
                     }
