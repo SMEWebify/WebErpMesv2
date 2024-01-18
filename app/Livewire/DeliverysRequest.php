@@ -73,7 +73,23 @@ class DeliverysRequest extends Component
     public function render()
     {
         $userSelect = User::select('id', 'name')->get();
-        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->orderBy('code')->get();
+
+        // Get the unique IDs of the companies in the order list
+        $companyIdsInOrderLines = OrderLines::where(function ($query) {
+                                                $query->where('delivery_status', '=', '1')
+                                                    ->orWhere('delivery_status', '=', '2');
+                                            })
+                                            ->leftJoin('orders', 'order_lines.orders_id', '=', 'orders.id')
+                                            ->pluck('orders.companies_id')
+                                            ->unique();
+
+        // Filter companies based on unique IDs
+        $this->CompaniesSelect = Companies::select('id', 'label', 'code')
+                                            ->whereIn('id', $companyIdsInOrderLines)
+                                            ->orderBy('code')
+                                            ->get();
+        
+
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
         

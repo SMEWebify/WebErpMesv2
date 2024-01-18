@@ -437,6 +437,11 @@ return [
             'can'  => ['purchases-menu'],
             'submenu' => [
                 [
+                    'text' => 'purchase_request_trans_key',
+                    'url'  => 'purchases/request',
+                    'label_color' => 'warning',
+                ],
+                [
                     'key'  => 'requests_for_quotation',
                     'text' => 'requests_for_quotation_list_trans_key',
                     'url'  => 'purchases/quotation',
