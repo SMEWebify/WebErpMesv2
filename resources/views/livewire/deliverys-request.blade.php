@@ -113,6 +113,7 @@
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
+                        <th>{{ __('general_content.tasks_status_trans_key') }}</th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.scum_qty_trans_key') }}</th>
                         <th>{{ __('general_content.unit_trans_key') }}</th>
@@ -139,9 +140,14 @@
                         </td>
                         <td>{{ $DeliverysRequestsLine->code }}</td>
                         <td>{{ $DeliverysRequestsLine->label }}</td>
+                        
                         <td>
-                            {{ $DeliverysRequestsLine->delivered_remaining_qty }}
+                            @if(1 == $DeliverysRequestsLine->tasks_status )  <span class="badge badge-info">{{ __('general_content.no_task_trans_key') }}</span>@endif
+                            @if(2 == $DeliverysRequestsLine->tasks_status )  <span class="badge badge-warning">{{ __('general_content.created_trans_key') }}</span>@endif
+                            @if(3 == $DeliverysRequestsLine->tasks_status )  <span class="badge badge-success">{{ __('general_content.in_progress_trans_key') }}</span> @endif
+                            @if(4 == $DeliverysRequestsLine->tasks_status )  <span class="badge badge-danger">{{ __('general_content.finished_task_trans_key') }}</span>@endif
                         </td>
+                        <td>{{ $DeliverysRequestsLine->delivered_remaining_qty }}</td>
                         <td>
                             <input class="form-control" wire:model.live="data.{{ $DeliverysRequestsLine->id }}.scumQty" placeholder="{{ __('general_content.qty_trans_key') }}" type="number">
                         </td>
@@ -158,7 +164,7 @@
                         </td>
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="13" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
@@ -167,6 +173,7 @@
                         <th>{{__('general_content.customer_trans_key') }}</th>
                         <th>{{ __('general_content.external_id_trans_key') }}</th>
                         <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{ __('general_content.tasks_status_trans_key') }}</th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.scum_qty_trans_key') }}</th>
                         <th>{{ __('general_content.unit_trans_key') }}</th>
