@@ -14,7 +14,15 @@
             <transition-group class="flex-1 flex flex-col h-full overflow-x-hidden overflow-y-auto rounded shadow-xs" tag="div" >
               <div v-for="task in status.tasks" :key="task.id" class="card mb-5 bg-light" >
                 <div class="card-body p-3 ">
-                      #{{ task.id }} - <span class="font-weight-bold">Order {{ task.order_lines.order.code }}</span> - {{ task.label }} - {{ task.order_lines.delivery_date }}<br/>
+                      <a :href="'/production/Task/Statu/Id/' + task.id ">
+                        #{{ task.id }}
+                      </a>
+                      - 
+                      <span class="font-weight-bold">
+                        <a :href="'/orders/' + task.order_lines.orders_id">
+                          {{ task.order_lines.order.code }}
+                        </a>
+                      </span> - {{ task.label }} - {{ task.order_lines.delivery_date }}<br/>
                       <span class="font-weight-bold">{{ task.order_lines.label }} || qty {{ task.order_lines.qty }}</span><br/>
                     <div class="float-right">
                       <div class="row">
