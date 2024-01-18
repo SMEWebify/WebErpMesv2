@@ -7,6 +7,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
+use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
@@ -76,6 +77,14 @@ class TaskStatu extends Component
             'comment'=>'',
         ]);
 
+        $StatusUpdate = Status::select('id')->where('title', 'In progress')->first();
+
+        /* // update task statu on Kanban*/
+        if($StatusUpdate->id){
+            $Task = Task::where('id',$taskId)->update(['status_id'=>$StatusUpdate->id]);
+            event(new TaskChangeStatu($taskId));
+        }
+
         $this->render();
 
         // Set Flash Message
@@ -109,11 +118,12 @@ class TaskStatu extends Component
             'timestamp' =>Carbon::now(),
             'comment'=>'',
         ]);
-
         $StatusUpdate = Status::select('id')->where('title', 'Finished')->first();
-        /* // update task statu Supplied on Kanban*/
+
+        /* // update task statu on Kanban*/
         if($StatusUpdate->id){
             $Task = Task::where('id',$taskId)->update(['status_id'=>$StatusUpdate->id]);
+            event(new TaskChangeStatu($taskId));
         }
 
         $this->render();

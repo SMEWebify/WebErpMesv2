@@ -69,18 +69,18 @@ class InvoicesRequest extends Component
     {
         $userSelect = User::select('id', 'name')->get();
 
-        // Get the unique IDs of the companies in the order list
-        $companyIdsInOrderLines = DeliveryLines::where(function ($query) {
-            $query->where('delivery_lines.invoice_status', '=', '1')
-                ->orWhere('delivery_lines.invoice_status', '=', '2');
-        })
-        ->leftJoin('deliverys', 'delivery_lines.deliverys_id', '=', 'deliverys.id')
-        ->pluck('deliverys.companies_id')
-        ->unique();
+        // Get the unique IDs of the companies in the DeliveryLines list
+        $companyIdsInDeliveryLines = DeliveryLines::where(function ($query) {
+                                                $query->where('delivery_lines.invoice_status', '=', '1')
+                                                    ->orWhere('delivery_lines.invoice_status', '=', '2');
+                                            })
+                                            ->leftJoin('deliverys', 'delivery_lines.deliverys_id', '=', 'deliverys.id')
+                                            ->pluck('deliverys.companies_id')
+                                            ->unique();
 
         // Filter companies based on unique IDs
         $this->CompaniesSelect = Companies::select('id', 'label', 'code')
-                ->whereIn('id', $companyIdsInOrderLines)
+                ->whereIn('id', $companyIdsInDeliveryLines)
                 ->orderBy('code')
                 ->get();
 

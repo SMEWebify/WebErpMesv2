@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
+use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
@@ -103,6 +104,8 @@ class TaskController extends Controller
                             'comment'=>'',
                         ]);
                     }
+
+                    event(new TaskChangeStatu($task['id']));
                 }
             }
         }

@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\TaskChangeStatu;
 use App\Events\OrderLineUpdated;
 use App\Events\DeliveryLineUpdated;
-use App\Listeners\CheckOrderStatus;
+use App\Listeners\CheckOrderDeliveredStatus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\UpdateDeliveryStatus;
+use App\Listeners\CheckOrderLineTaskStatus;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -23,10 +25,13 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         OrderLineUpdated::class => [
-            CheckOrderStatus::class,
+            CheckOrderDeliveredStatus::class,
         ],
         DeliveryLineUpdated::class => [
             UpdateDeliveryStatus::class,
+        ],
+        TaskChangeStatu::class => [
+            CheckOrderLineTaskStatus::class,
         ],
     ];
 
