@@ -53,8 +53,8 @@ class OpportunitiesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->where('active', 1)->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-        $Activities = OpportunitiesActivitiesLogs::orderBy('id')->get();
-        $Events = OpportunitiesEventsLogs::orderBy('id')->get();
+        $Activities = OpportunitiesActivitiesLogs::where('opportunities_id', $id)->orderBy('id')->get();
+        $Events = OpportunitiesEventsLogs::where('opportunities_id', $id)->orderBy('id')->get();
         $previousUrl = route('opportunities.show', ['id' => $id->id-1]);
         $nextUrl = route('opportunities.show', ['id' => $id->id+1]);
 
