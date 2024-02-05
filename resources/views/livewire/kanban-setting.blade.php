@@ -62,14 +62,16 @@
                             <td>{{ $KanbanSettingViewLine->order }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="#" wire:click="destroyKanban({{ $KanbanSettingViewLine->id }})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
-                                </div>
-                                <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="upKanban({{ $KanbanSettingViewLine->id }})" class="btn btn-secondary"><i class="fa fa-lg fa-fw  fa-sort-amount-down"></i></a>
                                 </div>
                                 <div class="btn-group btn-group-sm">
                                     <a href="#" wire:click="downKanban({{ $KanbanSettingViewLine->id }})" class="btn btn-primary"><i class="fa fa-lg fa-fw  fa-sort-amount-up-alt"></i></a>
                                 </div>
+                                @if ($KanbanSettingViewLine->tasks->isEmpty())
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" wire:click="destroyKanban({{ $KanbanSettingViewLine->id }})" class="btn btn-danger"><i class="fa fa-lg fa-fw fa-trash"></i></a>
+                                </div>
+                                @endif
                             </td>
                         </tr>
                         @empty
