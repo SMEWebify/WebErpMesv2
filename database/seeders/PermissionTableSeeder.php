@@ -29,7 +29,7 @@ class PermissionTableSeeder  extends Seeder
                         'quality-menu',
                         'settings-time-menu',
                         'methods-menu',
-                        'accouting-menu',
+                        'accounting-menu',
                         'human-resources-menu',
                         'your-company-menu',
                         ];

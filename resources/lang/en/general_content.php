@@ -758,13 +758,13 @@ return [
     'section_info_trans_key'                   => 'The Sections function allows you to define all the sections making up your company, i.e. the physical zones where work stations and operators are grouped together according to their job and cost.',
 
     //ACCOUNTING
-    'accouting_trans_key'                      => 'Accouting',
+    'accounting_trans_key'                      => 'Accounting',
     'new_payment_methods_trans_key'            => 'New Payment choice mode',
     'new_payment_conditions_trans_key'         => 'New Payment condition mode',
     'new_delevery_method_trans_key'            => 'New Delevery method mode',
     'new_vat_trans_key'                        => 'New VAT mode',
-    'accouting_allocations_trans_key'          => 'Accouting allocations',
-    'new_accouting_allocations_trans_key'      => 'New accouting allocation',
+    'accounting_allocations_trans_key'          => 'Accounting allocations',
+    'new_accounting_allocations_trans_key'      => 'New accounting allocation',
     
     //TIME
     'times_setting_trans_key'                  => 'Times setting',  

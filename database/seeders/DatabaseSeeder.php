@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
         AccountingPaymentMethod::factory()->count(3)->create();
         AccountingDelivery::factory()->count(3)->create();
         /*
-        *Accouting allocation seeder
+        *Accounting allocation seeder
         */
 
         

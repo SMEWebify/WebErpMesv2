@@ -47,7 +47,7 @@ return [
     'quality_trans_key'                        => 'Chất lượng',
     'settings_trans_key'                       => 'Thiết lập',
     'methods_trans_key'                        => 'Phương thức',
-    'accouting_trans_key'                      => 'Kế toán',
+    'accounting_trans_key'                      => 'Kế toán',
     'human_resources_trans_key'                => 'Nguồn nhân lực',
     'users_trans_key'                          => 'Người dùng',
     'your_company_trans_key'                   => 'Công ty của bạn',

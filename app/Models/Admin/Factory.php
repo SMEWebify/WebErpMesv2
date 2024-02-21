@@ -2,8 +2,9 @@
 
 namespace App\Models\Admin;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Accounting\AccountingVat;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Factory extends Model
 {

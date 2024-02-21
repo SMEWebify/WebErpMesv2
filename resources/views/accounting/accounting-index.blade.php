@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.accouting_trans_key'))
+@section('title', __('general_content.accounting_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.accouting_trans_key') }}</h1>
+    <h1>{{ __('general_content.accounting_trans_key') }}</h1>
 @stop
 
 @section('right-sidebar') 
@@ -17,7 +17,7 @@
       <li class="nav-item"><a class="nav-link active" href="#PaymentCondition" data-toggle="tab">{{ __('general_content.payment_conditions_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#PaymentChoice" data-toggle="tab">{{ __('general_content.payment_methods_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#VAT" data-toggle="tab">{{ __('general_content.vat_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#AccoutingAllocations" data-toggle="tab"> Accouting allocations</a></li>
+      <li class="nav-item"><a class="nav-link" href="#AccountingAllocations" data-toggle="tab"> Accounting allocations</a></li>
       <li class="nav-item"><a class="nav-link" href="#Delevery" data-toggle="tab">{{ __('general_content.delevery_method_trans_key') }}</a></li>
     </ul>
   </div>
@@ -66,7 +66,7 @@
                     </button>
                     <!-- Modal {{ $PaymentCondition->id }} -->
                     <x-adminlte-modal id="PaymentCondition{{ $PaymentCondition->id }}" title="Update {{ $PaymentCondition->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                      <form method="POST" action="{{ route('accouting.paymentCondition.update', ['id' => $PaymentCondition->id]) }}" enctype="multipart/form-data">
+                      <form method="POST" action="{{ route('accounting.paymentCondition.update', ['id' => $PaymentCondition->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
@@ -132,7 +132,7 @@
             <h3 class="card-title">{{__('general_content.new_payment_conditions_trans_key') }}</h3>
           </div>
           <div class="card-body">
-            <form  method="POST" action="{{ route('accouting.paymentCondition.create') }}" class="form-horizontal">
+            <form  method="POST" action="{{ route('accounting.paymentCondition.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -216,7 +216,7 @@
                     </button>
                     <!-- Modal {{ $PaymentMethod->id }} -->
                     <x-adminlte-modal id="PaymentMethod{{ $PaymentMethod->id }}" title="Update {{ $PaymentMethod->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                      <form method="POST" action="{{ route('accouting.paymentMethod.update', ['id' => $PaymentMethod->id]) }}" enctype="multipart/form-data">
+                      <form method="POST" action="{{ route('accounting.paymentMethod.update', ['id' => $PaymentMethod->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
@@ -269,7 +269,7 @@
             <h3 class="card-title">{{__('general_content.new_payment_methods_trans_key') }}</h3>
           </div>
           <div class="card-body">
-            <form  method="POST" action="{{ route('accouting.paymentMethod.create') }}" class="form-horizontal">
+            <form  method="POST" action="{{ route('accounting.paymentMethod.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -343,7 +343,7 @@
                     </button>
                     <!-- Modal {{ $VAT->id }} -->
                     <x-adminlte-modal id="VAT{{ $VAT->id }}" title="Update {{ $VAT->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                      <form method="POST" action="{{ route('accouting.vat.update', ['id' => $VAT->id]) }}" enctype="multipart/form-data">
+                      <form method="POST" action="{{ route('accounting.vat.update', ['id' => $VAT->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
@@ -402,7 +402,7 @@
             <h3 class="card-title">{{__('general_content.new_vat_trans_key') }}</h3>
           </div>
           <div class="card-body">
-            <form  method="POST" action="{{ route('accouting.vat.create') }}" class="form-horizontal">
+            <form  method="POST" action="{{ route('accounting.vat.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -444,11 +444,11 @@
     </div>
     <!-- /.tab-pane -->
 
-    <div class="tab-pane" id="AccoutingAllocations">
+    <div class="tab-pane" id="AccountingAllocations">
       <div class="row">
         <div class="col-md-6 card-primary">
           <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.accouting_allocations_trans_key') }}</h3>
+              <h3 class="card-title">{{ __('general_content.accounting_allocations_trans_key') }}</h3>
           </div>
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
@@ -486,7 +486,7 @@
                     </button>
                     <!-- Modal {{ $Allocation->id }} -->
                     <x-adminlte-modal id="Allocation{{ $Allocation->id }}" title="Update {{ $Allocation->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                      <form method="POST" action="{{ route('accouting.allocation.update', ['id' => $Allocation->id]) }}" enctype="multipart/form-data">
+                      <form method="POST" action="{{ route('accounting.allocation.update', ['id' => $Allocation->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
@@ -562,10 +562,10 @@
 
         <div class="col-md-6 card-secondary">
           <div class="card-header">
-            <h3 class="card-title">{{__('general_content.new_accouting_allocations_trans_key') }}</h3>
+            <h3 class="card-title">{{__('general_content.new_accounting_allocations_trans_key') }}</h3>
           </div>
           <div class="card-body">
-            <form  method="POST" action="{{ route('accouting.allocation.create') }}" class="form-horizontal">
+            <form  method="POST" action="{{ route('accounting.allocation.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
                 <label for="account">Account (or {{ __('general_content.external_id_trans_key') }})</label>
@@ -661,7 +661,7 @@
                     </button>
                     <!-- Modal {{ $Delevery->id }} -->
                     <x-adminlte-modal id="Delevery{{ $Delevery->id }}" title="Update {{ $Delevery->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                      <form method="POST" action="{{ route('accouting.delivery.update', ['id' => $Delevery->id]) }}" enctype="multipart/form-data">
+                      <form method="POST" action="{{ route('accounting.delivery.update', ['id' => $Delevery->id]) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
                           <div class="form-group">
@@ -709,7 +709,7 @@
             <h3 class="card-title">{{ __('general_content.new_delevery_method_trans_key') }}</h3>
           </div>
           <div class="card-body">
-            <form  method="POST" action="{{ route('accouting.delivery.create') }}" class="form-horizontal">
+            <form  method="POST" action="{{ route('accounting.delivery.create') }}" class="form-horizontal">
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>

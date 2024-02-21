@@ -48,7 +48,7 @@ return [
     'quality_trans_key'                        => 'Qualité',
     'settings_trans_key'                       => 'Paramètres',
     'methods_trans_key'                        => 'Méthodes',
-    'accouting_trans_key'                      => 'Comptabilité',
+    'accounting_trans_key'                      => 'Comptabilité',
     'human_resources_trans_key'                => 'Ressources humaine',
     'users_trans_key'                          => 'Utilisateurs',
     'your_company_trans_key'                   => 'Votre entreprise',

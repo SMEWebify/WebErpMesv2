@@ -483,10 +483,10 @@ return [
             'can'  => ['methods-menu'],
         ],
         [
-            'text' => 'accouting_trans_key',
+            'text' => 'accounting_trans_key',
             'icon' => 'fas fa-piggy-bank',
-            'url'  => 'accouting',
-            'can'  => ['accouting-menu'],
+            'url'  => 'accounting',
+            'can'  => ['accounting-menu'],
         ],
         [
             'text' => 'human_resources_trans_key',

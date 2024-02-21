@@ -23,87 +23,99 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->name('guest.order.show');
     Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
 
-    Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth'])->name('dashboard');
+    Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'check.factory'])->name('dashboard');
 
-    Route::group(['prefix' => 'companies'], function () {
-        Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->middleware(['auth'])->name('companies');
-        Route::post('/contacts/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->middleware(['auth'])->name('contacts.store');
-        Route::post('/contacts/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->middleware(['auth'])->name('contacts.update');
-        Route::get('/contacts/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->middleware(['auth'])->name('contacts.edit');
-        Route::post('/addresses/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->middleware(['auth'])->name('addresses.store');
-        Route::post('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->middleware(['auth'])->name('addresses.update');
-        Route::get('/addresses/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->middleware(['auth'])->name('addresses.edit');
-        Route::post('/import', 'App\Http\Controllers\Companies\CompaniesController@import')->middleware(['auth'])->name('companies.import');
-        Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->middleware(['auth'])->name('companies.update');
-        Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->middleware(['auth'])->name('companies.show');
+    Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->name('companies');
+
+        Route::group(['prefix' => 'contacts'], function () {
+            Route::post('/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->name('contacts.store');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->name('contacts.update');
+            Route::get('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->name('contacts.edit');
+        });
+    
+        Route::group(['prefix' => 'addresses'], function () {
+            Route::post('/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->name('addresses.store');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->name('addresses.update');
+            Route::get('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->name('addresses.edit');
+        });
+    
+        Route::post('/import', 'App\Http\Controllers\Companies\CompaniesController@import')->name('companies.import');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.update');
+        Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
     });
 
     Route::group(['prefix' => 'leads'], function () {
         //leads
-        Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->middleware(['auth'])->name('leads'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->middleware(['auth', 'check.factory'])->name('leads'); 
     });
 
-    Route::group(['prefix' => 'opportunities'], function () {
-        //opportunities
-        Route::get('/', 'App\Http\Controllers\Workflow\OpportunitiesController@index')->middleware(['auth'])->name('opportunities'); 
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->middleware(['auth'])->name('opportunities.show');
-        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->middleware(['auth'])->name('opportunities.update');
-        Route::get('/store/quote/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@storeQuote')->middleware(['auth'])->name('opportunities.store.quote');
-        Route::post('/store/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@store')->middleware(['auth'])->name('opportunities.store.activity');
-        Route::post('/update/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@update')->middleware(['auth'])->name('opportunities.update.activity');
-        Route::post('/store/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@store')->middleware(['auth'])->name('opportunities.store.event');
-        Route::post('/update/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@update')->middleware(['auth'])->name('opportunities.update.event');
+    Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\OpportunitiesController@index')->name('opportunities');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->name('opportunities.update');
+        Route::get('/store/quote/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@storeQuote')->name('opportunities.store.quote');
+    
+        Route::group(['prefix' => 'store'], function () {
+            Route::post('/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@store')->name('opportunities.store.activity');
+            Route::post('/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@store')->name('opportunities.store.event');
+        });
+    
+        Route::group(['prefix' => 'update'], function () {
+            Route::post('/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@update')->name('opportunities.update.activity');
+            Route::post('/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@update')->name('opportunities.update.event');
+        });
     });
 
-    Route::group(['prefix' => 'quotes'], function () {
+    Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'check.factory']], function () {
         //quote
-        Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->middleware(['auth'])->name('quotes'); 
-        Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->middleware(['auth'])->name('quotes-lines'); 
-        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->middleware(['auth'])->name('quotes.update');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->middleware(['auth'])->name('quotes.show');
+        Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes'); 
+        Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines'); 
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->name('quotes.update');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->name('quotes.show');
         //quote line
-        Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->middleware(['auth'])->name('quotes.update.detail.line');
-        Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->middleware(['auth'])->name('quotes.update.detail.picture');
-        Route::post('/{idQuote}/import', 'App\Http\Controllers\Workflow\QuoteLinesController@import')->middleware(['auth'])->name('quotes.import');
+        Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');
+        Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->name('quotes.update.detail.picture');
+        Route::post('/{idQuote}/import', 'App\Http\Controllers\Workflow\QuoteLinesController@import')->name('quotes.import');
     });
     
 
-    Route::group(['prefix' => 'orders'], function () {
+    Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'check.factory']], function () {
         //order
-        Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->middleware(['auth'])->name('orders'); 
-        Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->middleware(['auth'])->name('orders-lines'); 
-        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->middleware(['auth'])->name('orders.update');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->middleware(['auth'])->name('orders.show');
+        Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders'); 
+        Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines'); 
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->name('orders.update');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->name('orders.show');
         //order line
-        Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->middleware(['auth'])->name('orders.update.detail.line');
-        Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->middleware(['auth'])->name('orders.update.detail.picture');
-        Route::post('/{idOrder}/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->middleware(['auth'])->name('orders.import');
+        Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');
+        Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->name('orders.update.detail.picture');
+        Route::post('/{idOrder}/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.import');
     });
 
-    Route::group(['prefix' => 'deliverys'], function () {
-        Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->middleware(['auth'])->name('deliverys'); 
-        Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->middleware(['auth'])->name('deliverys-request'); 
-        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->middleware(['auth'])->name('deliverys.update');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->middleware(['auth'])->name('deliverys.show');
+    Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys'); 
+        Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request'); 
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->name('deliverys.show');
     });
 
-    Route::group(['prefix' => 'invoices'], function () {
-        Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->middleware(['auth'])->name('invoices'); 
-        Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->middleware(['auth'])->name('invoices-request'); 
-        Route::get('/export', 'App\Http\Controllers\Workflow\InvoicesController@export')->middleware(['auth'])->name('invoices.export');
-        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->middleware(['auth'])->name('invoices.update');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->middleware(['auth'])->name('invoices.show');
+    Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices'); 
+        Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->name('invoices-request'); 
+        Route::get('/export', 'App\Http\Controllers\Workflow\InvoicesController@export')->name('invoices.export');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
     });
 
-    Route::group(['prefix' => 'purchases'], function () {
+    Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'check.factory']], function () {
         
-        Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->middleware(['auth'])->name('purchases.request'); 
-        Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->middleware(['auth'])->name('purchases.quotation'); 
-        Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->middleware(['auth'])->name('purchases'); 
-        Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesController@waintingReceipt')->middleware(['auth'])->name('purchases.wainting.receipt'); 
-        Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesController@receipt')->middleware(['auth'])->name('purchases.receipt'); 
-        Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesController@waintingInvoice')->middleware(['auth'])->name('purchases.wainting.invoice'); 
-        Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->middleware(['auth'])->name('purchases.invoice'); 
+        Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->name('purchases.request'); 
+        Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->name('purchases.quotation'); 
+        Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->name('purchases'); 
+        Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesController@waintingReceipt')->name('purchases.wainting.receipt'); 
+        Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesController@receipt')->name('purchases.receipt'); 
+        Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesController@waintingInvoice')->name('purchases.wainting.invoice'); 
+        Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesController@invoice')->name('purchases.invoice'); 
 
         //only for quote request to purchase order
         Route::post('/Purchase/Order/Create/{id}', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrder')->middleware(['auth'])->name('purchases.orders.store');
@@ -119,102 +131,120 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/invoice/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showInvoice')->middleware(['auth'])->name('purchase.invoice.show');
     });
 
-    Route::group(['prefix' => 'print'], function () {
-        Route::get('/order/manufacturing/{Document}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->middleware(['auth'])->name('print.manufacturing.instruction');
+    Route::group(['prefix' => 'print', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/order/manufacturing/{Document}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->name('print.manufacturing.instruction');
     });
 
-    Route::group(['prefix' => 'pdf'], function () {
-        Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getQuotePdf')->middleware(['auth'])->name('pdf.quote');
-        Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->middleware(['auth'])->name('pdf.order');
-        Route::get('/order/Confirm/{Document}', 'App\Http\Controllers\PrintController@getOrderConfirmPdf')->middleware(['auth'])->name('pdf.orders.confirm');
-        Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@getDeliveryPdf')->middleware(['auth'])->name('pdf.delivery');
-        Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@getInvoicePdf')->middleware(['auth'])->name('pdf.invoice');
-        Route::get('/facture-x/{Document}', 'App\Http\Controllers\PrintController@getInvoiceFactureX')->middleware(['auth'])->name('pdf.facturex');
-        Route::get('/purchase/quotation/{Document}', 'App\Http\Controllers\PrintController@getPurchaseQuotationPdf')->middleware(['auth'])->name('pdf.purchase.quotation');
-        Route::get('/purchase/{Document}', 'App\Http\Controllers\PrintController@getPurchasePdf')->middleware(['auth'])->name('pdf.purchase');
-        Route::get('/receipt/{Document}', 'App\Http\Controllers\PrintController@getReceiptPdf')->middleware(['auth'])->name('pdf.receipt');
-        Route::get('/nc/{Document}', 'App\Http\Controllers\PrintController@getNCPdf')->middleware(['auth'])->name('pdf.nc');
+    Route::group(['prefix' => 'pdf', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getQuotePdf')->name('pdf.quote');
+        Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->name('pdf.order');
+        Route::get('/order/Confirm/{Document}', 'App\Http\Controllers\PrintController@getOrderConfirmPdf')->name('pdf.orders.confirm');
+        Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@getDeliveryPdf')->name('pdf.delivery');
+        Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@getInvoicePdf')->name('pdf.invoice');
+        Route::get('/facture-x/{Document}', 'App\Http\Controllers\PrintController@getInvoiceFactureX')->name('pdf.facturex');
+        Route::get('/purchase/quotation/{Document}', 'App\Http\Controllers\PrintController@getPurchaseQuotationPdf')->name('pdf.purchase.quotation');
+        Route::get('/purchase/{Document}', 'App\Http\Controllers\PrintController@getPurchasePdf')->name('pdf.purchase');
+        Route::get('/receipt/{Document}', 'App\Http\Controllers\PrintController@getReceiptPdf')->name('pdf.receipt');
+        Route::get('/nc/{Document}', 'App\Http\Controllers\PrintController@getNCPdf')->name('pdf.nc');
     });
 
-    Route::group(['prefix' => 'accouting'], function () {
+    Route::group(['prefix' => 'accounting', 'middleware' => ['auth', 'check.factory']], function () {
         //index route
         Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
-        //tab
-        Route::post('/Allocation/create', 'App\Http\Controllers\Accounting\AllocationController@store')->middleware(['auth'])->name('accouting.allocation.create');
-        Route::post('/Allocation/edit/{id}', 'App\Http\Controllers\Accounting\AllocationController@update')->middleware(['auth'])->name('accouting.allocation.update');
-        Route::post('/Delivery/create', 'App\Http\Controllers\Accounting\DeliveryController@store')->middleware(['auth'])->name('accouting.delivery.create');
-        Route::post('/Delivery/edit/{id}', 'App\Http\Controllers\Accounting\DeliveryController@update')->middleware(['auth'])->name('accouting.delivery.update');
-        Route::post('/PaymentCondition/create', 'App\Http\Controllers\Accounting\PaymentConditionsController@store')->middleware(['auth'])->name('accouting.paymentCondition.create');
-        Route::post('/PaymentCondition/edit/{id}', 'App\Http\Controllers\Accounting\PaymentConditionsController@update')->middleware(['auth'])->name('accouting.paymentCondition.update');
-        Route::post('/PaymentMethod/create', 'App\Http\Controllers\Accounting\PaymentMethodController@store')->middleware(['auth'])->name('accouting.paymentMethod.create');
-        Route::post('/PaymentMethod/edit/{id}', 'App\Http\Controllers\Accounting\PaymentMethodController@update')->middleware(['auth'])->name('accouting.paymentMethod.update');
-        Route::post('/VAT/create', 'App\Http\Controllers\Accounting\VatController@store')->middleware(['auth'])->name('accouting.vat.create');
-        Route::post('/VAT/create/edit/{id}', 'App\Http\Controllers\Accounting\VatController@update')->middleware(['auth'])->name('accouting.vat.update');
-    });
+        
+        // Routes for Allocation
+        Route::prefix('allocation')->group(function () {
+            Route::post('/create', 'App\Http\Controllers\Accounting\AllocationController@store')->name('accounting.allocation.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\AllocationController@update')->name('accounting.allocation.update');
+        });
+    
+        // Routes for Delivery
+        Route::prefix('delivery')->group(function () {
+            Route::post('/create', 'App\Http\Controllers\Accounting\DeliveryController@store')->name('accounting.delivery.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\DeliveryController@update')->name('accounting.delivery.update');
+        });
+    
+        // Routes for Payment Conditions
+        Route::prefix('paymentCondition')->group(function () {
+            Route::post('/create', 'App\Http\Controllers\Accounting\PaymentConditionsController@store')->name('accounting.paymentCondition.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\PaymentConditionsController@update')->name('accounting.paymentCondition.update');
+        });
+    
+        // Routes for Payment Methods
+        Route::prefix('paymentMethod')->group(function () {
+            Route::post('/create', 'App\Http\Controllers\Accounting\PaymentMethodController@store')->name('accounting.paymentMethod.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\PaymentMethodController@update')->name('accounting.paymentMethod.update');
+        });
+    
+        // Routes for VAT
+        Route::prefix('vat')->group(function () {
+            Route::post('/create', 'App\Http\Controllers\Accounting\VatController@store')->name('accounting.vat.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\VatController@update')->name('accounting.vat.update');
+        }); });
 
-    Route::group(['prefix' => 'times'], function () {
+    Route::group(['prefix' => 'times', 'middleware' => ['auth', 'check.factory']], function () {
         //index route
-        Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->middleware(['auth'])->name('times');
+        Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->name('times');
         //tab
-        Route::post('/Absence/create', 'App\Http\Controllers\Times\AbsenceController@store')->middleware(['auth'])->name('times.absence.create');
-        Route::post('/Absence/edit/{id}', 'App\Http\Controllers\Times\AbsenceController@update')->middleware(['auth'])->name('times.absence.update');
-        Route::post('/BanckHoliday/create', 'App\Http\Controllers\Times\BanckHolidayController@store')->middleware(['auth'])->name('times.banckholiday.create');
-        Route::post('/BanckHoliday/edit/{id}', 'App\Http\Controllers\Times\BanckHolidayController@update')->middleware(['auth'])->name('times.banckholiday.update');
-        Route::post('/ImproductTime/create', 'App\Http\Controllers\Times\ImproductTimeController@store')->middleware(['auth'])->name('times.improducttime.create');
-        Route::post('/ImproductTime/edit/{id}', 'App\Http\Controllers\Times\ImproductTimeController@update')->middleware(['auth'])->name('times.improducttime.update');
-        Route::post('/MachineEvent/create', 'App\Http\Controllers\Times\MachineEventController@store')->middleware(['auth'])->name('times.machineevent.create');
-        Route::post('/MachineEvent/edit/{id}', 'App\Http\Controllers\Times\MachineEventController@update')->middleware(['auth'])->name('times.machineevent.update');
+        Route::post('/Absence/create', 'App\Http\Controllers\Times\AbsenceController@store')->name('times.absence.create');
+        Route::post('/Absence/edit/{id}', 'App\Http\Controllers\Times\AbsenceController@update')->name('times.absence.update');
+        Route::post('/BanckHoliday/create', 'App\Http\Controllers\Times\BanckHolidayController@store')->name('times.banckholiday.create');
+        Route::post('/BanckHoliday/edit/{id}', 'App\Http\Controllers\Times\BanckHolidayController@update')->name('times.banckholiday.update');
+        Route::post('/ImproductTime/create', 'App\Http\Controllers\Times\ImproductTimeController@store')->name('times.improducttime.create');
+        Route::post('/ImproductTime/edit/{id}', 'App\Http\Controllers\Times\ImproductTimeController@update')->name('times.improducttime.update');
+        Route::post('/MachineEvent/create', 'App\Http\Controllers\Times\MachineEventController@store')->name('times.machineevent.create');
+        Route::post('/MachineEvent/edit/{id}', 'App\Http\Controllers\Times\MachineEventController@update')->name('times.machineevent.update');
     });
 
-    Route::group(['prefix' => 'products'], function () {
+    Route::group(['prefix' => 'products', 'middleware' => ['auth', 'check.factory']], function () {
         //index product route
-        Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->middleware(['auth'])->name('products');
+        Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
         //product route 
-        Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->middleware(['auth'])->name('products.store');
-        Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->middleware(['auth'])->name('products.update');
-        Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->middleware(['auth'])->name('products.duplicate');
-        Route::post('/image', 'App\Http\Controllers\Products\ProductsController@StoreImage')->middleware(['auth'])->name('products.update.image');
-        Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->middleware(['auth'])->name('products.update.stl');
-        Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->middleware(['auth'])->name('products.update.svg');
+        Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->name('products.store');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->name('products.update');
+        Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
+        Route::post('/image', 'App\Http\Controllers\Products\ProductsController@StoreImage')->name('products.update.image');
+        Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
+        Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
         //stock route
-        Route::get('/Stock', 'App\Http\Controllers\Products\StockController@index')->middleware(['auth'])->name('products.stock'); 
-        Route::post('/Stock/create', 'App\Http\Controllers\Products\StockController@store')->middleware(['auth'])->name('products.stock.store');
-        Route::post('/Stock/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->middleware(['auth'])->name('products.stock.update');
-        Route::get('/Stock/{id}', 'App\Http\Controllers\Products\StockController@show')->middleware(['auth'])->name('products.stock.show');
+        Route::get('/Stock', 'App\Http\Controllers\Products\StockController@index')->name('products.stock'); 
+        Route::post('/Stock/create', 'App\Http\Controllers\Products\StockController@store')->name('products.stock.store');
+        Route::post('/Stock/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->name('products.stock.update');
+        Route::get('/Stock/{id}', 'App\Http\Controllers\Products\StockController@show')->name('products.stock.show');
         
-        Route::post('/Stock/Location/create', 'App\Http\Controllers\Products\StockLocationController@store')->middleware(['auth'])->name('products.stocklocation.store');
-        Route::post('/Stock/Location/edit/{id}', 'App\Http\Controllers\Products\StockLocationController@update')->middleware(['auth'])->name('products.stocklocation.update');
-        Route::get('/Stock/Location/{id}', 'App\Http\Controllers\Products\StockLocationController@show')->middleware(['auth'])->name('products.stocklocation.show');
+        Route::post('/Stock/Location/create', 'App\Http\Controllers\Products\StockLocationController@store')->name('products.stocklocation.store');
+        Route::post('/Stock/Location/edit/{id}', 'App\Http\Controllers\Products\StockLocationController@update')->name('products.stocklocation.update');
+        Route::get('/Stock/Location/{id}', 'App\Http\Controllers\Products\StockLocationController@show')->name('products.stocklocation.show');
         
-        Route::post('/Stock/Location/product/create', 'App\Http\Controllers\Products\StockLocationProductsController@store')->middleware(['auth'])->name('products.stockline.store');
-        Route::post('/Stock/Location/product/create/internal-order', 'App\Http\Controllers\Products\StockLocationProductsController@storeFromInternalOrder')->middleware(['auth'])->name('products.stockline.store.from.internal.order');
-        Route::post('/Stock/Location/product/edit/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@update')->middleware(['auth'])->name('products.stockline.update');
-        Route::get('/Stock/Location/product/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@show')->middleware(['auth'])->name('products.stockline.show');
+        Route::post('/Stock/Location/product/create', 'App\Http\Controllers\Products\StockLocationProductsController@store')->name('products.stockline.store');
+        Route::post('/Stock/Location/product/create/internal-order', 'App\Http\Controllers\Products\StockLocationProductsController@storeFromInternalOrder')->name('products.stockline.store.from.internal.order');
+        Route::post('/Stock/Location/product/edit/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@update')->name('products.stockline.update');
+        Route::get('/Stock/Location/product/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@show')->name('products.stockline.show');
 
-        Route::post('/Stock/Location/product/entry', 'App\Http\Controllers\Products\StockLocationProductsController@entry')->middleware(['auth'])->name('products.stockline.entry');
-        Route::post('/Stock/Location/product/sorting', 'App\Http\Controllers\Products\StockLocationProductsController@sorting')->middleware(['auth'])->name('products.stockline.sorting');
+        Route::post('/Stock/Location/product/entry', 'App\Http\Controllers\Products\StockLocationProductsController@entry')->name('products.stockline.entry');
+        Route::post('/Stock/Location/product/sorting', 'App\Http\Controllers\Products\StockLocationProductsController@sorting')->name('products.stockline.sorting');
         
-        Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->middleware(['auth'])->name('products.show');
+        Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->name('products.show');
     });
 
-    Route::group(['prefix' => 'task'], function () {
+    Route::group(['prefix' => 'task', 'middleware' => ['auth', 'check.factory']], function () {
         Route::put('/sync', 'App\Http\Controllers\Planning\TaskController@sync')->name('task.sync');
-        Route::get('/{id_type}/{id_page}/show/{id_line}', 'App\Http\Controllers\Planning\TaskController@manage')->middleware(['auth'])->name('task.manage');
-        Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->middleware(['auth'])->name('task.delete');
-        Route::post('/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->middleware(['auth'])->name('task.store');
-        Route::post('/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->middleware(['auth'])->name('task.update');
+        Route::get('/{id_type}/{id_page}/show/{id_line}', 'App\Http\Controllers\Planning\TaskController@manage')->name('task.manage');
+        Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->name('task.delete');
+        Route::post('/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->name('task.store');
+        Route::post('/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->name('task.update');
     });
 
 
-    Route::group(['prefix' => 'production'], function () {
-        Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->middleware(['auth'])->name('production.task.statu.id');
-        Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->middleware(['auth'])->name('production.task.statu');
-        Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->middleware(['auth'])->name('production.task');
-        Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->middleware(['auth'])->name('production.kanban');
-        Route::get('/calendar', 'App\Http\Controllers\Planning\CalendarController@index')->middleware(['auth'])->name('production.calendar');
-        Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->middleware(['auth'])->name('production.gantt');
+    Route::group(['prefix' => 'production', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu.id');
+        Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu');
+        Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->name('production.task');
+        Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->name('production.kanban');
+        Route::get('/calendar', 'App\Http\Controllers\Planning\CalendarController@index')->name('production.calendar');
+        Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
         
-        Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->middleware(['auth'])->name('production.load.planning');
+        Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
     });
 
     Route::group(['prefix' => 'admin'], function () {
@@ -235,56 +265,56 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         
     });
 
-    Route::group(['prefix' => 'human-resources'], function () {
-        Route::get('/', 'App\Http\Controllers\Admin\HumanResourcesController@index')->middleware(['auth'])->name('human.resources'); 
-        Route::get('/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowUser')->middleware(['auth'])->name('human.resources.show.user');
-        Route::post('/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->middleware(['auth'])->name('human.resources.update.user');
-        Route::post('/contract/create', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserEmploymentContract')->middleware(['auth'])->name('human.resources.create.contract');
-        Route::post('/contract/update', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserEmploymentContract')->middleware(['auth'])->name('human.resources.update.contract');
+    Route::group(['prefix' => 'human-resources', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Admin\HumanResourcesController@index')->name('human.resources'); 
+        Route::get('/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowUser')->name('human.resources.show.user');
+        Route::post('/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->name('human.resources.update.user');
+        Route::post('/contract/create', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserEmploymentContract')->name('human.resources.create.contract');
+        Route::post('/contract/update', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserEmploymentContract')->name('human.resources.update.contract');
     });
 
-    Route::group(['prefix' => 'quality'], function () {
+    Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'check.factory']], function () {
         //index route
-        Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->middleware(['auth'])->name('quality');
+        Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
         //tab
-        Route::post('/Action/create', 'App\Http\Controllers\Quality\QualityActionController@store')->middleware(['auth'])->name('quality.action.create');
-        Route::post('/Action/edit/{id}', 'App\Http\Controllers\Quality\QualityActionController@update')->middleware(['auth'])->name('quality.action.update');
-        Route::post('/Device/create', 'App\Http\Controllers\Quality\QualityControlDeviceController@store')->middleware(['auth'])->name('quality.device.create');
-        Route::post('/Device/edit/{id}', 'App\Http\Controllers\Quality\QualityControlDeviceController@update')->middleware(['auth'])->name('quality.device.update');
-        Route::post('/NonConformitie/create', 'App\Http\Controllers\Quality\QualityNonConformityController@store')->middleware(['auth'])->name('quality.nonConformitie.create');
-        Route::post('/NonConformitie/edit/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@update')->middleware(['auth'])->name('quality.nonConformitie.update');
-        Route::post('/Derogation/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->middleware(['auth'])->name('quality.derogation.create');
-        Route::post('/Derogation/edit/{id}', 'App\Http\Controllers\Quality\QualityDerogationController@update')->middleware(['auth'])->name('quality.derogation.update');
+        Route::post('/Action/create', 'App\Http\Controllers\Quality\QualityActionController@store')->name('quality.action.create');
+        Route::post('/Action/edit/{id}', 'App\Http\Controllers\Quality\QualityActionController@update')->name('quality.action.update');
+        Route::post('/Device/create', 'App\Http\Controllers\Quality\QualityControlDeviceController@store')->name('quality.device.create');
+        Route::post('/Device/edit/{id}', 'App\Http\Controllers\Quality\QualityControlDeviceController@update')->name('quality.device.update');
+        Route::post('/NonConformitie/create', 'App\Http\Controllers\Quality\QualityNonConformityController@store')->name('quality.nonConformitie.create');
+        Route::post('/NonConformitie/edit/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@update')->name('quality.nonConformitie.update');
+        Route::post('/Derogation/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->name('quality.derogation.create');
+        Route::post('/Derogation/edit/{id}', 'App\Http\Controllers\Quality\QualityDerogationController@update')->name('quality.derogation.update');
         //setting
-        Route::post('/Failure/create', 'App\Http\Controllers\Quality\QualityFailureController@store')->middleware(['auth'])->name('quality.failure.create');
-        Route::post('/Failure/edit/{id}', 'App\Http\Controllers\Quality\QualityFailureController@update')->middleware(['auth'])->name('quality.failure.update');
-        Route::post('/Cause/create', 'App\Http\Controllers\Quality\QualityCauseController@store')->middleware(['auth'])->name('quality.cause.create');
-        Route::post('/Cause/edit/{id}', 'App\Http\Controllers\Quality\QualityCauseController@update')->middleware(['auth'])->name('quality.cause.update');
-        Route::post('/Correction/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->middleware(['auth'])->name('quality.correction.create');
-        Route::post('/Correction/edit/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@update')->middleware(['auth'])->name('quality.correction.update');
+        Route::post('/Failure/create', 'App\Http\Controllers\Quality\QualityFailureController@store')->name('quality.failure.create');
+        Route::post('/Failure/edit/{id}', 'App\Http\Controllers\Quality\QualityFailureController@update')->name('quality.failure.update');
+        Route::post('/Cause/create', 'App\Http\Controllers\Quality\QualityCauseController@store')->name('quality.cause.create');
+        Route::post('/Cause/edit/{id}', 'App\Http\Controllers\Quality\QualityCauseController@update')->name('quality.cause.update');
+        Route::post('/Correction/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->name('quality.correction.create');
+        Route::post('/Correction/edit/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@update')->name('quality.correction.update');
     });
 
-    Route::group(['prefix' => 'methods'], function () {
+    Route::group(['prefix' => 'methods', 'middleware' => ['auth', 'check.factory']], function () {
         //index route
-        Route::get('/', 'App\Http\Controllers\Methods\MethodsController@index')->middleware(['auth'])->name('methods');
+        Route::get('/', 'App\Http\Controllers\Methods\MethodsController@index')->name('methods');
         //tab
-        Route::post('/Unit/create', 'App\Http\Controllers\Methods\UnitsController@store')->middleware(['auth'])->name('methods.unit.create');
-        Route::post('/Unit/edit/{id}', 'App\Http\Controllers\Methods\UnitsController@update')->middleware(['auth'])->name('methods.unit.update');
-        Route::post('/Family/create', 'App\Http\Controllers\Methods\FamiliesController@store')->middleware(['auth'])->name('methods.family.create');
-        Route::post('/Family/edit/{id}', 'App\Http\Controllers\Methods\FamiliesController@update')->middleware(['auth'])->name('methods.family.update');
-        Route::post('/Service/create', 'App\Http\Controllers\Methods\ServicesController@store')->middleware(['auth'])->name('methods.service.create');
-        Route::post('/Service/edit/{id}', 'App\Http\Controllers\Methods\ServicesController@update')->middleware(['auth'])->name('methods.service.update');
-        Route::post('/Service/edit/{id}/image', 'App\Http\Controllers\Methods\ServicesController@StoreImage')->middleware(['auth'])->name('methods.service.update.picture');
-        Route::post('/Section/create', 'App\Http\Controllers\Methods\SectionsController@store')->middleware(['auth'])->name('methods.section.create');
-        Route::post('/Section/edit/{id}', 'App\Http\Controllers\Methods\SectionsController@update')->middleware(['auth'])->name('methods.section.update');
-        Route::post('/Ressources/create', 'App\Http\Controllers\Methods\RessourcesController@store')->middleware(['auth'])->name('methods.ressource.create');
-        Route::post('/Ressources/edit/{id}', 'App\Http\Controllers\Methods\RessourcesController@update')->middleware(['auth'])->name('methods.ressource.update');
-        Route::post('/Ressources/edit/{id}/image', 'App\Http\Controllers\Methods\RessourcesController@StoreImage')->middleware(['auth'])->name('methods.ressource.update.picture');
-        Route::post('/Location/create', 'App\Http\Controllers\Methods\LocationsController@store')->middleware(['auth'])->name('methods.location.create');
-        Route::post('/Location/edit/{id}', 'App\Http\Controllers\Methods\LocationsController@update')->middleware(['auth'])->name('methods.location.update');
-        Route::post('/Tool/create', 'App\Http\Controllers\Methods\ToolsController@store')->middleware(['auth'])->name('methods.tool.create');
-        Route::post('/Tool/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->middleware(['auth'])->name('methods.tool.update');
-        Route::post('/Tool/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->middleware(['auth'])->name('methods.tool.update.picture');
+        Route::post('/Unit/create', 'App\Http\Controllers\Methods\UnitsController@store')->name('methods.unit.create');
+        Route::post('/Unit/edit/{id}', 'App\Http\Controllers\Methods\UnitsController@update')->name('methods.unit.update');
+        Route::post('/Family/create', 'App\Http\Controllers\Methods\FamiliesController@store')->name('methods.family.create');
+        Route::post('/Family/edit/{id}', 'App\Http\Controllers\Methods\FamiliesController@update')->name('methods.family.update');
+        Route::post('/Service/create', 'App\Http\Controllers\Methods\ServicesController@store')->name('methods.service.create');
+        Route::post('/Service/edit/{id}', 'App\Http\Controllers\Methods\ServicesController@update')->name('methods.service.update');
+        Route::post('/Service/edit/{id}/image', 'App\Http\Controllers\Methods\ServicesController@StoreImage')->name('methods.service.update.picture');
+        Route::post('/Section/create', 'App\Http\Controllers\Methods\SectionsController@store')->name('methods.section.create');
+        Route::post('/Section/edit/{id}', 'App\Http\Controllers\Methods\SectionsController@update')->name('methods.section.update');
+        Route::post('/Ressources/create', 'App\Http\Controllers\Methods\RessourcesController@store')->name('methods.ressource.create');
+        Route::post('/Ressources/edit/{id}', 'App\Http\Controllers\Methods\RessourcesController@update')->name('methods.ressource.update');
+        Route::post('/Ressources/edit/{id}/image', 'App\Http\Controllers\Methods\RessourcesController@StoreImage')->name('methods.ressource.update.picture');
+        Route::post('/Location/create', 'App\Http\Controllers\Methods\LocationsController@store')->name('methods.location.create');
+        Route::post('/Location/edit/{id}', 'App\Http\Controllers\Methods\LocationsController@update')->name('methods.location.update');
+        Route::post('/Tool/create', 'App\Http\Controllers\Methods\ToolsController@store')->name('methods.tool.create');
+        Route::post('/Tool/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->name('methods.tool.update');
+        Route::post('/Tool/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->name('methods.tool.update.picture');
     });
 
     Route::group(['prefix' => 'notifications'], function () {

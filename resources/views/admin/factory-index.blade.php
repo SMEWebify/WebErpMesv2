@@ -780,7 +780,7 @@
                                             <option value="quality-menu">quality-menu</option>
                                             <option value="settings-time-menu">settings-time-menu</option>
                                             <option value="methods-menu">methods-menu</option>
-                                            <option value="accouting-menu">accouting-menu</option>
+                                            <option value="accounting-menu">accounting-menu</option>
                                             <option value="human-resources-menu">human-resources-menu</option>
                                             <option value="your-company-menu">your-company-menu</option>
                                         </select>
