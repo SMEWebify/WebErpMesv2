@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
@@ -57,10 +56,6 @@ class DeliverysController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
         $previousUrl = route('deliverys.show', ['id' => $id->id-1]);
         $nextUrl = route('deliverys.show', ['id' => $id->id+1]);
 
@@ -69,7 +64,6 @@ class DeliverysController extends Controller
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
-            'Factory' => $Factory,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
         ]);

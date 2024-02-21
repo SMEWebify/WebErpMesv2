@@ -6,7 +6,6 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
@@ -166,7 +165,6 @@ class OrdersIndex extends Component
         $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
         $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
         $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
-        $Factory = Factory::first();
 
         return view('livewire.orders-index', [
             'Orderslist' => $Orders,
@@ -177,7 +175,6 @@ class OrdersIndex extends Component
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
-            'Factory' => $Factory,
             'type' => $this->type,
         ]);
     }

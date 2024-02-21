@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Products;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
@@ -46,11 +45,6 @@ class ProductsController extends Controller
         $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
         $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
         $FamiliesSelect = MethodsFamilies::select('id', 'label')->orderBy('label')->get();
-
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
         
         $previousUrl = route('products.show', ['id' => $Product->id-1]);
         $nextUrl = route('products.show', ['id' => $Product->id+1]);
@@ -64,7 +58,6 @@ class ProductsController extends Controller
             'ServicesSelect' => $ServicesSelect,
             'UnitsSelect' => $UnitsSelect,
             'FamiliesSelect' => $FamiliesSelect,
-            'Factory' => $Factory,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
         ]);

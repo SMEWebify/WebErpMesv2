@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Quotes;
 use App\Services\QuoteCalculator;
@@ -68,12 +67,6 @@ class QuotesController extends Controller
         $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
         $previousUrl = route('quotes.show', ['id' => $id->id-1]);
         $nextUrl = route('quotes.show', ['id' => $id->id+1]);
-
-        //DB information mustn't be empty.
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
         
         $Status = Status::select('id')->orderBy('order')->first();
         if(!$Status){
@@ -88,7 +81,6 @@ class QuotesController extends Controller
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
-            'Factory' => $Factory,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Services\OrderCalculator;
@@ -64,12 +63,6 @@ class OrdersController extends Controller
         $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
         $previousUrl = route('orders.show', ['id' => $id->id-1]);
         $nextUrl = route('orders.show', ['id' => $id->id+1]);
-
-        //DB information mustn't be empty.
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
         $Status = Status::select('id')->orderBy('order')->first();
         if(!$Status){
             return redirect()->route('admin.factory')->withErrors('Please add Kanban information before');
@@ -83,7 +76,6 @@ class OrdersController extends Controller
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
-            'Factory' => $Factory,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,

@@ -6,9 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Workflow\Quotes;
-use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\QuoteNotification;
@@ -124,7 +122,6 @@ class QuotesIndex extends Component
         $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label', 'default')->get();
         $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label', 'default')->get();
         $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label', 'default')->get();
-        $Factory = Factory::first();
 
         return view('livewire.quotes-index')->with([
             'Quoteslist' => $Quotes,
@@ -134,7 +131,6 @@ class QuotesIndex extends Component
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
-            'Factory' => $Factory,
         ]);
     }
     

@@ -5,7 +5,6 @@ namespace App\Livewire;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
@@ -41,7 +40,6 @@ class TaskStatu extends Component
 
     public function mount($id) 
     {
-        $this->Factory = Factory::first();
         $this->user_id = Auth::id();
         $this->search = $id;
         $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();

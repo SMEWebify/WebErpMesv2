@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Methods;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use App\Models\Companies\Companies;
 use App\Models\Methods\MethodsTools;
 use App\Models\Methods\MethodsUnits;
@@ -34,15 +33,8 @@ class MethodsController extends Controller
         $MethodsTools = MethodsTools::orderBy('code')->paginate(10);
         $userSelect = User::select('id', 'name')->get();
         $CompaniesSelect = Companies::select('id', 'label')->orderBy('label')->where('statu_supplier', 2)->get();
-        
-        //DB information mustn't be empty.
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
 
         return view('methods/methods-index', [
-            'Factory' => $Factory,
             'MethodsServices' => $MethodsServices,
             'ServicesSelect' => $ServicesSelect,
             'MethodsRessources' => $MethodsRessources,

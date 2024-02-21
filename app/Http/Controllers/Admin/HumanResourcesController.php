@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
@@ -23,14 +22,8 @@ class HumanResourcesController extends Controller
         $Users = User::orderBy('id')->paginate(20);
         $userSelect = User::select('id', 'name')->get();
         $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
-        //DB information mustn't be empty.
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
 
         return view('admin/human-resources-index', [
-            'Factory' => $Factory,
             'Users' => $Users,
             'userSelect' => $userSelect,
             'SectionsSelect' =>  $SectionsSelect,
@@ -47,10 +40,7 @@ class HumanResourcesController extends Controller
         $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
         $UserEmploymentContracts = UserEmploymentContracts::where('user_id', $id)->get();
         $Roles = Role::all();
-        //DB information mustn't be empty.
-        $Factory = Factory::first();
         return view('admin/users-show', [
-            'Factory' => $Factory,
             'User' => $User,
             'Roles' => $Roles,
             'userSelect' => $userSelect,

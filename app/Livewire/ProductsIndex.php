@@ -5,7 +5,6 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
-use App\Models\Admin\Factory;
 use App\Models\Products\Products;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsFamilies;
@@ -88,10 +87,6 @@ class ProductsIndex extends Component
         $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
         $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
         $FamiliesSelect = MethodsFamilies::select('id', 'label')->orderBy('label')->get();
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
         
         return view('livewire.products-index', [
             'Products' => $Products,
@@ -99,7 +94,6 @@ class ProductsIndex extends Component
             'ServicesSelect' => $ServicesSelect,
             'UnitsSelect' => $UnitsSelect,
             'FamiliesSelect' => $FamiliesSelect,
-            'Factory' => $Factory,
         ]);
     }
 

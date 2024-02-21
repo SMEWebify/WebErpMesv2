@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Admin\Factory;
 use App\Exports\InvoiceLinesExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Collection;
@@ -47,13 +46,9 @@ class InvoiceExportLines extends Component
                                                                                     $q->where('invoices.code','like', '%'.$value.'%'); 
                                                                                 })
                                                                                 ->get();
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
+
         return view('livewire.invoice-export-lines', [
             'InvoiceExportLineslist' => $InvoiceExportLineslist,
-            'Factory' => $Factory,
         ]);
     }
 

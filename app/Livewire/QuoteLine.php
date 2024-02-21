@@ -5,7 +5,6 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
@@ -108,7 +107,6 @@ class QuoteLine extends Component
         $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
         $this->VATSelect = AccountingVat::select('id', 'label', 'default')->orderBy('rate')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get();
-        $this->Factory = Factory::first();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
         $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
         $this->BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)

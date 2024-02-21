@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use Illuminate\Validation\Rule;
 use App\Models\Admin\EstimatedBudgets;
 
@@ -80,12 +79,8 @@ class EstimatedBudget extends Component
 
     public function render()
     {
-        $this->Factory = Factory::first();
-        
         return view('livewire.estimated-budget', [
-            'EstimatedBudgetlist' => EstimatedBudgets::where('year','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(10),
-            'Factory' => $this->Factory,
-        ]);
+            'EstimatedBudgetlist' => EstimatedBudgets::where('year','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(10),]);
     }
 
     public function resetFields(){

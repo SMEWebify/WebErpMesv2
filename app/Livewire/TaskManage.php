@@ -5,10 +5,8 @@ namespace App\Livewire;
 use stdClass;
 use Carbon\Carbon;
 use Livewire\Component;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
-use PhpParser\Node\Expr\Empty_;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
@@ -152,7 +150,6 @@ class TaskManage extends Component
 
         $this->todayDate = Carbon::today();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
-        $this->Factory = Factory::first();
         $status =  Status::select('id')->orderBy('order')->first();
         $this->status_id = $status->id;
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->with('service')->whereRelation('service', 'type', 2)

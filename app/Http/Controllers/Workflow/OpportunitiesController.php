@@ -57,12 +57,7 @@ class OpportunitiesController extends Controller
         $Events = OpportunitiesEventsLogs::where('opportunities_id', $id->id)->orderBy('id')->get();
         $previousUrl = route('opportunities.show', ['id' => $id->id-1]);
         $nextUrl = route('opportunities.show', ['id' => $id->id+1]);
-
-        //DB information mustn't be empty.
         $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
 
         // Récupérer l'opportunité avec les relations nécessaires
         $opportunite = $id->load('lead', 'activities', 'events', 'quotes');
@@ -190,7 +185,6 @@ class OpportunitiesController extends Controller
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
-            'Factory' => $Factory,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'ActivitiesList' =>  $Activities,

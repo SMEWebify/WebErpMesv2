@@ -4,11 +4,9 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
-use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
@@ -102,7 +100,6 @@ class OrderLine extends Component
         $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
         $this->VATSelect = AccountingVat::select('id', 'label')->orderBy('rate')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
-        $this->Factory = Factory::first();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
         $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
         $this->BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)

@@ -5,7 +5,6 @@ namespace App\Livewire;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Methods\MethodsServices;
@@ -43,7 +42,6 @@ class TaskLines extends Component
     
     public function mount() 
     {
-        $this->Factory = Factory::first();
         $this->todayDate = Carbon::today();
     }
 

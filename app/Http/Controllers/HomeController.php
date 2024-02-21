@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
@@ -29,11 +28,6 @@ class HomeController extends Controller
         // check if user had role
         $user = User::find(Auth::user()->id);
         $userRoleCount = $user->getRoleNames()->count();
-        //DB information mustn't be empty.
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
 
         // Display total customers, suppliers, quotes, orders, NC 
         $data['customers_count'] = DB::table('companies')->where('statu_customer', '=', '2')->count();
@@ -197,7 +191,6 @@ class HomeController extends Controller
 
         return view('dashboard', [
             'userRoleCount' => $userRoleCount,
-            'Factory' => $Factory,
             'Announcement' => $Announcement,
             'LastProducts' => $LastProducts,
             'LastQuotes' => $LastQuotes,

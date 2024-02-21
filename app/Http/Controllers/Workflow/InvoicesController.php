@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use App\Models\Workflow\Invoices;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
@@ -64,17 +63,11 @@ class InvoicesController extends Controller
         $previousUrl = route('invoices.show', ['id' => $id->id-1]);
         $nextUrl = route('invoices.show', ['id' => $id->id+1]);
 
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
-
         return view('workflow/invoices-show', [
             'Invoice' => $id,
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
-            'Factory' => $Factory,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,

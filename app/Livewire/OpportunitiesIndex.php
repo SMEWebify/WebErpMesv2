@@ -6,7 +6,6 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\Opportunities;
 use App\Models\Companies\CompaniesContacts;
@@ -83,14 +82,12 @@ class OpportunitiesIndex extends Component
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $this->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $this->companies_id)->get();
         $UsersSelect = User::all();
-        $Factory = Factory::first();
 
         return view('livewire.opportunities-index')->with([
             'Opportunities' => $Opportunities,
             'CompanieSelect' => $CompanieSelect,
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
-            'Factory' => $Factory,
             'UsersSelect' => $UsersSelect,
         ]);
     }

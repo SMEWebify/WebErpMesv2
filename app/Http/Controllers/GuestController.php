@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use App\Models\Workflow\Quotes;
 use App\Services\QuoteCalculator;
 use App\Http\Controllers\Controller;
@@ -39,11 +38,9 @@ class GuestController extends Controller
         $TotalServiceSettingTime = $QuoteCalculator->getTotalSettingTimeByService();
         $TotalServiceCost = $QuoteCalculator->getTotalCostByService();
         $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
-        $Factory = Factory::first();
         
         return view('guest/guest-quote-info', [
             'Quote' => $Quote,
-            'Factory' => $Factory,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
@@ -72,11 +69,9 @@ class GuestController extends Controller
         $TotalServiceSettingTime = $OrderCalculator->getTotalSettingTimeByService();
         $TotalServiceCost = $OrderCalculator->getTotalCostByService();
         $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
-        $Factory = Factory::first();
         
         return view('guest/guest-order-info', [
             'Order' => $Order,
-            'Factory' => $Factory,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,

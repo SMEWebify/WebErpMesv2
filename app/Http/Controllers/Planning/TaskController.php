@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Planning;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
@@ -23,13 +22,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
-        return view('workflow/task-index', [
-            'Factory' => $Factory
-        ]);
+
+        return view('workflow/task-index');
     }
 
         /**
@@ -59,11 +53,7 @@ class TaskController extends Controller
     public function kanban()
     {
         $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->with('tasks.service')->get();
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
-        return view('workflow/kanban-index', compact('tasks', 'Factory'));
+        return view('workflow/kanban-index', compact('tasks'));
     }
 
     /**
@@ -114,18 +104,11 @@ class TaskController extends Controller
         return  $tasks;
     }
 
-        /**
+    /**
      * @return View
      */
     public function statu(Request $request)
     {
-        $Factory = Factory::first();
-        if(!$Factory){
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
-        }
-        return view('workflow/task-statu', [
-            'Factory' => $Factory,
-            'TaskId' => $request->id,
-        ]);
+        return view('workflow/task-statu', ['TaskId' => $request->id]);
     }
 }
