@@ -672,7 +672,7 @@
       labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','November','December' ],
       datasets: [
         {
-          label               : 'Order forcasted',
+          label               : 'Order forecast',
           borderColor         : 'rgba(60,141,188,0.5)',
           pointRadius          : 5,
           pointColor          : '#3b8bba',
