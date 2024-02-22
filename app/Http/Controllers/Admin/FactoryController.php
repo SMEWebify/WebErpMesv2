@@ -23,9 +23,21 @@ class FactoryController extends Controller
         $VATSelect  =  AccountingVat::select('id', 'label')->orderBy('rate')->get();
         $Roles = Role::all();
         $Permissions = Permission::all();
-        $Factory  =  Factory::firstOrCreate(
-                                    ['id' =>'1',],
-                                );
+        $Factory = Factory::first();
+        if (!$Factory) {
+            $Factory = Factory::create([
+                'id' => 1,
+                'name' => 'Company name',
+                'address' => 'Address',
+                'zipcode' => 'Zipcode',
+                'mail' => 'your @',
+                'web_site' => 'Your web site',
+                'pdf_header_font_color' => '#60A7A6',
+                'add_day_validity_quote' => '0',
+                'add_delivery_delay_order' => '0',
+            ]);
+        }
+
                         return view('admin/factory-index', [
                             'AnnouncementLines' => $AnnouncementLines,
                             'VATSelect' => $VATSelect,
