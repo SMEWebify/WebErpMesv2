@@ -327,6 +327,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/licence', function () {return view('licence');})->middleware(['auth'])->name('licence');
 
+    Route::get('/rgpd-policy', function () {return view('rgpd-policy');})->middleware(['auth'])->name('rgpd.policy');
+
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
         Route::get('/Profile/{id}', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');

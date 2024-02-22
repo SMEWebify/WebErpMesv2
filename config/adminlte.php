@@ -507,6 +507,11 @@ return [
             'icon' => 'nav-icon fas fa-file-contract',
         ],
         [
+            'text' => 'RGPD Policy',
+            'url'  => 'rgpd-policy',
+            'icon' => 'nav-icon fas fa-cloud',
+        ],
+        [
             'text' => 'release_note_trans_key',
             'url'  => 'https://github.com/SMEWebify/WebErpMesv2/releases',
             'icon' => 'nav-icon fas fa-file-contract',
@@ -732,8 +737,8 @@ return [
 
     'iframe' => [
         'default_tab' => [
-            'url' => null,
-            'title' => null,
+            'url' => 'opportunities',
+            'title' => 'OPP',
         ],
         'buttons' => [
             'close' => true,
@@ -746,7 +751,7 @@ return [
         'options' => [
             'loading_screen' => 1000,
             'auto_show_new_tab' => true,
-            'use_navbar_items' => true,
+            'use_navbar_items' => false,
         ],
     ],
 
