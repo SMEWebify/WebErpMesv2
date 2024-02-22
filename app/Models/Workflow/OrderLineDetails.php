@@ -25,7 +25,9 @@ class OrderLineDetails extends Model
                             'weight', 
                             'material_loss_rate', 
                             'cad_file',
-                            'picture',  
+                            'picture', 
+                            'internal_comment', 
+                            'external_comment',  
                         ];
 
     public function OrderLines()

@@ -26,6 +26,8 @@ class QuoteLineDetails extends Model
                             'material_loss_rate', 
                             'cad_file',  
                             'picture', 
+                            'internal_comment', 
+                            'external_comment', 
                         ];
 
     public function QuoteLines()

@@ -7,15 +7,18 @@ use Illuminate\View\Component;
 class FormTextareaComment extends Component
 {
     public $comment;
-
+    public $label;
+    public $name;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct( $comment)
+    public function __construct( $comment, $label = '' ,$name ="comment")
     {
         $this->comment = $comment;
+        $this->label = $label;
+        $this->name = $name;
     }
 
     /**

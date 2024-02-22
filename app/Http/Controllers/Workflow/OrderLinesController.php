@@ -40,6 +40,8 @@ class OrderLinesController extends Controller
         $OrderLineDetails->thickness=$request->thickness;
         $OrderLineDetails->weight=$request->weight;
         $OrderLineDetails->material_loss_rate=$request->material_loss_rate;
+        $OrderLineDetails->internal_comment=$request->internal_comment;
+        $OrderLineDetails->external_comment=$request->external_comment;
         $OrderLineDetails->save();
         return redirect()->route('orders.show', ['id' =>  $idOrder])->with('success', 'Successfully updated order detail line');
     }

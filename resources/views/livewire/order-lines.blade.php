@@ -214,6 +214,13 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <x-FormTextareaComment  label="Internal comment" name="internal_comment" comment="{{ $OrderLine->OrderLineDetails->internal_comment }}" />
+                                                    </div>
+                                                    <div class="row">
+                                                        <x-FormTextareaComment  label="External comment" name="external_comment" comment="{{ $OrderLine->OrderLineDetails->external_comment }}" />
+                                                    </div>
                                                 </div>
                                                 <div class="card-footer">
                                                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

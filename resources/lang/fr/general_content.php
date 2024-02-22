@@ -411,6 +411,8 @@ return [
     'email_trans_key'                          => 'E-mail',
     'date_trans_key'                           => 'Date',
     'comment_trans_key'                        => 'Commentaire',
+    'internal_comment_trans_key'               => 'Commentaire interne',
+    'external_comment_trans_key'                => 'Commentaire externe',
     'identifier_trans_key'                     => 'Référence',
     'payment_methods_trans_key'                => 'Méthode de paiement',
     'payment_conditions_trans_key'             => 'Condition de paiement',

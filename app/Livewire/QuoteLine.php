@@ -428,6 +428,8 @@ class QuoteLine extends Component
                         'weight'=>$QuoteLineDetailData->weight,
                         'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
                         'cad_file'=>$QuoteLineDetailData->cad_file,
+                        'internal_comment'=>$QuoteLineDetailData->internal_comment,
+                        'external_comment'=>$QuoteLineDetailData->external_comment,
                     ]);
 
                     $Tasks = Task::where('quote_lines_id', $key)->get();

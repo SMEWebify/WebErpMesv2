@@ -41,6 +41,8 @@ class QuoteLinesController extends Controller
         $QuoteLineDetails->thickness=$request->thickness;
         $QuoteLineDetails->weight=$request->weight;
         $QuoteLineDetails->material_loss_rate=$request->material_loss_rate;
+        $QuoteLineDetails->internal_comment=$request->internal_comment;
+        $QuoteLineDetails->external_comment=$request->external_comment;
         $QuoteLineDetails->save();
         return redirect()->route('quotes.show', ['id' =>  $idQuote])->with('success', 'Successfully updated quote detail line');
     }
