@@ -71,7 +71,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
         //quote
         Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes'); 
         Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines'); 
@@ -84,7 +84,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
     
 
-    Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
         //order
         Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders'); 
         Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines'); 
@@ -111,7 +111,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
     });
 
-    Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
         
         Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->name('purchases.request'); 
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->name('purchases.quotation'); 
@@ -262,7 +262,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 
-    Route::group(['prefix' => 'production', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'production', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu');
         Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->name('production.task');

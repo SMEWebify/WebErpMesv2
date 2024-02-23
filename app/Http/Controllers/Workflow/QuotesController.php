@@ -67,11 +67,6 @@ class QuotesController extends Controller
         $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
         $previousUrl = route('quotes.show', ['id' => $id->id-1]);
         $nextUrl = route('quotes.show', ['id' => $id->id+1]);
-        
-        $Status = Status::select('id')->orderBy('order')->first();
-        if(!$Status){
-            return redirect()->route('admin.factory')->withErrors('Please add Kanban information before');
-        }
 
         return view('workflow/quotes-show', [
             'Quote' => $id,

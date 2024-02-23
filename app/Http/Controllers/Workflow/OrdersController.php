@@ -63,10 +63,6 @@ class OrdersController extends Controller
         $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
         $previousUrl = route('orders.show', ['id' => $id->id-1]);
         $nextUrl = route('orders.show', ['id' => $id->id+1]);
-        $Status = Status::select('id')->orderBy('order')->first();
-        if(!$Status){
-            return redirect()->route('admin.factory')->withErrors('Please add Kanban information before');
-        }
 
         return view('workflow/orders-show', [
             'Order' => $id,

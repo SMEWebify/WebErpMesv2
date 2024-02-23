@@ -54,20 +54,21 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'auth'                    => \App\Http\Middleware\Authenticate::class,
+        'auth.basic'              => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'cache.headers'           => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can'                     => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest'                   => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm'        => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'signed'                  => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle'                => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified'                => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'localize'                => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class,
         'localizationRedirect'    => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
         'localeSessionRedirect'   => \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
         'localeCookieRedirect'    => \Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect::class,
         'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class,
-        'check.factory' => \App\Http\Middleware\CheckFactory::class
+        'check.factory'           => \App\Http\Middleware\CheckFactory::class,
+        'check.task.status'       => \App\Http\Middleware\CheckTaskStatus::class,
     ];
 }

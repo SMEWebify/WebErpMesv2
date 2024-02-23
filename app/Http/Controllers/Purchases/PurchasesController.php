@@ -30,11 +30,6 @@ class PurchasesController extends Controller
      */
     public function request()
     {    
-        $Statu = Status::first();
-        if(!$Statu){
-            return redirect()->route('admin.factory')->withErrors('Please add Kanban information before');
-        }
-
         return view('purchases/purchases-request');
     }
 
