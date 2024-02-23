@@ -419,6 +419,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/rgpd-policy', function () {return view('rgpd-policy');})->middleware(['auth'])->name('rgpd.policy');
 
+    Route::get('/iframe-mode', function () {return view('iframe-mode');})->middleware(['auth'])->name('iframe.mode');
+
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
         Route::get('/Profile/{id}', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');

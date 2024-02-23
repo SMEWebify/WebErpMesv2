@@ -235,6 +235,11 @@ return [
             'input_name'    => 'searchVal' ,
         ],
         [
+            'text'            => 'Iframe mode',
+            'url'             => 'iframe-mode',
+            'topnav_right'    => true,
+        ],
+        [
             'text'            => 'users_trans_key',
             'url'             => 'users',
             'topnav_right'    => true,
@@ -737,8 +742,8 @@ return [
 
     'iframe' => [
         'default_tab' => [
-            'url' => 'opportunities',
-            'title' => 'OPP',
+            'url' => null,
+            'title' => null,
         ],
         'buttons' => [
             'close' => true,
