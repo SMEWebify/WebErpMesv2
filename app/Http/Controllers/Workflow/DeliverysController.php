@@ -58,7 +58,7 @@ class DeliverysController extends Controller
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
         $previousUrl = route('deliverys.show', ['id' => $id->id-1]);
         $nextUrl = route('deliverys.show', ['id' => $id->id+1]);
-
+    
         return view('workflow/deliverys-show', [
             'Delivery' => $id,
             'CompanieSelect' => $CompanieSelect,

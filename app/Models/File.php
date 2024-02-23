@@ -34,6 +34,7 @@ class File extends Model
         'purchases_id',
         'purchases_receipt_id',
         'quality_non_conformities_id',
+        'as_photo'
     ];
     
 

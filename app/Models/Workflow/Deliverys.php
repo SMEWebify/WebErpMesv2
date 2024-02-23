@@ -60,10 +60,16 @@ class Deliverys extends Model
         return $this->hasMany(DeliveryLines::class)->orderBy('ordre');
     }
 
-    // Relationship with the files associated with the Quote
+    // Relationship with the files associated with the delevery
     public function files()
     {
         return $this->hasMany(File::class);
+    }
+
+    // Relationship with the files only photo associated with the delevery
+    public function photos()
+    {
+        return $this->hasMany(File::class)->where('as_photo', 1);
     }
 
     public function GetshortCreatedAttribute()

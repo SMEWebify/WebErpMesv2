@@ -30,6 +30,8 @@ return new class extends Migration
             $table->integer('purchases_id')->nullable();
             $table->integer('purchase_receipts_id')->nullable();
             $table->integer('quality_non_conformities_id')->nullable();
+            $table->integer('quality_non_conformities_id')->nullable();
+            $table->boolean('as_photo')->default(false);
             $table->timestamps();
         });
     }

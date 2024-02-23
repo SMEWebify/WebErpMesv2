@@ -413,6 +413,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::post('upload-file', 'App\Http\Controllers\FileUpload@fileUpload')->middleware(['auth'])->name('file.store');
+    Route::post('upload-photo', 'App\Http\Controllers\FileUpload@photoUpload')->middleware(['auth'])->name('photo.store');
 
     Route::get('/licence', function () {return view('licence');})->middleware(['auth'])->name('licence');
 
