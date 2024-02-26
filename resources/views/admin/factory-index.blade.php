@@ -489,6 +489,48 @@
                                         <input type="color" class="form-control"  name="pdf_header_font_color" id="pdf_header_font_color" value="{{ $Factory->pdf_header_font_color }}">
                                     </div>
                                 </div>
+                                <div class="col-3">
+                                    <label for="public_link_cgv">{{ __('general_content.public_link_cgv_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                                        </div>
+                                        <select class="form-control"  name="public_link_cgv" id="public_link_cgv" >
+                                            <option value="1"  @if('1' == $Factory->public_link_cgv ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
+                                            <option value="2" @if('2' == $Factory->public_link_cgv ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <label for="add_cgv_to_pdf">{{ __('general_content.add_cgv_to_quote_order_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                                        </div>
+                                        <select class="form-control"  name="add_cgv_to_pdf" id="add_cgv_to_pdf" >
+                                            <option value="1" @if('1' == $Factory->add_cgv_to_pdf ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
+                                            <option value="2" @if('2' == $Factory->add_cgv_to_pdf ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="far fa-image"></i></span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="cgv_file" id="cgv_file">
+                                            <label class="custom-file-label" for="cgv_file">{{ __('general_content.choose_file_trans_key') }}  (pdf | max: 10 240 Ko)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if( $Factory->cgv_file)
+                                <div class="col-3 text-center">
+                                    <a class="btn btn-info btn-sm " href="{{ asset('/cgv/factory/'. $Factory->cgv_file) }}" target="_blank">{{ __('general_content.show_current_file_trans_key') }}</a>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

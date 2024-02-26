@@ -35,6 +35,9 @@ class CreateFactoryTable extends Migration
             $table->string('add_day_validity_quote')->nullable()->default(0);
             $table->string('add_delivery_delay_order')->nullable()->default(0);
 			$table->string('task_barre_code')->default('EAN13');
+			$table->integer('public_link_cgv')->default(1);
+			$table->integer('add_cgv_to_pdf')->default(1);
+			$table->string('cgv_file')->nullable();
             $table->timestamps();
         });
     }

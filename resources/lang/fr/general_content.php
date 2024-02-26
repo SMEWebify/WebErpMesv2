@@ -81,7 +81,6 @@ return [
     'manual_stock_recep_trans_key'             => 'Réception manuelle des stocks',
     'inventories_trans_key'                    => 'Inventaires',
     'task_allocation_trans_key'                => 'Répartition des tâches',
-    'purchase_order_trans_key'                 => 'Commande achat',
     'purchase_order_reception_trans_key'       => 'Reception commande achat',
     'manufactured_component_entry_trans_key'   => 'Composant fabriqué saisie',
     'inter_stock_mvts_trans_key'               => 'Mouvement inter-stock',
@@ -391,6 +390,7 @@ return [
     'supplier_info_trans_key'                  => 'Information fournisseur',
     'date_pay_info_trans_key'                  => 'Date & paiement information',
     'documents_trans_key'                      => 'Documents',
+    'cgv_trans_key'                            => 'Conditions générale de ventes',
     'photos_trans_key'                         => 'Photos',
     'choose_file_trans_key'                    => 'Choisir fichier',
     'picture_file_trans_key'                   => 'Fichier image',
@@ -414,7 +414,7 @@ return [
     'date_trans_key'                           => 'Date',
     'comment_trans_key'                        => 'Commentaire',
     'internal_comment_trans_key'               => 'Commentaire interne',
-    'external_comment_trans_key'                => 'Commentaire externe',
+    'external_comment_trans_key'               => 'Commentaire externe',
     'identifier_trans_key'                     => 'Référence',
     'payment_methods_trans_key'                => 'Méthode de paiement',
     'payment_conditions_trans_key'             => 'Condition de paiement',
@@ -648,7 +648,6 @@ return [
     'bill_of_materials_trans_key'              => 'Nomenclature',
     'bom_trans_key'                            => 'BOM',
     'generic_trans_key'                        => 'Générique',
-    'end_date_trans_key'                       => 'Date de fin',
 
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Bons de livraisons',
@@ -808,6 +807,9 @@ return [
     'make_an_announcement_trans_key'           => 'Faire une annonce',
     'make_new_permissions_trans_key'           => 'Créer une nouvelle autorisation',
     'add_role_permission_trans_key'            => 'Ajouter un rôle dans les autorisations',
+    'public_link_cgv_trans_key'                => 'Lien publique pour les CGV',
+    'add_cgv_to_quote_order_trans_key'         => 'Ajouter les CGV à la suite des devis ou commande',
+    'show_current_file_trans_key'              => 'Voir le ficher courant',
     
     //PROFIL
     'profile_trans_key'                        => 'Profil',

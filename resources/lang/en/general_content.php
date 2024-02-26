@@ -81,7 +81,6 @@ return [
     'manual_stock_recep_trans_key'             => 'Manual Stock reception',
     'inventories_trans_key'                    => 'Inventories',
     'task_allocation_trans_key'                => 'Task allocation',
-    'purchase_order_trans_key'                 => 'Purchase order',
     'purchase_order_reception_trans_key'       => 'Purchase order reception',
     'manufactured_component_entry_trans_key'   => 'Manufactured component entry',
     'inter_stock_mvts_trans_key'               => 'Inter-stock mvts',
@@ -391,6 +390,7 @@ return [
     'supplier_info_trans_key'                  => 'Supplier information',
     'date_pay_info_trans_key'                  => 'Date & Payment information',
     'documents_trans_key'                      => 'Documents',
+    'cgv_trans_key'                            => 'General Conditions of Sale',
     'photos_trans_key'                         => 'Photos',
     'choose_file_trans_key'                    => 'Choose file',
     'picture_file_trans_key'                   => 'Picture file',
@@ -648,7 +648,6 @@ return [
     'bill_of_materials_trans_key'              => 'Bill of materials',
     'bom_trans_key'                            => 'BOM',
     'generic_trans_key'                        => 'Generic',
-    'end_date_trans_key'                       => 'End Date',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Delivery notes',
@@ -762,13 +761,13 @@ return [
     'section_info_trans_key'                   => 'The Sections function allows you to define all the sections making up your company, i.e. the physical zones where work stations and operators are grouped together according to their job and cost.',
 
     //ACCOUNTING
-    'accounting_trans_key'                      => 'Accounting',
+    'accounting_trans_key'                     => 'Accounting',
     'new_payment_methods_trans_key'            => 'New Payment choice mode',
     'new_payment_conditions_trans_key'         => 'New Payment condition mode',
     'new_delevery_method_trans_key'            => 'New Delevery method mode',
     'new_vat_trans_key'                        => 'New VAT mode',
-    'accounting_allocations_trans_key'          => 'Accounting allocations',
-    'new_accounting_allocations_trans_key'      => 'New accounting allocation',
+    'accounting_allocations_trans_key'         => 'Accounting allocations',
+    'new_accounting_allocations_trans_key'     => 'New accounting allocation',
     
     //TIME
     'times_setting_trans_key'                  => 'Times setting',  
@@ -807,6 +806,9 @@ return [
     'make_an_announcement_trans_key'           => 'Make an announcement',
     'make_new_permissions_trans_key'           => 'Make a new Permissions',
     'add_role_permission_trans_key'            => 'Add role in Permissions',
+    'public_link_cgv_trans_key'                => 'Publish public link for CGV',
+    'add_cgv_to_quote_order_trans_key'         => 'Add following the quote or order',
+    'show_current_file_trans_key'              => 'Show current file',
     
     //PROFIL
     'profile_trans_key'                        => 'Profil',

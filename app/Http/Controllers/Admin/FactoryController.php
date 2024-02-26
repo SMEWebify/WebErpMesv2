@@ -38,13 +38,13 @@ class FactoryController extends Controller
             ]);
         }
 
-                        return view('admin/factory-index', [
-                            'AnnouncementLines' => $AnnouncementLines,
-                            'VATSelect' => $VATSelect,
-                            'Roles' => $Roles,
-                            'Permissions' => $Permissions,
-                            'Factory' => $Factory,
-                        ]);
+        return view('admin/factory-index', [
+            'AnnouncementLines' => $AnnouncementLines,
+            'VATSelect' => $VATSelect,
+            'Roles' => $Roles,
+            'Permissions' => $Permissions,
+            'Factory' => $Factory,
+        ]);
     }
 
     /**
@@ -73,6 +73,8 @@ class FactoryController extends Controller
         $Factory->add_day_validity_quote = $request->add_day_validity_quote;
         $Factory->add_delivery_delay_order =  $request->add_delivery_delay_order;
         $Factory->task_barre_code =  $request->task_barre_code;
+        $Factory->public_link_cgv =  $request->public_link_cgv;
+        $Factory->add_cgv_to_pdf =  $request->add_cgv_to_pdf;
 
         $request->validate([
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
@@ -83,6 +85,17 @@ class FactoryController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $request->picture->move(public_path('images/factory'), $filename);
             $Factory->picture =  $filename;
+        }
+
+        $request->validate([
+            'file' => "mimes:pdf|max:10240"
+        ]);
+        
+        if($request->hasFile('cgv_file')){
+            $file =  $request->file('cgv_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->cgv_file->move(public_path('cgv/factory'), $filename);
+            $Factory->cgv_file =  $filename;
         }
 
         $Factory->save();

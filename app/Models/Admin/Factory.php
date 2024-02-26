@@ -30,7 +30,11 @@ class Factory extends Model
                             'share_capital', 
                             'curency',
                             'add_day_validity_quote',
-                            'add_delivery_delay_order'];
+                            'add_delivery_delay_order', 
+                            'public_link_cgv',
+                            'add_cgv_to_pdf',
+                            'cgv_file'];
+
 
     public function VAT()
     {

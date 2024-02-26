@@ -250,8 +250,23 @@
                                 </address>
                             </div>
                         </div>
+                        @if ( $Factory->cgv_file && $Factory->public_link_cgv != 2)
+                        <!-- CGV Notes -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h3 class="h6">{{ __('general_content.cgv_trans_key') }}</h3>
+                                <a class="btn btn-info btn-sm " href="{{ asset('/cgv/factory/'. $Factory->cgv_file) }}" target="_blank">Show SGV</a>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
+                @if ( $Factory->cgv_file && $Factory->add_cgv_to_pdf != 2)
+                <div class="row">
+                    <h1>{{ __('general_content.cgv_trans_key') }}</h1>
+                    <object data="{{ asset('/cgv/factory/'. $Factory->cgv_file) }}" type="application/pdf" width="100%" height="1000px"></object>
+                </div>
+                @endif
             </div>
         </div>
     </body>

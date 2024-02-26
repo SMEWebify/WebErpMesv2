@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 
-use PDF;
-
-use DateTime;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
@@ -25,6 +22,9 @@ use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
 use horstoeko\zugferd\codelists\ZugferdPaymentMeans;
 
+use PDF;
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+
 class PrintController extends Controller
 {
 
@@ -43,8 +43,23 @@ class PrintController extends Controller
         $Document->Lines = $Document->QuoteLines;
         unset($Document->QuoteLines);
         $image= $Factory->getImageFactoryPath();
+        //Start PDF generate
+        $oMerger = PDFMerger::init();
+        //Creat quote view
         $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice','image'));
-        return $pdf->stream();
+        // Save temp PDF 
+        $tempPath = tempnam(sys_get_temp_dir(), 'dompdf_temp');
+        $pdf->save($tempPath);
+        // add le PDF to merg
+        $oMerger->addPDF($tempPath, 'all');
+        if ( $Factory->cgv_file && $Factory->add_cgv_to_pdf != 2){
+            // add cgv if is required
+            $oMerger->addPDF('cgv/factory/' . $Factory->cgv_file, 'all');
+        }
+        // merge
+        $oMerger->merge();
+        //display
+        return $oMerger->stream();
     }
     
     /**
@@ -61,9 +76,26 @@ class PrintController extends Controller
         $vatPrice = $OrderCalculator->getVatTotal();
         $Document->Lines = $Document->OrderLines;
         unset($Document->OrderLines);
-        $image= $Factory->getImageFactoryPath();;
+        $image= $Factory->getImageFactoryPath();
+        //Start PDF generate
+        $oMerger = PDFMerger::init();
+        //Creat quote view
         $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice','image'));
-        return $pdf->stream();
+        // Save temp PDF 
+        $tempPath = tempnam(sys_get_temp_dir(), 'dompdf_temp');
+        $pdf->save($tempPath);
+        // add le PDF to merg
+        $oMerger->addPDF($tempPath, 'all');
+        if ( $Factory->cgv_file && $Factory->add_cgv_to_pdf != 2){
+            // add cgv if is required
+            $oMerger->addPDF('cgv/factory/' . $Factory->cgv_file, 'all');
+        }
+        // merge
+        $oMerger->merge();
+        //display
+        return $oMerger->stream();
+
+        
     }
     
     /**
@@ -80,9 +112,24 @@ class PrintController extends Controller
         $vatPrice = $OrderCalculator->getVatTotal();
         $Document->Lines = $Document->OrderLines;
         unset($Document->OrderLines);
-        $image= $Factory->getImageFactoryPath();;
+        $image= $Factory->getImageFactoryPath();
+        //Start PDF generate
+        $oMerger = PDFMerger::init();
+        //Creat quote view
         $pdf = PDF::loadView('print/pdf-sales', compact('typeDocumentName','Document', 'Factory','totalPrices','subPrice','vatPrice','image'));
-        return $pdf->stream();
+        // Save temp PDF 
+        $tempPath = tempnam(sys_get_temp_dir(), 'dompdf_temp');
+        $pdf->save($tempPath);
+        // add le PDF to merg
+        $oMerger->addPDF($tempPath, 'all');
+        if ( $Factory->cgv_file && $Factory->add_cgv_to_pdf != 2){
+            // add cgv if is required
+            $oMerger->addPDF('cgv/factory/' . $Factory->cgv_file, 'all');
+        }
+        // merge
+        $oMerger->merge();
+        //display
+        return $oMerger->stream();
     }
     
     /**
