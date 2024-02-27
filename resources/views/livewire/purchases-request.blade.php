@@ -92,6 +92,7 @@
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>{{ __('general_content.product_trans_key') }}</th>
+                        <th></th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.service_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
@@ -99,24 +100,35 @@
                 </thead>
                 <tbody>
                     @forelse ($PurchasesRequestsLineslist as $PurchasesRequestsLines)
-                    <tr>
-                        <td>
-                            <x-OrderButton id="{{ $PurchasesRequestsLines->OrderLines->order->id }}" code="{{ $PurchasesRequestsLines->OrderLines->order->code }}"  />
-                        </td>
-                        <td>{{ $PurchasesRequestsLines->ordre }}</td>
-                        <td>{{ $PurchasesRequestsLines->id }} - {{ $PurchasesRequestsLines->label }}</td>
-                        <td>@if($PurchasesRequestsLines->component_id ) {{ $PurchasesRequestsLines->Component['label'] }}@endif</td>
-                        <td>{{ $PurchasesRequestsLines->qty }}</td>
-                        <td>@if($PurchasesRequestsLines->methods_services_id ) {{ $PurchasesRequestsLines->service['label'] }}@endif</td>
-                        <td>
-                            <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" value="{{ $PurchasesRequestsLines->id }}" wire:model.live="data.{{ $PurchasesRequestsLines->id }}.task_id" id="data.{{ $PurchasesRequestsLines->id }}.task_id"  type="checkbox">
-                                <label for="data.{{ $PurchasesRequestsLines->id }}.task_id" class="custom-control-label">{{ __('general_content.add_to_document_trans_key') }} </label>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <x-OrderButton id="{{ $PurchasesRequestsLines->OrderLines->order->id }}" code="{{ $PurchasesRequestsLines->OrderLines->order->code }}"  />
+                            </td>
+                            <td>{{ $PurchasesRequestsLines->ordre }}</td>
+                            <td>{{ $PurchasesRequestsLines->id }} - {{ $PurchasesRequestsLines->label }}</td>
+                            <td>{{ $PurchasesRequestsLines->Component['label'] }}</td>
+                            <td><x-ButtonTextView route="{{ route('products.show', ['id' => $PurchasesRequestsLines->component_id])}}" /></td>
+                            <td>{{ $PurchasesRequestsLines->qty }}</td>
+                            <td @if($PurchasesRequestsLines->methods_services_id ) style="background-color: {{ $PurchasesRequestsLines->service['color'] }};" @endif >
+                                @if($PurchasesRequestsLines->methods_services_id )
+                                    @if( $PurchasesRequestsLines->service['picture'])
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $BOMline->service['picture']) }}'>">
+                                            <span>{{ $PurchasesRequestsLines->service['label'] }}</span>
+                                        </p>
+                                    @else
+                                        {{ $PurchasesRequestsLines->service['label'] }}
+                                    @endif
+                                @endif
+                            </td>
+                            <td>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" value="{{ $PurchasesRequestsLines->id }}" wire:model.live="data.{{ $PurchasesRequestsLines->id }}.task_id" id="data.{{ $PurchasesRequestsLines->id }}.task_id"  type="checkbox">
+                                    <label for="data.{{ $PurchasesRequestsLines->id }}.task_id" class="custom-control-label">{{ __('general_content.add_to_document_trans_key') }} </label>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                        <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
@@ -125,6 +137,7 @@
                         <th>{{ __('general_content.sort_trans_key') }}</th>
                         <th>{{__('general_content.label_trans_key') }}</th>
                         <th>{{ __('general_content.product_trans_key') }}</th>
+                        <th></th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.service_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>

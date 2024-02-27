@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use Illuminate\Support\Facades\Auth;
@@ -116,7 +117,6 @@ class PurchasesRequest extends Component
     {
         $userSelect = User::select('id', 'name')->get();
         $Status = Status::select('id')->orderBy('order')->first();
-
         //Select task where statu is open and only purchase type
         $PurchasesRequestsLineslist = $this->PurchasesRequestsLineslist = Task::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                                                         ->where('status_id', '=', $Status->id)
@@ -130,6 +130,11 @@ class PurchasesRequest extends Component
                                                                                     ->orWhere('type', '=', '5')
                                                                                     ->orWhere('type', '=', '6')
                                                                                     ->orWhere('type', '=', '7');
+                                                                            })
+                                                                            ->when($this->companies_id, function ($query) {
+                                                                                return $query->whereHas('Component.preferredSuppliers', function ($supplierQuery) {
+                                                                                    $supplierQuery->where('companies_id', $this->companies_id);
+                                                                                });
                                                                             })->get();
         return view('livewire.purchases-request', [
             'PurchasesRequestsLineslist' => $PurchasesRequestsLineslist,
