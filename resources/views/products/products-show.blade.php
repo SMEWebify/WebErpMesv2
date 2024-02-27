@@ -18,6 +18,9 @@
       <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">{{ __('general_content.tech_bom_trans_key') }} {{ $Product->getAllTaskCountAttribute() }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }}</a></li>
+      @if($Product->drawing_file)
+      <li class="nav-item"><a class="nav-link" href="#DrawingViewer" data-toggle="tab"> {{ __('general_content.drawing_trans_key') }}</a></li>
+      @endif
       @if($Product->stl_file)
       <li class="nav-item"><a class="nav-link" href="#StepViewer" data-toggle="tab">Stl {{ __('general_content.viewer_file_trans_key') }}</a></li>
       @endif
@@ -392,13 +395,24 @@
                         </div>
                     </div>
                   </form>
-                </div>
-              </div>
-              <div class="card card-info">
-                <div class="card-header">
-                  <h3 class="card-title">{{ __('general_content.stl_file_trans_key') }}</h3>
-                </div>
-                <div class="card-body">
+                  <form action="{{ route('products.update.drawing') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <label for="chooseFile">{{ __('general_content.drawing_trans_key') }}</label> (.pdf | max: 10 240 Ko)
+                    
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-file"></i></span>
+                      </div>
+                      <div class="custom-file">
+                        <input type="hidden" name="id" value="{{ $Product->id }}" >
+                        <input type="file" name="drawing" class="custom-file-input" id="drawing">
+                        <label class="custom-file-label" for="drawing">{{ __('general_content.choose_file_trans_key') }}</label>
+                      </div>
+                      <div class="input-group-append">
+                        <button type="submit" name="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                      </div>
+                    </div>
+                </form>
                   <form action="{{ route('products.update.stl') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <label for="chooseFile">{{ __('general_content.stl_file_trans_key') }}</label> (.stl | max: 10 240 Ko)
@@ -417,14 +431,7 @@
                       </div>
                     </div>
                 </form>
-                </div>
-              </div>
-              <div class="card card-info">
-                <div class="card-header">
-                  <h3 class="card-title">{{ __('general_content.svg_file_trans_key') }}</h3>
-                </div>
-                <div class="card-body">
-                  <form action="{{ route('products.update.svg') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('products.update.svg') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <label for="chooseFile">{{ __('general_content.svg_file_trans_key') }}</label> (.svg | max: 10 240 Ko)
                     
@@ -442,52 +449,47 @@
                       </div>
                     </div>
                 </form>
-                </div>
+                <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
+                    <br/>
+                    <label for="chooseFile">{{ __('general_content.documents_trans_key') }}</label> (.jpg,png,doc,docx,csv,xlsx,xls,pdf,zip | max: 10 240 Ko)
+                      @csrf
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="far fa-file"></i></span>
+                        </div>
+                        <div class="custom-file">
+                          <input type="hidden" name="product_id" value="{{ $Product->id }}" >
+                          <input type="file" name="file" class="custom-file-input" id="chooseFile">
+                          <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
+                        </div>
+                        <div class="input-group-append">
+                          <button type="submit" name="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                        </div>
+                      </div>
+                </form>
+                <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
+                <ul class="list-unstyled">
+                  @forelse ( $Product->files as $file)
+                  <li>
+                    <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
+                  </li>
+                  @empty
+                    {{ __('general_content.no_data_trans_key') }}
+                  @endforelse
+                </ul>
               </div>
-              <div class="card card-info">
-                <div class="card-header">
-                  <h3 class="card-title"> {{ __('general_content.documents_trans_key') }} </h3>
-                </div>
-                  <div class="card-body">
-                      <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
-                          @csrf
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="far fa-file"></i></span>
-                            </div>
-                            <div class="custom-file">
-                              <input type="hidden" name="product_id" value="{{ $Product->id }}" >
-                              <input type="file" name="file" class="custom-file-input" id="chooseFile">
-                              <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
-                            </div>
-                            <div class="input-group-append">
-                              <button type="submit" name="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
-                            </div>
-                          </div>
-                      </form>
-                      <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
-                      <ul class="list-unstyled">
-                        @forelse ( $Product->files as $file)
-                        <li>
-                          <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
-                        </li>
-                        @empty
-                          {{ __('general_content.no_data_trans_key') }}
-                        @endforelse
-                      </ul>
-                </div>
+            </div>
+            <div class="card card-warning">
+              <div class="card-header">
+                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
               </div>
-              <div class="card card-warning">
-                <div class="card-header">
-                  <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
-                </div>
-                <div class="card-body">
-                  <a href="{{ route('products.duplicate', ['id' => $Product->id])}}" class="btn btn-default"><i class="fa fa-copy"></i> {{ __('general_content.duplicate_product_trans_key') }}</a>
-                </div>
+              <div class="card-body">
+                <a href="{{ route('products.duplicate', ['id' => $Product->id])}}" class="btn btn-default"><i class="fa fa-copy"></i> {{ __('general_content.duplicate_product_trans_key') }}</a>
               </div>
             </div>
           </div>
         </div>
+      </div>
       <div class="tab-pane " id="TechnicalInfo">
         @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id, 'statu' => 1]) 
       </div>
@@ -497,6 +499,11 @@
       <div class="tab-pane" id="order">
         @livewire('orders-lines-index' , ['product_id' => $Product->id ])
       </div>
+      @if($Product->drawing_file)
+      <div class="tab-pane" id="DrawingViewer">
+        <object data="{{ asset('drawing/'. $Product->drawing_file) }}" type="application/pdf" width="100%" height="1000px"></object>
+      </div>
+      @endif
       @if($Product->stl_file)
       <div class="tab-pane" id="StepViewer">
         <script type="importmap">

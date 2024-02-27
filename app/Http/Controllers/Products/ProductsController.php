@@ -94,6 +94,29 @@ class ProductsController extends Controller
      * @param Request $request
      * @return View
      */
+    public function StoreDrawing(Request $request)
+    {
+        if($request->hasFile('drawing')){
+            //$type = $request->file->getClientMimeType();
+            //$size = $request->file->getSize();
+            $Product = Products::findOrFail($request->id);
+            $file =  $request->file('drawing');
+            $fileName = auth()->id() . '' . time() . '.pdf';
+            $request->drawing->move(public_path('drawing'), $fileName);
+            $Product->update(['drawing_file' => $fileName]);
+            $Product->save();
+
+            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated drawing');
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, no drawing selected']);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function StoreStl(Request $request)
     {
         if($request->hasFile('stl')){

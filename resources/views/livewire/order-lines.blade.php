@@ -248,6 +248,10 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                         </x-adminlte-modal>
                                     </div>
                                     <div class="input-group-prepend">
+                                        @if( $OrderLine->product_id && $OrderLine->Product->drawing_file)
+                                        <!-- Drawing link -->
+                                        <a class="btn btn-info" href="{{ asset('drawing/'. $OrderLine->Product->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                                        @endif
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                         <div class="dropdown-menu">
                                             @if($OrderStatu == 1 && $OrderLine->delivery_status == 1 )

@@ -223,6 +223,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->name('products.update');
         Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
         Route::post('/image', 'App\Http\Controllers\Products\ProductsController@StoreImage')->name('products.update.image');
+        Route::post('/drawing', 'App\Http\Controllers\Products\ProductsController@StoreDrawing')->name('products.update.drawing');
         Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
         Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
         // Stock routes

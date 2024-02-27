@@ -394,6 +394,7 @@ return [
     'photos_trans_key'                         => 'Photos',
     'choose_file_trans_key'                    => 'Choisir fichier',
     'picture_file_trans_key'                   => 'Fichier image',
+    'drawing_trans_key'                        => 'Mise en plan',
     'stl_file_trans_key'                       => 'Fichier STL',
     'svg_file_trans_key'                       => 'Fichier SVG',
     'viewer_file_trans_key'                    => 'Visioneuse',

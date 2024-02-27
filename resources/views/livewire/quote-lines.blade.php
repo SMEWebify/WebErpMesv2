@@ -225,6 +225,10 @@
                                         </x-adminlte-modal>
                                     </div>
                                     <div class="input-group-prepend">
+                                        @if( $QuoteLine->product_id && $QuoteLine->Product->drawing_file)
+                                        <!-- Drawing link -->
+                                        <a class="btn btn-info" href="{{ asset('drawing/'. $QuoteLine->Product->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                                        @endif
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                         <div class="dropdown-menu">
                                             @if($QuoteStatu == 1)

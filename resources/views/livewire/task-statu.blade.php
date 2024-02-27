@@ -17,7 +17,7 @@
     @else
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">#{{ $Task->id }} {{ __('general_content.task_detail_trans_key') }}</h3>
+          <h3 class="card-title">#{{ $Task->id }} {{ __('general_content.task_detail_trans_key') }} - {{ $Task->OrderLines->label }}</h3>
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
               <i class="fas fa-minus"></i>
@@ -75,7 +75,12 @@
             </div>
             <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
               <h3 class="text-primary">
-                <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  /> - {{ __('general_content.task_trans_key') }}  #{{ $Task->id }} {{ $Task->service['label'] }} 
+                <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  /> 
+                @if( $Task->OrderLines->product_id && $Task->OrderLines->Product->drawing_file)
+                  <!-- Drawing link -->
+                  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->OrderLines->Product->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                @endif
+                  - {{ __('general_content.task_trans_key') }}  #{{ $Task->id }} {{ $Task->service['label'] }} 
               </h3>
               <hr>
               <div class="row">
