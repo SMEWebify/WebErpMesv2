@@ -144,7 +144,7 @@
                             <label for="compannie_id">{{ __('general_content.supplier_trans_key') }}</label>
                               <select class="form-control" name="compannie_id" id="compannie_id">
                                 <option value="NULL">-</option>
-                                @forelse ($CompaniesSelect as $item)
+                                @forelse ($SupplierSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->label }}</option>
                                 @empty
                                 <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
@@ -292,10 +292,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                  <label for="compannie_id">Supplier (no mandatory)</label>
+                  <label for="compannie_id">{{ __('general_content.supplier_trans_key') }} (no mandatory)</label>
                     <select class="form-control" name="compannie_id" id="compannie_id">
                       <option value="NULL">-</option>
-                      @forelse ($CompaniesSelect as $item)
+                      @forelse ($SupplierSelect as $item)
                       <option value="{{ $item->id }}">{{ $item->label }}</option>
                       @empty
                       <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>

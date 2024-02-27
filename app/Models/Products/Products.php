@@ -5,6 +5,7 @@ namespace App\Models\Products;
 use App\Models\File;
 use App\Models\Planning\Task;
 use Spatie\Activitylog\LogOptions;
+use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
@@ -74,6 +75,10 @@ class Products extends Model
     public function Task()
     {
         return $this->hasMany(Task::class, 'products_id')->orderBy('ordre');
+    }
+
+    public function preferredSuppliers() {
+        return $this->belongsToMany(Companies::class, 'products_preferred_suppliers', 'product_id', 'companies_id')->withTimestamps();
     }
 
     public function getAllTaskCountAttribute()

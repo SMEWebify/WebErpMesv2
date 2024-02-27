@@ -32,7 +32,7 @@ class MethodsController extends Controller
         $MethodsFamilies = MethodsFamilies::orderBy('id')->paginate(10);
         $MethodsTools = MethodsTools::orderBy('code')->paginate(10);
         $userSelect = User::select('id', 'name')->get();
-        $CompaniesSelect = Companies::select('id', 'label')->orderBy('label')->where('statu_supplier', 2)->get();
+        $SupplierSelect = Companies::select('id', 'label')->orderBy('label')->where('statu_supplier', 2)->get();
 
         return view('methods/methods-index', [
             'MethodsServices' => $MethodsServices,
@@ -45,7 +45,7 @@ class MethodsController extends Controller
             'SectionsSelect' =>  $SectionsSelect,
             'MethodsLocations' =>  $MethodsLocations,
             'userSelect' => $userSelect,
-            'CompaniesSelect' => $CompaniesSelect,
+            'SupplierSelect' => $SupplierSelect,
             'MethodsTools' => $MethodsTools
             
         ]);

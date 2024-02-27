@@ -16,6 +16,9 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab">{{ __('general_content.product_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab">{{ __('general_content.tech_bom_trans_key') }} {{ $Product->getAllTaskCountAttribute() }}</a></li>
+      @if($Product->purchased == 1 )
+      <li class="nav-item"><a class="nav-link" href="#PreferredSupplier" data-toggle="tab"> {{ __('general_content.preferred_supplier_trans_key') }}</a></li>
+      @endif
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }}</a></li>
       @if($Product->drawing_file)
@@ -493,6 +496,75 @@
       <div class="tab-pane " id="TechnicalInfo">
         @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id, 'statu' => 1]) 
       </div>
+      @if($Product->purchased == 1 )
+      <div class="tab-pane" id="PreferredSupplier">
+        <div class="row">
+          <div class="col-md-6 card-primary">
+            <div class="card-header">
+                <h3 class="card-title">{{ __('general_content.preferred_supplier_trans_key') }}</h3>
+            </div>
+            <div class="card-body table-responsive p-0">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>{{__('general_content.id_trans_key') }}</th>
+                    <th>{{__('general_content.customer_trans_key') }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($Product->preferredSuppliers as $Supplier)
+                  <tr>
+                    <td>{{ $Supplier->code }}</td>
+                    <td>{{ $Supplier->label }}</td>
+                    <td><x-ButtonTextView route="{{ route('companies.show', ['id' => $Supplier->id])}}" /></td>
+                  </tr>
+                  @empty
+                  <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
+                  @endforelse
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>{{__('general_content.id_trans_key') }}</th>
+                    <th>{{__('general_content.customer_trans_key') }}</th>
+                    <th></th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          <!-- /.card secondary -->
+          </div>
+          <div class="col-md-6 card-secondary">
+            <div class="card-header">
+              <h3 class="card-title">{{ __('general_content.supplier_trans_key') }}</h3>
+            </div>
+            <div class="card-body">
+              <form  method="POST" action="{{ route('products.supplier.create') }}" class="form-horizontal" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="product_id" value="{{ $Product->id }}">
+                <div class="form-group">
+                  <label for="compannie_id">{{ __('general_content.supplier_trans_key') }}</label>
+                    <select class="form-control" name="compannie_id" id="compannie_id">
+                      <option value="NULL">-</option>
+                      @forelse ($SupplierSelect as $item)
+                      <option value="{{ $item->id }}">{{ $item->label }}</option>
+                      @empty
+                      <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
+                      @endforelse
+                    </select>
+                </div>
+                <div class="card-footer">
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                </div>
+              </form>
+            </div>
+            <!-- /.card body -->
+          </div>
+          <!-- /.card secondary -->
+        </div>
+        <!-- /.row -->
+      </div>
+      @endif
       <div class="tab-pane" id="quote">
         @livewire('quotes-lines-index' , ['product_id' => $Product->id ])
       </div>

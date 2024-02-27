@@ -7,9 +7,11 @@ use App\Models\User;
 use App\Models\Workflow\Leads;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
@@ -103,6 +105,10 @@ class Companies extends Model
     public function files()
     {
         return $this->hasMany(File::class);
+    }
+
+    public function productsfromThisSupplier() {
+        return $this->belongsToMany(Products::class, 'products_preferred_suppliers', 'companies_id', 'product_id')->withTimestamps();
     }
 
     public function GetPrettyCreatedAttribute()

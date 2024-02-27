@@ -220,6 +220,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
         //product route 
         Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->name('products.store');
+        Route::post('/supplier', 'App\Http\Controllers\Products\ProductsController@StoreSupplier')->name('products.supplier.create');
         Route::post('/edit/{id}', 'App\Http\Controllers\Products\ProductsController@update')->name('products.update');
         Route::get('/duplicate/{id}', 'App\Http\Controllers\Products\ProductsController@duplicate')->name('products.duplicate');
         Route::post('/image', 'App\Http\Controllers\Products\ProductsController@StoreImage')->name('products.update.image');

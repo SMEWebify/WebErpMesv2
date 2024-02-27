@@ -402,6 +402,7 @@ return [
     'take_photo_trans_key'                     => 'Télécharger la photo',
     'public_link_trans_key'                    => 'Lien publique',
     'add_to_document_trans_key'                => 'Ajouter au nouveau document',
+    'preferred_supplier_trans_key'             => 'Fournisseurs préférés',
 
     'companie_name_trans_key'                  => 'Nom société',
     'adress_name_trans_key'                    => 'Nom de l\'adresse',

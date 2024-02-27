@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
+use App\Models\Companies\Companies;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
@@ -45,6 +46,7 @@ class ProductsController extends Controller
         $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
         $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
         $FamiliesSelect = MethodsFamilies::select('id', 'label')->orderBy('label')->get();
+        $SupplierSelect = Companies::select('id', 'label')->orderBy('label')->where('statu_supplier', 2)->get();
         
         $previousUrl = route('products.show', ['id' => $Product->id-1]);
         $nextUrl = route('products.show', ['id' => $Product->id+1]);
@@ -60,7 +62,24 @@ class ProductsController extends Controller
             'FamiliesSelect' => $FamiliesSelect,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'SupplierSelect' =>  $SupplierSelect,
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function StoreSupplier(Request $request){
+
+        $product = Products::find($request->product_id);
+        if (!$product) {
+            return redirect()->back()->withErrors(['message' => 'Product not found.']);
+        }
+        else{
+            $product->preferredSuppliers()->attach($request->compannie_id);
+            return redirect()->route('products.show', ['id' =>  $request->product_id])->with('success', 'Successfully add supplier.');
+        }
     }
 
     /**

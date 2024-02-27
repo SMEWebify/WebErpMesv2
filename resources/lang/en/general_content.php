@@ -402,6 +402,7 @@ return [
     'take_photo_trans_key'                     => 'Take a picture',
     'public_link_trans_key'                    => 'Public link',
     'add_to_document_trans_key'                => 'Add to new document',
+    'preferred_supplier_trans_key'             => 'Preferreds suppliers',
     
     'companie_name_trans_key'                  => 'Companie name',
     'adress_name_trans_key'                    => 'Address name',
