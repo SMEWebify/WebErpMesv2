@@ -87,8 +87,8 @@
                         @forelse ($PurchasesWaintingReceiptLineslist as $PurchasesWaintingReceiptLine)
                         <tr>
                             <td>
-                                @if($PurchasesWaintingReceiptLine->purchaseLines->tasks->OrderLines ?? null)
-                                    <x-OrderButton id="{{ $PurchasesWaintingReceiptLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchasesWaintingReceiptLine->tasks->OrderLines->order->code }}"  /> 
+                                @if($PurchasesWaintingReceiptLine->tasks->OrderLines ?? null)
+                                    <x-OrderButton id="{{ $PurchasesWaintingReceiptLine->tasks->OrderLines->orders_id }}" code="{{ $PurchasesWaintingReceiptLine->tasks->OrderLines->order->code }}"  /> 
                                 @else
                                 {{__('general_content.generic_trans_key') }} 
                                 @endif
