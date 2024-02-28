@@ -116,25 +116,19 @@ class PurchasesWaintingInvoice extends Component
             // Create lines
             foreach ($this->data as $key => $item) {
                 //check if add line to new receipt line is aviable
-                if(array_key_exists("purchase_receipt_line_id",$this->data[$key])){
-                    if($this->data[$key]['purchase_receipt_line_id'] != false ){
-                        //if not best to find request value, but we cant send hidden data with livewire
-                        //How pass all information from task information ?
-                        $PurchaseReceiptLines = PurchaseReceiptLines::find($this->data[$key]['purchase_receipt_line_id']);
-                        
-                        // Create invoice line
-                        $PurchaseInvoiceLines = PurchaseInvoiceLines::create([
-                            'purchase_invoice_id' => $InvoiceCreated->id, 
-                            'purchase_receipt_line_id' => $PurchaseReceiptLines->id, 
-                            'purchase_line_id' => $PurchaseReceiptLines->purchase_line_id, 
-                        ]); 
-                        /* // update statu line of purchase order line*/
-                        PurchaseLines::where('id',$PurchaseInvoiceLines->purchase_line_id)->update(['invoiced_qty'=>$PurchaseReceiptLines->receipt_qty]);
-                    }
-                }
-            } 
+                $PurchaseReceiptLines = PurchaseReceiptLines::find($key);
+                
+                // Create invoice line
+                $PurchaseInvoiceLines = PurchaseInvoiceLines::create([
+                    'purchase_invoice_id' => $InvoiceCreated->id, 
+                    'purchase_receipt_line_id' => $PurchaseReceiptLines->id, 
+                    'purchase_line_id' => $PurchaseReceiptLines->purchase_line_id, 
+                ]); 
+                /* // update statu line of purchase order line*/
+                PurchaseLines::where('id',$PurchaseInvoiceLines->purchase_line_id)->update(['invoiced_qty'=>$PurchaseReceiptLines->receipt_qty]);
+            }
 
-            return redirect()->route('purchases.invoice.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new purchase invoice');
+            return redirect()->route('purchase.invoice.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new purchase invoice');
         }
         else{
             $errors = $this->getErrorBag();

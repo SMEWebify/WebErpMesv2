@@ -137,8 +137,10 @@
               <thead>
                 <tr>
                   <th>{{ __('general_content.order_trans_key') }}</th>
-                  <th>{{ __('general_content.description_trans_key') }}</th>
-                  <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
+                  <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
+                  <th>{{__('general_content.label_trans_key') }}</th>
+                  <th>{{ __('general_content.product_trans_key') }}</th>
                   <th>{{ __('general_content.qty_trans_key') }}</th>
                   <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                   <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
@@ -150,11 +152,29 @@
               <tbody>
                   @forelse($Purchase->PurchaseLines as $PurchaseLine)
                   <tr>
-                    <td>
-                        <x-OrderButton id="{{  $PurchaseLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseLine->tasks->OrderLines->order->code }}"  />
-                    </td>
-                    <td>#{{ $PurchaseLine->tasks->id }} {{ $PurchaseLine->code }} {{ $PurchaseLine->label }}</td>
-                    <td>{{ $PurchaseLine->supplier_ref }}</td>
+                    <tr>
+                      <td>
+                          @if($PurchaseLine->tasks->OrderLines ?? null)
+                              <x-OrderButton id="{{ $PurchaseLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseLine->tasks->OrderLines->order->code }}"  /> 
+                          @else
+                          {{__('general_content.generic_trans_key') }} 
+                          @endif
+                      </td>
+                      <td>@if($PurchaseLine->tasks->OrderLines ?? null){{ $PurchaseLine->tasks->OrderLines->qty }} x @endif</td>
+                      <td>@if($PurchaseLine->tasks->OrderLines ?? null){{ $PurchaseLine->tasks->OrderLines->label }}@endif</td>
+                      <td>
+                          <a href="{{ route('production.task.statu.id', ['id' => $PurchaseLine->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                          #{{ $PurchaseLine->tasks->id }} - {{ $PurchaseLine->tasks->label }}
+                          @if($PurchaseLine->tasks->component_id )
+                              - {{ $PurchaseLine->tasks->Component['label'] }}
+                          @endif
+                      </td>
+                      
+                      <td>
+                          @if($PurchaseLine->tasks->component_id ) 
+                          <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseLine->tasks->component_id])}}" />
+                          @endif
+                      </td>
                     <td>{{ $PurchaseLine->qty }}</td>
                     <td>{{ $PurchaseLine->receipt_qty }}</td>
                     <td>{{ $PurchaseLine->invoiced_qty }}</td>
@@ -168,8 +188,10 @@
                 <tfoot>
                   <tr>
                     <th>{{ __('general_content.order_trans_key') }}</th>
-                    <th>{{ __('general_content.description_trans_key') }}</th>
-                    <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_trans_key') }}</th>
+                    <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
+                    <th>{{__('general_content.label_trans_key') }}</th>
+                    <th>{{ __('general_content.product_trans_key') }}</th>
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                     <th>{{ __('general_content.qty_invoice_trans_key') }}</th>

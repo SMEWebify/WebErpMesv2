@@ -87,12 +87,12 @@
                 <thead>
                     <tr>
                         <th>{{ __('general_content.order_trans_key') }}</th>
-                        <th>{{ __('general_content.sort_trans_key') }}</th>
+                        <th>{{ __('general_content.qty_trans_key') }}</th>
+                        <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
                         <th>{{ __('general_content.product_trans_key') }}</th>
-                        <th></th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.service_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
@@ -102,17 +102,32 @@
                     @forelse ($PurchasesRequestsLineslist as $PurchasesRequestsLines)
                         <tr>
                             <td>
-                                <x-OrderButton id="{{ $PurchasesRequestsLines->OrderLines->order->id }}" code="{{ $PurchasesRequestsLines->OrderLines->order->code }}"  />
+                                @if($PurchasesRequestsLines->OrderLines ?? null)
+                                    <x-OrderButton id="{{ $PurchasesRequestsLines->OrderLines->orders_id }}" code="{{ $PurchasesRequestsLines->OrderLines->order->code }}"  /> 
+                                @else
+                                {{__('general_content.generic_trans_key') }} 
+                                @endif
                             </td>
-                            <td>{{ $PurchasesRequestsLines->ordre }}</td>
-                            <td>{{ $PurchasesRequestsLines->id }} - {{ $PurchasesRequestsLines->label }}</td>
-                            <td>{{ $PurchasesRequestsLines->Component['label'] }}</td>
-                            <td><x-ButtonTextView route="{{ route('products.show', ['id' => $PurchasesRequestsLines->component_id])}}" /></td>
+                            <td>@if($PurchasesRequestsLines->OrderLines ?? null){{ $PurchasesRequestsLines->OrderLines->qty }} x @endif</td>
+                            <td>@if($PurchasesRequestsLines->OrderLines ?? null){{ $PurchasesRequestsLines->OrderLines->label }}@endif</td>
+                            <td>
+                                <a href="{{ route('production.task.statu.id', ['id' => $PurchasesRequestsLines->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                                #{{ $PurchasesRequestsLines->id }} - {{ $PurchasesRequestsLines->label }}
+                                @if($PurchasesRequestsLines->component_id )
+                                    - {{ $PurchasesRequestsLines->Component['label'] }}
+                                @endif
+                            </td>
+                            
+                            <td>
+                                @if($PurchasesRequestsLines->component_id ) 
+                                <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchasesRequestsLines->component_id])}}" />
+                                @endif
+                            </td>
                             <td>{{ $PurchasesRequestsLines->qty }}</td>
                             <td @if($PurchasesRequestsLines->methods_services_id ) style="background-color: {{ $PurchasesRequestsLines->service['color'] }};" @endif >
                                 @if($PurchasesRequestsLines->methods_services_id )
                                     @if( $PurchasesRequestsLines->service['picture'])
-                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $BOMline->service['picture']) }}'>">
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $PurchasesRequestsLines->service['picture']) }}'>">
                                             <span>{{ $PurchasesRequestsLines->service['label'] }}</span>
                                         </p>
                                     @else
@@ -134,10 +149,10 @@
                 <tfoot>
                     <tr>
                         <th>{{ __('general_content.order_trans_key') }}</th>
-                        <th>{{ __('general_content.sort_trans_key') }}</th>
+                        <th>{{ __('general_content.qty_trans_key') }}</th>
+                        <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
                         <th>{{__('general_content.label_trans_key') }}</th>
                         <th>{{ __('general_content.product_trans_key') }}</th>
-                        <th></th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.service_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>

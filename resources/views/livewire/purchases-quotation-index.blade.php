@@ -51,7 +51,7 @@
                         </td>
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>

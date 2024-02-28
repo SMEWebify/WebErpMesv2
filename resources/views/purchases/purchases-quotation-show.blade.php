@@ -149,7 +149,10 @@
                 <thead>
                     <tr>
                       <th>{{ __('general_content.order_trans_key') }}</th>
-                      <th>{{ __('general_content.description_trans_key') }}</th>
+                      <th>{{ __('general_content.qty_trans_key') }}</th>
+                      <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
+                      <th>{{__('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.product_trans_key') }}</th>
                       <th>{{ __('general_content.qty_trans_key') }}</th>
                       <th>{{ __('general_content.price_trans_key') }}</th>
                       <th>{{__('general_content.total_price_trans_key') }}</th>
@@ -162,9 +165,27 @@
                       @forelse($PurchaseQuotation->PurchaseQuotationLines as $PurchaseQuotationLine)
                       <tr>
                         <td>
-                          <x-OrderButton id="{{ $PurchaseQuotationLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}"  />
+                            @if($PurchaseQuotationLine->tasks->OrderLines ?? null)
+                                <x-OrderButton id="{{ $PurchaseQuotationLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}"  /> 
+                            @else
+                            {{__('general_content.generic_trans_key') }} 
+                            @endif
                         </td>
-                        <td>#{{ $PurchaseQuotationLine->tasks->id }}  {{ $PurchaseQuotationLine->tasks->label }}</td>
+                        <td>@if($PurchaseQuotationLine->tasks->OrderLines ?? null){{ $PurchaseQuotationLine->tasks->OrderLines->qty }} x @endif</td>
+                        <td>@if($PurchaseQuotationLine->tasks->OrderLines ?? null){{ $PurchaseQuotationLine->tasks->OrderLines->label }}@endif</td>
+                        <td>
+                            <a href="{{ route('production.task.statu.id', ['id' => $PurchaseQuotationLine->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                            #{{ $PurchaseQuotationLine->tasks->id }} - {{ $PurchaseQuotationLine->tasks->label }}
+                            @if($PurchaseQuotationLine->tasks->component_id )
+                                - {{ $PurchaseQuotationLine->tasks->Component['label'] }}
+                            @endif
+                        </td>
+                        
+                        <td>
+                            @if($PurchaseQuotationLine->tasks->component_id ) 
+                            <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseQuotationLine->tasks->component_id])}}" />
+                            @endif
+                        </td>
                         <td>{{ $PurchaseQuotationLine->qty_to_order }}</td>
                         <td>{{ $PurchaseQuotationLine->unit_price }} {{ $Factory->curency }}</td>
                         <td>{{ $PurchaseQuotationLine->total_price }} {{ $Factory->curency }}</td>
@@ -181,13 +202,16 @@
                         <td>{{ $PurchaseQuotationLine->canceled_qty }}</td>
                       </tr>
                     @empty
-                      <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
+                      <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
                       <tr>
                         <th>{{ __('general_content.order_trans_key') }}</th>
-                        <th>{{ __('general_content.description_trans_key') }}</th>
+                        <th>{{ __('general_content.qty_trans_key') }}</th>
+                        <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
+                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{ __('general_content.product_trans_key') }}</th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.price_trans_key') }}</th>
                         <th>{{__('general_content.total_price_trans_key') }}</th>

@@ -107,7 +107,9 @@ class PurchasesWaintingReceipt extends Component
 
         if($i>0){
             $StatusUpdate = Status::select('id')->where('title', 'Finished')->first();
-
+            if(is_null($StatusUpdate)){
+                return redirect()->back()->with('error', 'No status in kanban for define finiched task');
+            }
             // Create puchase order
             $ReceiptCreated = PurchaseReceipt::create([
                 'code'=>$this->code,  
@@ -120,28 +122,24 @@ class PurchasesWaintingReceipt extends Component
             // Create lines
             foreach ($this->data as $key => $item) {
                 //check if add line to new receipt line is aviable
-                if(array_key_exists("purchase_line_id",$this->data[$key])){
-                    if($this->data[$key]['purchase_line_id'] != false ){
-                        //if not best to find request value, but we cant send hidden data with livewire
-                        //How pass all information from task information ?
-                        $PurchaseLines = PurchaseLines::find($this->data[$key]['purchase_line_id']);
-                        
-                        // Create delivery line
-                        $ReceiptLines = PurchaseReceiptLines::create([
-                            'purchase_receipt_id' => $ReceiptCreated->id, 
-                            'purchase_line_id' => $PurchaseLines->id, 
-                            'ordre' => $this->ordre, 
-                            'receipt_qty' => $PurchaseLines->qty, 
-                        ]); 
-                        /* // up order line for next record*/
-                        $this->ordre= $this->ordre+10;
-                        /* // update statu line of purchase order line*/
-                        PurchaseLines::where('id',$PurchaseLines->id)->update(['receipt_qty'=>$PurchaseLines->qty]);
-                        /* // update task statu Supplied on Kanban*/
-                        if($StatusUpdate->id){
-                            $Task = Task::where('id',$PurchaseLines->tasks_id)->update(['status_id'=>$StatusUpdate->id]);
-                        }
-                    }
+                //if not best to find request value, but we cant send hidden data with livewire
+                //How pass all information from task information ?
+                $PurchaseLines = PurchaseLines::find($key);
+                
+                // Create delivery line
+                $ReceiptLines = PurchaseReceiptLines::create([
+                    'purchase_receipt_id' => $ReceiptCreated->id, 
+                    'purchase_line_id' => $PurchaseLines->id, 
+                    'ordre' => $this->ordre, 
+                    'receipt_qty' => $PurchaseLines->qty, 
+                ]); 
+                /* // up order line for next record*/
+                $this->ordre= $this->ordre+10;
+                /* // update statu line of purchase order line*/
+                PurchaseLines::where('id',$PurchaseLines->id)->update(['receipt_qty'=>$PurchaseLines->qty]);
+                /* // update task statu Supplied on Kanban*/
+                if($StatusUpdate->id){
+                    $Task = Task::where('id',$PurchaseLines->tasks_id)->update(['status_id'=>$StatusUpdate->id]);
                 }
             } 
 

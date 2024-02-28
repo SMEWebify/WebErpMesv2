@@ -22,4 +22,11 @@
 @stop
 
 @section('js')
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip({
+          html:true
+      })
+  })
+</script>
 @stop

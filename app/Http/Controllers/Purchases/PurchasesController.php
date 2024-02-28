@@ -153,7 +153,14 @@ class PurchasesController extends Controller
             ]);
 
             $StatusUpdate = Status::select('id')->where('title', 'Supplied')->first();
-
+            if(is_null($StatusUpdate)){
+                $StatusUpdate = Status::select('id')->where('title', 'In progress')->first();
+            }
+            
+            if(is_null($StatusUpdate)){
+                return redirect()->back()->with('error', 'No status in kanban for define progress');
+            }
+            
             if($PurchaseOrderCreated){
                 // Create lines
                 $ordre = 10;
