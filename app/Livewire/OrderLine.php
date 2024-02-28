@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
@@ -96,6 +97,7 @@ class OrderLine extends Component
         $this->orders_id = $OrderId;
         $this->order_Statu = $OrderStatu;
         $this->delivery_date = $OrderDelay;
+        $this->Factory = Factory::first();
         $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
         $this->VATSelect = AccountingVat::select('id', 'label')->orderBy('rate')->get();
