@@ -278,17 +278,18 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>{{__('general_content.id_trans_key') }} </th>
+                        <th>{{ __('general_content.id_trans_key') }} </th>
                         <th>{{ __('general_content.order_trans_key') }}</th>
-                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{ __('general_content.label_trans_key') }}</th>
                         <th>{{ __('general_content.service_trans_key') }}</th>
-                        <th>{{__('general_content.component_trans_key') }}</th>
+                        <th>{{ __('general_content.component_trans_key') }}</th>
+                        <th></th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.cost_trans_key') }}</th>
                         <th>{{ __('general_content.margin_trans_key') }}</th>
                         <th>{{ __('general_content.price_trans_key') }}</th>
-                        <th>{{__('general_content.status_trans_key') }}</th>
-                        <th>{{__('general_content.action_trans_key') }}</th>
+                        <th>{{ __('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.action_trans_key') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -309,6 +310,7 @@
                                 @endif
                             </td>
                             <td>{{ $BOMline->Component['code'] }}</td>
+                            <td><x-ButtonTextView route="{{ route('products.show', ['id' => $BOMline->component_id])}}" /></td>
                             <td>{{ $BOMline->qty }}</td>
                             <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $BOMline->Margin() }} %</td>
@@ -332,13 +334,14 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                     <tr>
                         <th></th>
                         <th>{{ __('general_content.total_trans_key') }} :</th>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -453,14 +456,15 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>{{__('general_content.id_trans_key') }} </th>
+                        <th>{{ __('general_content.id_trans_key') }} </th>
                         <th>{{ __('general_content.order_trans_key') }}</th>
-                        <th>{{__('general_content.id_trans_key') }}</th>
-                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{ __('general_content.id_trans_key') }}</th>
+                        <th>{{ __('general_content.label_trans_key') }}</th>
+                        <th></th>
                         <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.cost_trans_key') }}</th>
                         <th>{{ __('general_content.price_trans_key') }} </th>
-                        <th>{{__('general_content.action_trans_key') }}</th>
+                        <th>{{ __('general_content.action_trans_key') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -470,6 +474,7 @@
                             <td>{{ $SubAssemblyLine->ordre }}</td>
                             <td>{{ $SubAssemblyLine->Child['code'] }}</td>
                             <td>{{ $SubAssemblyLine->Child['label'] }}</td>
+                            <td><x-ButtonTextView route="{{ route('products.show', ['id' => $SubAssemblyLine->child_id])}}" /></td>
                             <td>{{ $SubAssemblyLine->qty }}</td>
                             <td>{{ $SubAssemblyLine->Child['selling_price'] }}  {{ $Factory->curency }}</td>
                             <td>{{ $SubAssemblyLine->unit_price }}  {{ $Factory->curency }}</td>
@@ -485,11 +490,12 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                     <tr>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>

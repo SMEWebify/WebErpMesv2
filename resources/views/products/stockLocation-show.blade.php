@@ -49,7 +49,15 @@
                     <td>{{ $StockLocationsProduct->UserManagement['name'] }}</td>
                     <td>{{ $StockLocationsProduct->Product['label'] }}</td>
                     <td><x-ButtonTextView route="{{ route('products.show', ['id' => $StockLocationsProduct->Product['id']]) }}" /></td>
-                    <td>{{ $StockLocationsProduct->getCurrentStockMove() }}</td>
+                      @if($StockLocationsProduct->getCurrentStockMove() > $StockLocationsProduct->mini_qty)
+                      <td class="bg-success color-palette">
+                      @elseif($StockLocationsProduct->getCurrentStockMove() < $StockLocationsProduct->mini_qty)
+                      <td class="bg-danger color-palette">
+                      @elseif($StockLocationsProduct->getCurrentStockMove() == $StockLocationsProduct->mini_qty)
+                      <td class="bg-warning color-palette">
+                      @endif
+                      {{ $StockLocationsProduct->getCurrentStockMove() }}
+                    </td>
                     <!--<td>{{ $StockLocationsProduct->reserve_qty }}</td>-->
                     <td>{{ $StockLocationsProduct->mini_qty }}</td>
                     <td>{{ $StockLocationsProduct->end_date }}</td>

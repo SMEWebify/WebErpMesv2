@@ -493,6 +493,7 @@ return [
     'repots_setting_trans_key'                 => 'Repots setting',
     'visa_trans_key'                           => 'Visa',
     'select_to_export_trans_key'               => 'Select to export',
+    'line_trans_key'                           => 'Line',
     
     'problem_description_trans_key'            => 'Problem description',
     'proposal_description_trans_key'           => 'Proposal description',

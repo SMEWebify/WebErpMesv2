@@ -17,7 +17,16 @@
     @else
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">#{{ $Task->id }} {{ __('general_content.task_detail_trans_key') }} - {{ $Task->OrderLines->label }}</h3>
+          
+          
+          <h3 class="card-title">
+            <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />  
+            - #{{ __('general_content.line_trans_key') }} {{ $Task->OrderLines->label }}
+            @if( $Task->OrderLines->product_id && $Task->OrderLines->product->drawing_file)
+            -  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->Component->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+            @endif
+            - #{{ $Task->id }} {{ __('general_content.task_detail_trans_key') }}  {{ $Task->label }}
+          </h3>
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
               <i class="fas fa-minus"></i>
@@ -106,13 +115,17 @@
             </div>
             <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
               <h3 class="text-primary">
-                <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  /> 
-                @if( $Task->OrderLines->product_id && $Task->OrderLines->Product->drawing_file)
-                  <!-- Drawing link -->
-                  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->OrderLines->Product->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
-                @endif
-                  - {{ __('general_content.task_trans_key') }}  #{{ $Task->id }} {{ $Task->service['label'] }} 
+                {{ __('general_content.task_trans_key') }}  #{{ $Task->id }} {{ $Task->service['label'] }} 
               </h3>
+              @if( $Task->component_id && $Task->Component->drawing_file)
+                <h5 class="text-secondary">
+                  {{__('general_content.component_trans_key') }} : {{ $Task->Component->code }} <x-ButtonTextView route="{{ route('products.show', ['id' => $Task->component_id])}}" />
+                  <!-- Drawing link -->
+                  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->Component->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                </h5>
+              @endif
+              
+              
               <hr>
               <div class="row">
                 @if($Task->service->type == 1 or  $Task->service->type == 7)

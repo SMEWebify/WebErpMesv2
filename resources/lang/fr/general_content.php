@@ -493,6 +493,7 @@ return [
     'repots_setting_trans_key'                 => 'Paramètre de rapports',
     'visa_trans_key'                           => 'Visa',
     'select_to_export_trans_key'               => 'Sélectionnez pour exporter',
+    'line_trans_key'                           => 'Ligne',
     
     'problem_description_trans_key'            => 'Description du problème',
     'proposal_description_trans_key'           => 'Description de la proposition',
