@@ -52,7 +52,7 @@ class TaskStatu extends Component
         // Organiser les données pour la timeline
         $this->timelineData = [];
 
-        // Ajouter les événements s'il y en a
+        // Ajouter une commande s'il y en a
         foreach ($this->Task->purchaseLines as $purchaseLine) {
 
             $this->timelineData[] = [
@@ -62,17 +62,19 @@ class TaskStatu extends Component
                 'details' => $purchaseLine->GetPrettyCreatedAttribute(),
             ];
 
-            foreach ($purchaseLine->purchaseReceiptLines as $receipt) {
-                $this->timelineData[] = [
-                    'date' => $receipt->created_at->format('d M Y'),
-                    'icon' => 'fas fa-calendar-alt  bg-warning',
-                    'content' => __('general_content.po_receipt_trans_key') ." " . $receipt->label ." - ".  __('general_content.qty_reciept_trans_key') .":". $receipt->receipt_qty,
-                    'details' => $receipt->GetPrettyCreatedAttribute(),
-                ];
+            if (!is_null($purchaseLine->purchaseReceiptLines)) {
+                foreach ($purchaseLine->purchaseReceiptLines as $receipt) {
+                    $this->timelineData[] = [
+                        'date' => $receipt->created_at->format('d M Y'),
+                        'icon' => 'fas fa-calendar-alt  bg-warning',
+                        'content' => __('general_content.po_receipt_trans_key') ." " . $receipt->label ." - ".  __('general_content.qty_reciept_trans_key') .":". $receipt->receipt_qty,
+                        'details' => $receipt->GetPrettyCreatedAttribute(),
+                    ];
+                }
             }
         }
 
-        // Ajouter l'opportunité initiale
+        // Ajouter la task initiale
         $this->timelineData[] = [
             'date' => $this->Task->created_at->format('d M Y'),
             'icon' => 'fa fa-tags bg-primary',
@@ -80,7 +82,7 @@ class TaskStatu extends Component
             'details' => $this->Task->GetPrettyCreatedAttribute(),
         ];
 
-            // Trier le tableau par date
+        // Trier le tableau par date
         usort($this->timelineData, function ($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
         });
