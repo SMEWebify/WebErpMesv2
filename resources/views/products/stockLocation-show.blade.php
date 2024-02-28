@@ -32,6 +32,7 @@
                     <th>{{__('general_content.id_trans_key') }}</th>
                     <th>{{ __('general_content.user_management_trans_key') }}</th>
                     <th>{{ __('general_content.product_trans_key') }}</th>
+                    <th></th>
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <!--<th>Qty reserve</th>-->
                     <th>{{ __('general_content.qty_mini_trans_key') }}</th>
@@ -47,6 +48,7 @@
                     <td>{{ $StockLocationsProduct->code }}</td>
                     <td>{{ $StockLocationsProduct->UserManagement['name'] }}</td>
                     <td>{{ $StockLocationsProduct->Product['label'] }}</td>
+                    <td><x-ButtonTextView route="{{ route('products.show', ['id' => $StockLocationsProduct->Product['id']]) }}" /></td>
                     <td>{{ $StockLocationsProduct->getCurrentStockMove() }}</td>
                     <!--<td>{{ $StockLocationsProduct->reserve_qty }}</td>-->
                     <td>{{ $StockLocationsProduct->mini_qty }}</td>
@@ -111,6 +113,7 @@
                     <th>{{__('general_content.id_trans_key') }}</th>
                     <th>{{ __('general_content.user_management_trans_key') }}</th>
                     <th>{{ __('general_content.product_trans_key') }}</th>
+                    <th></th>
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <!--<th>Qty reserve</th>-->
                     <th>{{ __('general_content.qty_mini_trans_key') }}</th>

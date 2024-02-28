@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Products;
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Planning\Task;
@@ -13,6 +14,7 @@ use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
+use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\UpdateProductsRequest;
 
 class ProductsController extends Controller
@@ -32,8 +34,10 @@ class ProductsController extends Controller
     public function show($id)
     {
         $Product = Products::findOrFail($id);
+        $userSelect = User::select('id', 'name')->get();
         $status_id = Status::select('id')->orderBy('order')->first();
         $ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
+        $StockLocationsProducts = StockLocationProducts::where('products_id', $id)->get(); 
         $TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
         $BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
                                                                             ->orWhere('type', '=', 3)
@@ -52,6 +56,7 @@ class ProductsController extends Controller
         $nextUrl = route('products.show', ['id' => $Product->id+1]);
 
         return view('products/products-show', [
+            'userSelect' => $userSelect,
             'Product' => $Product,
             'status_id' => $status_id,
             'ProductSelect' => $ProductSelect,
@@ -63,6 +68,7 @@ class ProductsController extends Controller
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'SupplierSelect' =>  $SupplierSelect,
+            'StockLocationsProducts' =>  $StockLocationsProducts,
         ]);
     }
 

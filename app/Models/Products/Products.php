@@ -69,7 +69,12 @@ class Products extends Model
 
     public function Stock_location_product()
     {
-        return $this->hasMany(StockLocationProducts::class, 'stock_location_products');
+        return $this->hasMany(StockLocationProducts::class, 'products_id');
+    }
+
+    public function StockLocationProductCount()
+    {
+        return  $this->Stock_location_product()->count();
     }
 
     public function Task()
