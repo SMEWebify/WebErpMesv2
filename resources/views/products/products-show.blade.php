@@ -380,7 +380,7 @@
                 </div>
                 <div class="card-body">
                   @if($Product->picture)
-                      <img src="{{ asset('/images/products/'. $Product->picture) }}" alt="Product Image">
+                      <img src="{{ asset('/images/products/'. $Product->picture) }}" alt="Product Image" style="width: 100%;">
                   @endif
                   <form action="{{ route('products.update.image') }}" method="POST" enctype="multipart/form-data">
                     @csrf
