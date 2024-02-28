@@ -38,9 +38,11 @@
                     <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'. $Task->service->picture) }}">
                   @endif
                 </div>
+                @if($Task->service->type == 1 or  $Task->service->type == 7)
                 <div class="col-12 col-sm-3">
                   <x-adminlte-info-box title="{{ __('general_content.total_time_trans_key') }}" text="{{ $Task->getTotalLogTime() }} h" icon="fa fa-stopwatch" theme="warning"/>
                 </div>
+                @endif
                 <div class="col-12 col-sm-3">
                   <x-adminlte-info-box title="{{ __('general_content.finish_part_qty_trans_key') }}" text="{{ $Task->getTotalLogGoodQt() }} item(s)" icon="fa fa-database" theme="success"/>
                 </div>
@@ -51,24 +53,53 @@
               <div class="row">
                 <div class="col-12">
                   <h4>{{ __('general_content.logs_activity_trans_key') }}</h4>   
-                  @forelse ($taskActivities as $taskActivitie)
-                        @if($taskActivitie->type == 1)
-                          <p class="lead">{{ $taskActivitie->user->name }} - {{ __('general_content.set_to_start_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
-                        @elseif ($taskActivitie->type == 2)
-                        <p class="text-primary">{{ $taskActivitie->user->name }} - {{ __('general_content.set_to_end_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
-                        @elseif ($taskActivitie->type == 3)
-                        <p class="text-info">{{ $taskActivitie->user->name }} - {{ __('general_content.set_to_finish_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
-                        @elseif ($taskActivitie->type == 4)
-                          <p class="text-success">{{ $taskActivitie->user->name }} - {{ __('general_content.declare_finish_trans_key') }} <strong>{{ $taskActivitie->good_qt }}</strong> {{ __('general_content.part_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
-                        @elseif ($taskActivitie->type == 5)
-                          <p class="text-danger">{{ $taskActivitie->user->name }} - {{ __('general_content.declare_rejected_trans_key') }} <strong>{{ $taskActivitie->bad_qt }}</strong> {{ __('general_content.part_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
+                  @if($Task->service->type == 1 or  $Task->service->type == 7)
+                    @forelse ($taskActivities as $taskActivitie)
+                          @if($taskActivitie->type == 1)
+                            <p class="lead">{{ $taskActivitie->user->name }} - {{ __('general_content.set_to_start_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
+                          @elseif ($taskActivitie->type == 2)
+                          <p class="text-primary">{{ $taskActivitie->user->name }} - {{ __('general_content.set_to_end_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
+                          @elseif ($taskActivitie->type == 3)
+                          <p class="text-info">{{ $taskActivitie->user->name }} - {{ __('general_content.set_to_finish_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
+                          @elseif ($taskActivitie->type == 4)
+                            <p class="text-success">{{ $taskActivitie->user->name }} - {{ __('general_content.declare_finish_trans_key') }} <strong>{{ $taskActivitie->good_qt }}</strong> {{ __('general_content.part_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
+                          @elseif ($taskActivitie->type == 5)
+                            <p class="text-danger">{{ $taskActivitie->user->name }} - {{ __('general_content.declare_rejected_trans_key') }} <strong>{{ $taskActivitie->bad_qt }}</strong> {{ __('general_content.part_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
+                          @endif
+                          <hr>
+                    @empty
+                      <p>
+                        {{ __('general_content.no_activity_trans_key') }} 
+                      </p>
+                    @endforelse
+                  @else
+                    <div class="timeline timeline-inverse">
+                      @php
+                          $previousDate = null;
+                      @endphp
+            
+                      @foreach($timelineData as $item)
+                        @if ($item['date'] != $previousDate)
+                        <div class="time-label">
+                            <span class="bg-info">{{ $item['date'] }}</span>
+                        </div>
                         @endif
-                        <hr>
-                  @empty
-                    <p>
-                      {{ __('general_content.no_activity_trans_key') }} 
-                    </p>
-                  @endforelse
+                        <div>
+                            <i class="{{ $item['icon'] }}"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="far fa-clock"></i> {{ $item['details'] }}</span>
+                                <h3 class="timeline-header">{{ $item['content'] }}</h3>
+                            </div>
+                        </div>
+                        @php
+                          $previousDate = $item['date'];
+                        @endphp
+                    @endforeach
+                      <div>
+                        <i class="far fa-clock bg-gray"></i>
+                      </div>
+                    </div>
+                  @endif
                   <!-- /.row -->
                 </div>
               </div>
@@ -84,28 +115,34 @@
               </h3>
               <hr>
               <div class="row">
-                @if($lastTaskActivities)
-                  <div class="col-2 ">
-                    <a class="btn btn-app bg-success @if($lastTaskActivities->type == 1 || $lastTaskActivities->type == 3) disabled @endif " wire:click="StartTimeTask({{$Task->id}})">
-                      <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
-                    </a>
-                  </div>
-                  <div class="col-2 ">
-                    <a class="btn btn-app bg-warning @if($lastTaskActivities->type == 2 || $lastTaskActivities->type == 3) disabled @endif " wire:click="EndTimeTask({{$Task->id}})">
-                      <i class="fas fa-{{ __('general_content.pause_trans_key') }}"></i> {{ __('general_content.pause_trans_key') }}
-                    </a>
-                  </div>
-                  <div class="col-2">
-                    <a class="btn btn-app bg-danger @if($lastTaskActivities->type == 3) disabled @endif " wire:click="EndTask({{$Task->id}})">
-                      <i class="fas fa-stop"></i> {{ __('general_content.end_trans_key') }}
-                    </a>
-                  </div>
+                @if($Task->service->type == 1 or  $Task->service->type == 7)
+                  @if($lastTaskActivities)
+                    <div class="col-2 ">
+                      <a class="btn btn-app bg-success @if($lastTaskActivities->type == 1 || $lastTaskActivities->type == 3) disabled @endif " wire:click="StartTimeTask({{$Task->id}})">
+                        <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
+                      </a>
+                    </div>
+                    <div class="col-2 ">
+                      <a class="btn btn-app bg-warning @if($lastTaskActivities->type == 2 || $lastTaskActivities->type == 3) disabled @endif " wire:click="EndTimeTask({{$Task->id}})">
+                        <i class="fas fa-{{ __('general_content.pause_trans_key') }}"></i> {{ __('general_content.pause_trans_key') }}
+                      </a>
+                    </div>
+                    <div class="col-2">
+                      <a class="btn btn-app bg-danger @if($lastTaskActivities->type == 3) disabled @endif " wire:click="EndTask({{$Task->id}})">
+                        <i class="fas fa-stop"></i> {{ __('general_content.end_trans_key') }}
+                      </a>
+                    </div>
+                  @else
+                    <div class="col-2 ">
+                      <a class="btn btn-app bg-success" wire:click="StartTimeTask({{$Task->id}})">
+                        <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
+                      </a>
+                    </div>
+                  @endif
                 @else
-                  <div class="col-2 ">
-                    <a class="btn btn-app bg-success" wire:click="StartTimeTask({{$Task->id}})">
-                      <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
-                    </a>
-                  </div>
+                <div class="col-2 ">
+                  <a class="btn btn-app bg-success" href="{{ route('purchases.request') }}" >{{ __('general_content.new_purchase_document_trans_key') }}</a>
+                </div>
                 @endif
               </div>
               <hr>
@@ -194,7 +231,7 @@
                     </p>
                   </div>
                 </div>
-                
+                @if($Task->service->type == 1 or  $Task->service->type == 7)
                 <div class="row">
                   <div class="col-4">
                     <p class="text-sm">{{ __('general_content.setting_time_trans_key') }}
@@ -212,6 +249,7 @@
                     </p>
                   </div>
                 </div>
+                @endif
               </div>
               <div class="row">
                 <div class="col-12">

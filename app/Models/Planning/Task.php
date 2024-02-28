@@ -15,6 +15,7 @@ use App\Models\Methods\MethodsTools;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
 use App\Models\Planning\TaskActivities;
+use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Methods\MethodsRessources;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,6 +84,11 @@ class Task extends Model
     public function OrderLines()
     {
         return $this->belongsTo(OrderLines::class, 'order_lines_id');
+    }
+
+    public function purchaseLines()
+    {
+        return $this->hasMany(PurchaseLines::class, 'tasks_id');
     }
 
     public function StockMove()

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
@@ -22,10 +23,11 @@ class TaskStatu extends Component
     public $lastTaskActivities;
 
     public $search = '';
-    public $Factory = []; 
     public $user_id ;
 
-    
+    public $timelineData = [];
+
+
     public $addGoodQt = 0;
     public $addBadQt = 0;
     public $not_recalculate = true;
@@ -46,6 +48,42 @@ class TaskStatu extends Component
         $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
         $this->Task = Task::with('OrderLines.order')->find($this->search);
        // $this->end_date = $this->Task->end_date;
+
+        // Organiser les données pour la timeline
+        $this->timelineData = [];
+
+        // Ajouter les événements s'il y en a
+        foreach ($this->Task->purchaseLines as $purchaseLine) {
+
+            $this->timelineData[] = [
+                'date' => $purchaseLine->created_at->format('d M Y'),
+                'icon' => 'fas fa-calendar-alt  bg-success',
+                'content' => __('general_content.purchase_trans_key') ." ". $purchaseLine->purchase->code ." - ".  __('general_content.qty_reciept_trans_key') .":". $purchaseLine->receipt_qty ."/". $purchaseLine->qty ,
+                'details' => $purchaseLine->GetPrettyCreatedAttribute(),
+            ];
+
+            foreach ($purchaseLine->purchaseReceiptLines as $receipt) {
+                $this->timelineData[] = [
+                    'date' => $receipt->created_at->format('d M Y'),
+                    'icon' => 'fas fa-calendar-alt  bg-warning',
+                    'content' => __('general_content.po_receipt_trans_key') ." " . $receipt->label ." - ".  __('general_content.qty_reciept_trans_key') .":". $receipt->receipt_qty,
+                    'details' => $receipt->GetPrettyCreatedAttribute(),
+                ];
+            }
+        }
+
+        // Ajouter l'opportunité initiale
+        $this->timelineData[] = [
+            'date' => $this->Task->created_at->format('d M Y'),
+            'icon' => 'fa fa-tags bg-primary',
+            'content' => "Task créée",
+            'details' => $this->Task->GetPrettyCreatedAttribute(),
+        ];
+
+            // Trier le tableau par date
+        usort($this->timelineData, function ($a, $b) {
+            return strtotime($b['date']) - strtotime($a['date']);
+        });
     }
 
     public function render()

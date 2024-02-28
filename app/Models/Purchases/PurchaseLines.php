@@ -8,6 +8,7 @@ use App\Models\Purchases\Purchases;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Products\StockLocation;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Accounting\AccountingAllocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -47,6 +48,11 @@ class PurchaseLines extends Model
     public function purchase()
     {
         return $this->belongsTo(Purchases::class, 'purchases_id');
+    }
+
+    public function purchaseReceiptLines()
+    {
+        return $this->hasMany(PurchaseReceiptLines::class, 'purchase_line_id');
     }
 
     public function unit()

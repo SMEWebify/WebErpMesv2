@@ -165,13 +165,13 @@ class OpportunitiesController extends Controller
             ];
         }
 
-                // Ajouter l'opportunité initiale
-                $timelineData[] = [
-                    'date' => $opportunite->created_at->format('d M Y'),
-                    'icon' => 'fa fa-tags bg-primary',
-                    'content' => "Opportunité créée",
-                    'details' => $opportunite->GetPrettyCreatedAttribute(),
-                ];
+        // Ajouter l'opportunité initiale
+        $timelineData[] = [
+            'date' => $opportunite->created_at->format('d M Y'),
+            'icon' => 'fa fa-tags bg-primary',
+            'content' => "Opportunité créée",
+            'details' => $opportunite->GetPrettyCreatedAttribute(),
+        ];
 
          // Trier le tableau par date
         usort($timelineData, function ($a, $b) {

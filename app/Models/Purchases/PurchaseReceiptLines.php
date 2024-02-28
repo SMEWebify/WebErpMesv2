@@ -16,7 +16,6 @@ class PurchaseReceiptLines extends Model
         'purchase_line_id',
         'ordre',
         'receipt_qty',
-
     ];
 
     public function purchaseReceipt()
