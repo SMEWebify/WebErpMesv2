@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Products;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Products\Stocks;
+use App\Events\OrderLineUpdated;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use App\Models\Workflow\OrderLines;
@@ -73,14 +74,12 @@ class StockLocationProductsController extends Controller
         //if we are delivered all part
         if($OrderLine->delivered_remaining_qty == 0){
             $OrderLine->delivery_status = 3;
-            // update order statu info
-            // we must be check if all entry are delivered
-            //Orders::where('id',$OrderLine->orders_id)->update(['statu'=>2]);
+            event(new OrderLineUpdated($OrderLine->id));
         }
         else{
             $OrderLine->delivery_status = 2;
             // update order statu info
-            Orders::where('id',$OrderLine->orders_id)->update(['statu'=>3]);
+            event(new OrderLineUpdated($OrderLine->id));
         }
         $OrderLine->save();
 

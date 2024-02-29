@@ -53,7 +53,7 @@
                 <select class="form-control @error('accounting_vats_id') is-invalid @enderror" name="accounting_vats_id" id="accounting_vats_id"  wire:model.live="accounting_vats_id">
                     <option value="" >{{ __('general_content.select_vat_trans_key') }}</option>
                     @foreach ($VATSelect as $item)
-                        <option value="{{ $item->id }}" @if($item->default) selected @endif >{{ $item->label }}</option>
+                        <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @endforeach
                 </select>
             </div>
