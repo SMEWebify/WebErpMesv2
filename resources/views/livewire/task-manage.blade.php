@@ -309,7 +309,7 @@
                                     @endif
                                 @endif
                             </td>
-                            <td>{{ $BOMline->Component['code'] }}</td>
+                            <td class="bg-{{ $BOMline->Component->getColorStockStatu() }} color-palette">{{ $BOMline->Component['code'] }}</td> 
                             <td><x-ButtonTextView route="{{ route('products.show', ['id' => $BOMline->component_id])}}" /></td>
                             <td>{{ $BOMline->qty }}</td>
                             <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>

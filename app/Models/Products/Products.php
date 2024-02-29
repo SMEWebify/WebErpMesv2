@@ -77,6 +77,28 @@ class Products extends Model
         return  $this->Stock_location_product()->count();
     }
 
+    public function getColorStockStatu()
+    {
+        $stocks = $this->Stock_location_product;
+        $colorStatu = 'danger';
+        foreach ($stocks as $stock) {
+            $currentStock = $stock->getCurrentStockMove();
+            $minQty = $stock->mini_qty;
+
+            if ($currentStock < $minQty) {
+                return 'danger';
+            }
+            elseif($currentStock == $minQty) {
+                $colorStatu = 'warning';
+            }
+            elseif($currentStock > $minQty) {
+                $colorStatu = 'success';
+            }
+        }
+
+        return  $colorStatu;
+    }
+
     public function Task()
     {
         return $this->hasMany(Task::class, 'products_id')->orderBy('ordre');
