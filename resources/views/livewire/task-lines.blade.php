@@ -104,11 +104,14 @@
                                     - {{ $Task->Component['label'] }}
                                 @endif
                             </td>
-                            <td>
-                                @if($Task->component_id ) 
+                            
+                            @if($Task->component_id ) 
+                            <td class="bg-{{ $Task->Component->getColorStockStatu() }} color-palette">
                                 <x-ButtonTextView route="{{ route('products.show', ['id' => $Task->component_id])}}" />
-                                @endif
                             </td>
+                            @else
+                            <td></td>
+                            @endif
                             <td @if($Task->methods_services_id ) style="background-color: {{ $Task->service['color'] }};" @endif >
 
                                 @if($Task->methods_services_id )

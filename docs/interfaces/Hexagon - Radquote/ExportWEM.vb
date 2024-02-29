@@ -1,9 +1,9 @@
 ﻿'Variables from RADQuote Constants
-Dim ServerIp As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_IP","wem").Value.StringValue
-Dim ServerPort As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_port","wem").Value.StringValue
-Dim DatabaseName As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Nom_base","wem").Value.StringValue
-Dim DatabaseUser As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Utilisateur","wem").Value.StringValue
-Dim DatabasePassword As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Mot_de_passe","wem").Value.StringValue
+Dim ServerIp As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_IP","127.0.0.1").Value.StringValue
+Dim ServerPort As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_port","3306").Value.StringValue
+Dim DatabaseName As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Nom_base","erp").Value.StringValue
+Dim DatabaseUser As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Utilisateur","root").Value.StringValue
+Dim DatabasePassword As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Mot_de_passe","").Value.StringValue
 
 
 'Database table names
@@ -141,7 +141,7 @@ If MyCon.State = ConnectionState.Open Then
     customerSiteReader.Close()
 	
 	'READ ADDRESS INFORMATION FROM WEM TABLE
-	Dim addressQueryString As String = "SELECT * FROM " & CompanieAddressesTable & " WHERE " & """companies_id""" & "='" & customerSiteId & "'" 
+	Dim addressQueryString As String = "SELECT * FROM " & CompanieAddressesTable & " WHERE " & """companies_id""" & "='" & customerId & "'" 
     Dim addressCommand As New Odbc.OdbcCommand(addressQueryString, MyCon)
     Dim addressReader As Odbc.OdbcDataReader = addressCommand.ExecuteReader()
 
@@ -153,7 +153,7 @@ If MyCon.State = ConnectionState.Open Then
     addressReader.Close()
 	
 	'READ CONTACT INFORMATION FROM WEM TABLE
-	Dim contactQueryString As String = "SELECT * FROM " & CompaniesContactTable & " WHERE " & """companies_id""" & "='" & customerSiteId & "'" 
+	Dim contactQueryString As String = "SELECT * FROM " & CompaniesContactTable & " WHERE " & """companies_id""" & "='" & customerId & "'" 
     Dim contactCommand As New Odbc.OdbcCommand(contactQueryString, MyCon)
     Dim contactReader As Odbc.OdbcDataReader = contactCommand.ExecuteReader()
 
@@ -175,6 +175,9 @@ If MyCon.State = ConnectionState.Open Then
 	End While
 	userCreatorGetterReader.Close()
 
+	Dim QuoteGuid As Guid = Guid.NewGuid()
+	Dim QuoteGuidAsString As String = QuoteGuid.ToString()
+
 	'CREATE QUOTE
 	Dim quoteQueryString As String = "INSERT INTO " & QuoteTable & "(" & _
 		QuoteUUID & "," & _
@@ -191,9 +194,9 @@ If MyCon.State = ConnectionState.Open Then
 		QuoteDeliveriesId & "," & _
 		QuoteComment & ")" & _
 		" VALUES ('" & _
-		Guid.NewGuid() & "','" & _
-		Quote.Name & "','" & _
-		Quote.Name & "','" & _
+		QuoteGuidAsString & "','" & _
+		ToSqlString(Quote.Name) & "','" & _
+		ToSqlString(Quote.Name) & "','" & _
 		ToSqlString(GetQuoteReference()) & "','" & _
 		QuoteCustomerId & "," & _
 		QuoteCustomerContactId & "," & _
