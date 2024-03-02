@@ -57,9 +57,21 @@
                     <td>{{ $StockMove->UserManagement['name'] }}</td>
                     <td>{{ $StockMove->GetPrettyCreatedAttribute() }}</td>
                     <td>{{ $StockMove->qty }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                    @if($StockMove->order_line_id)
+                      <x-OrderButton id="{{ $StockMove->OrderLine->order['id'] }}" code="{{ $StockMove->OrderLine->order['code'] }}"  />
+                    @endif
+                    </td>
+                    <td>
+                    @if($StockMove->task_id)
+
+                    @endif
+                    </td>
+                    <td>
+                    @if($StockMove->purchase_receipt_line_id)
+
+                    @endif
+                    </td>
                     <td>
                       @if(1 == $StockMove->typ_move ){{__('general_content.inventories_trans_key') }} @endif
                       @if(2 == $StockMove->typ_move ){{__('general_content.task_allocation_trans_key') }} @endif

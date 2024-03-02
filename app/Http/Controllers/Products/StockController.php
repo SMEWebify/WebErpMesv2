@@ -10,6 +10,7 @@ use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
+use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\StoreStockRequest;
 use App\Http\Requests\Products\UpdateStockRequest;
 
@@ -29,6 +30,7 @@ class StockController extends Controller
         $userSelect = $this->SelectDataService->getUsers();
         $LastStock =  DB::table('stocks')->orderBy('id', 'desc')->first();
         $StockLocationList = StockLocation::all();
+        $StockLocationProductList = StockLocationProducts::all();
 
         //Select order line where not delivered or partialy delivered
         $InternalOrderRequestsLineslist = OrderLines::where(
@@ -46,6 +48,7 @@ class StockController extends Controller
             'userSelect' => $userSelect,
             'LastStock' => $LastStock,
             'StockLocationList' => $StockLocationList,
+            'StockLocationProductList' => $StockLocationProductList,
             'InternalOrderRequestsLineslist' => $InternalOrderRequestsLineslist
         ]);
     }

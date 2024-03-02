@@ -106,7 +106,41 @@ class StockLocationProductsController extends Controller
      * @param $request
      * @return View
      */
-    public function entry(StoreStockMoveRequest $request)
+    public function entryFromInternalOrder(StoreStockMoveRequest $request)
+    {
+        $stockMove = StockMove::create(['user_id' => $request->user_id, 
+                                        'qty' => $request->qty,
+                                        'stock_location_products_id' =>  $request->stock_location_products_id, 
+                                        'order_line_id' =>$request->order_line_id,
+                                        'typ_move' => $request->typ_move,
+                                        'component_price' => $request->component_price,
+                                    ]);
+
+        // update order line info
+        //same function from deliverys request livewire controler
+        $OrderLine = OrderLines::find($request->order_line_id);
+        $OrderLine->delivered_qty =  $request->qty;
+        $OrderLine->delivered_remaining_qty = $OrderLine->delivered_remaining_qty - $request->qty;
+        //if we are delivered all part
+        if($OrderLine->delivered_remaining_qty == 0){
+            $OrderLine->delivery_status = 3;
+            event(new OrderLineUpdated($OrderLine->id));
+        }
+        else{
+            $OrderLine->delivery_status = 2;
+            // update order statu info
+            event(new OrderLineUpdated($OrderLine->id));
+        }
+        $OrderLine->save();
+
+        return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+   }
+
+       /**
+     * @param $request
+     * @return View
+     */
+    public function entryFrom(StoreStockMoveRequest $request)
     {
         $stockMove = StockMove::create($request->only('user_id', 
                                                         'qty',

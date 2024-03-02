@@ -190,7 +190,7 @@
                         <form  method="POST" action="{{ route('products.stockline.store.from.internal.order') }}" class="form-horizontal">
                           @csrf
                           <input type="hidden" name="products_id" id="products_id" value="{{ $InternalOrderRequestsLines->product_id }}">
-                          <input type="hidden" name="code" id="code" value="STOCK-{{ $InternalOrderRequestsLines->label }}">
+                          <input type="hidden" name="code" id="code" value="STOCK|{{ $InternalOrderRequestsLines->order['code'] }}|{{ $InternalOrderRequestsLines->id }}|{{ now()->format('Y-m-d') }}">
                           <input type="hidden" name="stock_qty" id="stock_qty" value="{{ $InternalOrderRequestsLines->delivered_remaining_qty }}" >
                           <input type="hidden" name="mini_qty" id="mini_qty" value="{{ $InternalOrderRequestsLines->delivered_remaining_qty }}" >
                           <input type="hidden" name="component_price" id="component_price" value="{{ $InternalOrderRequestsLines->selling_price }}" >
@@ -210,14 +210,43 @@
                                 <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
                                 @endforelse
                               </select>
-                              <x-adminlte-button class="btn-flat" type="submit" label="Add" theme="success" icon="fas fa-lg fa-save"/>
+                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
                             </div>
                             @else
                               {{ __('general_content.no_product_in_line_stock_trans_key') }}
                             @endif
                           </div>
-                          
                         </form>
+                        <form  method="POST" action="{{ route('products.stockline.entry.from.internal.order') }}" class="form-horizontal">
+                          @csrf
+                          
+                          <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
+                          <input type="hidden" name="qty" id="qty" value="{{ $InternalOrderRequestsLines->delivered_remaining_qty }}" >
+                          <input type="hidden" name="order_line_id" id="order_line_id" value="{{ $InternalOrderRequestsLines->id }}" >
+                          <input type="hidden" name="component_price" id="component_price" value="{{ $InternalOrderRequestsLines->selling_price }}" >
+                          <input type="hidden" name="typ_move" id="typ_move" value="12" >
+                          <div class="form-group">
+                            @if($InternalOrderRequestsLines->product_id)
+                            <label for="stock_location_products_id">{{ __('general_content.stock_location_product_list_trans_key') }}</label>
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                              </div>
+                              <select class="form-control" name="stock_location_products_id" id="stock_location_products_id">
+                                @forelse ($StockLocationProductList as $StockLocationProduct)
+                                    @if($StockLocationProduct->products_id == $InternalOrderRequestsLines->product_id)
+                                      <option value="{{ $StockLocationProduct->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocationProduct->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
+                                    @endif
+                                  @empty
+                                <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
+                                @endforelse
+                              </select>
+                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_entry_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
+                            </div>
+                            @else
+                              {{ __('general_content.no_product_in_line_stock_trans_key') }}
+                            @endif
+                          </div>
                       </td>
                   </tr>
                   @empty

@@ -93,7 +93,7 @@ class SelectDataService
     
     public function getFamilies()
     {
-        return MethodsFamilies::select('id', 'label')->orderBy('ordre')->get();
+        return MethodsFamilies::select('id', 'label')->orderBy('label')->get();
     }
 
     public function getRessources()
