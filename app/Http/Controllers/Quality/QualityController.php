@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Quality;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Services\SelectDataService;
 use App\Models\Quality\QualityCause;
 use App\Models\Quality\QualityAction;
 use App\Models\Quality\QualityFailure;
@@ -16,29 +17,39 @@ use App\Models\Quality\QualityNonConformity;
 
 class QualityController extends Controller
 {
+    
+    protected $SelectDataService;
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+    
     /**
      * @return View
      */
     public function index()
     {
+
+        $userSelect = $this->SelectDataService->getUnitsSelect();
+        $ServicesSelect = $this->SelectDataService->getServices();
+        $CompaniesSelect = Companies::select('id', 'label')->orderBy('label')->get();
+        $CausesSelect = $this->SelectDataService->getQualityCause();
+        $FailuresSelect = $this->SelectDataService->getQualityFailure();
+        $CorrectionsSelect = $this->SelectDataService->getQualityCorrection();
+        $NonConformitysSelect = $this->SelectDataService->getQualityNonConformity();
+
         $QualityActions = QualityAction::orderBy('id')->paginate(10);
-        $LastAction =  DB::table('quality_actions')->orderBy('id', 'desc')->first();
         $QualityCauses = QualityCause::All();
-        $CausesSelect = QualityCause::select('id', 'label')->orderBy('label')->get();
         $QualityFailures = QualityFailure::All();
-        $FailuresSelect = QualityFailure::select('id', 'label')->orderBy('label')->get();
         $QualityCorrections = QualityCorrection::All();
-        $CorrectionsSelect = QualityCorrection::select('id', 'label')->orderBy('label')->get();
         $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
         $QualityNonConformitys = QualityNonConformity::orderBy('id')->paginate(10);
-        $NonConformitysSelect = QualityNonConformity::select('id', 'code')->orderBy('code')->get();
-        $LastNonConformity =  DB::table('quality_non_conformities')->orderBy('id', 'desc')->first();
         $QualityControlDevices = QualityControlDevice::orderBy('id')->paginate(10);
         $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
+
+        $LastAction =  DB::table('quality_actions')->orderBy('id', 'desc')->first();
+        $LastNonConformity =  DB::table('quality_non_conformities')->orderBy('id', 'desc')->first();
         $LastDerogation =  DB::table('quality_derogations')->orderBy('id', 'desc')->first();
-        $userSelect = User::select('id', 'name')->get();
-        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('label')->get();
-        $CompaniesSelect = Companies::select('id', 'label')->orderBy('label')->get();
         
         //*************bar**********************
 

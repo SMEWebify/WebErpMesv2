@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Times;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Times\TimesAbsence;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Times\TimesBanckHoliday;
@@ -13,6 +14,12 @@ use App\Models\Times\TimesImproductTime;
 
 class TimesController extends Controller
 {
+    protected $SelectDataService;
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+    
     /**
      * @return View
      */
@@ -24,7 +31,7 @@ class TimesController extends Controller
         $TimesMachineEvents = TimesMachineEvent::All();
         $TimesMachineEventsSelect = TimesMachineEvent::select('id', 'label')->orderBy('label')->get();
         $user = Auth::user();
-        $userSelect = User::select('id', 'name')->get();
+        $userSelect = $this->SelectDataService->getUnitsSelect();
         
         return view('times/times-index',[
             'TimesAbsences' => $TimesAbsences,

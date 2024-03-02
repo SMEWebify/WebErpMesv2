@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Accounting;
 
 use Illuminate\Http\Request;
+use App\Services\SelectDataService;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingAllocation;
@@ -11,6 +12,13 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class AccountingController extends Controller
 {
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
      * @return View
      */
@@ -21,7 +29,7 @@ class AccountingController extends Controller
         $PaymentConditions = AccountingPaymentConditions::All();
         $PaymentMethods = AccountingPaymentMethod::All();
         $VATs = AccountingVat::All();
-        $VATSelect = AccountingVat::select('id', 'label')->orderBy('label')->get();
+        $VATSelect = $this->SelectDataService->getVATSelect();
 
         return view('accounting/accounting-index', [
             'Allocations' => $Allocations,

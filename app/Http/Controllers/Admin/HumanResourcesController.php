@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsSection;
 use App\Models\Admin\UserEmploymentContracts;
@@ -14,14 +15,21 @@ use App\Http\Requests\Admin\UpdateUserEmploymentContractRequest;
 
 class HumanResourcesController extends Controller
 {
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
      * @return View
      */
     public function index()
     {
         $Users = User::orderBy('id')->paginate(20);
-        $userSelect = User::select('id', 'name')->get();
-        $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
+        $userSelect = $this->SelectDataService->getUsers();
+        $SectionsSelect = $this->SelectDataService->getSection();
 
         return view('admin/human-resources-index', [
             'Users' => $Users,
@@ -36,8 +44,8 @@ class HumanResourcesController extends Controller
     public function ShowUser($id)
     {
         $User = User::find($id);
-        $userSelect = User::select('id', 'name')->get();
-        $SectionsSelect = MethodsSection::select('id', 'label')->orderBy('label')->get();
+        $userSelect = $this->SelectDataService->getUsers();
+        $SectionsSelect  = $this->SelectDataService->getSection();;
         $UserEmploymentContracts = UserEmploymentContracts::where('user_id', $id)->get();
         $Roles = Role::all();
         return view('admin/users-show', [

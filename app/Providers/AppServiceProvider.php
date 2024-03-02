@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Planning\Task;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\OrderLines;
+use App\Services\SelectDataService;
 use Illuminate\Pagination\Paginator;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Purchases\PurchaseLines;
@@ -24,7 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(SelectDataService::class, function ($app) {
+            return new SelectDataService();
+        });
     }
 
     /**

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
@@ -21,6 +22,13 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class QuotesController extends Controller
 {
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
      * @return View
      */
@@ -51,12 +59,12 @@ class QuotesController extends Controller
      */
     public function show(Quotes $id)
     {
-        $CompanieSelect = Companies::select('id', 'code','label')->where('active', 1)->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
-        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
-        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
+        $CompanieSelect = $this->SelectDataService->getCompanies();
+        $AddressSelect = $this->SelectDataService->getAddress();
+        $ContactSelect = $this->SelectDataService->getContact();
+        $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
+        $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
+        $AccountingDeleveriesSelect =  $this->SelectDataService->getAccountingDelivery();
         $QuoteCalculator = new QuoteCalculator($id);
         $totalPrice = $QuoteCalculator->getTotalPrice();
         $subPrice = $QuoteCalculator->getSubTotal();

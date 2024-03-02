@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Products\Stocks;
 use App\Models\Products\Products;
 use Illuminate\Support\Facades\DB;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
 use App\Models\Products\StockLocationProducts;
@@ -15,13 +16,18 @@ use App\Http\Requests\Products\UpdateStockLocationRequest;
 
 class StockLocationController extends Controller
 {
+    protected $SelectDataService;
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
     //
     public function show($id)
     {
         $StockLocation = StockLocation::findOrFail($id);
         $Stock = Stocks::findOrFail($StockLocation->stocks_id);
         $StockLocationsProducts = StockLocationProducts::where('stock_locations_id', '=', $id)->get();
-        $userSelect = User::select('id', 'name')->get();
+        $userSelect = $this->SelectDataService->getUsers();
         $ProductSelect = Products::select('id', 'code')->get();
         $LastStockLocationProduct =  DB::table('stock_location_products')->orderBy('id', 'desc')->first();
         

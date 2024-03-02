@@ -8,6 +8,7 @@ use App\Models\Workflow\Orders;
 use App\Services\OrderCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
@@ -18,6 +19,13 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class OrdersController extends Controller
 {
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
      * @return View
      */
@@ -47,12 +55,12 @@ class OrdersController extends Controller
      */
     public function show(Orders $id)
     {
-        $CompanieSelect = Companies::select('id', 'code','label')->where('active', 1)->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-        $AccountingConditionSelect = AccountingPaymentConditions::select('id', 'code','label')->get();
-        $AccountingMethodsSelect = AccountingPaymentMethod::select('id', 'code','label')->get();
-        $AccountingDeleveriesSelect = AccountingDelivery::select('id', 'code','label')->get();
+        $CompanieSelect = $this->SelectDataService->getCompanies();
+        $AddressSelect = $this->SelectDataService->getAddress();
+        $ContactSelect = $this->SelectDataService->getContact();
+        $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
+        $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
+        $AccountingDeleveriesSelect = $this->SelectDataService->getAccountingDelivery();
         $OrderCalculator = new OrderCalculator($id);
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();

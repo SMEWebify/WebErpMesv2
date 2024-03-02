@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Factory;
-use App\Models\Admin\Announcements;
 use Spatie\Permission\Models\Role;
+use App\Models\Admin\Announcements;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Accounting\AccountingVat;
@@ -14,13 +15,20 @@ use App\Http\Requests\Admin\StoreAnnouncementRequest;
 
 class FactoryController extends Controller
 {
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
      * @return View
      */
     public function index()
     {
         $AnnouncementLines = Announcements::get()->All();
-        $VATSelect  =  AccountingVat::select('id', 'label')->orderBy('rate')->get();
+        $VATSelect = $this->SelectDataService->getVATSelect();
         $Roles = Role::all();
         $Permissions = Permission::all();
         $Factory = Factory::first();

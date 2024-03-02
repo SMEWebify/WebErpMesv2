@@ -9,10 +9,12 @@ use App\Models\Planning\Status;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\PurchaseCalculator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
@@ -21,10 +23,16 @@ use App\Models\Purchases\PurchaseQuotationLines;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
-use App\Models\Purchases\PurchaseInvoice;
 
 class PurchasesController extends Controller
 {
+    
+    protected $SelectDataService;
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+    
     /**
      * @return View
      */

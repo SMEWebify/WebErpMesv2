@@ -6,11 +6,19 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Services\SelectDataService;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
 
 class CompaniesController extends Controller
 {
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
      * @return View
      */
@@ -37,7 +45,7 @@ class CompaniesController extends Controller
     public function show($id)
     {
         $Companie = Companies::findOrFail($id);
-        $userSelect = User::select('id', 'name')->get();
+        $userSelect = $this->SelectDataService->getUsers();
         $previousUrl = route('companies.show', ['id' => $Companie->id-1]);
         $nextUrl = route('companies.show', ['id' => $Companie->id+1]);
 

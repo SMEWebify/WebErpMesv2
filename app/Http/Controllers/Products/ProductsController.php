@@ -9,6 +9,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Models\Companies\Companies;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
@@ -18,7 +19,13 @@ use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\UpdateProductsRequest;
 
 class ProductsController extends Controller
-{
+{    
+    protected $SelectDataService;
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
      * @return view
      */
@@ -34,9 +41,15 @@ class ProductsController extends Controller
     public function show($id)
     {
         $Product = Products::findOrFail($id);
-        $userSelect = User::select('id', 'name')->get();
+        
+        $userSelect = $this->SelectDataService->getUsers();
+        $ProductSelect = $this->SelectDataService->getProductsSelect();
+        $ServicesSelect = $this->SelectDataService->getServices();
+        $UnitsSelect = $this->SelectDataService->getFamilies();
+        $FamiliesSelect = $this->SelectDataService->getFamilies();
+        $SupplierSelect = $this->SelectDataService->getSupplier();
+
         $status_id = Status::select('id')->orderBy('order')->first();
-        $ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
         $StockLocationsProducts = StockLocationProducts::where('products_id', $id)->get(); 
         $TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
         $BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
@@ -47,10 +60,7 @@ class ProductsController extends Controller
                                                                             ->orWhere('type', '=', 8)
                                                                             ->orderBy('ordre')->get();
 
-        $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
-        $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
-        $FamiliesSelect = MethodsFamilies::select('id', 'label')->orderBy('label')->get();
-        $SupplierSelect = Companies::select('id', 'label')->orderBy('label')->where('statu_supplier', 2)->get();
+
         
         $previousUrl = route('products.show', ['id' => $Product->id-1]);
         $nextUrl = route('products.show', ['id' => $Product->id+1]);

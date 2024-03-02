@@ -12,6 +12,7 @@ use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
@@ -28,7 +29,13 @@ use App\Models\Accounting\AccountingPaymentConditions;
 use App\Http\Requests\Workflow\UpdateOpportunityRequest;
 
 class OpportunitiesController extends Controller
-{
+{ 
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
     /**
      * @return View
      */
@@ -50,9 +57,9 @@ class OpportunitiesController extends Controller
      */
     public function show(Opportunities $id)
     {  
-        $CompanieSelect = Companies::select('id', 'code','label')->where('active', 1)->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
+        $CompanieSelect = $this->SelectDataService->getCompanies();
+        $AddressSelect = $this->SelectDataService->getAddress();
+        $ContactSelect = $this->SelectDataService->getContact();
         $Activities = OpportunitiesActivitiesLogs::where('opportunities_id', $id->id)->orderBy('id')->get();
         $Events = OpportunitiesEventsLogs::where('opportunities_id', $id->id)->orderBy('id')->get();
         $previousUrl = route('opportunities.show', ['id' => $id->id-1]);
