@@ -23,7 +23,7 @@ class CreatePurchaseReceiptsTable extends Migration
             $table->string('delivery_note_number')->nullable();
 			$table->integer('statu')->default(1);
             #1 = In progress
-            #2 = Close
+            #2 = Stock
 			$table->integer('user_id');
 			$table->text('comment', 65535)->nullable();
             $table->timestamps();

@@ -13,12 +13,14 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\PurchaseCalculator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Products\StockLocation;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
+use App\Models\Products\StockLocationProducts;
 use App\Models\Purchases\PurchaseQuotationLines;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
@@ -227,6 +229,9 @@ class PurchasesController extends Controller
      */
     public function showReceipt(PurchaseReceipt $id)
     {   
+        
+        $StockLocationList = StockLocation::all();
+        $StockLocationProductList = StockLocationProducts::all();
         $previousUrl = route('purchase.receipt.show', ['id' => $id->id-1]);
         $nextUrl = route('purchase.receipt.show', ['id' => $id->id+1]);
 
@@ -234,6 +239,8 @@ class PurchasesController extends Controller
             'PurchaseReceipt' => $id,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'StockLocationList' =>  $StockLocationList,
+            'StockLocationProductList' =>  $StockLocationProductList,
         ]);
     }
 

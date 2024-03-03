@@ -9,6 +9,7 @@ use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
+use App\Models\Products\StockMove;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
 use App\Models\Quality\QualityNonConformity;
@@ -19,6 +20,8 @@ class TaskStatu extends Component
     protected $paginationTheme = 'bootstrap';
     
     public $Task;
+
+    public $taskStockMoves;
     public $taskActivities;
     public $lastTaskActivities;
 
@@ -44,6 +47,7 @@ class TaskStatu extends Component
     {
         $this->user_id = Auth::id();
         $this->search = $id;
+        $this->taskStockMoves = StockMove::where('task_id', $this->search)->get();
         $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
         $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
         $this->Task = Task::with('OrderLines.order')->find($this->search);
@@ -51,6 +55,46 @@ class TaskStatu extends Component
 
         // Organiser les données pour la timeline
         $this->timelineData = [];
+
+        foreach ($this->taskStockMoves as $taskStockMove){
+            $this->timelineData[] = [
+                'date' => $taskStockMove->created_at->format('d M Y'),
+                'icon' => 'fas fa-list  bg-primary',
+                'content' => __('general_content.new_entry_stock_trans_key') .' x'. $taskStockMove->qty .'- '. __('general_content.purchase_order_reception_trans_key'),
+                'details' => $taskStockMove->GetPrettyCreatedAttribute(),
+            ];
+        }
+
+        foreach ($this->taskActivities as $taskActivitie){
+            if($taskActivitie->type == 1){
+                $class = '';
+                $content =  $taskActivitie->user->name .' - '. __('general_content.set_to_start_trans_key');
+            }
+            elseif ($taskActivitie->type == 2){
+                $class = 'primary';
+                $content =  $taskActivitie->user->name .' - '. __('general_content.set_to_end_trans_key');
+            }
+            elseif ($taskActivitie->type == 3){
+                $class = 'info';
+                $content =  $taskActivitie->user->name .' - '. __('general_content.set_to_finish_trans_key');
+            }
+            elseif ($taskActivitie->type == 4){
+                $class = 'success';
+                $content =  $taskActivitie->user->name .' - '. __('general_content.declare_finish_trans_key') .' '. $taskActivitie->good_qt .' '.  __('general_content.part_trans_key');
+            }
+            elseif ($taskActivitie->type == 5){
+                $class = 'danger';
+                $content =  $taskActivitie->user->name .' - '. __('general_content.declare_rejected_trans_key') .' '. $taskActivitie->bad_qt .' '. __('general_content.part_trans_key');
+            }
+
+            $this->timelineData[] = [
+                'date' => $taskActivitie->created_at->format('d M Y'),
+                'icon' => 'fas fa-calendar-alt  bg-'. $class,
+                'content' => $content,
+                'details' => $taskActivitie->GetPrettyCreatedAttribute(),
+            ];
+        }
+
 
         // Ajouter une commande s'il y en a
         foreach ($this->Task->purchaseLines as $purchaseLine) {

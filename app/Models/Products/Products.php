@@ -6,6 +6,7 @@ use App\Models\File;
 use App\Models\Planning\Task;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
@@ -75,6 +76,14 @@ class Products extends Model
     public function StockLocationProductCount()
     {
         return  $this->Stock_location_product()->count();
+    }
+
+    public function getTotalStockMove()
+    {
+        $stockLocations = $this->Stock_location_product;
+        return $stockLocations->sum(function ($stockLocation) {
+            return $stockLocation->getCurrentStockMove();
+        });
     }
 
     public function getColorStockStatu()
@@ -201,6 +210,23 @@ class Products extends Model
     public function Quotelines()
     {
         return $this->hasMany(QuoteLines::class);
+    }
+
+    public function OrderLines()
+    {
+        return $this->hasMany(OrderLines::class);
+    }
+
+    public function undeliveredOrderLines()
+    {
+        return $this->hasMany(OrderLines::class, 'product_id')
+                    ->where('delivery_status', '=', 1)
+                    ->orwhere('delivery_status', '=', 2);
+    }
+
+    public function getTotalUndeliveredQtyAttribute()
+    {
+        return $this->undeliveredOrderLines->sum('delivered_remaining_qty');
     }
 
     // Relationship with the files associated with the Quote

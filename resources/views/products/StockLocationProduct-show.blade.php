@@ -46,7 +46,7 @@
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <th>{{ __('general_content.order_trans_key') }}</th>
                     <th>{{ __('general_content.task_trans_key') }}</th>
-                    <th>{{__('general_content.purchase_trans_key') }}</th>
+                    <th>{{__('general_content.po_receipt_trans_key') }}</th>
                     <th>{{ __('general_content.type_trans_key') }}</th>
                     <th>{{ __('general_content.price_trans_key') }}</th>
                   </tr>
@@ -64,12 +64,15 @@
                     </td>
                     <td>
                     @if($StockMove->task_id)
-
+                      <a href="{{ route('production.task.statu.id', ['id' => $StockMove->task_id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
                     @endif
                     </td>
                     <td>
                     @if($StockMove->purchase_receipt_line_id)
-
+                      <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipt.show', ['id' => $StockMove->purchaseReceiptLines->purchase_receipt_id])}}">
+                        <i class="fas fa-folder"></i>
+                        {{ $StockMove->purchaseReceiptLines->purchaseReceipt->code }}
+                      </a>
                     @endif
                     </td>
                     <td>
@@ -100,7 +103,7 @@
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <th>{{ __('general_content.order_trans_key') }}</th>
                     <th>{{ __('general_content.task_trans_key') }}</th>
-                    <th>{{__('general_content.purchase_trans_key') }}</th>
+                    <th>{{__('general_content.po_receipt_trans_key') }}</th>
                     <th>{{ __('general_content.type_trans_key') }}</th>
                     <th>{{ __('general_content.price_trans_key') }}</th>
                   </tr>

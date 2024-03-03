@@ -33,10 +33,7 @@
                         <td>{{ $PurchasesReceipt->purchase_receipt_lines_count }}</td>
                         <td>
                             @if(1 == $PurchasesReceipt->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                            @if(2 == $PurchasesReceipt->statu )  <span class="badge badge-warning">{{ __('general_content.ordered_trans_key') }}</span>@endif
-                            @if(3 == $PurchasesReceipt->statu )  <span class="badge badge-success">{{ __('general_content.partly_received_trans_key') }}</span>@endif
-                            @if(4 == $PurchasesReceipt->statu )  <span class="badge badge-danger">{{ __('general_content.rceived_trans_key') }}</span>@endif
-                            @if(5 == $PurchasesReceipt->statu )  <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span>@endif
+                            @if(2 == $PurchasesReceipt->statu )  <span class="badge badge-warning">{{ __('general_content.stock_trans_key') }}</span>@endif
                         </td>
                         <td>{{ $PurchasesReceipt->GetPrettyCreatedAttribute() }}</td>
                         <td>

@@ -8,6 +8,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Planning\TaskActivities;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchaseReceiptLines;
@@ -141,6 +142,15 @@ class PurchasesWaintingReceipt extends Component
                 if($StatusUpdate->id){
                     $Task = Task::where('id',$PurchaseLines->tasks_id)->update(['status_id'=>$StatusUpdate->id]);
                 }
+
+                //create entry qty int task
+                TaskActivities::create([
+                    'task_id'=> $PurchaseLines->tasks_id,
+                    'user_id'=>$this->user_id,
+                    'type'=>'4',
+                    'good_qt'=>$PurchaseLines->qty,
+                    'comment'=>'',
+                ]);
             } 
 
             return redirect()->route('purchase.receipt.show', ['id' => $ReceiptCreated->id])->with('success', 'Successfully created new receipt');

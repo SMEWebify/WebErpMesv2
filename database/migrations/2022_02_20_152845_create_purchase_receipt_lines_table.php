@@ -19,6 +19,7 @@ class CreatePurchaseReceiptLinesTable extends Migration
             $table->integer('purchase_line_id');
 			$table->integer('ordre');
             $table->integer('receipt_qty')->default(0);
+            $table->integer('stock_location_products_id')->nullable();
             $table->timestamps();
         });
     }

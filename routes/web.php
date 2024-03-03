@@ -218,6 +218,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'products', 'middleware' => ['auth', 'check.factory']], function () {
         //index product route
         Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
+
         //product route 
         Route::post('/create', 'App\Http\Controllers\Products\ProductsController@store')->name('products.store');
         Route::post('/supplier', 'App\Http\Controllers\Products\ProductsController@StoreSupplier')->name('products.supplier.create');
@@ -227,6 +228,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/drawing', 'App\Http\Controllers\Products\ProductsController@StoreDrawing')->name('products.update.drawing');
         Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
         Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
+
         // Stock routes
         Route::group(['prefix' => 'Stock'], function () {
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');
@@ -246,10 +248,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::group(['prefix' => 'stock/location/product'], function () {
             Route::post('/create', 'App\Http\Controllers\Products\StockLocationProductsController@store')->name('products.stockline.store');
             Route::post('/create/internal-order', 'App\Http\Controllers\Products\StockLocationProductsController@storeFromInternalOrder')->name('products.stockline.store.from.internal.order');
+            Route::post('/create/purchase-order', 'App\Http\Controllers\Products\StockLocationProductsController@storeFromPurchaseOrder')->name('products.stockline.store.from.purchase.order');
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@update')->name('products.stockline.update');
             Route::get('/{id}', 'App\Http\Controllers\Products\StockLocationProductsController@show')->name('products.stockline.show');
             Route::post('/entry', 'App\Http\Controllers\Products\StockLocationProductsController@entry')->name('products.stockline.entry');
             Route::post('/entry/internal-order', 'App\Http\Controllers\Products\StockLocationProductsController@entryFromInternalOrder')->name('products.stockline.entry.from.internal.order');
+            Route::post('/entry/purchase-order', 'App\Http\Controllers\Products\StockLocationProductsController@entryFromPurchaseOrder')->name('products.stockline.entry.from.purchase.order');
             Route::post('/sorting', 'App\Http\Controllers\Products\StockLocationProductsController@sorting')->name('products.stockline.sorting');
         });
         

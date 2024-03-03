@@ -6,8 +6,9 @@ use App\Models\User;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Purchases\PurchaseReceiptLines;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class StockLocationProducts extends Model
 {
@@ -35,6 +36,11 @@ class StockLocationProducts extends Model
     public function StockLocation()
     {
         return $this->belongsTo(StockLocation::class, 'stock_locations_id');
+    }
+
+    public function PurchaseReceiptLines()
+    {
+        return $this->hasMany(PurchaseReceiptLines::class);
     }
 
     public function StockMove()

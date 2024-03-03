@@ -12,6 +12,7 @@ use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
 use App\Models\Products\StockLocationProducts;
+use App\Models\Purchases\PurchaseReceiptLines;
 use App\Http\Requests\Products\StoreStockMoveRequest;
 use App\Http\Requests\Products\StoreStockLocationProductsRequest;
 use App\Http\Requests\Products\UpdateStockLocationProductsRequest;
@@ -86,6 +87,33 @@ class StockLocationProductsController extends Controller
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
     }
 
+    public function storeFromPurchaseOrder(StoreStockLocationProductsRequest $request)
+    {
+        $StockLocationProduct = StockLocationProducts::create($request->only('code',
+                                                                'user_id', 
+                                                                'stock_locations_id',
+                                                                'products_id', 
+                                                                'mini_qty',
+                                                                'end_date',
+                                                                'addressing',
+                                            ));
+
+        $stockMove = StockMove::create(['user_id' => $request->user_id, 
+                                        'qty' => $request->mini_qty,
+                                        'stock_location_products_id' =>   $StockLocationProduct->id,  
+                                        'task_id' =>$request->task_id,
+                                        'purchase_receipt_line_id' =>$request->purchase_receipt_line_id,
+                                        'typ_move' =>3,
+                                        'component_price' => $request->component_price,
+                                    ]);
+    
+            /* // update stock if line of purchase order line*/
+            PurchaseReceiptLines::where('id',$request->purchase_receipt_line_id,)->update(['stock_location_products_id'=>$StockLocationProduct->id]);
+    
+
+        return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+    }
+
     /**
      * @param $request
      * @return View
@@ -136,7 +164,28 @@ class StockLocationProductsController extends Controller
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
    }
 
-       /**
+    /**
+     * @param $request
+     * @return View
+     */
+    public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
+    {
+        $stockMove = StockMove::create(['user_id' => $request->user_id, 
+                                        'qty' => $request->qty,
+                                        'stock_location_products_id' =>  $request->stock_location_products_id, 
+                                        'task_id' =>$request->task_id,
+                                        'purchase_receipt_line_id' =>$request->purchase_receipt_line_id,
+                                        'typ_move' => $request->typ_move,
+                                        'component_price' => $request->component_price,
+                                    ]);
+
+        /* // update stock if line of purchase order line*/
+        PurchaseReceiptLines::where('id',$request->purchase_receipt_line_id,)->update(['stock_location_products_id'=>$request->stock_location_products_id]);
+
+        return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+   }
+
+    /**
      * @param $request
      * @return View
      */
