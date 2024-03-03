@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Products;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Products\Stocks;
+use App\Models\Products\Products;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;

@@ -39,7 +39,7 @@ class CreateOrderLinesTable extends Migration
             $table->integer('delivery_status')->default(1);
             #1 = Not delivered
             #2 = Partly delivered
-            #3 = Delivered
+            #3 = Delivered or Stock
             $table->integer('invoice_status')->default(1);
             #1 = Not invoiced
             #2 = Partly invoiced
