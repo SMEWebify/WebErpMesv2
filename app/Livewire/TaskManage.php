@@ -159,7 +159,7 @@ class TaskManage extends Component
                                                                                                             ->OrwhereRelation('service', 'type', 6)
                                                                                                             ->OrwhereRelation('service', 'type', 8)
                                                                                                             ->get();
-        $this->ComponentSelect = Products::select('id', 'code','label', 'methods_services_id')->where('methods_services_id', '=', $this->methods_services_id)->with('service')->whereRelation('service', 'type', 8)->get();
+        $this->ComponentSelect = Products::select('id', 'code','label', 'methods_services_id')->with('service')->whereRelation('service', 'type', 8)->get();
         $this->ServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
 
     }

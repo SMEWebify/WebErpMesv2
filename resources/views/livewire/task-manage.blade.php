@@ -295,7 +295,7 @@
                     <tbody>
                         @forelse($Line->BOM as $BOMline)
                         <tr>
-                            <td>#{{ $BOMline->id }}</td>
+                            <td><a href="{{ route('production.task.statu.id', ['id' => $BOMline->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $BOMline->id }}</a></td>
                             <td>{{ $BOMline->ordre }}</td>
                             <td>{{ $BOMline->label }}</td>
                             <td @if($BOMline->methods_services_id ) style="background-color: {{ $BOMline->service['color'] }};" @endif >
