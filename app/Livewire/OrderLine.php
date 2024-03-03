@@ -53,7 +53,7 @@ class OrderLine extends Component
     protected $rules = [
         'ordre' =>'required|numeric|gt:0',
         'label'=>'required',
-        'qty'=>'required',
+        'qty'=>'required|min:1|not_in:0',
         'methods_units_id'=>'required',
         'selling_price'=>'required|numeric|gt:0',
         'discount'=>'required',
