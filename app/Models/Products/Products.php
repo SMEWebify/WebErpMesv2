@@ -4,6 +4,7 @@ namespace App\Models\Products;
 
 use App\Models\File;
 use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
@@ -217,16 +218,52 @@ class Products extends Model
         return $this->hasMany(OrderLines::class);
     }
 
+    //Get all oder line was not finished and not manufactured for define what is needed for create stock
     public function undeliveredOrderLines()
     {
         return $this->hasMany(OrderLines::class, 'product_id')
-                    ->where('delivery_status', '=', 1)
-                    ->orwhere('delivery_status', '=', 2);
+                ->where(function ($query) {
+                    $query->where('delivery_status', '=', 1)
+                            ->orWhere('delivery_status', '=', 2);
+                })
+                ->whereDoesntHave('Task');
+                #1 = Not delivered
+                #2 = Partly delivered
     }
 
-    public function getTotalUndeliveredQtyAttribute()
+    public function getTotalUndeliveredQtyWithoutTasksAttribute()
     {
         return $this->undeliveredOrderLines->sum('delivered_remaining_qty');
+    }
+
+    //Get all task line was not finished for define what is needed for create stock
+    public function unFinishedTaskLines()
+    {
+        $statuses = Status::whereIn('title', ['Open', 'Started', 'In progress'])->get();
+        $openStatusId = $statuses->where('title', 'Open')->first()->id ?? null;
+        $startedStatusId = $statuses->where('title', 'Started')->first()->id ?? null;
+        $inProgressStatusId = $statuses->where('title', 'In progress')->first()->id ?? null;
+
+        $query = $this->hasMany(Task::class, 'component_id')
+                ->whereIn('status_id', [$openStatusId, $startedStatusId, $inProgressStatusId])
+                ->whereNotNull('order_lines_id');
+
+
+                return $query;
+    }
+
+    public function getTotalUnFinishedTaskLinesQtyAttribute()
+    {
+        $totalQty = 0;
+
+        foreach ($this->unFinishedTaskLines as $task) {
+            // Assurez-vous que la relation orderLine existe et n'est pas vide
+            if ($task->orderLine) {
+                $totalQty += $task->qty * $task->orderLine->delivered_remaining_qty;
+            }
+        }
+    
+        return $this->unFinishedTaskLines->sum('qty');
     }
 
     // Relationship with the files associated with the Quote

@@ -280,7 +280,7 @@
 
   <div class="card card-warning collapsed-card">
     <div class="card-header">
-      <h3 class="card-title">test</h3>
+      <h3 class="card-title">{{ __('general_content.current_stock_trans_key') }}</h3>
       <div class="card-tools">
         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
           <i class="fas fa-plus"></i>

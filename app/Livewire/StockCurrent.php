@@ -9,7 +9,7 @@ class StockCurrent extends Component
 {
 
     public $produitsAvecStock = [];
-    public $showProductsWithStock = false;
+    public $stockAndNeed = true;
 
     public function mount()
     {

@@ -21,6 +21,7 @@ return [
     'finished_task_trans_key'                  => 'Finished (all the tasks are finished)',
     'delivered_trans_key'                      => 'Delivered',
     'partly_delivered_trans_key'               => 'Partly delivered',
+    'partly_stored_trans_key'                  => 'Partially stored',
     'not_delivered_trans_key'                  => 'Not delivered',
     'chargeable_trans_key'                     => 'Chargeable',
     'not_chargeable_trans_key'                 => 'Not chargeable',
@@ -697,6 +698,13 @@ return [
     'new_entry_stock_trans_key'                => 'New entry stock line',
     'new_sorting_stock_trans_key'              => 'New sorting stock line',
     'no_product_in_line_stock_trans_key'       => 'No product attached to the order line',
+    'current_stock_trans_key'                  => 'Current stock',
+    'total_stock_trans_key'                    => 'Total stock',
+    'view_stock_list_trans_key'                => 'View stock list',
+    'stock_requested_trans_key'                => 'Show stock/requested',
+    'requested_trans_key'                      => 'Requested',
+    
+    
     
     'inventory_trans_key'                      => 'Inventory',
 

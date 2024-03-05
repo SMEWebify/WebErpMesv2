@@ -291,7 +291,7 @@
                                     @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
                                 @else
                                     @if(3 == $Order->statu )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
-                                    @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.stock_trans_key') }}</span>@endif
+                                    @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
                                 @endif
                                 </td>
                             <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>

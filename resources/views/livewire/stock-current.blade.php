@@ -3,11 +3,11 @@
         <div class="card-body">
             <div class="form-row">
                 <div class="form-group col-md-2">
-                    <button class="btn btn-success" wire:click="showStock">Afficher la liste des stocks</button>
+                    <button class="btn btn-success" wire:click="showStock">{{ __('general_content.view_stock_list_trans_key') }}</button>
                 </div>
                 <div class="form-group col-md-4">
-                    <label for="showProductsWithStock">Afficher les produits avec stock</label>
-                    <input type="checkbox" id="showProductsWithStock" wire:model.live="showProductsWithStock" style=" display:flex; align-items:center;">
+                    <label for="stockAndNeed">{{ __('general_content.stock_requested_trans_key') }}</label>
+                    <input type="checkbox" id="stockAndNeed" wire:model.live="stockAndNeed" style=" display:flex; align-items:center;">
                 </div>
             </div>
         </div>
@@ -20,7 +20,13 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>{{ __('general_content.qty_trans_key') }}</th>
+                <th>
+                    @if(!$stockAndNeed)
+                        {{ __('general_content.qty_trans_key') }}
+                    @else
+                        {{ __('general_content.qty_trans_key') }} / {{ __('general_content.requested_trans_key') }} ({{ __('general_content.order_line_trans_key') }})  ({{ __('general_content.task_trans_key') }})
+                    @endif
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -28,18 +34,20 @@
         <tr>
             <td><x-ButtonTextView route="{{ route('products.show', ['id' => $produit->id]) }}" /></td>
             <td>{{ $produit->label }}</td>
-            <td>Stock total: {{ $produit->StockLocationProductCount() }}</td>
+            <td>{{ __('general_content.total_stock_trans_key') }}: {{ $produit->StockLocationProductCount() }}</td>
             <td>
-                @if($showProductsWithStock)
-                    @foreach($produit->Stock_location_product as $StockLocationsProduct)
+                @if(!$stockAndNeed)
+                    @forelse($produit->Stock_location_product as $StockLocationsProduct)
                     <a href="{{ route('products.stockline.show', ['id' => $StockLocationsProduct->id])}}" class="btn btn-sm btn-success">{{ $StockLocationsProduct->code}} </a><br/>
-                    @endforeach
+                    @empty
+                    -
+                    @endforelse
                 @endif
             </td>
 
             <td>
-                @if($showProductsWithStock)
-                    @foreach($produit->Stock_location_product as $StockLocationsProduct)
+                @if(!$stockAndNeed)
+                    @forelse($produit->Stock_location_product as $StockLocationsProduct)
                         @if($StockLocationsProduct->getCurrentStockMove() > $StockLocationsProduct->mini_qty)
                         <li class="bg-success color-palette">
                         @elseif($StockLocationsProduct->getCurrentStockMove() < $StockLocationsProduct->mini_qty)
@@ -49,9 +57,11 @@
                         @endif
                         {{ $StockLocationsProduct->getCurrentStockMove() }}
                     </li>
-                    @endforeach
+                    @empty
+                    -
+                    @endforelse
                 @else
-                {{ $produit->getTotalStockMove() }} / {{ $produit->getTotalUndeliveredQtyAttribute() }} 
+                {{ $produit->getTotalStockMove() }} / <strong>{{ $produit->getTotalUndeliveredQtyWithoutTasksAttribute() +  $produit->getTotalUnFinishedTaskLinesQtyAttribute() }}</strong>  ({{ $produit->getTotalUndeliveredQtyWithoutTasksAttribute() }}) ({{ $produit->getTotalUnFinishedTaskLinesQtyAttribute() }})
                 @endif
             </td>
         </tr>
@@ -64,7 +74,13 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>{{ __('general_content.qty_trans_key') }}</th>
+                <th>
+                    @if(!$stockAndNeed)
+                        {{ __('general_content.qty_trans_key') }}
+                    @else
+                        {{ __('general_content.qty_trans_key') }} / {{ __('general_content.requested_trans_key') }} ({{ __('general_content.order_line_trans_key') }})  ({{ __('general_content.task_trans_key') }})
+                    @endif
+                </th>
             </tr>
         </tfoot>
     </table>

@@ -86,6 +86,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             <td>
                                 @if($OrderLine->order->type == 2)
                                     @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
+                                    @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
                                     @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
                                 @else
                                     @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
