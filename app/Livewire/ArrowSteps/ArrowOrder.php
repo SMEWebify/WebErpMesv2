@@ -9,11 +9,13 @@ use App\Models\Workflow\OrderLines;
 class ArrowOrder extends Component
 {
     public $OrderId;
+    public $OrderType;
     public $OrderStatu;
 
-    public function mount($OrderId, $OrderStatu) 
+    public function mount($OrderId, $OrderType, $OrderStatu) 
     {
         $this->OrderId = $OrderId;
+        $this->OrderType = $OrderType;
         $this->OrderStatu = $OrderStatu;
     }
 

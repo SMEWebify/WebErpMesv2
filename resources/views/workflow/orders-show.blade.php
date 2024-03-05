@@ -26,7 +26,7 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Order">
-        @livewire('arrow-steps.arrow-order', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu])
+        @livewire('arrow-steps.arrow-order', ['OrderId' => $Order->id, 'OrderType' => $Order->type, 'OrderStatu' => $Order->statu])
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')

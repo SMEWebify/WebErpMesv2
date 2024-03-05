@@ -286,9 +286,14 @@
                             <td>
                                 @if(1 == $Order->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
                                 @if(2 == $Order->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                                @if(3 == $Order->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
-                                @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
-                            </td>
+                                @if($Order->type == 1 )
+                                    @if(3 == $Order->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
+                                    @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
+                                @else
+                                    @if(3 == $Order->statu )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
+                                    @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.stock_trans_key') }}</span>@endif
+                                @endif
+                                </td>
                             <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
                             <td>
                                 <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
