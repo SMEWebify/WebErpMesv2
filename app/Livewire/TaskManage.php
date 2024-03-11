@@ -168,24 +168,26 @@ class TaskManage extends Component
     {
         if($this->idType == 'products_id'){
             $Line = Products::findOrFail($this->idLine);
-            $this->qty = 1 ;
+            //SMEWebify/WebErpMesv2/issues/328
+            //I'm not sure why I did that, I prefer to comment and not delete
+            //$this->qty = 1 ;
             $this->line_qty = 1;
             $Line->qty = 1;
         }
         elseif($this->idType == 'quote_lines_id'){
             $Line = Quotelines::findOrFail($this->idLine);
-            $this->qty = 1 ;
+            //$this->qty = 1 ;
             $this->line_qty = $Line->qty;
         }
         elseif($this->idType == 'order_lines_id'){
             $Line = OrderLines::findOrFail($this->idLine);
-            $this->qty = 1 ;
+            //$this->qty = 1 ;
             $this->line_qty = $Line->qty;
         }
         else{
             $Line = new stdClass();
             $Line->id = null;
-            $Line->qty = 1;
+            //$Line->qty = 1;
         }
 
         return view('livewire.task-manage',[

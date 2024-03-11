@@ -231,6 +231,7 @@ class Products extends Model
                 #2 = Partly delivered
     }
 
+    //Get sum from undeliveredOrderLines()
     public function getTotalUndeliveredQtyWithoutTasksAttribute()
     {
         return $this->undeliveredOrderLines->sum('delivered_remaining_qty');
@@ -244,26 +245,22 @@ class Products extends Model
         $startedStatusId = $statuses->where('title', 'Started')->first()->id ?? null;
         $inProgressStatusId = $statuses->where('title', 'In progress')->first()->id ?? null;
 
-        $query = $this->hasMany(Task::class, 'component_id')
+        return  $this->hasMany(Task::class, 'component_id')
                 ->whereIn('status_id', [$openStatusId, $startedStatusId, $inProgressStatusId])
                 ->whereNotNull('order_lines_id');
-
-
-                return $query;
     }
 
+    //Get sum from unFinishedTaskLines()
     public function getTotalUnFinishedTaskLinesQtyAttribute()
     {
         $totalQty = 0;
-
         foreach ($this->unFinishedTaskLines as $task) {
-            // Assurez-vous que la relation orderLine existe et n'est pas vide
-            if ($task->orderLine) {
-                $totalQty += $task->qty * $task->orderLine->delivered_remaining_qty;
+            if ($task->OrderLines) {
+                $totalQty += $task->qty * $task->OrderLines->delivered_remaining_qty;
             }
+            
         }
-    
-        return $this->unFinishedTaskLines->sum('qty');
+        return $totalQty;
     }
 
     // Relationship with the files associated with the Quote
