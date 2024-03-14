@@ -7,24 +7,25 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\Leads;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Models\Times\TimesAbsence;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Admin\Announcements;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
 use App\Models\Products\StockLocation;
+use Spatie\Permission\Traits\HasRoles;
 use App\Models\Planning\TaskActivities;
+use Illuminate\Notifications\Notifiable;
 use App\Models\Quality\QualityDerogation;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityControlDevice;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\Products\StockLocationProducts;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Permission\Traits\HasRoles;
-use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {

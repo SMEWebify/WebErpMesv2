@@ -1,6 +1,10 @@
 <div>
     <div class="card">
         <div class="card-body">
+            @if($stockAndNeed)
+            <x-InfocalloutComponent note="{{ __('general_content.current_stock_note_trans_key') }}"  />
+            <x-InfocalloutComponent note="{{ __('general_content.current_stock_note_2_trans_key') }}"  />
+            @endif
             <div class="form-row">
                 <div class="form-group col-md-2">
                     <button class="btn btn-success" wire:click="showStock">{{ __('general_content.view_stock_list_trans_key') }}</button>
@@ -45,6 +49,7 @@
                 @endif
             </td>
 
+            
             <td>
                 @if(!$stockAndNeed)
                     @forelse($produit->Stock_location_product as $StockLocationsProduct)
@@ -64,6 +69,15 @@
                 {{ $produit->getTotalStockMove() }} / <strong>{{ $produit->getTotalUndeliveredQtyWithoutTasksAttribute() +  $produit->getTotalUnFinishedTaskLinesQtyAttribute() }}</strong>  ({{ $produit->getTotalUndeliveredQtyWithoutTasksAttribute() }}) ({{ $produit->getTotalUnFinishedTaskLinesQtyAttribute() }})
                 @endif
             </td>
+
+            @if($stockAndNeed)
+            <td >
+                <a class="btn btn-primary btn-sm" wire:click="storeOrder({{ $produit->id }}, {{ $produit->getTotalUndeliveredQtyWithoutTasksAttribute() +  $produit->getTotalUnFinishedTaskLinesQtyAttribute() }})" href="#">
+                    <i class="fas fa-folder"></i>
+                    {{ __('general_content.new_order_trans_key') }}
+                </a>
+            </td>
+            @endif
         </tr>
         @endforeach
         

@@ -87,6 +87,7 @@ class Products extends Model
         });
     }
 
+    //https://github.com/SMEWebify/WebErpMesv2/issues/319
     public function getColorStockStatu()
     {
         $stocks = $this->Stock_location_product;
@@ -114,6 +115,7 @@ class Products extends Model
         return $this->hasMany(Task::class, 'products_id')->orderBy('ordre');
     }
 
+    //https://github.com/SMEWebify/WebErpMesv2/issues/313
     public function preferredSuppliers() {
         return $this->belongsToMany(Companies::class, 'products_preferred_suppliers', 'product_id', 'companies_id')->withTimestamps();
     }
@@ -219,6 +221,7 @@ class Products extends Model
     }
 
     //Get all oder line was not finished and not manufactured for define what is needed for create stock
+    //https://github.com/SMEWebify/WebErpMesv2/issues/321
     public function undeliveredOrderLines()
     {
         return $this->hasMany(OrderLines::class, 'product_id')
@@ -226,18 +229,23 @@ class Products extends Model
                     $query->where('delivery_status', '=', 1)
                             ->orWhere('delivery_status', '=', 2);
                 })
-                ->whereDoesntHave('Task');
+                ->whereDoesntHave('Task')
+                ->whereHas('order', function ($query) {
+                    $query->where('type', '=', 1);
+                });
                 #1 = Not delivered
                 #2 = Partly delivered
     }
 
     //Get sum from undeliveredOrderLines()
+    //https://github.com/SMEWebify/WebErpMesv2/issues/321
     public function getTotalUndeliveredQtyWithoutTasksAttribute()
     {
         return $this->undeliveredOrderLines->sum('delivered_remaining_qty');
     }
 
     //Get all task line was not finished for define what is needed for create stock
+    //https://github.com/SMEWebify/WebErpMesv2/issues/321
     public function unFinishedTaskLines()
     {
         $statuses = Status::whereIn('title', ['Open', 'Started', 'In progress'])->get();
@@ -251,6 +259,7 @@ class Products extends Model
     }
 
     //Get sum from unFinishedTaskLines()
+    //https://github.com/SMEWebify/WebErpMesv2/issues/321
     public function getTotalUnFinishedTaskLinesQtyAttribute()
     {
         $totalQty = 0;

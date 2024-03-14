@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
@@ -19,8 +20,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
+use App\Notifications\OrderNotification;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
+use Illuminate\Support\Facades\Notification;
 use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuoteLine extends Component
@@ -386,7 +389,10 @@ class QuoteLine extends Component
                 'quotes_id'=>$QuoteData->id, 
             ]);
 
-            
+            // notification for all user in database
+            $users = User::where('orders_notification', 1)->get();
+            Notification::send($users, new OrderNotification($OrdersCreated));
+
             Companies::where('id', $QuoteData->companies_id)->update(['statu_customer'=>3]);
 
             if($OrdersCreated){
