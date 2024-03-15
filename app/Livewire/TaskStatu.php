@@ -97,34 +97,37 @@ class TaskStatu extends Component
 
 
         // Ajouter une commande s'il y en a
-        foreach ($this->Task->purchaseLines as $purchaseLine) {
+        if(!is_null($this->Task)){
+            foreach ($this->Task->purchaseLines as $purchaseLine) {
 
-            $this->timelineData[] = [
-                'date' => $purchaseLine->created_at->format('d M Y'),
-                'icon' => 'fas fa-calendar-alt  bg-success',
-                'content' => __('general_content.purchase_trans_key') ." ". $purchaseLine->purchase->code ." - ".  __('general_content.qty_reciept_trans_key') .":". $purchaseLine->receipt_qty ."/". $purchaseLine->qty ,
-                'details' => $purchaseLine->GetPrettyCreatedAttribute(),
-            ];
+                $this->timelineData[] = [
+                    'date' => $purchaseLine->created_at->format('d M Y'),
+                    'icon' => 'fas fa-calendar-alt  bg-success',
+                    'content' => __('general_content.purchase_trans_key') ." ". $purchaseLine->purchase->code ." - ".  __('general_content.qty_reciept_trans_key') .":". $purchaseLine->receipt_qty ."/". $purchaseLine->qty ,
+                    'details' => $purchaseLine->GetPrettyCreatedAttribute(),
+                ];
 
-            if (!is_null($purchaseLine->purchaseReceiptLines)) {
-                foreach ($purchaseLine->purchaseReceiptLines as $receipt) {
-                    $this->timelineData[] = [
-                        'date' => $receipt->created_at->format('d M Y'),
-                        'icon' => 'fas fa-calendar-alt  bg-warning',
-                        'content' => __('general_content.po_receipt_trans_key') ." " . $receipt->label ." - ".  __('general_content.qty_reciept_trans_key') .":". $receipt->receipt_qty,
-                        'details' => $receipt->GetPrettyCreatedAttribute(),
-                    ];
+                if (!is_null($purchaseLine->purchaseReceiptLines)) {
+                    foreach ($purchaseLine->purchaseReceiptLines as $receipt) {
+                        $this->timelineData[] = [
+                            'date' => $receipt->created_at->format('d M Y'),
+                            'icon' => 'fas fa-calendar-alt  bg-warning',
+                            'content' => __('general_content.po_receipt_trans_key') ." " . $receipt->label ." - ".  __('general_content.qty_reciept_trans_key') .":". $receipt->receipt_qty,
+                            'details' => $receipt->GetPrettyCreatedAttribute(),
+                        ];
+                    }
                 }
             }
-        }
 
-        // Ajouter la task initiale
-        $this->timelineData[] = [
-            'date' => $this->Task->created_at->format('d M Y'),
-            'icon' => 'fa fa-tags bg-primary',
-            'content' => "Task créée",
-            'details' => $this->Task->GetPrettyCreatedAttribute(),
-        ];
+            // Ajouter la task initiale
+            $this->timelineData[] = [
+                'date' => $this->Task->created_at->format('d M Y'),
+                'icon' => 'fa fa-tags bg-primary',
+                'content' => "Task créée",
+                'details' => $this->Task->GetPrettyCreatedAttribute(),
+            ];
+            
+        }
 
         // Trier le tableau par date
         usort($this->timelineData, function ($a, $b) {
