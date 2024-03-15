@@ -170,7 +170,7 @@ class TaskManage extends Component
             $Line = Products::findOrFail($this->idLine);
             //SMEWebify/WebErpMesv2/issues/328
             //I'm not sure why I did that, I prefer to comment and not delete
-            //$this->qty = 1 ;
+            $this->qty = 1 ;
             $this->line_qty = 1;
             $Line->qty = 1;
         }
@@ -186,8 +186,9 @@ class TaskManage extends Component
         }
         else{
             $Line = new stdClass();
+            $this->line_qty = 1;
             $Line->id = null;
-            //$Line->qty = 1;
+            $Line->qty = 1;
         }
 
         return view('livewire.task-manage',[
