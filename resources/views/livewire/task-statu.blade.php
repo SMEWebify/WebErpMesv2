@@ -23,7 +23,7 @@
             <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />  
             - #{{ __('general_content.line_trans_key') }} {{ $Task->OrderLines->label }}
             @if( $Task->OrderLines->product_id && $Task->OrderLines->product->drawing_file)
-            -  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->Component->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+            -  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->OrderLines->product->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
             @endif
             - #{{ $Task->id }} {{ __('general_content.task_detail_trans_key') }}  {{ $Task->label }}
           </h3>
