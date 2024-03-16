@@ -70,7 +70,7 @@
                 @endif
             </td>
 
-            @if($stockAndNeed)
+            @if($stockAndNeed & ($produit->getTotalUndeliveredQtyWithoutTasksAttribute() +  $produit->getTotalUnFinishedTaskLinesQtyAttribute()) > 0)
             <td >
                 <a class="btn btn-primary btn-sm" wire:click="storeOrder({{ $produit->id }}, {{ $produit->getTotalUndeliveredQtyWithoutTasksAttribute() +  $produit->getTotalUnFinishedTaskLinesQtyAttribute() }})" href="#">
                     <i class="fas fa-folder"></i>
