@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Workflow\Orders;
 use App\Events\OrderLineUpdated;
+use App\Models\Products\StockMove;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Products\StockLocationProducts;
 
 class DeliverysRequest extends Component
 {
@@ -28,6 +30,7 @@ class DeliverysRequest extends Component
     public $DeliverysRequestsLineslist;
     public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
     public $updateLines = false;
+    public $RemoveFromStock = false;
     public $CompaniesSelect = [];
     public $data = [];
     public $qty = [];
@@ -175,6 +178,37 @@ class DeliverysRequest extends Component
                             $OrderLine->save();
                             // update order statu info
                             event(new OrderLineUpdated($OrderLine->id));
+                        }
+
+                        $TaskRelation = $OrderLine->Task()->get();
+
+                        if($this->RemoveFromStock && $OrderLine->product_id && $TaskRelation->isEmpty()){
+                            $quantityRemaining = $this->data[$key]['scumQty'];
+
+                            $StockLocationProduct = StockLocationProducts::where('products_id', $OrderLine->product_id)->get();
+                            foreach ($StockLocationProduct as $stock) {
+                                
+                                // Calculate the quantity to exit from this stock
+                                $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
+                    
+                                if($quantityToWithdraw != 0){
+                                    // Create a negative stock movement to record the stock issue
+                                    $stockMove = StockMove::create(['user_id' => Auth::id(),
+                                                                    'qty' => $quantityToWithdraw,
+                                                                    'stock_location_products_id' =>  $stock->id,  
+                                                                    'order_line_id' =>$OrderLine->id,
+                                                                    'typ_move' =>9,
+                                                                ]);
+                                }
+                    
+                                // Update remaining quantity
+                                $quantityRemaining -= $quantityToWithdraw;
+                    
+                                // Exit the loop if the requested quantity has been satisfied
+                                if ($quantityRemaining <= 0) {
+                                    break;
+                                }
+                            }
                         }
 
                         $this->ordre= $this->ordre+10;

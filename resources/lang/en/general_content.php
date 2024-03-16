@@ -703,6 +703,8 @@ return [
     'view_stock_list_trans_key'                => 'View stock list',
     'stock_requested_trans_key'                => 'Show stock/requested',
     'requested_trans_key'                      => 'Requested',
+    'remove_from_stock_trans_key'              => 'Remove from stock',
+    'remove_component_lines_stock_trans_key'   => 'Remove component lines automatically from stock',
     'current_stock_note_trans_key'             => 'The display of the requested outstanding includes unfinished order lines without task and tasks whose status is equal to: Open, Started, In progress',
     'current_stock_note_2_trans_key'           => 'Please note, creating an internal order will aim to replenish stock based on outstanding stock, however this may result in overstock if the action is carried out in duplicates with the normal flow.',
 

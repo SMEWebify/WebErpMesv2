@@ -119,7 +119,7 @@
                 <h3 class="card-title">{{__('general_content.new_entry_stock_trans_key') }}</h3>
               </div>
               <div class="card-body">
-                <form  method="POST" action="{{ route('products.stockline.entry') }}" class="form-horizontal">
+                <form  method="POST" action="{{ route('products.stockline.manual.entry') }}" class="form-horizontal">
                   @csrf
                   <div class="form-group">
                     <label for="typ_move">{{__('general_content.move_Type_trans_key') }}</label>
@@ -141,7 +141,7 @@
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-times"></i></span>
                       </div>
-                      <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" step=".001">
+                      <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" min="1" step=".001">
                       <input type="hidden" name="stock_location_products_id" id="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
                       <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
                     </div>
@@ -181,7 +181,7 @@
                       <div class="input-group-prepend">
                           <span class="input-group-text"><i class="fas fa-times"></i></span>
                       </div>
-                      <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" max="0" step=".001">
+                      <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" min="1" step=".001">
                       <input type="hidden" name="stock_location_products_id" id="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
                       <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
                     </div>

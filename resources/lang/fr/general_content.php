@@ -703,6 +703,8 @@ return [
     'view_stock_list_trans_key'                => 'Afficher la liste des stocks',
     'stock_requested_trans_key'                => 'Afficher stock/demandé',
     'requested_trans_key'                      => 'Demandé',
+    'remove_from_stock_trans_key'              => 'Retirer du stock',
+    'remove_component_lines_stock_trans_key'   => 'Supprimer automatiquement les lignes de composants du stock',
     'current_stock_note_trans_key'             => 'L\'affichage des encours demandés comprend les lignes de commandes non terminées sans tâche et les tâches dont le status est égale à : Ouvert, Commencé, Progression',
     'current_stock_note_2_trans_key'           => 'Attention, créer une commande interne aura pour but de refaire du stock basé sur l\'encours, cependant cela peux réaliser du surstock si l\'action est réalisée en doublons avec le flux normale.',
 

@@ -13,6 +13,7 @@ use App\Models\Products\StockMove;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
 use App\Models\Quality\QualityNonConformity;
+use App\Models\Products\StockLocationProducts;
 
 class TaskStatu extends Component
 {
@@ -57,12 +58,22 @@ class TaskStatu extends Component
         $this->timelineData = [];
 
         foreach ($this->taskStockMoves as $taskStockMove){
-            $this->timelineData[] = [
-                'date' => $taskStockMove->created_at->format('d M Y'),
-                'icon' => 'fas fa-list  bg-primary',
-                'content' => __('general_content.new_entry_stock_trans_key') .' x'. $taskStockMove->qty .'- '. __('general_content.purchase_order_reception_trans_key'),
-                'details' => $taskStockMove->GetPrettyCreatedAttribute(),
-            ];
+            if($taskStockMove->typ_move == 3){
+                $this->timelineData[] = [
+                    'date' => $taskStockMove->created_at->format('d M Y'),
+                    'icon' => 'fas fa-list  bg-primary',
+                    'content' => __('general_content.new_entry_stock_trans_key') .' x'. $taskStockMove->qty .'- '. __('general_content.purchase_order_reception_trans_key'),
+                    'details' => $taskStockMove->GetPrettyCreatedAttribute(),
+                ];
+            }
+            elseif($taskStockMove->typ_move == 2){
+                $this->timelineData[] = [
+                    'date' => $taskStockMove->created_at->format('d M Y'),
+                    'icon' => 'fas fa-list  bg-warning',
+                    'content' => __('general_content.new_sorting_stock_trans_key') .' x'. $taskStockMove->qty .'- '. __('general_content.task_allocation_trans_key'),
+                    'details' => $taskStockMove->GetPrettyCreatedAttribute(),
+                ];
+            }
         }
 
         foreach ($this->taskActivities as $taskActivitie){
@@ -217,7 +228,7 @@ class TaskStatu extends Component
         session()->flash('success','Log activitie added successfully');
     }
 
-    public function addGoodQt()
+    public function addGoodQtFromUser()
     {
         $this->validate();
         // Create Line
@@ -233,6 +244,57 @@ class TaskStatu extends Component
 
         // Set Flash Message
         session()->flash('success','Log activitie added successfully');
+    }
+
+    public function addGoodQtFromStock($composantId, $taskId)
+    {
+        
+        $quantityRemaining = $this->addGoodQt;
+
+        $StockLocationProduct = StockLocationProducts::where('products_id', $composantId)->get();
+        foreach ($StockLocationProduct as $stock) {
+            
+            // Calculate the quantity to exit from this stock
+            $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
+
+            if($quantityToWithdraw != 0){
+                // Create a negative stock movement to record the stock issue
+                $stockMove = StockMove::create(['user_id' => Auth::id(),
+                                                'qty' => $quantityToWithdraw,
+                                                'stock_location_products_id' =>   $stock->id,  
+                                                'task_id' =>$taskId,
+                                                'typ_move' =>2,
+                                            ]);
+            }
+
+            // Update remaining quantity
+            $quantityRemaining -= $quantityToWithdraw;
+
+            // Exit the loop if the requested quantity has been satisfied
+            if ($quantityRemaining <= 0) {
+                break;
+            }
+        }
+        
+        $this->validate();
+        // Create Line
+        TaskActivities::create([
+            'task_id'=> $this->search,
+            'user_id'=>$this->user_id,
+            'type'=>'4',
+            'good_qt'=>$this->addGoodQt,
+            'comment'=>'',
+        ]);
+
+        $this->render();
+        
+        // If the quantity requested is greater than the total quantity available
+        if ($quantityRemaining < 0) {
+            session()->flash('success','Outing stock successfully with negative stock');
+        }
+        else{
+            session()->flash('success','Sorting stock successfully');
+        }
     }
 
     public function addRejectedQt()

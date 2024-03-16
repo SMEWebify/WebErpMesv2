@@ -65,7 +65,8 @@ class StockLocationProducts extends Model
     {
         return StockMove::where('stock_location_products_id', $this->id)
                         ->where(function (Builder $query) {
-                            return $query->where('typ_move', '6')
+                            return $query->where('typ_move', '2')
+                                        ->orwhere('typ_move', '6')
                                         ->orwhere('typ_move', '9');
                         })
                         ->get()
@@ -74,7 +75,7 @@ class StockLocationProducts extends Model
 
     public function getCurrentStockMove()
     {
-        return $this->getTotalEntryStockMove() + $this->getTotalSortingStockMove();
+        return $this->getTotalEntryStockMove() - $this->getTotalSortingStockMove();
     }
 
     public function GetPrettyCreatedAttribute()

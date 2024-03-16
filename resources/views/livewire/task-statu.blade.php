@@ -42,11 +42,11 @@
           <div class="row">
             <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
               <div class="row">
+                @if($Task->service->picture )
                 <div class="col-12 col-sm-1"> 
-                  @if($Task->service->picture )
                     <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'. $Task->service->picture) }}">
-                  @endif
                 </div>
+                @endif
                 @if($Task->service->type == 1 or  $Task->service->type == 7)
                 <div class="col-12 col-sm-3">
                   <x-adminlte-info-box title="{{ __('general_content.total_time_trans_key') }}" text="{{ $Task->getTotalLogTime() }} h" icon="fa fa-stopwatch" theme="warning"/>
@@ -156,12 +156,38 @@
                 <div class="col-2 ">
                   <a class="btn btn-app bg-success" href="{{ route('purchases.request') }}" >{{ __('general_content.new_purchase_document_trans_key') }}</a>
                 </div>
+                
+                <div class="col-2">
+                  <a class="btn btn-app bg-danger " wire:click="EndTask({{$Task->id}})">
+                    <i class="fas fa-stop"></i> {{ __('general_content.end_trans_key') }}
+                  </a>
+                </div>
                 @endif
               </div>
+              @if( $Task->component_id)
               <hr>
               <div class="row">
                 <div class="col-12 ">
-                  <form wire:submit.prevent="addGoodQt">
+                  <form wire:submit.prevent="addGoodQtFromStock({{ $Task->component_id }},{{ $Task->id }})">
+                    <label for="addGoodQt">{{ __('general_content.remove_from_stock_trans_key') }} :</label>
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-times"></i></span>
+                        </div>
+                        <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.live="addGoodQt">
+                        <span class="input-group-append">
+                          <button type="submit" class="btn btn-info btn-flat">Set</button>
+                        </span>
+                      </div>
+                    @error('addGoodQt') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                  </form>
+                </div>
+              </div>
+              @endif
+              <hr>
+              <div class="row">
+                <div class="col-12 ">
+                  <form wire:submit.prevent="addGoodQtFromUser">
                       <label for="addGoodQt">{{ __('general_content.good_rejected_trans_key') }} :</label>
                       <div class="input-group input-group-sm">
                           <div class="input-group-prepend">

@@ -189,7 +189,7 @@ class StockLocationProductsController extends Controller
      * @param $request
      * @return View
      */
-    public function entryFrom(StoreStockMoveRequest $request)
+    public function entry(StoreStockMoveRequest $request)
     {
         $stockMove = StockMove::create($request->only('user_id', 
                                                         'qty',
