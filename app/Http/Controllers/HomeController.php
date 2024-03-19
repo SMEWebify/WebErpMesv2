@@ -65,8 +65,12 @@ class HomeController extends Controller
                                                                 MONTH(delivery_date) AS month,
                                                                 SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
                                                             ')
-                                                            ->whereYear('created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(delivery_date) ')
+                                                            ->leftJoin('orders', function($join) {
+                                                                $join->on('order_lines.orders_id', '=', 'orders.id')
+                                                                    ->where('orders.type', '=', 1);
+                                                            })
+                                                            ->whereYear('order_lines.created_at', $CurentYear)
+                                                            ->groupByRaw('MONTH(order_lines.delivery_date) ')
                                                             ->get();
 
         //Delivery data for chart
@@ -94,9 +98,13 @@ class HomeController extends Controller
         $orderTotalForCast = DB::table('order_lines') ->selectRaw('
                                                                 ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderTotalForCast
                                                         ')
+                                                        ->leftJoin('orders', function($join) {
+                                                            $join->on('order_lines.orders_id', '=', 'orders.id')
+                                                                ->where('orders.type', '=', 1);
+                                                        })
                                                         ->where('delivery_status', '=', 1)
                                                         ->orwhere('delivery_status', '=', 2)
-                                                        ->whereYear('created_at', $CurentYear)
+                                                        ->whereYear('order_lines.delivery_date', $CurentYear)
                                                         ->get();
 
         //Total Delivered
