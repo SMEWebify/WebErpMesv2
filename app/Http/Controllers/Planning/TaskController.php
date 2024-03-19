@@ -12,8 +12,10 @@ use App\Models\Workflow\Quotes;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
+use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
+use App\Models\Products\Products;
 
 class TaskController extends Controller
 {
@@ -33,7 +35,8 @@ class TaskController extends Controller
     public function manage($id_type, $id_page, $id_line)
     {
         if($id_type == 'products_id'){
-            
+            $LineInfo = SubAssembly::findOrFail($id_line); //https://github.com/SMEWebify/WebErpMesv2/issues/334
+            $Document = Products::findOrFail($id_page);
         }
         elseif($id_type == 'quote_lines_id'){
             $Document = Quotes::findOrFail($id_page);
@@ -42,6 +45,19 @@ class TaskController extends Controller
         elseif($id_type == 'order_lines_id'){
             $Document = Orders::findOrFail($id_page);
             $LineInfo = OrderLines::findOrFail($id_line);
+        }
+        elseif($id_type == 'sub_assembly_id'){ //https://github.com/SMEWebify/WebErpMesv2/issues/334
+            $LineInfo = SubAssembly::findOrFail($id_line);
+            if($LineInfo->quote_lines_id){
+                $Document = Quotes::findOrFail($id_page);
+            }
+            elseif($LineInfo->order_lines_id){
+                $Document = Orders::findOrFail($id_page);
+            }
+            elseif($LineInfo->products_id){
+                $Document = Products::findOrFail($id_page);
+                $Document->statu = 1;
+            }
         }
 
         return view('workflow/task-manage', compact('Document','LineInfo', 'id_type', 'id_page', 'id_line'));

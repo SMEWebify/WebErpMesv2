@@ -89,14 +89,23 @@
                         @forelse ($Tasklist as $Task)
                         <tr > 
                             <td>
-                                @if($Task->OrderLines ?? null)
+                                @if($Task->SubAssembly) <!-- Checks if the task is linked to a subset -->
+                                    @if($Task->SubAssembly->order_lines_id) <!-- Checks if the subset is linked to a command line -->
+                                        <x-OrderButton id="{{ $Task->SubAssembly->OrderLines->orders_id }}" code="{{ $Task->SubAssembly->OrderLines->order->code }}"  />
+                                    @endif
+                                @elseif($Task->OrderLines) <!-- If the task is linked directly to a command line -->
                                     <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  /> 
                                 @else
-                                {{__('general_content.generic_trans_key') }} 
+                                    {{__('general_content.generic_trans_key') }} <!-- Otherwise, it's a generic task -->
                                 @endif
                             </td>
-                            <td>@if($Task->OrderLines ?? null){{ $Task->OrderLines->qty }} x @endif</td>
-                            <td>@if($Task->OrderLines ?? null){{ $Task->OrderLines->label }}@endif</td>
+                            @if($Task->SubAssembly)
+                                <td>{{ $Task->SubAssembly->qty }} x</td>
+                                <td><i class="fas fa-code-branch"></i> {{ $Task->SubAssembly->Child->label }}</td>
+                            @else
+                                <td>@if($Task->OrderLines ?? null){{ $Task->OrderLines->qty }} x @endif</td>
+                                <td>@if($Task->OrderLines ?? null){{ $Task->OrderLines->label }}@endif</td>
+                            @endif
                             <td>
                                 <a href="{{ route('production.task.statu.id', ['id' => $Task->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
                                 #{{ $Task->id }} - {{ $Task->label }}

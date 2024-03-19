@@ -33,6 +33,7 @@ class Task extends Model
                             'quote_lines_id',
                             'order_lines_id',
                             'products_id',
+                            'sub_assembly_id',
                             'methods_services_id',  
                             'component_id',
                             'seting_time', 
@@ -99,6 +100,11 @@ class Task extends Model
     public function Products()
     {
         return $this->belongsTo(Products::class, 'products_id');
+    }
+
+    public function SubAssembly() //https://github.com/SMEWebify/WebErpMesv2/issues/334
+    {
+        return $this->belongsTo(SubAssembly::class, 'sub_assembly_id');
     }
 
     public function Component()

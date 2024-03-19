@@ -360,7 +360,7 @@
     </div>
     @endif
 
-    @if($statu == 1)
+    @if($statu == 1 && $idType != "sub_assembly_id")
     <div class="card-body">
         @if($updateLines)
         <form wire:submit.prevent="updateSubAssembly">
@@ -439,77 +439,97 @@
     @endif
 
     @if($Line->id ?? null)
-    <div class="card-body">
-        <div class="card card-secondary">
-            <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.sub_assembly_trans_key') }}</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                    <i class="fas fa-plus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
-                    <i class="fas fa-times"></i>
-                    </button>
+        @if($idType != "sub_assembly_id")
+        <div class="card-body">
+            <div class="card card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title">{{ __('general_content.sub_assembly_trans_key') }}</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
+                        <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
+                        <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body table-responsive p-0">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>{{ __('general_content.id_trans_key') }} </th>
-                        <th>{{ __('general_content.order_trans_key') }}</th>
-                        <th>{{ __('general_content.id_trans_key') }}</th>
-                        <th>{{ __('general_content.label_trans_key') }}</th>
-                        <th></th>
-                        <th>{{ __('general_content.qty_trans_key') }}</th>
-                        <th>{{ __('general_content.cost_trans_key') }}</th>
-                        <th>{{ __('general_content.price_trans_key') }} </th>
-                        <th>{{ __('general_content.action_trans_key') }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($Line->SubAssembly as $SubAssemblyLine)
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover">
+                        <thead>
                         <tr>
-                            <td>#{{ $SubAssemblyLine->id }}</td>
-                            <td>{{ $SubAssemblyLine->ordre }}</td>
-                            <td>{{ $SubAssemblyLine->Child['code'] }}</td>
-                            <td>{{ $SubAssemblyLine->Child['label'] }}</td>
-                            <td><x-ButtonTextView route="{{ route('products.show', ['id' => $SubAssemblyLine->child_id])}}" /></td>
-                            <td>{{ $SubAssemblyLine->qty }}</td>
-                            <td>{{ $SubAssemblyLine->Child['selling_price'] }}  {{ $Factory->curency }}</td>
-                            <td>{{ $SubAssemblyLine->unit_price }}  {{ $Factory->curency }}</td>
-                            <td class=" py-0 align-middle">
-                                <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                    <div class="dropdown-menu">
-                                        <a href="#" class="dropdown-item " wire:click="duplicateSubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> {{ __('general_content.copie_line_trans_key') }}</span></a>
-                                        <a href="#" class="dropdown-item" wire:click="editSubAssemblyLine({{$SubAssemblyLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> {{ __('general_content.edit_line_trans_key') }}</span></a>
-                                        <a href="#" class="dropdown-item" wire:click="destroySubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.delete_line_trans_key') }}</span></a>
-                                    </div>
-                                </div>
-                            </td>
+                            <th>{{ __('general_content.id_trans_key') }} </th>
+                            <th>{{ __('general_content.order_trans_key') }}</th>
+                            <th>{{ __('general_content.id_trans_key') }}</th>
+                            <th>{{ __('general_content.label_trans_key') }}</th>
+                            <th></th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.cost_trans_key') }}</th>
+                            <th>{{ __('general_content.price_trans_key') }} </th>
+                            <th>{{ __('general_content.action_trans_key') }}</th>
                         </tr>
-                        @empty
-                        <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
-                        @endforelse
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </tfoot>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse ($Line->SubAssembly as $SubAssemblyLine)
+                            <tr>
+                                <td>#{{ $SubAssemblyLine->id }}</td>
+                                <td>{{ $SubAssemblyLine->ordre }}</td>
+                                <td>{{ $SubAssemblyLine->Child['code'] }}</td>
+                                <td>{{ $SubAssemblyLine->Child['label'] }}</td>
+                                <td><x-ButtonTextView route="{{ route('products.show', ['id' => $SubAssemblyLine->child_id])}}" /></td>
+                                <td>{{ $SubAssemblyLine->qty }}</td>
+                                <td>{{ $SubAssemblyLine->Child['selling_price'] }}  {{ $Factory->curency }}</td>
+                                <td>{{ $SubAssemblyLine->unit_price }}  {{ $Factory->curency }}</td>
+                                <td>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            @if($SubAssemblyLine->Child->drawing_file)
+                                            <!-- Drawing link -->
+                                            <a class="btn btn-info" href="{{ asset('drawing/'. $SubAssemblyLine->Child->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                                            @endif
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                            <div class="dropdown-menu">
+                                                <a href="#" class="dropdown-item " wire:click="duplicateSubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> {{ __('general_content.copie_line_trans_key') }}</span></a>
+                                                <a href="#" class="dropdown-item" wire:click="editSubAssemblyLine({{$SubAssemblyLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> {{ __('general_content.edit_line_trans_key') }}</span></a>
+                                                <a href="#" class="dropdown-item" wire:click="destroySubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.delete_line_trans_key') }}</span></a>
+                                                <a href="#" class="dropdown-item" wire:click="breakDown({{$SubAssemblyLine->id}})"><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i>{{ __('general_content.break_down_task_trans_key') }}</span></a>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            @if($idType == "sub_assembly_id")
+                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->sub_assembly_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                            @elseif($idType == "quote_lines_id")
+                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->QuoteLines->quotes_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                            @elseif($idType == "order_lines_id")
+                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->OrderLines->orders_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                            @else
+                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->products_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
+                            @endforelse
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- /.card-body -->
             </div>
-            <!-- /.card-body -->
         </div>
-    </div>
+        @endif
     @endif
 </div>

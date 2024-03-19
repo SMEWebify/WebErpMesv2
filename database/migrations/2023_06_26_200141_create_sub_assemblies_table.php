@@ -19,6 +19,7 @@ return new class extends Migration
 			$table->integer('quote_lines_id')->nullable();
 			$table->integer('order_lines_id')->nullable();
 			$table->integer('products_id')->nullable();
+			$table->integer('sub_assembly_id')->nullable();
 			$table->integer('child_id');
 			$table->integer('qty');
 			$table->decimal('unit_price', 10, 3);

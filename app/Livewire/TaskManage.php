@@ -49,6 +49,8 @@ class TaskManage extends Component
     Private $quote_lines_id;
     Private $order_lines_id;
     Private $products_id;
+    Private $sub_assembly_id;
+    
 
     public $updateLines = false;
 
@@ -184,13 +186,18 @@ class TaskManage extends Component
             //$this->qty = 1 ;
             $this->line_qty = $Line->qty;
         }
+        elseif($this->idType == 'sub_assembly_id'){ //https://github.com/SMEWebify/WebErpMesv2/issues/334
+            $Line = SubAssembly::findOrFail($this->idLine);
+            //$this->qty = 1 ;
+            $this->line_qty = $Line->qty;
+        }
         else{
             $Line = new stdClass();
             $this->line_qty = 1;
             $Line->id = null;
             $Line->qty = 1;
         }
-
+        
         return view('livewire.task-manage',[
             'Line' => $Line,
         ]);
@@ -212,7 +219,6 @@ class TaskManage extends Component
         $this->validate();
         //custom rule if is BOM for check if service or component is not empty
         if($this->TaskType == 'BOM'&& (is_null($this->component_id) || $this->component_id == __('general_content.select_component_trans_key') || empty($this->component_id))){
-
             // Set Flash Message
             session()->flash('error', 'Please select Component.');
         }
@@ -231,12 +237,16 @@ class TaskManage extends Component
             elseif($this->idType == 'order_lines_id'){
                 $this->order_lines_id = $idLine;
             }
+            elseif($this->idType == 'sub_assembly_id'){ //https://github.com/SMEWebify/WebErpMesv2/issues/334
+                $this->sub_assembly_id = $idLine;
+            }
             else{
                 $this->products_id = $idLine;
+                $this->quote_lines_id = $idLine;
                 $this->order_lines_id = $idLine;
-                $this->order_lines_id = $idLine;
+                $this->sub_assembly_id = $idLine;
             }
-
+            
             $splitMethod = explode("-", $this->methods_services_id);
             $this->methods_services_id =  $splitMethod[0]; 
             $this->type =  $splitMethod[1]; 
@@ -246,6 +256,7 @@ class TaskManage extends Component
                                 'quote_lines_id' => $this->quote_lines_id, 
                                 'order_lines_id' => $this->order_lines_id, 
                                 'products_id' => $this->products_id, 
+                                'sub_assembly_id' => $this->sub_assembly_id, 
                                 'methods_services_id' => $this->methods_services_id,  
                                 'component_id' => $this->component_id,  
                                 'seting_time' => $this->seting_time,   
@@ -359,6 +370,9 @@ class TaskManage extends Component
             elseif($this->idType == 'order_lines_id'){
                 $this->order_lines_id = $idLine;
             }
+            elseif($this->idType == 'sub_assembly_id'){ //https://github.com/SMEWebify/WebErpMesv2/issues/334
+                $this->sub_assembly_id = $idLine;
+            }
             else{
                 session()->flash('error',"Something goes wrong ");
             }
@@ -374,6 +388,7 @@ class TaskManage extends Component
                                         'quote_lines_id' => $this->quote_lines_id, 
                                         'order_lines_id' => $this->order_lines_id, 
                                         'products_id' => $this->products_id, 
+                                        'sub_assembly_id' => $this->sub_assembly_id, 
                                         'child_id' => $this->subAssemblyComponentId, 
                                         'qty' => $this->subAssemblyQty,
                                         'unit_price' => $this->subAssemblyUnit_price]);

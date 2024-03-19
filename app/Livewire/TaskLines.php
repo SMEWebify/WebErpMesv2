@@ -56,22 +56,31 @@ class TaskLines extends Component
                                         ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                         ->orWhere(
                                             function($query) {
-                                                return $query
+                                                return $query // Tasks with non-null id lines
                                                         ->whereNull('quote_lines_id')
                                                         ->whereNull('order_lines_id')
-                                                        ->whereNull('products_id');
+                                                        ->whereNull('products_id') //https://github.com/SMEWebify/WebErpMesv2/issues/334
+                                                        ->whereNull('sub_assembly_id');
                                         })
                                         ->where('methods_services_id', 'like', '%'.$this->searchIdService.'%')
                                         ->where('status_id', 'like', '%'.$this->searchIdStatus.'%')
-                                        ->where('label','like', '%'.$this->search.'%')->get();
+                                        ->where('label','like', '%'.$this->search.'%')
+                                        ->get();
         }
         else{
             $Tasklist = $this->Tasklist = Task::with('OrderLines.order')
+                                        ->where(function ($query) { //https://github.com/SMEWebify/WebErpMesv2/issues/334
+                                            $query->whereNotNull('sub_assembly_id') // Tasks with non-null sub_assembly_id
+                                                ->WhereHas('SubAssembly', function ($query) {
+                                                    $query->whereNotNull('order_lines_id'); // Subassemblies with non-null order_lines_id
+                                                });
+                                        })
+                                        ->orwhereNotNull('order_lines_id') // Tasks with non-null order_lines_id
                                         ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                                        ->whereNotNull('order_lines_id')
                                         ->where('methods_services_id', 'like', '%'.$this->searchIdService.'%')
                                         ->where('status_id', 'like', '%'.$this->searchIdStatus.'%')
-                                        ->where('label','like', '%'.$this->search.'%')->get();
+                                        ->where('label','like', '%'.$this->search.'%')
+                                        ->get();
         }
         return view('livewire.task-lines', [
             'Tasklist' => $Tasklist,

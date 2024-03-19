@@ -20,6 +20,7 @@ class CreateTasksTable extends Migration
 			$table->integer('quote_lines_id')->nullable();
 			$table->integer('order_lines_id')->nullable();
 			$table->integer('products_id')->nullable();
+			$table->integer('sub_assembly_id')->nullable();
 			$table->integer('methods_services_id');
 			$table->integer('component_id')->nullable(); // use for BOM link with product id
 			$table->decimal('seting_time', 10, 3)->nullable();
