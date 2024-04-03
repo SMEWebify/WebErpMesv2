@@ -316,6 +316,7 @@ return [
 
     // BUTTON
     'view_trans_key'                           => 'View',
+    'view_count_trans_key'                     => 'View(s) count',
     'print_trans_key'                          => 'Print',
     'pdf_trans_key'                            => 'PDF',
     'edit_trans_key'                           => 'Edit',

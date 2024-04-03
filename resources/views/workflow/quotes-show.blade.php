@@ -164,6 +164,7 @@
                       <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
                       <p>
                         <input type="text" class="form-control"  value="{{ Request::root() }}/guest/quote/{{  $Quote->uuid }}">
+                        {{ __('general_content.view_count_trans_key') }} ( {{  $Quote->view_count }} ) 
                       </p>
                     </td>
                   </tr>

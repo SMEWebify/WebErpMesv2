@@ -36,6 +36,7 @@ class CreateQuotesTable extends Migration
 			$table->integer('accounting_payment_methods_id');
 			$table->integer('accounting_deliveries_id');
 			$table->text('comment', 65535)->nullable();
+			$table->integer('view_count')->default(0);
             $table->timestamps();
         });
     }

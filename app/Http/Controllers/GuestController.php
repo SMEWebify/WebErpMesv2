@@ -39,6 +39,8 @@ class GuestController extends Controller
         $TotalServiceCost = $QuoteCalculator->getTotalCostByService();
         $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
         
+        Quotes::find($Quote->id)->increment('view_count', 1);
+
         return view('guest/guest-quote-info', [
             'Quote' => $Quote,
             'totalPrices' => $totalPrice,
