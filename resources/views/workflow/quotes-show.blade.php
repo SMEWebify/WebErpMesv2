@@ -19,6 +19,7 @@
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.view_count_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
     </ul>
   </div>
@@ -164,7 +165,6 @@
                       <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
                       <p>
                         <input type="text" class="form-control"  value="{{ Request::root() }}/guest/quote/{{  $Quote->uuid }}">
-                        {{ __('general_content.view_count_trans_key') }} ( {{  $Quote->view_count }} ) 
                       </p>
                     </td>
                   </tr>
@@ -271,6 +271,12 @@
           </div>
         </div>
       </div>  
+      <div class="tab-pane " id="Views">
+        @foreach($Quote->guestVisits as $visit)
+        <p>Date: {{ $visit->GetPrettyCreatedAttribute() }}</p>
+      @endforeach
+
+      </div>
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')
         @if($Quote->statu == 1)

@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Workflow\Quotes;
-use App\Services\QuoteCalculator;
-use App\Http\Controllers\Controller;
 use App\Models\Workflow\Orders;
+use App\Models\Workflow\Quotes;
 use App\Services\OrderCalculator;
+use App\Services\QuoteCalculator;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use League\CommonMark\Extension\SmartPunct\Quote;
 
 class GuestController extends Controller
@@ -39,7 +40,8 @@ class GuestController extends Controller
         $TotalServiceCost = $QuoteCalculator->getTotalCostByService();
         $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
         
-        Quotes::find($Quote->id)->increment('view_count', 1);
+        // Save visit information to database
+        $this->logVisit(request(), $Quote->id);
 
         return view('guest/guest-quote-info', [
             'Quote' => $Quote,
@@ -50,6 +52,17 @@ class GuestController extends Controller
             'TotalServiceSettingTime'=> $TotalServiceSettingTime,
             'TotalServiceCost'=> $TotalServiceCost,
             'TotalServicePrice'=> $TotalServicePrice,
+        ]);
+    }
+
+    private function logVisit(Request $request, $quoteId)
+    {
+        // Save information to the log table
+        DB::table('guest_visits')->insert([
+            'url_visited' => $request->url(),
+            'visited_at' => now(),
+            'quotes_id' => $quoteId,
+            'visit_type' => 'quote' // Indicates the type of visit
         ]);
     }
 

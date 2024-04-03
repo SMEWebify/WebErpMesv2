@@ -5,12 +5,13 @@ namespace App\Models\Workflow;
 use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
+use App\Models\GuestVisits;
 use App\Models\Workflow\Orders;
 use App\Services\QuoteCalculator;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
-use App\Models\Workflow\QuoteLines;
 
+use App\Models\Workflow\QuoteLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -38,8 +39,7 @@ class Quotes extends Model
                             'accounting_payment_conditions_id',  
                             'accounting_payment_methods_id',  
                             'accounting_deliveries_id',  
-                            'comment',  
-                            'view_count' ];
+                            'comment', ];
 
     // Relationship with the company associated with the quote
     public function companie()
@@ -118,6 +118,16 @@ class Quotes extends Model
     {
         $quoteCalculator = new QuoteCalculator($this);
         return $quoteCalculator->getTotalPrice();
+    }
+
+    public function guestVisits()
+    {
+        return $this->hasMany(GuestVisits::class);
+    }
+
+    public function visitsCount()
+    {
+        return $this->guestVisits()->count();
     }
 
     public function getActivitylogOptions(): LogOptions
