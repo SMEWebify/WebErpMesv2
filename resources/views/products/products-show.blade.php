@@ -22,6 +22,7 @@
       @endif
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }}</a></li>
       @if($Product->drawing_file)
       <li class="nav-item"><a class="nav-link" href="#DrawingViewer" data-toggle="tab"> {{ __('general_content.drawing_trans_key') }}</a></li>
       @endif
@@ -692,6 +693,9 @@
       </div>
       <div class="tab-pane" id="order">
         @livewire('orders-lines-index' , ['product_id' => $Product->id ])
+      </div>
+      <div class="tab-pane" id="purchase">
+        @livewire('purchases-lines-index' , ['product_id' => $Product->id ])
       </div>
       @if($Product->drawing_file)
       <div class="tab-pane" id="DrawingViewer">
