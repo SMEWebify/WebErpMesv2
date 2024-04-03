@@ -60,6 +60,7 @@ class CompaniesLines extends Component
 
     public function render()
     {
+        
         return view('livewire.companies-lines', [
             'Companieslist' => Companies::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(10),
         ]);

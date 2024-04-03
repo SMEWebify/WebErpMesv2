@@ -3,7 +3,9 @@
         @include('include.alert-result')
         <div class="card-body">
             <div class="row">
-                @include('include.search-card')
+                <div class="col-md-10">
+                    @include('include.search-card')
+                </div>
             </div>
             <div class="card-body ">
                 <div class="row">
