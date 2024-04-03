@@ -249,6 +249,7 @@ return [
 
     'quote_info_trans_key'                     => 'Quote info',
     'quote_line_trans_key'                     => 'Quote lines',
+    'guest_page_trans_key'                     => 'Guest page',
     'lines_import_trans_key'                   => 'Lines Import',
 
     'order_info_trans_key'                     => 'Order info',

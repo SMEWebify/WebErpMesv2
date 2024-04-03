@@ -19,7 +19,7 @@
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.view_count_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
     </ul>
   </div>
@@ -272,10 +272,17 @@
         </div>
       </div>  
       <div class="tab-pane " id="Views">
-        @foreach($Quote->guestVisits as $visit)
-        <p>Date: {{ $visit->GetPrettyCreatedAttribute() }}</p>
-      @endforeach
-
+        <div class="card card-primary">
+          <div class="card-header">
+              <h3 class="card-title">{{ __('general_content.view_count_trans_key') }}</h3>
+          </div>
+          <div class="card-body">
+              @foreach($Quote->guestVisits as $visit)
+              <p>Date: {{ $visit->GetPrettyCreatedAttribute() }}</p>
+              @endforeach
+          </div>
+        </div>
+        @livewire('chatlive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
       </div>
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')
@@ -287,100 +294,100 @@
                 <h3 class="card-title">{{ __('general_content.choose_file_trans_key') }}</h3>
             </div>
             <form method="POST" action="{{ route('quotes.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
-                @csrf
-                <div class="card-body">
-                    {{-- Placeholder, sm size and prepend icon --}}
-                    <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="{{ __('general_content.choose_csv_trans_key') }}">
-                        <x-slot name="prependSlot">
-                            <div class="input-group-text bg-lightblue">
-                                <i class="fas fa-upload"></i>
-                            </div>
-                        </x-slot>
-                    </x-adminlte-input-file>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
-                        <div class="col-8">
-                            <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.external_id_trans_key') }}</label></div>
-                        <div class="col-8">
-                            <x-adminlte-input name="code" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number">
-                                <x-slot name="appendSlot">
-                                    <div class="input-group-text bg-red">
-                                        <i class="fas fa-hashtag"></i>
-                                    </div>
-                                </x-slot>
-                            </x-adminlte-input>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.description_trans_key') }}</label></div>
-                        <div class="col-8">
-                            <x-adminlte-input name="label" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
-                                <x-slot name="appendSlot">
-                                    <div class="input-group-text bg-red">
-                                        <i class="fas fa-hashtag"></i>
-                                    </div>
-                                </x-slot>
-                            </x-adminlte-input>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.qty_trans_key') }}</label></div>
-                        <div class="col-8">
-                            <x-adminlte-input name="qty" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
-                                <x-slot name="appendSlot">
+              @csrf
+              <div class="card-body">
+                  {{-- Placeholder, sm size and prepend icon --}}
+                  <x-adminlte-input-file name="import_file" igroup-size="sm" placeholder="{{ __('general_content.choose_csv_trans_key') }}">
+                      <x-slot name="prependSlot">
+                          <div class="input-group-text bg-lightblue">
+                              <i class="fas fa-upload"></i>
+                          </div>
+                      </x-slot>
+                  </x-adminlte-input-file>
+              </div>
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-4 text-right"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
+                      <div class="col-8">
+                          <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.external_id_trans_key') }}</label></div>
+                      <div class="col-8">
+                          <x-adminlte-input name="code" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number">
+                              <x-slot name="appendSlot">
                                   <div class="input-group-text bg-red">
-                                        <i class="fas fa-hashtag"></i>
-                                    </div>
-                                </x-slot>
-                            </x-adminlte-input>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.price_trans_key') }}</label></div>
-                        <div class="col-8">
-                            <x-adminlte-input name="selling_price" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
-                                <x-slot name="appendSlot">
+                                      <i class="fas fa-hashtag"></i>
+                                  </div>
+                              </x-slot>
+                          </x-adminlte-input>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.description_trans_key') }}</label></div>
+                      <div class="col-8">
+                          <x-adminlte-input name="label" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
+                              <x-slot name="appendSlot">
                                   <div class="input-group-text bg-red">
-                                        <i class="fas fa-hashtag"></i>
-                                    </div>
-                                </x-slot>
-                            </x-adminlte-input>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.discount_trans_key') }}</label></div>
-                        <div class="col-8">
-                            <x-adminlte-input name="discount" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
-                                <x-slot name="appendSlot">
-                                    <div class="input-group-text bg-blue">
-                                        <i class="fas fa-hashtag"></i>
-                                    </div>
-                                </x-slot>
-                            </x-adminlte-input>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.delivery_date_trans_key') }}</label></div>
-                        <div class="col-8">
-                            <x-adminlte-input name="delivery_date" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
-                                <x-slot name="appendSlot">
-                                    <div class="input-group-text bg-blue">
-                                        <i class="fas fa-hashtag"></i>
-                                    </div>
-                                </x-slot>
-                            </x-adminlte-input>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                </div>
+                                      <i class="fas fa-hashtag"></i>
+                                  </div>
+                              </x-slot>
+                          </x-adminlte-input>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.qty_trans_key') }}</label></div>
+                      <div class="col-8">
+                          <x-adminlte-input name="qty" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
+                              <x-slot name="appendSlot">
+                                <div class="input-group-text bg-red">
+                                      <i class="fas fa-hashtag"></i>
+                                  </div>
+                              </x-slot>
+                          </x-adminlte-input>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.price_trans_key') }}</label></div>
+                      <div class="col-8">
+                          <x-adminlte-input name="selling_price" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
+                              <x-slot name="appendSlot">
+                                <div class="input-group-text bg-red">
+                                      <i class="fas fa-hashtag"></i>
+                                  </div>
+                              </x-slot>
+                          </x-adminlte-input>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.discount_trans_key') }}</label></div>
+                      <div class="col-8">
+                          <x-adminlte-input name="discount" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
+                              <x-slot name="appendSlot">
+                                  <div class="input-group-text bg-blue">
+                                      <i class="fas fa-hashtag"></i>
+                                  </div>
+                              </x-slot>
+                          </x-adminlte-input>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.delivery_date_trans_key') }}</label></div>
+                      <div class="col-8">
+                          <x-adminlte-input name="delivery_date" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
+                              <x-slot name="appendSlot">
+                                  <div class="input-group-text bg-blue">
+                                      <i class="fas fa-hashtag"></i>
+                                  </div>
+                              </x-slot>
+                          </x-adminlte-input>
+                      </div>
+                  </div>
+              </div>
+              <div class="card-footer">
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+              </div>
             </form>
         </div>
         @else

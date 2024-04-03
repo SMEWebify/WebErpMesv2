@@ -249,6 +249,7 @@ return [
 
     'quote_info_trans_key'                     => 'Information du devis',
     'quote_line_trans_key'                     => 'Ligne du devis',
+    'guest_page_trans_key'                     => 'Page publique',
     'lines_import_trans_key'                   => 'Importation de lignes',
 
     'order_info_trans_key'                     => 'Information de commande',

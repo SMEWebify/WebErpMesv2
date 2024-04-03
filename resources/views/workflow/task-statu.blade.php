@@ -11,6 +11,8 @@
 @section('content')
 <div class="card-body">
   @livewire('task-statu', ['id' =>$TaskId])
+
+  @livewire('chatlive', ['idItem' => $TaskId, 'Class' => 'Task'])
 </div>
 @stop
 

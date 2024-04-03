@@ -259,6 +259,11 @@
                             </div>
                         </div>
                         @endif
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                @livewire('chatlive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
+                            </div>
+                        </div>
                     </div>
                 </div>
                 @if ( $Factory->cgv_file && $Factory->add_cgv_to_pdf != 2)
