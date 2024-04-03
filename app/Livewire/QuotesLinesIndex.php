@@ -35,6 +35,7 @@ class QuotesLinesIndex extends Component
     {
         if(is_numeric($this->product_id)){
             $QuoteLines = QuoteLines::where('product_id', $this->product_id)
+                                    ->where('label','like', '%'.$this->search.'%')
                                     ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                     ->paginate(15);
         
