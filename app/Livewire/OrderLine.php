@@ -7,16 +7,22 @@ use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
+use App\Models\Workflow\Orders;
+use App\Events\OrderLineUpdated;
 use App\Models\Products\Products;
+use App\Models\Products\StockMove;
+use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\OrderLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Workflow\DeliveryLines;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Quality\QualityNonConformity;
+use App\Models\Products\StockLocationProducts;
 
 class OrderLine extends Component
 {
@@ -48,7 +54,11 @@ class OrderLine extends Component
     public $BOMServicesSelect = [];
     public $TechProductList = [];
     public $BOMProductList = [];
-    
+
+    public $data = [];
+    public $RemoveFromStock = false;
+    private $deleveryOrdre = 10;
+
     // Validation Rules
     protected $rules = [
         'ordre' =>'required|numeric|gt:0',
@@ -388,5 +398,121 @@ class OrderLine extends Component
                     ]);
 
         return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
+    }
+
+    
+    public function storeDelevery($orderId){
+        //check if line exist
+        $i = 0;
+        foreach ($this->data as $key => $item) {
+            if(array_key_exists("order_line_id",$this->data[$key])){
+                if($this->data[$key]['order_line_id'] != false ){
+                    $i++;
+                }
+            }
+        }
+
+        if($i>0){
+
+            //get data to dulicate for new order
+            $OrderData = Orders::find($orderId);
+
+             //get last Delivery id for create new Code id
+            $LastDelivery=  Deliverys::orderBy('id', 'desc')->first();
+            if($LastDelivery == Null){
+                $deliveryCode = "DN-0";
+            }
+            else{
+                $deliveryCode = "DN-". $LastDelivery->id;
+            }
+
+             // Create delivery note
+            $DeliveryCreated = Deliverys::create([
+                'code'=>$deliveryCode,  
+                'label'=>$deliveryCode,
+                'companies_id'=>$OrderData->companies_id,   
+                'companies_addresses_id'=>$OrderData->companies_addresses_id,  
+                'companies_contacts_id'=>$OrderData->companies_contacts_id,  
+                'user_id'=>Auth::id(),  
+            ]);
+
+            if($DeliveryCreated){
+                // Create delivery note lines
+                foreach ($this->data as $key => $item) {
+
+                    //get data to dulicate for new order
+                    $OrderLineData = OrderLines::find($key);
+                    // Create delivery line
+                    $DeliveryLines = DeliveryLines::create([
+                        'deliverys_id' => $DeliveryCreated->id,
+                        'order_line_id' => $key, 
+                        'ordre' => $this->deleveryOrdre,
+                        'qty' => $OrderLineData->qty,
+                        'statu' => 1
+                    ]); 
+
+                    // update order line info
+                    //same function from stock location product controller
+                    $OrderLineData->delivered_qty =  $OrderLineData->delivered_qty + $OrderLineData->qty;
+                    $OrderLineData->delivered_remaining_qty = $OrderLineData->delivered_remaining_qty - $OrderLineData->qty;
+                    //if we are delivered all part
+                    if($OrderLineData->delivered_remaining_qty == 0){
+                        $OrderLineData->delivery_status = 3;
+                        $OrderLineData->save();
+                        // update order statu info
+                        // we must be check if all entry are delivered
+                        event(new OrderLineUpdated($OrderLineData->id));
+                    }
+                    else{
+                        $OrderLineData->delivery_status = 2;
+                        $OrderLineData->save();
+                        // update order statu info
+                        event(new OrderLineUpdated($OrderLineData->id));
+                    }
+
+                    $TaskRelation = $OrderLineData->Task()->get();
+
+                    if($this->RemoveFromStock && $OrderLineData->product_id && $TaskRelation->isEmpty()){
+                        $quantityRemaining = $OrderLineData->qty;
+
+                        $StockLocationProduct = StockLocationProducts::where('products_id', $OrderLineData->product_id)->get();
+                        foreach ($StockLocationProduct as $stock) {
+                            
+                            // Calculate the quantity to exit from this stock
+                            $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
+                
+                            if($quantityToWithdraw != 0){
+                                // Create a negative stock movement to record the stock issue
+                                $stockMove = StockMove::create(['user_id' => Auth::id(),
+                                                                'qty' => $quantityToWithdraw,
+                                                                'stock_location_products_id' =>  $stock->id,  
+                                                                'order_line_id' =>$OrderLineData->id,
+                                                                'typ_move' =>9,
+                                                            ]);
+                            }
+                
+                            // Update remaining quantity
+                            $quantityRemaining -= $quantityToWithdraw;
+                
+                            // Exit the loop if the requested quantity has been satisfied
+                            if ($quantityRemaining <= 0) {
+                                break;
+                            }
+                        }
+                    }
+
+                    $this->ordre= $this->ordre+10;
+                }
+                // return view on new document
+                return redirect()->route('deliverys.show', ['id' => $DeliveryCreated->id])->with('success', 'Successfully created new delivery note');
+            }
+            else{
+                return redirect()->back()->with('error', 'Something went wrong');
+            }
+        }
+        else{
+            $errors = $this->getErrorBag();
+            $errors->add('errors', 'no lines selected');
+        }
     }
 }

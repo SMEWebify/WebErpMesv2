@@ -46,6 +46,7 @@
                             <th>{{ __('general_content.delivery_status_trans_key') }}</th>
                             <th>{{ __('general_content.invoice_status_trans_key') }}</th>
                             <th>{{__('general_content.action_trans_key') }}</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -291,9 +292,17 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                     </div>
                                 </div>
                             </td>
+                            <td>
+                                @if(3 != $OrderLine->delivery_status && $OrderLine->order->type != 2)
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" value="{{ $OrderLine->id }}" wire:model.live="data.{{ $OrderLine->id }}.order_line_id" id="data.{{ $OrderLine->id }}.order_line_id"  type="checkbox">
+                                    <label for="data.{{ $OrderLine->id }}.order_line_id" class="custom-control-label">+</label>
+                                </div>
+                                @endif
+                            </td>
                         </tr>
                         @empty
-                            <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />
+                            <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
@@ -312,6 +321,22 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             <th>{{ __('general_content.delivery_status_trans_key') }}</th>
                             <th>{{ __('general_content.invoice_status_trans_key') }}</th>
                             <th>{{__('general_content.action_trans_key') }}</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <th colspan="13"></th>
+                            <th colspan="2">
+                                <div>
+                                    <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
+                                    <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" >
+                                </div>
+                                    <div>
+                                    <a class="btn btn-primary btn-sm" wire:click="storeDelevery({{ $OrderId }})" href="#">
+                                        <i class="fas fa-folder"></i>
+                                        {{ __('general_content.new_delivery_note_trans_key') }}
+                                    </a>
+                                </div>
+                            </th>
                         </tr>
                     </tfoot>
                 </table>

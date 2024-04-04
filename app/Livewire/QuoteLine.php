@@ -481,6 +481,5 @@ class QuoteLine extends Component
             $errors = $this->getErrorBag();
             $errors->add('errors', 'no lines selected');
         }
-
     }
 }

@@ -277,12 +277,13 @@
               <h3 class="card-title">{{ __('general_content.view_count_trans_key') }}</h3>
           </div>
           <div class="card-body">
-              @foreach($Quote->guestVisits as $visit)
+              @forelse($Quote->guestVisits as $visit)
               <p>Date: {{ $visit->GetPrettyCreatedAttribute() }}</p>
-              @endforeach
+              @empty
+              <p>{{ __('general_content.no_data_trans_key') }}</p>
+              @endforelse
           </div>
         </div>
-        @livewire('chatlive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
       </div>
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')

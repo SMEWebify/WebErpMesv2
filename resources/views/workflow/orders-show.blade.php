@@ -268,7 +268,6 @@
         </div>
       </div>  
       <div class="tab-pane " id="Views">
-        @livewire('chatlive', ['idItem' => $Order->id, 'Class' => 'Orders'])
       </div>
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')

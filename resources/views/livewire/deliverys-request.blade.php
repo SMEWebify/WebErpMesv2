@@ -92,7 +92,6 @@
                         @error('companies_contacts_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="form-group col-md-3">
-                        
                         <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
                         <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" style=" display:flex; align-items:center;">
                     </div>
