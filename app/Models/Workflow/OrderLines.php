@@ -9,6 +9,7 @@ use App\Models\Products\StockMove;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
+use App\Models\Products\SerialNumbers;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
@@ -80,6 +81,11 @@ class OrderLines extends Model
     public function StockMove()
     {
         return $this->hasMany(StockMove::class);
+    }
+
+    public function SerialNumbers()
+    {
+        return $this->hasMany(SerialNumbers::class);
     }
 
     public function getAllTaskCountAttribute()

@@ -51,12 +51,12 @@
                             <td>{{ $QuoteLine->VAT['label'] }}</td>
                             <td>{{ $QuoteLine->delivery_date }}</td>
                             <td>
-                                @if(1 == $QuoteLine->statu )   <span class="badge badge-info"> {{ __('general_content.open_trans_key') }}</span>@endif
+                                @if(1 == $QuoteLine->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
                                 @if(2 == $QuoteLine->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
                                 @if(3 == $QuoteLine->statu )  <span class="badge badge-success">{{ __('general_content.win_trans_key') }}</span>@endif
                                 @if(4 == $QuoteLine->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif
                                 @if(5 == $QuoteLine->statu )  <span class="badge badge-secondary">{{ __('general_content.closed_trans_key') }}</span>@endif
-                                @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">{{ __('general_content.obsolete_trans_key') }}</span>@endif
+                                @if(6 == $QuoteLine->statu )  <span class="badge badge-primary">{{ __('general_content.obsolete_trans_key') }}</span>@endif
                             </td>
                             <td>
                                 <x-ButtonTextView route="{{ route('quotes.show', ['id' => $QuoteLine->quotes_id])}}" />

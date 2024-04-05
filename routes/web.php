@@ -229,6 +229,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
         Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
 
+        // Serial numbers routes
+        Route::group(['prefix' => 'serial-numbers'], function () {
+            Route::get('/', 'App\Http\Controllers\Products\SerialNumbersController@index')->name('products.serialNumbers');
+        });
+
         // Stock routes
         Route::group(['prefix' => 'Stock'], function () {
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');

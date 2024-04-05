@@ -7,23 +7,22 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                    <th>{{ __('general_content.order_trans_key') }}</th>
-                    <th>{{ __('general_content.qty_trans_key') }}</th>
-                    <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
-                    <th>{{__('general_content.label_trans_key') }}</th>
-                    <th>{{ __('general_content.product_trans_key') }}</th>
-                    <th>{{ __('general_content.qty_trans_key') }}</th>
-                    <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
-                    <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
-                    <th>{{ __('general_content.price_trans_key') }}</th>
-                    <th>{{ __('general_content.discount_trans_key') }}</th>
-                    <th>{{ __('general_content.total_selling_trans_key') }}</th>
+                        <th>{{ __('general_content.order_trans_key') }}</th>
+                        <th>{{ __('general_content.qty_trans_key') }}</th>
+                        <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
+                        <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{ __('general_content.product_trans_key') }}</th>
+                        <th>{{ __('general_content.qty_trans_key') }}</th>
+                        <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
+                        <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
+                        <th>{{ __('general_content.price_trans_key') }}</th>
+                        <th>{{ __('general_content.discount_trans_key') }}</th>
+                        <th>{{ __('general_content.total_selling_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($PurchasesLineslist as $PurchaseLine)
                     <tr>
-                        <tr>
                         <td>
                             @if($PurchaseLine->tasks->OrderLines ?? null)
                                 <x-OrderButton id="{{ $PurchaseLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseLine->tasks->OrderLines->order->code }}"  /> 

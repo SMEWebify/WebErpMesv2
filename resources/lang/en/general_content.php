@@ -128,6 +128,9 @@ return [
     'internal_meeting_trans_key'               => 'Internal Meeting',
     'onsite_visite_trans_key'                  => 'Onsite visite',
     'sales_meeting_trans_key'                  => 'Sales Meeting',
+    'shipped_trans_key'                        => 'Shipped',
+    'returned_trans_key'                       => 'Returned',
+    'in_stock_trans_key'                       => 'In stock',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
@@ -686,6 +689,9 @@ return [
     'other_information_trans_key'              => 'Other information',
     'index_trans_key'                          => 'Index',
     'new_product_trans_key'                    => 'New product',
+
+    'serial_numbers_trans_key'                 => 'Serial Numbers',
+    'serial_numbers_list_trans_key'            => 'Serial Numbers list',
     
     'product_list_trans_key'                   => 'Product list',
     'stock_trans_key'                          => 'Stock',
@@ -707,6 +713,7 @@ return [
     'requested_trans_key'                      => 'Requested',
     'remove_from_stock_trans_key'              => 'Remove from stock',
     'remove_component_lines_stock_trans_key'   => 'Remove component lines automatically from stock',
+    'create_serial_number_trans_key'           => 'Create automatically serial number if not have',
     'current_stock_note_trans_key'             => 'The display of the requested outstanding includes unfinished order lines without task and tasks whose status is equal to: Open, Started, In progress',
     'current_stock_note_2_trans_key'           => 'Please note, creating an internal order will aim to replenish stock based on outstanding stock, however this may result in overstock if the action is carried out in duplicates with the normal flow.',
 

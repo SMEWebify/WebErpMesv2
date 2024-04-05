@@ -427,6 +427,10 @@ return [
                     'url'  => 'products',
                 ],
                 [
+                    'text' => 'serial_numbers_trans_key',
+                    'url'  => 'products/serial-numbers',
+                ],
+                [
                     'text' => 'stock_trans_key',
                     'url'  => 'products/Stock',
                 ],

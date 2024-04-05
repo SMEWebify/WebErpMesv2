@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
@@ -16,6 +17,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Products\SerialNumbers;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
@@ -57,6 +59,8 @@ class OrderLine extends Component
 
     public $data = [];
     public $RemoveFromStock = false;
+    public $CreateSerialNumber = false;
+    
     private $deleveryOrdre = 10;
 
     // Validation Rules
@@ -447,14 +451,30 @@ class OrderLine extends Component
                         'deliverys_id' => $DeliveryCreated->id,
                         'order_line_id' => $key, 
                         'ordre' => $this->deleveryOrdre,
-                        'qty' => $OrderLineData->qty,
+                        'qty' => $OrderLineData->delivered_remaining_qty,
                         'statu' => 1
                     ]); 
 
+                    if($this->CreateSerialNumber){
+                        $productId = null;
+                        if($OrderLineData->product_id) {
+                            $productId =$OrderLineData->product_id;
+                        }
+                        // Generate and insert serial numbers for each qt delivered
+                        for ($i = 0; $i <$OrderLineData->delivered_remaining_qty; $i++) {
+                            SerialNumbers::create([
+                                'products_id' => $productId,
+                                'order_line_id' => $OrderLineData->id,
+                                'serial_number' => Str::uuid(),
+                                'status' => 2, // sold
+                            ]);
+                        }
+                    }
+
                     // update order line info
                     //same function from stock location product controller
-                    $OrderLineData->delivered_qty =  $OrderLineData->delivered_qty + $OrderLineData->qty;
-                    $OrderLineData->delivered_remaining_qty = $OrderLineData->delivered_remaining_qty - $OrderLineData->qty;
+                    $OrderLineData->delivered_qty =  $OrderLineData->delivered_qty + $OrderLineData->delivered_remaining_qty;
+                    $OrderLineData->delivered_remaining_qty = $OrderLineData->delivered_remaining_qty - $OrderLineData->delivered_remaining_qty;
                     //if we are delivered all part
                     if($OrderLineData->delivered_remaining_qty == 0){
                         $OrderLineData->delivery_status = 3;
@@ -469,6 +489,8 @@ class OrderLine extends Component
                         // update order statu info
                         event(new OrderLineUpdated($OrderLineData->id));
                     }
+
+                    
 
                     $TaskRelation = $OrderLineData->Task()->get();
 
@@ -500,6 +522,8 @@ class OrderLine extends Component
                             }
                         }
                     }
+
+                    
 
                     $this->ordre= $this->ordre+10;
                 }

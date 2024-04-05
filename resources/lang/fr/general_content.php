@@ -128,6 +128,9 @@ return [
     'internal_meeting_trans_key'               => 'Réunion interne',
     'onsite_visite_trans_key'                  => 'Visite sur site',
     'sales_meeting_trans_key'                  => 'Rendez vous commercial',
+    'shipped_trans_key'                        => 'Expédié',
+    'returned_trans_key'                       => 'Retour',
+    'in_stock_trans_key'                       => 'En stock',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',
@@ -686,7 +689,10 @@ return [
     'other_information_trans_key'              => 'Autre information',
     'index_trans_key'                          => 'Ind',
     'new_product_trans_key'                    => 'Nouveau produit',
-    
+
+    'serial_numbers_trans_key'                 => 'Numéros de série',
+    'serial_numbers_list_trans_key'            => 'Liste des numéros de série',
+
     'product_list_trans_key'                   => 'Liste des produits',
     'stock_trans_key'                          => 'Stock',
     'stock_list_trans_key'                     => 'Stock liste',
@@ -707,6 +713,7 @@ return [
     'requested_trans_key'                      => 'Demandé',
     'remove_from_stock_trans_key'              => 'Retirer du stock',
     'remove_component_lines_stock_trans_key'   => 'Supprimer automatiquement les lignes de composants du stock',
+    'create_serial_number_trans_key'           => 'Créer automatiquement un numéro de série si vous n\'en avez pas',
     'current_stock_note_trans_key'             => 'L\'affichage des encours demandés comprend les lignes de commandes non terminées sans tâche et les tâches dont le status est égale à : Ouvert, Commencé, Progression',
     'current_stock_note_2_trans_key'           => 'Attention, créer une commande interne aura pour but de refaire du stock basé sur l\'encours, cependant cela peux réaliser du surstock si l\'action est réalisée en doublons avec le flux normale.',
 

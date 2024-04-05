@@ -34,6 +34,7 @@ return [
     'export_invoices_lines_list_trans_key'     => 'Export invoices line',
     'others_trans_key'                         => 'Others',
     'product_trans_key'                        => 'Product',
+    'serial_numbers_trans_key'                 => 'Serial Numbers',
     'product_list_trans_key'                   => 'Product list',
     'stock_trans_key'                          => 'Stock',
     'inventory_trans_key'                      => 'Inventory',

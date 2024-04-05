@@ -93,7 +93,9 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
-                        <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" style=" display:flex; align-items:center;">
+                        <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" >
+                        <label for="CreateSerialNumber">{{ __('general_content.create_serial_number_trans_key') }}</label>
+                        <input type="checkbox" id="CreateSerialNumber" wire:model.live="CreateSerialNumber" >
                     </div>
                     
                     <div class="form-group col-md-3"><br/>

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use App\Models\Workflow\Orders;
 use App\Events\OrderLineUpdated;
 use App\Models\Products\StockMove;
@@ -11,6 +12,7 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Products\SerialNumbers;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
@@ -31,6 +33,7 @@ class DeliverysRequest extends Component
     public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
     public $updateLines = false;
     public $RemoveFromStock = false;
+    public $CreateSerialNumber = false;
     public $CompaniesSelect = [];
     public $data = [];
     public $qty = [];
@@ -160,9 +163,28 @@ class DeliverysRequest extends Component
                             'statu' => 1
                         ]); 
 
+                        
+
                         // update order line info
                         //same function from stock location product controller
                         $OrderLine = OrderLines::find($key);
+
+                        if($this->CreateSerialNumber){
+                            $productId = null;
+                            if($OrderLine->product_id) {
+                                $productId =$OrderLine->product_id;
+                            }
+                            // Generate and insert serial numbers for each qt delivered
+                            for ($i = 0; $i < $this->data[$key]['scumQty']; $i++) {
+                                SerialNumbers::create([
+                                    'products_id' => $productId,
+                                    'order_line_id' => $key,
+                                    'serial_number' => Str::uuid(),
+                                    'status' => 2, // sold
+                                ]);
+                            }
+                        }
+
                         $OrderLine->delivered_qty =  $OrderLine->delivered_qty + $this->data[$key]['scumQty'];
                         $OrderLine->delivered_remaining_qty = $OrderLine->delivered_remaining_qty - $this->data[$key]['scumQty'];
                         //if we are delivered all part
