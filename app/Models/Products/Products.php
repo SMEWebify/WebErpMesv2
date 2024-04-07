@@ -16,6 +16,7 @@ use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -281,6 +282,20 @@ class Products extends Model
     public function SubAssembly()
     {
         return $this->hasMany(SubAssembly::class, 'products_id')->orderBy('ordre');
+    }
+
+    public function QuantityPrice()
+    {
+        return $this->hasMany(ProductsQuantityPrice::class);
+    }
+
+    public function getQuantityPricesForSupplier($supplierId)
+    {
+        // Récupérer les prix par quantité pour le fournisseur spécifié
+        return $this->QuantityPrice()
+                    ->where('companies_id', $supplierId)
+                    ->orderBy('min_qty')
+                    ->get();
     }
 
     public function GetPrettyCreatedAttribute()

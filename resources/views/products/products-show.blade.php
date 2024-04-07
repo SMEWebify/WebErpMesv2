@@ -286,10 +286,10 @@
                     <hr>
                     <div class="row">
                         <div class="col-4">
-                          <input type="number" class="form-control" value="{{ $Product->qty_eco_min }}" name="qty_eco_min" id="qty_eco_min" placeholder="Qty eco min" step=".001">
+                          <input type="number" class="form-control" value="{{ $Product->qty_eco_min }}" name="qty_eco_min" id="qty_eco_min" placeholder="{{ __('general_content.quantite_eco_min_trans_key') }}" step=".001">
                         </div>
                         <div class="col-4">
-                          <input type="number" class="form-control" value="{{ $Product->qty_eco_max }}" name="qty_eco_max" id="qty_eco_max" placeholder="Qty eco max" step=".001">
+                          <input type="number" class="form-control" value="{{ $Product->qty_eco_max }}" name="qty_eco_max" id="qty_eco_max" placeholder="{{ __('general_content.quantite_eco_max_trans_key') }}" step=".001">
                         </div>
                         <div class="col-4"></div>
                     </div>
@@ -635,14 +635,86 @@
                     <th>{{__('general_content.id_trans_key') }}</th>
                     <th>{{__('general_content.customer_trans_key') }}</th>
                     <th></th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($Product->preferredSuppliers as $Supplier)
+                  @forelse ($Product->preferredSuppliers as $preferredSuppliers)
                   <tr>
-                    <td>{{ $Supplier->code }}</td>
-                    <td>{{ $Supplier->label }}</td>
-                    <td><x-ButtonTextView route="{{ route('companies.show', ['id' => $Supplier->id])}}" /></td>
+                    <td>{{ $preferredSuppliers->code }}</td>
+                    <td>{{ $preferredSuppliers->label }}</td>
+                    <td><x-ButtonTextView route="{{ route('companies.show', ['id' => $preferredSuppliers->id])}}" /></td>
+                    <td class="py-0 align-middle">
+                        <!-- Button Modal -->
+                        <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#preferredSuppliers{{ $preferredSuppliers->id }}">
+                          x €
+                        </button>
+                        <!-- Modal {{ $preferredSuppliers->id }} -->
+                        <x-adminlte-modal id="preferredSuppliers{{ $preferredSuppliers->id }}" title="{{ __('general_content.price_by_qty_trans_key') }} {{ $preferredSuppliers->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                          <form method="POST" action="{{ route('products.supplier.qty.price.create', ['id' => $Product->id]) }} }}" enctype="multipart/form-data">
+                            @csrf
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="col-4">
+                                  <input type="hidden"  value="{{ $preferredSuppliers->id }}" name="companies_id" id="companies_id">
+                                
+                                  <input type="number" class="form-control"  name="min_qty" id="min_qty" placeholder="{{ __('general_content.quantite_min_trans_key') }}" step=".001">
+                                </div>
+                                <div class="col-4">
+                                  <input type="number" class="form-control"  name="max_qty" id="max_qty" placeholder="{{ __('general_content.quantite_max_trans_key') }}" step=".001">
+                                </div>
+                                <div class="col-4">
+                                  <div class="input-group">
+                                      <div class="input-group-prepend">
+                                          <span class="input-group-text">{{ $Factory->curency }}</span>
+                                      </div>
+                                      <input type="number" class="form-control"   name="price" id="price" placeholder="{{ __('general_content.price_trans_key') }}" step=".001">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="card-footer">
+                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                            </div>
+                          </form>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="card-body table-responsive p-0">
+                                <table class="table table-hover">
+                                  <thead>
+                                    <tr>
+                                      <th>{{__('general_content.quantite_min_trans_key') }}</th>
+                                      <th>{{__('general_content.quantite_max_trans_key') }}</th>
+                                      <th>{{__('general_content.price_trans_key') }}</th>
+                                      <th></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    @forelse ($Product->getQuantityPricesForSupplier($preferredSuppliers->id) as $QuantityPrice)
+                                    <tr>
+                                      <td>{{ $QuantityPrice->min_qty }}</td>
+                                      <td>{{ $QuantityPrice->max_qty }}</td>
+                                      <td>{{ $QuantityPrice->price }} {{ $Factory->curency }}</td>
+                                      <td></td>
+                                    </tr>
+                                    @empty
+                                    <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                    @endforelse
+                                  </tbody>
+                                  <tfoot>
+                                    <tr>
+                                      <th>{{__('general_content.quantite_min_trans_key') }}</th>
+                                      <th>{{__('general_content.quantite_max_trans_key') }}</th>
+                                      <th>{{__('general_content.price_trans_key') }}</th>
+                                      <th></th>
+                                    </tr>
+                                  </tfoot>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </x-adminlte-modal>
+                      </td>
                   </tr>
                   @empty
                   <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
@@ -652,6 +724,7 @@
                   <tr>
                     <th>{{__('general_content.id_trans_key') }}</th>
                     <th>{{__('general_content.customer_trans_key') }}</th>
+                    <th></th>
                     <th></th>
                   </tr>
                 </tfoot>

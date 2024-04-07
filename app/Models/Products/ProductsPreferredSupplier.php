@@ -10,4 +10,9 @@ class ProductsPreferredSupplier extends Model
     use HasFactory;
     protected $fillable = ['product_id', 
                             'companies_id',];
+
+    public function QuantityPrice()
+    {
+        return $this->hasMany(ProductsQuantityPrice::class, 'product_id', 'companies_id',);
+    }
 }

@@ -15,6 +15,7 @@ use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
+use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\UpdateProductsRequest;
 
@@ -96,6 +97,28 @@ class ProductsController extends Controller
             $product->preferredSuppliers()->attach($request->compannie_id);
             return redirect()->route('products.show', ['id' =>  $request->product_id])->with('success', 'Successfully add supplier.');
         }
+    }
+
+    public function StoreSupplierPriceQty(Request $request){
+
+        // Validate the request data
+        $validatedData = $request->validate([
+            'min_qty' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        // Create a new quantity price entry
+        $quantityPrice = ProductsQuantityPrice::create([
+            'products_id' => $request->id,
+            'companies_id' => $request->companies_id,
+            'min_qty' => $request->min_qty,
+            'max_qty' => $request->max_qty,
+            'price' => $request->price,
+        ]);
+
+        // Redirect back with success message
+
+        return redirect()->route('products.show', ['id' =>  $request->id])->with('success', 'Successfully add quantity price.');
     }
 
     /**
