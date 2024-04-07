@@ -13,6 +13,7 @@
                     <form>
                     @csrf
                         <div class="card card-body">
+                            @include('include.alert-result')
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="label">{{ __('general_content.name_opportunity_trans_key') }}</label>
@@ -151,7 +152,6 @@
     <!-- End Modal -->
 
     <div class="card">
-        @include('include.alert-result')
         <div class="card-body">
             <div class="row">
                 <div class="col-md-8">

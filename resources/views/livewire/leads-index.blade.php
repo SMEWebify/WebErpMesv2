@@ -12,6 +12,7 @@
                 <div class="modal-body">
                     <form>
                         <div class="card card-body">
+                            @include('include.alert-result')
                             <div class="row">
                                 <div class="col-12">
                                     <label for="companies_id">{{ __('general_content.companie_trans_key') }}</label>
