@@ -6,26 +6,25 @@ use Illuminate\Http\Request;
 use App\Http\Resources\AdresseResource;
 use App\Http\Resources\ContactResource;
 use App\Http\Resources\CompanieResource;
-use App\Http\Resources\OrderLinesResource;
+use App\Http\Resources\QuoteLinesResource;
 use App\Http\Resources\PaymentMethodResource;
 use App\Http\Resources\DeleveryMethodResource;
 use App\Http\Resources\PaymentConditionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class OrderResource extends JsonResource
+class QuoteResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @return array<string, mixed>
      */
-    public function toArray($request)
+    public function toArray(Request $request): array
     {
 
         return [
             'id' => $this->id,
-            'uuid' => $this->uuid,          
+            'uuid' => $this->uuid,     
             'code' => $this->code,
             'label' => $this->label,
             'customer_reference' => $this->customer_reference,
@@ -40,7 +39,7 @@ class OrderResource extends JsonResource
             'comment' => $this->comment,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'order_lines' => OrderLinesResource::collection($this->OrderLines),
+            'quote_lines' => QuoteLinesResource::collection($this->QuoteLines),
         ];
 
         //return parent::toArray($request);
