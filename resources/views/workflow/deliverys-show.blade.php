@@ -100,7 +100,14 @@
                         <td>
                           <x-ButtonTextPDF route="{{ route('pdf.delivery', ['Document' => $Delivery->id])}}" />
                         </td>
-                    </tr>
+                    </tr> 
+                    <tr>
+                      <td> 
+                      </td>
+                      <td>
+                        <a class="btn btn-primary btn-sm" href="{{ route('invoices.store.from.delivery', ['id' => $Delivery->id])}}" >{{ __('general_content.new_invoice_trans_key') }}</a>
+                      </td>
+                  </tr>
                 </table>
               </div>
             </div>

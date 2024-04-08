@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Workflow;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Workflow\Invoices;
+use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
+use App\Events\DeliveryLineUpdated;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Services\InvoiceCalculator;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\DeliveryLines;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Http\Requests\Workflow\UpdateInvoiceRequest;
@@ -45,6 +51,67 @@ class InvoicesController extends Controller
     public function request()
     {    
         return view('workflow/invoices-request');
+    }
+
+    
+    public function storeFromDelevery($id)
+    {
+        $LastInvoice =  Invoices::latest()->first();
+        if($LastInvoice == Null){
+            $code = "IN-0";
+            $label = "IN-0";
+        }
+        else{
+            $code = "IN-". $LastInvoice->id;
+            $label = "IN-". $LastInvoice->id;
+        }
+
+        $DeliveryData = Deliverys::find($id);
+
+        // Create invoice
+        $InvoiceCreated = Invoices::create([
+            'code'=>$code,  
+            'label'=>$label, 
+            'companies_id'=>$DeliveryData->companies_id,   
+            'companies_addresses_id'=>$DeliveryData->companies_addresses_id,  
+            'companies_contacts_id'=>$DeliveryData->companies_contacts_id,  
+            'user_id'=>Auth::id(),
+        ]);
+
+        $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
+        foreach ($DeliveryLines as $DeliveryLine) {
+            // Create  invoice line
+            $InvoiceLines = InvoiceLines::create([
+                'invoices_id' => $InvoiceCreated->id,
+                'order_line_id' => $DeliveryLine->order_line_id, 
+                'delivery_line_id' => $DeliveryLine->id, 
+                'ordre' => $DeliveryLine->ordre, 
+                'qty' => $DeliveryLine->qty,
+                'statu' => 1
+            ]); 
+
+            $DeliveryLine->invoice_status = 4; 
+            $DeliveryLine->save();
+            
+            event(new DeliveryLineUpdated($DeliveryLine->id));
+
+            // update order line info
+            $OrderLine = OrderLines::find($DeliveryLine->order_line_id);
+            $OrderLine->invoiced_qty =  $OrderLine->invoiced_qty + $DeliveryLine->qty;
+            $OrderLine->invoiced_remaining_qty = $OrderLine->invoiced_remaining_qty - $DeliveryLine->qty;
+            //if we are invoiced all part
+            if($OrderLine->invoiced_remaining_qty == 0){
+                $OrderLine->invoice_status = 3;
+            }
+            else{
+                $OrderLine->invoice_status = 2;
+            }
+            $OrderLine->save();
+        }
+
+        // return view on new document
+        return redirect()->route('invoices.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new invoice');
+
     }
 
     /**
