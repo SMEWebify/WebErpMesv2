@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Admin\CustomField;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
@@ -58,7 +59,15 @@ class DeliverysController extends Controller
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
         $previousUrl = route('deliverys.show', ['id' => $id->id-1]);
         $nextUrl = route('deliverys.show', ['id' => $id->id+1]);
-    
+        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'delivery')
+                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
+                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
+                                                ->where('cfv.entity_type', '=', 'delivery')
+                                                ->where('cfv.entity_id', '=', $id->id);
+                                    })
+                                    ->select('custom_fields.*', 'cfv.value as field_value')
+                                    ->get();
+
         return view('workflow/deliverys-show', [
             'Delivery' => $id,
             'CompanieSelect' => $CompanieSelect,
@@ -66,6 +75,7 @@ class DeliverysController extends Controller
             'ContactSelect' => $ContactSelect,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'CustomFields' => $CustomFields,
         ]);
     }
     

@@ -20,6 +20,9 @@
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
+      @if(count($CustomFields)> 0)
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
+      @endif
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
     </ul>
   </div>
@@ -278,13 +281,18 @@
           </div>
           <div class="card-body">
               @forelse($Quote->guestVisits as $visit)
-              <p>Date: {{ $visit->GetPrettyCreatedAttribute() }}</p>
+              <p>{{ __('general_content.date_trans_key') }}: {{ $visit->GetPrettyCreatedAttribute() }}</p>
               @empty
               <p>{{ __('general_content.no_data_trans_key') }}</p>
               @endforelse
           </div>
         </div>
       </div>
+      @if($CustomFields)
+      <div class="tab-pane " id="CustomFields">
+        @include('include.custom-fields-form', ['id' => $Quote->id, 'type' => 'quote'])
+      </div>
+      @endif
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')
         @if($Quote->statu == 1)

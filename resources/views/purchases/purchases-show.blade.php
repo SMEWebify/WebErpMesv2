@@ -17,6 +17,9 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Purchase" data-toggle="tab">{{  __('general_content.purchase_info_trans_key') }}</a></li> 
       <li class="nav-item"><a class="nav-link" href="#PurchaseLines" data-toggle="tab">{{  __('general_content.purchase_lines_trans_key') }}</a></li>
+      @if(count($CustomFields)> 0)
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
+      @endif
     </ul>
   </div>
   <!-- /.card-header -->
@@ -130,9 +133,13 @@
         </div>
       </div>    
       <div class="tab-pane " id="PurchaseLines">
-        
         @livewire('purchases-lines-index' , ['purchase_id' => $Purchase->id ])
       </div>
+      @if($CustomFields)
+      <div class="tab-pane " id="CustomFields">
+        @include('include.custom-fields-form', ['id' => $Purchase->id, 'type' => 'purchase'])
+      </div>
+      @endif
   </div>
   <!-- /.card-body -->
 </div>

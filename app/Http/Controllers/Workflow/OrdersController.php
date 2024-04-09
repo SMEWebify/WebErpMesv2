@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Workflow;
 use Carbon\Carbon;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
+use App\Models\Admin\CustomField;
 use App\Services\OrderCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
@@ -71,6 +72,14 @@ class OrdersController extends Controller
         $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
         $previousUrl = route('orders.show', ['id' => $id->id-1]);
         $nextUrl = route('orders.show', ['id' => $id->id+1]);
+        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'order')
+                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
+                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
+                                                ->where('cfv.entity_type', '=', 'order')
+                                                ->where('cfv.entity_id', '=', $id->id);
+                                    })
+                                    ->select('custom_fields.*', 'cfv.value as field_value')
+                                    ->get();
 
         return view('workflow/orders-show', [
             'Order' => $id,
@@ -89,6 +98,7 @@ class OrdersController extends Controller
             'TotalServicePrice'=> $TotalServicePrice,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'CustomFields' => $CustomFields,
         ]);
     }
     

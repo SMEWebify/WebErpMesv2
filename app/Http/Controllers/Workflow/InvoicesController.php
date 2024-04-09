@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Admin\CustomField;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
@@ -129,6 +130,14 @@ class InvoicesController extends Controller
         $vatPrice = $OrderCalculator->getVatTotal();
         $previousUrl = route('invoices.show', ['id' => $id->id-1]);
         $nextUrl = route('invoices.show', ['id' => $id->id+1]);
+        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'invoice')
+                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
+                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
+                                                ->where('cfv.entity_type', '=', 'invoice')
+                                                ->where('cfv.entity_id', '=', $id->id);
+                                    })
+                                    ->select('custom_fields.*', 'cfv.value as field_value')
+                                    ->get();
 
         return view('workflow/invoices-show', [
             'Invoice' => $id,
@@ -140,6 +149,7 @@ class InvoicesController extends Controller
             'vatPrice' => $vatPrice,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'CustomFields' => $CustomFields,
         ]);
     }
 

@@ -311,6 +311,7 @@ return [
     'customer_import_trans_key'                => 'Customer import',
     'kanban_setting_note_trans_key'            => 'The first line will be used for the default status of new tasks. The last line is used for finished task, ready for delivery note',
     'make_new_role_trans_key'                  => 'Make a new Role',
+    'custom_fields_trans_key'                  => 'Custom fields',
     
     // CARD HEADER
     'statistiques_trans_key'                   => 'Statistiques',
@@ -834,6 +835,9 @@ return [
     'public_link_cgv_trans_key'                => 'Publish public link for CGV',
     'add_cgv_to_quote_order_trans_key'         => 'Add following the quote or order',
     'show_current_file_trans_key'              => 'Show current file',
+    'name_field_trans_key'                     => 'Name field',
+    'type_field_trans_key'                     => 'Type field',
+    'entity_type_trans_key'                    => 'Type entity',
     
     //PROFIL
     'profile_trans_key'                        => 'Profil',

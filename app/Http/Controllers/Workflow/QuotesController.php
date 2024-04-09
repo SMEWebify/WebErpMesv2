@@ -6,11 +6,12 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Quotes;
+use App\Models\Admin\CustomField;
 use App\Services\QuoteCalculator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
-use App\Models\Workflow\QuoteLines;
 
+use App\Models\Workflow\QuoteLines;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
@@ -75,6 +76,14 @@ class QuotesController extends Controller
         $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
         $previousUrl = route('quotes.show', ['id' => $id->id-1]);
         $nextUrl = route('quotes.show', ['id' => $id->id+1]);
+        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'quote')
+                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
+                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
+                                                ->where('cfv.entity_type', '=', 'quote')
+                                                ->where('cfv.entity_id', '=', $id->id);
+                                    })
+                                    ->select('custom_fields.*', 'cfv.value as field_value')
+                                    ->get();
 
         return view('workflow/quotes-show', [
             'Quote' => $id,
@@ -93,6 +102,7 @@ class QuotesController extends Controller
             'TotalServicePrice'=> $TotalServicePrice,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'CustomFields' => $CustomFields,
         ]);
     }
     

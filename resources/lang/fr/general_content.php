@@ -311,6 +311,7 @@ return [
     'customer_import_trans_key'                => 'Import client',
     'kanban_setting_note_trans_key'            => 'La première ligne sera utilisée pour le statut par défaut des nouvelles tâches. La dernière ligne est utilisée pour la tâche terminée, prête pour le bon de livraison',
     'make_new_role_trans_key'                  => 'Créer un rôle',
+    'custom_fields_trans_key'                  => 'Champs personalisés',
 
     // CARD HEADER
     'statistiques_trans_key'                   => 'Statistiques',
@@ -834,6 +835,9 @@ return [
     'public_link_cgv_trans_key'                => 'Lien publique pour les CGV',
     'add_cgv_to_quote_order_trans_key'         => 'Ajouter les CGV à la suite des devis ou commande',
     'show_current_file_trans_key'              => 'Voir le ficher courant',
+    'name_field_trans_key'                     => 'Nom du champs',
+    'type_field_trans_key'                     => 'Type de champs',
+    'entity_type_trans_key'                    => 'Type associé',
     
     //PROFIL
     'profile_trans_key'                        => 'Profil',

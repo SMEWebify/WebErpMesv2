@@ -18,6 +18,9 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Invoice" data-toggle="tab">{{ __('general_content.invoice_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#InvoiceLines" data-toggle="tab">{{ __('general_content.invoice_lines_trans_key') }}</a></li>
+      @if(count($CustomFields)> 0)
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
+      @endif
     </ul>
   </div>
   <!-- /.card-header -->
@@ -176,6 +179,11 @@
         </div>
         <!-- /.row -->
       </div>
+      @if($CustomFields)
+      <div class="tab-pane " id="CustomFields">
+        @include('include.custom-fields-form', ['id' => $Invoice->id, 'type' => 'invoice'])
+      </div>
+      @endif
   </div>
   <!-- /.card-body -->
 </div>

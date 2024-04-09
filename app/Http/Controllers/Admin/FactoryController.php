@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
+use App\Models\Admin\CustomField;
 use Spatie\Permission\Models\Role;
 use App\Models\Admin\Announcements;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Admin\CustomFieldValue;
 use App\Models\Accounting\AccountingVat;
 use Spatie\Permission\Models\Permission;
 use App\Http\Requests\Admin\UpdateFactoryRequest;
+use App\Http\Requests\Admin\StoreCustomFieldRequest;
 use App\Http\Requests\Admin\StoreAnnouncementRequest;
 
 class FactoryController extends Controller
@@ -32,6 +36,8 @@ class FactoryController extends Controller
         $Roles = Role::all();
         $Permissions = Permission::all();
         $Factory = Factory::first();
+        $CustomFields = CustomField::all();
+
         if (!$Factory) {
             $Factory = Factory::create([
                 'id' => 1,
@@ -52,6 +58,7 @@ class FactoryController extends Controller
             'Roles' => $Roles,
             'Permissions' => $Permissions,
             'Factory' => $Factory,
+            'CustomFields' => $CustomFields,
         ]);
     }
 
@@ -138,5 +145,82 @@ class FactoryController extends Controller
 
         return redirect()->route('admin.factory')->with('success', 'Successfully delete announcement');
     }
-    
+
+
+    /**
+    * Store a newly created custom field in storage.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
+    public function storeCustomField(StoreCustomFieldRequest $request)
+    {
+
+
+        // Création d'un nouveau champ personnalisé
+        $customField = CustomField::create([
+            'name' => $request->name,
+            'type' => $request->type,
+            'related_type' => $request->related_type,
+        ]);
+
+        // Redirection vers une page de confirmation ou une autre action
+        return redirect()->route('admin.factory')->with('success', 'Custom field created successfully.');
+    }
+
+    /**
+    * Store a newly created custom field in storage.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
+    public function storeOrUpdateCustomField(Request $request, $id, $type)
+    {
+        // Validez les données du formulaire
+        $validatedData = $request->validate([
+            'custom_fields' => 'array', // Vous pouvez ajouter des règles de validation supplémentaires ici
+        ]);
+
+        // Parcourez les données soumises par le formulaire et créez ou mettez à jour les valeurs des champs personnalisés
+        foreach ($validatedData['custom_fields'] as $fieldId => $fieldValue) {
+            // Vérifiez si la valeur du champ personnalisé existe déjà en base de données
+            $customFieldValue = CustomFieldValue::where('custom_field_id', $fieldId)
+                                                ->where('entity_id', $id)
+                                                ->where('entity_type', $type)
+                                                ->first();
+
+            
+            if ($customFieldValue) {
+                // Si la valeur existe, mettez à jour sa valeur
+                $customFieldValue->update(['value' => $fieldValue]);
+            } else {
+                // Sinon, créez une nouvelle valeur pour ce champ personnalisé
+                CustomFieldValue::create([
+                    'custom_field_id' => $fieldId,
+                    'entity_id' => $id,
+                    'entity_type' =>  $type, // Vous pouvez adapter cela en fonction de votre logique métier
+                    'value' => $fieldValue,
+                ]);
+            }
+        }
+
+        if( $type=='quote'){
+            return redirect()->route('quotes.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
+        }
+        elseif( $type=='order'){
+            return redirect()->route('orders.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
+        }
+        elseif( $type=='delivery'){
+            return redirect()->route('deliverys.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
+        }
+        elseif( $type=='invoice'){
+            return redirect()->route('invoices.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
+        }
+        elseif( $type=='purchase'){
+            return redirect()->route('purchase.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
+        }
+        else{
+            return redirect()->back()->withErrors(['msg' => 'Something went wrong']);
+        }
+    }
 }

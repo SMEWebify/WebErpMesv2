@@ -17,6 +17,7 @@
             <li class="nav-item"><a class="nav-link" href="#Permissions" data-toggle="tab">{{ __('general_content.permissions_trans_key') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#RoleInPermissions" data-toggle="tab">{{ __('general_content.role_in_permissions_trans_key') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">{{ __('general_content.estimated_budget_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#CustomerImport" data-toggle="tab">{{ __('general_content.customer_import_trans_key') }}</a></li>
         </ul>
     </div>
@@ -932,6 +933,102 @@
                 <x-InfocalloutComponent note="Used for dashboard chart."  />
                 @livewire('estimated-budget')
             </div>
+            <div class="tab-pane " id="CustomFields">
+                <div class="row">
+                    <div class="col-md-6 card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('general_content.families_trans_key') }}</h3>
+                        </div>
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{{ __('general_content.name_field_trans_key') }}</th>
+                                        <th>{{ __('general_content.type_field_trans_key') }} </th>
+                                        <th>{{ __('general_content.entity_type_trans_key') }}</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($CustomFields as $CustomField)
+                                        <tr>
+                                            <td>{{ $CustomField->name }}</td>
+                                            <td>{{ $CustomField->type }}</td>
+                                            <td>{{ $CustomField->related_type }}</td>
+                                            <td></td>
+                                        </tr>
+                                    @empty
+                                        <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                    @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>{{ __('general_content.name_field_trans_key') }}</th>
+                                        <th>{{ __('general_content.type_field_trans_key') }} </th>
+                                        <th>{{ __('general_content.entity_type_trans_key') }}</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <!-- /.card secondary -->
+                    </div>
+                    <div class="col-md-6 card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('general_content.new_family_trans_key') }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <form  method="POST" action="{{ route('admin.factory.custom.field.store') }}" class="form-horizontal">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="code">{{ __('general_content.name_field_trans_key') }} :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="label">{{ __('general_content.type_field_trans_key') }}  :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                        </div>
+                                        <select class="form-control" id="type" name="type" required>
+                                            <option value="text">Text</option>
+                                            <option value="number">Number</option>
+                                            <option value="checkbox">Checkbox</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="methods_services_id">{{ __('general_content.entity_type_trans_key') }}  :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                        </div>
+                                        <select class="form-control" id="related_type" name="related_type" required>
+                                            <option value="quote">{{ __('general_content.quote_trans_key') }}</option>
+                                            <option value="order">{{ __('general_content.orders_trans_key') }}</option>
+                                            <option value="delivery">{{ __('general_content.delivery_notes_trans_key') }}</option>
+                                            <option value="invoice">{{ __('general_content.invoice_trans_key') }}</option>
+                                            <option value="purchase">{{ __('general_content.purchase_order_trans_key') }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.card body -->
+                    </div>
+                    <!-- /.card secondary -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.tab-pane -->
             <div class="tab-pane " id="CustomerImport">
                 @include('include.alert-result')
                 <div class="card card-primary">

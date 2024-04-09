@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
+use App\Models\Admin\CustomField;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
@@ -97,6 +98,7 @@ class PurchasesController extends Controller
         $previousUrl = route('purchase.quotation.show', ['id' => $id->id-1]);
         $nextUrl = route('purchase.quotation.show', ['id' => $id->id+1]);
 
+                                    
         return view('purchases/purchases-quotation-show', [
             'PurchaseQuotation' => $id,
             'CompanieSelect' => $CompanieSelect,
@@ -120,7 +122,14 @@ class PurchasesController extends Controller
         $totalPrice = $PurchaseCalculator->getTotalPrice();
         $previousUrl = route('purchase.show', ['id' => $id->id-1]);
         $nextUrl = route('purchase.show', ['id' => $id->id+1]);
-
+        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'purchase')
+                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
+                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
+                                                ->where('cfv.entity_type', '=', 'purchase')
+                                                ->where('cfv.entity_id', '=', $id->id);
+                                    })
+                                    ->select('custom_fields.*', 'cfv.value as field_value')
+                                    ->get();
         return view('purchases/purchases-show', [
             'Purchase' => $id,
             'CompanieSelect' => $CompanieSelect,
@@ -129,6 +138,7 @@ class PurchasesController extends Controller
             'totalPrices' => $totalPrice,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+            'CustomFields' => $CustomFields,
         ]);
     }
 

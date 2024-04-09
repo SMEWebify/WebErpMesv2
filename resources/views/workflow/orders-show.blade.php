@@ -18,7 +18,11 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.order_line_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li><li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li><li class="nav-item">
+      <!--<a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
+      @if(count($CustomFields)> 0)
+      <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
+      @endif
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
     </ul>
   </div>
@@ -269,6 +273,11 @@
       </div>  
       <div class="tab-pane " id="Views">
       </div>
+      @if($CustomFields)
+      <div class="tab-pane " id="CustomFields">
+        @include('include.custom-fields-form', ['id' => $Order->id, 'type' => 'order'])
+      </div>
+      @endif
       <div class="tab-pane " id="LinesImport">
         @include('include.alert-result')
         @if($Order->statu == 1)
