@@ -38,8 +38,8 @@ class OrderLine extends Component
     public $OrderId;
     public $OrderStatu;
     public $order_Statu;
+    public $OrderType;
     public $status_id;
-
     public $OrderLineslist;
     public $order_lines_id, $orders_id, $ordre, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $code='';
@@ -106,11 +106,12 @@ class OrderLine extends Component
     }
 
     
-    public function mount($OrderId, $OrderStatu, $OrderDelay) 
+    public function mount($OrderId, $OrderStatu, $OrderDelay, $OrderType) 
     {
         $this->orders_id = $OrderId;
         $this->order_Statu = $OrderStatu;
         $this->delivery_date = $OrderDelay;
+        $this->OrderType = $OrderType;
         $this->Factory = Factory::first();
         $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
@@ -143,8 +144,23 @@ class OrderLine extends Component
     }
 
     public function storeOrderLine(){
+        
+        if($this->OrderType == 2){
+            $this->validate([
+                'product_id' => 'required',
+                'ordre' =>'required|numeric|gt:0',
+                'label'=>'required',
+                'qty'=>'required|min:1|not_in:0',
+                'methods_units_id'=>'required',
+                'selling_price'=>'required|numeric|gt:0',
+                'discount'=>'required',
+                'accounting_vats_id'=>'required',
+            ]);
+        }
+        else{
+            $this->validate();
+        }
 
-        $this->validate();
         $date = date_create($this->delivery_date);
         $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
         
@@ -338,7 +354,21 @@ class OrderLine extends Component
 
     public function update(){
         // Validate request
-        $this->validate();
+        if($this->OrderType == 2){
+            $this->validate([
+                'product_id' => 'required',
+                'ordre' =>'required|numeric|gt:0',
+                'label'=>'required',
+                'qty'=>'required|min:1|not_in:0',
+                'methods_units_id'=>'required',
+                'selling_price'=>'required|numeric|gt:0',
+                'discount'=>'required',
+                'accounting_vats_id'=>'required',
+            ]);
+        }
+        else{
+            $this->validate();
+        }
         // Update line
         $OderLineToUpdate = Orderlines::find($this->order_lines_id);
 
@@ -391,15 +421,15 @@ class OrderLine extends Component
     }
 
     public function createNC($id, $companie_id){
-                    $NewNonConformity = QualityNonConformity::create([
-                        'code'=> "NC-OR-#". $this->orders_id,
-                        'label'=>"NC-L-#". $id,
-                        'statu'=>1,
-                        'type'=>1,
-                        'user_id'=>Auth::id(),
-                        'companie_id'=>$companie_id,
-                        'order_lines_id'=>$id,
-                    ]);
+        $NewNonConformity = QualityNonConformity::create([
+            'code'=> "NC-OR-#". $this->orders_id,
+            'label'=>"NC-L-#". $id,
+            'statu'=>1,
+            'type'=>1,
+            'user_id'=>Auth::id(),
+            'companie_id'=>$companie_id,
+            'order_lines_id'=>$id,
+        ]);
 
         return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
     }
