@@ -223,7 +223,7 @@
         </div>
       </div>   
       <div class="tab-pane " id="Lines">
-        @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date])
+        @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date, 'OrderType' => $Order->type])
       </div> 
       <div class="tab-pane" id="Charts">
         <div class="row">
