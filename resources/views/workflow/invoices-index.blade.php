@@ -51,8 +51,9 @@
           @foreach ($data['invoicesDataRate'] as $item)
                 @if(1 == $item->statu )  "In progress", @endif
                 @if(2 == $item->statu )  "Sent", @endif
-                @if(3 == $item->statu )  "Invoiced", @endif
-                @if(4 == $item->statu )  "Partially invoiced", @endif
+                @if(3 == $item->statu )  "Pending", @endif
+                @if(4 == $item->statu )  "Unpaid", @endif
+                @if(4 == $item->statu )  "Paid", @endif
           @endforeach
         ],
         datasets: [

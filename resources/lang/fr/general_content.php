@@ -131,6 +131,9 @@ return [
     'shipped_trans_key'                        => 'Expédié',
     'returned_trans_key'                       => 'Retour',
     'in_stock_trans_key'                       => 'En stock',
+    'pending_trans_key'                        => 'En attente',
+    'unpaid_trans_key'                         => 'Impayé',
+    'paid_trans_key'                           => 'Payé',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',

@@ -50,6 +50,9 @@
                           </x-slot>
                           <option value="1" @if(1 == $Invoice->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
                           <option value="2" @if(2 == $Invoice->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
+                          <option value="3" @if(3 == $Invoice->statu ) Selected @endif >{{ __('general_content.pending_trans_key') }}</option>
+                          <option value="4" @if(4 == $Invoice->statu ) Selected @endif >{{ __('general_content.unpaid_trans_key') }}</option>
+                          <option value="5" @if(5 == $Invoice->statu ) Selected @endif >{{ __('general_content.paid_trans_key') }}</option>
                         </x-adminlte-select>
                       </div>
                       <div class="col-4">
@@ -150,9 +153,10 @@
                     <td>{{ $InvoiceLine->OrderLine->VAT['rate'] }} %</td>
                     <td>
                       @if(1 == $InvoiceLine->invoice_status )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif 
-                      @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">{{ __('general_content.send_trans_key') }}</span>@endif
-                      @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.invoiced_trans_key') }}</span>@endif
-                      @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-success">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
+                      @if(2 == $InvoiceLine->invoice_status )  <span class="badge badge-primary">{{ __('general_content.send_trans_key') }}</span>@endif
+                      @if(3 == $InvoiceLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.pending_trans_key') }}</span>@endif
+                      @if(4 == $InvoiceLine->invoice_status )  <span class="badge badge-danger">{{ __('general_content.unpaid_trans_key') }}</span>@endif
+                      @if(5 == $InvoiceLine->invoice_status )  <span class="badge badge-success">{{ __('general_content.paid_trans_key') }}</span>@endif
                     </td>
                   </tr>
                   @empty

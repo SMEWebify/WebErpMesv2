@@ -131,6 +131,9 @@ return [
     'shipped_trans_key'                        => 'Shipped',
     'returned_trans_key'                       => 'Returned',
     'in_stock_trans_key'                       => 'In stock',
+    'pending_trans_key'                        => 'Pending',
+    'unpaid_trans_key'                         => 'Unpaid',
+    'paid_trans_key'                           => 'Paid',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',

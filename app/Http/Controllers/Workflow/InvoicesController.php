@@ -165,6 +165,15 @@ class InvoicesController extends Controller
         $Invoice->comment=$request->comment;
         $Invoice->save();
 
+        // For each invoice line associated with this invoice
+        foreach ($Invoice->InvoiceLines as $line) {
+            // Update the invoice line status with the new invoice status
+            $line->invoice_status = $Invoice->statu;
+
+            // Save each updated invoice line
+            $line->save();
+        }
+
         return redirect()->route('invoices.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
     }
 

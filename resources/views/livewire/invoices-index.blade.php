@@ -1,7 +1,28 @@
 <div>
     <div class="card">
         <div class="card-body">
-            @include('include.search-card')
+            <div class="row">
+                <div class="col-md-8">
+                    @include('include.search-card')
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            </div>
+                            <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
+                                <option value="" selected>{{ __('general_content.select_statu_trans_key') }}</option>
+                                <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
+                                <option value="2">{{ __('general_content.send_trans_key') }}</option>
+                                <option value="3">{{ __('general_content.pending_trans_key') }}</option>
+                                <option value="4">{{ __('general_content.unpaid_trans_key') }}</option>
+                                <option value="5">{{ __('general_content.paid_trans_key') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="table-responsive p-0">
             <table class="table table-hover">
@@ -37,9 +58,10 @@
                         <td>{{ $Invoice->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                         <td>
                             @if(1 == $Invoice->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                            @if(2 == $Invoice->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
-                            @if(3 == $Invoice->statu )  <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>@endif
-                            @if(4 == $Invoice->statu )  <span class="badge badge-danger">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
+                            @if(2 == $Invoice->statu )  <span class="badge badge-primary">{{ __('general_content.send_trans_key') }}</span>@endif
+                            @if(3 == $Invoice->statu )  <span class="badge badge-warning">{{ __('general_content.pending_trans_key') }}</span>@endif
+                            @if(4 == $Invoice->statu )  <span class="badge badge-danger">{{ __('general_content.unpaid_trans_key') }}</span>@endif
+                            @if(5 == $Invoice->statu )  <span class="badge badge-success">{{ __('general_content.paid_trans_key') }}</span>@endif
                         </td>
                         <td>{{ $Invoice->GetPrettyCreatedAttribute() }}</td>
                         <td>
