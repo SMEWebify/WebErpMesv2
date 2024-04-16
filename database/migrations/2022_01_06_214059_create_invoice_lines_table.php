@@ -24,8 +24,9 @@ class CreateInvoiceLinesTable extends Migration
             $table->integer('invoice_status')->default(1);
             #1 = In progress
             #2 = Sent
-            #3 = Invoiced
-            #4 = Partially invoiced
+            #3 = Pending
+            #4 = Unpaid
+            #5 = Paid
             $table->timestamps();
         });
     }
