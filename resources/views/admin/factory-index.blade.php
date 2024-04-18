@@ -19,6 +19,9 @@
             <li class="nav-item"><a class="nav-link" href="#EstimatedBudget" data-toggle="tab">{{ __('general_content.estimated_budget_trans_key') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#CustomerImport" data-toggle="tab">{{ __('general_content.customer_import_trans_key') }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#LogsView" data-toggle="tab">LogsView</a></li>
+
+            
         </ul>
     </div>
     <div class="card-body">
@@ -1180,6 +1183,10 @@
                         </div>
                     </form>
                 </div>
+            </div>
+            <div class="tab-pane " id="LogsView">
+                
+                @livewire('logs-viewer')
             </div>
         </div>
     </div>
