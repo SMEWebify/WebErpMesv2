@@ -831,7 +831,7 @@ return [
     'hour_trans_key'                           => 'Heure(s)',
     'header_font_color_trans_key'              => 'Couleur d’en-tête',
     'manufacturing_information_trans_key'      => 'Informations de fabrication',
-    'bare_code_type_trans_key'                 => 'Type nu de code pour la tâche de déclaration',
+    'bare_code_type_trans_key'                 => 'Type de code pour la tâche de déclaration',
     'make_an_announcement_trans_key'           => 'Faire une annonce',
     'make_new_permissions_trans_key'           => 'Créer une nouvelle autorisation',
     'add_role_permission_trans_key'            => 'Ajouter un rôle dans les autorisations',
@@ -857,4 +857,11 @@ return [
     'release_note_trans_key'                   => 'Notes de version',
 
     'search_results_trans_key'                 => 'Résulta de la recherche',
+
+    //WORKSHOP
+    'workshop_interface_trans_key'             => 'Workshop Interface',
+    'to_access_trans_key'                      => 'Accéder',
+    'production_declaration_trans_key'         => 'Déclaration de Production',
+    'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
+    'note_2_trans_key'                         => 'Faites des déclarations de production',
 ];

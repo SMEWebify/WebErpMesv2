@@ -2,8 +2,8 @@
     <form wire:submit.prevent="filterLogs">
         <div class="form-group col-md-3">
             <label for="model">Subject Type</label>
-            <select class="form-control" id="model" wire:model.defer="model" placeholder="Modèle">
-                <option value="">Tous les modèles</option>
+            <select class="form-control" id="model" wire:model.defer="model" placeholder="Subject Type">
+                <option value="">Subject Type</option>
                 @foreach ($availableModels as $availableModel)
                     <option value="{{ $availableModel }}">{{ $availableModel }}</option>
                 @endforeach

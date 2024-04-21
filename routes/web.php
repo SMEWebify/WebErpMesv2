@@ -25,6 +25,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'check.factory'])->name('dashboard');
 
+    Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'check.factory'])->name('workshop');
+        Route::get('/Task/Lines', 'App\Http\Controllers\Workshop\WorkshopController@taskLines')->middleware(['auth', 'check.factory'])->name('workshop.task.lines');
+        Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu.id');
+        Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
+    });
+    
+
     Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->name('companies');
 

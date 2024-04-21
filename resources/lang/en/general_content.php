@@ -857,4 +857,11 @@ return [
     'release_note_trans_key'                   => 'Release notes',
     
     'search_results_trans_key'                 => 'Search results',
+
+    //WORKSHOP
+    'workshop_interface_trans_key'             => 'Workshop Interface',
+    'to_access_trans_key'                      => 'To access',
+    'production_declaration_trans_key'         => 'Production Declaration',
+    'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
+    'note_2_trans_key'                         => 'Make production declarations.',
 ];
