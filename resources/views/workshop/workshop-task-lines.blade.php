@@ -17,11 +17,9 @@
 @section('js')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    $(document).ready(function(){
-        // Fonction pour basculer la classe sidebar-hidden sur la balise body
-        $("#toggleSidebar").click(function(){
-        $("body").toggleClass("sidebar-hidden");
+        $(document).ready(function(){
+        // Ajoute la classe sidebar-hidden à la balise body dès que la page est chargée
+        $("body").addClass("sidebar-hidden");
         });
-    });
     </script>
 @stop
