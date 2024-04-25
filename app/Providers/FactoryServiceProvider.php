@@ -9,6 +9,13 @@ use Illuminate\Support\ServiceProvider;
 class FactoryServiceProvider extends ServiceProvider
 {
     /**
+     * The first factory
+     *
+     * @var static|null
+     */
+    private static ?Factory $firstFactory = null;
+
+    /**
      * Register services.
      */
     public function register(): void
@@ -21,10 +28,10 @@ class FactoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //view()->share('Factory', Factory::first());
+        self::$firstFactory ??= Factory::first();
+        //view()->share('Factory', self::$firstFactory);
         View::composer('*', function ($view) {
-            $Factory = Factory::first();
-            $view->with('Factory', $Factory);
+            $view->with('Factory', self::$firstFactory);
         });
     }
 }
