@@ -30,13 +30,18 @@ class HomeController extends Controller
         $userRoleCount = $user->getRoleNames()->count();
 
         // Display total customers, suppliers, quotes, orders, NC 
-        $data['customers_count'] = DB::table('companies')->where('statu_customer', '=', '2')->count();
-        $data['suppliers_count'] = DB::table('companies')->where('statu_supplier', '=', '2')->count();
-        $data['quotes_count'] = DB::table('quotes')->count();
-        $data['orders_count'] = DB::table('orders')->count();
-        $data['quality_non_conformities_count'] = DB::table('quality_non_conformities')->count();
-        $data['user_count'] = DB::table('users')->count();
-        
+        $all_count = DB::table('users')->selectRaw("'user_count' as type, count(*) as count")
+            ->unionAll(DB::table('companies')->selectRaw("'customers_count' as type, count(*) as count")->where('statu_customer', '=', '2'))
+            ->unionAll(DB::table('companies')->selectRaw("'suppliers_count' as type, count(*) as count")->where('statu_supplier', '=', '2'))
+            ->unionAll(DB::table('quotes')->selectRaw("'quotes_count' as type, count(*) as count"))
+            ->unionAll(DB::table('orders')->selectRaw("'orders_count' as type, count(*) as count"))
+            ->unionAll(DB::table('quality_non_conformities')->selectRaw("'quality_non_conformities_count' as type, count(*) as count"))
+            ->get();
+        $data = $all_count->reduce(function($data, $count) {
+            $data[$count->type] = $count->count;
+            return $data;
+        }, []);
+
         $Announcement = Announcements::latest()->first();
 
         //Estimated Budgets data for chart
