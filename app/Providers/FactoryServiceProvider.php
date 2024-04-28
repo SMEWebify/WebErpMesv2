@@ -28,9 +28,9 @@ class FactoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        self::$firstFactory ??= Factory::first();
         //view()->share('Factory', self::$firstFactory);
         View::composer('*', function ($view) {
+            self::$firstFactory ??= Factory::first();
             $view->with('Factory', self::$firstFactory);
         });
     }
