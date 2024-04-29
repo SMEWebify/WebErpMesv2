@@ -22,7 +22,7 @@
 
   <div class="row">
     <div class="col-lg-2 col-6">
-      <x-adminlte-small-box title="{{$data['suppliers_count']}}" 
+      <x-adminlte-small-box title="{{$data['customers_count']}}"
                             text="{{ __('general_content.client_trans_key') }}" 
                             icon="far fa-building"
                             theme="info" 
@@ -31,7 +31,7 @@
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-6">
-      <x-adminlte-small-box title="{{ $data['customers_count'] }}" 
+      <x-adminlte-small-box title="{{ $data['suppliers_count'] }}"
                             text="{{ __('general_content.suppliers_trans_key') }}" 
                             icon="far fa-building"
                             theme="success" 
