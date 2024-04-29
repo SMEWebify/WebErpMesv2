@@ -243,7 +243,7 @@ class OpportunitiesController extends Controller
         $accounting_payment_methods = ($accounting_payment_methods->id  ?? 0);  
         $accounting_deliveries = ($accounting_deliveries->id  ?? 0);
 
-        if($accounting_payment_conditions == 0){
+        if($accounting_payment_conditions == 0 || accounting_payment_methods == 0 || accounting_deliveries == 0){
             return redirect()->route('opportunities.show', ['id' =>  $id->id])->with('error', 'No default settings');
         }
 
