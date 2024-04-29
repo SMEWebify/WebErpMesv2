@@ -2,7 +2,7 @@
 
 return [
 
-    /* GRENERAL TRANS KEY */
+    /* GENERAL TRANS KEY */
 
     //STATUS
     'open_trans_key'                           => 'Open',
@@ -65,17 +65,17 @@ return [
     'productive_trans_key'                     => 'Productive',
     'raw_material_trans_key'                   => 'Raw material',
     'raw_material_sheet_trans_key'             => 'Raw material (Sheet)',
-    'raw_material_profil_trans_key'            => 'Raw material (Profil)',
+    'raw_material_profil_trans_key'            => 'Raw material (Profile)',
     'raw_material_block_trans_key'             => 'Raw material (block)',
     'supplies_trans_key'                       => 'Supplies',
     'supplied_trans_key'                       => 'Supplied',
     'sub_contracting_trans_key'                => 'Sub-contracting',
     'composed_component_trans_key'             => 'Composed component',
-    'unsed_trans_key'                          => 'Unsed',
+    'unsed_trans_key'                          => 'Unused',
     'used_trans_key'                           => 'Used',
     'mass_trans_key'                           => 'Mass',
     'length_trans_key'                         => 'Length',
-    'aera_trans_key'                           => 'Aera',
+    'aera_trans_key'                           => 'Area',
     'volume_trans_key'                         => 'Volume',
     'on_trial_trans_key'                       => 'On trial',
     'asset_trans_key'                          => 'Asset',
@@ -119,14 +119,14 @@ return [
     'closed_won_trans_key'                     => 'Closed-won',
     'closed_lost_trans_key'                    => 'Closed-lost',
     'informational_trans_key'                  => 'Informational', 
-    'activity_maketing_trans_key'              => 'Activity maketing', 
+    'activity_maketing_trans_key'              => 'Activity marketing',
     'email_send_trans_key'                     => 'Email Send',
     'pre_sakes_aactivity_trans_key'            => 'Pre-sakes activity',
     'sales_activity_trans_key'                 => 'Sales activity',
     'sales_telephone_call_trans_key'           => 'Sales telephone call',
     'no_start_trans_key'                       => 'No start',
     'internal_meeting_trans_key'               => 'Internal Meeting',
-    'onsite_visite_trans_key'                  => 'Onsite visite',
+    'onsite_visite_trans_key'                  => 'Onsite visit',
     'sales_meeting_trans_key'                  => 'Sales Meeting',
     'shipped_trans_key'                        => 'Shipped',
     'returned_trans_key'                       => 'Returned',
@@ -153,8 +153,8 @@ return [
     'status_supplier_trans_key'                => 'Status supplier',
     'color_trans_key'                          => 'Color',
     'picture_trans_key'                        => 'Picture',
-    'ressource_trans_key'                      => 'Ressource',
-    'ressources_trans_key'                     => 'Ressources',
+    'ressource_trans_key'                      => 'Resource',
+    'ressources_trans_key'                     => 'Resources',
     'section_trans_key'                        => 'Section',
     'sections_trans_key'                       => 'Sections',
     'hourly_rate_trans_key'                    => 'Hourly rate',
@@ -184,7 +184,7 @@ return [
     
     'supplier_ref_trans_key'                   => 'Supplier ref',
     'supplier_trans_key'                       => 'Supplier',
-    'qty_reciept_trans_key'                    => 'Qty Reciept',
+    'qty_reciept_trans_key'                    => 'Qty Receipt',
     'qty_purchase_trans_key'                   => 'Qty purchase',
     'qty_invoice_trans_key'                    => 'Qty Invoice',
     'qty_accepted_trans_key'                   => 'Qty accepted',
@@ -196,7 +196,7 @@ return [
     'type_of_contract_trans_key'               => 'Type of contract',
     'weekly_duration_trans_key'                => 'Weekly duration',
     
-    'employment_statu_trans_key'               => 'Employment statu',
+    'employment_statu_trans_key'               => 'Employment status',
     'job_title_trans_key'                      => 'Job Title',
     'role_trans_key'                           => 'Role',  
     'roles_trans_key'                          => 'Roles',  
@@ -290,11 +290,11 @@ return [
     'tools_trans_key'                          => 'Tools',
     
     'absence_trans_key'                        => 'Absence',
-    'banck_holiday_trans_key'                  => 'Banck holiday',
-    'improduct_time_trans_key'                 => 'Improduct time',
+    'banck_holiday_trans_key'                  => 'Bank holiday',
+    'improduct_time_trans_key'                 => 'Non-productive time',
     'machine_event_trans_key'                  => 'Machine event',
 
-    'profil_setting_trans_key'                 => 'Profil setting',
+    'profil_setting_trans_key'                 => 'Profile setting',
     'notification_history_trans_key'           => 'Notification history',
     'leave_request_trans_key'                  => 'Leave request',
 
@@ -356,7 +356,7 @@ return [
     'select_service_trans_key'                 => 'Select service',
     'select_family_trans_key'                  => 'Select family',
     'select_unit_trans_key'                    => 'Select unit',
-    'select_statu_trans_key'                   => 'Select statu',
+    'select_statu_trans_key'                   => 'Select status',
     'select_type_trans_key'                    => 'Select type',
     'select_control_type_trans_key'            => 'Select control type',
     'select_task_type_trans_key'               => 'Select your task Type',
@@ -430,7 +430,7 @@ return [
     'identifier_trans_key'                     => 'Identifier',
     'payment_methods_trans_key'                => 'Payment Methods',
     'payment_conditions_trans_key'             => 'Payment Conditions',
-    'delevery_method_trans_key'                => 'Delevery method',
+    'delevery_method_trans_key'                => 'Delivery method',
     'validity_date_trans_key'                  => 'Validity date',
     
     'material_trans_key'                       => 'Material',
@@ -474,8 +474,8 @@ return [
     'share_capital_trans_key'                  => 'Share capital',
     'custom_trans_key'                         => 'Custom',
     'custom_section_trans_key'                 => 'Custom section',
-    'personnal_mail_trans_key'                 => 'Personnal E-mail',
-    'personnal_phone_trans_key'                => 'Personnal phone number',
+    'personnal_mail_trans_key'                 => 'Personal E-mail',
+    'personnal_phone_trans_key'                => 'Personal phone number',
     'phone_trans_key'                          => 'Phone number',
     'mobile_phone_trans_key'                   => 'Mobile phone number',
     'nationality_trans_key'                    => 'Nationality',
@@ -499,8 +499,8 @@ return [
     'priority_trans_key'                       => 'Priority',
     'campaign_trans_key'                       => 'Campaign',
     'part_trans_key'                           => 'part(s)',
-    'curency_trans_key'                        => 'Curency',
-    'repots_setting_trans_key'                 => 'Repots setting',
+    'curency_trans_key'                        => 'Currency',
+    'repots_setting_trans_key'                 => 'Reports setting',
     'visa_trans_key'                           => 'Visa',
     'select_to_export_trans_key'               => 'Select to export',
     'line_trans_key'                           => 'Line',
@@ -515,7 +515,7 @@ return [
     'collapse_trans_key'                       => 'Collapse',
     'remove_trans_key'                         => 'Remove',
 
-    'probality_trans_key'                      => 'Probality',
+    'probality_trans_key'                      => 'Probability',
     'budget_trans_key'                         => 'Budget',
 
     //NOTIFICATION
@@ -623,7 +623,7 @@ return [
     //GANTT
     'gantt_trans_key'                          => 'Gantt',
     'gantt_info_1_trans_key'                   => 'Number of Task to be recalculate for date',
-    'gantt_info_2_trans_key'                   => 'Number of Task to be recalculate for ressource',
+    'gantt_info_2_trans_key'                   => 'Number of Task to be recalculate for resource',
 
     //TASK
     'tasks_trans_key'                          => 'Tasks',
@@ -652,7 +652,7 @@ return [
     'search_task_trans_key'                    => 'Search Task',
     'calculate_task_trans_key'                 => 'Calculate Task(s)',
     'calculate_date_task_trans_key'            => 'Task Calculation Date',
-    'calculate_ressource_task_trans_key'       => 'Task Calculation Ressource',
+    'calculate_ressource_task_trans_key'       => 'Task Calculation Resource',
     'add_sub_assembly_trans_key'               => 'Add sub assembly',
     'sub_assembly_trans_key'                   => 'Sub assembly',
     'component_trans_key'                      => 'Component',
@@ -742,7 +742,7 @@ return [
 
     //PURCHASE RECIEPT
     'po_receipt_trans_key'                     => 'PO receipt',
-    'name_purchase_reciept_trans_key'          => 'Name of reciept',
+    'name_purchase_reciept_trans_key'          => 'Name of receipt',
 
     'waiting_to_invoice_trans_key'             => 'Waiting to invoice',
 
@@ -753,7 +753,7 @@ return [
     //QUALITY
     'quality_trans_key'                        => 'Quality',
     'non_conformities_trans_key'               => 'Non conformities',
-    'non_conformitie_trans_key'                => 'Non conformitie',   
+    'non_conformitie_trans_key'                => 'Non conformity',
     'settings_trans_key'                       => 'Settings',
     'action_note_trans_key'                    => 'Actions are measures taken to prevent a problem from occurring (preventive actions), to solve an existing problem (corrective actions), or to improve a process or product (improvement requests).',
     'no_nc_trans_key'                          => 'No NC link',
@@ -767,7 +767,7 @@ return [
     'new_failure_trans_key'                    => 'New failure',
     'new_correction_trans_key'                 => 'New Correction',
     'new_measuring_devices_trans_key'          => 'New measuring devices',
-    'new_non_conformitie_trans_key'            => 'New non conformitie',
+    'new_non_conformitie_trans_key'            => 'New non conformity',
     'measuring_devices_note_trans_key'         => 'The measuring devices used to measure quality.',
     'non_conformitie_note_trans_key'           => 'Non-conformity sheets are documents summing up data related to a quality issue that arose within your company, with a customer, or with a supplier and the extra costs it generated..',
     'quality_setting_note_trans_key'           => 'To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource.',
@@ -776,7 +776,7 @@ return [
     'methods_trans_key'                        => 'Methods',
     'service_trans_key'                        => 'Service',
     'new_service_trans_key'                    => 'New Service',
-    'new_ressource_trans_key'                  => 'New Ressource',
+    'new_ressource_trans_key'                  => 'New Resource',
     'new_section_trans_key'                    => 'New Section',
     'new_location_trans_key'                   => 'New location',
     'new_unit_trans_key'                       => 'New unit',
@@ -793,7 +793,7 @@ return [
     'accounting_trans_key'                     => 'Accounting',
     'new_payment_methods_trans_key'            => 'New Payment choice mode',
     'new_payment_conditions_trans_key'         => 'New Payment condition mode',
-    'new_delevery_method_trans_key'            => 'New Delevery method mode',
+    'new_delevery_method_trans_key'            => 'New Delivery method mode',
     'new_vat_trans_key'                        => 'New VAT mode',
     'accounting_allocations_trans_key'         => 'Accounting allocations',
     'new_accounting_allocations_trans_key'     => 'New accounting allocation',
@@ -801,9 +801,9 @@ return [
     //TIME
     'times_setting_trans_key'                  => 'Times setting',  
     'new_machine_event_trans_key'              => 'New machine event type',
-    'new_banck_holiday_trans_key'              => 'New banck holiday',
-    'new_improduct_time_trans_key'             => 'New improduct time',
-    'machine_statu_trans_key'                  => 'Machine statu',  
+    'new_banck_holiday_trans_key'              => 'New bank holiday',
+    'new_improduct_time_trans_key'             => 'New non-productive time',
+    'machine_statu_trans_key'                  => 'Machine status',
     'resource_required_trans_key'              => 'Resource required',  
     
     //HUMAN RESOURCES
@@ -820,7 +820,7 @@ return [
     'about_setup_trans_key'                    => 'Account setup',
     'password_account_trans_key'               => 'Password (only for confirm changes)',
     'marital_status_trans_key'                 => 'Marital status', 
-    'adress_section_trans_key'                 => 'Adress section',
+    'adress_section_trans_key'                 => 'Address section',
     
     //YOUR COMPANIE
     'your_company_trans_key'                   => 'Your company',
@@ -843,7 +843,7 @@ return [
     'entity_type_trans_key'                    => 'Type entity',
     
     //PROFIL
-    'profile_trans_key'                        => 'Profil',
+    'profile_trans_key'                        => 'Profile',
     'information_trans_key'                    => 'Information',
     'pay_grade_trans_key'                      => 'Pay grade',
     'work_station_id_trans_key'                => 'Work station id',
