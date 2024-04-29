@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Workflow;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Admin\CustomField;
+use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
@@ -15,6 +16,8 @@ use App\Http\Requests\Workflow\UpdateDeliveryRequest;
 
 class DeliverysController extends Controller
 {
+    use NextPreviousTrait;
+    
     /**
      * @return View
      */
@@ -57,8 +60,7 @@ class DeliverysController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-        $previousUrl = route('deliverys.show', ['id' => $id->id-1]);
-        $nextUrl = route('deliverys.show', ['id' => $id->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Deliverys(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'delivery')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
                                         $join->on('custom_fields.id', '=', 'cfv.custom_field_id')

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Admin\CustomField;
+use App\Traits\NextPreviousTrait;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
@@ -29,7 +30,7 @@ use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
 
 class PurchasesController extends Controller
 {
-    
+    use NextPreviousTrait;
     protected $SelectDataService;
     public function __construct(SelectDataService $SelectDataService)
     {
@@ -95,9 +96,7 @@ class PurchasesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','label')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
-        $previousUrl = route('purchase.quotation.show', ['id' => $id->id-1]);
-        $nextUrl = route('purchase.quotation.show', ['id' => $id->id+1]);
-
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchasesQuotation(), $id->id);
                                     
         return view('purchases/purchases-quotation-show', [
             'PurchaseQuotation' => $id,
@@ -120,8 +119,7 @@ class PurchasesController extends Controller
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
         $PurchaseCalculator = new PurchaseCalculator($id);
         $totalPrice = $PurchaseCalculator->getTotalPrice();
-        $previousUrl = route('purchase.show', ['id' => $id->id-1]);
-        $nextUrl = route('purchase.show', ['id' => $id->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Purchases(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'purchase')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
                                         $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
@@ -221,7 +219,7 @@ class PurchasesController extends Controller
                     $PurchasesQuotationLine = PurchaseQuotationLines::where('id', $item)->update(['qty_accepted'=> $Task->qty]);
                 }
 
-                return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
+                return redirect()->route('purchases.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
                 
             }
             else{
@@ -242,8 +240,7 @@ class PurchasesController extends Controller
         
         $StockLocationList = StockLocation::all();
         $StockLocationProductList = StockLocationProducts::all();
-        $previousUrl = route('purchase.receipt.show', ['id' => $id->id-1]);
-        $nextUrl = route('purchase.receipt.show', ['id' => $id->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchaseReceipt(), $id->id);
 
         return view('purchases/purchases-receipt-show', [
             'PurchaseReceipt' => $id,
@@ -260,8 +257,8 @@ class PurchasesController extends Controller
      */
     public function showInvoice(PurchaseInvoice $id)
     {   
-        $previousUrl = route('purchase.invoice.show', ['id' => $id->id-1]);
-        $nextUrl = route('purchase.invoice.show', ['id' => $id->id+1]);
+
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchaseInvoice(), $id->id);
 
         return view('purchases/purchases-invoice-show', [
             'PurchaseInvoice' => $id,
@@ -286,7 +283,7 @@ class PurchasesController extends Controller
         $Purchases->comment=$request->comment;
         $Purchases->save();
         
-        return redirect()->route('purchase.show', ['id' =>  $Purchases->id])->with('success', 'Successfully updated purchase order');
+        return redirect()->route('purchases.show', ['id' =>  $Purchases->id])->with('success', 'Successfully updated purchase order');
     }
 
     /**
@@ -305,7 +302,7 @@ class PurchasesController extends Controller
         $PurchasesQuotation->comment=$request->comment;
         $PurchasesQuotation->save();
         
-        return redirect()->route('purchase.quotation.show', ['id' =>  $PurchasesQuotation->id])->with('success', 'Successfully updated purchase quotation');
+        return redirect()->route('purchases.quotations.show', ['id' =>  $PurchasesQuotation->id])->with('success', 'Successfully updated purchase quotation');
     }
 
     /**
@@ -321,7 +318,7 @@ class PurchasesController extends Controller
         $PurchaseReceipt->comment=$request->comment;
         $PurchaseReceipt->save();
         
-        return redirect()->route('purchase.receipt.show', ['id' =>  $PurchaseReceipt->id])->with('success', 'Successfully updated reciept');
+        return redirect()->route('purchase.receipts.show', ['id' =>  $PurchaseReceipt->id])->with('success', 'Successfully updated reciept');
     }
     
     /**

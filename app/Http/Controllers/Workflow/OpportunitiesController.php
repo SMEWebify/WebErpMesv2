@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
@@ -30,6 +31,8 @@ use App\Http\Requests\Workflow\UpdateOpportunityRequest;
 
 class OpportunitiesController extends Controller
 { 
+    use NextPreviousTrait;
+
     protected $SelectDataService;
 
     public function __construct(SelectDataService $SelectDataService)
@@ -62,8 +65,7 @@ class OpportunitiesController extends Controller
         $ContactSelect = $this->SelectDataService->getContact();
         $Activities = OpportunitiesActivitiesLogs::where('opportunities_id', $id->id)->orderBy('id')->get();
         $Events = OpportunitiesEventsLogs::where('opportunities_id', $id->id)->orderBy('id')->get();
-        $previousUrl = route('opportunities.show', ['id' => $id->id-1]);
-        $nextUrl = route('opportunities.show', ['id' => $id->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Opportunities(), $id->id);
         $Factory = Factory::first();
 
         // Récupérer l'opportunité avec les relations nécessaires
@@ -243,7 +245,7 @@ class OpportunitiesController extends Controller
         $accounting_payment_methods = ($accounting_payment_methods->id  ?? 0);  
         $accounting_deliveries = ($accounting_deliveries->id  ?? 0);
 
-        if($accounting_payment_conditions == 0 || accounting_payment_methods == 0 || accounting_deliveries == 0){
+        if($accounting_payment_conditions == 0 || $accounting_payment_methods == 0 || $accounting_deliveries == 0){
             return redirect()->route('opportunities.show', ['id' =>  $id->id])->with('error', 'No default settings');
         }
 

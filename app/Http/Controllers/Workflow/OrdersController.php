@@ -7,6 +7,7 @@ use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Admin\CustomField;
 use App\Services\OrderCalculator;
+use App\Traits\NextPreviousTrait;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
@@ -20,6 +21,7 @@ use App\Models\Accounting\AccountingPaymentConditions;
 
 class OrdersController extends Controller
 {
+    use NextPreviousTrait;
     protected $SelectDataService;
 
     public function __construct(SelectDataService $SelectDataService)
@@ -70,8 +72,7 @@ class OrdersController extends Controller
         $TotalServiceSettingTime = $OrderCalculator->getTotalSettingTimeByService();
         $TotalServiceCost = $OrderCalculator->getTotalCostByService();
         $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
-        $previousUrl = route('orders.show', ['id' => $id->id-1]);
-        $nextUrl = route('orders.show', ['id' => $id->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Orders(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'order')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
                                         $join->on('custom_fields.id', '=', 'cfv.custom_field_id')

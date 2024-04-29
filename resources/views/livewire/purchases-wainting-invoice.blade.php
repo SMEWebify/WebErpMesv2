@@ -77,13 +77,13 @@
                             <x-OrderButton id="{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->OrderLines->order->code }}"  />
                         </td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $PurchasesWaintingInvoiceLine->purchaseLines->purchase->id])}}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchasesWaintingInvoiceLine->purchaseLines->purchase->id])}}">
                                 <i class="fas fa-folder"></i>
                                 {{ $PurchasesWaintingInvoiceLine->purchaseLines->purchase->code }}
                             </a>
                         </td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipt.show', ['id' => $PurchasesWaintingInvoiceLine->purchase_receipt_id])}}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipts.show', ['id' => $PurchasesWaintingInvoiceLine->purchase_receipt_id])}}">
                                 <i class="fas fa-folder"></i>
                                 {{ $PurchasesWaintingInvoiceLine->purchaseReceipt->code }}
                             </a>

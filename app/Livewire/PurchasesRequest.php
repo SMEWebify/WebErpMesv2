@@ -211,7 +211,7 @@ class PurchasesRequest extends Component
                             $Task = Task::where('id',$key)->update(['status_id'=>$StatusUpdate->id]);
                         }
                     } 
-                    return redirect()->route('purchase.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
+                    return redirect()->route('purchases.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
                 }
                 else{
                     return redirect()->back()->with('error', 'Something went wrong');
@@ -246,7 +246,7 @@ class PurchasesRequest extends Component
                         $this->ordre= $this->ordre+10;
                     }
                     
-                    return redirect()->route('purchase.quotation.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
+                    return redirect()->route('purchases.quotations.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
                 }
                 else{
                     return redirect()->back()->with('error', 'Something went wrong');

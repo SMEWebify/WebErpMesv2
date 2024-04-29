@@ -90,7 +90,7 @@
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $DocumentLine->purchaseLines->purchases_id ])}}">
+                            <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $DocumentLine->purchaseLines->purchases_id ])}}">
                                 <i class="fas fa-folder"></i>
                                 {{ $DocumentLine->purchaseLines->purchase->code }}
                             </a>

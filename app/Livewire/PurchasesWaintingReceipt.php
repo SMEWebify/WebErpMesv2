@@ -153,7 +153,7 @@ class PurchasesWaintingReceipt extends Component
                 ]);
             } 
 
-            return redirect()->route('purchase.receipt.show', ['id' => $ReceiptCreated->id])->with('success', 'Successfully created new receipt');
+            return redirect()->route('purchase.receipts.show', ['id' => $ReceiptCreated->id])->with('success', 'Successfully created new receipt');
         }
         else{
             $errors = $this->getErrorBag();

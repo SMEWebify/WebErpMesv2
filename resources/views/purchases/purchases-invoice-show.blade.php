@@ -143,13 +143,13 @@
                   @forelse($PurchaseInvoice->PurchaseInvoiceLines as $PurchaseInvoiceLine)
                   <tr>
                     <td>
-                      <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $PurchaseInvoiceLine->purchaseReceiptLines->purchaseReceipt->id ])}}">
+                      <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseInvoiceLine->purchaseReceiptLines->purchaseReceipt->id ])}}">
                           <i class="fas fa-folder"></i>
                           {{ $PurchaseInvoiceLine->purchaseReceiptLines->purchaseReceipt->code }}
                       </a>
                     </td>
                     <td>
-                      <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $PurchaseInvoiceLine->purchaseLines->purchases_id ])}}">
+                      <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseInvoiceLine->purchaseLines->purchases_id ])}}">
                           <i class="fas fa-folder"></i>
                           {{ $PurchaseInvoiceLine->purchaseLines->purchase->code }}
                       </a>

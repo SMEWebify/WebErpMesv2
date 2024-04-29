@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Companies;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Traits\NextPreviousTrait;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
@@ -12,6 +13,7 @@ use App\Http\Requests\Companies\UpdateCompanieRequest;
 
 class CompaniesController extends Controller
 {
+    use NextPreviousTrait;
     protected $SelectDataService;
 
     public function __construct(SelectDataService $SelectDataService)
@@ -46,8 +48,7 @@ class CompaniesController extends Controller
     {
         $Companie = Companies::findOrFail($id);
         $userSelect = $this->SelectDataService->getUsers();
-        $previousUrl = route('companies.show', ['id' => $Companie->id-1]);
-        $nextUrl = route('companies.show', ['id' => $Companie->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Companies(), $Companie->id);
 
         return view('companies/companies-show', [
             'Companie' => $Companie,

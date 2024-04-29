@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
+use App\Traits\NextPreviousTrait;
 use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
@@ -21,6 +22,8 @@ use App\Http\Requests\Products\UpdateProductsRequest;
 
 class ProductsController extends Controller
 {    
+    use NextPreviousTrait;
+    
     protected $SelectDataService;
     public function __construct(SelectDataService $SelectDataService)
     {
@@ -62,9 +65,7 @@ class ProductsController extends Controller
                                                                             ->orderBy('ordre')->get();
 
 
-        
-        $previousUrl = route('products.show', ['id' => $Product->id-1]);
-        $nextUrl = route('products.show', ['id' => $Product->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Products(), $Product->id);
 
         return view('products/products-show', [
             'userSelect' => $userSelect,

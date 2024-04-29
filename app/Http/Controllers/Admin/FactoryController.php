@@ -217,7 +217,7 @@ class FactoryController extends Controller
             return redirect()->route('invoices.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
         }
         elseif( $type=='purchase'){
-            return redirect()->route('purchase.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
+            return redirect()->route('purchases.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
         }
         else{
             return redirect()->back()->withErrors(['msg' => 'Something went wrong']);

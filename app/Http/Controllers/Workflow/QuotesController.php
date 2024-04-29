@@ -8,21 +8,24 @@ use App\Models\Planning\Status;
 use App\Models\Workflow\Quotes;
 use App\Models\Admin\CustomField;
 use App\Services\QuoteCalculator;
+use App\Traits\NextPreviousTrait;
 use Illuminate\Support\Facades\DB;
-use App\Models\Companies\Companies;
 
+use App\Models\Companies\Companies;
 use App\Models\Workflow\QuoteLines;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
+use League\CommonMark\Extension\SmartPunct\Quote;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
 
 class QuotesController extends Controller
 {
+    use NextPreviousTrait;
     protected $SelectDataService;
 
     public function __construct(SelectDataService $SelectDataService)
@@ -74,8 +77,7 @@ class QuotesController extends Controller
         $TotalServiceSettingTime = $QuoteCalculator->getTotalSettingTimeByService();
         $TotalServiceCost = $QuoteCalculator->getTotalCostByService();
         $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
-        $previousUrl = route('quotes.show', ['id' => $id->id-1]);
-        $nextUrl = route('quotes.show', ['id' => $id->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Quotes(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'quote')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
                                         $join->on('custom_fields.id', '=', 'cfv.custom_field_id')

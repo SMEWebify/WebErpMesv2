@@ -109,7 +109,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('purchase.show', ['id' => $PurchasesWaintingReceiptLine->purchases_id])}}">
+                                <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchasesWaintingReceiptLine->purchases_id])}}">
                                     <i class="fas fa-folder"></i>
                                     {{ $PurchasesWaintingReceiptLine->purchase->code }}
                                 </a>

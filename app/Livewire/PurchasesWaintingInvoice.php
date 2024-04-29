@@ -128,7 +128,7 @@ class PurchasesWaintingInvoice extends Component
                 PurchaseLines::where('id',$PurchaseInvoiceLines->purchase_line_id)->update(['invoiced_qty'=>$PurchaseReceiptLines->receipt_qty]);
             }
 
-            return redirect()->route('purchase.invoice.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new purchase invoice');
+            return redirect()->route('purchase.invoices.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new purchase invoice');
         }
         else{
             $errors = $this->getErrorBag();

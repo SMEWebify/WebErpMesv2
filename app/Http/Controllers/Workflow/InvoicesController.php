@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Admin\CustomField;
 use App\Models\Workflow\Invoices;
+use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Events\DeliveryLineUpdated;
@@ -22,6 +23,7 @@ use App\Http\Requests\Workflow\UpdateInvoiceRequest;
 
 class InvoicesController extends Controller
 {
+    use NextPreviousTrait;
     /**
      * @return View
      */
@@ -128,8 +130,7 @@ class InvoicesController extends Controller
         $totalPrice = $OrderCalculator->getTotalPrice();
         $subPrice = $OrderCalculator->getSubTotal();
         $vatPrice = $OrderCalculator->getVatTotal();
-        $previousUrl = route('invoices.show', ['id' => $id->id-1]);
-        $nextUrl = route('invoices.show', ['id' => $id->id+1]);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Invoices(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'invoice')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
                                         $join->on('custom_fields.id', '=', 'cfv.custom_field_id')

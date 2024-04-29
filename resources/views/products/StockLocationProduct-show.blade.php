@@ -69,7 +69,7 @@
                     </td>
                     <td>
                     @if($StockMove->purchase_receipt_line_id)
-                      <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipt.show', ['id' => $StockMove->purchaseReceiptLines->purchase_receipt_id])}}">
+                      <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipts.show', ['id' => $StockMove->purchaseReceiptLines->purchase_receipt_id])}}">
                         <i class="fas fa-folder"></i>
                         {{ $StockMove->purchaseReceiptLines->purchaseReceipt->code }}
                       </a>

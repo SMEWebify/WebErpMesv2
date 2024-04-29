@@ -138,10 +138,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/receipt/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchaseReceipt')->middleware(['auth'])->name('receipt.update');
         Route::post('/invoice/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchaseReceipt')->middleware(['auth'])->name('invoice.update');
 
-        Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchase.show');
-        Route::get('/quotation/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showQuotation')->middleware(['auth'])->name('purchase.quotation.show');
-        Route::get('/receipt/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showReceipt')->middleware(['auth'])->name('purchase.receipt.show');
-        Route::get('/invoice/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showInvoice')->middleware(['auth'])->name('purchase.invoice.show');
+        Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchases.show');
+        Route::get('/quotation/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showQuotation')->middleware(['auth'])->name('purchases.quotations.show');
+        Route::get('/receipt/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showReceipt')->middleware(['auth'])->name('purchase.receipts.show');
+        Route::get('/invoice/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showInvoice')->middleware(['auth'])->name('purchase.invoices.show');
     });
 
     Route::group(['prefix' => 'print', 'middleware' => ['auth', 'check.factory']], function () {

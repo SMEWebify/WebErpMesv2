@@ -42,7 +42,7 @@
                         </td>
                         <td>{{ $Purchase->GetPrettyCreatedAttribute() }}</td>
                         <td>
-                            <x-ButtonTextView route="{{ route('purchase.show', ['id' => $Purchase->id])}}" />
+                            <x-ButtonTextView route="{{ route('purchases.show', ['id' => $Purchase->id])}}" />
                             @if( $Purchase->companies_contacts_id != 0 & $Purchase->companies_addresses_id !=0)
                             <x-ButtonTextPDF route="{{ route('pdf.purchase', ['Document' => $Purchase->id])}}" />
                             @endif
