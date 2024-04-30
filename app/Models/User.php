@@ -26,6 +26,7 @@ use App\Models\Products\StockLocationProducts;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Crypt;
 
 class User extends Authenticatable
 {
@@ -38,32 +39,32 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'email', //crypt 
         'password',
-        'personnal_phone_number',
+        'personnal_phone_number', //crypt 
         'desc',
-        'born_date',
+        'born_date', //crypt 
          /** Add for WebErpMesv2/issues/142 */
         'nationality',
         'gender',
         'marital_status',
-        'ssn_num',
-        'nic_num',
-        'driving_license',
+        'ssn_num', //crypt 
+        'nic_num', //crypt 
+        'driving_license', //crypt 
         'driving_license_exp_date',
         'employment_status',
         'job_title',
         'pay_grade',
         'work_station_id',
-        'address1',
-        'address2',
-        'city',
-        'country',
-        'province',
-        'postal_code',
-        'home_phone',
-        'mobile_phone',
-        'private_email',
+        'address1', //crypt 
+        'address2', //crypt 
+        'city', //crypt 
+        'country', //crypt 
+        'province', //crypt 
+        'postal_code', //crypt 
+        'home_phone', //crypt 
+        'mobile_phone', //crypt 
+        'private_email', //crypt 
         'joined_date',
         'confirmation_date',
         'termination_date',
@@ -232,5 +233,217 @@ class User extends Authenticatable
     {
         return LogOptions::defaults()->logOnly(['name', 'email']);
         // Chain fluent methods for configuration options
+    }
+
+    // Encrypt while setting
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = Crypt::encrypt($value);
+    }
+
+    // Decrypt while getting
+    public function getEmailAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+     public function setPersonnalPhoneNumberAttribute($value)
+    {
+        $this->attributes['personnal_phone_number'] = Crypt::encrypt($value);
+    }
+
+    public function getPersonnalPhoneNumberAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setBornDateAttribute($value)
+    {
+        $this->attributes['born_date'] = Crypt::encrypt($value);
+    }
+
+    public function getBornDateAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setSsnNumAttribute($value)
+    {
+        $this->attributes['ssn_num'] = Crypt::encrypt($value);
+    }
+
+    public function getSsnNumAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setNicNumAttribute($value)
+    {
+        $this->attributes['nic_num'] = Crypt::encrypt($value);
+    }
+
+    public function getNicNumAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setDrivingLicenseAttribute($value)
+    {
+        $this->attributes['driving_license'] = Crypt::encrypt($value);
+    }
+
+    public function getDrivingLicenseAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setAddress1Attribute($value)
+    {
+        $this->attributes['address1'] = Crypt::encrypt($value);
+    }
+
+    public function getAddress1Attribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setAddress2Attribute($value)
+    {
+        $this->attributes['address2'] = Crypt::encrypt($value);
+    }
+
+    public function getAddress2Attribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setCityAttribute($value)
+    {
+        $this->attributes['city'] = Crypt::encrypt($value);
+    }
+
+    public function getCityAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setCountryAttribute($value)
+    {
+        $this->attributes['country'] = Crypt::encrypt($value);
+    }
+
+    public function getCountryAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setProvinceAttribute($value)
+    {
+        $this->attributes['province'] = Crypt::encrypt($value);
+    }
+
+    public function getProvinceAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setPostalCodeAttribute($value)
+    {
+        $this->attributes['postal_code'] = Crypt::encrypt($value);
+    }
+
+    public function getPostalCodeAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setHomePhoneAttribute($value)
+    {
+        $this->attributes['home_phone'] = Crypt::encrypt($value);
+    }
+
+    public function getHomePhoneAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setMobilePhoneAttribute($value)
+    {
+        $this->attributes['mobile_phone'] = Crypt::encrypt($value);
+    }
+
+    public function getMobilePhoneAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
+    }
+
+    public function setPrivateEmailAttribute($value)
+    {
+        $this->attributes['private_email'] = Crypt::encrypt($value);
+    }
+
+    public function getPrivateEmailAttribute($value)
+    {
+        try {
+            return decrypt($value);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            return null; 
+        }
     }
 }

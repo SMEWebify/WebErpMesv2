@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('image_url')->nullable();
             $table->string('personnal_phone_number')->nullable();
-            $table->date('born_date')->nullable();
+            $table->string('born_date')->nullable();
             $table->string('desc')->nullable();
 
             /** Add for WebErpMesv2/issues/142 */
