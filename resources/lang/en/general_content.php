@@ -142,7 +142,7 @@ return [
     'label_trans_key'                          => 'Label',
     'customer_trans_key'                       => 'Customer',
     'status_trans_key'                         => 'Status',
-    'statu_trans_key'                          => 'Statu',
+    'statu_trans_key'                          => 'Status',
     'total_price_trans_key'                    => 'Total price',
     'lines_count_trans_key'                    => 'Lines count',
     'created_at_trans_key'                     => 'Created at',
@@ -317,8 +317,8 @@ return [
     'custom_fields_trans_key'                  => 'Custom fields',
     
     // CARD HEADER
-    'statistiques_trans_key'                   => 'Statistiques',
-    'informations_trans_key'                   => 'Informations',
+    'statistiques_trans_key'                   => 'Statistics',
+    'informations_trans_key'                   => 'Information',
     'options_trans_key'                        => 'Options',
     'charts_trans_key'                         => 'Charts',
 
@@ -414,7 +414,7 @@ return [
     'add_to_document_trans_key'                => 'Add to new document',
     'preferred_supplier_trans_key'             => 'Preferreds suppliers',
     
-    'companie_name_trans_key'                  => 'Companie name',
+    'companie_name_trans_key'                  => 'Company name',
     'adress_name_trans_key'                    => 'Address name',
     'adress_trans_key'                         => 'Address',
     'contact_name_trans_key'                   => 'Contact name',
@@ -557,7 +557,7 @@ return [
     
     //COMPANIES
     'companies_trans_key'                      => 'Companies',
-    'companie_trans_key'                       => 'Companie',
+    'companie_trans_key'                       => 'Company',
     'sort_companie_trans_key'                  => 'Sort companie',
     'companies_list_trans_key'                 => 'Companies list',
     'latest_companies_trans_key'               => 'Latest companies ',
