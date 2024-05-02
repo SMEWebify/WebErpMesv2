@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "533fe61b353b0a6aa5406ca2dbbb4a35",
+    "content-hash": "e5bc25fba73c0e66d25189369a27f602",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -9911,7 +9911,7 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "10.0",
+            "version": "9.2.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
@@ -9933,9 +9933,9 @@
                 "phpunit/php-text-template": "^2.0.2",
                 "sebastian/code-unit-reverse-lookup": "^2.0.2",
                 "sebastian/complexity": "^2.0",
-                "sebastian/environment": "^6.0",
+                "sebastian/environment": "^5.1.2",
                 "sebastian/lines-of-code": "^1.0.3",
-                "sebastian/version": "^4.0",
+                "sebastian/version": "^3.0.1",
                 "theseer/tokenizer": "^1.2.0"
             },
             "require-dev": {
@@ -9989,7 +9989,7 @@
         },
         {
             "name": "phpunit/php-file-iterator",
-            "version": "3.0.3",
+            "version": "3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
@@ -10049,7 +10049,7 @@
         },
         {
             "name": "phpunit/php-invoker",
-            "version": "4.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-invoker.git",
@@ -10112,7 +10112,7 @@
         },
         {
             "name": "phpunit/php-text-template",
-            "version": "3.0",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-text-template.git",
@@ -10171,7 +10171,7 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "6.0",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
@@ -10254,22 +10254,22 @@
                 "phar-io/manifest": "^2.0.3",
                 "phar-io/version": "^3.0.2",
                 "php": ">=7.3",
-                "phpunit/php-code-coverage": "^10.0",
-                "phpunit/php-file-iterator": "^3.0.3",
+                "phpunit/php-code-coverage": "^9.2.28",
+                "phpunit/php-file-iterator": "^3.0.5",
                 "phpunit/php-invoker": "^3.1.1",
                 "phpunit/php-text-template": "^2.0.3",
-                "phpunit/php-timer": "^6.0",
-                "sebastian/cli-parser": "^2.0",
-                "sebastian/code-unit": "^2.0",
-                "sebastian/comparator": "^5.0",
-                "sebastian/diff": "^5.0",
-                "sebastian/environment": "^6.0",
-                "sebastian/exporter": "^5.0",
-                "sebastian/global-state": "^6.0",
-                "sebastian/object-enumerator": "^5.0",
+                "phpunit/php-timer": "^5.0.2",
+                "sebastian/cli-parser": "^1.0.1",
+                "sebastian/code-unit": "^1.0.6",
+                "sebastian/comparator": "^4.0.8",
+                "sebastian/diff": "^4.0.3",
+                "sebastian/environment": "^5.1.3",
+                "sebastian/exporter": "^4.0.5",
+                "sebastian/global-state": "^5.0.1",
+                "sebastian/object-enumerator": "^4.0.3",
                 "sebastian/resource-operations": "^3.0.3",
-                "sebastian/type": "^4.0",
-                "sebastian/version": "^4.0"
+                "sebastian/type": "^3.2",
+                "sebastian/version": "^3.0.2"
             },
             "suggest": {
                 "ext-soap": "To be able to generate mocks based on WSDL files",
@@ -10455,7 +10455,7 @@
         },
         {
             "name": "sebastian/cli-parser",
-            "version": "2.0",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/cli-parser.git",
@@ -10511,7 +10511,7 @@
         },
         {
             "name": "sebastian/code-unit",
-            "version": "2.0",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/code-unit.git",
@@ -10622,7 +10622,7 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "5.0",
+            "version": "4.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
@@ -10636,8 +10636,8 @@
             },
             "require": {
                 "php": ">=7.3",
-                "sebastian/diff": "^5.0",
-                "sebastian/exporter": "^5.0"
+                "sebastian/diff": "^4.0",
+                "sebastian/exporter": "^4.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.3"
@@ -10753,7 +10753,7 @@
         },
         {
             "name": "sebastian/diff",
-            "version": "5.0",
+            "version": "4.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
@@ -10819,7 +10819,7 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "6.0",
+            "version": "5.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
@@ -10882,7 +10882,7 @@
         },
         {
             "name": "sebastian/exporter",
-            "version": "5.0",
+            "version": "4.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
@@ -10896,7 +10896,7 @@
             },
             "require": {
                 "php": ">=7.3",
-                "sebastian/recursion-context": "^5.0"
+                "sebastian/recursion-context": "^4.0"
             },
             "require-dev": {
                 "ext-mbstring": "*",
@@ -10959,7 +10959,7 @@
         },
         {
             "name": "sebastian/global-state",
-            "version": "6.0",
+            "version": "5.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
@@ -10974,7 +10974,7 @@
             "require": {
                 "php": ">=7.3",
                 "sebastian/object-reflector": "^2.0",
-                "sebastian/recursion-context": "^5.0"
+                "sebastian/recursion-context": "^4.0"
             },
             "require-dev": {
                 "ext-dom": "*",
@@ -11080,7 +11080,7 @@
         },
         {
             "name": "sebastian/object-enumerator",
-            "version": "5.0",
+            "version": "4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/object-enumerator.git",
@@ -11095,7 +11095,7 @@
             "require": {
                 "php": ">=7.3",
                 "sebastian/object-reflector": "^2.0",
-                "sebastian/recursion-context": "^5.0"
+                "sebastian/recursion-context": "^4.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.3"
@@ -11192,7 +11192,7 @@
         },
         {
             "name": "sebastian/recursion-context",
-            "version": "5.0",
+            "version": "4.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/recursion-context.git",
@@ -11309,7 +11309,7 @@
         },
         {
             "name": "sebastian/type",
-            "version": "4.0",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/type.git",
@@ -11365,7 +11365,7 @@
         },
         {
             "name": "sebastian/version",
-            "version": "4.0",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/version.git",
