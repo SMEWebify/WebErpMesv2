@@ -1,4 +1,4 @@
-<x-adminlte-select name="companies_id" label="Companie" label-class="text-lightblue" igroup-size="sm">
+<x-adminlte-select name="companies_id" label="{{ __('general_content.companie_trans_key') }}" label-class="text-lightblue" igroup-size="sm">
     <x-slot name="prependSlot">
         <div class="input-group-text bg-gradient-info">
             <i class="fas fa-building"></i>
