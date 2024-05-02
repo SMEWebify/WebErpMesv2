@@ -23,6 +23,7 @@ return [
     'partly_delivered_trans_key'               => 'Partiellement livré',
     'partly_stored_trans_key'                  => 'Partiellement stocké',
     'not_delivered_trans_key'                  => 'Non livré',
+    'delivered_without_dn_trans_key'           => 'Livré sans bon de livraison',
     'chargeable_trans_key'                     => 'Payant',
     'not_chargeable_trans_key'                 => 'Non payant',
     'partly_invoiced_trans_key'                => 'Partiellement facturé',

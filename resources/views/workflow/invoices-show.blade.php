@@ -142,8 +142,12 @@
                       <x-OrderButton id="{{ $InvoiceLine->orderLine->order['id'] }}" code="{{ $InvoiceLine->orderLine->order['code'] }}"  />
                     </td>
                     <td>
+                      @if($InvoiceLine->delivery_line_id)
                       <x-DeliveryButton id="{{ $InvoiceLine->deliveryLine->delivery['id'] }}" code="{{ $InvoiceLine->deliveryLine->delivery['code'] }}"  />
-                    </td>
+                      @else
+                      {{ __('general_content.delivered_without_dn_trans_key') }}
+                      @endif
+                      </td>
                     <td>{{ $InvoiceLine->orderLine['code'] }}</td>
                     <td>{{ $InvoiceLine->orderLine['label'] }}</td>
                     <td>{{ $InvoiceLine->qty }}</td>

@@ -11,12 +11,14 @@ use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Events\OrderLineUpdated;
 use App\Models\Products\Products;
+use App\Models\Workflow\Invoices;
 use App\Models\Products\StockMove;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\OrderLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Workflow\InvoiceLines;
 use App\Models\Products\SerialNumbers;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Methods\MethodsFamilies;
@@ -62,6 +64,7 @@ class OrderLine extends Component
     public $CreateSerialNumber = false;
     
     private $deleveryOrdre = 10;
+    private $invoiceOrdre = 10;
 
     // Validation Rules
     protected $rules = [
@@ -555,7 +558,7 @@ class OrderLine extends Component
 
                     
 
-                    $this->ordre= $this->ordre+10;
+                    $this->deleveryOrdre= $this->deleveryOrdre+10;
                 }
                 // return view on new document
                 return redirect()->route('deliverys.show', ['id' => $DeliveryCreated->id])->with('success', 'Successfully created new delivery note');
@@ -563,6 +566,144 @@ class OrderLine extends Component
             else{
                 return redirect()->back()->with('error', 'Something went wrong');
             }
+        }
+        else{
+            $errors = $this->getErrorBag();
+            $errors->add('errors', 'no lines selected');
+        }
+    }
+
+    public function storeInvoice($orderId){
+        //check if line exist
+        $i = 0;
+        foreach ($this->data as $key => $item) {
+            if(array_key_exists("order_line_id",$this->data[$key])){
+                if($this->data[$key]['order_line_id'] != false ){
+                    $i++;
+                }
+            }
+        }
+
+        if($i>0){ 
+
+            //get data to dulicate for new order
+            $OrderData = Orders::find($orderId);
+
+            //get last Invoice id for create new Code id
+            $LastInvoice=  Invoices::orderBy('id', 'desc')->first();
+            if($LastInvoice == Null){
+                $invoiceCode = "IN-0";
+            }
+            else{
+                $invoiceCode = "IN-". $LastInvoice->id;
+            }
+
+            // Create invoice
+            $InvoiceCreated = Invoices::create([
+                'code'=>$invoiceCode,  
+                'label'=>$invoiceCode, 
+                'companies_id'=>$OrderData->companies_id,   
+                'companies_addresses_id'=>$OrderData->companies_addresses_id,  
+                'companies_contacts_id'=>$OrderData->companies_contacts_id,  
+                'user_id'=>Auth::id(),
+            ]);
+
+            if($InvoiceCreated){
+                // Create invoice note lines
+                foreach ($this->data as $key => $item) {
+
+                    //get data to dulicate for new order
+                    $OrderLineData = OrderLines::find($key);
+                    // Create invoice line
+                    $InvoiceLines = InvoiceLines::create([
+                        'invoices_id' => $InvoiceCreated->id,
+                        'order_line_id' => $key, 
+                        'delivery_line_id' => null, 
+                        'ordre' => $this->invoiceOrdre,
+                        'qty' => $OrderLineData->invoiced_remaining_qty,
+                        'statu' => 1
+                    ]); 
+
+                    if($this->CreateSerialNumber){
+                        $productId = null;
+                        if($OrderLineData->product_id) {
+                            $productId =$OrderLineData->product_id;
+                        }
+                        // Generate and insert serial numbers for each qt delivered
+                        for ($i = 0; $i <$OrderLineData->invoiced_remaining_qty; $i++) {
+                            SerialNumbers::create([
+                                'products_id' => $productId,
+                                'order_line_id' => $OrderLineData->id,
+                                'serial_number' => Str::uuid(),
+                                'status' => 2, // sold
+                            ]);
+                        }
+                    }
+
+                    // update order line info
+                    //same function from stock location product controller
+                    $OrderLineData->delivered_qty =  $OrderLineData->delivered_qty + $OrderLineData->delivered_remaining_qty;
+                    $OrderLineData->invoiced_qty =  $OrderLineData->invoiced_qty + $OrderLineData->invoiced_remaining_qty;
+                    $OrderLineData->delivered_remaining_qty = $OrderLineData->delivered_remaining_qty - $OrderLineData->delivered_remaining_qty;
+                    $OrderLineData->invoiced_remaining_qty = $OrderLineData->invoiced_remaining_qty - $OrderLineData->invoiced_remaining_qty;
+                    //if we are delivered all part
+                    if($OrderLineData->delivered_remaining_qty == 0){
+                        $OrderLineData->delivery_status = 4;
+                        $OrderLineData->invoice_status = 3;
+                        $OrderLineData->save();
+                        // update order statu info
+                        // we must be check if all entry are delivered
+                        event(new OrderLineUpdated($OrderLineData->id));
+                    }
+                    else{
+                        $OrderLineData->delivery_status = 2;
+                        $OrderLineData->invoice_status = 2;
+                        $OrderLineData->save();
+                        // update order statu info
+                        event(new OrderLineUpdated($OrderLineData->id));
+                    }
+
+                    $TaskRelation = $OrderLineData->Task()->get();
+
+                    if($this->RemoveFromStock && $OrderLineData->product_id && $TaskRelation->isEmpty()){
+                        $quantityRemaining = $OrderLineData->qty;
+
+                        $StockLocationProduct = StockLocationProducts::where('products_id', $OrderLineData->product_id)->get();
+                        foreach ($StockLocationProduct as $stock) {
+                            
+                            // Calculate the quantity to exit from this stock
+                            $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
+                
+                            if($quantityToWithdraw != 0){
+                                // Create a negative stock movement to record the stock issue
+                                $stockMove = StockMove::create(['user_id' => Auth::id(),
+                                                                'qty' => $quantityToWithdraw,
+                                                                'stock_location_products_id' =>  $stock->id,  
+                                                                'order_line_id' =>$OrderLineData->id,
+                                                                'typ_move' =>9,
+                                                            ]);
+                            }
+                
+                            // Update remaining quantity
+                            $quantityRemaining -= $quantityToWithdraw;
+                
+                            // Exit the loop if the requested quantity has been satisfied
+                            if ($quantityRemaining <= 0) {
+                                break;
+                            }
+                        }
+                    }
+
+
+                    $this->invoiceOrdre= $this->invoiceOrdre+10;
+                }
+                // return view on new document
+                return redirect()->route('invoices.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new invoice');
+            }
+            else{
+                return redirect()->back()->with('error', 'Something went wrong');
+            }
+            
         }
         else{
             $errors = $this->getErrorBag();

@@ -23,6 +23,7 @@ return [
     'partly_delivered_trans_key'               => 'Partly delivered',
     'partly_stored_trans_key'                  => 'Partially stored',
     'not_delivered_trans_key'                  => 'Not delivered',
+    'delivered_without_dn_trans_key'           => 'Delivered without delevery note',
     'chargeable_trans_key'                     => 'Chargeable',
     'not_chargeable_trans_key'                 => 'Not chargeable',
     'partly_invoiced_trans_key'                => 'Partly invoiced',

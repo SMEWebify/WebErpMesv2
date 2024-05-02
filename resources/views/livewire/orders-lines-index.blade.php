@@ -78,7 +78,7 @@
                                 @else
                                     @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
                                     @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
-                                    @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
+                                    @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif @if(4 == $OrderLine->delivery_status )  <span class="badge badge-primary">{{ __('general_content.delivered_without_dn_trans_key') }}</span>@endif
                                 @endif
                             </td>
                             <td>

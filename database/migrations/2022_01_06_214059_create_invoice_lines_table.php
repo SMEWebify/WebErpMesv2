@@ -17,7 +17,7 @@ class CreateInvoiceLinesTable extends Migration
             $table->id();
             $table->integer('invoices_id');
             $table->integer('order_line_id');
-            $table->integer('delivery_line_id');
+            $table->integer('delivery_line_id')->nullable();
             $table->integer('ordre');
 			$table->integer('qty');
             $table->integer('accounting_allocation_id')->nullable();

@@ -97,6 +97,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                     @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
                                     @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
                                     @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
+                                    @if(4 == $OrderLine->delivery_status )  <span class="badge badge-primary">{{ __('general_content.delivered_without_dn_trans_key') }}</span>@endif
                                 @endif
                             </td>
                             <td>
@@ -293,7 +294,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                 </div>
                             </td>
                             <td>
-                                @if(3 != $OrderLine->delivery_status && $OrderLine->order->type != 2)
+                                @if ((($OrderLine->delivery_status != 3 && $OrderLine->order->type != 2) && ($OrderLine->delivery_status != 4 && $OrderLine->order->type != 2)))
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input" value="{{ $OrderLine->id }}" wire:model.live="data.{{ $OrderLine->id }}.order_line_id" id="data.{{ $OrderLine->id }}.order_line_id"  type="checkbox">
                                     <label for="data.{{ $OrderLine->id }}.order_line_id" class="custom-control-label">+</label>
@@ -338,6 +339,12 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                     <a class="btn btn-primary btn-sm" wire:click="storeDelevery({{ $OrderId }})" href="#">
                                         <i class="fas fa-folder"></i>
                                         {{ __('general_content.new_delivery_note_trans_key') }}
+                                    </a>
+                                </div>
+                                <div class="m-3">
+                                    <a class="btn btn-primary btn-sm" wire:click="storeInvoice({{ $OrderId }})" href="#">
+                                        <i class="fas fa-folder"></i>
+                                        {{ __('general_content.new_invoice_trans_key') }}
                                     </a>
                                 </div>
                             </th>
