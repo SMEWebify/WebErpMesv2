@@ -142,7 +142,7 @@ return [
     'label_trans_key'                          => 'Label',
     'customer_trans_key'                       => 'Customer',
     'status_trans_key'                         => 'Status',
-    'statu_trans_key'                          => 'Status',
+    'statu_trans_key'                          => 'Statu',
     'total_price_trans_key'                    => 'Total price',
     'lines_count_trans_key'                    => 'Lines count',
     'created_at_trans_key'                     => 'Created at',
