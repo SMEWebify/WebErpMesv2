@@ -260,11 +260,6 @@
                                 </address>
                             </div>
                         </div>
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                @livewire('chatlive', ['idItem' => $Order->id, 'Class' => 'Orders'])
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

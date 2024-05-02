@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
             $table->string('label');
-            $table->integer('user_id')->default(0);
+            $table->integer('user_id')->default(0)->nullable();
             $table->integer('related_id'); // ID of the associated element
             $table->string('related_type'); // Type of the associated element
             //Quotes

@@ -261,7 +261,7 @@
                         @endif
                         <div class="card mb-4">
                             <div class="card-body">
-                                @livewire('chatlive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
+                                @livewire('ChatLive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
                             </div>
                         </div>
                     </div>

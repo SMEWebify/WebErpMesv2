@@ -287,6 +287,7 @@
               @endforelse
           </div>
         </div>
+        @livewire('ChatLive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
       </div>
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">
