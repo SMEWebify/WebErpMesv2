@@ -41,7 +41,7 @@
                         <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $PurchaseQuotation->code }}
                       </div>
                       <div class="col-3">
-                        <x-adminlte-select name="statu" label="Statu" label-class="text-success" igroup-size="sm">
+                        <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                           <x-slot name="prependSlot">
                               <div class="input-group-text bg-gradient-success">
                                   <i class="fas fa-exclamation"></i>
