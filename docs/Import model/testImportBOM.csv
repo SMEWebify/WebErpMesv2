@@ -1,0 +1,6 @@
+ordre,service_code,label,component_code,unit_code,qty,unit_cost,unit_price
+1,COMPO,Task Example,SHT-1000,UNIT,10,5.00,10.00
+2,COMPO,Task Example 2,PRD02,UNIT,15,4.50,9.00
+3,COMPO,Task Example,SHT-1000,UNIT,20,5.00,10.00
+4,COMPO,Task Example1,SH-1000,UNIT,10,5.00,10.00
+5,COMPO,Task Example,SHT-1000,UNIT2,10,5.00,10.00

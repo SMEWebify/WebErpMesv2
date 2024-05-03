@@ -6,6 +6,7 @@ use stdClass;
 use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\Planning\Task;
+use Livewire\WithFileUploads;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
@@ -13,9 +14,12 @@ use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsServices;
+use Illuminate\Support\Facades\Validator;
 
 class TaskManage extends Component
 {
+    use WithFileUploads;
+    
     public $idLine;
     public $idType;
     public $idPage;
@@ -59,6 +63,8 @@ class TaskManage extends Component
     public $ProductSelect  = [];
     public $ComponentSelect  = [];
     public $todayDate = '';
+
+    public $csvFile;
 
     // Validation Rules
     protected $rules = [
@@ -296,6 +302,74 @@ class TaskManage extends Component
             // Reset Form Fields After Creating line
             $this->resetFields();
         }
+    }
+
+    public function importBOMCSV()
+    {
+        if ($this->csvFile) {
+            $path = $this->csvFile->getRealPath();
+            $data = array_map('str_getcsv', file($path));
+            $header = array_shift($data);
+            $successCount = 0;
+            $errorMessages = [];
+
+            foreach ($data as $row) {
+                
+                $rowData = array_combine($header, $row);
+                // Retrieve entities id based on codes
+                $service = MethodsServices::where('code', $rowData['service_code'])->first();
+                $product = Products::where('code', $rowData['component_code'])->first();
+                $unit = MethodsUnits::where('code', $rowData['unit_code'])->first();
+                
+                // Prepare data with matching IDs
+                $rowData['methods_services_id'] = $service ? $service->id : null;
+                $rowData['type'] = $service ? $service->type : null;
+                $rowData['component_id'] = $product ? $product->id : null;
+                $rowData['methods_units_id'] = $unit ? $unit->id : null;
+
+                if($this->idType == 'products_id'){
+                    $rowData['products_id'] = $this->idLine;
+                }
+                elseif($this->idType == 'quote_lines_id'){
+                    $rowData['quote_lines_id'] =$this->idLine;
+                }
+                elseif($this->idType == 'order_lines_id'){
+                    $rowData['order_lines_id'] = $this->idLine;
+                }
+
+                // Remove code fields to avoid unknown field errors during creation
+                unset($rowData['service_code'], $rowData['component_code'], $rowData['unit_code']);
+                
+                $validator = Validator::make($rowData, [
+                    'ordre' => 'required|integer',
+                    'methods_services_id' => 'required|exists:methods_services,id',
+                    'label' => 'required|string|max:255',
+                    'component_id' => 'required|exists:products,id',
+                    'methods_units_id' => 'required|exists:methods_units,id',
+                    'qty' => 'required|numeric|min:1',
+                    'unit_cost' => 'required|numeric',
+                    'unit_price' => 'required|numeric'
+                ]);
+
+                if ($validator->fails()) {
+                    $errorMessages[] = "Error in line : " . implode(', ', $row) . " - " . $validator->errors()->first();
+                    continue;
+                }
+
+                Task::create($rowData);
+                $successCount++;
+            }
+
+            if (!empty($errorMessages)) {
+                session()->flash('errors',  $errorMessages);
+            }
+            session()->flash('success', "Import successful for {$successCount} tasks.");
+            
+
+        } else {
+            session()->flash('error', 'Aucun fichier sélectionné.');
+        }
+            
     }
 
     public function editTaskLine($id){

@@ -147,6 +147,32 @@
                 </div>
             </div>
         </form>
+
+
+        
+        @if($TaskType == 'BOM')
+        <div class="card card-body">
+            @if (session()->has('errors'))
+                <ul>
+                    @foreach (session('errors') as $errorMessage)
+                        <li class="bg-danger">{{ $errorMessage }}</li>
+                    @endforeach
+                </ul>
+            @endif
+
+        
+            <form wire:submit.prevent="importBOMCSV" class="form-inline">
+                <div class="form-group mb-2">
+                    <input type="hidden" wire:model="idLine" value="{{ $Line->id }}">
+                    <div class="custom-file">
+                        <input type="file" wire:model="csvFile" class="custom-file-input" id="csvFileInput">
+                        <label class="custom-file-label" for="csvFileInput">Choose file</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">{{__('general_content.lines_import_trans_key') }}</button>
+            </form>
+        </div>
+        @endif
     </div>
     @endif
 
