@@ -13,6 +13,7 @@ use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsLocation;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsRessources;
+use App\Models\Methods\MethodsStandardNomenclature;
 
 class MethodsController extends Controller
 {
@@ -42,6 +43,7 @@ class MethodsController extends Controller
         $MethodsUnits = MethodsUnits::orderBy('id')->paginate(10);
         $MethodsFamilies = MethodsFamilies::orderBy('id')->paginate(10);
         $MethodsTools = MethodsTools::orderBy('code')->paginate(10);
+        $MethodsStandardNomenclatures = MethodsStandardNomenclature::orderBy('id')->get();
 
         return view('methods/methods-index', [
             'MethodsServices' => $MethodsServices,
@@ -55,7 +57,8 @@ class MethodsController extends Controller
             'MethodsLocations' =>  $MethodsLocations,
             'userSelect' => $userSelect,
             'SupplierSelect' => $SupplierSelect,
-            'MethodsTools' => $MethodsTools
+            'MethodsTools' => $MethodsTools,
+            'MethodsStandardNomenclatures' => $MethodsStandardNomenclatures
             
         ]);
     }

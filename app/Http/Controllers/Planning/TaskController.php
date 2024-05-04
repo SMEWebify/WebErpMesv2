@@ -9,13 +9,14 @@ use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
-use App\Models\Products\Products;
+use App\Models\Methods\MethodsStandardNomenclature;
 
 class TaskController extends Controller
 {
@@ -58,6 +59,13 @@ class TaskController extends Controller
                 $Document = Products::findOrFail($id_page);
                 $Document->statu = 1;
             }
+        }
+        elseif($id_type == 'nomenclature_lines_id'){
+            $Document = MethodsStandardNomenclature::findOrFail($id_page);
+            $LineInfo = $Document;
+        }
+        else{
+            return back()->withInput()->withErrors(['msg' => 'Error, Something goes wrong ']);
         }
 
         return view('workflow/task-manage', compact('Document','LineInfo', 'id_type', 'id_page', 'id_line'));

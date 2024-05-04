@@ -575,4 +575,19 @@
       });
     });
   </script>
+
+<script type="text/javascript">
+  $('.custom-file-input').on('change',function(){
+    // Obtient le nom du fichier sélectionné
+    var fileName = $(this).val().split('\\').pop(); 
+    // Sélectionne le label correspondant et met à jour son contenu
+    $(this).next('.custom-file-label').addClass("selected").html(fileName);
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-toggle="tooltip"
+  });
+</script>
 @stop

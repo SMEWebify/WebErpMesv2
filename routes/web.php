@@ -430,6 +430,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->name('methods.tool.update');
             Route::post('/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->name('methods.tool.update.picture');
         });
+
+        // Routes for Standard Nomenclature
+        Route::group(['prefix' => 'standard-nomenclature'], function () {
+            Route::post('/create', 'App\Http\Controllers\Methods\StandardNomenclatureController@store')->name('methods.standard.nomenclature.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Methods\StandardNomenclatureController@update')->name('methods.standard.nomenclature.update');
+        });
     });
 
     Route::group(['prefix' => 'notifications'], function () {

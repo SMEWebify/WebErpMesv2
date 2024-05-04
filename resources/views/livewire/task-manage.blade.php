@@ -1,5 +1,5 @@
 <div>
-    @if($statu == 1)
+    @if($statu == 1 || $idType == "nomenclature_lines_id")
     <div class="card-body">
         @include('include.alert-result')
         @if($updateLines)
@@ -150,7 +150,7 @@
 
 
         
-        @if($TaskType == 'BOM')
+        @if($TaskType == 'BOM' && $idType != "nomenclature_lines_id")
         <div class="card card-body">
             @if (session()->has('errors'))
                 <ul>
@@ -165,7 +165,7 @@
                 <div class="form-group mb-2">
                     <input type="hidden" wire:model="idLine" value="{{ $Line->id }}">
                     <div class="custom-file">
-                        <input type="file" wire:model="csvFile" class="custom-file-input" id="csvFileInput">
+                        <input type="file" wire:model="csvFile" class="custom-file-input" id="csvFileInput" data-toggle="tooltip" data-placement="top" title="Model: ordre,service_code,label,component_code,unit_code,qty,unit_cost,unit_price">
                         <label class="custom-file-label" for="csvFileInput">Choose file</label>
                     </div>
                 </div>
@@ -213,7 +213,13 @@
                     <tbody>
                         @forelse ($Line->TechnicalCut as $TechLine)
                         <tr>
-                            <td><a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $TechLine->id }}</a></td>
+                            <td>
+                                @if($idType == "order_lines_id")
+                                    <a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $TechLine->id }}</a>
+                                @else
+                                    #{{ $TechLine->id }}
+                                @endif
+                            </td>
                             <td>{{ $TechLine->ordre }}</td>
                             <td>{{ $TechLine->label }}</td>
                             <td @if($TechLine->methods_services_id ) style="background-color: {{ $TechLine->service['color'] }};" @endif >
@@ -321,7 +327,14 @@
                     <tbody>
                         @forelse($Line->BOM as $BOMline)
                         <tr>
-                            <td><a href="{{ route('production.task.statu.id', ['id' => $BOMline->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $BOMline->id }}</a></td>
+                            <td>
+                                
+                                @if($idType == "order_lines_id")
+                                    <a href="{{ route('production.task.statu.id', ['id' => $BOMline->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $BOMline->id }}</a>
+                                @else
+                                    #{{ $BOMline->id }}
+                                @endif
+                            </td>
                             <td>{{ $BOMline->ordre }}</td>
                             <td>{{ $BOMline->label }}</td>
                             <td @if($BOMline->methods_services_id ) style="background-color: {{ $BOMline->service['color'] }};" @endif >
@@ -465,7 +478,7 @@
     @endif
 
     @if($Line->id ?? null)
-        @if($idType != "sub_assembly_id")
+        @if($idType != "sub_assembly_id" && $idType != "nomenclature_lines_id")
         <div class="card-body">
             <div class="card card-secondary">
                 <div class="card-header">
