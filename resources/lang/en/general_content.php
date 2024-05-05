@@ -784,6 +784,8 @@ return [
     'new_family_trans_key'                     => 'New family',
     'new_tool_trans_key'                       => 'New tool',
     'family_trans_key'                         => 'Family',
+    'new_standard_bom_trans_key'               => 'New standard nomenclature',
+    'standard_bom_trans_key'                   => 'Standard nomenclature',
     'service_info_trans_key'                   => 'In the Type scrolling list, indicate whether the service is productive (manufacturing operation) or actually involves the procurement of raw materials or supplies, is a service completed externally, i.e. by a subcontractor, or is a composed component. The service type is then used to filter data when creating a list of tasks, a bill of materials, etc. For raw materials, a distinction is also made between bars, plates and blocks. The screen used to detail raw materials may look different, depending on the raw material type.',
     'ressource_info_trans_key'                 => 'Depending on your working method, resources may be employees or machines or a mixture of both. In any case, you must indicate for each of them the maximum number of working hours per day as well as the services that they can complete.',
     'unit_info_trans_key'                      => 'You must enter all units you may have to work with in your business. This may be Parts, Meters, Kilograms, etc.',

@@ -183,7 +183,7 @@
                 <h3 class="card-title">{{__('general_content.technical_cut_trans_key') }}</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                        <i class="fas fa-plus"></i>
+                        <i class="fas fa-minus"></i>
                     </button>
                     <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                         <i class="fas fa-times"></i>
@@ -299,7 +299,7 @@
                 <h3 class="card-title">{{__('general_content.bill_of_materials_trans_key') }}</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-minus"></i>
                     </button>
                     <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                     <i class="fas fa-times"></i>
@@ -485,7 +485,7 @@
                     <h3 class="card-title">{{ __('general_content.sub_assembly_trans_key') }}</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                        <i class="fas fa-plus"></i>
+                        <i class="fas fa-minus"></i>
                         </button>
                         <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
                         <i class="fas fa-times"></i>
@@ -570,5 +570,34 @@
             </div>
         </div>
         @endif
+    @endif
+
+    @if($statu == 1 || $idType == "nomenclature_lines_id")
+    <div class="card-body">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">{{ __('general_content.standard_bom_trans_key') }}</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body table-responsive p-0 m-4">
+                @forelse ($StandardNomenclatures as $StandardNomenclature)
+                    <a  wire:click="AddStandardNomenclature({{$StandardNomenclature->id}})" class="btn btn-app bg-primary">
+                        <span class="badge bg-success">{{ $StandardNomenclature->getAllTaskCountAttribute() }}</span>
+                        <i class="fas fa-list"></i> {{ $StandardNomenclature->label }}
+                    </a>
+                @empty
+                {{ __('general_content.no_data_trans_key') }}
+                @endforelse
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
     @endif
 </div>

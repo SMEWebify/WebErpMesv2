@@ -1417,7 +1417,7 @@
     <div class="row">
       <div class="col-md-6 card-primary">
         <div class="card-header">
-          <h3 class="card-title">Nomenclatures standard</h3>
+          <h3 class="card-title">{{ __('general_content.standard_bom_trans_key') }}</h3>
         </div>
         <div class="card-body table-responsive p-0">
           <table class="table table-hover">
@@ -1488,7 +1488,7 @@
       </div>
       <div class="col-md-6 card-secondary">
         <div class="card-header">
-          <h3 class="card-title">Nouvelle nomenclature standard</h3>
+          <h3 class="card-title">{{ __('general_content.new_standard_bom_trans_key') }}</h3>
         </div>
         <div class="card-body">
           <form  method="POST" action="{{ route('methods.standard.nomenclature.create') }}" class="form-horizontal" enctype="multipart/form-data">

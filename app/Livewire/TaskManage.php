@@ -28,6 +28,7 @@ class TaskManage extends Component
     public $statu;
     public $status_id;
     public $ServicesSelect;
+    public $StandardNomenclatures;
     public $TaskType = "TechCut";
 
     public $taskId;
@@ -175,6 +176,7 @@ class TaskManage extends Component
                                                                                                             ->get();
         $this->ComponentSelect = Products::select('id', 'code','label', 'methods_services_id')->with('service')->whereRelation('service', 'type', 8)->get();
         $this->ServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
+        $this->StandardNomenclatures = MethodsStandardNomenclature::orderBy('id')->get();
 
     }
 
@@ -542,5 +544,60 @@ class TaskManage extends Component
         }catch(\Exception $e){
             session()->flash('error',"Something goes wrong while deleting sub assembly #". $id);
         }
+    }
+
+    public function AddStandardNomenclature($id){   //https://github.com/SMEWebify/WebErpMesv2/issues/377
+        $standardTasks = MethodsStandardTask::where('methods_nomenclature_standard_id', $id)->get();
+        foreach ($standardTasks as $standardTask) {
+            
+            $taskData = [
+                'label' => $standardTask->label,
+                'ordre' => $standardTask->ordre,
+                'sub_assembly_id' => $standardTask->sub_assembly_id,
+                'methods_services_id' => $standardTask->methods_services_id,
+                'component_id' => $standardTask->component_id,
+                'seting_time' => $standardTask->seting_time,
+                'unit_time' => $standardTask->unit_time,
+                'remaining_time' => $standardTask->remaining_time,
+                'status_id' => 1,  // Assume default status
+                'type' => $standardTask->type,
+                'qty' => $standardTask->qty,
+                'qty_init' => $standardTask->qty_init,
+                'unit_cost' => $standardTask->unit_cost,
+                'unit_price' => $standardTask->unit_price,
+                'methods_units_id' => $standardTask->methods_units_id,
+                'x_size' => $standardTask->x_size,
+                'y_size' => $standardTask->y_size,
+                'z_size' => $standardTask->z_size,
+                'x_oversize' => $standardTask->x_oversize,
+                'y_oversize' => $standardTask->y_oversize,
+                'z_oversize' => $standardTask->z_oversize,
+                'diameter' => $standardTask->diameter,
+                'diameter_oversize' => $standardTask->diameter_oversize,
+                'to_schedule' => $standardTask->to_schedule,
+                'material' => $standardTask->material,
+                'thickness' => $standardTask->thickness,
+                'weight' => $standardTask->weight,
+                'methods_tools_id' => $standardTask->methods_tools_id,
+                // Autres champs nécessaires
+            ];
+
+            if($this->idType == 'products_id'){
+                $taskData['products_id'] = $this->idLine;
+            }
+            elseif($this->idType == 'quote_lines_id'){
+                $taskData['quote_lines_id'] = $this->idLine;
+            }
+            elseif($this->idType == 'order_lines_id'){
+                $taskData['order_lines_id'] = $this->idLine;
+            }
+            elseif($this->idType == 'sub_assembly_id'){ 
+                $taskData['sub_assembly_id'] = $this->idLine;
+            }
+            
+            Task::create($taskData);
+        }
+    
+        session()->flash('success', 'Nomenclature added Successfully');
     }
 }

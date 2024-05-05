@@ -783,6 +783,8 @@ return [
     'new_unit_trans_key'                       => 'Nouvelle unité',
     'new_family_trans_key'                     => 'Nouvelle famille',
     'new_tool_trans_key'                       => 'Nouveau outil',
+    'new_standard_bom_trans_key'               => 'Nouvelle nomenclature standard',
+    'standard_bom_trans_key'                   => 'Nomenclature standard',
     'family_trans_key'                         => 'Famille',
     'service_info_trans_key'                   => 'Dans la liste déroulante Type, indiquez si la prestation est productive (opération de fabrication) ou implique effectivement l\'approvisionnement en matières premières ou fournitures, est une prestation réalisée en externe, c\'est-à-dire par un sous-traitant, ou est une composante composée. Le type de prestation permet ensuite de filtrer les données lors de la création d\'une liste de tâches, d\'une nomenclature, etc. Pour les matières premières, on distingue également les barres, les plaques et les blocs. L\'écran utilisé pour détailler les matières premières peut être différent selon le type de matière première.',
     'ressource_info_trans_key'                 => 'Selon votre méthode de travail, les ressources peuvent être des employés, des machines ou un mélange des deux. Dans tous les cas, vous devez indiquer pour chacun d’eux le nombre maximum d’heures de travail par jour ainsi que les prestations qu’ils peuvent réaliser.',
