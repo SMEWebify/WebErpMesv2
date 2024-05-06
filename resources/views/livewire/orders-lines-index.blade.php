@@ -92,7 +92,64 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $OrderLine->getAllTaskCountAttribute() }}</span></a></button>
+                                    <!-- Button Modal -->
+                                    <button type="button" class="btn bg-warning" data-toggle="modal" data-target="#OrderLineTasks{{ $OrderLine->id }}">
+                                        <i class="fa fa-lg fa-fw  fas fa-list"></i>
+                                    </button>
+                                    <!-- Modal {{ $OrderLine->id }} -->
+                                    <x-adminlte-modal id="OrderLineTasks{{ $OrderLine->id }}" title="Task detail for {{ $OrderLine->label }}" theme="warning" icon="fa fa-pen" size='lg' disable-animations>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{{ __('general_content.order_trans_key') }}</th>
+                                                            <th>{{ __('general_content.label_trans_key') }}</th>
+                                                            <th>{{ __('general_content.service_trans_key') }}</th>
+                                                            <th>{{ __('general_content.total_time_trans_key') }}</th>
+                                                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                                                            <th>{{ __('general_content.cost_trans_key') }}</th>
+                                                            <th>{{ __('general_content.margin_trans_key') }}</th>
+                                                            <th>{{ __('general_content.price_trans_key') }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse ( $OrderLine->Task as $Task)
+                                                        <tr>
+                                                            <td>{{ $Task->ordre }}</td>
+                                                            <td>{{ $Task->label }}</td>
+                                                            <td @if($Task->methods_services_id ) style="background-color: {{ $Task->service['color'] }};" @endif >
+                                                                @if($Task->methods_services_id )
+                                                                    @if( $Task->service['picture'])
+                                                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $Task->service['picture']) }}'>">
+                                                                            <span>{{ $Task->service['label'] }}</span>
+                                                                        </p>
+                                                                    @else
+                                                                        {{ $Task->service['label'] }}
+                                                                    @endif
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $Task->TotalTime() }} h</td>
+                                                            <td>{{ $Task->qty }}</td>
+                                                            <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
+                                                            <td>{{ $Task->Margin() }} %</td>
+                                                            <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
+                                                        </tr>
+                                                        @empty
+                                                        <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <a class="btn btn-info btn-sm" href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}">
+                                                <i class="fas fa-folder"></i>
+                                                {{ __('general_content.view_trans_key') }}
+                                            </a>
+                                        </div>
+                                    </x-adminlte-modal>
+                                    <a href="{{ route('task.manage', ['id_type'=> 'order_lines_id', 'id_page'=>  $OrderLine->orders_id, 'id_line' => $OrderLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $OrderLine->getAllTaskCountAttribute() }}</span></a>
                                 </div>
                             </td>
                             <td>
