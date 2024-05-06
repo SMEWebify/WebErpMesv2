@@ -282,8 +282,18 @@ return [
                 ],
                 [
                     'text'=>'vietnamese_trans_key',
-                    'icon' => 'flag-icon flag-icon-fr',
+                    'icon' => 'flag-icon flag-icon-vi',
                     'url'=> 'vi',
+                ],
+                [
+                    'text'=>'Spanish',
+                    'icon' => 'flag-icon flag-icon-es',
+                    'url'=> 'es',
+                ],
+                [
+                    'text'=>'Arabic',
+                    'icon' => 'flag-icon flag-icon-ar',
+                    'url'=> 'ar',
                 ]
             ]
         ],
