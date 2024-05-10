@@ -236,26 +236,12 @@ class User extends Authenticatable
     }
 
     // Encrypt while setting
-    public function setEmailAttribute($value)
-    {
-        $this->attributes['email'] = Crypt::encrypt($value);
-    }
-
-    // Decrypt while getting
-    public function getEmailAttribute($value)
-    {
-        try {
-            return decrypt($value);
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            return null; 
-        }
-    }
-
-     public function setPersonnalPhoneNumberAttribute($value)
+    public function setPersonnalPhoneNumberAttribute($value)
     {
         $this->attributes['personnal_phone_number'] = Crypt::encrypt($value);
     }
 
+    // Decrypt while getting
     public function getPersonnalPhoneNumberAttribute($value)
     {
         try {
