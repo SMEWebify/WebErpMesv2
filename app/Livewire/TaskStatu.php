@@ -21,7 +21,8 @@ class TaskStatu extends Component
     protected $paginationTheme = 'bootstrap';
     
     public $Task;
-
+    public $nextTask;
+    public $previousTask;
     public $taskStockMoves;
     public $taskActivities;
     public $lastTaskActivities;
@@ -75,6 +76,18 @@ class TaskStatu extends Component
                 ];
             }
         }
+
+        // Récupérer la tâche précédente
+        $this->previousTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                                        ->where('ordre', '<', $this->Task->ordre)
+                                        ->orderBy('ordre', 'desc')
+                                        ->first();
+
+        // Récupérer la tâche suivante
+        $this->nextTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                                    ->where('ordre', '>', $this->Task->ordre)
+                                    ->orderBy('ordre', 'asc')
+                                    ->first();
 
         foreach ($this->taskActivities as $taskActivitie){
             if($taskActivitie->type == 1){
@@ -153,6 +166,17 @@ class TaskStatu extends Component
             $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
             $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
             $this->Task = Task::with('OrderLines.order')->find($this->search);
+            // Récupérer la tâche précédente
+            $this->previousTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                    ->where('ordre', '<', $this->Task->ordre)
+                    ->orderBy('ordre', 'desc')
+                    ->first();
+
+            // Récupérer la tâche suivante
+            $this->nextTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                ->where('ordre', '>', $this->Task->ordre)
+                ->orderBy('ordre', 'asc')
+                ->first();
         }
         
         return view('livewire.task-statu', [
@@ -337,6 +361,12 @@ class TaskStatu extends Component
             'task_id'=>$id,
         ]);
 
-return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
+    return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
+    }
+
+    public function goToTask($taskId)
+{
+    // Rédirection ou mise à jour de la vue avec la nouvelle tâche
+    $this->mount($taskId);
 }
 }
