@@ -23,7 +23,7 @@ class CreateQuoteLinesTable extends Migration
 			$table->integer('qty');
 			$table->integer('methods_units_id');
 			$table->decimal('selling_price', 10, 3);
-			$table->decimal('discount', 10, 3);
+			$table->decimal('discount', 10, 3)->default(0);
 			$table->integer('accounting_vats_id');
 			$table->date('delivery_date')->nullable();
 			$table->integer('statu')->default(1);

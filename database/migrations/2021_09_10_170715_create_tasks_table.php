@@ -28,14 +28,14 @@ class CreateTasksTable extends Migration
 			$table->decimal('remaining_time', 10, 3)->nullable();
 			$table->integer('status_id')->default(1);
 			$table->integer('type');
-            #1 = Productive
-            #2 = Raw material
-            #3 = Raw material (Sheet)
-            #4 = Raw material (Profil)
-            #5 = Raw material (block)
-            #6 = Supplies
-            #6 = Sub-contracting
-            #6 = Composed component
+            # 1 = Productive
+            # 2 = Raw material
+            # 3 = Raw material (Sheet)
+            # 4 = Raw material (Profil)
+            # 5 = Raw material (block)
+            # 6 = Supplies
+            # 7 = Sub-contracting
+            # 8 = Composed component
 			$table->date('delay')->nullable();
 			$table->integer('qty')->nullable();
 			$table->integer('qty_init')->nullable();
