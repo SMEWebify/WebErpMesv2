@@ -1,6 +1,5 @@
-<p align="center">
-    <img src="https://github.com/SMEWebify/WebErpMesv2/assets/75578469/536ad6ff-e27e-41ca-bac1-00c6662ca827">
-</p>
+![Firefly brand logo for digitalisation web application title -WEM -around workshop sheetmetal, bendin](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/2e877aae-4f66-4347-9cf5-38a85fbf57d5)
+
 
 
 <p align="center">
@@ -12,7 +11,8 @@
 
 # Why ΣEM ? :monocle_face:
 
-Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. ΣEM offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 9, Livewire and bootstrap 4.6.
+Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. ΣEM offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 10, Livewire and bootstrap 4.6.
+![Firefly Ressource Management and Manufacturing system Web for industry sheet metal machining mold av](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/fdaa2e64-20cb-4076-9293-bf2291ea637f)
 
 
 <p align="center">Any improvement discussion would be helpful. :hugs:</p>
@@ -37,30 +37,6 @@ for run to production, follow this link :  [wiki page (install to run)](https://
 -----------------
 
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/07840f20-081d-47d3-b892-14f86b5ecc44)
-
-
-
-https://github.com/SMEWebify/WebErpMesv2/assets/75578469/8e2dff79-5ddf-4c56-b5e2-b845f7e91158
-
-
-https://github.com/SMEWebify/WebErpMesv2/assets/75578469/f9e8e8b2-e492-4bd3-9ebc-b90b20267962
-
-
-
-https://github.com/SMEWebify/WebErpMesv2/assets/75578469/f6804d4c-4fb2-455c-aaa3-b07bbe883faf
-
-
-
-
-https://github.com/SMEWebify/WebErpMesv2/assets/75578469/6ed63bf6-c08b-477f-8147-f91aeeb3d922
-
-
-
-Quality
-![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/5510ee89-2257-4906-94f5-273cf8315322)
-
-
-
 
 
 
