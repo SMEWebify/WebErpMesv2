@@ -49,7 +49,7 @@ class ProductsController extends Controller
         $userSelect = $this->SelectDataService->getUsers();
         $ProductSelect = $this->SelectDataService->getProductsSelect();
         $ServicesSelect = $this->SelectDataService->getServices();
-        $UnitsSelect = $this->SelectDataService->getFamilies();
+        $UnitsSelect = $this->SelectDataService->getUnitsSelect();
         $FamiliesSelect = $this->SelectDataService->getFamilies();
         $SupplierSelect = $this->SelectDataService->getSupplier();
 
