@@ -77,17 +77,19 @@ class TaskStatu extends Component
             }
         }
 
-        // Récupérer la tâche précédente
-        $this->previousTask = Task::where('order_lines_id', $this->Task->order_lines_id)
-                                        ->where('ordre', '<', $this->Task->ordre)
-                                        ->orderBy('ordre', 'desc')
-                                        ->first();
+        if($this->Task){
+            // Récupérer la tâche précédente
+            $this->previousTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                                            ->where('ordre', '<', $this->Task->ordre)
+                                            ->orderBy('ordre', 'desc')
+                                            ->first();
 
-        // Récupérer la tâche suivante
-        $this->nextTask = Task::where('order_lines_id', $this->Task->order_lines_id)
-                                    ->where('ordre', '>', $this->Task->ordre)
-                                    ->orderBy('ordre', 'asc')
-                                    ->first();
+            // Récupérer la tâche suivante
+            $this->nextTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                                        ->where('ordre', '>', $this->Task->ordre)
+                                        ->orderBy('ordre', 'asc')
+                                        ->first();
+        }
 
         foreach ($this->taskActivities as $taskActivitie){
             if($taskActivitie->type == 1){
@@ -166,17 +168,19 @@ class TaskStatu extends Component
             $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
             $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
             $this->Task = Task::with('OrderLines.order')->find($this->search);
-            // Récupérer la tâche précédente
-            $this->previousTask = Task::where('order_lines_id', $this->Task->order_lines_id)
-                    ->where('ordre', '<', $this->Task->ordre)
-                    ->orderBy('ordre', 'desc')
-                    ->first();
+            if($this->Task){
+                // Récupérer la tâche précédente
+                $this->previousTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                        ->where('ordre', '<', $this->Task->ordre)
+                        ->orderBy('ordre', 'desc')
+                        ->first();
 
-            // Récupérer la tâche suivante
-            $this->nextTask = Task::where('order_lines_id', $this->Task->order_lines_id)
-                ->where('ordre', '>', $this->Task->ordre)
-                ->orderBy('ordre', 'asc')
-                ->first();
+                // Récupérer la tâche suivante
+                $this->nextTask = Task::where('order_lines_id', $this->Task->order_lines_id)
+                    ->where('ordre', '>', $this->Task->ordre)
+                    ->orderBy('ordre', 'asc')
+                    ->first();
+            }
         }
         
         return view('livewire.task-statu', [

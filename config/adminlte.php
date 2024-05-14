@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'logo' => 'v1.0.8',
+    'logo' => 'v1.09',
     'logo_img' => 'vendor/adminlte/dist/img/simple-logo.PNG',
     'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
@@ -268,11 +268,11 @@ return [
         [
             'text' => 'language_trans_key',
             'topnav_right' => true,
-            'icon' => 'flag-icon flag-icon-uk',
+            'icon' => 'flag-icon flag-icon-gb',
             'submenu' => [
                 [
                     'text'=>'english_trans_key',
-                    'icon' => 'flag-icon flag-icon-uk',
+                    'icon' => 'flag-icon flag-icon-gb',
                     'url'=> 'en',
                 ],
                 [
@@ -702,7 +702,7 @@ return [
             'files' => [
                 [
                     'type' => 'css',
-                    'asset' => false,
+                    'asset' => true,
                     'location' => '//cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css',
                     ],
             ],
