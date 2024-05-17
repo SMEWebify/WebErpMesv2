@@ -505,6 +505,7 @@ return [
     'visa_trans_key'                           => 'Visa',
     'select_to_export_trans_key'               => 'Select to export',
     'line_trans_key'                           => 'Line',
+    'blocked_unti_trans_key'                   => 'Blocked until',
     
     'problem_description_trans_key'            => 'Problem description',
     'proposal_description_trans_key'           => 'Proposal description',
@@ -810,7 +811,7 @@ return [
     'resource_required_trans_key'              => 'Resource required',  
     
     //HUMAN RESOURCES
-    'human_resources_trans_key'                => 'Human resources',   
+    'human_resources_trans_key'                => 'Human resources',
     
     //USER
     'users_trans_key'                          => 'Users',

@@ -80,6 +80,7 @@ class User extends Authenticatable
         'users_notification',
         'quotes_notification',
         'orders_notification',
+        'banned_until',
     ];
 
     /**
@@ -99,6 +100,10 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+    ];
+
+    protected $dates = [
+        'banned_until'
     ];
 
     public function adminlte_image()

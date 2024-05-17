@@ -87,6 +87,18 @@ class HumanResourcesController extends Controller
      * @param Request $request
      * @return View
      */
+    public function LockUser(Request $request, int $id)
+    {
+        $UserUpdate = User::findOrFail($id);
+        $UserUpdate->banned_until = $request->banned_until;
+        $UserUpdate->save();
+        return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', 'Successfully lock user');
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
     public function storeUserEmploymentContract(StoreUserEmploymentContractRequest $request)
     {
         // Create Line

@@ -26,6 +26,7 @@
                         <th>{{__('general_content.status_trans_key') }}</th>
                         <th></th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{__('general_content.blocked_unti_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,6 +72,7 @@
                             <x-ButtonTextView route="{{ route('human.resources.show.user', ['id' => $User->id])}}" />
                         </td>
                         <td>{{ $User->GetPrettyCreatedAttribute() }}</td>
+                        <td>{{ $User->banned_until }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -87,6 +89,7 @@
                         <th>{{__('general_content.status_trans_key') }}</th>
                         <th></th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{__('general_content.blocked_unti_trans_key') }}</th>
                     </tr>
                 </tfoot>
             </table>

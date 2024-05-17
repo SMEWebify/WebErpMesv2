@@ -324,7 +324,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     
         // Update User
         Route::post('/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->name('human.resources.update.user');
-    
+
+        //lock User
+        Route::post('/lock/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@LockUser')->name('human.resources.lock.user');
+
         // Employment Contract
         Route::group(['prefix' => 'contract'], function () {
             // Create Employment Contract

@@ -505,7 +505,8 @@ return [
     'visa_trans_key'                           => 'Visa',
     'select_to_export_trans_key'               => 'Sélectionnez pour exporter',
     'line_trans_key'                           => 'Ligne',
-    
+    'blocked_unti_trans_key'                   => 'Bloqué jusqu\'au',
+
     'problem_description_trans_key'            => 'Description du problème',
     'proposal_description_trans_key'           => 'Description de la proposition',
     'customer_reply_description_trans_key'     => 'Description de la réponse du client',

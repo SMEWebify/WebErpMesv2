@@ -63,6 +63,31 @@
                 <p class="text-muted">{{ $User->postal_code }} {{ $User->city }} </p>
             </div>
         </div>
+
+        @if($User->id != auth()->id() )
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">{{__('general_content.blocked_unti_trans_key') }}</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ route('human.resources.lock.user', ['id' => $User->id]) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-body">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                            </div>
+                            <input type="date" class="form-control"   name="banned_until"  id="banned_until" value="{{ $User->banned_until }}">
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
+
     </div>
 
     <div class="col-md-9">
