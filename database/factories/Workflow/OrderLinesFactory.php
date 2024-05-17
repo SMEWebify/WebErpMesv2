@@ -28,7 +28,7 @@ class OrderLinesFactory extends Factory
     public function definition()
     {
         $this->code = $this->faker->unique()->numerify('PART-####');
-        $this->qty = $this->faker->numberBetween($min = 1, $max = 9990);
+        $this->qty = $this->faker->biasedNumberBetween($min = 1, $max = 9990);
 
         return [
             //
@@ -40,7 +40,7 @@ class OrderLinesFactory extends Factory
 			'delivered_remaining_qty' => $this->qty,
 			'invoiced_remaining_qty' => $this->qty,
 			'methods_units_id' => MethodsUnits::all()->random()->id,
-			'selling_price' => $this->faker->numberBetween($min = 1, $max = 50),
+			'selling_price' => $this->faker->biasedNumberBetween($min = 1, $max = 10),
 			'discount' => $this->faker->numberBetween($min = 0, $max = 3),
 			'accounting_vats_id' => AccountingVat ::all()->random()->id,
 

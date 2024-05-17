@@ -37,7 +37,7 @@ class OrderLineDetailsFactory extends Factory
     
 
         return [
-            'order_lines_id' => OrderLines::factory(),
+            'order_lines_id' => null,
             'x_size' =>$this->x_size,
             'y_size' => $this->y_size, 
             'z_size' => $this->z_size, 

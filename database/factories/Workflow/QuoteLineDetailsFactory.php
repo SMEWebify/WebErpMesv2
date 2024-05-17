@@ -37,7 +37,7 @@ class QuoteLineDetailsFactory extends Factory
     
 
         return [
-            'quote_lines_id' => QuoteLines::factory(),
+            'quote_lines_id' => null,
             'x_size' =>$this->x_size,
             'y_size' => $this->y_size, 
             'z_size' => $this->z_size, 

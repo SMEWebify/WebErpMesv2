@@ -16,12 +16,11 @@ class OrderLinesTableSeeder extends Seeder
     public function run()
     {
         //
-        $OrderLines = OrderLines::factory()->count(500)->create();
+        $OrderLines = OrderLines::factory()->count(2500)->create();
 
-        foreach ($OrderLines as $key => $OrderLine) {
+        foreach ($OrderLines as $orderLine) {
             OrderLineDetails::factory()
-                ->for($OrderLine, 'OrderLines')
-                ->create();
+            ->create(['order_lines_id' => $orderLine->id]);
         }
     }
 }

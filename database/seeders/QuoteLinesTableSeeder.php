@@ -16,12 +16,11 @@ class QuoteLinesTableSeeder extends Seeder
     public function run()
     {
         //
-        $QuoteLines = QuoteLines::factory()->count(500)->create();
+        $QuoteLines = QuoteLines::factory()->count(2500)->create();
 
-        foreach ($QuoteLines as $key => $QuoteLine) {
+        foreach ($QuoteLines as $quoteLine) {
             QuoteLineDetails::factory()
-                ->for($QuoteLine, 'QuoteLines')
-                ->create();
+                ->create(['quote_lines_id' => $quoteLine->id]);
         }
     }
 }

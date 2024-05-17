@@ -4,18 +4,21 @@ namespace Database\Seeders;
 
 use App\Models\User;
 
-use App\Models\Workflow\Orders;
-use App\Models\Workflow\Quotes;
 use Illuminate\Database\Seeder;
 use App\Models\Companies\Companies;
-use App\Models\Workflow\OrderLines;
-use App\Models\Workflow\QuoteLines;
+use Database\Seeders\CreateTaskSeeder;
+use Database\Seeders\OrderTableSeeder;
+use Database\Seeders\QuotesTableSeeder;
 use App\Models\Accounting\AccountingVat;
+
 use App\Models\Companies\CompaniesContacts;
 use Database\Seeders\CreateAdminUserSeeder;
+use Database\Seeders\OrderLinesTableSeeder;
+use Database\Seeders\PermissionTableSeeder;
+use Database\Seeders\QuoteLinesTableSeeder;
 use App\Models\Companies\CompaniesAddresses;
+use Database\Seeders\EstimatedBudgetsSeeder;
 use Database\Seeders\MethodsUnitTableSeeder;
-
 use App\Models\Accounting\AccountingDelivery;
 use Database\Seeders\MethodsSectionTableSeeder;
 use Database\Seeders\MethodsServicesTableSeeder;
@@ -39,8 +42,12 @@ class DatabaseSeeder extends Seeder
             MethodsServicesTableSeeder::class,
             MethodsUnitTableSeeder::class,
             MethodsSectionTableSeeder::class,
+            PermissionTableSeeder::class,
             CreateAdminUserSeeder::class,
         ]);
+
+        //factory
+        $this->call(EstimatedBudgetsSeeder::class);
 
         //companies informations
         Companies::factory()->count(50)->create();
@@ -69,12 +76,13 @@ class DatabaseSeeder extends Seeder
         */
 
         //Quotes
-        Quotes::factory()->count(50)->create();
-        QuoteLines::factory()->count(500)->create();
+        $this->call(QuotesTableSeeder::class);
+        $this->call(QuoteLinesTableSeeder::class);
         //Orders 
-        Orders::factory()->count(100)->create();
-        OrderLines::factory()->count(500)->create();
+        $this->call(OrderTableSeeder::class);
+        $this->call(OrderLinesTableSeeder::class);
 
         //Task
+        $this->call(CreateTaskSeeder::class);
     }
 }
