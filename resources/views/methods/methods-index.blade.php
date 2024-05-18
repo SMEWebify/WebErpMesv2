@@ -636,7 +636,7 @@
                   <td>{{ $MethodsSection->ordre }}</td>
                   <td>{{ $MethodsSection->code }}</td>
                   <td>{{ $MethodsSection->label }}</td>
-                  <td>{{ $MethodsSection->UserManagement['name'] }}</td>
+                  <td><img src="{{ Avatar::create($MethodsSection->UserManagement['name'])->toBase64() }}" /></td>
                   <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsSection->color }}"></td>
                   <td class=" py-0 align-middle">
                     <!-- Button Modal -->

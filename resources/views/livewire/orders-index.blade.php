@@ -261,6 +261,7 @@
                             <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.total_price_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{ __('general_content.user_trans_key') }}</th>
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
                             </th>
@@ -293,7 +294,8 @@
                                     @if(3 == $Order->statu )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
                                     @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
                                 @endif
-                                </td>
+                            </td>
+                            <td><img src="{{ Avatar::create($Order->UserManagement['name'])->toBase64() }}" /></td>
                             <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>
                             <td>
                                 <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
@@ -301,7 +303,7 @@
                             </td>
                         </tr>
                         @empty
-                            <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
+                            <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
@@ -314,6 +316,7 @@
                             <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{__('general_content.total_price_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
+                            <th>{{ __('general_content.user_trans_key') }}</th>
                             <th>{{__('general_content.created_at_trans_key') }}</th>
                             <th>{{__('general_content.action_trans_key') }}</th>
                         </tr>

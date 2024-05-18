@@ -26,6 +26,7 @@
         "laravel/framework": "^10.0",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^4.2.2",
+        "laravolt/avatar": "^5.1",
         "livewire/livewire": "^3.0",
         "maatwebsite/excel": "^3.1",
         "mcamara/laravel-localization": "^1.8.0",

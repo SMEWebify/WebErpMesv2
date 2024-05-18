@@ -214,7 +214,7 @@
                                 @if(5 == $Opportunity->statu )  <span class="badge badge-danger">{{ __('general_content.closed_lost_trans_key') }}</span>@endif
                                 @if(6 == $Opportunity->statu )   <span class="badge badge-secondary">{{ __('general_content.informational_trans_key') }}</span>@endif
                             </td>
-                            <td>{{ $Opportunity->UserManagement['name'] }}</td>
+                            <td><img src="{{ Avatar::create($Opportunity->UserManagement['name'])->toBase64() }}" /></td>
                             <td>{{ $Opportunity->GetPrettyCreatedAttribute() }}</td>
                             <td>
                                 <x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Opportunity->id])}}" />

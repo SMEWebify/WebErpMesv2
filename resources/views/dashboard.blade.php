@@ -347,7 +347,7 @@
                   </td>
                   <td>{{ $LastQuote->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                   <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
-                  <td>{{ $LastQuote->UserManagement['name'] }}</td>
+                  <td><img src="{{ Avatar::create($LastQuote->UserManagement['name'])->toBase64() }}" /></td>
                 </tr>
                 <!-- /.item -->
                 @empty
@@ -418,7 +418,7 @@
                   </td>
                   <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
                   <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
-                  <td>{{ $LastOrder->UserManagement['name'] }}</td>
+                  <td><img src="{{ Avatar::create($LastOrder->UserManagement['name'])->toBase64() }}" /></td>
                 </tr>
                 <!-- /.item -->
                 @empty

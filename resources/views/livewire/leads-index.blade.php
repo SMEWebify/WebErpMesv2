@@ -173,7 +173,7 @@
                         <td><x-CompanieButton id="{{ $Leads->companies_id }}" label="{{ $Leads->companie['label'] }}"  /></td>
                         <td>{{ $Leads->companie['first_name'] }} {{ $Leads->contact['name'] }}</td>
                         <td>{{ $Leads->adresse['adress'] }} {{ $Leads->adresse['zipcode'] }}  {{ $Leads->adresse['city'] }}</td>
-                        <td>{{ $Leads->UserManagement['name'] }}</td>
+                        <td><img src="{{ Avatar::create($Leads->UserManagement['name'])->toBase64() }}" /></td>
                         <td>{{ $Leads->source }}</td>
                         <td>
                             @if(1 == $Leads->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif

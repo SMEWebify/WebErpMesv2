@@ -40,6 +40,7 @@
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
                         <th>{{__('general_content.total_price_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.user_trans_key') }}</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
                         </th>
@@ -63,6 +64,7 @@
                             @if(4 == $Invoice->statu )  <span class="badge badge-danger">{{ __('general_content.unpaid_trans_key') }}</span>@endif
                             @if(5 == $Invoice->statu )  <span class="badge badge-success">{{ __('general_content.paid_trans_key') }}</span>@endif
                         </td>
+                        <td><img src="{{ Avatar::create($Invoice->UserManagement['name'])->toBase64() }}" /></td>
                         <td>{{ $Invoice->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('invoices.show', ['id' => $Invoice->id])}}" />
@@ -74,7 +76,7 @@
                         </td>
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
@@ -85,6 +87,7 @@
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
                         <th>{{__('general_content.total_price_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.user_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>

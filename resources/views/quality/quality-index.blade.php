@@ -65,7 +65,7 @@
               <tr>
                 <td>{{ $QualityAction->code }}</td>
                 <td>{{ $QualityAction->label }}</td>
-                <td>{{ $QualityAction->UserManagement['name'] }}</td>
+                <td><img src="{{ Avatar::create($QualityAction->UserManagement['name'])->toBase64() }}" /></td>
                 <td>
                   @if($QualityAction->type  == 1) <span class="badge badge-warning">{{ __('general_content.internal_trans_key') }}</span> @endif
                   @if($QualityAction->type  == 2) <span class="badge badge-danger">{{ __('general_content.external_trans_key') }}</span> @endif
@@ -356,7 +356,7 @@
               <tr>
                 <td>{{ $QualityDerogation->code }}</td>
                 <td>{{ $QualityDerogation->label }}</td>
-                <td>{{ $QualityDerogation->UserManagement['name'] }}</td>
+                <td><img src="{{ Avatar::create($QualityDerogation->UserManagement['name'])->toBase64() }}" /></td>
                 <td>
                   @if($QualityDerogation->type  == 1) <span class="badge badge-warning">{{ __('general_content.internal_trans_key') }}</span> @endif
                   @if($QualityDerogation->type  == 2) <span class="badge badge-danger">{{ __('general_content.external_trans_key') }}</span> @endif
@@ -648,7 +648,7 @@
               <tr>
                 <td>{{ $QualityNonConformity->code }}</td>
                 <td>{{ $QualityNonConformity->label }}</td>
-                <td>{{ $QualityNonConformity->UserManagement['name'] }}</td>
+                <td><img src="{{ Avatar::create($QualityNonConformity->UserManagement['name'])->toBase64() }}" /></td>
                 <td>
                   @if($QualityNonConformity->type  == 1) <span class="badge badge-warning">{{ __('general_content.internal_trans_key') }}</span> @endif
                   @if($QualityNonConformity->type  == 2) <span class="badge badge-danger">{{ __('general_content.external_trans_key') }}</span> @endif
@@ -1084,7 +1084,7 @@
                   <td>{{ $QualityControlDevice->code }}</td>
                   <td>{{ $QualityControlDevice->label }}</td>
                   <td>{{ $QualityControlDevice->service['label'] }}</td>
-                  <td>{{ $QualityControlDevice->UserManagement['name'] }}</td>
+                  <td><img src="{{ Avatar::create($QualityControlDevice->UserManagement['name'])->toBase64() }}" /></td>
                   <td>{{ $QualityControlDevice->serial_number }}</td>
                   <td>{{ $QualityControlDevice->GetPrettyCreatedAttribute() }}</td>
                   <td>
