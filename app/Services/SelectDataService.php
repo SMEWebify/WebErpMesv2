@@ -118,6 +118,6 @@ class SelectDataService
     
     public function getQualityNonConformity()
     {
-        return QualityNonConformity::select('id', 'label')->orderBy('label')->get();
+        return QualityNonConformity::select('id', 'code')->orderBy('code')->get();
     }
 }
