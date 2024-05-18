@@ -30,7 +30,7 @@ class QualityController extends Controller
     public function index()
     {
 
-        $userSelect = $this->SelectDataService->getUnitsSelect();
+        $userSelect = $this->SelectDataService->getUsers();
         $ServicesSelect = $this->SelectDataService->getServices();
         $CompaniesSelect = Companies::select('id', 'label')->orderBy('label')->get();
         $CausesSelect = $this->SelectDataService->getQualityCause();

@@ -33,7 +33,7 @@ class MethodsController extends Controller
         $ServicesSelect = $this->SelectDataService->getServices();
         $RessourcesSelect = $this->SelectDataService->getRessources();
         $SectionsSelect = $this->SelectDataService->getSection();
-        $userSelect = $this->SelectDataService->getUnitsSelect();
+        $userSelect = $this->SelectDataService->getUsers();
         $SupplierSelect = $this->SelectDataService->getSupplier();
 
         $MethodsServices = MethodsServices::orderBy('ordre')->paginate(10);

@@ -31,7 +31,7 @@ class TimesController extends Controller
         $TimesMachineEvents = TimesMachineEvent::All();
         $TimesMachineEventsSelect = TimesMachineEvent::select('id', 'label')->orderBy('label')->get();
         $user = Auth::user();
-        $userSelect = $this->SelectDataService->getUnitsSelect();
+        $userSelect = $this->SelectDataService->getUsers();
         
         return view('times/times-index',[
             'TimesAbsences' => $TimesAbsences,
