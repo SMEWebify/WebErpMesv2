@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-4">
+                <div class="col-md-4">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-md-4">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="searchIdService">{{ __('general_content.status_trans_key') }}</label>
@@ -52,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-md-4">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="ShowGenericTask">{{ __('general_content.show_generic_task_trans_key') }}</label>
