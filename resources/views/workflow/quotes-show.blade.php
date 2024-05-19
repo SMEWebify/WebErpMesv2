@@ -42,10 +42,10 @@
                 @csrf 
                 <div class="card card-body">
                   <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Quote->code }}
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-input-label',['label' =>__('general_content.name_quote_trans_key'), 'Value' =>  $Quote->label])
                       </div>
                     </div>
@@ -57,18 +57,18 @@
                     </div>
                     <hr>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-companie',['companiesId' =>  $Quote->companies_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-input-customerInfo',['customerReference' =>  $Quote->customer_reference])
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-adress',['adressId' =>   $Quote->companies_addresses_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-contact',['contactId' =>   $Quote->companies_contacts_id])
                       </div>
                     </div>
@@ -88,18 +88,18 @@
                     </div>
                     <hr>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Quote->accounting_payment_conditions_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                           @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Quote->accounting_payment_methods_id])
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                           @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Quote->accounting_deliveries_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         <label for="label">{{ __('general_content.validity_date_trans_key') }}</label>
                         <div class="input-group">
                           <div class="input-group-text bg-gradient-secondary">

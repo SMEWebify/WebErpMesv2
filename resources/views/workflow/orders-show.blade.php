@@ -42,10 +42,10 @@
                 @csrf
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-3">
                         <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Order->code }}
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-3">
                         @include('include.form.form-input-label',['label' =>__('general_content.name_order_trans_key'), 'Value' =>  $Order->label])
                       </div>
                     </div>
@@ -57,15 +57,15 @@
                       <label for="InputWebSite">{{ __('general_content.customer_info_trans_key') }}</label>
                     </div>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-companie',['companiesId' =>  $Order->companies_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-input-customerInfo',['customerReference' =>  $Order->customer_reference])
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-adress',['adressId' =>   $Order->companies_addresses_id])
                       </div>
                       <div class="col-6">
@@ -88,18 +88,18 @@
                     </div>
                     <hr>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Order->accounting_payment_conditions_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                           @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Order->accounting_payment_methods_id])
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                           @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Order->accounting_deliveries_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                       </div>
@@ -108,7 +108,7 @@
                   @else
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                       </div>

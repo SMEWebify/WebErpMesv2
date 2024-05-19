@@ -381,8 +381,8 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             <th></th>
                         </tr>
                         <tr>
-                            <th colspan="13"></th>
-                            <th colspan="2">
+                            <th colspan="11"></th>
+                            <th colspan="4">
                                 <div>
                                     <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
                                     <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" >
@@ -396,8 +396,9 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                         <i class="fas fa-folder"></i>
                                         {{ __('general_content.new_delivery_note_trans_key') }}
                                     </a>
-                                </div>
-                                <div class="m-3">
+                                    
+                                    or
+
                                     <a class="btn btn-primary btn-sm" wire:click="storeInvoice({{ $OrderId }})" href="#">
                                         <i class="fas fa-folder"></i>
                                         {{ __('general_content.new_invoice_trans_key') }}
