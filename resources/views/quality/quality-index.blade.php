@@ -25,17 +25,17 @@
   <div class="tab-content p-3">
     <div class="tab-pane active" id="Dashboard">
       <div class="row">
-        <div class="col-4">
+        <div class="col-md-4">
           <canvas id="actionChart" height="100"></canvas>
           <canvas id="derogationChart" height="100"></canvas>
           <canvas id="nonConformityChart" height="100"></canvas>
         </div>
 
-        <div class="col-4">
+        <div class="col-md-4">
           <canvas id="topGeneratorsChart" width="400" height="200"></canvas>
         </div>
 
-        <div class="col-4">
+        <div class="col-md-4">
             <!-- Nuage de points -->
             <canvas id="radarChart" width="400" height="400"></canvas>
         </div>
