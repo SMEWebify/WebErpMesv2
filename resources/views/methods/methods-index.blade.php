@@ -198,12 +198,6 @@
                 </tr>
               </tfoot>
             </table>
-            <div class="row">
-              <div class="col-5">
-              {{ $MethodsServices->links() }}
-              </div>
-            <!-- /.row -->
-            </div>
           </div>
         <!-- /.card secondary -->
         </div>
@@ -487,12 +481,6 @@
                 </tr>
               </tfoot>
             </table>
-            <div class="row">
-              <div class="col-5">
-              {{ $MethodsServices->links() }}
-              </div>
-            <!-- /.row -->
-            </div>
         </div>
       <!-- /.card secondary -->
       </div>

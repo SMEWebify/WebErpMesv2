@@ -36,13 +36,13 @@ class MethodsController extends Controller
         $userSelect = $this->SelectDataService->getUsers();
         $SupplierSelect = $this->SelectDataService->getSupplier();
 
-        $MethodsServices = MethodsServices::orderBy('ordre')->paginate(10);
-        $MethodsRessources = MethodsRessources::orderBy('ordre')->paginate(10);
-        $MethodsSections = MethodsSection::orderBy('ordre')->paginate(10);
-        $MethodsLocations = MethodsLocation::orderBy('id')->paginate(10);
-        $MethodsUnits = MethodsUnits::orderBy('id')->paginate(10);
-        $MethodsFamilies = MethodsFamilies::orderBy('id')->paginate(10);
-        $MethodsTools = MethodsTools::orderBy('code')->paginate(10);
+        $MethodsServices = MethodsServices::orderBy('ordre')->get();
+        $MethodsRessources = MethodsRessources::orderBy('ordre')->get();
+        $MethodsSections = MethodsSection::orderBy('ordre')->get();
+        $MethodsLocations = MethodsLocation::orderBy('id')->get();
+        $MethodsUnits = MethodsUnits::orderBy('id')->get();
+        $MethodsFamilies = MethodsFamilies::orderBy('id')->get();
+        $MethodsTools = MethodsTools::orderBy('code')->get();
         $MethodsStandardNomenclatures = MethodsStandardNomenclature::orderBy('id')->get();
 
         return view('methods/methods-index', [
