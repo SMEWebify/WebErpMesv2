@@ -18,7 +18,7 @@ class PlanningController extends Controller
 
         // Collect Tasks
         $taches = Task::with('service')
-                        ->where('end_date', '>=', now())
+                        ->where('end_date', '>=', date("Y-m-d"))
                         ->whereNotNull('order_lines_id')
                         ->where(function (Builder $query) {
                             return $query->where('tasks.type', 1)
