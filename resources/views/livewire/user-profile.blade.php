@@ -42,7 +42,7 @@
                         <div class="card-body">
 
                             <div class="row">
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="personnal_phone_number">{{__('general_content.personnal_phone_trans_key') }}:</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -52,7 +52,7 @@
                                     </div>
                                     @error('personnal_phone_number') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="private_email">{{ __('general_content.personnal_email_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -62,7 +62,7 @@
                                     </div>
                                     @error('private_email') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="born_date">{{ __('general_content.born_date_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -72,7 +72,7 @@
                                     </div>
                                     @error('born_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="nationality">{{__('general_content.nationality_trans_key') }} :</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -85,7 +85,7 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="gender">{{ __('general_content.gender_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -101,7 +101,7 @@
                                     @error('gender') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
 
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="marital_status">{{ __('general_content.marital_status_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -121,12 +121,12 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="password">{{ __('general_content.driving_license_trans_key') }} :</label>
                                     <input wire:model.live="driving_license" type="text" class="form-control" />
                                     @error('driving_license') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="driving_license_exp_date">{{ __('general_content.driving_license_exp_date_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -136,12 +136,12 @@
                                     </div>
                                     @error('driving_license_exp_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label>{{ __('general_content.ssn_num_trans_key') }} :</label>
                                     <input wire:model.live="ssn_num" type="text" class="form-control" />
                                     @error('ssn_num') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label>{{ __('general_content.nic_num_trans_key') }} :</label>
                                     <input wire:model.live="nic_num" type="text" class="form-control" />
                                     @error('nic_num') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -154,34 +154,34 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="address1">{{ __('general_content.adress_trans_key') }} 1 :</label>
                                     <input type="text" wire:model.live="address1"  name="address1" class="form-control">
                                     @error('address1') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-6">
+                                <div class="form-group col-md-6">
                                     <label for="address2">{{ __('general_content.adress_trans_key') }} 2 :</label>
                                     <input type="text" wire:model.live="address2"  name="address2" class="form-control">
                                     @error('address2') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="city">{{ __('general_content.city_trans_key') }} :</label>
                                     <input type="text" wire:model.live="city"  name="city" class="form-control">
                                     @error('city') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="postal_code">{{ __('general_content.postal_code_trans_key') }} :</label>
                                     <input type="text" wire:model.live="postal_code"  name="postal_code" class="form-control">
                                     @error('postal_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="province">{{ __('general_content.province_trans_key') }}  :</label>
                                     <input type="text" wire:model.live="province"  name="province" class="form-control">
                                     @error('province') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="country">{{ __('general_content.country_trans_key') }} :</label>
                                     <input type="text" wire:model.live="country"  name="country" class="form-control">
                                     @error('country') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -194,22 +194,22 @@
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="custom1">{{ __('general_content.custom_trans_key') }} 1 :</label>
                                     <input wire:model.live="custom1" type="text" class="form-control" />
                                     @error('custom1') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="custom2">{{ __('general_content.custom_trans_key') }} 2:</label>
                                     <input wire:model.live="custom2" type="text" class="form-control" />
                                     @error('custom2') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="custom3">{{ __('general_content.custom_trans_key') }} 3:</label>
                                     <input wire:model.live="custom3" type="text" class="form-control" />
                                     @error('custom3') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="col-3">
+                                <div class="form-group col-md-3">
                                     <label for="custom4">{{ __('general_content.custom_trans_key') }} 4</label>
                                     <input wire:model.live="custom4" type="text" class="form-control" />
                                     @error('custom4') <span class="text-danger">{{ $message }}<br/></span>@enderror
