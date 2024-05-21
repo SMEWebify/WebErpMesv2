@@ -493,6 +493,9 @@
               <div class="card-body">
                 <a href="{{ route('products.duplicate', ['id' => $Product->id])}}" class="btn btn-default"><i class="fa fa-copy"></i> {{ __('general_content.duplicate_product_trans_key') }}</a>
               </div>
+              <div class="card-body">
+                @php echo '<img src="data:image/jpeg;base64,' . DNS1D::getBarcodePNG  (strval($Product->id), $Factory->task_barre_code, 4,60,array(1,1,1), true). '" alt="barcode"   />'; @endphp
+              </div>
             </div>
           </div>
         </div>

@@ -11,7 +11,6 @@
 @section('content')
 <div class="card-body">
   @livewire('task-statu', ['id' =>$TaskId])
-
 </div>
 @stop
 

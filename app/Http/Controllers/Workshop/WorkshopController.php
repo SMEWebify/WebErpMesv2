@@ -27,4 +27,10 @@ class WorkshopController extends Controller
     {
         return view('workshop/workshop-task-statu', ['TaskId' => $request->id]);
     }
+
+    public function stockDetail(Request $request)
+    {
+        return view('workshop/workshop-stock-detail', ['StockDetailId' => $request->id]);
+    }
+    
 }

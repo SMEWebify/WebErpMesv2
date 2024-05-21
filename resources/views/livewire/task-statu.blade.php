@@ -15,22 +15,22 @@
     @if(is_null($Task->order_lines_id))
       <x-adminlte-alert theme="info" title="Info">{{ __('general_content.quote_task_trans_key') }}</x-adminlte-alert>
     @else
-    <div class="row">
-      <div class="col-6 mb-3">
-        @if ($previousTask)
-          <button wire:click="goToTask({{ $previousTask->id }})" class="btn btn-primary btn-lg btn-block">
-              <i class="fas fa-arrow-left"></i> {{ $previousTask->ordre }} - {{ $previousTask->label }}
-          </button>
-        @endif
+      <div class="row">
+        <div class="col-6 mb-3">
+          @if ($previousTask)
+            <button wire:click="goToTask({{ $previousTask->id }})" class="btn btn-primary btn-lg btn-block">
+                <i class="fas fa-arrow-left"></i> {{ $previousTask->ordre }} - {{ $previousTask->label }}
+            </button>
+          @endif
+        </div>
+        <div class="col-6 mb-3">
+          @if ($nextTask)
+            <button wire:click="goToTask({{ $nextTask->id }})" class="btn btn-primary btn-lg btn-block">
+              {{ $nextTask->ordre }} - {{ $nextTask->label }} <i class="fas fa-arrow-right"></i>
+            </button>
+          @endif
+        </div>
       </div>
-      <div class="col-6 mb-3">
-        @if ($nextTask)
-          <button wire:click="goToTask({{ $nextTask->id }})" class="btn btn-primary btn-lg btn-block">
-            {{ $nextTask->ordre }} - {{ $nextTask->label }} <i class="fas fa-arrow-right"></i>
-          </button>
-        @endif
-      </div>
-  </div>
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">

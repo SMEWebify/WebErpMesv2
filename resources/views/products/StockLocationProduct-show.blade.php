@@ -49,6 +49,7 @@
                     <th>{{__('general_content.po_receipt_trans_key') }}</th>
                     <th>{{ __('general_content.type_trans_key') }}</th>
                     <th>{{ __('general_content.price_trans_key') }}</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -91,6 +92,11 @@
                       @if(13 == $StockMove->typ_move ){{__('general_content.direct_inventory_trans_key') }} @endif
                     </td>
                     <td></td>
+                    <td>
+                      <div class="btn-group btn-group-sm">
+                        <a href="{{ route('products.stock.detail.show', ['id' => $StockMove->id])}}" class="btn btn-info"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                      </div>
+                    </td>
                   </tr>
                   @empty
                     <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
@@ -106,6 +112,7 @@
                     <th>{{__('general_content.po_receipt_trans_key') }}</th>
                     <th>{{ __('general_content.type_trans_key') }}</th>
                     <th>{{ __('general_content.price_trans_key') }}</th>
+                    <th></th>
                   </tr>
                 </tfoot>
               </table>

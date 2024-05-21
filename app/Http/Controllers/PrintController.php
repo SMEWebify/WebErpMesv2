@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 
+use PDF;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
 use App\Services\OrderCalculator;
 use App\Services\QuoteCalculator;
@@ -13,16 +15,15 @@ use App\Models\Workflow\Deliverys;
 use App\Models\Purchases\Purchases;
 use App\Services\InvoiceCalculator;
 use App\Services\PurchaseCalculator;
+
 use horstoeko\zugferd\ZugferdProfiles;
 use App\Models\Purchases\PurchaseReceipt;
-
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Quality\QualityNonConformity;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
+
 use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
 use horstoeko\zugferd\codelists\ZugferdPaymentMeans;
-
-use PDF;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
 class PrintController extends Controller
@@ -394,6 +395,5 @@ class PrintController extends Controller
         $pdf = PDF::loadView('print/pdf-nc', compact('typeDocumentName','Document', 'Factory','image'));
         return $pdf->stream();
     }
-    
-    
+
 }

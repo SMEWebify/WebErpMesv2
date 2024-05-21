@@ -30,6 +30,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Task/Lines', 'App\Http\Controllers\Workshop\WorkshopController@taskLines')->middleware(['auth', 'check.factory'])->name('workshop.task.lines');
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
+        Route::get('/Stock/Detail/{id}', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail.id');
+        Route::get('/Stock/Detail', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail');
     });
     
 
@@ -251,6 +253,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Products\StockController@store')->name('products.stock.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->name('products.stock.update');
             Route::get('/{id}', 'App\Http\Controllers\Products\StockController@show')->name('products.stock.show');
+
+            // Stock detail
+            Route::get('/detail/{id}', 'App\Http\Controllers\Products\StockController@detail')->name('products.stock.detail.show');
         });
 
         // Stock Location routes

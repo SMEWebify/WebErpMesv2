@@ -34,9 +34,9 @@
         <div class="col-md-4 offset-md-2">
             <div class="card text-center mb-4" style="background-color: #dc3545;"> 
                 <div class="card-body">
-                    <h5 class="card-title text-white">Stocks</h5> <span class="badge badge-info right">Soon</span>
+                    <h5 class="card-title text-white">Stocks</h5> <span class="badge badge-danger right">Beta</span>
                     <p class="card-text text-white"></p>
-                    <a href="#" class="btn btn-primary btn-lg btn-block">{{ __('general_content.to_access_trans_key') }}</a>
+                    <a href="{{ route('workshop.stock.detail') }}" class="btn btn-primary btn-lg btn-block">{{ __('general_content.to_access_trans_key') }}</a>
                 </div>
             </div>
         </div>

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Products\Stocks;
 use App\Models\Products\Products;
+use App\Models\Products\StockMove;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;
@@ -86,5 +87,10 @@ class StockController extends Controller
         $Stock->user_id=$request->user_id;
         $Stock->save();
         return redirect()->route('products.stock')->with('success', 'Successfully updated stock '.  $Stock->label);
+    }
+
+    public function detail(Request $request)
+    {
+        return view('products/stock-detail-show', ['StockDetailId' => $request->id]);
     }
 }
