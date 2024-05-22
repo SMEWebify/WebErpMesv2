@@ -1,5 +1,4 @@
 <div>
-    
     <div class="card-body" >
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -8,6 +7,8 @@
             <input type="text" class="form-control" wire:model.live="search" placeholder="{{ __('general_content.search_task_trans_key') }}">
         </div>
     </div>
+    
+    @include('include.alert-result')
 
     @empty($StockDetails)
     <h1>No Stock</h1> 
@@ -90,5 +91,47 @@
             @php echo '<img src="data:image/jpeg;base64,' . DNS1D::getBarcodePNG  (strval($StockDetails->id), $Factory->task_barre_code,4,60,array(1,1,1), true) . '" alt="barcode"   />'; @endphp
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">{{ __('general_content.photos_trans_key') }}</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('photo.store') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="far fa-file"></i></span>
+                    </div>
+                    <div class="custom-file">
+                    <input type="hidden" name="stock_move_id" value="{{ $StockDetails->id }}" >
+                    <input type="file" name="file" accept="image/*" capture="camera" class="custom-file-input" id="chooseFile">
+                    <label class="custom-file-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
+                    </div>
+                    <div class="input-group-append">
+                    <button type="submit" name="submit" class="btn btn-success">
+                        {{ __('general_content.upload_trans_key') }} 
+                    </button>
+                    </div>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        @foreach($StockDetails->photos as $photo)
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ asset('photo/' . $photo->name) }}" class="card-img-top" alt="Photo" width="100">
+                    <div class="card-body">
+                        <p class="card-text">{{ $photo->original_file_name }}</p>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+        </div>
     @endempty
 </div>

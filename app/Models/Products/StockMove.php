@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use App\Models\File;
 use App\Models\User;
 use App\Models\Planning\Task;
 use App\Models\Workflow\OrderLines;
@@ -50,6 +51,18 @@ class StockMove extends Model
     public function purchaseReceiptLines()
     {
         return $this->belongsTo(PurchaseReceiptLines::class, 'purchase_receipt_line_id');
+    }
+
+    // Relationship with the files associated with the delevery
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
+
+    // Relationship with the files only photo associated with the delevery
+    public function photos()
+    {
+        return $this->hasMany(File::class)->where('as_photo', 1);
     }
     
     public function GetPrettyCreatedAttribute()

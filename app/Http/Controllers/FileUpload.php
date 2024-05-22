@@ -32,6 +32,7 @@ class FileUpload extends Controller
             'purchases_id' => $request->purchase_id,
             'purchase_receipts_id' => $request->purchase_receipt_id,
             'quality_non_conformities_id' => $request->quality_non_conformitie_id,
+            'stock_move_id' => $request->stock_move_id,
         ]);
 
         return back()->with('success','File has been uploaded.')->with('file', $fileName);
@@ -62,6 +63,7 @@ class FileUpload extends Controller
             'purchases_id' => $request->purchase_id,
             'purchase_receipts_id' => $request->purchase_receipt_id,
             'quality_non_conformities_id' => $request->quality_non_conformitie_id,
+            'stock_move_id' => $request->stock_move_id,
             'as_photo' => 1,
         ]);
 

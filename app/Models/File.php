@@ -9,6 +9,7 @@ use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
+use App\Models\Products\StockMove;
 use App\Models\Workflow\Opportunities;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseReceipt;
@@ -34,6 +35,7 @@ class File extends Model
         'purchases_id',
         'purchases_receipt_id',
         'quality_non_conformities_id',
+        'stock_move_id',
         'as_photo'
     ];
     
@@ -86,6 +88,10 @@ class File extends Model
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'users_id');
+    }
+    public function StockMove()
+    {
+        return $this->belongsTo(StockMove::class, 'stock_move_id');
     }
 
     public function GetPrettySize()
