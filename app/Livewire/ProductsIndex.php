@@ -47,6 +47,7 @@ class ProductsIndex extends Component
     public $diameter; 
     public $diameter_oversize; 
     public $section_size; 
+    public $finishing; 
     
      // Validation Rules
     protected $rules = [
@@ -127,6 +128,7 @@ class ProductsIndex extends Component
                                                     'diameter'=>$this->diameter, 
                                                     'diameter_oversize'=>$this->diameter_oversize, 
                                                     'section_size'=>$this->section_size, 
+                                                    'finishing'=>$this->finishing, 
             ]);
             // Reset Form Fields After Creating line
             return redirect()->route('products.show', ['id' => $ProductsCreated->id])->with('success', 'Successfully created new product');

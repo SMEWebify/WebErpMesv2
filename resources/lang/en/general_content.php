@@ -435,6 +435,7 @@ return [
     'validity_date_trans_key'                  => 'Validity date',
     
     'material_trans_key'                       => 'Material',
+    'finishing_trans_key'                      => 'Finishing',
     'thickness_trans_key'                      => 'Thickness',
     'weight_trans_key'                         => 'Weight',
     'x_size_trans_key'                         => 'X size',

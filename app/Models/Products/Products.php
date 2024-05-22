@@ -50,6 +50,7 @@ class Products extends Model
                             'diameter',
                             'diameter_oversize',
                             'section_size',
+                            'finishing',
                             'picture',
                             'drawing_file',
                             'stl_file',

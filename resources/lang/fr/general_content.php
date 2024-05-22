@@ -436,6 +436,7 @@ return [
 
     'material_trans_key'                       => 'Matière',
     'thickness_trans_key'                      => 'Epaisseur',
+    'finishing_trans_key'                      => 'Finition',
     'weight_trans_key'                         => 'Poids',
     'x_size_trans_key'                         => 'Taille X',
     'y_size_trans_key'                         => 'Taille Y',

@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Products;
 
-use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
-use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
-use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
-use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
@@ -250,6 +246,7 @@ class ProductsController extends Controller
         $Product->diameter = $request->diameter;
         $Product->diameter_oversize = $request->diameter_oversize;
         $Product->section_size = $request->section_size;
+        $Product->finishing = $request->finishing;
         $Product->save();
         return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated product');
     }
