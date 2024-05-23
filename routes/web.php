@@ -256,6 +256,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
             // Stock detail
             Route::get('/detail/{id}', 'App\Http\Controllers\Products\StockController@detail')->name('products.stock.detail.show');
+            Route::post('/detail/edit/{id}', 'App\Http\Controllers\Products\StockController@detailUpdate')->name('products.stock.detail.update');
         });
 
         // Stock Location routes

@@ -13,7 +13,7 @@
     @empty($StockDetails)
     <h1>No Stock</h1> 
     @else
-    <div class="card">
+    <div class="card card-primary">
         <div class="card-header">
             <h3 class="card-title">
                 Stock - {{ $StockDetails->StockLocationProducts->product->code }}
@@ -84,10 +84,105 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="card card-warning">
+        <div class="card-header">
+            <h3 class="card-title">
+                Stock - {{ __('general_content.view_details_trans_key') }}
+            </h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
         <div class="card-body">
-            <p>
+            <form method="POST" action="{{ route('products.stock.detail.update', ['id' => $StockDetails->id]) }}" enctype="multipart/form-data">
+                @csrf
+                <div class="row">
+                    <div class="col-4">
+                        <label for="x_size">X</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            </div>
+                            <input type="number" class="form-control" value="{{ $StockDetails->x_size }}" name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="y_size">Y</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            </div>
+                            <input type="number" class="form-control" value="{{ $StockDetails->y_size }}"  name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="z_size">Z</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            </div>
+                            <input type="number" class="form-control" value="{{ $StockDetails->z_size }}" name="z_size" id="z_size"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="nb_part">{{ __('general_content.qty_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            </div>
+                            <input type="number" class="form-control" value="{{ $StockDetails->nb_part }}" name="nb_part" id="nb_part"  placeholder="{{ __('general_content.qty_trans_key') }}" step=".001">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="surface_perc">M²</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            </div>
+                            <input type="number" class="form-control" value="{{ $StockDetails->surface_perc }}"  name="surface_perc" id="surface_perc"  placeholder="M²" step=".001">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="tracability">{{ __('general_content.tracability_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            </div>
+                            <input type="text" class="form-control" value="{{ $StockDetails->tracability }}" name="tracability" id="tracability"  placeholder="{{ __('general_content.tracability_trans_key') }}" step=".001">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card card-secondary">
+        <div class="card-header">
+            <h3 class="card-title">
                 BARECODE
-            </p>
+            </h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
             @php echo '<img src="data:image/jpeg;base64,' . DNS1D::getBarcodePNG  (strval($StockDetails->id), $Factory->task_barre_code,4,60,array(1,1,1), true) . '" alt="barcode"   />'; @endphp
         </div>
     </div>
@@ -95,29 +190,29 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card card-info">
-            <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.photos_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('photo.store') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="far fa-file"></i></span>
-                    </div>
-                    <div class="custom-file">
-                    <input type="hidden" name="stock_move_id" value="{{ $StockDetails->id }}" >
-                    <input type="file" name="file" accept="image/*" capture="camera" class="custom-file-input" id="chooseFile">
-                    <label class="custom-file-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
-                    </div>
-                    <div class="input-group-append">
-                    <button type="submit" name="submit" class="btn btn-success">
-                        {{ __('general_content.upload_trans_key') }} 
-                    </button>
-                    </div>
+                <div class="card-header">
+                    <h3 class="card-title">{{ __('general_content.photos_trans_key') }}</h3>
                 </div>
-                </form>
-            </div>
+                <div class="card-body">
+                    <form action="{{ route('photo.store') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="far fa-file"></i></span>
+                            </div>
+                            <div class="custom-file">
+                            <input type="hidden" name="stock_move_id" value="{{ $StockDetails->id }}" >
+                            <input type="file" name="file" accept="image/*" capture="camera" class="custom-file-input" id="chooseFile">
+                            <label class="custom-file-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
+                            </div>
+                            <div class="input-group-append">
+                            <button type="submit" name="submit" class="btn btn-success">
+                                {{ __('general_content.upload_trans_key') }} 
+                            </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         </div>

@@ -93,4 +93,17 @@ class StockController extends Controller
     {
         return view('products/stock-detail-show', ['StockDetailId' => $request->id]);
     }
+
+    public function detailUpdate(Request $request)
+    {
+        $StockDetail = StockMove::find($request->id);
+        $StockDetail->x_size=$request->x_size;
+        $StockDetail->y_size=$request->y_size;
+        $StockDetail->z_size=$request->z_size;
+        $StockDetail->nb_part=$request->nb_part;
+        $StockDetail->surface_perc=$request->surface_perc;
+        $StockDetail->tracability=$request->tracability;
+        $StockDetail->save();
+        return redirect()->route('products.stock.detail.show', ['id' => $StockDetail->id])->with('success', 'Successfully updated stock');
+    }
 }
