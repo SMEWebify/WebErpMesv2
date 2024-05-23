@@ -21,6 +21,9 @@ class CompaniesLines extends Component
     public $sortAsc = true; // default sort direction
 
     public $Companies;
+
+    public $LastCompanie = '1';
+
     public $userSelect = [];
     public $code, $label;
     public $website, $fbsite, $twittersite, $lkdsite;
@@ -56,6 +59,15 @@ class CompaniesLines extends Component
     {
         $this->user_id = Auth::id();
         $this->userSelect = User::select('id', 'name')->get();
+
+        $this->LastCompanie =  Companies::orderBy('id', 'desc')->first();
+
+        if($this->LastCompanie == Null){
+            $this->code = "COMP-0";
+        }
+        else{
+            $this->code = "COMP-". $this->LastCompanie->id;
+        }
     }
 
     public function render()
