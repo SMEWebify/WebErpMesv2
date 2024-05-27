@@ -30,6 +30,7 @@ class QuotesIndex extends Component
     public $userSelect = [];
     public $LastQuote = '1';
 
+    //Quote
     public $code; 
     public $label; 
     public $customer_reference;
@@ -43,6 +44,12 @@ class QuotesIndex extends Component
     public $accounting_payment_methods_id;  
     public $accounting_deliveries_id;  
     public $comment;
+
+    //adresse
+    public $CustomerAddressesOrdre, $CustomerAddressesLabel, $CustomerAdress, $CustomerZipcode, $CustomerCity, $CustomerCountry, $CustomerAddressesNumber, $CustomerAddressesMail;   
+    //Contact
+    public $CustomerContactOrdre, $CustomerCivility, $CustomerFirstName, $CustomerName, $CustomerFunction, $CustomerContactNumber, $CustomerMobile, $CustomerContactMail;   
+    
 
     public $idCompanie = '';
 
@@ -162,5 +169,51 @@ class QuotesIndex extends Component
             Companies::where('id', $this->companies_id)->update(['statu_customer'=>2]);
             return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
     }
+
+    public function saveCutomerAddresses(){
+            $validatedData = $this->validate([
+                'companies_id' => 'required',
+                'CustomerAddressesOrdre' => 'required',
+                'CustomerAddressesLabel' => 'required',
+            ]);
+
+            $adress = CompaniesAddresses::create([
+                                        'companies_id'=> $this->companies_id,
+                                        'ordre'=>$this->CustomerAddressesOrdre,  
+                                        'label'=>$this->CustomerAddressesLabel,  
+                                        'adress'=>$this->CustomerAdress, 
+                                        'zipcode'=>$this->CustomerZipcode,  
+                                        'city'=>$this->CustomerCity,    
+                                        'country'=>$this->CustomerCountry,   
+                                        'number'=>$this->CustomerAddressesNumber,   
+                                        'mail'=>$this->CustomerAddressesMail, 
+                            ]); 
+         // Set Flash Message
+        session()->flash('success','Line added Successfully');
+    }
+
+    public function saveCutomerContact(){
+        $validatedData = $this->validate([
+            'companies_id' => 'required',
+            'CustomerContactOrdre' => 'required',
+            'CustomerCivility' => 'required',
+            'CustomerFirstName' => 'required',
+            'CustomerName' => 'required',
+        ]);
+
+        $contact = CompaniesContacts::create([
+                                    'companies_id'=> $this->companies_id,
+                                    'ordre'=>$this->CustomerContactOrdre,  
+                                    'civility'=>$this->CustomerCivility,  
+                                    'first_name'=>$this->CustomerFirstName, 
+                                    'name'=>$this->CustomerName,  
+                                    'function'=>$this->CustomerFunction,    
+                                    'number'=>$this->CustomerContactNumber,    
+                                    'mobile'=>$this->CustomerMobile,    
+                                    'mail'=>$this->CustomerContactMail, 
+                        ]); 
+     // Set Flash Message
+    session()->flash('success','Line added Successfully');
+}
 }
 
