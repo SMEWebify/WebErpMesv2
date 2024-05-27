@@ -14,6 +14,7 @@ class PurchasesIndex extends Component
     public $search = '';
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
+    public $searchIdStatus = '';
 
     public $code; 
     public $label; 
@@ -47,7 +48,11 @@ class PurchasesIndex extends Component
 
     public function render()
     {
-        $Purchases = Purchases::withCount('PurchaseLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $Purchases = Purchases::withCount('PurchaseLines')
+                                ->where('label','like', '%'.$this->search.'%')
+                                ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
+                                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                                ->paginate(15);
         return view('livewire.purchases-index', [
             'PurchasesList' => $Purchases,
         ]);

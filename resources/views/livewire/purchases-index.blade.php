@@ -1,7 +1,28 @@
 <div>
     <div class="card">
         <div class="card-body">
-            @include('include.search-card')
+            <div class="row">
+                <div class="col-md-8">
+                @include('include.search-card')
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            </div>
+                            <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
+                                <option value="" selected>{{ __('general_content.select_statu_trans_key') }}</option>
+                                <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
+                                <option value="2">{{ __('general_content.ordered_trans_key') }}</option>
+                                <option value="3">{{ __('general_content.partly_received_trans_key') }}</option>
+                                <option value="4">{{ __('general_content.rceived_trans_key') }}</option>
+                                <option value="5">{{ __('general_content.canceled_trans_key') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="table-responsive p-0">
             <table class="table table-hover">
@@ -18,6 +39,7 @@
                         </th>
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.user_trans_key') }}</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
                         </th>
@@ -40,6 +62,7 @@
                             @if(4 == $Purchase->statu )  <span class="badge badge-danger">{{ __('general_content.rceived_trans_key') }}</span>@endif
                             @if(5 == $Purchase->statu )  <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span>@endif
                         </td>
+                        <td><img src="{{ Avatar::create($Purchase->UserManagement['name'])->toBase64() }}" /></td>
                         <td>{{ $Purchase->GetPrettyCreatedAttribute() }}</td>
                         <td>
                             <x-ButtonTextView route="{{ route('purchases.show', ['id' => $Purchase->id])}}" />
@@ -59,6 +82,7 @@
                         <th>{{__('general_content.customer_trans_key') }}</th>
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.user_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
                     </tr>
