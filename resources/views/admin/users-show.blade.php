@@ -343,12 +343,12 @@
                                                                 </div>
                                                                 <!-- /.form-group -->
                                                                 <div class="form-group">
-                                                                    <label for="duration_trial_period">{{__('general_content.duration_trial_trans_keyy') }} :</label>
+                                                                    <label for="duration_trial_period">{{__('general_content.duration_trial_trans_key') }} :</label>
                                                                     <div class="input-group">
                                                                         <div class="input-group-prepend">
                                                                             <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
                                                                         </div>
-                                                                        <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_keyy') }}" value="{{ $UserEmploymentContract->duration_trial_period }}" step="1" min="0">
+                                                                        <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_key') }}" value="{{ $UserEmploymentContract->duration_trial_period }}" step="1" min="0">
                                                                     </div>
                                                                 </div>
                                                                 <!-- /.form-group -->
@@ -517,12 +517,12 @@
                                                 </div>
                                                 <!-- /.form-group -->
                                                 <div class="form-group">
-                                                    <label for="duration_trial_period">{{__('general_content.duration_trial_trans_keyy') }} :</label>
+                                                    <label for="duration_trial_period">{{__('general_content.duration_trial_trans_key') }} :</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
                                                         </div>
-                                                        <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_keyy') }}" step="1" min="0">
+                                                        <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_key') }}" step="1" min="0">
                                                     </div>
                                                 </div>
                                                 <!-- /.form-group -->
