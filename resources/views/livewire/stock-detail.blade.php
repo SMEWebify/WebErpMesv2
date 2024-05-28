@@ -133,15 +133,6 @@
                 </div>
                 <div class="row">
                     <div class="col-4">
-                        <label for="nb_part">{{ __('general_content.qty_trans_key') }}</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                            </div>
-                            <input type="number" class="form-control" value="{{ $StockDetails->nb_part }}" name="nb_part" id="nb_part"  placeholder="{{ __('general_content.qty_trans_key') }}" step=".001">
-                        </div>
-                    </div>
-                    <div class="col-4">
                         <label for="surface_perc">M²</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -158,6 +149,8 @@
                             </div>
                             <input type="text" class="form-control" value="{{ $StockDetails->tracability }}" name="tracability" id="tracability"  placeholder="{{ __('general_content.tracability_trans_key') }}" step=".001">
                         </div>
+                    </div>
+                    <div class="col-4">
                     </div>
                 </div>
 

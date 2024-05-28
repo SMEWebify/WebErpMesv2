@@ -75,6 +75,14 @@ class TaskStatu extends Component
                     'details' => $taskStockMove->GetPrettyCreatedAttribute(),
                 ];
             }
+            elseif($taskStockMove->typ_move == 6){
+                $this->timelineData[] = [
+                    'date' => $taskStockMove->created_at->format('d M Y'),
+                    'icon' => 'fas fa-list  bg-warning',
+                    'content' => __('general_content.new_sorting_stock_trans_key') .' x'. $taskStockMove->qty .'- '. __('general_content.task_allocation_trans_key'),
+                    'details' => $taskStockMove->GetPrettyCreatedAttribute(),
+                ];
+            }
         }
 
         if($this->Task){

@@ -368,6 +368,7 @@ return [
     'select_status_trans_key'                  => 'Selectionner status',
     'select_controle_trans_key'                => 'Selectionner type de contrôle',
     'select_document_trans_key'                => 'Selectionner le document',
+    'select_task_trans_key'                    => 'Selectionner la tâche',
     'reception_control_trans_key'              => 'Controle de reception',
 
     'no_select_company_trans_key'              => 'Aucune société, ajouter une société',

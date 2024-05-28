@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Products;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Planning\Task;
 use App\Models\Products\Stocks;
 use App\Events\OrderLineUpdated;
 use App\Models\Products\Products;
@@ -26,12 +27,14 @@ class StockLocationProductsController extends Controller
         $StockLocationProduct = StockLocationProducts::findOrFail($id);
         $StockLocation = StockLocation::findOrFail($StockLocationProduct->stock_locations_id);
         $Stock = Stocks::findOrFail($StockLocation->stocks_id);
+        $TaskList = Task::where('component_id', $id)->orderby('created_at', 'desc')->get();
         
         return view('products/StockLocationProduct-show', [
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,
             'StockLocationProduct' => $StockLocationProduct,
             'StockMoves' => $StockMoves,
+            'TaskList' => $TaskList,
         ]);
     }
 
@@ -59,12 +62,17 @@ class StockLocationProductsController extends Controller
                                                                 'addressing',
                                             ));
 
+        $product = Products::find($StockLocationProduct->products_id);
+
         $stockMove = StockMove::create(['user_id' => $request->user_id, 
                                         'qty' => $request->mini_qty,
                                         'stock_location_products_id' =>  $StockLocationProduct->id, 
                                         'order_line_id' =>$request->order_line_id,
                                         'typ_move' => 12,
                                         'component_price' => $request->component_price,
+                                        'x_size' => $product->x_size,
+                                        'y_size' => $product->y_size,
+                                        'z_size' => $product->z_size,
                                     ]);
 
         // update order line info
@@ -98,6 +106,8 @@ class StockLocationProductsController extends Controller
                                                                 'addressing',
                                             ));
 
+        $product = Products::find($StockLocationProduct->products_id);
+
         $stockMove = StockMove::create(['user_id' => $request->user_id, 
                                         'qty' => $request->mini_qty,
                                         'stock_location_products_id' =>   $StockLocationProduct->id,  
@@ -105,6 +115,9 @@ class StockLocationProductsController extends Controller
                                         'purchase_receipt_line_id' =>$request->purchase_receipt_line_id,
                                         'typ_move' =>3,
                                         'component_price' => $request->component_price,
+                                        'x_size' => $product->x_size,
+                                        'y_size' => $product->y_size,
+                                        'z_size' => $product->z_size,
                                     ]);
     
             /* // update stock if line of purchase order line*/
@@ -195,6 +208,11 @@ class StockLocationProductsController extends Controller
                                                         'qty',
                                                         'stock_location_products_id', 
                                                         'typ_move',
+                                                        'x_size',
+                                                        'y_size',
+                                                        'z_size',
+                                                        'surface_perc',
+                                                        'tracability',
                                                     ));
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
    }
@@ -209,6 +227,8 @@ class StockLocationProductsController extends Controller
                                                         'qty',
                                                         'stock_location_products_id', 
                                                         'typ_move',
+                                                        'task_id',
+                                                        'tracability',
                                                     ));
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
     }

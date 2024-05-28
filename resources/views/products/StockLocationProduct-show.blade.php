@@ -153,6 +153,47 @@
                       <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
                     </div>
                   </div>
+                  <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">X</span>
+                        </div>
+                        <input type="number" class="form-control"  name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">Y</span>
+                        </div>
+                        <input type="number" class="form-control"   name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">Z</span>
+                        </div>
+                        <input type="number" class="form-control"  name="z_size" id="z_size"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span><span class="input-group-text">M²</span>
+                            </div>
+                            <input type="number" class="form-control"  name="surface_perc" id="surface_perc"  placeholder="M²" step=".001">
+                        </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="tracability">{{ __('general_content.tracability_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                        </div>
+                        <input type="text" class="form-control"  name="tracability" id="tracability"  placeholder="{{ __('general_content.tracability_trans_key') }}" step=".001">
+                    </div>
+                  </div>
                   <div class="card-footer">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                   </div>
@@ -191,6 +232,29 @@
                       <input type="number" class="form-control" name="qty" id="qty" placeholder="Ex: 10" min="1" step=".001">
                       <input type="hidden" name="stock_location_products_id" id="stock_location_products_id" value="{{ $StockLocationProduct->id }}">
                       <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="service_id">{{ __('general_content.task_trans_key') }}</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-list"></i></span>
+                      </div>
+                      <select class="form-control" name="task_id" id="task_id">
+                        <option value="null">{{ __('general_content.select_task_trans_key') }}</option>
+                        @foreach ($TaskList as $item)
+                        <option value="{{ $item->id }}">#{{ $item->id }}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="tracability">{{ __('general_content.tracability_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                        </div>
+                        <input type="text" class="form-control"  name="tracability" id="tracability"  placeholder="{{ __('general_content.tracability_trans_key') }}" step=".001">
                     </div>
                   </div>
                   <div class="card-footer">

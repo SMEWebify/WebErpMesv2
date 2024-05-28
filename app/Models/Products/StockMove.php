@@ -26,6 +26,15 @@ class StockMove extends Model
                             'typ_move',
                             'component_price',
                             'company_id',
+                            'x_size',
+                            'y_size',
+                            'z_size',
+                            'nb_part',
+                            'surface_perc',
+                            'nest_path',
+                            'nest_picture_path',
+                            'status',
+                            'tracability',
                         ];
 
     public function UserManagement()

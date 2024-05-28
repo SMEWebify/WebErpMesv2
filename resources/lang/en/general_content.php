@@ -368,6 +368,7 @@ return [
     'select_status_trans_key'                  => 'Select status',
     'select_controle_trans_key'                => 'Select controle type',
     'select_document_trans_key'                => 'Select your document',
+    'select_task_trans_key'                    => 'Select task',
     'reception_control_trans_key'              => 'Reception control',
     
     'no_select_company_trans_key'              => 'No company, please add',
