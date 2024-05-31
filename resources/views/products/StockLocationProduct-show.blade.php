@@ -235,18 +235,18 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="service_id">{{ __('general_content.task_trans_key') }}</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-list"></i></span>
-                      </div>
-                      <select class="form-control" name="task_id" id="task_id">
+                      <x-adminlte-select2 name="task_id" id="task_id" label="{{ __('general_content.task_trans_key') }}" label-class="text-lightblue"
+                        igroup-size="lg" data-placeholder="Select an task...">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-gradient-info">
+                                <i class="fas fa-list"></i>
+                            </div>
+                        </x-slot>
                         <option value="null">{{ __('general_content.select_task_trans_key') }}</option>
                         @foreach ($TaskList as $item)
                         <option value="{{ $item->id }}">#{{ $item->id }}</option>
                         @endforeach
-                      </select>
-                    </div>
+                      </x-adminlte-select2>
                   </div>
                   <div class="form-group">
                     <label for="tracability">{{ __('general_content.tracability_trans_key') }}</label>
