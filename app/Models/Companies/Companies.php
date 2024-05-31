@@ -9,6 +9,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Companies\SupplierRating;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Quality\QualityNonConformity;
@@ -101,10 +102,20 @@ class Companies extends Model
         return $this->Orders()->count();
     }
 
-    // Relationship with the files associated with the Quote
+    // Relationship with the files associated with the Companies
     public function files()
     {
         return $this->hasMany(File::class);
+    }
+    // Relationship with the Rating associated with the Companies
+    public function rating()
+    {
+        return $this->hasMany(SupplierRating::class);
+    }
+    
+    public function averageRating()
+    {
+        return $this->rating()->avg('rating');
     }
 
     public function productsfromThisSupplier() {

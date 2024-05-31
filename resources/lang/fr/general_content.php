@@ -185,6 +185,7 @@ return [
 
     'supplier_ref_trans_key'                   => 'Référence Vendeur',
     'supplier_trans_key'                       => 'Vendeur',
+    'supplier_rate_trans_key'                  => 'Note vendeur',
     'qty_reciept_trans_key'                    => 'Qt reçue',
     'qty_purchase_trans_key'                   => 'Qt achetée',
     'qty_invoice_trans_key'                    => 'Qt facturée',

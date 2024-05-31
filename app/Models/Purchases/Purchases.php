@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Companies\SupplierRating;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,11 +51,18 @@ class Purchases extends Model
         return $this->hasMany(PurchaseLines::class)->orderBy('ordre');
     }
 
-    // Relationship with the files associated with the Quote
+    // Relationship with the files associated with the Purchases
     public function files()
     {
         return $this->hasMany(File::class);
     }
+
+    // Relationship with the Rating associated with the Purchases
+    public function Rating()
+    {
+        return $this->hasMany(SupplierRating::class);
+    }
+        
 
     public function GetPrettyCreatedAttribute()
     {

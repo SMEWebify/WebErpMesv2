@@ -651,6 +651,7 @@
                   <tr>
                     <th>{{__('general_content.id_trans_key') }}</th>
                     <th>{{__('general_content.customer_trans_key') }}</th>
+                    <th>{{ __('general_content.supplier_rate_trans_key') }}</th>
                     <th></th>
                     <th></th>
                   </tr>
@@ -660,6 +661,15 @@
                   <tr>
                     <td>{{ $preferredSuppliers->code }}</td>
                     <td>{{ $preferredSuppliers->label }}</td>
+                    <td>
+                      @for ($i = 1; $i <= 5; $i++)
+                          @if ($i <= $preferredSuppliers->averageRating())
+                              <span class="badge badge-warning">&#9733;</span>
+                          @else
+                              <span class="badge badge-info">&#9734;</span>
+                          @endif
+                      @endfor
+                    </td>
                     <td><x-ButtonTextView route="{{ route('companies.show', ['id' => $preferredSuppliers->id])}}" /></td>
                     <td class="py-0 align-middle">
                         <!-- Button Modal -->
@@ -741,6 +751,7 @@
                   <tr>
                     <th>{{__('general_content.id_trans_key') }}</th>
                     <th>{{__('general_content.customer_trans_key') }}</th>
+                    <th>{{ __('general_content.supplier_rate_trans_key') }}</th>
                     <th></th>
                     <th></th>
                   </tr>

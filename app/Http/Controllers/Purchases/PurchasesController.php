@@ -128,6 +128,7 @@ class PurchasesController extends Controller
                                     })
                                     ->select('custom_fields.*', 'cfv.value as field_value')
                                     ->get();
+
         return view('purchases/purchases-show', [
             'Purchase' => $id,
             'CompanieSelect' => $CompanieSelect,

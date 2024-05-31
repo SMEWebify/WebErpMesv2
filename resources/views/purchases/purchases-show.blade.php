@@ -128,6 +128,47 @@
                   </tr>
                 </table>
               </div>
+              <hr>
+              <div class="card-body">
+                @if($Purchase->Rating->isEmpty())
+                <form action="{{ route('companies.ratings.store') }}" method="POST">
+                  @csrf
+                  <input type="hidden" name="purchases_id" value="{{ $Purchase->id }}" >
+                  <input type="hidden" name="companies_id" value="{{ $Purchase->companies_id }}" >
+                  <div class="form-group">
+                    <label for="rating">{{ __('general_content.supplier_rate_trans_key') }}</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-star-half-alt"></i></span>
+                      </div>
+                      <select name="rating" id="rating" class="form-control">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <x-FormTextareaComment  comment="" />
+                  </div>
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                </form>
+                @else
+                  @php
+                      $Rating = $Purchase->Rating->toArray();
+                  @endphp
+                  <label for="rating">{{ __('general_content.supplier_rate_trans_key') }}</label>
+                  @for ($i = 1; $i <= 5; $i++)
+                      @if ($i <= $Rating[0]['rating'])
+                          <span class="badge badge-warning">&#9733;</span>
+                      @else
+                          <span class="badge badge-info">&#9734;</span>
+                      @endif
+                  @endfor
+                @endif
+              </div>
             </div>
             <div class="card card-info">
               <div class="card-header">
