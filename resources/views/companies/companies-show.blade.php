@@ -16,6 +16,7 @@
       <li class="nav-item"><a class="nav-link" href="#lead" data-toggle="tab">{{ __('general_content.leads_trans_key') }} ({{ $Companie->getLeadsCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }} ({{ $Companie->getQuotesCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }} ({{ $Companie->getOrdersCountAttribute() }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Companie->getPurchasesCountAttribute() }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -646,7 +647,9 @@
       <div class="tab-pane" id="order">
         @livewire('orders-index' , ['idCompanie' => $Companie->id ])
       </div>
-      
+      <div class="tab-pane" id="purchase">
+        @livewire('purchases-index' , ['idCompanie' => $Companie->id ])
+      </div>
     </div>
   </div>
 </div>

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\SupplierRating;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Purchases\Purchases;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -100,6 +101,16 @@ class Companies extends Model
     public function getOrdersCountAttribute()
     {
         return $this->Orders()->count();
+    }
+
+    public function Purchases()
+    {
+        return $this->hasMany(Purchases::class, 'companies_id');
+    }
+
+    public function getPurchasesCountAttribute()
+    {
+        return $this->Purchases()->count();
     }
 
     // Relationship with the files associated with the Companies

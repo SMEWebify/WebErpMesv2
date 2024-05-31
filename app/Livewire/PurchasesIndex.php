@@ -26,6 +26,8 @@ class PurchasesIndex extends Component
     public $user_id;   
     public $comment;
 
+    public $idCompanie = '';
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -48,11 +50,22 @@ class PurchasesIndex extends Component
 
     public function render()
     {
-        $Purchases = Purchases::withCount('PurchaseLines')
-                                ->where('label','like', '%'.$this->search.'%')
-                                ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
-                                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                                ->paginate(15);
+        if(is_numeric($this->idCompanie)){
+            $Purchases = Purchases::withCount('PurchaseLines')
+                            ->where('companies_id', $this->idCompanie)
+                            ->where('label','like', '%'.$this->search.'%')
+                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
+                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->paginate(15);
+        }
+        else{
+            $Purchases = Purchases::withCount('PurchaseLines')
+                ->where('label','like', '%'.$this->search.'%')
+                ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
+                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                ->paginate(15);
+        }
+
         return view('livewire.purchases-index', [
             'PurchasesList' => $Purchases,
         ]);
