@@ -746,6 +746,7 @@ return [
     'name_purchase_trans_key'                  => 'Name of purchase order',
     'update_valide_trans_key'                  => 'Update valide address & contact',
     'purchase_order_trans_key'                 => 'Purchase Order',
+    'top_rated_supplier_trans_key'             => 'Top rated supplier',
     
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Purchase request',

@@ -746,6 +746,7 @@ return [
     'name_purchase_trans_key'                  => 'Nom de la commande d\'achat',
     'update_valide_trans_key'                  => 'Mettre à jour l\'adresse et un contact valides',
     'purchase_order_trans_key'                 => 'Commande achat',
+    'top_rated_supplier_trans_key'             => 'Top fournisseurr',
 
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Demande d\'achat',

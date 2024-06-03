@@ -41,8 +41,19 @@ class PurchasesController extends Controller
      * @return View
      */
     public function request()
-    {    
-        return view('purchases/purchases-request');
+    {   
+        $topRatedSuppliers = Companies::where('statu_supplier', 2 )// Filtrer les fournisseurs actifs
+        ->withCount('rating') // Compter le nombre d'évaluations
+        ->having('rating_count', '>', 0) // Exclure les fournisseurs sans évaluations
+            ->orderByDesc(function ($company) {
+                return $company->select(DB::raw('avg(rating)'))
+                    ->from('supplier_ratings')
+                    ->whereColumn('companies_id', 'companies.id');
+            })
+            ->take(5) // Limiter les résultats aux 5 premiers fournisseurs
+            ->get();
+
+        return view('purchases/purchases-request', ['topRatedSuppliers' => $topRatedSuppliers]);
     }
 
     /**
