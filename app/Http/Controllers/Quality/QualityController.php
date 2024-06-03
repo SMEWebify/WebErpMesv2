@@ -55,8 +55,11 @@ class QualityController extends Controller
 
         // Nombre total d'entrées pour chaque catégorie
         $totalDerogations = QualityDerogation::count();
+        $totalDerogationsOpen = QualityDerogation::where('statu',1)->count();
         $totalNonConformities = QualityNonConformity::count();
+        $totalNonConformitiesOpen = QualityNonConformity::where('statu',1)->count();
         $totalActions = QualityAction::count();
+        $totalActionsOpen = QualityAction::where('statu',1)->count();
 
         // Nombre d'entrées internes pour chaque catégorie
         $internalDerogations = QualityDerogation::where('type', 1)->count();
@@ -164,7 +167,9 @@ class QualityController extends Controller
             'internalActionRate'=> $internalActionRate,
             'externalActionRate'=> $externalActionRate, 
             'chartData'=> $chartData, 
-            
+            'totalDerogationsOpen'=> $totalDerogationsOpen,
+            'totalNonConformitiesOpen'=> $totalNonConformitiesOpen,
+            'totalActionsOpen'=> $totalActionsOpen,
         ]);
     }
 }

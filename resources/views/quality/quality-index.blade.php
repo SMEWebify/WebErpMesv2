@@ -25,6 +25,24 @@
   <div class="tab-content p-3">
     <div class="tab-pane active" id="Dashboard">
       <div class="row">
+        <div class="col-lg-4 col-6">
+          <x-adminlte-small-box title="{{ __('general_content.open_trans_key') }} {{ __('general_content.action_trans_key') }}" text="{{ $totalActionsOpen }}" icon="fas fa-chart-bar text-white"
+              theme="teal"/>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-6">
+          <x-adminlte-small-box title="{{ __('general_content.open_trans_key') }} {{ __('general_content.non_conformities_trans_key') }}" text="{{ $totalNonConformitiesOpen }}" icon="fas fa-chart-bar text-white"
+              theme="purple"/>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-6">
+          <x-adminlte-small-box title="{{ __('general_content.open_trans_key') }} {{ __('general_content.derogations_trans_key') }}" text="{{ $totalDerogationsOpen }}" icon="fas fa-chart-bar text-white"
+              theme="info"/>
+        </div>
+        <!-- ./col -->
+      </div>
+      <hr>
+      <div class="row">
         <div class="col-md-4">
           <canvas id="actionChart" height="100"></canvas>
           <canvas id="derogationChart" height="100"></canvas>
