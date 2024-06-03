@@ -196,6 +196,7 @@ return [
     'qty_accepted_trans_key'                   => 'Qt acceptée',
     'qty_canceled_trans_key'                   => 'Qt annulée',
     'qty_mini_trans_key'                       => 'Qt mini',
+    'qty_total_trans_key'                      => 'Qt total',
     'scum_qty_trans_key'                       => 'Qt restante',
 
     'name_trans_key'                           => 'Nom',
@@ -747,6 +748,8 @@ return [
     'update_valide_trans_key'                  => 'Mettre à jour l\'adresse et un contact valides',
     'purchase_order_trans_key'                 => 'Commande achat',
     'top_rated_supplier_trans_key'             => 'Top fournisseurr',
+    'delevery_time_trans_key'                  => 'Délais de reception (moy jours)',
+
 
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Demande d\'achat',

@@ -12,30 +12,148 @@
 
 @section('content')
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+<div class="card">
+  <div class="card-header p-2">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li> 
+      <li class="nav-item"><a class="nav-link" href="#List" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }}</a></li> 
+    </ul>
+  </div>
+  <!-- /.card-header -->
+  <div class="tab-content p-3">
+    <div class="tab-pane active" id="Dashboard">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-header bg-info">
+              <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="donutChart" width="400" height="400"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header bg-warning">
+              <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-          <canvas id="donutChart" width="400" height="400"></canvas>
+        
+        <div class="col-md-3">
+          <x-adminlte-small-box title=" {{ __('general_content.lines_count_trans_key') }}" text="{{ $totalPurchaseLineCount }}" icon="fas fa-shopping-cart text-white"
+            theme="purple"/>
+
+          <div class="card">
+            <div class="card-header bg-primary">
+              {{ __('general_content.top_rated_supplier_trans_key') }}
+            </div>
+            @foreach ($topRatedSuppliers as $supplier)
+              <div class="row ">
+                <div class="card-body">
+                  <div class="text-center">
+                      <h5>{{ $supplier->label }}</h5>
+                      <p>
+                      @for ($i = 1; $i <= 5; $i++)
+                          @if ($i <= $supplier->averageRating())
+                              <span class="badge badge-warning">&#9733;</span>
+                          @else
+                              <span class="badge badge-info">&#9734;</span>
+                          @endif
+                      @endfor
+                    </p>
+                  </div>
+                </div>
+              </div>
+            @endforeach
+          </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-header bg-secondary">
+              {{ __('general_content.suppliers_shortest_times_trans_key') }}
+            </div>
+            <div class="card-body">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th>{{ __('general_content.supplier_trans_key') }}</th>
+                          <th>{{ __('general_content.delevery_time_trans_key') }}</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach ($top5FastestSuppliers as $supplier)
+                      <tr>
+                          <td>{{ $supplier->supplier_name }}</td>
+                          <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
+                      </tr>
+                      @endforeach
+                  </tbody>
+              </table>
+            </div>
+          </div>
+          <x-adminlte-small-box title=" {{ __('general_content.total_price_trans_key') }}" text="{{ $totalPurchasesAmount }} {{ $Factory->curency }}" icon="fas fa-shopping-cart text-white"
+          theme="danger"/>
+          <div class="card">
+            <div class="card-header bg-dark ">
+              {{ __('general_content.suppliers_longest_times_trans_key') }}
+            </div>
+            <div class="card-body">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th>{{ __('general_content.supplier_trans_key') }}</th>
+                          <th>{{ __('general_content.delevery_time_trans_key') }}</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach ($top5SlowestSuppliers as $supplier)
+                      <tr>
+                          <td>{{ $supplier->supplier_name }}</td>
+                          <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
+                      </tr>
+                      @endforeach
+                  </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-          <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+
+        <div class="col-md-3">
+          <x-adminlte-small-box title=" {{ __('general_content.average_purchase_price_trans_key') }}" text="{{ $averageAmount }} {{ $Factory->curency }}" icon="fas fa-chart-bar text-white"
+                theme="teal"/>
+          <div class="card">
+            <div class="card-header bg-success">
+              {{ __('general_content.most_purchased_products_trans_key') }}
+            </div>
+            <div class="card-body">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th>{{ __('general_content.product_trans_key') }}</th>
+                          <th>{{ __('general_content.qty_total_trans_key') }}</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach($topProducts as $product)
+                      <tr>
+                          <td>{{ $product->label }} </td>
+                          <td>{{ $product->total_quantity }}</td>
+                      </tr>
+                      @endforeach
+                  </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-9">
+    <div class="tab-pane" id="List">
       @livewire('purchases-index')
     </div>
-  </div>
 
 <!-- /.card -->
 </div>

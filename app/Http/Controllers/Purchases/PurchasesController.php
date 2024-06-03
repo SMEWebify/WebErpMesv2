@@ -23,6 +23,7 @@ use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Products\StockLocationProducts;
+use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Purchases\PurchaseQuotationLines;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
@@ -42,18 +43,7 @@ class PurchasesController extends Controller
      */
     public function request()
     {   
-        $topRatedSuppliers = Companies::where('statu_supplier', 2 )// Filtrer les fournisseurs actifs
-        ->withCount('rating') // Compter le nombre d'évaluations
-        ->having('rating_count', '>', 0) // Exclure les fournisseurs sans évaluations
-            ->orderByDesc(function ($company) {
-                return $company->select(DB::raw('avg(rating)'))
-                    ->from('supplier_ratings')
-                    ->whereColumn('companies_id', 'companies.id');
-            })
-            ->take(5) // Limiter les résultats aux 5 premiers fournisseurs
-            ->get();
-
-        return view('purchases/purchases-request', ['topRatedSuppliers' => $topRatedSuppliers]);
+        return view('purchases/purchases-request');
     }
 
     /**
@@ -94,8 +84,55 @@ class PurchasesController extends Controller
                                                             ->whereYear('purchase_lines.created_at', $CurentYear)
                                                             ->groupByRaw('MONTH(purchase_lines.created_at) ')
                                                             ->get();
-                                                            
-        return view('purchases/purchases-index')->with('data',$data);
+
+        $topRatedSuppliers = Companies::where('statu_supplier', 2 ) // Filter active suppliers
+                                                            ->withCount('rating') // Count the number of evaluations
+                                                            ->having('rating_count', '>', 0) // Exclude suppliers without reviews
+                                                                ->orderByDesc(function ($company) {
+                                                                    return $company->select(DB::raw('avg(rating)'))
+                                                                        ->from('supplier_ratings')
+                                                                        ->whereColumn('companies_id', 'companies.id');
+                                                                })
+                                                                ->take(5) // Limit results to the first 5 suppliers
+                                                                ->get();
+
+        $averageReceptionDelayBySupplier = PurchaseReceiptLines::join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
+                                                                ->join('purchases', 'purchase_lines.purchases_id', '=', 'purchases.id')
+                                                                ->join('companies', 'purchases.companies_id', '=', 'companies.id') // Join the suppliers table
+                                                                ->selectRaw('companies.label AS supplier_name, AVG(DATEDIFF(purchase_receipt_lines.created_at, purchase_lines.created_at)) AS avg_reception_delay')
+                                                                ->groupBy('companies.label') // Group by supplier
+                                                                ->get();
+
+        // Sorting results by average reception time in ascending order
+        $sortedByAvgReceptionDelay = $averageReceptionDelayBySupplier->sortBy('avg_reception_delay');
+        // Collect the 5 suppliers with the shortest deadlines
+        $top5FastestSuppliers = $sortedByAvgReceptionDelay->take(5);
+        // Retrieve the 5 suppliers with the longest lead times
+        $top5SlowestSuppliers = $sortedByAvgReceptionDelay->reverse()->take(5);
+
+        $topProducts = PurchaseLines::select('products.label', 'purchase_lines.product_id', DB::raw('SUM(purchase_lines.qty) as total_quantity'))
+                                    ->join('products', 'products.id', '=', 'purchase_lines.product_id')
+                                    ->groupBy('purchase_lines.product_id', 'products.label')
+                                    ->orderByDesc('total_quantity')
+                                    ->take(5)
+                                    ->get();
+
+        $totalPurchaseAmount = PurchaseLines::sum('total_selling_price');
+        $totalPurchaseCount = PurchaseLines::count();
+        $averageAmount = $totalPurchaseCount > 0 ? $totalPurchaseAmount / $totalPurchaseCount : 0;
+        
+        $totalPurchaseLineCount = PurchaseLines::count();
+        $totalPurchasesAmount = PurchaseLines::sum('total_selling_price');
+
+        return view('purchases/purchases-index', [
+                                                    'topRatedSuppliers' => $topRatedSuppliers,
+                                                    'top5FastestSuppliers' => $top5FastestSuppliers,
+                                                    'top5SlowestSuppliers' => $top5SlowestSuppliers,
+                                                    'topProducts' => $topProducts,
+                                                    'averageAmount' => $averageAmount,
+                                                    'totalPurchaseLineCount' => $totalPurchaseLineCount,
+                                                    'totalPurchasesAmount' => $totalPurchasesAmount,
+                                                ])->with('data',$data);
     }
 
     /**
@@ -254,12 +291,18 @@ class PurchasesController extends Controller
         $StockLocationProductList = StockLocationProducts::all();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchaseReceipt(), $id->id);
 
+        $averageReceptionDelay = PurchaseReceiptLines::join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
+                                                    ->where('purchase_receipt_lines.purchase_receipt_id', $id->id) // Filtrer par bon de réception spécifique
+                                                    ->selectRaw('AVG(DATEDIFF(purchase_receipt_lines.created_at, purchase_lines.created_at)) AS avg_reception_delay')
+                                                    ->first();
+
         return view('purchases/purchases-receipt-show', [
             'PurchaseReceipt' => $id,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'StockLocationList' =>  $StockLocationList,
             'StockLocationProductList' =>  $StockLocationProductList,
+            'averageReceptionDelay' => $averageReceptionDelay->avg_reception_delay
         ]);
     }
 

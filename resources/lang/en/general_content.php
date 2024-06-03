@@ -196,6 +196,7 @@ return [
     'qty_accepted_trans_key'                   => 'Qty accepted',
     'qty_canceled_trans_key'                   => 'Qty canceled',
     'qty_mini_trans_key'                       => 'Qty mini',
+    'qty_total_trans_key'                      => 'Qty total',
     'scum_qty_trans_key'                       => 'Scum qty',
     
     'name_trans_key'                           => 'Name',
@@ -747,6 +748,11 @@ return [
     'update_valide_trans_key'                  => 'Update valide address & contact',
     'purchase_order_trans_key'                 => 'Purchase Order',
     'top_rated_supplier_trans_key'             => 'Top rated supplier',
+    'delevery_time_trans_key'                  => 'Delivery times (avg days)',
+    'average_purchase_price_trans_key'         => 'Avg purchase price',
+    'most_purchased_products_trans_key'        => 'Most purchased products',
+    'suppliers_longest_times_trans_key'        => 'Suppliers with the longest receipt times',
+    'suppliers_shortest_times_trans_key'       => 'Suppliers with the shortest receipt times',
     
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Purchase request',

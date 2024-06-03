@@ -100,6 +100,12 @@
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                   <tr>
+                    <td style="width:50%"> 
+                    {{ __('general_content.delevery_time_trans_key') }}
+                    </td>
+                    <td>
+                      <td>{{ $averageReceptionDelay }}
+                    </td>
                   </tr>
                 </table>
               </div>
@@ -131,7 +137,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.purchase_order_trans_key') }}</th>
                   <th>{{ __('general_content.qty_trans_key') }}</th>
                   <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
                   <th>{{__('general_content.label_trans_key') }}</th>
@@ -146,11 +152,10 @@
                   @forelse($PurchaseReceipt->PurchaseReceiptLines as $PurchaseReceiptLine)
                   <tr>
                     <td>
-                        @if($PurchaseReceiptLine->tasks->OrderLines ?? null)
-                            <x-OrderButton id="{{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->order->code }}"  /> 
-                        @else
-                        {{__('general_content.generic_trans_key') }} 
-                        @endif
+                      <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseReceiptLine->purchaseLines->purchase->id])}}">
+                        <i class="fas fa-folder"></i>
+                        {{ $PurchaseReceiptLine->purchaseLines->purchase->code }}
+                    </a>
                     </td>
                     <td>@if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null){{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->qty }} x @endif</td>
                     <td>@if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null){{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->label }}@endif</td>
@@ -241,7 +246,7 @@
               @endforelse
                 <tfoot>
                   <tr>
-                    <th>{{ __('general_content.order_trans_key') }}</th>
+                    <th>{{ __('general_content.purchase_order_trans_key') }}</th>
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
                     <th>{{__('general_content.label_trans_key') }}</th>
