@@ -135,6 +135,10 @@ return [
     'pending_trans_key'                        => 'En attente',
     'unpaid_trans_key'                         => 'Impayé',
     'paid_trans_key'                           => 'Payé',
+    'done_trans_key'                           => 'Fait',
+    'to_submit_trans_key'                      => 'Soumettre',
+    'submitted_trans_key'                      => 'Soumise',
+    'approved_trans_key'                       => 'Approuvée',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',
@@ -370,6 +374,7 @@ return [
     'select_controle_trans_key'                => 'Selectionner type de contrôle',
     'select_document_trans_key'                => 'Selectionner le document',
     'select_task_trans_key'                    => 'Selectionner la tâche',
+    'select_categorie_trans_key'               => 'Selectionner la categorie',
     'reception_control_trans_key'              => 'Controle de reception',
 
     'no_select_company_trans_key'              => 'Aucune société, ajouter une société',
@@ -666,7 +671,12 @@ return [
     'bill_of_materials_trans_key'              => 'Nomenclature',
     'bom_trans_key'                            => 'BOM',
     'generic_trans_key'                        => 'Générique',
-
+    'current_count_task_trans_key'             => 'Nombre d\'OF en cours',
+    'average_time_task_trans_key'              => 'Average processing time for OFs',
+    'user_productivity_trans_key'              => 'Productivité des utilisateurs',
+    'task_count_trans_key'                     => 'Nombre de tâches',
+    'total_hours_per_resource_trans_key'       => 'Heures totales par ressource',
+    
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Bons de livraisons',
     'deliverys_notes_request_trans_key'        => 'Attente de bons de livraison',
@@ -815,6 +825,12 @@ return [
     
     //HUMAN RESOURCES
     'human_resources_trans_key'                => 'Ressources humaines',   
+    'expense_categories_trans_key'             => 'Catégorie de dépense',
+    'categories_trans_key'                     => 'Catégorie',
+    'payer_trans_key'                          => 'Payeur',
+    'scan_file_trans_key'                      => 'Fichier scanné',
+    'location_expense_trans_key'               => 'Localisation',
+    'new_expense_categories_trans_key'         => 'Nouvelle catégorie de dépense',
     
     //USER
     'users_trans_key'                          => 'Utilisateur',
@@ -859,6 +875,8 @@ return [
     'notification_choice_trans_key'            => 'Choix des notifications',
     'new_user_trans_key'                       => 'Nouvel utilisateur',
     'new_absence_request_trans_key'            => 'Nouvelle demande d\'absence',
+    'expense_report_trans_key'                 => 'Note de frais',
+    'new_expense_report_trans_key'             => 'Nouvelle note de frais',
 
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Notes de version',

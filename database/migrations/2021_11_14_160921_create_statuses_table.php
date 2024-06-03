@@ -15,6 +15,15 @@ class CreateStatusesTable extends Migration
     {
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
+            #Open
+            #Started
+            #In progress
+            #Finished
+            #Suspended
+            #To RFQ
+            #RFQ in progress
+            #Outsourced
+            #Supplied
             $table->string('title');
             $table->smallInteger('order')->default(0);
         });

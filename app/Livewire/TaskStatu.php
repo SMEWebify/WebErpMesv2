@@ -39,16 +39,19 @@ class TaskStatu extends Component
     private $RecalculateBooleanValue = 0;
     public $end_date;
 
+    public $tasksOpen, $tasksInProgress, $tasksPending, $tasksOngoing, $tasksCompleted, $averageProcessingTime, $userProductivity, $totalResourcesAllocated, $resourceHours; 
+
+
     // Validation Rules
     protected $rules = [
         'addGoodQt' =>'required|numeric|min:0',
         'addBadQt' =>'required|numeric|min:0',
     ];
 
-    public function mount($id) 
+    public function mount($TaskId, $tasksOpen, $tasksInProgress, $tasksPending, $tasksOngoing, $tasksCompleted, $averageProcessingTime, $userProductivity, $totalResourcesAllocated, $resourceHours) 
     {
         $this->user_id = Auth::id();
-        $this->search = $id;
+        $this->search = $TaskId;
         $this->taskStockMoves = StockMove::where('task_id', $this->search)->get();
         $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
         $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
@@ -376,9 +379,4 @@ class TaskStatu extends Component
     return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
     }
 
-    public function goToTask($taskId)
-{
-    // Rédirection ou mise à jour de la vue avec la nouvelle tâche
-    $this->mount($taskId);
-}
 }

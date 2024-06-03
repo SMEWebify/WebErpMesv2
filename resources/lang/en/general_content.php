@@ -135,6 +135,10 @@ return [
     'pending_trans_key'                        => 'Pending',
     'unpaid_trans_key'                         => 'Unpaid',
     'paid_trans_key'                           => 'Paid',
+    'done_trans_key'                           => 'Done',
+    'to_submit_trans_key'                      => 'To submit',
+    'submitted_trans_key'                      => 'Submitted',
+    'approved_trans_key'                       => 'Approved',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
@@ -370,6 +374,7 @@ return [
     'select_controle_trans_key'                => 'Select controle type',
     'select_document_trans_key'                => 'Select your document',
     'select_task_trans_key'                    => 'Select task',
+    'select_categorie_trans_key'               => 'Select categorie',
     'reception_control_trans_key'              => 'Reception control',
     
     'no_select_company_trans_key'              => 'No company, please add',
@@ -666,6 +671,11 @@ return [
     'bill_of_materials_trans_key'              => 'Bill of materials',
     'bom_trans_key'                            => 'BOM',
     'generic_trans_key'                        => 'Generic',
+    'current_count_task_trans_key'             => 'Number of current tasks',
+    'average_time_task_trans_key'              => 'Average processing time for OFs',
+    'user_productivity_trans_key'              => 'User Productivity',
+    'task_count_trans_key'                     => 'Number of tasks',
+    'total_hours_per_resource_trans_key'       => 'Total hours per resource',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Delivery notes',
@@ -815,6 +825,12 @@ return [
     
     //HUMAN RESOURCES
     'human_resources_trans_key'                => 'Human resources',
+    'categories_trans_key'                     => 'Categories',
+    'payer_trans_key'                          => 'Payer',
+    'scan_file_trans_key'                      => 'Scan file',
+    'location_expense_trans_key'               => 'Location',
+    'expense_categories_trans_key'             => 'Expense categories',
+    'new_expense_categories_trans_key'         => 'New expense categories',
     
     //USER
     'users_trans_key'                          => 'Users',
@@ -859,6 +875,8 @@ return [
     'notification_choice_trans_key'            => 'Notification choice',
     'new_user_trans_key'                       => 'New user',
     'new_absence_request_trans_key'            => 'New absence request',
+    'expense_report_trans_key'                 => 'Expense report',
+    'new_expense_report_trans_key'             => 'New expense report',
 
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',
