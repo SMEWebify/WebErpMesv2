@@ -7,7 +7,17 @@
 @stop
 
 @section('content')
-    @livewire('task-statu', ['id' =>$TaskId])
+    @livewire('task-statu', ['TaskId' => $TaskId,
+                            'tasksOpen' => $tasksOpen,
+                            'tasksInProgress' => $tasksInProgress,
+                            'tasksPending' => $tasksPending,
+                            'tasksOngoing' => $tasksOngoing,
+                            'tasksCompleted' => $tasksCompleted,
+                            'averageProcessingTime' => $averageProcessingTime,
+                            'userProductivity' => $userProductivity,
+                            'totalResourcesAllocated' => $totalResourcesAllocated,
+                            'resourceHours' => $resourceHours,
+                            ])
 @stop
 
 @section('css')
