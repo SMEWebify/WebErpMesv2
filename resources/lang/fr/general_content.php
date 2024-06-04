@@ -693,6 +693,16 @@ return [
     'invoices_export_trans_key'                => 'Exporter ligne de facture',
     'others_trans_key'                         => 'Autres',
     'new_invoice_trans_key'                    => 'Nouvelle facture',
+    'number_of_invoice_trans_key'              => 'Nombre total de factures',
+    'amount_of_invoice_trans_key'              => 'Montant total des factures',
+    'payments_received_of_invoice_trans_key'   => 'Montant total des paiements reçus',
+    'bills_paid_trans_key'                     => 'Factures payées',
+    'bills_unpaid_trans_key'                   => 'Factures impayées',
+    'top_customers_trans_key'                  => 'Meilleurs clients',
+    'top_products_trans_key'                   => 'Meilleurs produits',
+    'average_payment_time_trans_key'           => 'Délai moyen de paiement',
+    'late_payment_time_trans_key'              => 'Taux de retard de paiement',
+    'incoterm_trans_key'                       => 'Incoterm',
 
     //PRODUCT
     'product_trans_key'                        => 'Produit',

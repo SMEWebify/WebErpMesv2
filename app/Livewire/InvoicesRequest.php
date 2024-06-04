@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use App\Models\Workflow\Invoices;
 use App\Events\DeliveryLineUpdated;
 use App\Models\Companies\Companies;
@@ -124,12 +126,14 @@ class InvoicesRequest extends Component
         if($i>0){
             // Create invoice
             $InvoiceCreated = Invoices::create([
+                                                'uuid'=> Str::uuid(),
                                                 'code'=>$this->code,  
                                                 'label'=>$this->label, 
                                                 'companies_id'=>$this->companies_id,   
                                                 'companies_addresses_id'=>$this->companies_addresses_id,  
                                                 'companies_contacts_id'=>$this->companies_contacts_id,  
                                                 'user_id'=>$this->user_id, 
+                                                'due_date' => Carbon::now()->addDays(30),
             ]);
 
             // Create invoice note lines

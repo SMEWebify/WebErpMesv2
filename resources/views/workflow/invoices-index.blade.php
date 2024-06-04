@@ -9,27 +9,97 @@
 @section('right-sidebar')
 
 @section('content')
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+<div class="card">
+  <div class="card-header p-2">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li> 
+      <li class="nav-item"><a class="nav-link" href="#List" data-toggle="tab">{{ __('general_content.invoices_list_trans_key') }}</a></li> 
+    </ul>
+  </div>
+  <!-- /.card-header -->
+  <div class="tab-content p-3">
+    <div class="tab-pane active" id="Dashboard">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card">
+            <div class="card-header bg-info">
+              <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+            </div>
+            <div class="card-body">
+              <canvas id="donutChart" width="400" height="400"></canvas>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-          <canvas id="donutChart" width="400" height="400"></canvas>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-success ">
+                  {{ __('general_content.statistiques_trans_key') }}
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ __('general_content.number_of_invoice_trans_key') }} : {{ $totalInvoices }}</p>
+                    <p class="card-text">{{ __('general_content.amount_of_invoice_trans_key') }} : {{ number_format($totalInvoiceAmount, 2) }} {{ $Factory->curency }}</p>
+                    <p class="card-text">{{ __('general_content.payments_received_of_invoice_trans_key') }} : {{ number_format($totalPaymentsReceived, 2) }} {{ $Factory->curency }} <span class="badge badge-warning right">Soon</span></p> 
+                </div>
+            </div>
+            <div class="card">
+              <div class="card-header bg-warning">
+                <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+            </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
+        
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary">
+                  {{ __('general_content.statistiques_trans_key') }}
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ __('general_content.bills_paid_trans_key') }} : {{ $paidInvoices }}</p>
+                    <p class="card-text">{{ __('general_content.bills_unpaid_trans_key') }}  : {{ $unpaidInvoices }}</p>
+                    <p class="card-text">{{ __('general_content.average_payment_time_trans_key') }} : {{ round($averagePaymentDelay, 2) }} jours <span class="badge badge-warning right">Soon</span></p> 
+                    <p class="card-text">{{ __('general_content.late_payment_time_trans_key') }} : {{ round($latePaymentRate, 2) }} % <span class="badge badge-warning right">Soon</span></p> 
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-          <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+      
+  
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-secondary">
+                  {{ __('general_content.top_customers_trans_key') }}
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach($topClients as $client)
+                            <li class="list-group-item">
+                                <strong>{{ $client->companie->label }}</strong>  {{ number_format($client->total_amount, 2) }} {{ $Factory->curency }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+              <div class="card-header bg-dark ">
+                {{ __('general_content.top_products_trans_key') }} 
+              </div>
+              <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                      @foreach($topProducts as $product)
+                          <li class="list-group-item">
+                              {{ $product->orderLine->Product->label ?? 'Produit inconnu' }} - {{ $product->total_quantity }}
+                          </li>
+                      @endforeach
+                  </ul>
+              </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-9">
+    <div class="tab-pane" id="List">
       @livewire('invoices-index')
     </div>
   </div>

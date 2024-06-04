@@ -693,7 +693,17 @@ return [
     'invoices_export_trans_key'                => 'Invoice lines export',
     'others_trans_key'                         => 'Others',
     'new_invoice_trans_key'                    => 'New invoice',
-
+    'number_of_invoice_trans_key'              => 'Total number of invoices',
+    'amount_of_invoice_trans_key'              => 'Total amount of invoices',
+    'payments_received_of_invoice_trans_key'   => 'Total amount of payments received',
+    'bills_paid_trans_key'                     => 'Bills paid',
+    'bills_unpaid_trans_key'                   => 'Unpaid bills',
+    'top_customers_trans_key'                  => 'Top Customers',
+    'top_products_trans_key'                   => 'Top Products',
+    'average_payment_time_trans_key'           => 'Average payment time',
+    'late_payment_time_trans_key'              => 'Late payment rate',
+    'incoterm_trans_key'                       => 'Incoterm',
+    
     //PRODUCT
     'product_trans_key'                        => 'Product',
     'products_trans_key'                       => 'Products',

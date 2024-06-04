@@ -18,7 +18,8 @@ class Invoices extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['code', 
+    protected $fillable = ['uuid',
+                            'code', 
                             'label', 
                             'companies_id', 
                             'companies_contacts_id',   
@@ -30,6 +31,10 @@ class Invoices extends Model
                             'bank_id',
                             'comment',
                             'order_id',
+                            'payment_date',
+                            'due_date',
+                            'export_date',
+                            'incoterm',
                             ];
 
 

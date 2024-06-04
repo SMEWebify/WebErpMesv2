@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Admin\CustomField;
 use App\Models\Workflow\Invoices;
@@ -45,7 +46,65 @@ class InvoicesController extends Controller
                                                             ->whereYear('invoice_lines.created_at', $CurentYear)
                                                             ->groupByRaw('MONTH(invoice_lines.created_at) ')
                                                             ->get();
-        return view('workflow/invoices-index')->with('data',$data);
+
+        // Total number of invoices
+        $totalInvoices = Invoices::count();
+
+        // Total amount of invoices
+        $totalInvoiceAmount = Invoices::all()->reduce(function ($carry, $invoice) {
+            return $carry + $invoice->getTotalPriceAttribute();
+        }, 0);
+
+        // Total amount of payments received
+        // Make sure the getTotalPriceAttribute method returns the total amount paid
+        $totalPaymentsReceived = Invoices::where('statu', 5)->get()->reduce(function ($carry, $invoice) {
+            return $carry + $invoice->getTotalPriceAttribute();
+        }, 0);
+
+        // Paid vs. unpaid invoices
+        $paidInvoices = Invoices::where('statu', 5)->count();
+        $unpaidInvoices = Invoices::where('statu','!=', 4)->count();
+
+    // Average payment deadline (Make sure you have payment_date and due_date fields in the invoices table)
+        $averagePaymentDelay = Invoices::whereNotNull('payment_date')
+                                        ->select(DB::raw('AVG(DATEDIFF(payment_date, due_date)) as avg_delay'))
+                                        ->value('avg_delay');
+
+        // Late payment rate
+        $latePaymentRate = Invoices::where('statu', 4)
+                                    ->where('due_date', '<', now())
+                                    ->count() / ($totalInvoices ?: 1) * 100;
+
+        // Top customers by invoiced amount
+        $topClients = Invoices::select('companies_id', DB::raw('SUM((invoice_lines.qty * order_lines.selling_price) - (invoice_lines.qty * order_lines.selling_price)*(order_lines.discount/100)) as total_amount'))
+                                ->join('invoice_lines', 'invoices.id', '=', 'invoice_lines.invoices_id')
+                                ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+                                ->groupBy('companies_id')
+                                ->orderByDesc('total_amount')
+                                ->take(5)
+                                ->get();
+
+    // Top products/services billed
+        $topProducts = InvoiceLines::select('order_lines.product_id', DB::raw('SUM(invoice_lines.qty) as total_quantity'))
+                                    ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
+                                    ->groupBy('order_lines.product_id')
+                                    ->orderByDesc('total_quantity')
+                                    ->take(5)
+                                    ->get();
+
+
+
+        return view('workflow/invoices-index', compact(
+                                                        'totalInvoices',
+                                                        'totalInvoiceAmount',
+                                                        'totalPaymentsReceived',
+                                                        'paidInvoices',
+                                                        'unpaidInvoices',
+                                                        'averagePaymentDelay',
+                                                        'latePaymentRate',
+                                                        'topClients',
+                                                        'topProducts',
+                                                    ))->with('data',$data);
     }
 
     /**
@@ -73,12 +132,14 @@ class InvoicesController extends Controller
 
         // Create invoice
         $InvoiceCreated = Invoices::create([
+            'uuid'=> Str::uuid(),
             'code'=>$code,  
             'label'=>$label, 
             'companies_id'=>$DeliveryData->companies_id,   
             'companies_addresses_id'=>$DeliveryData->companies_addresses_id,  
             'companies_contacts_id'=>$DeliveryData->companies_contacts_id,  
             'user_id'=>Auth::id(),
+            'due_date' => Carbon::now()->addDays(30),
         ]);
 
         $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
@@ -163,6 +224,8 @@ class InvoicesController extends Controller
         $Invoice = Invoices::find($request->id);
         $Invoice->label=$request->label;
         $Invoice->statu=$request->statu;
+        $Invoice->due_date=$request->due_date;
+        $Invoice->incoterm=$request->incoterm;
         $Invoice->comment=$request->comment;
         $Invoice->save();
 

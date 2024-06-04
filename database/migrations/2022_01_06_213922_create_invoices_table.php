@@ -27,7 +27,14 @@ class CreateInvoicesTable extends Migration
             #4 = Unpaid
             #5 = Paid
             $table->integer('invoice_type')->default(1);
+            #1 = Invoice
+            #2 = Credit note
+            #3 = Proforma
+            #4 = Down payment
             $table->integer('accounting_status')->default(1);
+            #1 = In progress
+            #2 = To be posted
+            #3 = Posted
 			$table->integer('user_id');
             $table->integer('bank_id')->nullable();
 			$table->text('comment', 65535)->nullable();

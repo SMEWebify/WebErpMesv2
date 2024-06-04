@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
@@ -600,12 +601,14 @@ class OrderLine extends Component
 
             // Create invoice
             $InvoiceCreated = Invoices::create([
+                'uuid'=> Str::uuid(),
                 'code'=>$invoiceCode,  
                 'label'=>$invoiceCode, 
                 'companies_id'=>$OrderData->companies_id,   
                 'companies_addresses_id'=>$OrderData->companies_addresses_id,  
                 'companies_contacts_id'=>$OrderData->companies_contacts_id,  
                 'user_id'=>Auth::id(),
+                'due_date' => Carbon::now()->addDays(30),
             ]);
 
             if($InvoiceCreated){
