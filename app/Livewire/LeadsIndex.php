@@ -18,6 +18,8 @@ class LeadsIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
+    public $viewType = 'table'; // Par défaut à 'table'
+
     public $search = '';
     public $sortField = 'statu'; // default sorting field
     public $sortAsc = true; // default sort direction
@@ -44,6 +46,11 @@ class LeadsIndex extends Component
             $this->sortAsc = true; 
         }
         $this->sortField = $field;
+    }
+
+    public function changeView($view)
+    {
+        $this->viewType = $view;
     }
 
     // Validation Rules

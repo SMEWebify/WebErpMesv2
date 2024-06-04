@@ -1,4 +1,14 @@
 <div class="card-body">
+    <!-- Bouton de basculement entre les vues -->
+    <div class="mb-3">
+        <button class="btn btn-primary" wire:click="changeView('table')">
+            <i class="fas fa-table mr-1"></i> Table
+        </button>
+        <button class="btn btn-secondary" wire:click="changeView('cards')">
+            <i class="fas fa-th-large mr-1"></i> Cards
+        </button>
+    </div>
+
     <!-- Modal -->
     <div wire:ignore.self class="modal fade" id="ModalLead" tabindex="-1" role="dialog" aria-labelledby="ModalLeadTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -147,6 +157,7 @@
         </div>
     </div>
     <!-- End Modal -->
+    @if($viewType === 'table')
     <div class="card">
         <div class="table-responsive p-0">
             <table class="table table-hover">
@@ -167,35 +178,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($Leadslist as $Leads)
+                    @forelse ($Leadslist as $Lead)
                     <tr>
-                        <td>#{{ $Leads->id }}</td>
-                        <td><x-CompanieButton id="{{ $Leads->companies_id }}" label="{{ $Leads->companie['label'] }}"  /></td>
-                        <td>{{ $Leads->companie['first_name'] }} {{ $Leads->contact['name'] }}</td>
-                        <td>{{ $Leads->adresse['adress'] }} {{ $Leads->adresse['zipcode'] }}  {{ $Leads->adresse['city'] }}</td>
-                        <td><img src="{{ Avatar::create($Leads->UserManagement['name'])->toBase64() }}" /></td>
-                        <td>{{ $Leads->source }}</td>
+                        <td>#{{ $Lead->id }}</td>
+                        <td><x-CompanieButton id="{{ $Lead->companies_id }}" label="{{ $Lead->companie['label'] }}"  /></td>
+                        <td>{{ $Lead->companie['first_name'] }} {{ $Lead->contact['name'] }}</td>
+                        <td>{{ $Lead->adresse['adress'] }} {{ $Lead->adresse['zipcode'] }}  {{ $Lead->adresse['city'] }}</td>
+                        <td><img src="{{ Avatar::create($Lead->UserManagement['name'])->toBase64() }}" /></td>
+                        <td>{{ $Lead->source }}</td>
                         <td>
-                            @if(1 == $Leads->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
-                            @if(2 == $Leads->priority )  <span class="badge badge-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
-                            @if(3 == $Leads->priority )  <span class="badge badge-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
-                            @if(4 == $Leads->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
+                            @if(1 == $Lead->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
+                            @if(2 == $Lead->priority )  <span class="badge badge-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
+                            @if(3 == $Lead->priority )  <span class="badge badge-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
+                            @if(4 == $Lead->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
                         </td>
-                        <td>{{ $Leads->campaign }}</td>
+                        <td>{{ $Lead->campaign }}</td>
                         <td>
-                            @if(1 == $Leads->statu )  <span class="badge badge-info">{{ __('general_content.new_trans_key') }}</span>@endif
-                            @if(2 == $Leads->statu )  <span class="badge badge-warning">{{ __('general_content.assigned_trans_key') }}</span>@endif
-                            @if(3 == $Leads->statu )  <span class="badge badge-primary">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                            @if(4 == $Leads->statu )  <span class="badge badge-success">{{ __('general_content.converted_trans_key') }}</span>@endif
-                            @if(5 == $Leads->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif 
+                            @if(1 == $Lead->statu )  <span class="badge badge-info">{{ __('general_content.new_trans_key') }}</span>@endif
+                            @if(2 == $Lead->statu )  <span class="badge badge-warning">{{ __('general_content.assigned_trans_key') }}</span>@endif
+                            @if(3 == $Lead->statu )  <span class="badge badge-primary">{{ __('general_content.in_progress_trans_key') }}</span>@endif
+                            @if(4 == $Lead->statu )  <span class="badge badge-success">{{ __('general_content.converted_trans_key') }}</span>@endif
+                            @if(5 == $Lead->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif 
                         </td>
                         <td> 
                             <div class="input-group-prepend">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item" wire:click="inProgress({{$Leads->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i>{{ __('general_content.in_progress_trans_key') }}</span></a>
-                                    <a href="#" class="dropdown-item " wire:click="storeOpportunity({{$Leads->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i>{{ __('general_content.converted_trans_key') }}</span></a>
-                                    <a href="#" class="dropdown-item" wire:click="lost({{$Leads->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.lost_trans_key') }}</span></a>
+                                    <a href="#" class="dropdown-item" wire:click="inProgress({{$Lead->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i>{{ __('general_content.in_progress_trans_key') }}</span></a>
+                                    <a href="#" class="dropdown-item " wire:click="storeOpportunity({{$Lead->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i>{{ __('general_content.converted_trans_key') }}</span></a>
+                                    <a href="#" class="dropdown-item" wire:click="lost({{$Lead->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.lost_trans_key') }}</span></a>
                                 </div>
                             </div>
                         </td>
@@ -221,8 +232,72 @@
             </table>
         </div>
         <!-- /.row -->
-        {{ $Leadslist->links() }}
     <!-- /.card -->
     </div>
+    @else
+        <!-- Vue en cartes -->
+        <div class="row">
+            @forelse ($Leadslist as $lead)
+                <div class="col-md-3 ">
+                    <div class="card">
+                        
+                        @if(1 == $Lead->statu )  @php $backgroud="bg-info" @endphp @endif
+                        @if(2 == $Lead->statu )  @php $backgroud="bg-warning" @endphp @endif
+                        @if(3 == $Lead->statu )  @php $backgroud="bg-primary" @endphp @endif
+                        @if(4 == $Lead->statu )  @php $backgroud="bg-success" @endphp @endif
+                        @if(5 == $Lead->statu )  @php $backgroud="bg-danger" @endphp @endif
+
+                        <div class="card-header {{ $backgroud }}">
+                            <div class="row">
+                                <div class="col-4">
+                                    <img src="{{ Avatar::create($Lead->UserManagement['name'])->toBase64() }}" />
+                                </div>
+                                <div class="col-4">
+                                    <x-CompanieButton id="{{ $Lead->companies_id }}" label="{{ $Lead->companie['label'] }}"  />
+                                </div>
+                                <div class="col-4">
+                                    <p class="card-text"><strong>{{ __('general_content.priority_trans_key') }}</strong>
+                                        @if(1 == $Lead->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
+                                        @if(2 == $Lead->priority )  <span class="badge badge-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
+                                        @if(3 == $Lead->priority )  <span class="badge badge-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
+                                        @if(4 == $Lead->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">{{ $Lead->companie['first_name'] }} {{ $Lead->contact['name'] }}</p>
+                            <p class="card-text">{{ $Lead->adresse['adress'] }} {{ $Lead->adresse['zipcode'] }}  {{ $Lead->adresse['city'] }}</p>
+                            <p class="card-text"><strong>{{ __('general_content.source_trans_key') }}</strong> {{ $Lead->source }}</p>
+                            <p class="card-text"><strong>{{ __('general_content.campaign_trans_key') }}</strong>{{ $Lead->campaign }}</p>
+                            <p class="card-text"><strong>{{ __('general_content.status_trans_key') }}</strong>
+                                @if(1 == $Lead->statu )  <span class="badge badge-info">{{ __('general_content.new_trans_key') }}</span>@endif
+                                @if(2 == $Lead->statu )  <span class="badge badge-warning">{{ __('general_content.assigned_trans_key') }}</span>@endif
+                                @if(3 == $Lead->statu )  <span class="badge badge-primary">{{ __('general_content.in_progress_trans_key') }}</span>@endif
+                                @if(4 == $Lead->statu )  <span class="badge badge-success">{{ __('general_content.converted_trans_key') }}</span>@endif
+                                @if(5 == $Lead->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif
+                            </p>
+                        </div>
+                        <div class="card-footer bg-secondary">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="actionMenu">
+                                <a class="dropdown-item" wire:click="inProgress({{ $Lead->id }})">{{ __('general_content.in_progress_trans_key') }}</a>
+                                <a class="dropdown-item" wire:click="storeOpportunity({{ $Lead->id }})">{{ __('general_content.converted_trans_key') }}</a>
+                                <a class="dropdown-item" wire:click="lost({{ $Lead->id }})">{{ __('general_content.lost_trans_key') }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-warning">{{ __('general_content.no_data_trans_key') }}</div>
+                </div>
+            @endforelse
+        </div>
+    @endif
+    
+    {{ $Leadslist->links() }}
 <!-- /.card-body -->
 </div>
