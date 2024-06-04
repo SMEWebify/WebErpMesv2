@@ -144,33 +144,35 @@ class InvoicesController extends Controller
 
         $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
         foreach ($DeliveryLines as $DeliveryLine) {
-            // Create  invoice line
-            $InvoiceLines = InvoiceLines::create([
-                'invoices_id' => $InvoiceCreated->id,
-                'order_line_id' => $DeliveryLine->order_line_id, 
-                'delivery_line_id' => $DeliveryLine->id, 
-                'ordre' => $DeliveryLine->ordre, 
-                'qty' => $DeliveryLine->qty,
-                'statu' => 1
-            ]); 
+            if($DeliveryLine->invoice_status != 4){
+                // Create  invoice line
+                $InvoiceLines = InvoiceLines::create([
+                    'invoices_id' => $InvoiceCreated->id,
+                    'order_line_id' => $DeliveryLine->order_line_id, 
+                    'delivery_line_id' => $DeliveryLine->id, 
+                    'ordre' => $DeliveryLine->ordre, 
+                    'qty' => $DeliveryLine->qty,
+                    'statu' => 1
+                ]); 
 
-            $DeliveryLine->invoice_status = 4; 
-            $DeliveryLine->save();
-            
-            event(new DeliveryLineUpdated($DeliveryLine->id));
+                $DeliveryLine->invoice_status = 4; 
+                $DeliveryLine->save();
+                
+                event(new DeliveryLineUpdated($DeliveryLine->id));
 
-            // update order line info
-            $OrderLine = OrderLines::find($DeliveryLine->order_line_id);
-            $OrderLine->invoiced_qty =  $OrderLine->invoiced_qty + $DeliveryLine->qty;
-            $OrderLine->invoiced_remaining_qty = $OrderLine->invoiced_remaining_qty - $DeliveryLine->qty;
-            //if we are invoiced all part
-            if($OrderLine->invoiced_remaining_qty == 0){
-                $OrderLine->invoice_status = 3;
+                // update order line info
+                $OrderLine = OrderLines::find($DeliveryLine->order_line_id);
+                $OrderLine->invoiced_qty =  $OrderLine->invoiced_qty + $DeliveryLine->qty;
+                $OrderLine->invoiced_remaining_qty = $OrderLine->invoiced_remaining_qty - $DeliveryLine->qty;
+                //if we are invoiced all part
+                if($OrderLine->invoiced_remaining_qty == 0){
+                    $OrderLine->invoice_status = 3;
+                }
+                else{
+                    $OrderLine->invoice_status = 2;
+                }
+                $OrderLine->save();
             }
-            else{
-                $OrderLine->invoice_status = 2;
-            }
-            $OrderLine->save();
         }
 
         // return view on new document

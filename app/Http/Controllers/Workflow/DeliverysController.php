@@ -69,6 +69,9 @@ class DeliverysController extends Controller
                                     })
                                     ->select('custom_fields.*', 'cfv.value as field_value')
                                     ->get();
+        $allDelivered = $id->DeliveryLines->every(function($line) {
+            return $line->invoice_status == 4;
+        });
 
         return view('workflow/deliverys-show', [
             'Delivery' => $id,
@@ -78,6 +81,7 @@ class DeliverysController extends Controller
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'CustomFields' => $CustomFields,
+            'allDelivered' => $allDelivered,
         ]);
     }
     
