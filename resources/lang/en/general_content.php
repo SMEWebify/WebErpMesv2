@@ -590,6 +590,12 @@ return [
     'opportunity_trans_key'                    => 'Opportunity',
     'new_activity_trans_key'                   => 'New activity',
     'new_event_trans_key'                      => 'New event',
+    'opportunities_list_trans_key'             => 'Opportunities list',
+    'opportunities_count_trans_key'            => 'Opportunities count',
+    'total_amount_won_trans_key'               => 'Total amount won',
+    'total_amount_lost_trans_key'              => 'Total amount lost',
+    'opportunities_by_company_trans_key'       => 'Opportunities by Company',
+    'opportunities_by_probability_trans_key'   => 'Opportunities by Probability and Amount',
 
     //QUOTES
     'quote_trans_key'                          => 'Quote',

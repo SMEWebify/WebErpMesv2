@@ -151,13 +151,23 @@
     </div>
     <!-- End Modal -->
 
+    
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-8">
+                <!-- View toggle button -->
+                <div class="col-2">
+                    <button class="btn btn-primary" wire:click="changeView('table')">
+                        <i class="fas fa-table mr-1"></i> Table
+                    </button>
+                    <button class="btn btn-secondary" wire:click="changeView('cards')">
+                        <i class="fas fa-th-large mr-1"></i> Cards
+                    </button>
+                </div>
+                <div class="col-6">
                     @include('include.search-card')
                 </div>
-                <div class="col-md-3">
+                <div class="col-2">
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -175,12 +185,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-2">
                     <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalOpportunity">
                         {{ __('general_content.new_opportunities_trans_key') }}
                     </button>
                 </div>
             </div>
+            @if($viewType === 'table')
+                
             <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                     <thead>
@@ -235,10 +247,63 @@
                         </tr>
                     </tfoot>
                 </table>
+                @else
+                <!-- Vue en cartes -->
+                <div class="row">
+                    @forelse ($Opportunities as $Opportunity)
+                        <div class="col-md-3 ">
+                            <div class="card">
+                                
+                                @if(1 == $Opportunity->statu )  @php $backgroud="bg-info" @endphp @endif
+                                @if(2 == $Opportunity->statu )  @php $backgroud="bg-primary" @endphp @endif
+                                @if(3 == $Opportunity->statu )  @php $backgroud="bg-warning" @endphp @endif
+                                @if(4 == $Opportunity->statu )  @php $backgroud="bg-success" @endphp @endif
+                                @if(5 == $Opportunity->statu )  @php $backgroud="bg-danger" @endphp @endif
+                                @if(6 == $Opportunity->statu )  @php $backgroud="bg-secondary" @endphp @endif
+
+                                <div class="card-header {{ $backgroud }}">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img src="{{ Avatar::create($Opportunity->UserManagement['name'])->toBase64() }}" />
+                                        </div>
+                                        <div class="col-8">
+                                            {{ $Opportunity->label }}
+                                        </div>
+                                        <div class="col-2">
+                                            <x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Opportunity->id])}}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text"><strong>{{ __('general_content.probality_trans_key') }}</strong> {{ $Opportunity->probality }} %</p>
+                                    <p class="card-text"><strong>{{ __('general_content.status_trans_key') }}</strong>
+                                        @if(1 == $Opportunity->statu )   <span class="badge badge-info"> {{ __('general_content.new_trans_key') }}</span>@endif
+                                        @if(2 == $Opportunity->statu )  <span class="badge badge-primary">{{ __('general_content.quote_made_trans_key') }}</span>@endif
+                                        @if(3 == $Opportunity->statu )  <span class="badge badge-warning">{{ __('general_content.negotiation_trans_key') }}</span>@endif
+                                        @if(4 == $Opportunity->statu )  <span class="badge badge-success">{{ __('general_content.closed_won_trans_key') }}</span>@endif
+                                        @if(5 == $Opportunity->statu )  <span class="badge badge-danger">{{ __('general_content.closed_lost_trans_key') }}</span>@endif
+                                        @if(6 == $Opportunity->statu )   <span class="badge badge-secondary">{{ __('general_content.informational_trans_key') }}</span>@endif
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-secondary">
+                                    <x-CompanieButton id="{{ $Opportunity->companies_id }}" label="{{ $Opportunity->companie['label'] }}"  />
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                            <div class="col-12">
+                                <div class="alert alert-warning">{{ __('general_content.no_data_trans_key') }}</div>
+                            </div>
+                        @endforelse
+                @endif
             </div>
-            {{ $Opportunities->links() }}
         <!-- /.card-body -->
         </div>
     <!-- /.card -->
     </div>
+
+    
+
+    
+    {{ $Opportunities->links() }}
 </div>

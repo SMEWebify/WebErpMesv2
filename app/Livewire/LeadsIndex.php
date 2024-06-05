@@ -18,7 +18,7 @@ class LeadsIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $viewType = 'table'; // Par défaut à 'table'
+    public $viewType = 'table'; // Defaults to 'table'
 
     public $search = '';
     public $sortField = 'statu'; // default sorting field

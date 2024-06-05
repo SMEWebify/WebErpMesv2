@@ -590,6 +590,12 @@ return [
     'opportunity_trans_key'                    => 'Oportunité',
     'new_activity_trans_key'                   => 'Nouvelle activité',
     'new_event_trans_key'                      => 'Nouveau événement',
+    'opportunities_list_trans_key'             => 'Liste des opportunités',
+    'opportunities_count_trans_key'            => 'Les opportunités comptent',
+    'total_amount_won_trans_key'               => 'Montant total gagné',
+    'total_amount_lost_trans_key'              => 'Montant total perdu',
+    'opportunities_by_company_trans_key'       => 'Opportunités par entreprise',
+    'opportunities_by_probability_trans_key'   => 'Opportunités par probabilité et montant',
 
     //QUOTES
     'quote_trans_key'                          => 'Devis',

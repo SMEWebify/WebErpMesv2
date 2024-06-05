@@ -1,5 +1,5 @@
 <div class="card-body">
-    <!-- Bouton de basculement entre les vues -->
+    <!-- View toggle button -->
     <div class="mb-3">
         <button class="btn btn-primary" wire:click="changeView('table')">
             <i class="fas fa-table mr-1"></i> Table
@@ -230,8 +230,8 @@
                     </tr>
                 </tfoot>
             </table>
-        </div>
         <!-- /.row -->
+        </div>
     <!-- /.card -->
     </div>
     @else

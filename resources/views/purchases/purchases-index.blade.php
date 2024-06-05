@@ -154,7 +154,6 @@
     <div class="tab-pane" id="List">
       @livewire('purchases-index')
     </div>
-
 <!-- /.card -->
 </div>
 

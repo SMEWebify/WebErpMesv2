@@ -50,8 +50,43 @@ class OpportunitiesController extends Controller
                                     ->groupBy('statu')
                                     ->get();
 
+        $recentActivities = OpportunitiesActivitiesLogs::latest()->take(5)->get();
 
-        return view('workflow/opportunities-index')->with('data',$data);
+
+        $opportunitiesByAmount = Opportunities::select('probality', DB::raw('SUM(budget) as total_amount'))
+                                            ->groupBy('probality')
+                                            ->get();
+
+        $opportunitiesByCloseDate = Opportunities::select('close_date', DB::raw('count(*) as count'))
+                                                    ->groupBy('close_date')
+                                                    ->get();
+
+        $opportunitiesByCompany = Opportunities::with('companie')
+                                ->select('companies_id', DB::raw('count(*) as count'))
+                                ->groupBy('companies_id')
+                                ->get();
+
+        $opportunitiesCount = Opportunities::count();
+
+
+        $quotesWon = Quotes::where('statu', 3)->whereNotNull('opportunities_id')->get();
+                                $totalQuotesWon = $quotesWon->sum(function ($quote) {
+                                    return $quote->getTotalPriceAttribute();
+                                });
+
+        $quotesLost = Quotes::where('statu', 4)->whereNotNull('opportunities_id')->get();
+                            $totalQuotesLost = $quotesLost->sum(function ($quote) {
+                                return $quote->getTotalPriceAttribute();
+                            });
+
+        return view('workflow/opportunities-index', compact( 'recentActivities',  
+                                                            'opportunitiesByAmount', 
+                                                            'opportunitiesByCloseDate', 
+                                                            'opportunitiesByCompany', 
+                                                            'totalQuotesWon', 
+                                                            'totalQuotesLost',
+                                                            'opportunitiesCount'
+                                                        ))->with('data',$data);
     }
 
     /**

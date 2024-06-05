@@ -15,7 +15,8 @@ class OpportunitiesIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    
+    public $viewType = 'table'; // Defaults to 'table'
+
     public $search = '';
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
@@ -56,6 +57,11 @@ class OpportunitiesIndex extends Component
             $this->sortAsc = true; 
         }
         $this->sortField = $field;
+    }
+
+    public function changeView($view)
+    {
+        $this->viewType = $view;
     }
 
     public function updatingSearch()
