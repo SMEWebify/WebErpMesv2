@@ -139,7 +139,7 @@ return [
     'to_submit_trans_key'                      => 'To submit',
     'submitted_trans_key'                      => 'Submitted',
     'approved_trans_key'                       => 'Approved',
-
+    
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
     'id_trans_key'                             => 'ID',
@@ -375,6 +375,7 @@ return [
     'select_controle_trans_key'                => 'Select controle type',
     'select_document_trans_key'                => 'Select your document',
     'select_task_trans_key'                    => 'Select task',
+    'select_order_trans_key'                   => 'Select order',
     'select_order_line_trans_key'              => 'Select order line',
     'select_categorie_trans_key'               => 'Select categorie',
     'reception_control_trans_key'              => 'Reception control',
@@ -901,6 +902,7 @@ return [
     'new_absence_request_trans_key'            => 'New absence request',
     'expense_report_trans_key'                 => 'Expense report',
     'new_expense_report_trans_key'             => 'New expense report',
+    'expense_validation_trans_key'             => 'Expense validation',
 
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',

@@ -15,6 +15,7 @@
             <li class="nav-item"><a class="nav-link active" href="#Profil" data-toggle="tab">{{ __('general_content.profil_setting_trans_key') }}</a></li>
             <li class="nav-item"><a class="nav-link" href="#History" data-toggle="tab">{{ __('general_content.notification_history_trans_key') }}</a></li> 
             <li class="nav-item"><a class="nav-link" href="#LeaveRequest" data-toggle="tab">{{ __('general_content.leave_request_trans_key') }}</a></li> 
+            <li class="nav-item"><a class="nav-link" href="#ExpenseReport" data-toggle="tab">{{ __('general_content.expense_report_trans_key') }}</a></li> 
         </ul>
     </div>
     <!-- /.card-header -->
@@ -163,7 +164,7 @@
                                     </button>
                                     <!-- Modal {{ $TimesAbsence->id }} -->
                                     <x-adminlte-modal id="TimesAbsence{{ $TimesAbsence->id }}" title="Update {{ $TimesAbsence->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                                        <form method="POST" action="{{ route('times.absence.update', ['id' => $TimesAbsence->id]) }}" enctype="multipart/form-data">
+                                        <form method="POST" action="{{ route('times.absence.update', ['id' => $TimesAbsence->id] ) }}" enctype="multipart/form-data">
                                             @csrf
                                             <div class="card-body">
                                                 <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
@@ -255,6 +256,136 @@
                         <div class="card-footer">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                         </div>
+                        </form>
+                    </div>
+                    <!-- /.card secondary -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <div class="tab-pane" id="ExpenseReport">
+                <div class="row">
+                    <div class="col-md-6 card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('general_content.expense_report_trans_key') }}</h3>
+                        </div>
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>{{__('general_content.label_trans_key') }}</th>
+                                    <th>{{__('general_content.status_trans_key') }}</th>
+                                    <th>{{__('general_content.date_trans_key') }}</th>
+                                    <th></th>
+                                    <th>{{__('general_content.amount_trans_key') }}</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @forelse ($ExpenseReports as $ExpenseReport)
+                                <tr>
+                                    <td>{{ $ExpenseReport->label }}</td>
+                                    <td>
+                                        @if($ExpenseReport->status  == 1){{__('general_content.done_trans_key') }} @endif
+                                        @if($ExpenseReport->status  == 2){{__('general_content.to_submit_trans_key') }} @endif
+                                        @if($ExpenseReport->status  == 3){{__('general_content.submitted_trans_key') }} @endif
+                                        @if($ExpenseReport->status  == 4){{__('general_content.returned_trans_key') }} @endif
+                                        @if($ExpenseReport->status  == 5){{__('general_content.approved_trans_key') }} @endif
+                                    </td>
+                                    <td>{{ $ExpenseReport->date }}</td>
+                                    <td>{{ $ExpenseReport->expenses()->count() }}</td>
+                                    <td>{{ $ExpenseReport->getTotalAmountAttribute() }} {{ $Factory->curency }}</td>
+                                    <td class=" py-0 align-middle">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ route('human.resources.show.expense', ['id' => $ExpenseReport->id])}}" class="btn bg-primary"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                                        </div>
+                                        @if($ExpenseReport->status  == 1 || $ExpenseReport->status  == 2 || $ExpenseReport->status  == 4)
+                                        <!-- Button Modal -->
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn bg-teal " data-toggle="modal" data-target="#ExpenseReport{{ $ExpenseReport->id }}">
+                                                <i class="fa fa-lg fa-fw  fa-edit"></i>
+                                            </button>
+                                        </div>
+                                        <!-- Modal {{ $ExpenseReport->id }} -->
+                                        <x-adminlte-modal id="ExpenseReport{{ $ExpenseReport->id }}" title="Update {{ $ExpenseReport->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                                            <form method="POST" action="{{ route('human.resources.update.expense.report', ['id' => $ExpenseReport->id]) }}" enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        <label for="label">{{__('general_content.label_trans_key') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                            </div>
+                                                            <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $ExpenseReport->label }}">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="status">{{ __('general_content.status_trans_key') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                                            </div>
+                                                            <select class="form-control" name="status" id="status">
+                                                                <option value="1" @if($ExpenseReport->status == 1) Selected @endif>{{__('general_content.done_trans_key') }}</option>
+                                                                <option value="2" @if($ExpenseReport->status == 2) Selected @endif>{{__('general_content.to_submit_trans_key') }}</option>
+                                                                <option value="3" @if($ExpenseReport->status == 3) Selected @endif>{{__('general_content.submitted_trans_key') }}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="date">{{ __('general_content.date_trans_key') }}</label>
+                                                        <input type="date" class="form-control" name="date"  id="date" value="{{ $ExpenseReport->date }}">
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer">
+                                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                                                </div>
+                                            </form>
+                                        </x-adminlte-modal>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @empty
+                                    <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>{{__('general_content.label_trans_key') }}</th>
+                                        <th>{{__('general_content.status_trans_key') }}</th>
+                                        <th>{{__('general_content.date_trans_key') }}</th>
+                                        <th></th>
+                                        <th>{{__('general_content.amount_trans_key') }}</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    <!-- /.card secondary -->
+                    </div>
+                    <div class="col-md-6 card-secondary">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ __('general_content.new_expense_report_trans_key') }}</h3>
+                        </div>
+                        <form  method="POST" action="{{ route('human.resources.create.expense.report') }}" class="form-horizontal" enctype="multipart/form-data">
+                            @csrf
+                            <div class="form-group">
+                                <label for="label">{{__('general_content.label_trans_key') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">{{ __('general_content.date_trans_key') }}</label>
+                                <input type="date" class="form-control" name="date"  id="date" >
+                            </div>
+                            <div class="card-footer">
+                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                            </div>
                         </form>
                     </div>
                     <!-- /.card secondary -->

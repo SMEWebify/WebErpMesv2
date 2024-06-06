@@ -345,6 +345,26 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             // Update Employment Contract
             Route::post('/update', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserEmploymentContract')->name('human.resources.update.contract');
         });
+
+        // Employment Contract
+        Route::group(['prefix' => 'expense'], function () {
+            // Create Expense category
+            Route::post('/create/category', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserExpenseCategorie')->name('human.resources.create.expense.category');
+            // Update Expense category
+            Route::post('/update/category', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserExpenseCategorie')->name('human.resources.update.expense.category');
+            // Create Expense Report User
+            Route::post('/create/report', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserExpenseReport')->name('human.resources.create.expense.report');
+            // Update Expense Report User
+            Route::post('/update/report', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserExpenseReport')->name('human.resources.update.expense.report');
+            // Show Expense User
+            Route::get('/show/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowExpenseUser')->name('human.resources.show.expense');
+            // Create Expense  User
+            Route::post('/create/expense/{report_id}', 'App\Http\Controllers\Admin\HumanResourcesController@storeExpenseUser')->name('human.resources.create.expense.line');
+            // Update Expense  User
+            Route::post('/update/expense/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@updateExpenseUser')->name('human.resources.update.expense.line');
+             // Valide Expense  User
+            Route::post('/valide/report', 'App\Http\Controllers\Admin\HumanResourcesController@valideExpenseUser')->name('human.resources.valide.expense.report');
+        });
     });
 
     Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'check.factory']], function () {

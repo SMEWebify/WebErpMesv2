@@ -261,7 +261,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($UserEmploymentContracts as $UserEmploymentContract)
+                                            @forelse ($UserEmploymentContracts as $UserEmploymentContract)
                                             <tr>
                                                 <td>
                                                     @if($UserEmploymentContract->statu == 1) <span class="badge badge-warning">{{__('general_content.on_trial_trans_key') }}</span> @endif
@@ -430,7 +430,9 @@
                                                     </x-adminlte-modal>
                                                 </td>
                                             </tr>
-                                            @endforeach
+                                            @empty
+                                            <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                            @endforelse
                                         </tbody>
                                         <tfoot>
                                             <tr>

@@ -26,8 +26,6 @@ class UpdateInvoiceRequest extends FormRequest
         return [
              //
             'label'=>'required',
-            'due_date'=>'date',
-            'incoterm'=>'string',
         ];
     }
 }

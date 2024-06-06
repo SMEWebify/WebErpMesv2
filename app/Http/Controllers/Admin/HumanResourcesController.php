@@ -3,13 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\UserExpense;
 use Illuminate\Http\Request;
+use App\Models\Workflow\Orders;
+use App\Models\UserExpenseReport;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Models\UserExpenseCategory;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
-use App\Models\Methods\MethodsSection;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Admin\UserEmploymentContracts;
+use App\Http\Requests\Admin\StoreUserExpenseRequest;
+use App\Http\Requests\Admin\UpdateUserExpenseRequest;
+use App\Http\Requests\Admin\StoreUserExpenseReportRequest;
+use App\Http\Requests\Admin\UpdateUserExpenseReportRequest;
+use App\Http\Requests\Admin\StoreUserExpenseCategorieRequest;
+use App\Http\Requests\Admin\UpdateUserExpenseCategorieRequest;
 use App\Http\Requests\Admin\StoreUserEmploymentContractRequest;
 use App\Http\Requests\Admin\UpdateUserEmploymentContractRequest;
 
@@ -30,11 +40,17 @@ class HumanResourcesController extends Controller
         $Users = User::orderBy('id')->paginate(20);
         $userSelect = $this->SelectDataService->getUsers();
         $SectionsSelect = $this->SelectDataService->getSection();
+        $ExpenseReports = UserExpenseReport::where('status', 3)
+                                            ->orWhere('status', 5)
+                                            ->get();
+        $UserExpenseCategories = UserExpenseCategory::All();
 
         return view('admin/human-resources-index', [
             'Users' => $Users,
             'userSelect' => $userSelect,
             'SectionsSelect' =>  $SectionsSelect,
+            'UserExpenseCategories' =>  $UserExpenseCategories,
+            'ExpenseReports' =>  $ExpenseReports,
         ]);
     }
 
@@ -43,10 +59,11 @@ class HumanResourcesController extends Controller
      */
     public function ShowUser($id)
     {
-        $User = User::find($id);
+        $User = User::findOrFail($id);
         $userSelect = $this->SelectDataService->getUsers();
-        $SectionsSelect  = $this->SelectDataService->getSection();;
+        $SectionsSelect  = $this->SelectDataService->getSection();
         $UserEmploymentContracts = UserEmploymentContracts::where('user_id', $id)->get();
+        $UserExpenseReports = UserExpenseReport::where('user_id', $id)->get();
         $Roles = Role::all();
         return view('admin/users-show', [
             'User' => $User,
@@ -54,6 +71,7 @@ class HumanResourcesController extends Controller
             'userSelect' => $userSelect,
             'SectionsSelect' =>  $SectionsSelect,
             'UserEmploymentContracts' =>  $UserEmploymentContracts,
+            'UserExpenseReports' =>  $UserExpenseReports,
         ]);
     }
 
@@ -150,4 +168,117 @@ class HumanResourcesController extends Controller
         return redirect()->route('human.resources.show.user', ['id' => $UserEmploymentContract->user_id])->with('success', 'Successfully update contract');
     }
     
+    public function storeUserExpenseCategorie(StoreUserExpenseCategorieRequest $request)
+    {
+        // Create Line
+        $UserExpenseCategory = UserExpenseCategory::create([
+                                                            'label'=>$request->label,  
+                                                            'description'=>$request->description, 
+                                                        ]);
+
+        return redirect()->route('human.resources')->with('success', 'Successfully add category');
+    }
+
+    public function updateUserExpenseCategorie(UpdateUserExpenseCategorieRequest $request)
+    {
+        // Create Line
+        $UserExpenseCategory = UserExpenseCategory::findOrFail($request->id);
+        $UserExpenseCategory->label  =$request->label;
+        $UserExpenseCategory->description =$request->description;
+        $UserExpenseCategory->save();
+
+        return redirect()->route('human.resources')->with('success', 'Successfully update category');
+    }
+
+    public function storeUserExpenseReport(StoreUserExpenseReportRequest $request)
+    {
+        // Create Line
+        $UserExpenseReport = UserExpenseReport::create([
+                                                            'user_id'=> Auth::id(),
+                                                            'date'=>$request->date, 
+                                                            'label'=>$request->label,  
+                                                        ]);
+
+        return redirect()->route('user.profile', ['id' => Auth::id()])->with('success', 'Successfully add expense report');
+    }
+
+    public function updateUserExpenseReport(UpdateUserExpenseReportRequest $request)
+    {
+        // updpate Line
+        $UserExpenseReport = UserExpenseReport::findOrFail($request->id);
+        $UserExpenseReport->label  =$request->label;
+        $UserExpenseReport->status =$request->status;
+        $UserExpenseReport->date =$request->date;
+        $UserExpenseReport->save();
+
+        return redirect()->route('user.profile', ['id' =>Auth::id()])->with('success', 'Successfully update  expense report');
+    }
+
+    public function ShowExpenseUser($id)
+    {
+        $UserExpenseReports = UserExpenseReport::findOrFail($id);
+        $UserExpenseCategoriesSelect = UserExpenseCategory::All();
+        $userSelect = $this->SelectDataService->getUsers();
+        $OrderLineList = Orders::orderby('created_at', 'desc')->get();
+        return view('admin/expenses', [
+            'userSelect' =>  $userSelect,
+            'UserExpenseCategoriesSelect' =>  $UserExpenseCategoriesSelect,
+            'UserExpenseReports' =>  $UserExpenseReports,
+            'OrderLineList' =>  $OrderLineList,
+        ]);
+    }
+
+    public function storeExpenseUser(StoreUserExpenseRequest $request, int $report_id)
+    {
+        // Create Line
+        $UserExpense = UserExpense::create([
+                                                'report_id'=>$report_id, 
+                                                'user_id'=> Auth::id(),
+                                                'category_id'=>$request->category_id,  
+                                                'expense_date'=>$request->expense_date, 
+                                                'location'=>$request->location, 
+                                                'description'=>$request->description, 
+                                                'amount'=>$request->amount, 
+                                                'payer_id'=>$request->payer_id, 
+                                                'tax'=>$request->tax, 
+                                                'order_id'=>$request->order_id, 
+                                            ]);
+
+        if($request->hasFile('scan_file')){
+            $UserExpense = UserExpense::findOrFail($UserExpense->id);
+            $file =  $request->file('scan_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $request->scan_file->move(public_path('file/Expense'), $filename);
+            $UserExpense->update(['scan_file' => $filename]);
+            $UserExpense->save();
+        }
+
+        return redirect()->route('human.resources.show.expense', ['id' => $report_id])->with('success', 'Successfully add expense report');
+    }
+
+    public function updateExpenseUser(UpdateUserExpenseRequest $request)
+    {
+        $UserExpense = UserExpense::findOrFail($request->id);
+        $UserExpense->category_id  =$request->category_id;
+        $UserExpense->expense_date =$request->expense_date;
+        $UserExpense->location =$request->location;
+        $UserExpense->description =$request->description;
+        $UserExpense->amount =$request->amount;
+        $UserExpense->payer_id =$request->payer_id;
+        $UserExpense->tax =$request->tax;
+        $UserExpense->order_id =$request->order_id;
+        $UserExpense->save();
+
+        return redirect()->route('human.resources.show.expense', ['id' => $UserExpense->report_id])->with('success', 'Successfully add expense report');
+    }
+
+    public function valideExpenseUser(Request $request)
+    {
+        // valide Line
+        $UserExpenseReport = UserExpenseReport::findOrFail($request->id);
+        $UserExpenseReport->status =$request->status;
+        $UserExpenseReport->save();
+
+        return redirect()->route('human.resources')->with('success', 'Successfully valide  expense report');
+    }
 }
