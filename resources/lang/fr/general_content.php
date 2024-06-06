@@ -375,6 +375,7 @@ return [
     'select_controle_trans_key'                => 'Selectionner type de contrôle',
     'select_document_trans_key'                => 'Selectionner le document',
     'select_task_trans_key'                    => 'Selectionner la tâche',
+    'select_order_line_trans_key'              => 'Selectionner une ligne de commande',
     'select_categorie_trans_key'               => 'Selectionner la categorie',
     'reception_control_trans_key'              => 'Controle de reception',
 
