@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Workflow\Orders;
 use App\Models\Products\Products;
@@ -23,9 +24,11 @@ class StockCurrent extends Component
     public $produitsAvecStock = [];
     public $stockAndNeed = true;
 
+    public $Factory = [];
+    
     public function mount()
     {
-        
+        $this->Factory = Factory::first();
     }
 
     public function render()

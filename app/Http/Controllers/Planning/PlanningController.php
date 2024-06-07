@@ -11,14 +11,24 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PlanningController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Retrieve start and end dates from the query
+        $startDate = $request->input('start_date', Carbon::now()->format('Y-m-d'));
+        $endDate = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d')); // Default, 1 month from today
+
+        // Check that the start date is not greater than the end date
+        if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
+            return redirect()->route('production.load.planning')->withErrors(['The start date must be before or equal to the end date.']);
+        }
+
+
         // Dans votre contrôleur ou ailleurs où vous avez besoin de cette information
         $countTaskNullRessource = Task::whereNotNull('order_lines_id')->whereDoesntHave('resources')->count();
 
         // Collect Tasks
         $taches = Task::with('service')
-                        ->where('end_date', '>=', date("Y-m-d"))
+                        ->whereBetween('end_date', [$startDate, $endDate])
                         ->whereNotNull('order_lines_id')
                         ->where(function (Builder $query) {
                             return $query->where('tasks.type', 1)
@@ -106,7 +116,7 @@ class PlanningController extends Controller
         }
 
         // Extract all unique dates from each array into $rateChargePerServiceDay
-        $allDatesUniques = [Carbon::now()->format('Y-m-d')];
+        $allDatesUniques = [$startDate];
         foreach ($rateChargePerServiceDay as $ratePerService) {
             $datesService = array_keys($ratePerService);
             $allDatesUniques = array_merge($allDatesUniques, $datesService);
@@ -122,13 +132,13 @@ class PlanningController extends Controller
 
         // Generate all dates between the smallest and largest date
         $possibleDates = [];
-        $currentDate = $minDate;
-        while ($currentDate <= $maxDate) {
+        $currentDate = $startDate;
+        while ($currentDate <= $endDate) {
             $possibleDates[] = $currentDate;
             $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
         }
 
         
-        return view('workflow/planning-index', compact('taches', 'countTaskNullRessource', 'countTaskNullDate', 'tasksPerServiceDay', 'structureRateLoad', 'services', 'possibleDates'));
+        return view('workflow/planning-index', compact('taches', 'countTaskNullRessource', 'countTaskNullDate', 'tasksPerServiceDay', 'structureRateLoad', 'services', 'possibleDates', 'startDate', 'endDate'));
     }
 }
