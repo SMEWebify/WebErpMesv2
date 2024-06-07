@@ -16,7 +16,7 @@ class OrderLinesTableSeeder extends Seeder
     public function run()
     {
         //
-        $OrderLines = OrderLines::factory()->count(2500)->create();
+        $OrderLines = OrderLines::factory()->count(5000)->create();
 
         foreach ($OrderLines as $orderLine) {
             OrderLineDetails::factory()

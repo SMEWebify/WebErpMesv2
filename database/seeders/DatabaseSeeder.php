@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
         AccountingPaymentConditions::factory()->count(5)->create();
         AccountingPaymentMethod::factory()->count(3)->create();
         AccountingDelivery::factory()->count(3)->create();
-        /*
+        /*A
         *Accounting allocation seeder
         */
 

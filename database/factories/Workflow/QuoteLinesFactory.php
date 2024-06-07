@@ -27,12 +27,13 @@ class QuoteLinesFactory extends Factory
 
     public function definition()
     {
+        $quote = Quotes::all()->random();
         $this->code = $this->faker->unique()->numerify('PART-####');
         $this->qty = $this->faker->biasedNumberBetween($min = 1, $max = 2990);
 
         return [
             //
-            'quotes_id' =>  Quotes::all()->random()->id,
+            'quotes_id' =>  $quote->id,
             'ordre' => $this->faker->numberBetween($min = 1, $max = 10),
             'code' => $this->code,
 			'label' => $this->code,
@@ -41,17 +42,7 @@ class QuoteLinesFactory extends Factory
 			'selling_price' => $this->faker->biasedNumberBetween($min = 1, $max = 10),
 			'discount' => $this->faker->numberBetween($min = 0, $max = 3),
 			'accounting_vats_id' => AccountingVat ::all()->random()->id,
-
-
-            /* I dont know get validity_date from same order where id is use
-            * we can use this sql requete after seeder for update delivery date line same as order date
-            UPDATE 
-                quote_lines,
-                quotes
-            SET quote_lines.delivery_date = quotes.validity_date
-            WHERE quotes.id = quote_lines.quotes_id
-            */
-
+            'delivery_date' => $quote->validity_date,
         ];
     }
 }
