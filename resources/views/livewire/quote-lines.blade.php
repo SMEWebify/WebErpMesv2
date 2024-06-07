@@ -195,6 +195,20 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-4">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fab fa-mdb"></i></span>
+                                                                </div>
+                                                                <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->finishing }}" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-4">
+                                                        </div>
+                                                        <div class="col-4">
+                                                        </div>
+                                                    </div>
                                                     <hr>
                                                     <div class="row">
                                                         <x-FormTextareaComment  label="Internal comment" name="internal_comment" comment="{{ $QuoteLine->QuoteLineDetails->internal_comment }}" />

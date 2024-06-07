@@ -22,6 +22,7 @@ class QuoteLineDetails extends Model
                             'diameter_oversize',
                             'material', 
                             'thickness', 
+                            'finishing',
                             'weight', 
                             'material_loss_rate', 
                             'cad_file',  

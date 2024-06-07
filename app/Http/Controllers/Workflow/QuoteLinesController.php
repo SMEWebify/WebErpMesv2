@@ -39,6 +39,7 @@ class QuoteLinesController extends Controller
         $QuoteLineDetails->diameter_oversize=$request->diameter_oversize;
         $QuoteLineDetails->material=$request->material;
         $QuoteLineDetails->thickness=$request->thickness;
+        $QuoteLineDetails->finishing=$request->finishing;
         $QuoteLineDetails->weight=$request->weight;
         $QuoteLineDetails->material_loss_rate=$request->material_loss_rate;
         $QuoteLineDetails->internal_comment=$request->internal_comment;

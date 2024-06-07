@@ -99,6 +99,7 @@ class StockCurrent extends Component
             'diameter_oversize'=>$ProductDetail->diameter_oversize,
             'material'=>$ProductDetail->material,
             'thickness'=>$ProductDetail->thickness,
+            'finishing'=>$ProductDetail->finishing,
             'weight'=>$ProductDetail->weight,
             'material_loss_rate'=>0,
             'cad_file'=>$ProductDetail->drawing_file,

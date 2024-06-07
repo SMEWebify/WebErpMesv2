@@ -38,6 +38,7 @@ class OrderLinesController extends Controller
         $OrderLineDetails->diameter_oversize=$request->diameter_oversize;
         $OrderLineDetails->material=$request->material;
         $OrderLineDetails->thickness=$request->thickness;
+        $OrderLineDetails->finishing = $request->finishing;
         $OrderLineDetails->weight=$request->weight;
         $OrderLineDetails->material_loss_rate=$request->material_loss_rate;
         $OrderLineDetails->internal_comment=$request->internal_comment;

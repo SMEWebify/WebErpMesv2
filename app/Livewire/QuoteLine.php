@@ -262,6 +262,7 @@ class QuoteLine extends Component
             $newProductDetail = Products::findOrFail($newProduct->id);
             $newProductDetail->material = $QuoteLineDetailData->material;
             $newProductDetail->thickness = $QuoteLineDetailData->thickness;
+            $newProductDetail->finishing = $QuoteLineDetailData->finishing;
             $newProductDetail->weight = $QuoteLineDetailData->weight;
             $newProductDetail->x_size = $QuoteLineDetailData->x_size;
             $newProductDetail->y_size = $QuoteLineDetailData->y_size;
@@ -431,6 +432,7 @@ class QuoteLine extends Component
                         'diameter_oversize'=>$QuoteLineDetailData->diameter_oversize,
                         'material'=>$QuoteLineDetailData->material,
                         'thickness'=>$QuoteLineDetailData->thickness,
+                        'finishing'=>$QuoteLineDetailData->finishing,
                         'weight'=>$QuoteLineDetailData->weight,
                         'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
                         'cad_file'=>$QuoteLineDetailData->cad_file,

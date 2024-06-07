@@ -275,6 +275,7 @@ class OrderLine extends Component
                 $newProductDetail = Products::findOrFail($newProduct->id);
                 $newProductDetail->material = $OrderLineDetailData->material;
                 $newProductDetail->thickness = $OrderLineDetailData->thickness;
+                $newProductDetail->finishing = $OrderLineDetailData->finishing;
                 $newProductDetail->weight = $OrderLineDetailData->weight;
                 $newProductDetail->x_size = $OrderLineDetailData->x_size;
                 $newProductDetail->y_size = $OrderLineDetailData->y_size;
