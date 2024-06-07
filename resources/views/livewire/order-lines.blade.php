@@ -72,7 +72,9 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                             <td>{{ $OrderLine->selling_price }} {{ $Factory->curency }}</td>
                             <td>{{ $OrderLine->discount }} %</td>
                             <td>{{ $OrderLine->VAT['rate'] }} %</td>
-                            <td>{{ $OrderLine->delivery_date }}</td>
+                            <td><a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="{{ __('general_content.internal_delay_trans_key') }} : {{ $OrderLine->internal_delay }}">{{ $OrderLine->delivery_date }}</a>
+                                
+                                </td>
                             <td>
                                 @if(1 == $OrderLine->tasks_status )  <span class="badge badge-info">{{ __('general_content.no_task_trans_key') }}</span>@endif
                                 @if(2 == $OrderLine->tasks_status )  

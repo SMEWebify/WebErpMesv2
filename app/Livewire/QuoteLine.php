@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
+use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
@@ -107,6 +108,7 @@ class QuoteLine extends Component
         $this->quote_Statu = $QuoteStatu;
         $this->delivery_date = $QuoteDelay;
         $this->status_id = Status::select('id')->orderBy('order')->first();
+        $this->Factory = Factory::first();
         $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
         $this->VATSelect = AccountingVat::select('id', 'label', 'default')->orderBy('rate')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get();
@@ -402,6 +404,10 @@ class QuoteLine extends Component
 
                     //get data to dulicate for new order
                     $QuoteLineData = Quotelines::find($key);
+
+                    $date = date_create($QuoteLineData->delivery_date);
+                    $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
+                    
                     $newOrderline = Orderlines::create([
                         'orders_id'=>$OrdersCreated->id,
                         'ordre'=>$QuoteLineData->ordre,
@@ -415,6 +421,7 @@ class QuoteLine extends Component
                         'selling_price'=>$QuoteLineData->selling_price,
                         'discount'=>$QuoteLineData->discount,
                         'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
+                        'internal_delay'=>$internalDelay,
                         'delivery_date'=>$QuoteLineData->delivery_date,
                     ]);
 

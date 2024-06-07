@@ -70,6 +70,10 @@ class StockCurrent extends Component
                                         'type'=>2, 
         ]);
 
+        $date = date_create($validity_date);
+        $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
+                    
+
         $newOrderline = Orderlines::create([
             'orders_id'=>$OrdersCreated->id,
             'ordre'=>10,
@@ -83,6 +87,7 @@ class StockCurrent extends Component
             'selling_price'=>$sellingPrice,
             'discount'=>0,
             'accounting_vats_id'=>$accountingVatDefaultId,
+            'internal_delay'=>$internalDelay,
             'delivery_date'=>$validity_date,
         ]);
 

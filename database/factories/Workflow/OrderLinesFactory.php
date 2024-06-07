@@ -44,6 +44,7 @@ class OrderLinesFactory extends Factory
 			'selling_price' => $this->faker->biasedNumberBetween($min = 1, $max = 5),
 			'discount' => $this->faker->numberBetween($min = 0, $max = 3),
 			'accounting_vats_id' => AccountingVat ::all()->random()->id,
+            'internal_delay' => $order->validity_date,
             'delivery_date' => $order->validity_date,
         ];
     }

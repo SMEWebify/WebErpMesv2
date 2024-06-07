@@ -180,6 +180,7 @@ return [
     'discount_trans_key'                       => 'Discount',
     'vat_trans_key'                            => 'VAT',
     'delivery_date_trans_key'                  => 'Delivery date',
+    'internal_delay_trans_key'                 => 'Internal delay',
     'tasks_status_trans_key'                   => 'Tasks status',
     'delivery_status_trans_key'                => 'Delivery status',
     'invoice_status_trans_key'                 => 'Invoice status',

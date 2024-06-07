@@ -394,7 +394,6 @@ class OrderLine extends Component
             }*/
             $date = date_create($this->delivery_date);
             $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
-        
             
             $OderLineToUpdate->ordre = $this->ordre;
             $OderLineToUpdate->code = $this->code;
