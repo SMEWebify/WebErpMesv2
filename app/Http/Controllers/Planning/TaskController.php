@@ -78,7 +78,11 @@ class TaskController extends Controller
      */
     public function kanban()
     {
-        $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->with('tasks.service')->get();
+        $tasks = Status::where('title', '!=', 'Supplied')
+                        ->orderBy('order', 'ASC')
+                        ->with('tasks.OrderLines.order')
+                        ->with('tasks.service')
+                        ->get();
         return view('workflow/kanban-index', compact('tasks'));
     }
 
@@ -126,7 +130,10 @@ class TaskController extends Controller
             }
         }
 
-        $tasks = Status::orderBy('order', 'ASC')->with('tasks.OrderLines.order')->with('tasks.service')->get();
+        $tasks = Status::where('title', '!=', 'Supplied')
+                        ->orderBy('order', 'ASC')
+                        ->with('tasks.OrderLines.order')
+                        ->with('tasks.service')->get();
         return  $tasks;
     }
 
