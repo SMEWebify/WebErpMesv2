@@ -139,7 +139,9 @@ class CompaniesController extends Controller
     public function update(UpdateCompanieRequest $request)
     {
         $Companie = Companies::findOrFail($request->id);
+        $Companie->civility  =$request->civility;
         $Companie->label  =$request->label;
+        $Companie->last_name  =$request->last_name;
         $Companie->website =$request->website;
         $Companie->fbsite  =$request->fbsite;
         $Companie->twittersite  =$request->twittersite; 

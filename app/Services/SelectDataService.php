@@ -33,12 +33,12 @@ class SelectDataService
     
     public function getCompanies()
     {
-        return Companies::select('id', 'code','label')->where('active', 1)->get();
+        return Companies::select('id', 'code','client_type','civility','label','last_name')->where('active', 1)->get();
     }
 
     public function getSupplier()
     {
-        return Companies::select('id', 'code','label')->orderBy('label')->where('statu_supplier', 2)->get();
+        return Companies::select('id', 'code','client_type','civility','label','last_name')->orderBy('label')->where('statu_supplier', 2)->get();
     }
 
     public function getAddress()

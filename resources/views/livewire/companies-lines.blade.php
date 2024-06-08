@@ -26,16 +26,6 @@
                                                 @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-4">
-                                                <label for="label">{{ __('general_content.name_company_trans_key') }}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control @error('label') is-invalid @enderror"  wire:model.live="label" name="label"  id="label" placeholder="{{ __('general_content.name_company_trans_key') }}">
-                                                </div>
-                                                @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                                            </div>
-                                            <div class="form-group col-md-4">
                                                 <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label> 
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -50,6 +40,63 @@
                                                 </div>
                                                 @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="client_type">{{ __('Type de Client') }}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
+                                                        </div>
+                                                        <select class="form-control" id="client_type" wire:click.prevent="toggleClientType()" wire:model.live="client_type">
+                                                            <option value="1">{{ __('Société') }}</option>
+                                                            <option value="2">{{ __('Particulier') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        <div class="form-row">
+                                            @if ($client_type === 2)
+                                            <div class="form-group col-md-4">
+                                                <label for="label">{{ __('general_content.civility_trans_key') }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="civility" wire:model.live="civility" placeholder="{{ __('general_content.civility_trans_key') }}"> 
+                                                </div>
+                                                @error('civility') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="label">{{ __('general_content.first_name_trans_key') }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="label" wire:model.live="label" placeholder="{{ __('general_content.first_name_trans_key') }}"> 
+                                                </div>
+                                                @error('label') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="last_name">{{ __('general_content.contact_name_trans_key') }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="last_name" wire:model.live="last_name" placeholder="{{ __('general_content.contact_name_trans_key') }}">
+                                                </div>
+                                                @error('last_name') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
+                                            @else
+                                            <div class="form-group col-md-4">
+                                                <label for="label">{{ __('general_content.name_company_trans_key') }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control @error('label') is-invalid @enderror"  wire:model.live="label" name="label"  id="label" placeholder="{{ __('general_content.name_company_trans_key') }}">
+                                                </div>
+                                                @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="card card-body">
@@ -101,15 +148,15 @@
                                         </div>
                                         <div class="form-row">
                                             <div class="form-group col-md-3">
-                                                <input type="text" class="form-control" name="siren" id="siren"  wire:model.live="siren" placeholder="{{ __('general_content.reg_number_trans_key') }}">
+                                                <input type="text" class="form-control" name="siren" id="siren"  wire:model.live="siren" placeholder="{{ __('general_content.reg_number_trans_key') }}" @if($client_type == 2) disabled @endif>
                                                 @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-3">
-                                                <input type="text" class="form-control" name="naf_code" id="naf_code"  wire:model.live="naf_code" placeholder="{{ __('general_content.naf_code_trans_key') }}">
+                                                <input type="text" class="form-control" name="naf_code" id="naf_code"  wire:model.live="naf_code" placeholder="{{ __('general_content.naf_code_trans_key') }}" @if($client_type == 2) disabled @endif>
                                                 @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                             <div class="form-group col-md-3">
-                                                <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  wire:model.live="intra_community_vat" placeholder="{{ __('general_content.vat_number_trans_key') }}">
+                                                <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  wire:model.live="intra_community_vat" placeholder="{{ __('general_content.vat_number_trans_key') }}" @if($client_type == 2) disabled @endif>
                                                 @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                         </div>

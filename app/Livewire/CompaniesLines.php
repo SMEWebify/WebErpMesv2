@@ -32,12 +32,18 @@ class CompaniesLines extends Component
     public $discount;
     public $account_general_customer, $account_auxiliary_customer, $account_general_supplier, $account_auxiliary_supplier, $recept_controle, $comment;
 
+    public $client_type = 1;
+    public $civility, $last_name; 
+
     // Validation Rules
     protected $rules = [
         'code' =>'required|unique:companies',
+        'client_type' => 'required',
         'label'=>'required',
         'user_id'=>'required',
         'recept_controle'=>'required',
+        'civility' => 'nullable|required_if:client_type,2',
+        'last_name' => 'nullable|required_if:client_type,2',
     ];
 
     public function sortBy($field)
@@ -78,13 +84,28 @@ class CompaniesLines extends Component
         ]);
     }
 
+    public function toggleClientType()
+    {
+        if($this->client_type == 1){
+            $this->client_type = 1;
+            $this->civility = null;
+            $this->last_name = null;
+        }
+        else{
+            $this->client_type = 2;
+        }
+    }
+
     public function storeCompany(){
 
         $this->validate();
             // Create Line
             $CompaniesCreated = Companies::create([
                 'code'=>$this->code, 
+                'client_type' => $this->client_type,
+                'civility' => $this->civility,
                 'label'=>$this->label,
+                'last_name' => $this->last_name,
                 'website'=>$this->website,
                 'fbsite'=>$this->fbsite,
                 'twittersite'=>$this->twittersite, 

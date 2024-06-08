@@ -174,7 +174,7 @@ class PurchasesController extends Controller
      */
     public function showQuotation(PurchasesQuotation $id)
     {   
-        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchasesQuotation(), $id->id);
@@ -195,7 +195,7 @@ class PurchasesController extends Controller
      */
     public function showPurchase(Purchases $id)
     {   
-        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
         $PurchaseCalculator = new PurchaseCalculator($id);

@@ -67,7 +67,7 @@ class PurchasesWaintingInvoice extends Component
             $this->label = $this->document_type ."-". $this->LastInvoice;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->where('statu_supplier', '=', 2)->orderBy('code')->get();
+        $this->CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('statu_supplier', '=', 2)->orderBy('code')->get();
     }
 
     

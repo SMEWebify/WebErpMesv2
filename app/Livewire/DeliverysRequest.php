@@ -90,7 +90,7 @@ class DeliverysRequest extends Component
                                             ->unique();
 
         // Filter companies based on unique IDs
-        $this->CompaniesSelect = Companies::select('id', 'label', 'code')
+        $this->CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')
                                             ->whereIn('id', $companyIdsInOrderLines)
                                             ->orderBy('code')
                                             ->get();

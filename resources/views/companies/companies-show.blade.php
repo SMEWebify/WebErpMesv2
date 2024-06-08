@@ -37,13 +37,24 @@
                       <label for="InputWebSite">{{ __('general_content.general_information_trans_key') }}</label>
                     </div>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="col-1">
                         <div class="text-muted">
                           <label for="label">{{ __('general_content.external_id_trans_key') }}</label>
                           <b class="d-block">{{ $Companie->code }}</b>
                         </div>
                       </div>
-                      <div class="col-3">
+                      <div class="col-2">
+                        <label for="companies_notification">{{__('general_content.active_trans_key') }}</label>
+                        <div class="input-group">
+                              @if($Companie->active == 1)  
+                                  <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  checked />
+                              @else
+                                  <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  />
+                              @endif
+                        </div>
+                      </div>
+                      @if($Companie->client_type == 1) 
+                      <div class="col-4">
                         <label for="label">{{ __('general_content.name_company_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -52,6 +63,35 @@
                             <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="{{ __('general_content.name_company_trans_key') }}">
                         </div>
                       </div>
+                      @else
+                      <div class="col-2">
+                        <label for="label">{{ __('general_content.civility_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            </div>
+                            <input type="text" class="form-control" name="civility"  id="civility" value="{{ $Companie->civility }}" placeholder="{{ __('general_content.civility_trans_key') }}">
+                        </div>
+                      </div>
+                      <div class="col-2">
+                        <label for="label">{{ __('general_content.first_name_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            </div>
+                            <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="{{ __('general_content.first_name_trans_key') }}">
+                        </div>
+                      </div>
+                      <div class="col-2">
+                        <label for="last_name">{{ __('general_content.contact_name_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            </div>
+                            <input type="text" class="form-control" name="last_name"  id="last_name" value="{{ $Companie->last_name }}" placeholder="{{ __('general_content.contact_name_trans_key') }}">
+                        </div>
+                      </div>
+                      @endif
                       <div class="col-3">
                         <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
                         <div class="input-group">
@@ -64,16 +104,6 @@
                                 <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
                             @endforeach
                             </select>
-                        </div>
-                      </div>
-                      <div class="col-3">
-                        <label for="companies_notification">{{__('general_content.active_trans_key') }}</label>
-                        <div class="input-group">
-                              @if($Companie->active == 1)  
-                                  <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  checked />
-                              @else
-                                  <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  />
-                              @endif
                         </div>
                       </div>
                     </div>
@@ -123,15 +153,15 @@
                     </div>
                     <div class="row">
                         <div class="col-3">
-                            <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="{{ __('general_content.reg_number_trans_key') }}">
+                            <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="{{ __('general_content.reg_number_trans_key') }}"  @if($Companie->client_type == 2) disabled @endif>
                             @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
                         <div class="col-3">
-                            <input type="text" class="form-control" name="naf_code" id="naf_code"  value="{{ $Companie->naf_code }}" placeholder="{{ __('general_content.naf_code_trans_key') }}">
+                            <input type="text" class="form-control" name="naf_code" id="naf_code"  value="{{ $Companie->naf_code }}" placeholder="{{ __('general_content.naf_code_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
                             @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
                         <div class="col-3">
-                            <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="{{ __('general_content.vat_number_trans_key') }}">
+                            <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="{{ __('general_content.vat_number_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
                             @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
                     </div>

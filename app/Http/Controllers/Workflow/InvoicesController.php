@@ -186,7 +186,7 @@ class InvoicesController extends Controller
      */
     public function show(Invoices $id)
     {
-        $CompanieSelect = Companies::select('id', 'code','label')->get();
+        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
         $OrderCalculator = new InvoiceCalculator($id);

@@ -22,7 +22,10 @@ class Companies extends Model
     use HasFactory;
 
     protected $fillable = ['code', 
+                            'client_type',
+                            'civility',
                             'label',
+                            'last_name',
                             'website',
                             'fbsite',
                             'twittersite', 
@@ -42,6 +45,16 @@ class Companies extends Model
                             'comment',
                             'active',
                         ];
+
+    public function getLabelAttribute()
+    {
+        if ($this->client_type == '2') { // If it is an individual
+            return "{$this->civility} {$this->attributes['label']} {$this->last_name}";
+        }
+
+        // Otherwise, return the original label
+        return $this->attributes['label'];
+    }
 
     public function Addresses()
     {
