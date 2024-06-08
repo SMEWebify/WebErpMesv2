@@ -141,7 +141,7 @@ class HomeController extends Controller
                                                             ])
                                                             ->where('delivery_status', '<', 3)
                                                             ->groupBy('orders_id')
-                                                            ->take(4)
+                                                            ->take(10)
                                                             ->get();
         //late Order count
         $LateOrdersCount = OrderLines::orderBy('id', 'desc')->where('delivery_date', '<', Carbon::now())
@@ -153,7 +153,7 @@ class HomeController extends Controller
         $LateOrders = OrderLines::orderBy('id', 'desc')->where('delivery_date', '<', Carbon::now())
                                                         ->where('delivery_status', '<', 3)
                                                         ->groupBy('orders_id')
-                                                        ->take(4)
+                                                        ->take(10)
                                                         ->get();
 
         //Quote data for chart
@@ -183,7 +183,7 @@ class HomeController extends Controller
                     ->get();
 
         //5 last product add 
-        $LastProducts = Products::orderBy('id', 'desc')->take(5)->get();
+        $LastProducts = Products::orderBy('id', 'desc')->take(6)->get();
 
         //total price
         $data['delivered_month_in_progress'] = DB::table('delivery_lines')

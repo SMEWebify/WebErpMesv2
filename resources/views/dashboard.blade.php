@@ -7,7 +7,16 @@
 @stop
 
 @section('content')
-
+<style>
+  .full-height {
+      height: 100%;
+  }
+  .row-extend {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+  }
+</style>
   @if($userRoleCount < 1)
   <div class="card">
     <div class="card-body">
@@ -20,8 +29,8 @@
   </div>
   @endif
 
-  <div class="row">
-    <div class="col-lg-2 col-6">
+  <div class="row ">
+    <div class="col-lg-3 col-md-4">
       <x-adminlte-small-box title="{{$data['customers_count']}}"
                             text="{{ __('general_content.client_trans_key') }}" 
                             icon="far fa-building"
@@ -30,7 +39,7 @@
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
-    <div class="col-lg-2 col-6">
+    <div class="col-lg-3 col-md-4">
       <x-adminlte-small-box title="{{ $data['suppliers_count'] }}"
                             text="{{ __('general_content.suppliers_trans_key') }}" 
                             icon="far fa-building"
@@ -39,104 +48,176 @@
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
-    <div class="col-lg-2 col-6">
-      <x-adminlte-small-box title="{{ $data['user_count'] }}" 
-                            text="{{ __('general_content.users_trans_key') }}" 
-                            icon="fas fa-user-plus"
-                            theme="warning" 
-                            url="{{ route('users') }}" 
-                            url-text="{{ __('general_content.view_details_trans_key') }}"/>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-2 col-6">
+    <div class="col-lg-3 col-md-4">
       <x-adminlte-small-box title="{{ $data['quotes_count'] }}" 
                             text="{{ __('general_content.quote_trans_key') }}" 
                             icon="fas fa-calculator"
-                            theme="danger" 
+                            theme="primary" 
                             url="{{ route('quotes') }}" 
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
-    <div class="col-lg-2 col-6">
+    <div class="col-lg-3 col-md-4">
       <x-adminlte-small-box title="{{ $data['orders_count'] }}" 
                             text="{{ __('general_content.orders_trans_key') }}" 
                             icon="fas fa-shopping-cart"
-                            theme="secondary" 
+                            theme="yellow" 
                             url="{{ route('orders') }}" 
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
-    <div class="col-lg-2 col-6">
-      <x-adminlte-small-box title="{{ $data['quality_non_conformities_count'] }}"
-                            text="{{ __('general_content.non_conformities_trans_key') }}"
-                            icon="fas fa-times-circle"
-                            theme="primary" 
-                            url="{{ route('quality') }}" 
-                            url-text="{{ __('general_content.view_details_trans_key') }}"/>
-    </div>
-    <!-- ./col -->
-  </div>
-  <!-- /.row -->
 
-  <div class="row">
-    <!-- TABLE: ANNOUNCEMENT -->
-    <div class="col-md-4">
-      <div class="card bg-gradient-primary">
-        <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.announcement_trans_key') }} 
-            {{ optional($Announcement)->GetPrettyCreatedAttribute() }} by {{ optional($Announcement)->UserManagement['name'] ?? 'Nobody'  }}
-          </h3> 
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body ">
-          <h2><i class="icon fas fa-info"></i> {{ $Announcement->title ?? 'No announcement' }}</h2>
-            <div class="bg-primary disabled color-palette">
-              <h5>{!! nl2br(htmlspecialchars(optional($Announcement)->comment, ENT_NOQUOTES)) ?? 'No announcement' !!}</h5>
-            </div>       
-        </div>
-        <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
-    </div>
-    <!-- /.col -->
-
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">{{ __('general_content.monthly_recap_report_trans_key') }}</h5>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <div class="row">
+    <!-- TABLE: INCOMING AND LATE ORDER -->
+    <div class="col-md-12">
+      <x-adminlte-card title="{{ __('general_content.order_to_be_delivered_trans_key') }}" theme="orange" icon="fas fa-shopping-cart text-white" collapsible="collapsed" removable maximizable>
+        <div class="row">
             <div class="col-md-12">
-              <p class="text-center">
-                <strong>{{ __('general_content.sales_period_trans_key', ['year' => now()->year]) }}</strong>
-              </p>
-              <div class="chart">
-                <!-- Sales Chart Canvas -->
-                  <canvas id="lineChart" style="min-height: 400px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
-              </div>
-              <!-- /.chart-responsive -->
+              <div class="row">
+                <div class="col-md-1">
+                  <a href="{{ route('orders') }}" class="btn btn-lg btn-warning">
+                    {{ __('general_content.incoming_orders_trans_key') }}
+                      <i class="icon fas fa-ban"></i><br/>
+                  </a>
+                </div>
+                @forelse ($incomingOrders as $incomingOrder)
+                <div class="col-md-1">
+                  <div class="progress-group alert alert-warning">
+                      <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id]) }}"><i class="fas fa-calculator"></i></a> {{ $incomingOrder->order['code'] }}<br/>
+                      <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $incomingOrder->delivery_date }}
+                  </div>
+                </div>
+                <!-- /.col-md-1 -->
+                @empty
+                <div class="col-md-1">
+                    <div class="progress-group">
+                    {{ __('general_content.no_coming_orders_trans_key') }}
+                    </div>
+                </div>
+                <!-- /.progress-group -->
+                @endforelse
+
+                @if ($incomingOrdersCount >= 1)
+                <div class="col-md-1">
+                  <a href="{{ route('orders') }}" class="btn btn-lg btn-warning">
+                      + {{ $incomingOrdersCount }} <br/>
+                      <i class="fas fa-arrow-circle-right"></i><br/>
+                  </a>
+                </div>
+                @endif
             </div>
-            <!-- /.col -->
           </div>
-          <!-- /.row -->
+          <!-- /.col-md-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-1">
+                <a href="{{ route('orders') }}" class="btn btn-lg btn-danger">
+                  {{ __('general_content.late_orders_trans_key') }}
+                    <i class="icon fas fa-ban"></i><br/>
+                </a>
+              </div>
+              @forelse ($LateOrders as $LateOrder)
+              <div class="col-md-1">
+                  <div class="progress-group alert alert-danger">
+                      <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id]) }}"><i class="fas fa-calculator"></i></a> {{ $LateOrder->order['code'] }}<br/>
+                      <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $LateOrder->delivery_date }}
+                  </div>
+              </div>
+              <!-- /.col-md-1 -->
+              @empty
+              <div class="col-md-1">
+                  <div class="progress-group">
+                      {{ __('general_content.no_late_orders_trans_key') }}
+                  </div>
+              </div>
+              <!-- /.col-md-12 -->
+              @endforelse
+
+              @if ($LateOrdersCount >= 1)
+              <div class="col-md-1">
+                <a href="{{ route('orders') }}" class="btn btn-lg btn-danger">
+                    + {{ $LateOrdersCount }} <br/>
+                    <i class="fas fa-arrow-circle-right"></i><br/>
+                </a>
+              </div>
+              @endif
+            </div>
+          </div>
+        </div>
+        <!-- /.row -->
+      </x-adminlte-card>
+    </div>
+
+    <!-- TABLE: LATEST ORDERS -->
+    <div class="col-lg-4 col-md-12">
+      <x-adminlte-card title="{{ __('general_content.latest_orders_trans_key') }}" theme="info" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+        <div class="table-responsive">
+          <table class="table m-0">
+            <thead>
+            <tr>
+              <th>{{ __('general_content.id_trans_key') }}</th>
+              <th>{{ __('general_content.customer_trans_key') }}</th>
+              <th>{{ __('general_content.status_trans_key') }}</th>
+              <th>{{ __('general_content.total_price_trans_key') }}</th>
+              <th>{{ __('general_content.created_at_trans_key') }}</th>
+              <th>{{ __('general_content.assigned_trans_key') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+              @forelse ($LastOrders as $LastOrder)
+              <tr>
+                <td>
+                  <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
+                <td>
+                  @if($LastOrder->type == 1 )
+                  <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
+                  @else
+                  {{ __('general_content.internal_order_trans_key') }}
+                  @endif
+                </td>
+                <td>
+                  @if(1 == $LastOrder->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
+                  @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
+                  @if(3 == $LastOrder->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
+                  @if(4 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
+                </td>
+                <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
+                <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
+                <td><img src="{{ Avatar::create($LastOrder->UserManagement['name'])->toBase64() }}" /></td>
+              </tr>
+              <!-- /.item -->
+              @empty
+            <tr>
+              <td colspan="4">{{ __('general_content.no_order_trans_key') }}</td>
+            </tr>
+            @endforelse
+            </tbody>
+          </table>
+        </div>
+        <!-- /.table-responsive -->
+        <x-slot name="footerSlot">
+          <a href="{{ route('orders') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
+        </x-slot>
+      </x-adminlte-card>
+    </div>
+
+    <!-- CHART: TOTAL OVERVIEW -->
+    <div class="col-lg-8 col-md-12">
+      <x-adminlte-card title="{{ __('general_content.monthly_recap_report_trans_key') }}" theme="purple" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+        <div class="row">
+          <div class="col-md-12">
+            <p class="text-center">
+              <strong>{{ __('general_content.sales_period_trans_key', ['year' => now()->year]) }}</strong>
+            </p>
+            <div class="chart">
+              <!-- Sales Chart Canvas -->
+                <canvas id="lineChart" style="min-height: 400px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
+            </div>
+            <!-- /.chart-responsive -->
+          </div>
+          <!-- /.col -->
         </div>
         <!-- ./card-body -->
         <div class="card-footer">
@@ -180,142 +261,48 @@
           <!-- /.row -->
         </div>
         <!-- /.card-footer -->
-      </div>
-      <!-- /.card -->
+      </x-adminlte-card>
     </div>
-    <!-- /.col-md-6" -->
 
-    <div class="col-md-2">
-      <div class="card ">
-        <div class="card-header">
-          <h5 class="card-title">{{ __('general_content.order_to_be_delivered_trans_key') }}</h5>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-center">
-                <strong><i class="icon fas fa-ban"></i> {{ __('general_content.incoming_orders_trans_key') }}</strong>
-              </p>
-              @forelse ($incomingOrders as $incomingOrder)
-              <div class="progress-group alert alert-warning">
-                <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id])}}"><i class="fas fa-calculator"></i></a> {{ $incomingOrder->order['code'] }}<br/>
-                <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $incomingOrder->delivery_date }}
-              </div>
-              @empty
-              <div class="progress-group">
-                {{ __('general_content.no_coming_orders_trans_key') }}
-              </div>
-              <!-- /.progress-group -->
-              @endforelse
-              
-            </div>
-            <!-- /.col -->
-            <div class="col-md-6 border-left">
-              <p class="text-center">
-                <strong><i class="icon fas fa-ban"></i> {{ __('general_content.late_orders_trans_key') }}</strong>
-              </p>
-              @forelse ($LateOrders as $LateOrder)
-              <div class="progress-group alert alert-danger">
-                <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id])}}"><i class="fas fa-calculator"></i></a> {{ $LateOrder->order['code'] }}<br/>
-                <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $LateOrder->delivery_date }}
-              </div>
-              @empty
-              <div class="progress-group">
-                {{ __('general_content.no_late_orders_trans_key') }}
-              </div>
-              <!-- /.progress-group -->
-              @endforelse
-              
-            </div>
-            <!-- /.col -->
-          </div>
-          <!-- /.row -->
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer">
-          <div class="row">
-            <div class="col-md-6 border-left">
-              @if ($incomingOrdersCount >= 1)
-              <div class="small-box bg-warning">
-                <a href="{{ route('orders') }}" class="small-box-footer">+ {{ $incomingOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-              @endif
-            </div>
-            <!-- /.col -->
-            <div class="col-md-6 border-left">
-              @if ($LateOrdersCount >= 1)
-              <div class="small-box bg-danger">
-                <a href="{{ route('orders') }}" class="small-box-footer">+ {{ $LateOrdersCount }} <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-              @endif
-            </div>
-            <!-- /.col -->
-          </div>
-          <!-- /.row -->
-        </div>
-        <!-- /.card-footer -->
-      </div>
-      <!-- /.card -->
+    <!-- TABLE: DELIVERED -->
+    <div class="col-lg-6 col-md-12">
+      <x-adminlte-small-box title="{{ __('general_content.delivered_month_in_progress_trans_key') }}" 
+                          text="{{ $data['delivered_month_in_progress'][0]->orderSum ?? 0}} {{ $Factory->curency }}" 
+                          icon="icon fas fa-info"
+                          theme="yellow" 
+                          url="{{ route('orders') }}" 
+                          url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
-    <!-- /.col-md-2 -->
+    <div class="col-lg-6 col-md-12">
+      <x-adminlte-small-box title="{{ __('general_content.remaining_month_trans_key') }}" 
+                          text="{{ $data['remaining_order'][0]->orderSum ?? 0 -$data['delivered_month_in_progress'][0]->orderSum   ?? 0}}  {{ $Factory->curency }}" 
+                          icon="icon fas fa-info"
+                          theme="danger" 
+                          url="{{ route('orders') }}" 
+                          url-text="{{ __('general_content.view_details_trans_key') }}"/>
+    </div>
+    <!-- /.col -->
 
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{ __('general_content.quote_transformation_trans_key') }}</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="chart-responsive">
-                <canvas id="QuoteRate"  style="min-height: 350px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
-              </div>
-              <!-- ./chart-responsive -->
+    <!-- CHART: QUOTES RATE -->
+    <div class="col-lg-4 col-md-12">
+      <x-adminlte-card title="{{ __('general_content.quote_transformation_trans_key') }}" theme="dark" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="chart-responsive">
+              <canvas id="QuoteRate"  style="min-height: 350px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
             </div>
-            <!-- /.col -->
+            <!-- ./chart-responsive -->
           </div>
-          <!-- /.row -->
+          <!-- /.col -->
         </div>
-        <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
+        <!-- /.row -->
+      </x-adminlte-card>
     </div>
     <!-- /.col-md-4 -->
 
-    <div class="col-md-4">
-      <!-- TABLE: LATEST QUOTES -->
-      <div class="card  bg-gradient-success">
-        <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.latest_quotes_trans_key') }}</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body p-0">
+    <!-- TABLE: LATEST QUOTES -->
+    <div class="col-lg-4 col-md-12">
+      <x-adminlte-card title="{{ __('general_content.latest_quotes_trans_key') }}" theme="success" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
           <div class="table-responsive">
             <table class="table m-0">
               <thead>
@@ -359,93 +346,31 @@
             </table>
           </div>
           <!-- /.table-responsive -->
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer clearfix">
+        <x-slot name="footerSlot">
           <a href="{{ route('quotes') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
-        </div>
-        <!-- /.card-footer -->
-      </div>
-      <!-- /.card -->
+        </x-slot>
+      </x-adminlte-card>
     </div>
     <!-- /.col-md-4 -->
 
-    <!-- TABLE: LATEST ORDERS -->
-    <div class="col-md-4">
-      <div class="card  bg-gradient-info">
-        <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.latest_orders_trans_key') }}</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table m-0">
-              <thead>
-              <tr>
-                <th>{{ __('general_content.id_trans_key') }}</th>
-                <th>{{ __('general_content.customer_trans_key') }}</th>
-                <th>{{ __('general_content.status_trans_key') }}</th>
-                <th>{{ __('general_content.total_price_trans_key') }}</th>
-                <th>{{ __('general_content.created_at_trans_key') }}</th>
-                <th>{{ __('general_content.assigned_trans_key') }}</th>
-              </tr>
-              </thead>
-              <tbody>
-                @forelse ($LastOrders as $LastOrder)
-                <tr>
-                  <td>
-                    <x-OrderButton id="{{ $LastOrder->id }}" code="{{ $LastOrder->code }}"  />
-                  <td>
-                    @if($LastOrder->type == 1 )
-                    <x-CompanieButton id="{{ $LastOrder->companies_id }}" label="{{ $LastOrder->companie['label'] }}"  />
-                    @else
-                    {{ __('general_content.internal_order_trans_key') }}
-                    @endif
-                  </td>
-                  <td>
-                    @if(1 == $LastOrder->statu )  <span class="badge badge-info">{{ __('general_content.open_trans_key') }}</span>@endif
-                    @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
-                    @if(3 == $LastOrder->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
-                    @if(4 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
-                  </td>
-                  <td>{{ $LastOrder->getTotalPriceAttribute() }}  {{ $Factory->curency }}</td>
-                  <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
-                  <td><img src="{{ Avatar::create($LastOrder->UserManagement['name'])->toBase64() }}" /></td>
-                </tr>
-                <!-- /.item -->
-                @empty
-              <tr>
-                <td colspan="4">{{ __('general_content.no_order_trans_key') }}</td>
-              </tr>
-              @endforelse
-              </tbody>
-            </table>
-          </div>
-          <!-- /.table-responsive -->
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer clearfix">
-          <a href="{{ route('orders') }}" class="btn btn-sm btn-secondary float-right">{{ __('general_content.view_all_trans_key') }}</a>
-        </div>
-        <!-- /.card-footer -->
-      </div>
-      <!-- /.card -->
+    <!-- TABLE: ANNOUNCEMENT -->
+    <div class="col-lg-4 col-md-12">
+      <x-adminlte-card title="{{ __('general_content.announcement_trans_key') }}" theme="lightblue" theme-mode="outline"
+          icon="fas fa-lg fa-envelope" header-class="text-uppercase rounded-bottom border-info"
+          removable>
+          <h2><i class="icon fas fa-info"></i> {{ $Announcement->title ?? 'No announcement' }}</h2>
+            <div class="disabled color-palette">
+              <h5>{!! nl2br(htmlspecialchars(optional($Announcement)->comment, ENT_NOQUOTES)) ?? 'No announcement' !!}</h5>
+            </div>  
+      </x-adminlte-card>
     </div>
     <!-- /.col -->
 
-    <!-- SERVICE GOAL -->
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">{{ __('general_content.goal_task_trans_key') }}</h5>
+    <!-- PRODUCT LIST -->
+    <div class="col-lg-12 col-md-12">
+      <div class="card ">
+        <div class="card-header border-transparent bg-gradient-teal">
+          <h3 class="card-title">{{ __('general_content.latest_products_trans_key') }}</h3>
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
@@ -457,13 +382,44 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+          <div class="row">  
+            @forelse ($LastProducts as $LastProduct)
+            <div class="col-md-2">
+              <x-adminlte-profile-widget name="{{ $LastProduct->label }} {{ $LastProduct->ind }}" desc="{{ $LastProduct->family->label }}" theme="lightblue"
+                  img="@if($LastProduct->picture) {{ asset('/images/products/'. $LastProduct->picture) }} @endif" layout-type="classic">
+                  <x-adminlte-profile-row-item icon="fas fa-cash-register " title="{{ __('general_content.purchased_price_trans_key') }}" text=" {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}"
+                      url="#" badge="teal"/>
+                  <x-adminlte-profile-row-item icon="fas fa-shopping-cart" title="{{ __('general_content.price_trans_key') }}"
+                      text="{{ $LastProduct->selling_price }}  {{ $Factory->curency }}" url="#" badge="lightblue"/>
+              </x-adminlte-profile-widget>
+              
+              
+            </div>
+            <!-- /.item -->
+            @empty
+              <li class="item">{{ __('general_content.no_product_trans_key') }}</li>
+            @endforelse
+          </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+            <a href="{{ route('products') }}" class="btn btn-sm btn-secondary">{{ __('general_content.view_all_trans_key') }}</a>
+          </div>
+        </div>
+        <!-- /.card-footer -->
+      </div>
+    </div>
+
+    <!-- SERVICE GOAL -->
+    <div class="col-lg-12 col-md-12">
+      <x-adminlte-card title="{{ __('general_content.goal_task_trans_key') }}" theme="primary" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
           <div class="row">
-            <div class="col-md-12 card">
+            <div class="col-md-12">
               @forelse ($ServiceGoals as $ServiceGoal)
               <div class="progress-group">
                 {{ $ServiceGoal->label }}
                 <span class="float-right">{{ $ServiceGoal->tasks_count }}</span>
-                <div class="progress progress-sm">
+                <div class="progress">
                   @php
                   foreach($Tasks as $Task){
                   if($Task->methods_id == $ServiceGoal->id){
@@ -474,7 +430,7 @@
                     elseif($Task->title ==  __('general_content.in_progress_trans_key') ){ $class = 'bg-primary';$title = __('general_content.in_progress_trans_key');}
                     elseif($Task->title ==  __('general_content.finished_trans_key') ){ $class = 'bg-success';$title = __('general_content.finished_trans_key');}
                     else{ $class = 'bg-info';$title = $Task->title;}
-                    echo '<div class="progress-bar '.   $class  .'" style="width: '.  $width  .'%">'. $title .' - '. $Task->total_task .'</div>' ;
+                    echo '<div class="progress-bar  progress-bar-striped '.   $class  .'" style="width: '.  $width  .'%">'. $title .' - '. $Task->total_task .'</div>' ;
                   }
                 }
                 @endphp
@@ -491,107 +447,7 @@
             <!-- /.col -->
           </div>
           <!-- /.row -->
-        </div>
-        <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
-    </div>
-    <!-- /.col-md-4 -->
-
-    <!-- TABLE: DELIVERED -->
-    <div class="col-md-4">
-      <div class="card bg-gradient-warning">
-        <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.delivered_month_in_progress_trans_key') }}</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body ">
-          <h1><i class="icon fas fa-info"></i> {{ $data['delivered_month_in_progress'][0]->orderSum ?? 0}} {{ $Factory->curency }}</h1>    
-        </div>
-        <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
-      <div class="card bg-gradient-danger">
-        <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.remaining_month_trans_key') }}</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body ">
-          <h1><i class="icon fas fa-info"></i> {{ $data['remaining_order'][0]->orderSum ?? 0 -$data['delivered_month_in_progress'][0]->orderSum   ?? 0}}  {{ $Factory->curency }}</h1>    
-        </div>
-        <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
-    </div>
-    <!-- /.col -->
-
-    <!-- PRODUCT LIST -->
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header border-transparent">
-          <h3 class="card-title">{{ __('general_content.latest_products_trans_key') }}</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <ul class="products-list product-list-in-card pl-2 pr-2">  
-            @forelse ($LastProducts as $LastProduct)
-            <li class="item">
-              @if($LastProduct->picture)
-                <div class="product-img">
-                  <img src="{{ asset('/images/products/'. $LastProduct->picture) }}" alt="Product Image" class="img-size-50">
-                </div>
-              @endif
-              <div class="product-info">
-                <a href="{{ route('products.show', ['id' => $LastProduct->id])}}" class="product-title">{{ $LastProduct->label }} {{ $LastProduct->ind }}
-                  @if($LastProduct->purchased_price)
-                  <span class="badge badge-info float-right">{{ __('general_content.purchased_price_trans_key') }} {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}</span></a>
-                  @endif
-                <span class="product-description">
-                  {{ $LastProduct->code }}
-                  @if($LastProduct->selling_price)
-                  <span class="badge badge-success float-right">{{ __('general_content.selling_price_trans_key') }} {{ $LastProduct->selling_price }}  {{ $Factory->curency }}</span>
-                  @endif
-                </span>
-              </div>
-            </li>
-            <!-- /.item -->
-            @empty
-              <li class="item">{{ __('general_content.no_product_trans_key') }}</li>
-            @endforelse
-          </ul>
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer clearfix">
-            <a href="{{ route('products') }}" class="btn btn-sm btn-secondary">{{ __('general_content.view_all_trans_key') }}</a>
-          </div>
-        </div>
-        <!-- /.card-footer -->
-      </div>
-    </div>
+      </x-adminlte-card>
   </div>
   <!-- /.row -->
 @stop
