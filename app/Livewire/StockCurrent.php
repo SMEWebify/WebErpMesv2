@@ -54,6 +54,10 @@ class StockCurrent extends Component
         $accountingVatDefaultId = AccountingVat::select('id')->where( 'default', 1)->first(); 
         $accountingVatDefaultId = ($accountingVatDefaultId->id ?? 0); 
 
+        if($accountingVatDefaultId == 0 ){
+            return redirect()->route('products.stock')->with('error', 'No default settings');
+        }
+
         //Get Product info for put in new order
         $ProductDetail = Products::findOrFail($productId);
         $sellingPrice = ($ProductDetail->selling_price ?? 0); 

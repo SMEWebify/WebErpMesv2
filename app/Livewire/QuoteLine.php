@@ -53,10 +53,6 @@ class QuoteLine extends Component
     public $VATSelect = [];
     public $Factory = [];
     public $ProductSelect  = [];
-    public $TechServicesSelect = [];
-    public $BOMServicesSelect = [];
-    public $TechProductList = [];
-    public $BOMProductList = [];
 
     public $data = [];
 
@@ -113,14 +109,6 @@ class QuoteLine extends Component
         $this->VATSelect = AccountingVat::select('id', 'label', 'default')->orderBy('rate')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
-        $this->TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
-        $this->BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
-                                                                            ->orWhere('type', '=', 3)
-                                                                            ->orWhere('type', '=', 4)
-                                                                            ->orWhere('type', '=', 5)
-                                                                            ->orWhere('type', '=', 6)
-                                                                            ->orWhere('type', '=', 8)
-                                                                            ->orderBy('ordre')->get();
     }
 
     public function render()

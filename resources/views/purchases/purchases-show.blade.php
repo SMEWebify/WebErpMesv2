@@ -209,7 +209,7 @@
         </div>
       </div>    
       <div class="tab-pane " id="PurchaseLines">
-        @livewire('purchases-lines-index' , ['purchase_id' => $Purchase->id ])
+          @livewire('purchases-lines-index', ['purchase_id' => $Purchase->id, 'OrderStatu' => $Purchase->statu])
       </div>
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">

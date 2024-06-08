@@ -47,12 +47,12 @@
                         @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="label">{{ __('general_content.name_of_deliverys_notes_trans_key') }}</label>
+                        <label for="label">{{ __('general_content.label_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_of_deliverys_notes_trans_key') }}" required>
+                            <input type="text" class="form-control" wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_purchase_trans_key') }}" required>
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>

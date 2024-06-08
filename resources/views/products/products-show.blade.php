@@ -798,7 +798,7 @@
         @livewire('orders-lines-index' , ['product_id' => $Product->id ])
       </div>
       <div class="tab-pane" id="purchase">
-        @livewire('purchases-lines-index' , ['product_id' => $Product->id ])
+        @livewire('purchases-lines-index' , ['search_product_id' => $Product->id, 'purchase_id' => null, 'OrderStatu' => 0 ])
       </div>
       <div class="tab-pane" id="serialNumber">
         @livewire('serial-numbers-index' , ['product_id' => $Product->id ])

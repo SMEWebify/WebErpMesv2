@@ -137,6 +137,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th>{{ __('general_content.order_trans_key') }}</th>
                   <th>{{ __('general_content.purchase_order_trans_key') }}</th>
                   <th>{{ __('general_content.qty_trans_key') }}</th>
                   <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
@@ -152,100 +153,147 @@
                   @forelse($PurchaseReceipt->PurchaseReceiptLines as $PurchaseReceiptLine)
                   <tr>
                     <td>
+                      @if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null)
+                        <x-OrderButton id="{{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->order->code }}"  />
+                      @else
+                        {{__('general_content.generic_trans_key') }} 
+                      @endif
+                    </td>
+                    <td>
                       <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseReceiptLine->purchaseLines->purchase->id])}}">
                         <i class="fas fa-folder"></i>
                         {{ $PurchaseReceiptLine->purchaseLines->purchase->code }}
                     </a>
                     </td>
-                    <td>@if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null){{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->qty }} x @endif</td>
-                    <td>@if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null){{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->label }}@endif</td>
                     <td>
+                      @if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null)
+                        {{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->qty }} x 
+                      @else
+                        {{__('general_content.generic_trans_key') }} 
+                      @endif
+                    </td>
+                    <td>
+                      @if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null)
+                        {{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->label }}
+                      @else
+                        {{__('general_content.generic_trans_key') }} 
+                      @endif
+                    </td>
+                    <td>
+                      @if($PurchaseReceiptLine->purchaseLines->tasks_id ?? null)
                         <a href="{{ route('production.task.statu.id', ['id' => $PurchaseReceiptLine->purchaseLines->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
                         #{{ $PurchaseReceiptLine->purchaseLines->tasks->id }} - {{ $PurchaseReceiptLine->purchaseLines->tasks->label }}
                         @if($PurchaseReceiptLine->purchaseLines->tasks->component_id )
                             - {{ $PurchaseReceiptLine->purchaseLines->tasks->Component['label'] }}
                         @endif
+                      @else
+                          {{ $PurchaseReceiptLine->purchaseLines->label }}
+                      @endif
                     </td>
-                    
                     <td>
-                        @if($PurchaseReceiptLine->purchaseLines->tasks->component_id ) 
-                        <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseReceiptLine->purchaseLines->tasks->component_id])}}" />
-                        @endif
+                      @if($PurchaseReceiptLinepurchaseLines->tasks_id ?? null)
+                          @if($PurchaseReceiptLine->purchaseLines->tasks->component_id ) 
+                          <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseReceiptLine->purchaseLines->tasks->component_id])}}" />
+                          @endif
+                      @else
+                          @if($PurchaseReceiptLine->purchaseLines->product_id ) 
+                              <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseReceiptLine->purchaseLines->product_id])}}" />
+                          @endif
+                      @endif
                     </td>
-                    <td>{{ $PurchaseReceiptLine->purchaseLines->tasks->qty  }}</td>
+                    <td>
+                      @if($PurchaseReceiptLine->purchaseLines->tasks_id ?? null)
+                        {{ $PurchaseReceiptLine->purchaseLines->tasks->qty  }} 
+                      @else
+                        {{__('general_content.generic_trans_key') }} 
+                      @endif
+                    </td>
                     <td>{{ $PurchaseReceiptLine->purchaseLines->qty  }}</td>
                     <td>{{ $PurchaseReceiptLine->receipt_qty }}</td>
                     
                     <td>
-                      @if($PurchaseReceiptLine->purchaseLines->tasks->component_id)
-                        @if(empty($PurchaseReceiptLine->stock_location_products_id))
-                        <form  method="POST" action="{{ route('products.stockline.store.from.purchase.order') }}" class="form-horizontal">
-                          @csrf
-                          <input type="hidden" name="products_id" id="products_id" value="{{ $PurchaseReceiptLine->purchaseLines->tasks->component_id }}">
-                          <input type="hidden" name="code" id="code" value="STOCK|{{ $PurchaseReceiptLine->purchaseReceipt->code }}|{{ $PurchaseReceiptLine->id }}|{{ now()->format('Y-m-d') }}">
-                          <input type="hidden" name="stock_qty" id="stock_qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
-                          <input type="hidden" name="mini_qty" id="mini_qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
-                          <input type="hidden" name="component_price" id="component_price" value="{{ $PurchaseReceiptLine->purchaseLines->selling_price }}" >
-                          <input type="hidden" name="task_id" id="task_id" value="{{ $PurchaseReceiptLine->purchaseLines->tasks_id }}" >
-                          <input type="hidden" name="purchase_receipt_line_id" id="purchase_receipt_line_id" value="{{ $PurchaseReceiptLine->id }}" >
-                          <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
-                          <div class="form-group">
-                            <label for="stock_locations_id">{{ __('general_content.stock_location_list_trans_key') }}</label>
-                            <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                              </div>
-                              <select class="form-control" name="stock_locations_id" id="stock_locations_id">
-                                @forelse ($StockLocationList as $StockLocation)
-                                <option value="{{ $StockLocation->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocation->Stocks->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
-                                @empty
-                                <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
-                                @endforelse
-                              </select>
-                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
-                            </div>
-                          </div>
-                        </form>
-                        <form  method="POST" action="{{ route('products.stockline.entry.from.purchase.order') }}" class="form-horizontal">
-                          @csrf
-                          <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
-                          <input type="hidden" name="qty" id="qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
-                          <input type="hidden" name="task_id" id="task_id" value="{{ $PurchaseReceiptLine->purchaseLines->tasks_id }}" >
-                          <input type="hidden" name="purchase_receipt_line_id" id="purchase_receipt_line_id" value="{{ $PurchaseReceiptLine->id }}" >
-                          <input type="hidden" name="component_price" id="component_price" value="{{ $PurchaseReceiptLine->purchaseLines->selling_price }}" >
-                          <input type="hidden" name="typ_move" id="typ_move" value="3" >
-                          <div class="form-group">
-                            <label for="stock_location_products_id">{{ __('general_content.stock_location_product_list_trans_key') }}</label>
-                            <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                              </div>
-                              <select class="form-control" name="stock_location_products_id" id="stock_location_products_id">
-                                @forelse ($StockLocationProductList as $StockLocationProduct)
-                                    @if($StockLocationProduct->products_id == $PurchaseReceiptLine->purchaseLines->tasks->component_id)
-                                      <option value="{{ $StockLocationProduct->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocationProduct->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
-                                    @endif
+                        @if($PurchaseReceiptLine->purchaseLines->tasks->component_id ?? null || $PurchaseReceiptLine->purchaseLines->product_id ?? null)
+                          @if(empty($PurchaseReceiptLine->stock_location_products_id))
+
+                          @php
+                            if($PurchaseReceiptLine->purchaseLines->tasks->component_id ?? null){
+                              $productId = $PurchaseReceiptLine->purchaseLines->tasks->component_id;
+                              $taskId = $PurchaseReceiptLine->purchaseLines->tasks_id;
+                            }
+                            elseif($PurchaseReceiptLine->purchaseLines->product_id ?? null){
+                              $productId = $PurchaseReceiptLine->purchaseLines->product_id;
+                              $taskId = null;
+                            }
+                          @endphp
+
+                          <form  method="POST" action="{{ route('products.stockline.store.from.purchase.order') }}" class="form-horizontal">
+                            @csrf
+                            <input type="hidden" name="products_id" id="products_id" value="{{ $productId }}">
+                            <input type="hidden" name="code" id="code" value="STOCK|{{ $PurchaseReceiptLine->purchaseReceipt->code }}|{{ $PurchaseReceiptLine->id }}|{{ now()->format('Y-m-d') }}">
+                            <input type="hidden" name="stock_qty" id="stock_qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
+                            <input type="hidden" name="mini_qty" id="mini_qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
+                            <input type="hidden" name="component_price" id="component_price" value="{{ $PurchaseReceiptLine->purchaseLines->selling_price }}" >
+                            <input type="hidden" name="task_id" id="task_id" value="{{ $taskId }}" >
+                            <input type="hidden" name="purchase_receipt_line_id" id="purchase_receipt_line_id" value="{{ $PurchaseReceiptLine->id }}" >
+                            <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
+                            <div class="form-group">
+                              <label for="stock_locations_id">{{ __('general_content.stock_location_list_trans_key') }}</label>
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <select class="form-control" name="stock_locations_id" id="stock_locations_id">
+                                  @forelse ($StockLocationList as $StockLocation)
+                                  <option value="{{ $StockLocation->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocation->Stocks->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
                                   @empty
-                                <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
-                                @endforelse
-                              </select>
-                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_entry_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
+                                  <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
+                                  @endforelse
+                                </select>
+                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
+                              </div>
                             </div>
-                          </div>
-                        </form>
+                          </form>
+                          <form  method="POST" action="{{ route('products.stockline.entry.from.purchase.order') }}" class="form-horizontal">
+                            @csrf
+                            <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}" >
+                            <input type="hidden" name="qty" id="qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
+                            <input type="hidden" name="task_id" id="task_id" value="{{ $taskId }}" >
+                            <input type="hidden" name="purchase_receipt_line_id" id="purchase_receipt_line_id" value="{{ $PurchaseReceiptLine->id }}" >
+                            <input type="hidden" name="component_price" id="component_price" value="{{ $PurchaseReceiptLine->purchaseLines->selling_price }}" >
+                            <input type="hidden" name="typ_move" id="typ_move" value="3" >
+                            <div class="form-group">
+                              <label for="stock_location_products_id">{{ __('general_content.stock_location_product_list_trans_key') }}</label>
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <select class="form-control" name="stock_location_products_id" id="stock_location_products_id">
+                                  @forelse ($StockLocationProductList as $StockLocationProduct)
+                                      @if($StockLocationProduct->products_id == $productId)
+                                        <option value="{{ $StockLocationProduct->id }}">{{ __('general_content.stock_trans_key') }} : {{ $StockLocationProduct->code }}| {{ __('general_content.location_trans_key') }} : {{ $StockLocation->code }} </option>
+                                      @endif
+                                    @empty
+                                  <option value="">{{ __('general_content.no_stock_location_trans_key') }}</option>
+                                  @endforelse
+                                </select>
+                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.new_entry_stock_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
+                              </div>
+                            </div>
+                          </form>
+                          @else
+                          <a href="{{ route('products.stockline.show', ['id' => $PurchaseReceiptLine->stock_location_products_id])}}" class="btn btn-sm btn-success">{{ $PurchaseReceiptLine->StockLocationProducts->code}} </a>
+                          @endif
                         @else
-                        <a href="{{ route('products.stockline.show', ['id' => $PurchaseReceiptLine->stock_location_products_id])}}" class="btn btn-sm btn-success">{{ $PurchaseReceiptLine->StockLocationProducts->code}} </a>
+                        {{ __('general_content.no_product_in_line_stock_trans_key') }}
                         @endif
-                      @else
-                      {{ __('general_content.no_product_in_line_stock_trans_key') }}
-                      @endif
                     </td>
                   </tr>
                 @empty
                   <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}."  />
-              @endforelse
+                @endforelse
                 <tfoot>
                   <tr>
+                    <th>{{ __('general_content.order_trans_key') }}</th>
                     <th>{{ __('general_content.purchase_order_trans_key') }}</th>
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>

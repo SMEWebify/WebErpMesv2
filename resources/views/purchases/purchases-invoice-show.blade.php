@@ -130,9 +130,9 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>{{ __('general_content.purchase_receipt_trans_key') }}</th>
-                  <th>{{ __('general_content.purchase_order_trans_key') }}</th>
                   <th>{{ __('general_content.order_trans_key') }}</th>
+                  <th>{{ __('general_content.purchase_order_trans_key') }}</th>
+                  <th>{{ __('general_content.purchase_receipt_trans_key') }}</th>
                   <th>{{ __('general_content.description_trans_key') }}</th>
                   <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
                   <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
@@ -143,10 +143,11 @@
                   @forelse($PurchaseInvoice->PurchaseInvoiceLines as $PurchaseInvoiceLine)
                   <tr>
                     <td>
-                      <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseInvoiceLine->purchaseReceiptLines->purchaseReceipt->id ])}}">
-                          <i class="fas fa-folder"></i>
-                          {{ $PurchaseInvoiceLine->purchaseReceiptLines->purchaseReceipt->code }}
-                      </a>
+                      @if($PurchaseInvoiceLine->purchaseLines->tasks->OrderLines ?? null)
+                        <x-OrderButton id="{{ $PurchaseInvoiceLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchaseInvoiceLine->purchaseLines->tasks->OrderLines->order->code }}"  />
+                      @else
+                        {{__('general_content.generic_trans_key') }} 
+                      @endif
                     </td>
                     <td>
                       <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseInvoiceLine->purchaseLines->purchases_id ])}}">
@@ -155,9 +156,22 @@
                       </a>
                     </td>
                     <td>
-                      <x-OrderButton id="{{ $PurchaseInvoiceLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchaseInvoiceLine->purchaseLines->tasks->OrderLines->order->code }}"  />
+                      <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipts.show', ['id' => $PurchaseInvoiceLine->purchaseReceiptLines->purchaseReceipt->id ])}}">
+                          <i class="fas fa-folder"></i>
+                          {{ $PurchaseInvoiceLine->purchaseReceiptLines->purchaseReceipt->code }}
+                      </a>
                     </td>
-                    <td>#{{ $PurchaseInvoiceLine->purchaseLines->tasks->id }} {{ $PurchaseInvoiceLine->purchaseLines->tasks->code }} {{ $PurchaseInvoiceLine->purchaseLines->tasks->label }}</td>
+                    <td>
+                      @if($PurchaseInvoiceLine->purchaseLines->tasks_id ?? null)
+                        <a href="{{ route('production.task.statu.id', ['id' => $PurchaseInvoiceLine->purchaseLines->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                        #{{ $PurchaseInvoiceLine->purchaseLines->tasks->id }} - {{ $PurchaseInvoiceLine->purchaseLines->tasks->label }}
+                        @if($PurchaseInvoiceLine->purchaseLines->tasks->component_id )
+                            - {{ $PurchaseInvoiceLine->purchaseLines->tasks->Component['label'] }}
+                        @endif
+                      @else
+                          {{ $PurchaseInvoiceLine->purchaseLines->label }}
+                      @endif
+                    </td>
                     <td>{{ $PurchaseInvoiceLine->purchaseLines->supplier_ref }}</td>
                     <td>{{ $PurchaseInvoiceLine->purchaseReceiptLines->receipt_qty }}</td>
                     <td>{{ $PurchaseInvoiceLine->purchaseLines->selling_price  }} {{ $Factory->curency }}</td>

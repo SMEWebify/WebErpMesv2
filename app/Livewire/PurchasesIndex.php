@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 
 class PurchasesIndex extends Component

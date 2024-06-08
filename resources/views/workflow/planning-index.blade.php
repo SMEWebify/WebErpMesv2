@@ -40,10 +40,12 @@
       <form action="{{ route('production.load.planning') }}" method="GET">
         <div class="row">
           <div class="form-group col-2">
-              <label for="start_date">Date de début:</label>
-              <input type="date" class="form-control" id="start_date" name="start_date" required value="{{ $startDate ?? '' }}">
-              <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
-              <input type="date" class="form-control" name="end_date"  id="end_date" required value="{{ $endDate ?? '' }}">
+            <label for="start_date">Date de début:</label>
+            <input type="date" class="form-control" id="start_date" name="start_date" required value="{{ $startDate ?? '' }}">
+          </div>
+          <div class="form-group col-2">
+            <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
+            <input type="date" class="form-control" name="end_date"  id="end_date" required value="{{ $endDate ?? '' }}">
           </div>
           <div class="form-group col-2">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

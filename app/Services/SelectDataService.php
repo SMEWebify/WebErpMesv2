@@ -38,7 +38,7 @@ class SelectDataService
 
     public function getSupplier()
     {
-        return Companies::select('id', 'label')->orderBy('label')->where('statu_supplier', 2)->get();
+        return Companies::select('id', 'code','label')->orderBy('label')->where('statu_supplier', 2)->get();
     }
 
     public function getAddress()

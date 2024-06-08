@@ -74,8 +74,12 @@
                     @forelse ($PurchasesWaintingInvoiceLineslist as $PurchasesWaintingInvoiceLine)
                     <tr>
                         <td>
-                            <x-OrderButton id="{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->OrderLines->order->code }}"  />
-                        </td>
+                            @if($PurchasesWaintingInvoiceLine->purchaseLines->tasks->OrderLines ?? null)
+                                <x-OrderButton id="{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->OrderLines->order->code }}"  />
+                            @else
+                                {{__('general_content.generic_trans_key') }} 
+                            @endif
+                            </td>
                         <td>
                             <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchasesWaintingInvoiceLine->purchaseLines->purchase->id])}}">
                                 <i class="fas fa-folder"></i>
@@ -91,7 +95,17 @@
                         <td>
                             {{ $PurchasesWaintingInvoiceLine->purchaseReceipt->companie->code }} - {{ $PurchasesWaintingInvoiceLine->purchaseReceipt->companie->label }}
                         </td>
-                        <td>#{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->id }} {{ $PurchasesWaintingInvoiceLine->code }} {{ $PurchasesWaintingInvoiceLine->label }}</td>
+                        <td>
+                            @if($PurchasesWaintingInvoiceLine->purchaseLines->tasks_id ?? null)
+                                <a href="{{ route('production.task.statu.id', ['id' => $PurchasesWaintingInvoiceLine->purchaseLines->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                                #{{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->id }} {{ $PurchasesWaintingInvoiceLine->purchaseLines->code }} {{ $PurchasesWaintingInvoiceLine->purchaseLines->label }}
+                                @if($PurchasesWaintingInvoiceLine->purchaseLines->tasks->component_id )
+                                    - {{ $PurchasesWaintingInvoiceLine->purchaseLines->tasks->Component['label'] }}
+                                @endif
+                            @else
+                                {{ $PurchasesWaintingInvoiceLine->purchaseLines->label }}
+                            @endif
+                        </td>
                         <td>{{ $PurchasesWaintingInvoiceLine->receipt_qty }}</td>
                         <td>
                             <div class="custom-control custom-checkbox">

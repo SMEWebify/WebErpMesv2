@@ -25,6 +25,7 @@ use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Purchases\PurchaseQuotationLines;
+use App\Http\Requests\Purchases\StorePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
@@ -124,6 +125,23 @@ class PurchasesController extends Controller
         $totalPurchaseLineCount = PurchaseLines::count();
         $totalPurchasesAmount = PurchaseLines::sum('total_selling_price');
 
+        $userSelect = $this->SelectDataService->getUsers();
+        $SupplierSelect = $this->SelectDataService->getSupplier();
+
+        
+        $LastPurchase = 0;
+        $LastPurchase =  Purchases::latest()->first();
+        //if we have no id, define 0 
+        if($LastPurchase == Null){
+            $code =  "-0";
+            $label = "-0";
+        }
+        // else we use is from db
+        else{
+            $code = "PU-".  $LastPurchase->id;
+            $label = "PU-".  $LastPurchase->id;
+        }
+
         return view('purchases/purchases-index', [
                                                     'topRatedSuppliers' => $topRatedSuppliers,
                                                     'top5FastestSuppliers' => $top5FastestSuppliers,
@@ -132,7 +150,22 @@ class PurchasesController extends Controller
                                                     'averageAmount' => $averageAmount,
                                                     'totalPurchaseLineCount' => $totalPurchaseLineCount,
                                                     'totalPurchasesAmount' => $totalPurchasesAmount,
+                                                    'userSelect' => $userSelect,
+                                                    'SupplierSelect' => $SupplierSelect,
+                                                    'code' => $code,
+                                                    'label' => $label,
                                                 ])->with('data',$data);
+    }
+
+    /**
+     * @param Request $request
+     * @return View
+     */
+    public function storePurchase(StorePurchaseRequest  $request)
+    {
+        $PurchaseOrderCreated = Purchases::create($request->only('code', 'label','companies_id','user_id'));
+
+        return redirect()->route('purchases.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
     }
 
     /**

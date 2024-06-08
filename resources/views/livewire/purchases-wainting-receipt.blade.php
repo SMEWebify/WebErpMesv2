@@ -90,22 +90,44 @@
                                 @if($PurchasesWaintingReceiptLine->tasks->OrderLines ?? null)
                                     <x-OrderButton id="{{ $PurchasesWaintingReceiptLine->tasks->OrderLines->orders_id }}" code="{{ $PurchasesWaintingReceiptLine->tasks->OrderLines->order->code }}"  /> 
                                 @else
-                                {{__('general_content.generic_trans_key') }} 
+                                    {{__('general_content.generic_trans_key') }} 
                                 @endif
                             </td>
-                            <td>@if($PurchasesWaintingReceiptLine->tasks->OrderLines ?? null){{ $PurchasesWaintingReceiptLine->tasks->OrderLines->qty }} x @endif</td>
-                            <td>@if($PurchasesWaintingReceiptLine->tasks->OrderLines ?? null){{ $PurchasesWaintingReceiptLine->tasks->OrderLines->label }}@endif</td>
                             <td>
-                                <a href="{{ route('production.task.statu.id', ['id' => $PurchasesWaintingReceiptLine->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
-                                #{{ $PurchasesWaintingReceiptLine->tasks->id }} - {{ $PurchasesWaintingReceiptLine->tasks->label }}
-                                @if($PurchasesWaintingReceiptLine->tasks->component_id )
-                                    - {{ $PurchasesWaintingReceiptLine->tasks->Component['label'] }}
+                                @if($PurchasesWaintingReceiptLine->tasks->OrderLines ?? null)
+                                    {{ $PurchasesWaintingReceiptLine->tasks->OrderLines->qty }} x 
+                                @else
+                                    {{__('general_content.generic_trans_key') }} 
+                                @endif
+                            </td>
+                            <td>
+                                @if($PurchasesWaintingReceiptLine->tasks->OrderLines ?? null)
+                                    {{ $PurchasesWaintingReceiptLine->tasks->OrderLines->label }}
+                                @else
+                                    {{__('general_content.generic_trans_key') }} 
+                                @endif
+                            </td>
+                            <td>
+                                @if($PurchasesWaintingReceiptLine->tasks_id ?? null)
+                                    <a href="{{ route('production.task.statu.id', ['id' => $PurchasesWaintingReceiptLine->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                                    #{{ $PurchasesWaintingReceiptLine->tasks->id }} - {{ $PurchasesWaintingReceiptLine->tasks->label }}
+                                    @if($PurchasesWaintingReceiptLine->tasks->component_id )
+                                        - {{ $PurchasesWaintingReceiptLine->tasks->Component['label'] }}
+                                    @endif
+                                @else
+                                    {{ $PurchasesWaintingReceiptLine->label }}
                                 @endif
                             </td>
                             
                             <td>
-                                @if($PurchasesWaintingReceiptLine->tasks->component_id ) 
-                                <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchasesWaintingReceiptLine->tasks->component_id])}}" />
+                                @if($PurchasesWaintingReceiptLine->tasks_id ?? null)
+                                    @if($PurchasesWaintingReceiptLine->tasks->component_id ) 
+                                    <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchasesWaintingReceiptLine->tasks->component_id])}}" />
+                                    @endif
+                                @else
+                                    @if($PurchasesWaintingReceiptLine->product_id ) 
+                                        <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchasesWaintingReceiptLine->product_id])}}" />
+                                    @endif
                                 @endif
                             </td>
                             <td>
@@ -117,7 +139,7 @@
                             <td>
                                 {{ $PurchasesWaintingReceiptLine->purchase->companie->code }} - {{ $PurchasesWaintingReceiptLine->purchase->companie->label }}
                             </td>
-                            <td>#{{ $PurchasesWaintingReceiptLine->tasks->id }} {{ $PurchasesWaintingReceiptLine->code }} {{ $PurchasesWaintingReceiptLine->label }}</td>
+                            <td> {{ $PurchasesWaintingReceiptLine->code }} {{ $PurchasesWaintingReceiptLine->label }}</td>
                             <td>{{ $PurchasesWaintingReceiptLine->qty }}</td>
                             <td>
                                 <div class="custom-control custom-checkbox">

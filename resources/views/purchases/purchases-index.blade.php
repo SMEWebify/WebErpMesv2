@@ -123,8 +123,96 @@
         </div>
 
         <div class="col-md-3">
-          <x-adminlte-small-box title=" {{ __('general_content.average_purchase_price_trans_key') }}" text="{{ $averageAmount }} {{ $Factory->curency }}" icon="fas fa-chart-bar text-white"
-                theme="teal"/>
+            <!-- Modal -->
+            <div wire:ignore.self class="modal fade" id="ModalPurchase" tabindex="-1" role="dialog" aria-labelledby="ModalPurchaseTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                  <div class="modal-content ">
+                      <div class="modal-header bg-success">
+                          <h5 class="modal-title" id="ModalPurchaseTitle">{{ __('general_content.new_opportunities_trans_key') }}</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <div class="modal-body">
+                          <form  method="POST" action="{{ route('purchases.store') }}" class="form-horizontal" enctype="multipart/form-data"> 
+                          @csrf
+                          <div class="card card-body">
+                              @include('include.alert-result')
+                              <div class="form-row">
+                                <div class="form-group col-md-3">
+                                  <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
+                                  <div class="input-group">
+                                      <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                      </div>
+                                      <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="{{ $code }}" required>
+                                  </div>
+                                  @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="label">{{ __('general_content.label_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="label"  id="label"  placeholder="{{ __('general_content.name_purchase_trans_key') }}" value="{{ $label }}" required>
+                                    </div>
+                                    @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="form-group col-md-3">
+                                  <label for="companies_id">{{ __('general_content.sort_companie_trans_key') }}</label>
+                                  <div class="input-group">
+                                      <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                      </div>
+                                      <select class="form-control"  name="companies_id" id="companies_id" required>
+                                          <option value="">{{ __('general_content.select_company_trans_key') }}</option>
+                                      @forelse ($SupplierSelect as $item)
+                                          <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                      @empty
+                                          <option value="">{{ __('general_content.no_select_company_trans_key') }}</option>
+                                      @endforelse
+                                      </select>
+                                  </div>
+                                  @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                              </div>
+                                <div class="form-group col-md-3">
+                                    <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <select class="form-control"  name="user_id" id="user_id" required>
+                                            <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
+                                            @foreach ($userSelect as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('general_content.close_trans_key') }}</button>
+                                  <button type="Submit" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
+                              </div>
+                            </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- End Modal -->
+
+          <div class="card text-center">
+            <div class="card-body d-flex justify-content-center">
+              <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalPurchase">
+                {{ __('general_content.new_purchase_document_trans_key') }}</button>
+            </div>
+          </div>
+
+          <x-adminlte-small-box title=" {{ __('general_content.average_purchase_price_trans_key') }}" text="{{ $averageAmount }} {{ $Factory->curency }}" icon="fas fa-chart-bar text-white" theme="teal"/>
+          
           <div class="card">
             <div class="card-header bg-success">
               {{ __('general_content.most_purchased_products_trans_key') }}

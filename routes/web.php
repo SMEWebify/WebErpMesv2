@@ -130,6 +130,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesController@request')->name('purchases.request'); 
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesController@quotation')->name('purchases.quotation'); 
         Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->name('purchases'); 
+        
+        Route::post('/', 'App\Http\Controllers\Purchases\PurchasesController@storePurchase')->name('purchases.store'); 
         Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesController@waintingReceipt')->name('purchases.wainting.receipt'); 
         Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesController@receipt')->name('purchases.receipt'); 
         Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesController@waintingInvoice')->name('purchases.wainting.invoice'); 
