@@ -426,6 +426,9 @@ return [
     'add_to_document_trans_key'                => 'Add to new document',
     'preferred_supplier_trans_key'             => 'Preferreds suppliers',
     
+    'customer_type_trans_key'                  => 'Customer type',
+    'individual_trans_key'                     => 'Individual',
+    'legal_entity_trans_key'                   => 'Legal entity',
     'companie_name_trans_key'                  => 'Company name',
     'adress_name_trans_key'                    => 'Address name',
     'adress_trans_key'                         => 'Address',

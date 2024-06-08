@@ -426,6 +426,9 @@ return [
     'add_to_document_trans_key'                => 'Ajouter au nouveau document',
     'preferred_supplier_trans_key'             => 'Fournisseurs préférés',
 
+    'customer_type_trans_key'                  => 'Type de client',
+    'individual_trans_key'                     => 'Particulier',
+    'legal_entity_trans_key'                   => 'Entité juridique',
     'companie_name_trans_key'                  => 'Nom société',
     'adress_name_trans_key'                    => 'Nom de l\'adresse',
     'adress_trans_key'                         => 'Adresse',

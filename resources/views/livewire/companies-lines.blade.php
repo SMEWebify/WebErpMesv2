@@ -41,14 +41,14 @@
                                                 @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                             </div>
                                                 <div class="form-group col-md-4">
-                                                    <label for="client_type">{{ __('Type de Client') }}</label>
+                                                    <label for="client_type">{{ __('general_content.customer_type_trans_key') }}</label>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
                                                         </div>
                                                         <select class="form-control" id="client_type" wire:click.prevent="toggleClientType()" wire:model.live="client_type">
-                                                            <option value="1">{{ __('Société') }}</option>
-                                                            <option value="2">{{ __('Particulier') }}</option>
+                                                            <option value="1">{{ __('general_content.legal_entity_trans_key') }}</option>
+                                                            <option value="2">{{ __('general_content.individual_trans_key') }}</option>
                                                         </select>
                                                     </div>
                                                 </div>
