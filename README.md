@@ -11,11 +11,25 @@
 
 # Why ΣEM ? :monocle_face:
 
-Often, management systems offer full CRM and billing management. But if a link is missing between what is quoted and what must be manufactured. ΣEM offers a link between what the customer expects and a real-time status of the order in the manufacturing workshop. This project using Laravel 10, Livewire and bootstrap 4.6.
-![Firefly Ressource Management and Manufacturing system Web for industry sheet metal machining mold av](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/fdaa2e64-20cb-4076-9293-bf2291ea637f)
+Often, management systems offer comprehensive customer relationship management (CRM) and invoicing capabilities. However, in manufacturing and machining businesses, there is sometimes a critical gap between what is quoted and what needs to be manufactured. This is where ΣEM comes in.
+
+ΣEM provides an integrated solution that bridges the gap between sales and manufacturing processes. Here are some reasons why ΣEM might be your ideal solution:
+
+- Real-time Production Tracking: ΣEM allows for real-time tracking of each order, from the quoting phase to final delivery, providing complete visibility into the production process.
+
+- Seamless CRM and Order Management Integration: With its seamless integration with CRM and order management, ΣEM simplifies and streamlines business processes, ensuring smooth customer relationship management.
+
+- Efficient Inventory and Resource Management: ΣEM offers advanced inventory and resource management features, enabling businesses to efficiently manage raw materials, work-in-progress, and human resources required for order fulfillment.
+
+- Community Support and Collaborative Development: ΣEM is an open-source project supported by an active community of developers and users. This ensures ongoing, collaborative development, with the opportunity for users to contribute to the enhancement and extension of the solution.
+
+ΣEM provides a holistic approach to business management for manufacturing and machining businesses, helping them optimize processes, improve operational efficiency, and drive growth.
+
+- Technology Stack: ΣEM is built using modern technologies such as Laravel 10, Livewire, and Bootstrap 4.6, ensuring scalability, performance, and a user-friendly interface.
+
+Any discussion of improvement or contribution is welcome. :hugs:
 
 
-<p align="center">Any improvement discussion would be helpful. :hugs:</p>
 
 # Demo :eyes:
 
@@ -36,7 +50,9 @@ for run to production, follow this link :  [wiki page (install to run)](https://
   
 -----------------
 
-![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/07840f20-081d-47d3-b892-14f86b5ecc44)
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
+
+
 
 
 
