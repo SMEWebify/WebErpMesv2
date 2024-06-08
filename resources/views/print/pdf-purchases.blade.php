@@ -96,8 +96,18 @@
                 <tbody>
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
-                        <td>{{ $DocumentLine->tasks->OrderLines->order->code }}</td>
-                        <td>#{{ $DocumentLine->tasks->id }} {{ $DocumentLine->code }} {{ $DocumentLine->label }}</td>
+                        <td>
+                            @if($DocumentLine->tasks->OrderLines ?? null)
+                            {{ $DocumentLine->tasks->OrderLines->order->code }}
+                            @endif
+                        </td>
+                        <td>
+                            @if($DocumentLine->tasks_id ?? null)
+                            #{{ $DocumentLine->tasks->id }} {{ $DocumentLine->code }} {{ $DocumentLine->label }}
+                            @else
+                                {{ $DocumentLine->label }}
+                            @endif
+                        </td>
                         <td>{{ $DocumentLine->supplier_ref }}</td>
                         <td>{{ $DocumentLine->qty }}</td>
                         <td>{{ $DocumentLine->selling_price }} {{ $Factory->curency }}</td>

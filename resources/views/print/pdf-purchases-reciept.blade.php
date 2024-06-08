@@ -81,7 +81,6 @@
                         <th>{{ __('general_content.order_trans_key') }}</th>
                         <th>{{ __('general_content.description_trans_key') }}</th>
                         <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
-                        <th>{{ __('general_content.qty_trans_key') }}</th>
                         <th>{{ __('general_content.qty_purchase_trans_key') }}</th>
                         <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                     </tr>
@@ -90,17 +89,21 @@
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $DocumentLine->purchaseLines->purchases_id ])}}">
-                                <i class="fas fa-folder"></i>
-                                {{ $DocumentLine->purchaseLines->purchase->code }}
-                            </a>
+                            {{ $DocumentLine->purchaseLines->purchase->code }}
                         </td>
                         <td>
-                        <x-OrderButton id="{{ $DocumentLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $DocumentLine->purchaseLines->tasks->OrderLines->order->code }}"  />
+                            @if($DocumentLine->purchaseLines->tasks->OrderLines ?? null)
+                            {{ $DocumentLine->purchaseLines->tasks->OrderLines->order->code }}
+                            @endif
                         </td>
-                        <td>#{{ $DocumentLine->purchaseLines->tasks->id }} {{ $DocumentLine->purchaseLines->tasks->code }} {{ $DocumentLine->purchaseLines->tasks->label }}</td>
+                        <td>
+                            @if($DocumentLine->purchaseLines->tasks_id ?? null)
+                            #{{ $DocumentLine->purchaseLines->tasks->id }} {{ $DocumentLine->purchaseLines->tasks->code }} {{ $DocumentLine->purchaseLines->tasks->label }}
+                            @else
+                                {{ $DocumentLine->purchaseLines->label }}
+                            @endif
+                        </td>
                         <td>{{ $DocumentLine->purchaseLines->supplier_ref }}</td>
-                        <td>{{ $DocumentLine->purchaseLines->tasks->qty  }}</td>
                         <td>{{ $DocumentLine->purchaseLines->qty  }}</td>
                         <td>{{ $DocumentLine->receipt_qty }}</td>
                     </tr>
