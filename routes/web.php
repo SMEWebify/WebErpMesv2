@@ -474,7 +474,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'notifications'], function () {
         Route::get('/get', 'App\Http\Controllers\NotificationsController@getNotificationsData')->middleware(['auth'])->name('notifications.get');
-        Route::get('/show', 'App\Http\Controllers\NotificationsController@show')->middleware(['auth'])->name('notifications.show');
+        Route::get('/show', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('notifications.show');
         Route::post('/show', 'App\Http\Controllers\UsersController@settingNotification')->middleware(['auth'])->name('notifications.setting');
     });
 

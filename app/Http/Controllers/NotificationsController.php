@@ -58,14 +58,4 @@ class NotificationsController extends Controller
             'dropdown'    => $dropdownHtml,
         ];
     }
-
-    public function show()
-    {
-        $UserProfil = User::find(Auth::user()->id);
-        $TimesAbsences = TimesAbsence::where('user_id', Auth::user()->id)->get();
-        return view('profile', [
-            'UserProfil' => $UserProfil,
-            'TimesAbsences' => $TimesAbsences,
-        ]);
-    }
 }
