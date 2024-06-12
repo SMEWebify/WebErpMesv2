@@ -34,13 +34,13 @@
                       <label for="InputWebSite">{{ __('general_content.general_information_trans_key') }}</label>
                     </div>
                     <div class="row">
-                      <div class="col-1">
+                      <div class="form-group col-md-1">
                         <div class="text-muted">
                           <label for="label">{{ __('general_content.external_id_trans_key') }}</label>
                           <b class="d-block">{{ $Companie->code }}</b>
                         </div>
                       </div>
-                      <div class="col-2">
+                      <div class="form-group col-md-2">
                         <label for="companies_notification">{{__('general_content.active_trans_key') }}</label>
                         <div class="input-group">
                               @if($Companie->active == 1)  
@@ -51,7 +51,7 @@
                         </div>
                       </div>
                       @if($Companie->client_type == 1) 
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <label for="label">{{ __('general_content.name_company_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -61,7 +61,7 @@
                         </div>
                       </div>
                       @else
-                      <div class="col-2">
+                      <div class="form-group col-md-2">
                         <label for="label">{{ __('general_content.civility_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -70,7 +70,7 @@
                             <input type="text" class="form-control" name="civility"  id="civility" value="{{ $Companie->civility }}" placeholder="{{ __('general_content.civility_trans_key') }}">
                         </div>
                       </div>
-                      <div class="col-2">
+                      <div class="form-group col-md-2">
                         <label for="label">{{ __('general_content.first_name_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -79,7 +79,7 @@
                             <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="{{ __('general_content.first_name_trans_key') }}">
                         </div>
                       </div>
-                      <div class="col-2">
+                      <div class="form-group col-md-2">
                         <label for="last_name">{{ __('general_content.contact_name_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -89,7 +89,7 @@
                         </div>
                       </div>
                       @endif
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -110,7 +110,7 @@
                         <label for="InputWebSite">{{ __('general_content.site_link_trans_key') }}</label>
                     </div>
                     <div class="row">
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
@@ -118,7 +118,7 @@
                               <input type="text" class="form-control"  name="website" id="website" value="{{ $Companie->website }}" placeholder="Web site">
                           </div>
                       </div>
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
@@ -126,7 +126,7 @@
                               <input type="text" class="form-control"  name="fbsite" id="fbsite"  value="{{ $Companie->fbsite }}"  placeholder="Facebook">
                           </div>
                       </div>
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
@@ -134,7 +134,7 @@
                               <input type="text" class="form-control"  name="twittersite" id="twittersite" value="{{ $Companie->twittersite }}"  placeholder="X">
                           </div>
                       </div>
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
@@ -149,11 +149,11 @@
                         <label for="siren">{{ __('general_content.administrative_information_trans_key') }}</label>
                     </div>
                     <div class="row">
-                        <div class="col-3">
+                      <div class="form-group col-md-3">
                             <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="{{ __('general_content.reg_number_trans_key') }}"  @if($Companie->client_type == 2) disabled @endif>
                             @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <input type="text" class="form-control" name="naf_code" id="naf_code"  value="{{ $Companie->naf_code }}" placeholder="{{ __('general_content.naf_code_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
                             @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
@@ -165,7 +165,7 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                        <div class="col-3">
+                      <div class="form-group col-md-3">
                             <label for="statu_customer">{{ __('general_content.status_client_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -179,7 +179,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="discount">{{__('general_content.discount_trans_key') }} :</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -188,11 +188,11 @@
                                 <input type="number" class="form-control" name="discount" id="discount" value="{{ $Companie->discount }}" placeholder="{{ __('general_content.discount_trans_key') }}">
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="account_general_customer">{{ __('general_content.general_account_trans_key') }}</label>
                             <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" value="{{ $Companie->account_general_customer }}" placeholder="{{ __('general_content.general_account_trans_key') }}">
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="account_auxiliary_customer">{{ __('general_content.auxiliary_account_trans_key') }}</label>
                             <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" value="{{ $Companie->account_auxiliary_customer }}" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
                         </div>
@@ -200,7 +200,7 @@
                   </div>
                   <div class="card card-body">
                     <div class="row">
-                        <div class="col-3">
+                      <div class="form-group col-md-3">
                             <label for="statu_supplier">{{ __('general_content.status_supplier_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -213,7 +213,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="recept_controle">{{ __('general_content.reception_control_trans_key') }}</label>
                             <select class="form-control" name="recept_controle" id="recept_controle" value="recept_controle">
                                 <option value="">{{ __('general_content.select_controle_trans_key') }}</option>
@@ -221,11 +221,11 @@
                                 <option value="2" @if($Companie->recept_controle == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
                             </select>
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="account_general_supplier">{{ __('general_content.general_account_trans_key') }}</label>
                             <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  value="{{ $Companie->account_general_supplier }}" placeholder="{{ __('general_content.general_account_trans_key') }}">
                         </div>
-                        <div class="col-3">
+                        <div class="form-group col-md-3">
                             <label for="account_auxiliary_supplier">{{ __('general_content.auxiliary_account_trans_key') }}</label>
                             <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  value="{{ $Companie->account_auxiliary_supplier }}" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
                         </div>
@@ -240,7 +240,7 @@
                 </form>
               </div>
             </x-adminlte-card>
-            <div class="col-md-3">
+            <div class="form-group col-md-3">
               <x-adminlte-card title="{{ __('general_content.information_trans_key') }}" theme="secondary" maximizable>
                   @if($Companie->website )
                   <a href="{{ $Companie->website }}" class="text-gray">
@@ -269,7 +269,7 @@
       </div>  
       <div class="tab-pane " id="Adresses">
         <div class="row">
-          <div class="col-md-8">
+          <div class="form-group col-md-8">
             <x-adminlte-card title="{{ __('general_content.adress_trans_key') }}" theme="primary" maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
@@ -396,13 +396,12 @@
             </x-adminlte-card>
           <!-- /.card secondary -->
           </div>
-
           <div class="col-md-4">
             <x-adminlte-card title="{{ __('general_content.new_address_trans_key') }}" theme="secondary" maximizable>
               <form method="POST" action="{{ route('addresses.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-12">
                     <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -412,7 +411,9 @@
                     </div>
                     <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
                   </div>
-                  <div class="col-5">
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
                     <label for="label">{{__('general_content.label_trans_key') }}</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
@@ -424,34 +425,37 @@
                 </div>
                 <hr>
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-12">
                     <label for="adress">{{ __('general_content.adress_name_trans_key') }}</label>
                     <input type="text" class="form-control" name="adress"  id="adress" placeholder="{{ __('general_content.adress_name_trans_key') }}">
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-12">
                     <label for="zipcode">{{ __('general_content.postal_code_trans_key') }}</label>
                     <input type="text" class="form-control" name="zipcode"  id="zipcode" placeholder="{{ __('general_content.postal_code_trans_key') }}">
                   </div>
-                  <div class="col-5">
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
                     <label for="city">{{ __('general_content.city_trans_key') }}</label>
                     <input type="text" class="form-control" name="city"  id="city" placeholder="{{ __('general_content.city_trans_key') }}">
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-12">
                     <label for="country">{{ __('general_content.country_trans_key') }}</label>
                     <input type="text" class="form-control" name="country"  id="country" placeholder="{{ __('general_content.country_trans_key') }}">
                   </div>
                 </div>
-                <hr>
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-12">
                     <label for="number">{{ __('general_content.phone_trans_key') }}</label>
                     <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}">
                   </div>
-                  <div class="col-5">
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
                     <label for="mail">{{ __('general_content.email_trans_key') }}</label>
                     <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}">
                   </div>
@@ -590,7 +594,7 @@
               <form method="POST" action="{{ route('contacts.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-6">
                     <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                     <div class="input-group">
                       <div class="input-group-prepend">
@@ -600,7 +604,7 @@
                       <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
                     </div>
                   </div>
-                  <div class="col-5">
+                  <div class="form-group col-md-6">
                     <label for="civility">{{ __('general_content.civility_trans_key') }}</label>
                     <select class="form-control" name="civility">
                       <option value="{{ __('general_content.miss_trans_key') }}">{{ __('general_content.miss_trans_key') }}</option>
@@ -611,34 +615,38 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-6">
                     <label for="first_name">{{ __('general_content.first_name_trans_key') }}</label>
                     <input type="text" class="form-control" name="first_name"  id="first_name" placeholder="{{ __('general_content.first_name_trans_key') }}">
                   </div>
-                  <div class="col-5">
+                  <div class="form-group col-md-6">
                     <label for="name">{{ __('general_content.name_trans_key') }}</label>
                     <input type="text" class="form-control" name="name"  id="name" placeholder="{{ __('general_content.name_trans_key') }}">
                   </div>
                 </div>
-                <hr>
-                <div class="form-group">
-                  <label for="function">{{ __('general_content.function_trans_key') }}</label>
-                  <input type="text" class="form-control" name="function"  id="function" placeholder="{{ __('general_content.function_trans_key') }}">
-                </div>
-                <hr>
                 <div class="row">
-                  <div class="col-5">
+                  <div class="form-group col-md-12">
+                    <label for="function">{{ __('general_content.function_trans_key') }}</label>
+                    <input type="text" class="form-control" name="function"  id="function" placeholder="{{ __('general_content.function_trans_key') }}">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
                     <label for="number">{{ __('general_content.phone_trans_key') }}</label>
                     <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}">
                   </div>
-                  <div class="col-5">
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
                     <label for="mobile">{{ __('general_content.mobile_phone_trans_key') }}</label>
                     <input type="text" class="form-control" name="mobile"  id="mobile" placeholder="{{ __('general_content.mobile_phone_trans_key') }}">
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="mail">{{ __('general_content.email_trans_key') }}</label>
-                  <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}">
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="mail">{{ __('general_content.email_trans_key') }}</label>
+                    <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}">
+                  </div>
                 </div>
                 <x-slot name="footerSlot">
                   <button type="submit" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
