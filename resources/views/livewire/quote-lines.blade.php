@@ -87,7 +87,7 @@
                                             @csrf
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fab fa-mdb"></i></span>
@@ -95,7 +95,7 @@
                                                             <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->material }}" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
@@ -103,7 +103,7 @@
                                                             <input type="number" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->thickness }}" name="thickness" id="thickness"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
@@ -114,7 +114,7 @@
                                                 </div>
                                                 <hr>
                                                 <div class="row">
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <label for="x_size">X</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -123,7 +123,7 @@
                                                             <input type="number" class="form-control" value="{{  $QuoteLine->QuoteLineDetails->x_size }}" name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <label for="y_size">Y</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -132,7 +132,7 @@
                                                             <input type="number" class="form-control" value="{{  $QuoteLine->QuoteLineDetails->y_size }}"  name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <label for="z_size">Z</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -143,7 +143,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -151,7 +151,7 @@
                                                                 <input type="number" class="form-control"  value="{{ $QuoteLine->QuoteLineDetails->x_oversize }}" name="x_oversize" id="x_oversize"  placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -159,7 +159,7 @@
                                                                 <input type="number" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->y_oversize }}" name="y_oversize" id="y_oversize"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -170,7 +170,7 @@
                                                     </div>
                                                     <hr>
                                                     <div class="row">
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -178,7 +178,7 @@
                                                                 <input type="number" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->diameter }}" name="diameter" id="diameter"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -186,7 +186,7 @@
                                                                 <input type="number" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
@@ -196,7 +196,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fab fa-mdb"></i></span>
@@ -204,9 +204,9 @@
                                                                 <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->finishing }}" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                         </div>
                                                     </div>
                                                     <hr>

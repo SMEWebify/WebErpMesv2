@@ -35,10 +35,10 @@
                 @csrf
                 <div class="card card-body">
                   <div class="row">
-                    <div class="form-group col-4">
+                    <div class="form-group col-md-4">
                       <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Delivery->code }}
                     </div>
-                    <div class="form-group col-4">
+                    <div class="form-group col-md-4">
                       <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                         <x-slot name="prependSlot">
                             <div class="input-group-text bg-gradient-success">
@@ -49,7 +49,7 @@
                         <option value="2" @if(2 == $Delivery->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
                       </x-adminlte-select>
                     </div>
-                    <div class="form-group col-4">
+                    <div class="form-group col-md-4">
                       @include('include.form.form-input-label',['label' =>'Name of delivery', 'Value' =>  $Delivery->label])
                     </div>
                   </div>

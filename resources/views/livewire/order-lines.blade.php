@@ -124,7 +124,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                             @csrf
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fab fa-mdb"></i></span>
@@ -132,7 +132,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                             <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->material }}" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
@@ -140,7 +140,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                             <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->thickness }}" name="thickness" id="thickness"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
@@ -151,7 +151,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                 </div>
                                                 <hr>
                                                 <div class="row">
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <label for="x_size">X</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -160,7 +160,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                             <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->x_size }}" name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <label for="y_size">Y</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -169,7 +169,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                             <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->y_size }}"  name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="form-group col-md-4">
                                                         <label for="z_size">Z</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -180,7 +180,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -188,7 +188,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                                 <input type="number" class="form-control"  value="{{ $OrderLine->OrderLineDetails->x_oversize }}" name="x_oversize" id="x_oversize"  placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -196,7 +196,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                                 <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->y_oversize }}" name="y_oversize" id="y_oversize"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -207,7 +207,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                     </div>
                                                     <hr>
                                                     <div class="row">
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -215,7 +215,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                                 <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->diameter }}" name="diameter" id="diameter"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -223,7 +223,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                                 <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
@@ -233,7 +233,7 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fab fa-mdb"></i></span>
@@ -241,9 +241,9 @@ Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
                                                                 <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->finishing }}" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="form-group col-md-4">
                                                         </div>
                                                     </div>
                                                     <hr>

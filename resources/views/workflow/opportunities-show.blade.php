@@ -36,7 +36,7 @@
                 @csrf 
                 <div class="card card-body">
                   <div class="row">
-                      <div class="col-6">
+                    <div class="form-group col-md-6">
                         @include('include.form.form-input-label',['label' =>__('general_content.name_opportunity_trans_key'), 'Value' =>  $Opportunity->label])
                       </div>
                     </div>
@@ -48,15 +48,15 @@
                     </div>
                     <hr>
                     <div class="row">
-                      <div class="col-12">
+                      <div class="form-group col-md-12">
                         @include('include.form.form-select-companie',['companiesId' =>  $Opportunity->companies_id])
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-adress',['adressId' =>   $Opportunity->companies_addresses_id])
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         @include('include.form.form-select-contact',['contactId' =>   $Opportunity->companies_contacts_id])
                       </div>
                     </div>
@@ -76,7 +76,7 @@
                     </div>
                     <hr>
                     <div class="row">
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         <x-adminlte-input type="number" name="probality" label="{{ __('general_content.probality_trans_key') }}" placeholder="50" value="{{  $Opportunity->probality }}" label-class="text-success">
                           <x-slot name="prependSlot">
                               <div class="input-group-text bg-gradient-success">
@@ -85,7 +85,7 @@
                           </x-slot>
                         </x-adminlte-input>
                       </div>
-                      <div class="col-6">
+                      <div class="form-group col-md-6">
                         <x-adminlte-input  type="number" name="budget" label="{{ __('general_content.budget_trans_key') }}" placeholder="0" value="{{  $Opportunity->budget }}" label-class="text-success">
                           <x-slot name="prependSlot">
                             <div class="input-group-prepend">

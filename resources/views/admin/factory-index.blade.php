@@ -55,7 +55,7 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-4">
+                            <div class="form-group col-md-4">
                                 <label for="zipcode">{{ __('general_content.postal_code_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -64,7 +64,7 @@
                                     <input type="text" class="form-control" name="zipcode"  id="zipcode"  value="{{ $Factory->zipcode }}"  placeholder="{{ __('general_content.postal_code_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="form-group col-md-4">
                                 <label for="city">{{ __('general_content.capacity_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -73,7 +73,7 @@
                                     <input type="text" class="form-control" name="city"  id="city" value="{{ $Factory->city }}"  placeholder="{{ __('general_content.capacity_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="form-group col-md-4">
                                 <label for="country">{{ __('general_content.country_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -330,7 +330,7 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-4">
+                            <div class="form-group col-md-4">
                                 <label for="phone_number">{{ __('general_content.phone_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -339,7 +339,7 @@
                                     <input type="text" class="form-control" name="phone_number"  id="phone_number"  value="{{ $Factory->phone_number }}"  placeholder="{{ __('general_content.phone_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="form-group col-md-4">
                                 <label for="mail">{{ __('general_content.email_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -348,7 +348,7 @@
                                     <input type="email" class="form-control" name="mail"  id="mail" value="{{ $Factory->mail }}"  placeholder="{{ __('general_content.email_trans_key') }}">
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="form-group col-md-4">
                                 <label for="web_site">{{ __('general_content.web_link_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -379,7 +379,7 @@
 
                     <x-adminlte-card title="{{ __('general_content.default_value_trans_key') }}" theme="info" collapsible maximizable>
                         <div class="row">
-                            <div class="col-8">
+                            <div class="form-group col-md-6">
                                 <label for="add_day_validity_quote">{{ __('general_content.add_value_day_offer_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -391,7 +391,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-8">
+                            <div class="form-group col-md-6">
                                 <label for="add_delivery_delay_order">{{ __('general_content.add_value_day_delivery_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -438,13 +438,13 @@
 
                     <x-adminlte-card title="{{ __('general_content.repots_setting_trans_key') }}" theme="teal" collapsible maximizable>
                         <div class="row">
-                            <div class="col-3">
+                            <div class="form-group col-md-3">
                                 <div class="form-group">
                                     <label for="pdf_header_font_color">{{ __('general_content.header_font_color_trans_key') }}</label>
                                     <input type="color" class="form-control"  name="pdf_header_font_color" id="pdf_header_font_color" value="{{ $Factory->pdf_header_font_color }}">
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="form-group col-md-3">
                                 <label for="public_link_cgv">{{ __('general_content.public_link_cgv_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -456,7 +456,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-3">
+                            <div class="form-group col-md-3">
                                 <label for="add_cgv_to_pdf">{{ __('general_content.add_cgv_to_quote_order_trans_key') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">

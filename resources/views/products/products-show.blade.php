@@ -48,14 +48,14 @@
                 @csrf
                 <div class="card card-body">
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <div class="text-muted">
                           <label for="label">{{ __('general_content.external_id_trans_key') }}</label>
                             <b class="d-block">{{ $Product->code }}</b>
                           </p>
                         </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="label">{{ __('general_content.description_trans_key') }}</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -64,7 +64,7 @@
                               <input type="text" class="form-control" value="{{ $Product->label }}" name="label"  id="label" placeholder="{{ __('general_content.description_trans_key') }}">
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="ind">{{ __('general_content.index_trans_key') }}</label>
                           <input type="text" class="form-control" value="{{ $Product->ind }}"   name="ind"  id="ind" placeholder="{{ __('general_content.index_trans_key') }}">
                       </div>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="card card-body">
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label> 
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -88,7 +88,7 @@
                               </select>
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="methods_families_id">{{ __('general_content.select_family_trans_key') }}</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -104,7 +104,7 @@
                               </select>
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="methods_units_id">{{ __('general_content.unit_trans_key') }}</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -124,7 +124,7 @@
                 </div>
                 <div class="card card-body">
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="purchased">{{ __('general_content.purchased_trans_key') }}</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -137,7 +137,7 @@
                               </select>
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="sold">{{ __('general_content.sold_trans_key') }}</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -150,7 +150,7 @@
                               </select>
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="tracability_type">{{ __('general_content.tracability_trans_key') }}</label>
                           <select class="form-control" name="tracability_type" id="tracability_type">
                               <option value="">{{ __('general_content.select_type_trans_key') }}</option>
@@ -161,7 +161,7 @@
                       </div>
                   </div>
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text">{{ $Factory->curency }}</span>
@@ -169,7 +169,7 @@
                               <input type="number" class="form-control" value="{{ $Product->purchased_price }}"  name="purchased_price" id="purchased_price" placeholder="{{ __('general_content.purchased_price_trans_key') }}" step=".001">
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text">{{ $Factory->curency }}</span>
@@ -184,7 +184,7 @@
                       <label for="material">{{ __('general_content.proprieties_trans_key') }}</label>
                   </div>
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fab fa-mdb"></i></span>
@@ -192,7 +192,7 @@
                               <input type="text" class="form-control" value="{{ $Product->material }}" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
@@ -200,7 +200,7 @@
                               <input type="number" class="form-control" value="{{ $Product->thickness }}" name="thickness" id="thickness"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <div class="input-group">
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
@@ -210,7 +210,7 @@
                       </div>
                   </div>
                   <div class="row">
-                    <div class="col-4">
+                    <div class="form-group col-md-4">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fab fa-mdb"></i></span>
@@ -218,14 +218,14 @@
                             <input type="text" class="form-control" value="{{ $Product->finishing }}" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="form-group col-md-4">
                     </div>
-                    <div class="col-4">
+                    <div class="form-group col-md-4">
                     </div>
                   </div>
                   <hr>
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="x_size">X</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -234,7 +234,7 @@
                               <input type="number" class="form-control" value="{{ $Product->x_size }}" name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="y_size">Y</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -243,7 +243,7 @@
                               <input type="number" class="form-control" value="{{ $Product->y_size }}"  name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
                           </div>
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                           <label for="z_size">Z</label>
                           <div class="input-group">
                               <div class="input-group-prepend">
@@ -255,21 +255,21 @@
                   </div>
                   <hr>
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                           </div>
                           <input type="number" class="form-control"  value="{{ $Product->x_oversize }}" name="x_oversize" id="x_oversize"  placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
                       </div></div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                           </div>
                           <input type="number" class="form-control" value="{{ $Product->y_oversize }}" name="y_oversize" id="y_oversize"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
                       </div></div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <div class="input-group">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -279,13 +279,13 @@
                       </div>
                   </div>
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <input type="number" class="form-control" value="{{ $Product->diameter }}" name="diameter" id="diameter"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <input type="number" class="form-control" value="{{ $Product->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <input type="number" class="form-control" value="{{ $Product->section_size }}" name="section_size" id="section_size" placeholder="Section size" step=".001">
                       </div>
                   </div>
@@ -296,13 +296,13 @@
                   </div>
                   <hr>
                   <div class="row">
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <input type="number" class="form-control" value="{{ $Product->qty_eco_min }}" name="qty_eco_min" id="qty_eco_min" placeholder="{{ __('general_content.quantite_eco_min_trans_key') }}" step=".001">
                       </div>
-                      <div class="col-4">
+                      <div class="form-group col-md-4">
                         <input type="number" class="form-control" value="{{ $Product->qty_eco_max }}" name="qty_eco_max" id="qty_eco_max" placeholder="{{ __('general_content.quantite_eco_max_trans_key') }}" step=".001">
                       </div>
-                      <div class="col-4"></div>
+                      <div class="form-group col-md-4"></div>
                   </div>
                   <hr>
                   <div class="card card-body">
@@ -631,15 +631,15 @@
                               @csrf
                               <div class="card-body">
                                 <div class="row">
-                                  <div class="col-4">
+                                  <div class="form-group col-md-4">
                                     <input type="hidden"  value="{{ $preferredSuppliers->id }}" name="companies_id" id="companies_id">
                                   
                                     <input type="number" class="form-control"  name="min_qty" id="min_qty" placeholder="{{ __('general_content.quantite_min_trans_key') }}" step=".001">
                                   </div>
-                                  <div class="col-4">
+                                  <div class="form-group col-md-4">
                                     <input type="number" class="form-control"  name="max_qty" id="max_qty" placeholder="{{ __('general_content.quantite_max_trans_key') }}" step=".001">
                                   </div>
-                                  <div class="col-4">
+                                  <div class="form-group col-md-4">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ $Factory->curency }}</span>

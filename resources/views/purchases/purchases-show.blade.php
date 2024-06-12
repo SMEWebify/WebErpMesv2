@@ -33,10 +33,10 @@
                 @csrf 
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}
                       </div>
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                           <x-slot name="prependSlot">
                               <div class="input-group-text bg-gradient-success">
@@ -50,7 +50,7 @@
                           <option value="5" @if(5 == $Purchase->statu ) Selected @endif >{{ __('general_content.canceled_trans_key') }}</option>
                         </x-adminlte-select>
                       </div>
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_trans_key'), 'Value' =>  $Purchase->label])
                       </div>
                     </div>
@@ -64,18 +64,18 @@
                     <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
                     @endif
                     <div class="row">
-                      <div class="col-5">
+                      <div class="form-group col-md-5">
                         @include('include.form.form-select-companie',['companiesId' =>  $Purchase->companies_id])
                       </div>
-                      <div class="col-5">
+                      <div class="form-group col-md-5">
                         
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-5">
+                      <div class="form-group col-md-5">
                         @include('include.form.form-select-adress',['adressId' =>   $Purchase->companies_addresses_id])
                       </div>
-                      <div class="col-5">
+                      <div class="form-group col-md-5">
                         @include('include.form.form-select-contact',['contactId' =>   $Purchase->companies_contacts_id])
                       </div>
                     </div>

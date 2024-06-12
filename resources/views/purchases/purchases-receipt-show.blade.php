@@ -31,10 +31,10 @@
                 @csrf 
                   <div class="card card-body">
                     <div class="row">
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $PurchaseReceipt->code }}
                       </div>
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                           <x-slot name="prependSlot">
                               <div class="input-group-text bg-gradient-success">
@@ -45,11 +45,11 @@
                           <option value="2" @if(2 == $PurchaseReceipt->statu ) Selected @endif >{{ __('general_content.stock_trans_key') }}</option>
                         </x-adminlte-select>
                       </div>
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_reciept_trans_key'), 'Value' =>  $PurchaseReceipt->label])
                       </div>
 
-                      <div class="col-3">
+                      <div class="form-group col-md-3">
                         <x-adminlte-input name="delivery_note_number" label="{{ __('general_content.delivery_note_number_trans_key') }}" placeholder="{{ __('general_content.delivery_note_number_trans_key') }}" value="{{  $PurchaseReceipt->delivery_note_number }}" label-class="text-success">
                           <x-slot name="prependSlot">
                             <div class="input-group-text bg-gradient-success">
@@ -65,7 +65,7 @@
                       <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
                     </div>
                     <div class="row">
-                      <div class="col-5">
+                      <div class="form-group col-md-5">
                         <label for="companies_id">{{ __('general_content.companie_trans_key') }}</label>
                         <div class="input-group">
                           <div class="input-group-prepend">
