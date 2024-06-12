@@ -2,11 +2,8 @@
             <div class="col-md-9">
                 <form wire:submit.prevent="updateProfile">
                     @include('include.alert-result')
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('general_content.about_setup_trans_key') }}</h3>
-                        </div>
-                        <div class="card-body">
+                    <x-adminlte-card title="{{ __('general_content.about_setup_trans_key') }}" theme="primary" maximizable>
+
                             <div class="form-group">
                                 <label for="name">{{ __('general_content.name_trans_key') }}</label>
                                 <input wire:model.live="name" type="text" class="form-control" />
@@ -27,20 +24,14 @@
                                 <input wire:model.live="password" type="password" class="form-control" />
                                 @error('password') <span class="text-danger">{{ $message }}<br/></span>@enderror
                             </div>
-                        </div>
-                        <div class="card-footer">
+                        <x-slot name="footerSlot">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                        </div>
-                    </div>
+                        </x-slot>
+                    </x-adminlte-card>
                 </form>
 
                 <form wire:submit.prevent="updateInformation">
-                    <div class="card card-warning">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('general_content.personnal_information_trans_key') }}</h3>
-                        </div>
-                        <div class="card-body">
-
+                    <x-adminlte-card title="{{ __('general_content.personnal_information_trans_key') }}" theme="warning" maximizable>
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label for="personnal_phone_number">{{__('general_content.personnal_phone_trans_key') }}:</label>
@@ -147,8 +138,7 @@
                                     @error('nic_num') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="card card-body">
+                            <hr>
                             <div class="row">
                                 <label for="InputWebSite">{{ __('general_content.adress_section_trans_key') }}</label>
                             </div>
@@ -187,8 +177,7 @@
                                     @error('country') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="card card-body">
+                            <hr>
                             <div class="row">
                                 <label for="InputWebSite">{{ __('general_content.custom_section_trans_key') }}</label>
                             </div>
@@ -215,8 +204,7 @@
                                     @error('custom4') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="card card-body">
+                            <hr>
                             <div class="row">
                                 <div class="col-12">
                                     <label>{{ __('general_content.about_you_trans_key') }}</label>
@@ -224,10 +212,9 @@
                                     @error('desc') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
-                        </div> 
-                        <div class="card-footer">
+                        <x-slot name="footerSlot">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                        </div>
-                    </div>
+                        </x-slot>
+                    </x-adminlte-card>
                 </form>
             </div>

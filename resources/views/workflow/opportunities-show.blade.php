@@ -31,10 +31,7 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
               <form method="POST" action="{{ route('opportunities.update', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
                 @csrf 
                 <div class="card card-body">
@@ -104,89 +101,45 @@
                       <x-FormTextareaComment  comment="{{ $Opportunity->comment }}" />
                     </div>
                   </div>
-                  <div class="card-footer">
+                  <x-slot name="footerSlot">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                  </div>
+                  </x-slot>
               </form>
-            </div>
+            </x-adminlte-card>
           </div>
           <div class="col-md-3">
-            <div class="card card-info">
-              <div class="card-header ">
-                <h3 class="card-title">{{ __('general_content.historical_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                @if($Opportunity->leads_id)
-                <div class="text-muted">
-                  <h3>Lead #{{ $Opportunity->leads_id }} </h3>
-                  <p class="text-sm">{{ __('general_content.user_trans_key') }}
-                    <b class="d-block">{{ $Opportunity->lead->UserManagement['name'] }}</b>
-                  </p>
-                  <p class="text-sm">{{ __('general_content.source_trans_key') }}
-                    <b class="d-block">{{ $Opportunity->lead->source }}</b>
-                  </p>
-                  <p class="text-sm">{{ __('general_content.campaign_trans_key') }}
-                    <b class="d-block">{{ $Opportunity->lead->campaign }}</b>
-                  </p>
-                </div>
-                @endif
-              </div>
-            </div>
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
-              </div>
-              <div class="card-body ">
-                <p>
-                  <a class="btn btn-success btn-sm" href="{{ route('opportunities.store.quote', ['id' => $Opportunity->id ]) }}">
-                    <i class="fas fa-folder"></i>
-                    {{ __('general_content.new_quote_trans_key') }}
-                  </a>
+            <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info" maximizable>
+              @if($Opportunity->leads_id)
+              <div class="text-muted">
+                <h3>Lead #{{ $Opportunity->leads_id }} </h3>
+                <p class="text-sm">{{ __('general_content.user_trans_key') }}
+                  <b class="d-block">{{ $Opportunity->lead->UserManagement['name'] }}</b>
                 </p>
-                @forelse($Opportunity->Quotes as $Quote)
-                  <hr>
-                  <x-QuoteButton id="{{ $Quote->id }}" code="{{ $Quote->code }}"  />
-                  <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /><br/>
-                @empty
-                {{ __('general_content.no_data_trans_key') }}
-                @endforelse
+                <p class="text-sm">{{ __('general_content.source_trans_key') }}
+                  <b class="d-block">{{ $Opportunity->lead->source }}</b>
+                </p>
+                <p class="text-sm">{{ __('general_content.campaign_trans_key') }}
+                  <b class="d-block">{{ $Opportunity->lead->campaign }}</b>
+                </p>
               </div>
-            </div>
-            <div class="card card-info">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.documents_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text"><i class="far fa-file"></i></span>
-                        </div>
-                        <div class="custom-file">
-                          <input type="hidden" name="opportunities_id" value="{{ $Opportunity->id }}" >
-                          <input type="file" name="file" class="custom-file-input" id="chooseFile">
-                          <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
-                        </div>
-                        <div class="input-group-append">
-                          <button type="submit" name="submit" class="btn btn-success">
-                            {{ __('general_content.upload_trans_key') }} 
-                          </button>
-                        </div>
-                      </div>
-                </form>
-                <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
-                <ul class="list-unstyled">
-                  @forelse ( $Opportunity->files as $file)
-                  <li>
-                    <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
-                  </li>
-                  @empty
-                    {{ __('general_content.no_data_trans_key') }}
-                  @endforelse
-                </ul>
-              </div>
-            </div>
+              @endif
+            </x-adminlte-card>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
+              <p>
+                <a class="btn btn-success btn-sm" href="{{ route('opportunities.store.quote', ['id' => $Opportunity->id ]) }}">
+                  <i class="fas fa-folder"></i>
+                  {{ __('general_content.new_quote_trans_key') }}
+                </a>
+              </p>
+              @forelse($Opportunity->Quotes as $Quote)
+                <hr>
+                <x-QuoteButton id="{{ $Quote->id }}" code="{{ $Quote->code }}"  />
+                <x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /><br/>
+              @empty
+              {{ __('general_content.no_data_trans_key') }}
+              @endforelse
+            </x-adminlte-card>
+            @include('include.file-store', ['inputName' => "opportunities_id",'inputValue' => $Opportunity->id,'filesList' => $Opportunity->files,])
           </div>
         </div>
       </div>   
@@ -220,146 +173,142 @@
       </div>
       <div class="tab-pane " id="Activities">
         <div class="row">
-          <div class="col-md-6 card-primary">
-            <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.activities_trans_key') }}</h3>
-            </div>
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>{{ __('general_content.label_trans_key') }}</th>
-                    <th>{{ __('general_content.type_trans_key') }}</th>
-                    <th>{{ __('general_content.statu_trans_key') }}</th>
-                    <th>{{ __('general_content.priority_trans_key') }}</th>
-                    <th>{{ __('general_content.due_date_trans_key') }}</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse ($ActivitiesList as $Activity)
-                  <tr>
-                    <td>{{ $Activity->label }}</td>
-                    <td>
-                      @if($Activity->type  == 1) <span class="badge badge-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
-                      @if($Activity->type  == 2) <span class="badge badge-warning">{{ __('general_content.email_send_trans_key') }}</span> @endif
-                      @if($Activity->type  == 3) <span class="badge badge-primary">{{ __('general_content.pre_sakes_aactivity_trans_key') }}</span> @endif
-                      @if($Activity->type  == 4) <span class="badge badge-success">{{ __('general_content.sales_activity_trans_key') }}</span> @endif
-                      @if($Activity->type  == 5) <span class="badge badge-danger">{{ __('general_content.sales_telephone_call_trans_key') }}</span> @endif
-                    </td>
-                    <td>
-                      @if($Activity->statu  == 1) <span class="badge badge-info">{{ __('general_content.no_start_trans_key') }}</span> @endif
-                      @if($Activity->statu  == 2) <span class="badge badge-success">{{ __('general_content.in_progress_trans_key') }}</span> @endif
-                      @if($Activity->statu  == 3) <span class="badge badge-success">{{ __('general_content.closed_trans_key') }}</span> @endif
-                      @if($Activity->statu  == 4) <span class="badge badge-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span> @endif
-                    </td>
-                    <td>
-                      @if(1 == $Activity->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
-                      @if(2 == $Activity->priority )  <span class="badge badge-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
-                      @if(3 == $Activity->priority )  <span class="badge badge-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
-                      @if(4 == $Activity->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
-                    </td>
-                    <td>{{ $Activity->due_date }}</td>
-                    <td class="py-0 align-middle">
-                      <!-- Button Modal -->
-                      <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Activity{{ $Activity->id }}">
-                        <i class="fa fa-lg fa-fw  fa-edit"></i>
-                      </button>
-                      <!-- Modal {{ $Activity->id }} -->
-                      <x-adminlte-modal id="Activity{{ $Activity->id }}" title="Update {{ $Activity->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('opportunities.update.activity', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
-                          @csrf
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label for="label">{{__('general_content.label_trans_key') }}</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                </div>
-                                <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Activity->label }}">
-                                <input type="hidden"  name="id"  id="id" value="{{ $Activity->id }}" >
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="type">{{ __('general_content.statu_trans_key') }}</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                </div>
-                                <select class="form-control" name="type" id="type">
-                                  <option value="1" @if($Activity->type == 1 ) Selected @endif>{{ __('general_content.activity_maketing_trans_key') }}</option>
-                                  <option value="2" @if($Activity->type == 2  ) Selected @endif>{{ __('general_content.email_send_trans_key') }}</option>
-                                  <option value="3" @if($Activity->type == 3 ) Selected @endif>{{ __('general_content.pre_sakes_aactivity_trans_key') }}</option>
-                                  <option value="4" @if($Activity->type == 4  ) Selected @endif>{{ __('general_content.sales_activity_trans_key') }}</option>
-                                  <option value="5" @if($Activity->type == 5  ) Selected @endif>{{ __('general_content.sales_telephone_call_trans_key') }}</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                </div>
-                                <select class="form-control" name="statu" id="statu">
-                                  <option value="1" @if($Activity->statu == 1 ) Selected @endif>{{ __('general_content.no_start_trans_key') }}</option>
-                                  <option value="2" @if($Activity->statu == 2  ) Selected @endif>{{ __('general_content.in_progress_trans_key') }}</option>
-                                  <option value="3" @if($Activity->statu == 3 ) Selected @endif>{{ __('general_content.closed_trans_key') }}</option>
-                                  <option value="4" @if($Activity->statu == 4  ) Selected @endif>{{ __('general_content.waiting_customer_data_trans_key') }}</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="priority">{{ __('general_content.priority_trans_key') }}</label>
-                              <div class="input-group">
-                                  <div class="input-group-text bg-gradient-success">
-                                      <i class="fas fa-exclamation"></i>
+          <div class="col-md-6">
+            <x-adminlte-card title="{{ __('general_content.activities_trans_key') }}" theme="primary" maximizable>
+              <div class="table-responsive p-0">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>{{ __('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.type_trans_key') }}</th>
+                      <th>{{ __('general_content.statu_trans_key') }}</th>
+                      <th>{{ __('general_content.priority_trans_key') }}</th>
+                      <th>{{ __('general_content.due_date_trans_key') }}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($ActivitiesList as $Activity)
+                    <tr>
+                      <td>{{ $Activity->label }}</td>
+                      <td>
+                        @if($Activity->type  == 1) <span class="badge badge-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
+                        @if($Activity->type  == 2) <span class="badge badge-warning">{{ __('general_content.email_send_trans_key') }}</span> @endif
+                        @if($Activity->type  == 3) <span class="badge badge-primary">{{ __('general_content.pre_sakes_aactivity_trans_key') }}</span> @endif
+                        @if($Activity->type  == 4) <span class="badge badge-success">{{ __('general_content.sales_activity_trans_key') }}</span> @endif
+                        @if($Activity->type  == 5) <span class="badge badge-danger">{{ __('general_content.sales_telephone_call_trans_key') }}</span> @endif
+                      </td>
+                      <td>
+                        @if($Activity->statu  == 1) <span class="badge badge-info">{{ __('general_content.no_start_trans_key') }}</span> @endif
+                        @if($Activity->statu  == 2) <span class="badge badge-success">{{ __('general_content.in_progress_trans_key') }}</span> @endif
+                        @if($Activity->statu  == 3) <span class="badge badge-success">{{ __('general_content.closed_trans_key') }}</span> @endif
+                        @if($Activity->statu  == 4) <span class="badge badge-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span> @endif
+                      </td>
+                      <td>
+                        @if(1 == $Activity->priority )  <span class="badge badge-danger">{{ __('general_content.burning_trans_key') }}</span>@endif
+                        @if(2 == $Activity->priority )  <span class="badge badge-warning">{{ __('general_content.hot_trans_key') }}</span>@endif
+                        @if(3 == $Activity->priority )  <span class="badge badge-primary">{{ __('general_content.lukewarm_trans_key') }}</span>@endif
+                        @if(4 == $Activity->priority )  <span class="badge badge-success">{{ __('general_content.cold_trans_key') }}</span>@endif
+                      </td>
+                      <td>{{ $Activity->due_date }}</td>
+                      <td class="py-0 align-middle">
+                        <!-- Button Modal -->
+                        <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Activity{{ $Activity->id }}">
+                          <i class="fa fa-lg fa-fw  fa-edit"></i>
+                        </button>
+                        <!-- Modal {{ $Activity->id }} -->
+                        <x-adminlte-modal id="Activity{{ $Activity->id }}" title="Update {{ $Activity->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                          <form method="POST" action="{{ route('opportunities.update.activity', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
+                            @csrf
+                            <div class="card-body">
+                              <div class="form-group">
+                                <label for="label">{{__('general_content.label_trans_key') }}</label>
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                   </div>
-                                  <select class="form-control"  name="priority" id="priority">
-                                      <option value="1"  @if($Activity->priority == 1 ) Selected @endif>{{ __('general_content.burning_trans_key') }}</option>
-                                      <option value="2"  @if($Activity->priority == 2 ) Selected @endif>{{ __('general_content.hot_trans_key') }}</option>
-                                      <option value="3"  @if($Activity->priority == 3 ) Selected @endif>{{ __('general_content.lukewarm_trans_key') }}</option>
-                                      <option value="4"  @if($Activity->priority == 4 ) Selected @endif>{{ __('general_content.cold_trans_key') }}</option>
+                                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Activity->label }}">
+                                  <input type="hidden"  name="id"  id="id" value="{{ $Activity->id }}" >
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="type">{{ __('general_content.statu_trans_key') }}</label>
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                  </div>
+                                  <select class="form-control" name="type" id="type">
+                                    <option value="1" @if($Activity->type == 1 ) Selected @endif>{{ __('general_content.activity_maketing_trans_key') }}</option>
+                                    <option value="2" @if($Activity->type == 2  ) Selected @endif>{{ __('general_content.email_send_trans_key') }}</option>
+                                    <option value="3" @if($Activity->type == 3 ) Selected @endif>{{ __('general_content.pre_sakes_aactivity_trans_key') }}</option>
+                                    <option value="4" @if($Activity->type == 4  ) Selected @endif>{{ __('general_content.sales_activity_trans_key') }}</option>
+                                    <option value="5" @if($Activity->type == 5  ) Selected @endif>{{ __('general_content.sales_telephone_call_trans_key') }}</option>
                                   </select>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                  </div>
+                                  <select class="form-control" name="statu" id="statu">
+                                    <option value="1" @if($Activity->statu == 1 ) Selected @endif>{{ __('general_content.no_start_trans_key') }}</option>
+                                    <option value="2" @if($Activity->statu == 2  ) Selected @endif>{{ __('general_content.in_progress_trans_key') }}</option>
+                                    <option value="3" @if($Activity->statu == 3 ) Selected @endif>{{ __('general_content.closed_trans_key') }}</option>
+                                    <option value="4" @if($Activity->statu == 4  ) Selected @endif>{{ __('general_content.waiting_customer_data_trans_key') }}</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="priority">{{ __('general_content.priority_trans_key') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-text bg-gradient-success">
+                                        <i class="fas fa-exclamation"></i>
+                                    </div>
+                                    <select class="form-control"  name="priority" id="priority">
+                                        <option value="1"  @if($Activity->priority == 1 ) Selected @endif>{{ __('general_content.burning_trans_key') }}</option>
+                                        <option value="2"  @if($Activity->priority == 2 ) Selected @endif>{{ __('general_content.hot_trans_key') }}</option>
+                                        <option value="3"  @if($Activity->priority == 3 ) Selected @endif>{{ __('general_content.lukewarm_trans_key') }}</option>
+                                        <option value="4"  @if($Activity->priority == 4 ) Selected @endif>{{ __('general_content.cold_trans_key') }}</option>
+                                    </select>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="due_date">{{ __('general_content.due_date_trans_key') }}</label>
+                                <input type="date" class="form-control" name="due_date"  id="due_date"  value="{{ $Activity->due_date }}" >
+                              </div>
+                              <div class="form-group">
+                                <x-FormTextareaComment  comment="{{ $Activity->comment }}" />
                               </div>
                             </div>
-                            <div class="form-group">
-                              <label for="due_date">{{ __('general_content.due_date_trans_key') }}</label>
-                              <input type="date" class="form-control" name="due_date"  id="due_date"  value="{{ $Activity->due_date }}" >
-                            </div>
-                            <div class="form-group">
-                              <x-FormTextareaComment  comment="{{ $Activity->comment }}" />
-                            </div>
-                          </div>
-                          <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                          </div>
-                        </form>
-                      </x-adminlte-modal>
-                    </td>
-                  </tr>
-                  @empty
-                  <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
-                  @endforelse
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>{{ __('general_content.label_trans_key') }}</th>
-                    <th>{{ __('general_content.type_trans_key') }}</th>
-                    <th>{{ __('general_content.statu_trans_key') }}</th>
-                    <th>{{ __('general_content.priority_trans_key') }}</th>
-                    <th>{{ __('general_content.due_date_trans_key') }}</th>
-                    <th></th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+                            <x-slot name="footerSlot">
+                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            </x-slot>
+                          </form>
+                        </x-adminlte-modal>
+                      </td>
+                    </tr>
+                    @empty
+                    <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    @endforelse
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>{{ __('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.type_trans_key') }}</th>
+                      <th>{{ __('general_content.statu_trans_key') }}</th>
+                      <th>{{ __('general_content.priority_trans_key') }}</th>
+                      <th>{{ __('general_content.due_date_trans_key') }}</th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </x-adminlte-card>
           </div>
-          <div class="col-md-6 card-secondary">
-            <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.new_activity_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
+          <div class="col-md-6">
+            <x-adminlte-card title="{{ __('general_content.new_activity_trans_key') }}" theme="secondary" maximizable>
               <form  method="POST" action="{{ route('opportunities.store.activity', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
@@ -409,117 +358,113 @@
                   <label>{{ __('general_content.comment_trans_key') }}</label>
                   <textarea class="form-control" rows="3" name="comment"  placeholder="..."></textarea>
                 </div>
-                <div class="card-footer">
+                <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                </div>
+                </x-slot>
               </form>
-            </div>
+            </x-adminlte-card>
           </div>
         </div>
       </div>
       <div class="tab-pane " id="Events">
         <div class="row">
           <div class="col-md-6 card-primary">
-            <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.events_trans_key') }}</h3>
-            </div>
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>{{ __('general_content.label_trans_key') }}</th>
-                    <th>{{ __('general_content.type_trans_key') }}</th>
-                    <th>{{ __('general_content.start_date_trans_key') }}</th>
-                    <th>{{ __('general_content.end_date_trans_key') }}</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse ($EventsList as $Event)
-                  <tr>
-                    <td>{{ $Event->label }}</td>
-                    <td>
-                      @if($Event->type  == 1) <span class="badge badge-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
-                      @if($Event->type  == 2) <span class="badge badge-warning">{{ __('general_content.internal_meeting_trans_key') }}</span> @endif
-                      @if($Event->type  == 3) <span class="badge badge-primary">{{ __('general_content.onsite_visite_trans_key') }}</span> @endif
-                      @if($Event->type  == 4) <span class="badge badge-success">{{ __('general_content.sales_meeting_trans_key') }}</span> @endif
-                    </td>
-                    <td>{{ $Event->start_date }}</td>
-                    <td>{{ $Event->end_date }}</td>
-                    <td class="py-0 align-middle">
-                      <!-- Button Modal -->
-                      <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Event{{ $Event->id }}">
-                        <i class="fa fa-lg fa-fw  fa-edit"></i>
-                      </button>
-                      <!-- Modal {{ $Event->id }} -->
-                      <x-adminlte-modal id="Event{{ $Event->id }}" title="Update {{ $Event->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('opportunities.update.event', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
-                          @csrf
-                          <div class="card-body">
-                            <div class="form-group">
-                              <label for="label">{{__('general_content.label_trans_key') }}</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+            <x-adminlte-card title="{{ __('general_content.events_trans_key') }}" theme="primary" maximizable>
+              <div class="table-responsive p-0">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>{{ __('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.type_trans_key') }}</th>
+                      <th>{{ __('general_content.start_date_trans_key') }}</th>
+                      <th>{{ __('general_content.end_date_trans_key') }}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($EventsList as $Event)
+                    <tr>
+                      <td>{{ $Event->label }}</td>
+                      <td>
+                        @if($Event->type  == 1) <span class="badge badge-info">{{ __('general_content.activity_maketing_trans_key') }}</span> @endif
+                        @if($Event->type  == 2) <span class="badge badge-warning">{{ __('general_content.internal_meeting_trans_key') }}</span> @endif
+                        @if($Event->type  == 3) <span class="badge badge-primary">{{ __('general_content.onsite_visite_trans_key') }}</span> @endif
+                        @if($Event->type  == 4) <span class="badge badge-success">{{ __('general_content.sales_meeting_trans_key') }}</span> @endif
+                      </td>
+                      <td>{{ $Event->start_date }}</td>
+                      <td>{{ $Event->end_date }}</td>
+                      <td class="py-0 align-middle">
+                        <!-- Button Modal -->
+                        <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Event{{ $Event->id }}">
+                          <i class="fa fa-lg fa-fw  fa-edit"></i>
+                        </button>
+                        <!-- Modal {{ $Event->id }} -->
+                        <x-adminlte-modal id="Event{{ $Event->id }}" title="Update {{ $Event->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                          <form method="POST" action="{{ route('opportunities.update.event', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
+                            @csrf
+                            <div class="card-body">
+                              <div class="form-group">
+                                <label for="label">{{__('general_content.label_trans_key') }}</label>
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                  </div>
+                                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Event->label }}">
+                                  <input type="hidden"  name="id"  id="id" value="{{ $Event->id }}" >
                                 </div>
-                                <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Event->label }}">
-                                <input type="hidden"  name="id"  id="id" value="{{ $Event->id }}" >
+                              </div>
+                              <div class="form-group">
+                                <label for="type">{{ __('general_content.statu_trans_key') }}</label>
+                                <div class="input-group">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                  </div>
+                                  <select class="form-control" name="type" id="type">
+                                    <option value="1" @if($Event->type == 1 ) Selected @endif>{{ __('general_content.activity_maketing_trans_key') }}</option>
+                                    <option value="2" @if($Event->type == 2  ) Selected @endif>{{ __('general_content.internal_meeting_trans_key') }}</option>
+                                    <option value="3" @if($Event->type == 3 ) Selected @endif>{{ __('general_content.onsite_visite_trans_key') }}</option>
+                                    <option value="4" @if($Event->type == 4  ) Selected @endif>{{ __('general_content.sales_meeting_trans_key') }}</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
+                                <input type="date" class="form-control" name="start_date"  id="start_date"  value="{{ $Event->start_date }}" >
+                              </div>
+                              <div class="form-group">
+                                <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
+                                <input type="date" class="form-control" name="end_date"  id="end_date"  value="{{ $Event->end_date }}" >
+                              </div>
+                              <div class="form-group">
+                                <x-FormTextareaComment  comment="{{ $Event->comment }}" />
                               </div>
                             </div>
-                            <div class="form-group">
-                              <label for="type">{{ __('general_content.statu_trans_key') }}</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                </div>
-                                <select class="form-control" name="type" id="type">
-                                  <option value="1" @if($Event->type == 1 ) Selected @endif>{{ __('general_content.activity_maketing_trans_key') }}</option>
-                                  <option value="2" @if($Event->type == 2  ) Selected @endif>{{ __('general_content.internal_meeting_trans_key') }}</option>
-                                  <option value="3" @if($Event->type == 3 ) Selected @endif>{{ __('general_content.onsite_visite_trans_key') }}</option>
-                                  <option value="4" @if($Event->type == 4  ) Selected @endif>{{ __('general_content.sales_meeting_trans_key') }}</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
-                              <input type="date" class="form-control" name="start_date"  id="start_date"  value="{{ $Event->start_date }}" >
-                            </div>
-                            <div class="form-group">
-                              <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
-                              <input type="date" class="form-control" name="end_date"  id="end_date"  value="{{ $Event->end_date }}" >
-                            </div>
-                            <div class="form-group">
-                              <x-FormTextareaComment  comment="{{ $Event->comment }}" />
-                            </div>
-                          </div>
-                          <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                          </div>
-                        </form>
-                      </x-adminlte-modal>
-                    </td>
-                  </tr>
-                  @empty
-                  <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
-                  @endforelse
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>{{ __('general_content.label_trans_key') }}</th>
-                    <th>{{ __('general_content.type_trans_key') }}</th>
-                    <th>{{ __('general_content.start_date_trans_key') }}</th>
-                    <th>{{ __('general_content.end_date_trans_key') }}</th>
-                    <th></th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+                            <x-slot name="footerSlot">
+                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                            </x-slot>
+                          </form>
+                        </x-adminlte-modal>
+                      </td>
+                    </tr>
+                    @empty
+                    <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    @endforelse
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>{{ __('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.type_trans_key') }}</th>
+                      <th>{{ __('general_content.start_date_trans_key') }}</th>
+                      <th>{{ __('general_content.end_date_trans_key') }}</th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </x-adminlte-card>
           </div>
-          <div class="col-md-6 card-secondary">
-            <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.new_event_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
+          <div class="col-md-6">
+            <x-adminlte-card title="{{ __('general_content.new_event_trans_key') }}" theme="secondary" maximizable>
               <form  method="POST" action="{{ route('opportunities.store.event', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
@@ -558,11 +503,11 @@
                   <label>{{ __('general_content.comment_trans_key') }}</label>
                   <textarea class="form-control" rows="3" name="comment"  placeholder="..."></textarea>
                 </div>
-                <div class="card-footer">
+                <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                </div>
+                </x-slot>
               </form>
-            </div>
+            </x-adminlte-card>
           </div>
         </div>
       </div>

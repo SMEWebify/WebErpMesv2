@@ -28,14 +28,7 @@
       <div class="tab-pane active" id="Purchase">
         <div class="row">
           <div class="col-md-9">
-            @include('include.alert-result')
-            @if( $Purchase->companies_contacts_id == 0 & $Purchase->companies_addresses_id ==0)
-            <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
-            @endif
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
               <form method="POST" action="{{ route('purchase.update', ['id' => $Purchase->id]) }}" enctype="multipart/form-data">
                 @csrf 
                   <div class="card card-body">
@@ -66,6 +59,10 @@
                     <div class="row">
                       <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
                     </div>
+                    @include('include.alert-result')
+                    @if( $Purchase->companies_contacts_id == 0 & $Purchase->companies_addresses_id ==0)
+                    <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
+                    @endif
                     <div class="row">
                       <div class="col-5">
                         @include('include.form.form-select-companie',['companiesId' =>  $Purchase->companies_id])
@@ -92,14 +89,12 @@
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </form>
-            </div>
+            </x-adminlte-card>
           </div>
           <div class="col-md-3">
-            <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
-              <div class="card-body table-responsive p-0">
+            
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
+              <div class="table-responsive p-0">
                 <table class="table table-hover">
                   <tr>
                     <th>Total:</th>
@@ -107,12 +102,10 @@
                   </tr>
                 </table>
               </div>
-            </div>
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
-              </div>
-              <div class="card-body table-responsive p-0">
+            </x-adminlte-card>
+
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
+              <div class="table-responsive p-0">
                 <table class="table table-hover">
                   <tr>
                       <td style="width:50%"> 
@@ -169,42 +162,9 @@
                   @endfor
                 @endif
               </div>
-            </div>
-            <div class="card card-info">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.documents_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text"><i class="far fa-file"></i></span>
-                        </div>
-                        <div class="custom-file">
-                          <input type="hidden" name="purchase_id" value="{{ $Purchase->id }}" >
-                          <input type="file" name="file" class="custom-file-input" id="chooseFile">
-                          <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
-                        </div>
-                        <div class="input-group-append">
-                          <button type="submit" name="submit" class="btn btn-success">
-                            {{ __('general_content.upload_trans_key') }} 
-                          </button>
-                        </div>
-                      </div>
-                </form>
-                <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
-                <ul class="list-unstyled">
-                  @forelse ( $Purchase->files as $file)
-                  <li>
-                    <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
-                  </li>
-                  @empty
-                    {{ __('general_content.no_data_trans_key') }}
-                  @endforelse
-                </ul>
-              </div>
-            </div>
+            </x-adminlte-card>
+
+            @include('include.file-store', ['inputName' => "purchases_id",'inputValue' => $Purchase->id,'filesList' => $Purchase->files,])
           </div>
         </div>
       </div>    

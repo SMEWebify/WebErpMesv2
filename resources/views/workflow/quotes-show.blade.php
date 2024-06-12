@@ -34,10 +34,8 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
+            
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
               <form method="POST" action="{{ route('quotes.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
                 @csrf 
                 <div class="card card-body">
@@ -119,15 +117,11 @@
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
               </form>
-            </div>
+            </x-adminlte-card>
           </div>
           <div class="col-md-3">
-            <div class="card card-info">
-              <div class="card-header ">
-                <h3 class="card-title">{{ __('general_content.historical_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                @if($Quote->opportunities_id)
+            @if($Quote->opportunities_id)
+              <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info" maximizable>
                 <div class="text-muted">
                   <h3>{{__('general_content.opportunity_trans_key')}} #{{ $Quote->opportunities->label }} </h3><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Quote->opportunities_id])}}" />
                   
@@ -141,87 +135,44 @@
                     <b class="d-block">{{ $Quote->opportunities->budget }}</b>
                   </p>
                 </div>
-                @endif
-              </div>
-            </div>
-            <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
-              <div class="card-body table-responsive p-0">
+              </x-adminlte-card>
+            @endif
+            
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
               @include('include.sub-total-price')
-            </div>
-            </div>
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
-              </div>
-              <div class="card-body table-responsive p-0">
-                <table class="table table-hover">
-                  <tr>
-                    <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>
-                    <td><x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /></td>
-                  </tr>
-                  @if($Quote->uuid)
-                  <tr>
-                    <td colspan="2">
-                      <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
-                      <p>
-                        <input type="text" class="form-control"  value="{{ Request::root() }}/guest/quote/{{  $Quote->uuid }}">
-                      </p>
-                    </td>
-                  </tr>
-                  @endif
-                  @forelse($Quote->Orders as $Order)
-                  <tr>
-                      <td style="width:50%"><x-OrderButton id="{{ $Order->id }}" code="{{ $Order->code }}"  /></td>
-                      <td><x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" /></td>
-                  </tr>
-                  @empty
-                  <tr>
-                    <td colspan="2">
-                        {{ __('general_content.no_data_trans_key') }}
-                    </td>
-                  </tr>
-                  @endforelse
-                </table>
-              </div>
-            </div>
-            <div class="card card-info">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.documents_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                <form action="{{ route('file.store') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text"><i class="far fa-file"></i></span>
-                        </div>
-                        <div class="custom-file">
-                          <input type="hidden" name="quotes_id" value="{{ $Quote->id }}" >
-                          <input type="file" name="file" class="custom-file-input" id="chooseFile">
-                          <label class="custom-file-label" for="chooseFile">{{ __('general_content.choose_file_trans_key') }}</label>
-                        </div>
-                        <div class="input-group-append">
-                          <button type="submit" name="submit" class="btn btn-success">
-                            {{ __('general_content.upload_trans_key') }} 
-                          </button>
-                        </div>
-                      </div>
-                </form>
-                <h5 class="mt-5 text-muted">{{ __('general_content.attached_file_trans_key') }} </h5>
-                <ul class="list-unstyled">
-                  @forelse ( $Quote->files as $file)
-                  <li>
-                    <a href="{{ asset('/file/'. $file->name) }}" download="{{ $file->original_file_name }}" class="btn-link text-secondary">{{ $file->original_file_name }} -  <small>{{ $file->GetPrettySize() }}</small></a>
-                  </li>
-                  @empty
-                    {{ __('general_content.no_data_trans_key') }}
-                  @endforelse
-                </ul>
-              </div>
-            </div>
+            </x-adminlte-card>
+
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
+              <table class="table table-hover">
+                <tr>
+                  <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>
+                  <td><x-ButtonTextPDF route="{{ route('pdf.quote', ['Document' => $Quote->id])}}" /></td>
+                </tr>
+                @if($Quote->uuid)
+                <tr>
+                  <td colspan="2">
+                    <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
+                    <p>
+                      <input type="text" class="form-control"  value="{{ Request::root() }}/guest/quote/{{  $Quote->uuid }}">
+                    </p>
+                  </td>
+                </tr>
+                @endif
+                @forelse($Quote->Orders as $Order)
+                <tr>
+                    <td style="width:50%"><x-OrderButton id="{{ $Order->id }}" code="{{ $Order->code }}"  /></td>
+                    <td><x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" /></td>
+                </tr>
+                @empty
+                <tr>
+                  <td colspan="2">
+                      {{ __('general_content.no_data_trans_key') }}
+                  </td>
+                </tr>
+                @endforelse
+              </table>
+            </x-adminlte-card>
+            @include('include.file-store', ['inputName' => "quotes_id",'inputValue' => $Quote->id,'filesList' => $Quote->files,])
           </div>
         </div>
       </div>   
@@ -231,62 +182,35 @@
       <div class="tab-pane" id="Charts">
         <div class="row">
           <div class="col-md-6">
-            <div class="card-secondary">
-              <div class="card-header">
-                <h3 class="card-title"> {{ __('Total product time by service') }} </h3>
-              </div>
-              <div class="card-body">
-                <canvas id="productDonutChart" width="400" height="400"></canvas>
-              </div>
-            </div>
+            <x-adminlte-card title="{{ __('Total product time by service') }}" theme="secondary" maximizable>
+              <canvas id="productDonutChart" width="400" height="400"></canvas>
+            </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <div class="card-secondary">
-              <div class="card-header">
-                <h3 class="card-title"> {{ __('Total setting time by service') }} </h3>
-              </div>
-              <div class="card-body">
-                <canvas id="settingDonutChart" width="400" height="400"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card-secondary">
-              <div class="card-header">
-                <h3 class="card-title"> {{ __('Total cost by service') }} </h3>
-              </div>
-              <div class="card-body">
-                <canvas id="CostDonutChart" width="400" height="400"></canvas>
-              </div>
-            </div>
+            <x-adminlte-card title="{{ __('Total setting time by service') }}" theme="secondary" maximizable>
+              <canvas id="settingDonutChart" width="400" height="400"></canvas>
+            </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <div class="card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('Total price by service') }}</h3>
-              </div>
-              <div class="card-body">
+            <x-adminlte-card title="{{ __('Total cost by service') }}" theme="secondary" maximizable>
+              <canvas id="CostDonutChart" width="400" height="400"></canvas>
+            </x-adminlte-card>
+          </div>
+          <div class="col-md-6">
+            <x-adminlte-card title="{{ __('Total price by service') }}" theme="secondary" maximizable>
                 <canvas id="PriceDonutChart" width="400" height="400"></canvas>
-              </div>
-            </div>
+              </x-adminlte-card>
           </div>
         </div>
       </div>  
       <div class="tab-pane " id="Views">
-        <div class="card card-primary">
-          <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.view_count_trans_key') }}</h3>
-          </div>
-          <div class="card-body">
-              @forelse($Quote->guestVisits as $visit)
-              <p>{{ __('general_content.date_trans_key') }}: {{ $visit->GetPrettyCreatedAttribute() }}</p>
-              @empty
-              <p>{{ __('general_content.no_data_trans_key') }}</p>
-              @endforelse
-          </div>
-        </div>
+        <x-adminlte-card title="{{ __('general_content.view_count_trans_key') }}" theme="primary" maximizable>
+          @forelse($Quote->guestVisits as $visit)
+          <p>{{ __('general_content.date_trans_key') }}: {{ $visit->GetPrettyCreatedAttribute() }}</p>
+          @empty
+          <p>{{ __('general_content.no_data_trans_key') }}</p>
+          @endforelse
+        </x-adminlte-card>
         @livewire('ChatLive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
       </div>
       @if($CustomFields)
@@ -299,11 +223,8 @@
         @if($Quote->statu == 1)
         <x-InfocalloutComponent note="{{ __('general_content.csv_quote_info_trans_key') }}"  />
 
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.choose_file_trans_key') }}</h3>
-            </div>
-            <form method="POST" action="{{ route('quotes.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
+        <x-adminlte-card title="{{ __('general_content.choose_file_trans_key') }}" theme="primary" maximizable>
+          <form method="POST" action="{{ route('quotes.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
               @csrf
               <div class="card-body">
                   {{-- Placeholder, sm size and prepend icon --}}
@@ -395,11 +316,11 @@
                       </div>
                   </div>
               </div>
-              <div class="card-footer">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-              </div>
+              <x-slot name="footerSlot">
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+              </x-slot>
             </form>
-        </div>
+          </x-adminlte-card>
         @else
         <x-adminlte-alert theme="info" title="Info">
             {{ __('general_content.info_statu_trans_key') }}

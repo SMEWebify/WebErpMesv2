@@ -26,10 +26,7 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.information_trans_key') }}</h3>
-              </div>
+            <x-adminlte-card title="{{ __('general_content.information_trans_key') }}" theme="primary" maximizable>
               <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
@@ -237,18 +234,14 @@
                   <div class="card card-body">
                         <x-FormTextareaComment  comment="{{ $Companie->comment }}" />
                   </div>
-                  <div class="card-footer">
+                  <x-slot name="footerSlot">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                  </div>
+                  </x-slot>
                 </form>
               </div>
-            </div>
+            </x-adminlte-card>
             <div class="col-md-3">
-              <div class="card card-secondary">
-                <div class="card-header">
-                  <h3 class="card-title"> {{ __('general_content.information_trans_key') }} </h3>
-                </div>
-                <div class="card-body">
+              <x-adminlte-card title="{{ __('general_content.information_trans_key') }}" theme="secondary" maximizable>
                   @if($Companie->website )
                   <a href="{{ $Companie->website }}" class="text-gray">
                     <i class="fab fa-internet-explorer fa-2x"></i>
@@ -269,147 +262,143 @@
                     <i class="fab fa-linkedin fa-2x"></i>
                   </a>
                   @endif
-                </div>
-              </div>
+              </x-adminlte-card>
+              @include('include.file-store', ['inputName' => "companies_id",'inputValue' => $Companie->id,'filesList' => $Companie->files,])
             </div>
           </div>
       </div>  
       <div class="tab-pane " id="Adresses">
         <div class="row">
-          <div class="col-md-8 card-primary">
-            <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.adress_trans_key') }}</h3>
-            </div>
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>{{ __('general_content.label_trans_key') }}</th>
-                    <th>{{ __('general_content.adress_trans_key') }}</th>
-                    <th>{{ __('general_content.postal_code_trans_key') }}</th>
-                    <th>{{ __('general_content.city_trans_key') }}</th>
-                    <th>{{ __('general_content.country_trans_key') }}</th>
-                    <th>{{ __('general_content.phone_trans_key') }}</th>
-                    <th>{{ __('general_content.email_trans_key') }}</th>
-                    <th>{{ __('general_content.action_trans_key') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse($Companie->Addresses as $Address)
-                  <tr>
-                    <td>{{ $Address->ordre }}</td>
-                    <td>{{ $Address->label }}</td>
-                    <td>{{ $Address->adress }}</td>
-                    <td>{{ $Address->zipcode }}</td>
-                    <td>{{ $Address->city }}</td>
-                    <td>{{ $Address->country }}</td>
-                    <td>{{ $Address->number }}</td>
-                    <td>{{ $Address->mail }}</td>
-                    <td class=" py-0 align-middle">
-                      <!-- Button Modal -->
-                      <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Address{{ $Address->id }}">
-                        <i class="fa fa-lg fa-fw  fa-edit"></i>
-                      </button>
-                      <!-- Modal {{ $Address->id }} -->
-                      <x-adminlte-modal id="Address{{ $Address->id }}" title="Update {{ $Address->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('addresses.edit', ['id' => $Address->id]) }}" >
-                          @csrf
-                          <div class="card-body">
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
+          <div class="col-md-8">
+            <x-adminlte-card title="{{ __('general_content.adress_trans_key') }}" theme="primary" maximizable>
+              <div class="table-responsive p-0">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>{{ __('general_content.label_trans_key') }}</th>
+                      <th>{{ __('general_content.adress_trans_key') }}</th>
+                      <th>{{ __('general_content.postal_code_trans_key') }}</th>
+                      <th>{{ __('general_content.city_trans_key') }}</th>
+                      <th>{{ __('general_content.country_trans_key') }}</th>
+                      <th>{{ __('general_content.phone_trans_key') }}</th>
+                      <th>{{ __('general_content.email_trans_key') }}</th>
+                      <th>{{ __('general_content.action_trans_key') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse($Companie->Addresses as $Address)
+                    <tr>
+                      <td>{{ $Address->ordre }}</td>
+                      <td>{{ $Address->label }}</td>
+                      <td>{{ $Address->adress }}</td>
+                      <td>{{ $Address->zipcode }}</td>
+                      <td>{{ $Address->city }}</td>
+                      <td>{{ $Address->country }}</td>
+                      <td>{{ $Address->number }}</td>
+                      <td>{{ $Address->mail }}</td>
+                      <td class=" py-0 align-middle">
+                        <!-- Button Modal -->
+                        <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Address{{ $Address->id }}">
+                          <i class="fa fa-lg fa-fw  fa-edit"></i>
+                        </button>
+                        <!-- Modal {{ $Address->id }} -->
+                        <x-adminlte-modal id="Address{{ $Address->id }}" title="Update {{ $Address->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                          <form method="POST" action="{{ route('addresses.edit', ['id' => $Address->id]) }}" >
+                            @csrf
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" value="{{ $Address->ordre }}">
+                                        <input type="hidden" name="id" value="{{ $Address->id }}">
+                                        <input type="hidden" name="companies_id" value="{{ $Address->companies_id }}">
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                  <label for="label">{{__('general_content.label_trans_key') }}</label>
                                   <div class="input-group">
-                                      <div class="input-group-prepend">
-                                          <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
-                                      </div>
-                                      <input type="text" class="form-control" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" value="{{ $Address->ordre }}">
-                                      <input type="hidden" name="id" value="{{ $Address->id }}">
-                                      <input type="hidden" name="companies_id" value="{{ $Address->companies_id }}">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Address->label }}">
                                   </div>
+                                </div>
                               </div>
-                              <div class="col-5">
-                                <label for="label">{{__('general_content.label_trans_key') }}</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                  </div>
-                                  <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $Address->label }}">
+                              <hr>
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="adress">{{ __('general_content.adress_name_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="adress"  id="adress" placeholder="{{ __('general_content.adress_name_trans_key') }}" value="{{ $Address->adress }}">
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="zipcode">{{ __('general_content.postal_code_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="zipcode"  id="zipcode" placeholder="{{ __('general_content.postal_code_trans_key') }}" value="{{ $Address->zipcode }}">
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="city">{{ __('general_content.city_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="city"  id="city" placeholder="{{ __('general_content.city_trans_key') }}" value="{{ $Address->city }}">
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="country">{{ __('general_content.country_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="country"  id="country" placeholder="{{ __('general_content.country_trans_key') }}" value="{{ $Address->country }}">
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="number">{{ __('general_content.phone_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}" value="{{ $Address->number }}">
+                                </div>
+                                <div class="col-5">
+                                  <label for="mail">{{ __('general_content.email_trans_key') }}</label>
+                                  <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}" value="{{ $Address->mail }}">
                                 </div>
                               </div>
                             </div>
-                            <hr>
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="adress">{{ __('general_content.adress_name_trans_key') }}</label>
-                                <input type="text" class="form-control" name="adress"  id="adress" placeholder="{{ __('general_content.adress_name_trans_key') }}" value="{{ $Address->adress }}">
-                              </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             </div>
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="zipcode">{{ __('general_content.postal_code_trans_key') }}</label>
-                                <input type="text" class="form-control" name="zipcode"  id="zipcode" placeholder="{{ __('general_content.postal_code_trans_key') }}" value="{{ $Address->zipcode }}">
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="city">{{ __('general_content.city_trans_key') }}</label>
-                                <input type="text" class="form-control" name="city"  id="city" placeholder="{{ __('general_content.city_trans_key') }}" value="{{ $Address->city }}">
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="country">{{ __('general_content.country_trans_key') }}</label>
-                                <input type="text" class="form-control" name="country"  id="country" placeholder="{{ __('general_content.country_trans_key') }}" value="{{ $Address->country }}">
-                              </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="number">{{ __('general_content.phone_trans_key') }}</label>
-                                <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}" value="{{ $Address->number }}">
-                              </div>
-                              <div class="col-5">
-                                <label for="mail">{{ __('general_content.email_trans_key') }}</label>
-                                <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}" value="{{ $Address->mail }}">
-                              </div>
-                            </div>
-                          </div>
-                          <!-- /.card-body -->
-                          <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                          </div>
-                        </form>
-                      </x-adminlte-modal>
-                    </td>
-                  </tr>
-                  @empty
-                  <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
-                  @endforelse
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>#</th>
-                    <th>{{ __('general_content.postal_code_trans_key') }}</th>
-                    <th>{{ __('general_content.adress_trans_key') }}</th>
-                    <th>{{ __('general_content.postal_code_trans_key') }}</th>
-                    <th>{{ __('general_content.city_trans_key') }}</th>
-                    <th>{{ __('general_content.country_trans_key') }}</th>
-                    <th>{{ __('general_content.phone_trans_key') }}</th>
-                    <th>{{ __('general_content.email_trans_key') }}</th>
-                    <th>{{ __('general_content.action_trans_key') }}</th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+                          </form>
+                        </x-adminlte-modal>
+                      </td>
+                    </tr>
+                    @empty
+                    <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    @endforelse
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>#</th>
+                      <th>{{ __('general_content.postal_code_trans_key') }}</th>
+                      <th>{{ __('general_content.adress_trans_key') }}</th>
+                      <th>{{ __('general_content.postal_code_trans_key') }}</th>
+                      <th>{{ __('general_content.city_trans_key') }}</th>
+                      <th>{{ __('general_content.country_trans_key') }}</th>
+                      <th>{{ __('general_content.phone_trans_key') }}</th>
+                      <th>{{ __('general_content.email_trans_key') }}</th>
+                      <th>{{ __('general_content.action_trans_key') }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </x-adminlte-card>
           <!-- /.card secondary -->
           </div>
 
-          <div class="col-md-4 card-secondary">
-            <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.new_address_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
+          <div class="col-md-4">
+            <x-adminlte-card title="{{ __('general_content.new_address_trans_key') }}" theme="secondary" maximizable>
               <form method="POST" action="{{ route('addresses.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
@@ -467,143 +456,137 @@
                     <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}">
                   </div>
                 </div>
-                <div class="modal-footer">
+                <x-slot name="footerSlot">
                   <button type="submit" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
-                </div>
+                </x-slot>
               </form>
-            </div>
-            <!-- /.card body -->
+            </x-adminlte-card>
           </div>
-          <!-- /.card secondary -->
         </div>
       <!-- /.row -->
       </div>    
       <div class="tab-pane " id="Contact">
         <div class="row">
-          <div class="col-md-8 card-primary">
-            <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.contacts_trans_key') }}</h3>
-            </div>
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>{{ __('general_content.function_trans_key') }}</th>
-                    <th>{{ __('general_content.name_trans_key') }}</th>
-                    <th>{{ __('general_content.first_name_trans_key') }}</th>
-                    <th>{{ __('general_content.email_trans_key') }}</th>
-                    <th>{{ __('general_content.phone_trans_key') }}</th>
-                    <th>{{ __('general_content.mobile_phone_trans_key') }}</th>
-                    <th>{{ __('general_content.action_trans_key') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse($Companie->Contacts as $Contact)
-                  <tr>
-                    <td>{{ $Contact->ordre }}</td>
-                    <td>{{ $Contact->function }}</td>
-                    <td>{{ $Contact->name }}</td>
-                    <td>{{ $Contact->first_name }}</td>
-                    <td>{{ $Contact->mail }}</td>
-                    <td>{{ $Contact->number }}</td>
-                    <td>{{ $Contact->mobile }}</td>
-                    <td class=" py-0 align-middle">
-                      <!-- Button Modal -->
-                      <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Contact{{ $Contact->id }}">
-                        <i class="fa fa-lg fa-fw  fa-edit"></i>
-                      </button>
-                      <!-- Modal {{ $Contact->id }} -->
-                      <x-adminlte-modal id="Contact{{ $Contact->id }}" title="Update {{ $Contact->name }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('contacts.edit', ['id' => $Contact->id]) }}" >
-                          @csrf
-                          <div class="card-body">
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+          <div class="col-md-8">
+            <x-adminlte-card title="{{ __('general_content.contacts_trans_key') }}" theme="primary" maximizable>
+              <div class="table-responsive p-0">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>{{ __('general_content.function_trans_key') }}</th>
+                      <th>{{ __('general_content.name_trans_key') }}</th>
+                      <th>{{ __('general_content.first_name_trans_key') }}</th>
+                      <th>{{ __('general_content.email_trans_key') }}</th>
+                      <th>{{ __('general_content.phone_trans_key') }}</th>
+                      <th>{{ __('general_content.mobile_phone_trans_key') }}</th>
+                      <th>{{ __('general_content.action_trans_key') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse($Companie->Contacts as $Contact)
+                    <tr>
+                      <td>{{ $Contact->ordre }}</td>
+                      <td>{{ $Contact->function }}</td>
+                      <td>{{ $Contact->name }}</td>
+                      <td>{{ $Contact->first_name }}</td>
+                      <td>{{ $Contact->mail }}</td>
+                      <td>{{ $Contact->number }}</td>
+                      <td>{{ $Contact->mobile }}</td>
+                      <td class=" py-0 align-middle">
+                        <!-- Button Modal -->
+                        <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Contact{{ $Contact->id }}">
+                          <i class="fa fa-lg fa-fw  fa-edit"></i>
+                        </button>
+                        <!-- Modal {{ $Contact->id }} -->
+                        <x-adminlte-modal id="Contact{{ $Contact->id }}" title="Update {{ $Contact->name }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                          <form method="POST" action="{{ route('contacts.edit', ['id' => $Contact->id]) }}" >
+                            @csrf
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" value="{{ $Contact->ordre }}">
+                                    <input type="hidden" name="companies_id" value="{{ $Contact->companies_id }}">
+                                    <input type="hidden" name="id" value="{{ $Contact->id }}">
                                   </div>
-                                  <input type="text" class="form-control" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" value="{{ $Contact->ordre }}">
-                                  <input type="hidden" name="companies_id" value="{{ $Contact->companies_id }}">
-                                  <input type="hidden" name="id" value="{{ $Contact->id }}">
+                                </div>
+                                <div class="col-5">
+                                  <label for="civility">{{ __('general_content.civility_trans_key') }}</label>
+                                  <select class="form-control" name="civility">
+                                    <option value="{{ __('general_content.miss_trans_key') }}" @if( $Contact->civility ==__('general_content.miss_trans_key')) Selected @endIf >{{ __('general_content.miss_trans_key') }}</option>
+                                    <option value="{{ __('general_content.ms_trans_key') }}" @if( $Contact->civility ==__('general_content.ms_trans_key')) Selected @endIf >{{ __('general_content.ms_trans_key') }}</option>
+                                    <option value="{{ __('general_content.mr_trans_key') }}" @if( $Contact->civility ==__('general_content.mr_trans_key')) Selected @endIf >{{ __('general_content.mr_trans_key') }}</option>
+                                    <option value="{{ __('general_content.mrs_trans_key') }}" @if( $Contact->civility ==__('general_content.mrs_trans_key')) Selected @endIf >{{ __('general_content.mrs_trans_key') }}</option>
+                                  </select>
                                 </div>
                               </div>
-                              <div class="col-5">
-                                <label for="civility">{{ __('general_content.civility_trans_key') }}</label>
-                                <select class="form-control" name="civility">
-                                  <option value="{{ __('general_content.miss_trans_key') }}" @if( $Contact->civility ==__('general_content.miss_trans_key')) Selected @endIf >{{ __('general_content.miss_trans_key') }}</option>
-                                  <option value="{{ __('general_content.ms_trans_key') }}" @if( $Contact->civility ==__('general_content.ms_trans_key')) Selected @endIf >{{ __('general_content.ms_trans_key') }}</option>
-                                  <option value="{{ __('general_content.mr_trans_key') }}" @if( $Contact->civility ==__('general_content.mr_trans_key')) Selected @endIf >{{ __('general_content.mr_trans_key') }}</option>
-                                  <option value="{{ __('general_content.mrs_trans_key') }}" @if( $Contact->civility ==__('general_content.mrs_trans_key')) Selected @endIf >{{ __('general_content.mrs_trans_key') }}</option>
-                                </select>
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="first_name">{{ __('general_content.first_name_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="first_name"  id="first_name" placeholder="{{ __('general_content.first_name_trans_key') }}" value="{{ $Contact->first_name }}">
+                                </div>
+                                <div class="col-5">
+                                  <label for="name">{{ __('general_content.name_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="name"  id="name" placeholder="{{ __('general_content.name_trans_key') }}" value="{{ $Contact->name }}">
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="form-group">
+                                <label for="function">{{ __('general_content.function_trans_key') }}</label>
+                                <input type="text" class="form-control" name="function"  id="function" placeholder="{{ __('general_content.function_trans_key') }}" value="{{ $Contact->function }}">
+                              </div>
+                              <hr>
+                              <div class="row">
+                                <div class="col-5">
+                                  <label for="number">{{ __('general_content.phone_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}"  value="{{ $Contact->number }}">
+                                </div>
+                                <div class="col-5">
+                                  <label for="mobile">{{ __('general_content.mobile_phone_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="mobile"  id="mobile" placeholder="{{ __('general_content.mobile_phone_trans_key') }}"  value="{{ $Contact->mobile }}">
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="mail">{{ __('general_content.email_trans_key') }}</label>
+                                <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}"  value="{{ $Contact->mail }}">
                               </div>
                             </div>
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="first_name">{{ __('general_content.first_name_trans_key') }}</label>
-                                <input type="text" class="form-control" name="first_name"  id="first_name" placeholder="{{ __('general_content.first_name_trans_key') }}" value="{{ $Contact->first_name }}">
-                              </div>
-                              <div class="col-5">
-                                <label for="name">{{ __('general_content.name_trans_key') }}</label>
-                                <input type="text" class="form-control" name="name"  id="name" placeholder="{{ __('general_content.name_trans_key') }}" value="{{ $Contact->name }}">
-                              </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             </div>
-                            <hr>
-                            <div class="form-group">
-                              <label for="function">{{ __('general_content.function_trans_key') }}</label>
-                              <input type="text" class="form-control" name="function"  id="function" placeholder="{{ __('general_content.function_trans_key') }}" value="{{ $Contact->function }}">
-                            </div>
-                            <hr>
-                            <div class="row">
-                              <div class="col-5">
-                                <label for="number">{{ __('general_content.phone_trans_key') }}</label>
-                                <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}"  value="{{ $Contact->number }}">
-                              </div>
-                              <div class="col-5">
-                                <label for="mobile">{{ __('general_content.mobile_phone_trans_key') }}</label>
-                                <input type="text" class="form-control" name="mobile"  id="mobile" placeholder="{{ __('general_content.mobile_phone_trans_key') }}"  value="{{ $Contact->mobile }}">
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="mail">{{ __('general_content.email_trans_key') }}</label>
-                              <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}"  value="{{ $Contact->mail }}">
-                            </div>
-                          </div>
-                          <!-- /.card-body -->
-                          <div class="card-footer">
-                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                          </div>
-                        </form>
-                      </x-adminlte-modal>
-                    </td>
-                  </tr>
-                  @empty
-                  <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
-                  @endforelse
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th>#</th>
-                    <th>{{ __('general_content.function_trans_key') }}</th>
-                    <th>{{ __('general_content.name_trans_key') }}</th>
-                    <th>{{ __('general_content.first_name_trans_key') }}</th>
-                    <th>{{ __('general_content.email_trans_key') }}</th>
-                    <th>{{ __('general_content.phone_trans_key') }}</th>
-                    <th>{{ __('general_content.mobile_phone_trans_key') }}</th>
-                    <th>{{ __('general_content.action_trans_key') }}</th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+                          </form>
+                        </x-adminlte-modal>
+                      </td>
+                    </tr>
+                    @empty
+                    <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    @endforelse
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>#</th>
+                      <th>{{ __('general_content.function_trans_key') }}</th>
+                      <th>{{ __('general_content.name_trans_key') }}</th>
+                      <th>{{ __('general_content.first_name_trans_key') }}</th>
+                      <th>{{ __('general_content.email_trans_key') }}</th>
+                      <th>{{ __('general_content.phone_trans_key') }}</th>
+                      <th>{{ __('general_content.mobile_phone_trans_key') }}</th>
+                      <th>{{ __('general_content.action_trans_key') }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </x-adminlte-card>
           <!-- /.card secondary -->
           </div>
-          <div class="col-md-4 card-secondary">
-            <div class="card-header">
-              <h3 class="card-title">{{ __('general_content.new_contact_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
+          <div class="col-md-4">
+            <x-adminlte-card title="{{ __('general_content.new_contact_trans_key') }}" theme="secondary" maximizable>
               <form method="POST" action="{{ route('contacts.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
@@ -657,14 +640,12 @@
                   <label for="mail">{{ __('general_content.email_trans_key') }}</label>
                   <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}">
                 </div>
-                <div class="modal-footer">
+                <x-slot name="footerSlot">
                   <button type="submit" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
-                </div>
+                </x-slot>
               </form>
-            </div>
-            <!-- /.card body -->
+            </x-adminlte-card>
           </div>
-          <!-- /.card secondary -->
         <!-- /.row -->
         </div> 
       </div>

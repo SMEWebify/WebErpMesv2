@@ -11,9 +11,7 @@
 @section('content')
 
 <div class="card">
-  <div class="card-body">
-    @livewire('calendar')
-  </div>
+  @livewire('calendar')
 </div>
 @stop
 

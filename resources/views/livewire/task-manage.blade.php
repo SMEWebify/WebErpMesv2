@@ -122,7 +122,7 @@
                             </div>
                             <input type="number" class="form-control @error('unit_cost') is-invalid @enderror" name="unit_cost"  id="unit_cost" placeholder="{{ __('general_content.cost_trans_key') }}" value="0" step=".001" min="0" wire:model.defer="unit_cost">
                         </div> 
-                        <p>({{ $seting_time  }} h /{{ $Line->qty  }} + {{ $unit_time }} h) x {{ $methods_services_hourly_rate }} {{ $Factory->curency }} / h = {{ ((float)$seting_time / (float)$Line->qty + (float)$unit_time) * (float)$methods_services_hourly_rate }}
+                        <p>({{ $seting_time  }} h /{{ $Line->qty  }} + {{ $unit_time }} h) x {{ $methods_services_hourly_rate }} {{ $Factory->curency }} / h = {{ ((float)$seting_time / (float)$Line->qty + (float)$unit_time) * (float)$methods_services_hourly_rate }}</p>
                     </div>
                     <div class="form-group col-md-2">
                         <label for="unit_price">{{ __('general_content.price_trans_key') }}</label>
@@ -147,8 +147,6 @@
                 </div>
             </div>
         </form>
-
-
         
         @if($TaskType == 'BOM' && $idType != "nomenclature_lines_id")
         <div class="card card-body">
@@ -178,20 +176,9 @@
 
     @if($Line->id ?? null)
     <div class="card-body">
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">{{__('general_content.technical_cut_trans_key') }}</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="card-body table-responsive p-0">
-                    <table class="table table-hover">
+        <x-adminlte-card title="{{ __('general_content.technical_cut_trans_key') }}" theme="primary" maximizable>
+            <div class="table-responsive p-0">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>{{__('general_content.id_trans_key') }} </th>
@@ -291,38 +278,26 @@
                     </tfoot>
                 </table>
             </div>
-            <!-- /.card-body -->
-        </div>
-            
-        <div class="card card-info">
-            <div class="card-header">
-                <h3 class="card-title">{{__('general_content.bill_of_materials_trans_key') }}</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                    <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
-                    <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="card-body table-responsive p-0">
+        </x-adminlte-card>
+        
+        <x-adminlte-card title="{{ __('general_content.bill_of_materials_trans_key') }}" theme="info" maximizable>
+            <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <thead>
-                    <tr>
-                        <th>{{ __('general_content.id_trans_key') }} </th>
-                        <th>{{ __('general_content.order_trans_key') }}</th>
-                        <th>{{ __('general_content.label_trans_key') }}</th>
-                        <th>{{ __('general_content.service_trans_key') }}</th>
-                        <th>{{ __('general_content.component_trans_key') }}</th>
-                        <th></th>
-                        <th>{{ __('general_content.qty_trans_key') }}</th>
-                        <th>{{ __('general_content.cost_trans_key') }}</th>
-                        <th>{{ __('general_content.margin_trans_key') }}</th>
-                        <th>{{ __('general_content.price_trans_key') }}</th>
-                        <th>{{ __('general_content.status_trans_key') }}</th>
-                        <th>{{ __('general_content.action_trans_key') }}</th>
-                    </tr>
+                        <tr>
+                            <th>{{ __('general_content.id_trans_key') }} </th>
+                            <th>{{ __('general_content.order_trans_key') }}</th>
+                            <th>{{ __('general_content.label_trans_key') }}</th>
+                            <th>{{ __('general_content.service_trans_key') }}</th>
+                            <th>{{ __('general_content.component_trans_key') }}</th>
+                            <th></th>
+                            <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.cost_trans_key') }}</th>
+                            <th>{{ __('general_content.margin_trans_key') }}</th>
+                            <th>{{ __('general_content.price_trans_key') }}</th>
+                            <th>{{ __('general_content.status_trans_key') }}</th>
+                            <th>{{ __('general_content.action_trans_key') }}</th>
+                        </tr>
                     </thead>
                     <tbody>
                         @forelse($Line->BOM as $BOMline)
@@ -377,30 +352,27 @@
                         @endforelse
                     </tbody>
                     <tfoot>
-                    <tr>
-                        <th></th>
-                        <th>{{ __('general_content.total_trans_key') }} :</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th>{{ $Line->getBOMTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
-                        <th>{{ $Line->getBOMTMarginAttribute() }} %</th>
-                        <th>{{ $Line->getBOMTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
+                        <tr>
+                            <th></th>
+                            <th>{{ __('general_content.total_trans_key') }} :</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>{{ $Line->getBOMTotalUnitCostAttribute() }}  {{ $Factory->curency }}</th>
+                            <th>{{ $Line->getBOMTMarginAttribute() }} %</th>
+                            <th>{{ $Line->getBOMTotalUnitPricettribute() }}  {{ $Factory->curency }}</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
                     </tfoot>
                 </table>
             </div>
-            <!-- /.card-body -->
-        </div>
-    </div>
+        </x-adminlte-card>
     @endif
 
     @if($statu == 1 && $idType != "sub_assembly_id")
-    <div class="card-body">
         @if($updateLines)
         <form wire:submit.prevent="updateSubAssembly">
         @else
@@ -474,84 +446,71 @@
                 </div>
             </div>
         </form>
-    </div>
     @endif
 
     @if($Line->id ?? null)
         @if($idType != "sub_assembly_id" && $idType != "nomenclature_lines_id")
-        <div class="card-body">
-            <div class="card card-secondary">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('general_content.sub_assembly_trans_key') }}</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                        <i class="fas fa-minus"></i>
-                        </button>
-                        <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
-                        <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover">
-                        <thead>
+        <x-adminlte-card title="{{ __('general_content.sub_assembly_trans_key') }}" theme="secondary" maximizable>
+            <div class="table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>{{ __('general_content.id_trans_key') }} </th>
+                        <th>{{ __('general_content.order_trans_key') }}</th>
+                        <th>{{ __('general_content.id_trans_key') }}</th>
+                        <th>{{ __('general_content.label_trans_key') }}</th>
+                        <th></th>
+                        <th>{{ __('general_content.qty_trans_key') }}</th>
+                        <th>{{ __('general_content.cost_trans_key') }}</th>
+                        <th>{{ __('general_content.price_trans_key') }} </th>
+                        <th>{{ __('general_content.action_trans_key') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($Line->SubAssembly as $SubAssemblyLine)
                         <tr>
-                            <th>{{ __('general_content.id_trans_key') }} </th>
-                            <th>{{ __('general_content.order_trans_key') }}</th>
-                            <th>{{ __('general_content.id_trans_key') }}</th>
-                            <th>{{ __('general_content.label_trans_key') }}</th>
-                            <th></th>
-                            <th>{{ __('general_content.qty_trans_key') }}</th>
-                            <th>{{ __('general_content.cost_trans_key') }}</th>
-                            <th>{{ __('general_content.price_trans_key') }} </th>
-                            <th>{{ __('general_content.action_trans_key') }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($Line->SubAssembly as $SubAssemblyLine)
-                            <tr>
-                                <td>#{{ $SubAssemblyLine->id }}</td>
-                                <td>{{ $SubAssemblyLine->ordre }}</td>
-                                <td>{{ $SubAssemblyLine->Child['code'] }}</td>
-                                <td>{{ $SubAssemblyLine->Child['label'] }}</td>
-                                <td><x-ButtonTextView route="{{ route('products.show', ['id' => $SubAssemblyLine->child_id])}}" /></td>
-                                <td>{{ $SubAssemblyLine->qty }}</td>
-                                <td>{{ $SubAssemblyLine->Child['selling_price'] }}  {{ $Factory->curency }}</td>
-                                <td>{{ $SubAssemblyLine->unit_price }}  {{ $Factory->curency }}</td>
-                                <td>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            @if($SubAssemblyLine->Child->drawing_file)
-                                            <!-- Drawing link -->
-                                            <a class="btn btn-info" href="{{ asset('drawing/'. $SubAssemblyLine->Child->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
-                                            @endif
-                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                            <div class="dropdown-menu">
-                                                <a href="#" class="dropdown-item " wire:click="duplicateSubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> {{ __('general_content.copie_line_trans_key') }}</span></a>
-                                                <a href="#" class="dropdown-item" wire:click="editSubAssemblyLine({{$SubAssemblyLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> {{ __('general_content.edit_line_trans_key') }}</span></a>
-                                                <a href="#" class="dropdown-item" wire:click="destroySubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.delete_line_trans_key') }}</span></a>
-                                                <a href="#" class="dropdown-item" wire:click="breakDown({{$SubAssemblyLine->id}})"><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i>{{ __('general_content.break_down_task_trans_key') }}</span></a>
-                                            </div>
-                                        </div>
-                                        <div class="btn-group btn-group-sm">
-                                            @if($idType == "sub_assembly_id")
-                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->sub_assembly_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
-                                            @elseif($idType == "quote_lines_id")
-                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->QuoteLines->quotes_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
-                                            @elseif($idType == "order_lines_id")
-                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->OrderLines->orders_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
-                                            @else
-                                            <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->products_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
-                                            @endif
+                            <td>#{{ $SubAssemblyLine->id }}</td>
+                            <td>{{ $SubAssemblyLine->ordre }}</td>
+                            <td>{{ $SubAssemblyLine->Child['code'] }}</td>
+                            <td>{{ $SubAssemblyLine->Child['label'] }}</td>
+                            <td><x-ButtonTextView route="{{ route('products.show', ['id' => $SubAssemblyLine->child_id])}}" /></td>
+                            <td>{{ $SubAssemblyLine->qty }}</td>
+                            <td>{{ $SubAssemblyLine->Child['selling_price'] }}  {{ $Factory->curency }}</td>
+                            <td>{{ $SubAssemblyLine->unit_price }}  {{ $Factory->curency }}</td>
+                            <td>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        @if($SubAssemblyLine->Child->drawing_file)
+                                        <!-- Drawing link -->
+                                        <a class="btn btn-info" href="{{ asset('drawing/'. $SubAssemblyLine->Child->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                                        @endif
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <div class="dropdown-menu">
+                                            <a href="#" class="dropdown-item " wire:click="duplicateSubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> {{ __('general_content.copie_line_trans_key') }}</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="editSubAssemblyLine({{$SubAssemblyLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> {{ __('general_content.edit_line_trans_key') }}</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="destroySubAssemblyLine({{$SubAssemblyLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.delete_line_trans_key') }}</span></a>
+                                            <a href="#" class="dropdown-item" wire:click="breakDown({{$SubAssemblyLine->id}})"><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i>{{ __('general_content.break_down_task_trans_key') }}</span></a>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
-                            @endforelse
-                        </tbody>
-                        <tfoot>
+                                    <div class="btn-group btn-group-sm">
+                                        @if($idType == "sub_assembly_id")
+                                        <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->sub_assembly_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                        @elseif($idType == "quote_lines_id")
+                                        <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->QuoteLines->quotes_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                        @elseif($idType == "order_lines_id")
+                                        <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->OrderLines->orders_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                        @else
+                                        <a href="{{ route('task.manage', ['id_type'=> 'sub_assembly_id', 'id_page'=>  $SubAssemblyLine->products_id, 'id_line' => $SubAssemblyLine->id])}}" class="dropdown-item" ><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i> {{ __('general_content.tasks_trans_key') }}{{  $SubAssemblyLine->getAllTaskCountAttribute() }}</span></a></button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        @endforelse
+                    </tbody>
+                    <tfoot>
                         <tr>
                             <th></th>
                             <th></th>
@@ -563,30 +522,16 @@
                             <th></th>
                             <th></th>
                         </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <!-- /.card-body -->
+                    </tfoot>
+                </table>
             </div>
-        </div>
+        </x-adminlte-card>
         @endif
     @endif
 
     @if($statu == 1 || $idType == "nomenclature_lines_id")
-    <div class="card-body">
-        <div class="card card-warning">
-            <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.standard_bom_trans_key') }}</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="card-body table-responsive p-0 m-4">
+        <x-adminlte-card title="{{ __('general_content.standard_bom_trans_key') }}" theme="warning" maximizable>
+            <div class="table-responsive p-0 m-4">
                 @forelse ($StandardNomenclatures as $StandardNomenclature)
                     <a  wire:click="AddStandardNomenclature({{$StandardNomenclature->id}})" class="btn btn-app bg-primary">
                         <span class="badge bg-success">{{ $StandardNomenclature->getAllTaskCountAttribute() }}</span>
@@ -596,8 +541,7 @@
                 {{ __('general_content.no_data_trans_key') }}
                 @endforelse
             </div>
-            <!-- /.card-body -->
-        </div>
-    </div>
+        </x-adminlte-card>
     @endif
+</div>
 </div>

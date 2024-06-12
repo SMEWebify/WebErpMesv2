@@ -33,7 +33,7 @@ class File extends Model
         'invoices_id',
         'products_id',
         'purchases_id',
-        'purchases_receipt_id',
+        'purchase_receipts_id',
         'quality_non_conformities_id',
         'stock_move_id',
         'as_photo'

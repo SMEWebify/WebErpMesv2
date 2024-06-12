@@ -9,83 +9,71 @@
 @section('content')
 <div class="row">
     <div class="col-md-3">
-        <div class="card card-primary card-outline">
-            <div class="card-body box-profile">
-                <div class="text-center">
-                    <img class="profile-user-img img-fluid img-circle" src="{{ $User->adminlte_image() }}" alt="User profile picture">
-                </div>
-                <h3 class="profile-username text-center">{{ $User->name }}</h3>
-                <p class="text-muted text-center">
-                    @if(!empty($User->getRoleNames()))
-                    @foreach($User->getRoleNames() as $v)
-                        <label class="badge badge-success">{{ $v }}</label>
-                    @endforeach
-                    @endif
-                </p>
-                <p class="text-muted text-center">{{ $User->email }}</p>
-                <ul class="list-group list-group-unbordered mb-3">
-                    <li class="list-group-item"><b>{{ __('general_content.leads_trans_key') }}</b> <a class="float-right">{{ $User->getLeadsCountAttribute() }}</a></li> 
-                    <li class="list-group-item"><b>{{ __('general_content.quotes_list_trans_key') }}</b> <a class="float-right">{{ $User->getQuotesCountAttribute() }}</a></li>
-                    <li class="list-group-item"><b>{{ __('general_content.orders_list_trans_key') }}</b> <a class="float-right">{{ $User->getOrdersCountAttribute() }}</a></li>
-                    <li class="list-group-item"><b>{{ __('general_content.non_conformities_trans_key') }}</b> <a class="float-right">{{ $User->getNcCountAttribute() }}</a></li> 
-                </ul>
+        <x-adminlte-card theme="primary" theme-mode="outline">
+            <div class="text-center">
+                <img class="profile-user-img img-fluid img-circle" src="{{ $User->adminlte_image() }}" alt="User profile picture">
             </div>
-        </div>
+            <h3 class="profile-username text-center">{{ $User->name }}</h3>
+            <p class="text-muted text-center">
+                @if(!empty($User->getRoleNames()))
+                @foreach($User->getRoleNames() as $v)
+                    <label class="badge badge-success">{{ $v }}</label>
+                @endforeach
+                @endif
+            </p>
+            <p class="text-muted text-center">{{ $User->email }}</p>
+            <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item"><b>{{ __('general_content.leads_trans_key') }}</b> <a class="float-right">{{ $User->getLeadsCountAttribute() }}</a></li> 
+                <li class="list-group-item"><b>{{ __('general_content.quotes_list_trans_key') }}</b> <a class="float-right">{{ $User->getQuotesCountAttribute() }}</a></li>
+                <li class="list-group-item"><b>{{ __('general_content.orders_list_trans_key') }}</b> <a class="float-right">{{ $User->getOrdersCountAttribute() }}</a></li>
+                <li class="list-group-item"><b>{{ __('general_content.non_conformities_trans_key') }}</b> <a class="float-right">{{ $User->getNcCountAttribute() }}</a></li> 
+            </ul>
+        </x-adminlte-card>
 
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.about_trans_key') }} {{ $User->name }}</h3>
-            </div>
-            <div class="card-body">
-                @if($User->private_email)
-                <strong><i class="fas fa-envelope  mr-1"></i>{{__('general_content.personnal_mail_trans_key') }}</strong>
-                <p class="text-muted">{{ $User->private_email }}</p>
-                <hr>
-                @endif
-                @if($User->personnal_phone_number)
-                <strong><i class="fas fa-phone  mr-1"></i>{{__('general_content.personnal_phone_trans_key') }}</strong>
-                <p class="text-muted">{{ $User->personnal_phone_number }}</p>
-                <hr>
-                @endif
-                @if($User->born_date)
-                <strong><i class="far fa-calendar-alt  mr-1"></i>{{ __('general_content.born_date_trans_key') }}</strong>
-                <p class="text-muted">{{ $User->born_date }}</p>
-                <hr>
-                @endif
-                @if($User->nationality)
-                <strong><i class="fas fa-flag mr-1"></i>{{__('general_content.nationality_trans_key') }}</strong>
-                <p class="text-muted">{{ $User->nationality }}</p>
-                <hr>
-                @endif
-                <strong><i class="fas fa-map-marker-alt mr-1"></i>{{__('general_content.user_location_trans_key') }}</strong>
-                <p class="text-muted">{{ $User->address1 }}</p>
-                <p class="text-muted">{{ $User->address2 }}</p>
-                <p class="text-muted">{{ $User->postal_code }} {{ $User->city }} </p>
-            </div>
-        </div>
+        <x-adminlte-card title="{{ __('general_content.about_trans_key') }} {{ $User->name }}" theme="primary" maximizable>
+            @if($User->private_email)
+            <strong><i class="fas fa-envelope  mr-1"></i>{{__('general_content.personnal_mail_trans_key') }}</strong>
+            <p class="text-muted">{{ $User->private_email }}</p>
+            <hr>
+            @endif
+            @if($User->personnal_phone_number)
+            <strong><i class="fas fa-phone  mr-1"></i>{{__('general_content.personnal_phone_trans_key') }}</strong>
+            <p class="text-muted">{{ $User->personnal_phone_number }}</p>
+            <hr>
+            @endif
+            @if($User->born_date)
+            <strong><i class="far fa-calendar-alt  mr-1"></i>{{ __('general_content.born_date_trans_key') }}</strong>
+            <p class="text-muted">{{ $User->born_date }}</p>
+            <hr>
+            @endif
+            @if($User->nationality)
+            <strong><i class="fas fa-flag mr-1"></i>{{__('general_content.nationality_trans_key') }}</strong>
+            <p class="text-muted">{{ $User->nationality }}</p>
+            <hr>
+            @endif
+            <strong><i class="fas fa-map-marker-alt mr-1"></i>{{__('general_content.user_location_trans_key') }}</strong>
+            <p class="text-muted">{{ $User->address1 }}</p>
+            <p class="text-muted">{{ $User->address2 }}</p>
+            <p class="text-muted">{{ $User->postal_code }} {{ $User->city }} </p>
+        </x-adminlte-card>
 
         @if($User->id != auth()->id() )
-        <div class="card card-warning">
-            <div class="card-header">
-                <h3 class="card-title">{{__('general_content.blocked_unti_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ route('human.resources.lock.user', ['id' => $User->id]) }}" enctype="multipart/form-data">
-                    @csrf
-                    <div class="card-body">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                            </div>
-                            <input type="date" class="form-control"   name="banned_until"  id="banned_until" value="{{ $User->banned_until }}">
+        <x-adminlte-card title="{{ __('general_content.blocked_unti_trans_key') }}" theme="warning" maximizable>
+            <form method="POST" action="{{ route('human.resources.lock.user', ['id' => $User->id]) }}" enctype="multipart/form-data">
+                @csrf
+                <div class="card-body">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                         </div>
+                        <input type="date" class="form-control"   name="banned_until"  id="banned_until" value="{{ $User->banned_until }}">
                     </div>
-                    <div class="card-footer">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                    </div>
-                </form>
-            </div>
-        </div>
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                </x-slot>
+            </form>
+        </x-adminlte-card>
         @endif
 
     </div>
@@ -449,162 +437,158 @@
                             </div>
                             
                             <div class="col-md-6">
-                                <div class="card card-secondary">
-                                    <div class="card-header">
-                                        <h3 class="card-title">{{__('general_content.new_contract_trans_key') }}</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <form method="POST" action="{{ route('human.resources.create.contract', ['id' => $User->id]) }}" enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="card-body">
-                                                <input type="hidden" name="user_id" id="user_id" value="{{ $User->id }}">
-                                                <div class="form-group">
-                                                    <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                        </div>
-                                                        <select class="form-control" name="statu" id="statu">
-                                                            <option value="1">{{__('general_content.on_trial_trans_key') }}</option>
-                                                            <option value="2">{{__('general_content.asset_trans_key') }}</option>
-                                                            <option value="3">{{__('general_content.closed_trans_key') }}</option>
-                                                        </select>
+                                
+                                <x-adminlte-card title="{{ __('general_content.new_contract_trans_key') }}" theme="secondary" maximizable>
+                                    <form method="POST" action="{{ route('human.resources.create.contract', ['id' => $User->id]) }}" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="card-body">
+                                            <input type="hidden" name="user_id" id="user_id" value="{{ $User->id }}">
+                                            <div class="form-group">
+                                                <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                                     </div>
+                                                    <select class="form-control" name="statu" id="statu">
+                                                        <option value="1">{{__('general_content.on_trial_trans_key') }}</option>
+                                                        <option value="2">{{__('general_content.asset_trans_key') }}</option>
+                                                        <option value="3">{{__('general_content.closed_trans_key') }}</option>
+                                                    </select>
                                                 </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="methods_section_id">{{__('general_content.section_concern_trans_key') }}:</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                        </div>
-                                                        <select class="form-control" name="methods_section_id" id="methods_section_id">
-                                                            @forelse ($SectionsSelect as $item)
-                                                            <option value="{{ $item->id }}">{{ $item->label }}</option>
-                                                            @empty
-                                                            <option value="">{{ __('general_content.no_section_trans_key') }}</option>
-                                                            @endforelse
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="signature_date">{{__('general_content.signature_date_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                        </div>
-                                                        <input type="date" class="form-control"   name="signature_date"  id="signature_date">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="type_of_contract">{{__('general_content.type_of_contract_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                        </div>
-                                                        <input type="text" class="form-control"  name="type_of_contract" id="type_of_contract" placeholder="{{__('general_content.type_of_contract_trans_key') }}">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="start_date">{{ __('general_content.start_date_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                        </div>
-                                                        <input type="date" class="form-control"   name="start_date"  id="start_date">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="duration_trial_period">{{__('general_content.duration_trial_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
-                                                        </div>
-                                                        <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_key') }}" step="1" min="0">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="start_date">{{ __('general_content.end_date_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                                        </div>
-                                                        <input type="date" class="form-control"   name="end_date"  id="end_date">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="weekly_duration">{{__('general_content.weekly_duration_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-stopwatch"> {{__('general_content.hour_trans_key') }}</i></span>
-                                                        </div>
-                                                        <input type="number" class="form-control"  name="weekly_duration" id="weekly_duration" placeholder="{{__('general_content.weekly_duration_trans_key') }}" step="1" min="0">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="position">{{__('general_content.position_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                        </div>
-                                                        <input type="text" class="form-control"  name="position" id="position" placeholder="{{__('general_content.position_trans_key') }}">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="coefficient">{{__('general_content.coefficient_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                        </div>
-                                                        <input type="text" class="form-control"  name="coefficient" id="coefficient" placeholder="{{__('general_content.coefficient_trans_key') }}">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="hourly_gross_salary">{{__('general_content.hourly_gross_salary_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                        </div>
-                                                        <input type="number" class="form-control"  name="hourly_gross_salary" id="hourly_gross_salary" placeholder="{{__('general_content.hourly_gross_salary_trans_key') }}" step="1" min="0">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="minimum_monthly_salary">{{__('general_content.minimum_monthly_salary_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                        </div>
-                                                        <input type="number" class="form-control"  name="minimum_monthly_salary" id="minimum_monthly_salary" placeholder="{{__('general_content.minimum_monthly_salary_trans_key') }}" step="1" min="0">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
-                                                <div class="form-group">
-                                                    <label for="annual_gross_salary">{{__('general_content.annual_gross_salary_trans_key') }} :</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">{{ $Factory->curency }}</span>
-                                                        </div>
-                                                        <input type="number" class="form-control"  name="annual_gross_salary" id="annual_gross_salary" placeholder="{{__('general_content.annual_gross_salary_trans_key') }}" step="1" min="0">
-                                                    </div>
-                                                </div>
-                                                <!-- /.form-group -->
                                             </div>
-                                            <div class="card-footer">
-                                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="methods_section_id">{{__('general_content.section_concern_trans_key') }}:</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                    </div>
+                                                    <select class="form-control" name="methods_section_id" id="methods_section_id">
+                                                        @forelse ($SectionsSelect as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->label }}</option>
+                                                        @empty
+                                                        <option value="">{{ __('general_content.no_section_trans_key') }}</option>
+                                                        @endforelse
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </form>
-                                    </div>
-                                </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="signature_date">{{__('general_content.signature_date_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                    </div>
+                                                    <input type="date" class="form-control"   name="signature_date"  id="signature_date">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="type_of_contract">{{__('general_content.type_of_contract_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control"  name="type_of_contract" id="type_of_contract" placeholder="{{__('general_content.type_of_contract_trans_key') }}">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="start_date">{{ __('general_content.start_date_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                    </div>
+                                                    <input type="date" class="form-control"   name="start_date"  id="start_date">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="duration_trial_period">{{__('general_content.duration_trial_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-stopwatch">{{ __('general_content.day_trans_key') }}</i></span>
+                                                    </div>
+                                                    <input type="number" class="form-control"  name="duration_trial_period" id="duration_trial_period" placeholder="{{__('general_content.duration_trial_trans_key') }}" step="1" min="0">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="start_date">{{ __('general_content.end_date_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                                    </div>
+                                                    <input type="date" class="form-control"   name="end_date"  id="end_date">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="weekly_duration">{{__('general_content.weekly_duration_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-stopwatch"> {{__('general_content.hour_trans_key') }}</i></span>
+                                                    </div>
+                                                    <input type="number" class="form-control"  name="weekly_duration" id="weekly_duration" placeholder="{{__('general_content.weekly_duration_trans_key') }}" step="1" min="0">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="position">{{__('general_content.position_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control"  name="position" id="position" placeholder="{{__('general_content.position_trans_key') }}">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="coefficient">{{__('general_content.coefficient_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control"  name="coefficient" id="coefficient" placeholder="{{__('general_content.coefficient_trans_key') }}">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="hourly_gross_salary">{{__('general_content.hourly_gross_salary_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                    </div>
+                                                    <input type="number" class="form-control"  name="hourly_gross_salary" id="hourly_gross_salary" placeholder="{{__('general_content.hourly_gross_salary_trans_key') }}" step="1" min="0">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="minimum_monthly_salary">{{__('general_content.minimum_monthly_salary_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                    </div>
+                                                    <input type="number" class="form-control"  name="minimum_monthly_salary" id="minimum_monthly_salary" placeholder="{{__('general_content.minimum_monthly_salary_trans_key') }}" step="1" min="0">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label for="annual_gross_salary">{{__('general_content.annual_gross_salary_trans_key') }} :</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ $Factory->curency }}</span>
+                                                    </div>
+                                                    <input type="number" class="form-control"  name="annual_gross_salary" id="annual_gross_salary" placeholder="{{__('general_content.annual_gross_salary_trans_key') }}" step="1" min="0">
+                                                </div>
+                                            </div>
+                                            <!-- /.form-group -->
+                                        </div>
+                                        <div class="card-footer">
+                                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                        </div>
+                                    </form>
+                                </x-adminlte-card>
                             </div>
                         </div>
                         <!-- /.card-body -->

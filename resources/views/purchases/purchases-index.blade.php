@@ -11,7 +11,6 @@
 @section('right-sidebar')
 
 @section('content')
-
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
@@ -24,32 +23,20 @@
     <div class="tab-pane active" id="Dashboard">
       <div class="row">
         <div class="col-md-3">
-          <div class="card">
-            <div class="card-header bg-info">
-              <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
-              <canvas id="donutChart" width="400" height="400"></canvas>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header bg-warning">
-              <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
-              <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-            </div>
-          </div>
+          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+            <canvas id="donutChart" width="400" height="400"></canvas>
+          </x-adminlte-card>
+          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="warning" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+          </x-adminlte-card>
         </div>
         
         <div class="col-md-3">
           <x-adminlte-small-box title=" {{ __('general_content.lines_count_trans_key') }}" text="{{ $totalPurchaseLineCount }}" icon="fas fa-shopping-cart text-white"
             theme="purple"/>
 
-          <div class="card">
-            <div class="card-header bg-primary">
-              {{ __('general_content.top_rated_supplier_trans_key') }}
-            </div>
+            
+          <x-adminlte-card title="{{ __('general_content.top_rated_supplier_trans_key') }}" theme="primary" maximizable>
             @foreach ($topRatedSuppliers as $supplier)
               <div class="row ">
                 <div class="card-body">
@@ -68,58 +55,49 @@
                 </div>
               </div>
             @endforeach
-          </div>
+          </x-adminlte-card>
         </div>
 
         <div class="col-md-3">
-          <div class="card">
-            <div class="card-header bg-secondary">
-              {{ __('general_content.suppliers_shortest_times_trans_key') }}
-            </div>
-            <div class="card-body">
-              <table class="table">
-                  <thead>
-                      <tr>
-                          <th>{{ __('general_content.supplier_trans_key') }}</th>
-                          <th>{{ __('general_content.delevery_time_trans_key') }}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      @foreach ($top5FastestSuppliers as $supplier)
-                      <tr>
-                          <td>{{ $supplier->supplier_name }}</td>
-                          <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
-                      </tr>
-                      @endforeach
-                  </tbody>
-              </table>
-            </div>
-          </div>
+          <x-adminlte-card title="{{ __('general_content.suppliers_shortest_times_trans_key') }}" theme="secondary" maximizable>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ __('general_content.supplier_trans_key') }}</th>
+                        <th>{{ __('general_content.delevery_time_trans_key') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($top5FastestSuppliers as $supplier)
+                    <tr>
+                        <td>{{ $supplier->supplier_name }}</td>
+                        <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+          </x-adminlte-card>
           <x-adminlte-small-box title=" {{ __('general_content.total_price_trans_key') }}" text="{{ $totalPurchasesAmount }} {{ $Factory->curency }}" icon="fas fa-shopping-cart text-white"
           theme="danger"/>
-          <div class="card">
-            <div class="card-header bg-dark ">
-              {{ __('general_content.suppliers_longest_times_trans_key') }}
-            </div>
-            <div class="card-body">
-              <table class="table">
-                  <thead>
-                      <tr>
-                          <th>{{ __('general_content.supplier_trans_key') }}</th>
-                          <th>{{ __('general_content.delevery_time_trans_key') }}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      @foreach ($top5SlowestSuppliers as $supplier)
-                      <tr>
-                          <td>{{ $supplier->supplier_name }}</td>
-                          <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
-                      </tr>
-                      @endforeach
-                  </tbody>
-              </table>
-            </div>
-          </div>
+          
+          <x-adminlte-card title="{{ __('general_content.suppliers_longest_times_trans_key') }}" theme="dark" maximizable>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ __('general_content.supplier_trans_key') }}</th>
+                        <th>{{ __('general_content.delevery_time_trans_key') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($top5SlowestSuppliers as $supplier)
+                    <tr>
+                        <td>{{ $supplier->supplier_name }}</td>
+                        <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+          </x-adminlte-card>
         </div>
 
         <div class="col-md-3">
@@ -204,39 +182,35 @@
           </div>
           <!-- End Modal -->
 
-          <div class="card text-center">
-            <div class="card-body d-flex justify-content-center">
+          <x-adminlte-card theme="lime" theme-mode="outline">
+            <div class="d-flex justify-content-center">
               <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalPurchase">
                 {{ __('general_content.new_purchase_document_trans_key') }}</button>
             </div>
-          </div>
+          </x-adminlte-card>
 
           <x-adminlte-small-box title=" {{ __('general_content.average_purchase_price_trans_key') }}" text="{{ $averageAmount }} {{ $Factory->curency }}" icon="fas fa-chart-bar text-white" theme="teal"/>
           
-          <div class="card">
-            <div class="card-header bg-success">
-              {{ __('general_content.most_purchased_products_trans_key') }}
-            </div>
-            <div class="card-body">
-              <table class="table">
-                  <thead>
-                      <tr>
-                          <th>{{ __('general_content.product_trans_key') }}</th>
-                          <th>{{ __('general_content.qty_total_trans_key') }}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      @foreach($topProducts as $product)
-                      <tr>
-                          <td>{{ $product->label }} </td>
-                          <td>{{ $product->total_quantity }}</td>
-                      </tr>
-                      @endforeach
-                  </tbody>
-              </table>
-            </div>
-          </div>
+          <x-adminlte-card title="{{ __('general_content.most_purchased_products_trans_key') }}" theme="success" maximizable>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <th>{{ __('general_content.product_trans_key') }}</th>
+                      <th>{{ __('general_content.qty_total_trans_key') }}</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  @foreach($topProducts as $product)
+                  <tr>
+                      <td>{{ $product->label }} </td>
+                      <td>{{ $product->total_quantity }}</td>
+                  </tr>
+                  @endforeach
+              </tbody>
+            </table>
+          </x-adminlte-card>
         </div>
+
       </div>
     </div>
     <div class="tab-pane" id="List">
@@ -244,7 +218,6 @@
     </div>
 <!-- /.card -->
 </div>
-
 @stop
 
 @section('css')

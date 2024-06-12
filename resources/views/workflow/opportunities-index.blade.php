@@ -22,46 +22,34 @@
   <div class="tab-content p-3">
     <div class="tab-pane active" id="Dashboard">
       <div class="row">
-
         <div class="col-md-3">
-          <div class="card">
-            <div class="card-header bg-info">
-              <h3 class="card-title">{{ __('general_content.statistiques_trans_key') }}</h3>
-            </div>
-            <div class="card-body">
-              <canvas id="donutChart" width="400" height="400"></canvas>
-            </div>
-          </div>
+          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+            <canvas id="donutChart" width="400" height="400"></canvas>
+          </x-adminlte-card>
         </div>
-        
         <div class="col-md-3">
-          <div class="card">
-            <div class="card-header bg-primary">
-              {{ __('general_content.logs_activity_trans_key') }}
-            </div>
-            <div class="card-body">
-                <table class="table">
-                  <thead>
-                      <tr>
-                          <th>{{__('general_content.label_trans_key') }}</th>
-                          <th>{{__('general_content.created_at_trans_key') }}</th>
-                          <th>{{__('general_content.opportunity_trans_key') }}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    @forelse ($recentActivities as $activity)
-                      <tr>
-                          <td>{{ $activity->label }}</td>
-                          <td>{{ $activity->GetPrettyCreatedAttribute() }}</td>
-                          <td><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $activity->opportunities_id])}}" /></td>
-                      </tr>
-                    @empty
-                      <x-EmptyDataLine col="2" text="{{ __('general_content.no_data_trans_key') }}"  />
-                    @endforelse
-                  </tbody>
-              </table>
-            </div>
-          </div>
+          <x-adminlte-card title="{{ __('general_content.logs_activity_trans_key') }}" theme="primary" maximizable>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <th>{{__('general_content.label_trans_key') }}</th>
+                      <th>{{__('general_content.created_at_trans_key') }}</th>
+                      <th>{{__('general_content.opportunity_trans_key') }}</th>
+                  </tr>
+              </thead>
+              <tbody>
+                @forelse ($recentActivities as $activity)
+                  <tr>
+                      <td>{{ $activity->label }}</td>
+                      <td>{{ $activity->GetPrettyCreatedAttribute() }}</td>
+                      <td><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $activity->opportunities_id])}}" /></td>
+                  </tr>
+                @empty
+                  <x-EmptyDataLine col="2" text="{{ __('general_content.no_data_trans_key') }}"  />
+                @endforelse
+              </tbody>
+            </table>
+          </x-adminlte-card>
           <x-adminlte-small-box title="{{ __('general_content.total_amount_won_trans_key') }}" text="{{ $totalQuotesWon }} {{ $Factory->curency }}" icon="fas fa-shopping-cart text-white"
             theme="danger"/>
         </div>
@@ -69,11 +57,8 @@
       <div class="col-md-3">
         <x-adminlte-small-box title="{{ __('general_content.opportunities_count_trans_key') }}" text="{{ $opportunitiesCount }}" icon="fas fa-chart-bar text-white"
           theme="teal"/>
-        <div class="card">
-          <div class="card-header bg-secondary">
-            {{ __('general_content.opportunities_by_company_trans_key') }}
-          </div>
-          <div class="card-body">
+          
+          <x-adminlte-card title="{{ __('general_content.opportunities_by_company_trans_key') }}" theme="secondary" maximizable>
             <table class="table">
                 <thead>
                     <tr>
@@ -92,34 +77,28 @@
                       @endforelse
                 </tbody>
             </table>
-          </div>
-        </div>
+          </x-adminlte-card>
       </div>
 
       <div class="col-md-3">
-        <div class="card">
-          <div class="card-header bg-dark">
-            {{ __('general_content.opportunities_by_probability_trans_key') }}
-          </div>
-          <div class="card-body">
-            <table class="table">
-              <thead>
-                  <tr>
-                      <th>{{ __('general_content.probality_trans_key') }}</th>
-                      <th>{{ __('general_content.amount_trans_key') }}</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  @foreach ($opportunitiesByAmount as $opportunity)
-                      <tr>
-                          <td>{{ $opportunity->probality }} %</td>
-                          <td>{{ $opportunity->total_amount }}  {{ $Factory->curency }}</td>
-                      </tr>
-                  @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <x-adminlte-card title="{{ __('general_content.opportunities_by_probability_trans_key') }}" theme="dark" maximizable>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>{{ __('general_content.probality_trans_key') }}</th>
+                    <th>{{ __('general_content.amount_trans_key') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($opportunitiesByAmount as $opportunity)
+                    <tr>
+                        <td>{{ $opportunity->probality }} %</td>
+                        <td>{{ $opportunity->total_amount }}  {{ $Factory->curency }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+          </table>
+        </x-adminlte-card>
         <x-adminlte-small-box title="{{ __('general_content.total_amount_lost_trans_key') }}" text="{{ $totalQuotesLost }}  {{ $Factory->curency }}" icon="fas fa-times-circle "
           theme="warning"/>
       </div>

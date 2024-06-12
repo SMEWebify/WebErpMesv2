@@ -30,10 +30,7 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
               <form method="POST" action="{{ route('invoices.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
                 @csrf
                   <div class="card card-body">
@@ -75,42 +72,36 @@
                       <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
                     </div>
                   </div>
-                  <div class="card-footer">
+                  <x-slot name="footerSlot">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                  </div>
+                  </x-slot>
               </form>
-            </div>
+            </x-adminlte-card>
           </div>
+
           <div class="col-md-3">
-            <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <div class="card-body">
-                    {{ __('general_content.created_at_trans_key') }} : {{ $Invoice->GetPrettyCreatedAttribute() }}
-                  </div>
-                  <div class="card-body">
-                    {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $Invoice->companie['id'] }}" label="{{ $Invoice->companie['label'] }}"  />
-                  </div>
-                  <div class="card-body">
-                    {{ __('general_content.adress_name_trans_key') }} :   {{ $Invoice->adresse['label'] }} - {{ $Invoice->adresse['adress'] }}
-                  </div>
-                  <div class="card-body">
-                    {{ __('general_content.contact_name_trans_key') }} :  {{ $Invoice->contact['first_name'] }} - {{ $Invoice->contact['name'] }}
-                  </div>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
+              <div class="table-responsive">
+                <div class="card-body">
+                  {{ __('general_content.created_at_trans_key') }} : {{ $Invoice->GetPrettyCreatedAttribute() }}
+                </div>
+                <div class="card-body">
+                  {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $Invoice->companie['id'] }}" label="{{ $Invoice->companie['label'] }}"  />
+                </div>
+                <div class="card-body">
+                  {{ __('general_content.adress_name_trans_key') }} :   {{ $Invoice->adresse['label'] }} - {{ $Invoice->adresse['adress'] }}
+                </div>
+                <div class="card-body">
+                  {{ __('general_content.contact_name_trans_key') }} :  {{ $Invoice->contact['first_name'] }} - {{ $Invoice->contact['name'] }}
                 </div>
               </div>
               <div class="card-body">
                 @include('include.sub-total-price')
               </div>
-            </div>
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
-              </div>
-              <div class="card-body table-responsive p-0">
+            </x-adminlte-card>
+
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
+              <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <tr>
                         <td style="width:50%"> 
@@ -122,7 +113,9 @@
                     </tr>
                 </table>
               </div>
-            </div>
+            </x-adminlte-card>
+
+            @include('include.file-store', ['inputName' => "invoices_id",'inputValue' => $Invoice->id,'filesList' => $Invoice->files,])
           </div>
         </div>
       </div>       

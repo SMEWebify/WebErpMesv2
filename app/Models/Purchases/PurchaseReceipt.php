@@ -54,7 +54,7 @@ class PurchaseReceipt extends Model
     // Relationship with the files associated with the Quote
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->hasMany(File::class, 'purchase_receipts_id');
     }
 
     public function GetPrettyCreatedAttribute()

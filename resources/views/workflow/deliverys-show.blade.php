@@ -30,71 +30,61 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
               <form method="POST" action="{{ route('deliverys.update', ['id' => $Delivery->id]) }}" enctype="multipart/form-data">
                 @csrf
-                  <div class="card card-body">
-                    <div class="row">
-                      <div class="form-group col-4">
-                        <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Delivery->code }}
-                      </div>
-                      <div class="form-group col-4">
-                        <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
-                          <x-slot name="prependSlot">
-                              <div class="input-group-text bg-gradient-success">
-                                  <i class="fas fa-exclamation"></i>
-                              </div>
-                          </x-slot>
-                          <option value="1" @if(1 == $Delivery->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
-                          <option value="2" @if(2 == $Delivery->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
-                        </x-adminlte-select>
-                      </div>
-                      <div class="form-group col-4">
-                        @include('include.form.form-input-label',['label' =>'Name of delivery', 'Value' =>  $Delivery->label])
-                      </div>
+                <div class="card card-body">
+                  <div class="row">
+                    <div class="form-group col-4">
+                      <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Delivery->code }}
                     </div>
-                  </div>
-                  <div class="card card-body">
-                    <div class="row">
-                      <x-FormTextareaComment  comment="{{ $Delivery->comment }}" />
+                    <div class="form-group col-4">
+                      <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-gradient-success">
+                                <i class="fas fa-exclamation"></i>
+                            </div>
+                        </x-slot>
+                        <option value="1" @if(1 == $Delivery->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
+                        <option value="2" @if(2 == $Delivery->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
+                      </x-adminlte-select>
                     </div>
-                  </div>
-                  <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                  </div>
-              </form>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <div class="card-body">
-                    {{ __('general_content.created_at_trans_key') }} :  {{ $Delivery->GetPrettyCreatedAttribute() }}
-                  </div>
-                  <div class="card-body">
-                    {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $Delivery->companie['id'] }}" label="{{ $Delivery->companie['label'] }}"  />
-                  </div>
-                  <div class="card-body">
-                    {{ __('general_content.adress_name_trans_key') }} :   {{ $Delivery->adresse['label'] }} - {{ $Delivery->adresse['adress'] }}
-                  </div>
-                  <div class="card-body">
-                    {{ __('general_content.contact_name_trans_key') }} :  {{ $Delivery->contact['first_name'] }} - {{ $Delivery->contact['name'] }}
+                    <div class="form-group col-4">
+                      @include('include.form.form-input-label',['label' =>'Name of delivery', 'Value' =>  $Delivery->label])
+                    </div>
                   </div>
                 </div>
+                <div class="card card-body">
+                  <div class="row">
+                    <x-FormTextareaComment  comment="{{ $Delivery->comment }}" />
+                  </div>
+                </div>
+                <x-slot name="footerSlot">
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                </x-slot>
+              </form>
+            </x-adminlte-card>
+          </div>
+          <div class="col-md-3">
+            <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="secondary" maximizable>
+              <div class="table-responsive">
+                <div class="card-body">
+                  {{ __('general_content.created_at_trans_key') }} :  {{ $Delivery->GetPrettyCreatedAttribute() }}
+                </div>
+                <div class="card-body">
+                  {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $Delivery->companie['id'] }}" label="{{ $Delivery->companie['label'] }}"  />
+                </div>
+                <div class="card-body">
+                  {{ __('general_content.adress_name_trans_key') }} :   {{ $Delivery->adresse['label'] }} - {{ $Delivery->adresse['adress'] }}
+                </div>
+                <div class="card-body">
+                  {{ __('general_content.contact_name_trans_key') }} :  {{ $Delivery->contact['first_name'] }} - {{ $Delivery->contact['name'] }}
+                </div>
               </div>
-            </div>
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
-              </div>
-              <div class="card-body table-responsive p-0">
+            </x-adminlte-card>
+
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
+              <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <tr>
                         <td style="width:50%"> 
@@ -115,7 +105,9 @@
                     @endif
                 </table>
               </div>
-            </div>
+            </x-adminlte-card>
+            
+            @include('include.file-store', ['inputName' => "deliverys_id",'inputValue' => $Delivery->id,'filesList' => $Delivery->files,])
           </div>
         </div>
       </div>      
@@ -180,31 +172,26 @@
       <div class="tab-pane" id="Photos">
         <div class="row">
           <div class="col-md-12">
-            <div class="card card-info">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.photos_trans_key') }}</h3>
-              </div>
-              <div class="card-body">
-                <form action="{{ route('photo.store') }}" method="post" enctype="multipart/form-data">
-                  @csrf
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="far fa-file"></i></span>
-                    </div>
-                    <div class="custom-file">
-                      <input type="hidden" name="delivery_id" value="{{ $Delivery->id }}" >
-                      <input type="file" name="file" accept="image/*" capture="camera" class="custom-file-input" id="chooseFile">
-                      <label class="custom-file-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
-                    </div>
-                    <div class="input-group-append">
-                      <button type="submit" name="submit" class="btn btn-success">
-                        {{ __('general_content.upload_trans_key') }} 
-                      </button>
-                    </div>
+            <x-adminlte-card title="{{ __('general_content.photos_trans_key') }}" theme="info" maximizable>
+              <form action="{{ route('photo.store') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="far fa-file"></i></span>
                   </div>
-                </form>
-              </div>
-            </div>
+                  <div class="custom-file">
+                    <input type="hidden" name="delivery_id" value="{{ $Delivery->id }}" >
+                    <input type="file" name="file" accept="image/*" capture="camera" class="custom-file-input" id="chooseFile">
+                    <label class="custom-file-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
+                  </div>
+                  <div class="input-group-append">
+                    <button type="submit" name="submit" class="btn btn-success">
+                      {{ __('general_content.upload_trans_key') }} 
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </x-adminlte-card>
           </div>
         </div>
         <div class="row">

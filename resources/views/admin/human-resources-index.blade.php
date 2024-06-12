@@ -198,103 +198,101 @@
             <!-- /.tab-pane active -->
             <div class="tab-pane " id="ExpenseCat">
                 <div class="row">
-                    <div class="col-md-6 card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('general_content.expense_categories_trans_key') }}</h3>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>{{__('general_content.label_trans_key') }}</th>
-                                        <th>{{__('general_content.description_trans_key') }}</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($UserExpenseCategories as $UserExpenseCategory)
-                                    <tr>
-                                        <td>{{ $UserExpenseCategory->label }}</td>
-                                        <td>{{ $UserExpenseCategory->description }}</td>
-                                        <td class=" py-0 align-middle">
-                                            <!-- Button Modal -->
-                                            <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#UserExpenseCategory{{ $UserExpenseCategory->id }}">
-                                                <i class="fa fa-lg fa-fw  fa-edit"></i>
-                                            </button>
-                                            <!-- Modal {{ $UserExpenseCategory->id }} -->
-                                            <x-adminlte-modal id="UserExpenseCategory{{ $UserExpenseCategory->id }}" title="Update {{ $UserExpenseCategory->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                                                <form method="POST" action="{{ route('human.resources.update.expense.category', ['id' => $UserExpenseCategory->id]) }}" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="card-body">
-                                                        <div class="form-group">
-                                                            <label for="label">{{__('general_content.label_trans_key') }}</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                    <div class="col-md-6">
+                        <x-adminlte-card title="{{ __('general_content.expense_categories_trans_key') }}" theme="primary" maximizable>
+                            <div class="table-responsive p-0">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>{{__('general_content.label_trans_key') }}</th>
+                                            <th>{{__('general_content.description_trans_key') }}</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($UserExpenseCategories as $UserExpenseCategory)
+                                        <tr>
+                                            <td>{{ $UserExpenseCategory->label }}</td>
+                                            <td>{{ $UserExpenseCategory->description }}</td>
+                                            <td class=" py-0 align-middle">
+                                                <!-- Button Modal -->
+                                                <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#UserExpenseCategory{{ $UserExpenseCategory->id }}">
+                                                    <i class="fa fa-lg fa-fw  fa-edit"></i>
+                                                </button>
+                                                <!-- Modal {{ $UserExpenseCategory->id }} -->
+                                                <x-adminlte-modal id="UserExpenseCategory{{ $UserExpenseCategory->id }}" title="Update {{ $UserExpenseCategory->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                                                    <form method="POST" action="{{ route('human.resources.update.expense.category', ['id' => $UserExpenseCategory->id]) }}" enctype="multipart/form-data">
+                                                        @csrf
+                                                        <div class="card-body">
+                                                            <div class="form-group">
+                                                                <label for="label">{{__('general_content.label_trans_key') }}</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                    </div>
+                                                                    <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $UserExpenseCategory->label }}">
                                                                 </div>
-                                                                <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}" value="{{ $UserExpenseCategory->label }}">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="description">{{__('general_content.description_trans_key') }}</label>
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                                                    </div>
+                                                                    <input type="text" class="form-control" name="description"  id="description" placeholder="{{__('general_content.description_trans_key') }}" value="{{ $UserExpenseCategory->description }}">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="description">{{__('general_content.description_trans_key') }}</label>
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                                                                </div>
-                                                                <input type="text" class="form-control" name="description"  id="description" placeholder="{{__('general_content.description_trans_key') }}" value="{{ $UserExpenseCategory->description }}">
-                                                            </div>
+                                                        <div class="card-footer">
+                                                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                                         </div>
-                                                    </div>
-                                                    <div class="card-footer">
-                                                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                                                    </div>
-                                                </form>
-                                            </x-adminlte-modal>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                        <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
-                                    @endforelse
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>{{__('general_content.label_trans_key') }}</th>
-                                        <th>{{__('general_content.description_trans_key') }}</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                                                    </form>
+                                                </x-adminlte-modal>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                            <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                        @endforelse
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>{{__('general_content.label_trans_key') }}</th>
+                                            <th>{{__('general_content.description_trans_key') }}</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </x-adminlte-card>
                     <!-- /.card secondary -->
                     </div>
                     <div class="col-md-6 card-secondary">
-                        <div class="card-header">
-                            <h3 class="card-title">{{__('general_content.new_expense_categories_trans_key') }}</h3>
-                        </div>
-                        <form  method="POST" action="{{ route('human.resources.create.expense.category') }}" class="form-horizontal">
-                            @csrf
-                            <div class="form-group">
-                                <label for="label">{{__('general_content.label_trans_key') }}</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                        <x-adminlte-card title="{{ __('general_content.new_expense_categories_trans_key') }}" theme="secondary" maximizable>
+                            <form  method="POST" action="{{ route('human.resources.create.expense.category') }}" class="form-horizontal">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="label">{{__('general_content.label_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                                     </div>
-                                    <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="description">{{__('general_content.description_trans_key') }}</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                <div class="form-group">
+                                    <label for="description">{{__('general_content.description_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="description"  id="description" placeholder="{{__('general_content.description_trans_key') }}">
                                     </div>
-                                    <input type="text" class="form-control" name="description"  id="description" placeholder="{{__('general_content.description_trans_key') }}">
                                 </div>
-                            </div>
-                            <div class="card-footer">
-                                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                            </div>
-                        </form>
+                                <div class="card-footer">
+                                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                </div>
+                            </form>
+                        </x-adminlte-card>
                     </div>
                     <!-- /.card secondary -->
                 </div>

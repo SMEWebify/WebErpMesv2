@@ -285,7 +285,7 @@
 
     <!-- CHART: QUOTES RATE -->
     <div class="col-lg-4 col-md-12">
-      <x-adminlte-card title="{{ __('general_content.quote_transformation_trans_key') }}" theme="dark" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+      <x-adminlte-card title="{{ __('general_content.quote_transformation_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
         <div class="row">
           <div class="col-md-12">
             <div class="chart-responsive">
@@ -368,46 +368,30 @@
 
     <!-- PRODUCT LIST -->
     <div class="col-lg-12 col-md-12">
-      <div class="card ">
-        <div class="card-header border-transparent bg-gradient-teal">
-          <h3 class="card-title">{{ __('general_content.latest_products_trans_key') }}</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
+      
+      <x-adminlte-card title="{{ __('general_content.latest_products_trans_key') }}" theme="dark" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+        <div class="row">  
+          @forelse ($LastProducts as $LastProduct)
+          <div class="col-md-2">
+            <x-adminlte-profile-widget name="{{ $LastProduct->label }} {{ $LastProduct->ind }}" desc="{{ $LastProduct->family->label }}" theme="lightblue"
+                img="@if($LastProduct->picture) {{ asset('/images/products/'. $LastProduct->picture) }} @endif" layout-type="classic">
+                <x-adminlte-profile-row-item icon="fas fa-cash-register " title="{{ __('general_content.purchased_price_trans_key') }}" text=" {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}"
+                    url="#" badge="teal"/>
+                <x-adminlte-profile-row-item icon="fas fa-shopping-cart" title="{{ __('general_content.price_trans_key') }}"
+                    text="{{ $LastProduct->selling_price }}  {{ $Factory->curency }}" url="#" badge="lightblue"/>
+            </x-adminlte-profile-widget>
+            
+            
           </div>
+          <!-- /.item -->
+          @empty
+            <li class="item">{{ __('general_content.no_product_trans_key') }}</li>
+          @endforelse
         </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <div class="row">  
-            @forelse ($LastProducts as $LastProduct)
-            <div class="col-md-2">
-              <x-adminlte-profile-widget name="{{ $LastProduct->label }} {{ $LastProduct->ind }}" desc="{{ $LastProduct->family->label }}" theme="lightblue"
-                  img="@if($LastProduct->picture) {{ asset('/images/products/'. $LastProduct->picture) }} @endif" layout-type="classic">
-                  <x-adminlte-profile-row-item icon="fas fa-cash-register " title="{{ __('general_content.purchased_price_trans_key') }}" text=" {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}"
-                      url="#" badge="teal"/>
-                  <x-adminlte-profile-row-item icon="fas fa-shopping-cart" title="{{ __('general_content.price_trans_key') }}"
-                      text="{{ $LastProduct->selling_price }}  {{ $Factory->curency }}" url="#" badge="lightblue"/>
-              </x-adminlte-profile-widget>
-              
-              
-            </div>
-            <!-- /.item -->
-            @empty
-              <li class="item">{{ __('general_content.no_product_trans_key') }}</li>
-            @endforelse
-          </div>
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer clearfix">
-            <a href="{{ route('products') }}" class="btn btn-sm btn-secondary">{{ __('general_content.view_all_trans_key') }}</a>
-          </div>
-        </div>
-        <!-- /.card-footer -->
-      </div>
+        <x-slot name="footerSlot">
+          <a href="{{ route('products') }}" class="btn btn-sm btn-secondary">{{ __('general_content.view_all_trans_key') }}</a>
+        </x-slot>
+      </x-adminlte-card>
     </div>
 
     <!-- SERVICE GOAL -->
