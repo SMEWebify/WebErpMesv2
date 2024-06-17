@@ -44,6 +44,7 @@ class Companies extends Model
                             'recept_controle',
                             'comment',
                             'active',
+                            'barcode_value',
                         ];
 
     public function getLabelAttribute()

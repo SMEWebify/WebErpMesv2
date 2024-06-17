@@ -161,6 +161,7 @@ class CompaniesController extends Controller
         $Companie->comment =$request->comment;
         if($request->active) $Companie->active=1;
         else $Companie->active = 0;
+        $Companie->barcode_value =$request->barcode_value;
         $Companie->save();
         return redirect()->route('companies.show', ['id' =>  $Companie->id])->with('success', 'Successfully updated companie');
     }

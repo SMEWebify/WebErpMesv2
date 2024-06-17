@@ -26,246 +26,266 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <x-adminlte-card title="{{ __('general_content.information_trans_key') }}" theme="primary" maximizable>
-              <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
-                @csrf
-                  <div class="card card-body">
-                    <div class="row">
-                      <label for="InputWebSite">{{ __('general_content.general_information_trans_key') }}</label>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-1">
-                        <div class="text-muted">
-                          <label for="label">{{ __('general_content.external_id_trans_key') }}</label>
-                          <b class="d-block">{{ $Companie->code }}</b>
-                        </div>
-                      </div>
-                      <div class="form-group col-md-2">
-                        <label for="companies_notification">{{__('general_content.active_trans_key') }}</label>
-                        <div class="input-group">
-                              @if($Companie->active == 1)  
-                                  <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  checked />
-                              @else
-                                  <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  />
-                              @endif
-                        </div>
-                      </div>
-                      @if($Companie->client_type == 1) 
-                      <div class="form-group col-md-4">
-                        <label for="label">{{ __('general_content.name_company_trans_key') }}</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-building"></i></span>
-                            </div>
-                            <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="{{ __('general_content.name_company_trans_key') }}">
-                        </div>
-                      </div>
-                      @else
-                      <div class="form-group col-md-2">
-                        <label for="label">{{ __('general_content.civility_trans_key') }}</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-building"></i></span>
-                            </div>
-                            <input type="text" class="form-control" name="civility"  id="civility" value="{{ $Companie->civility }}" placeholder="{{ __('general_content.civility_trans_key') }}">
-                        </div>
-                      </div>
-                      <div class="form-group col-md-2">
-                        <label for="label">{{ __('general_content.first_name_trans_key') }}</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-building"></i></span>
-                            </div>
-                            <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="{{ __('general_content.first_name_trans_key') }}">
-                        </div>
-                      </div>
-                      <div class="form-group col-md-2">
-                        <label for="last_name">{{ __('general_content.contact_name_trans_key') }}</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-building"></i></span>
-                            </div>
-                            <input type="text" class="form-control" name="last_name"  id="last_name" value="{{ $Companie->last_name }}" placeholder="{{ __('general_content.contact_name_trans_key') }}">
-                        </div>
-                      </div>
-                      @endif
-                      <div class="form-group col-md-3">
-                        <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            </div>
-                            <select class="form-control" name="user_id" id="user_id" value="user_id">
-                                <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
-                            @foreach ($userSelect as $item)
-                                <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
-                            @endforeach
-                            </select>
-                        </div>
-                      </div>
+            <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+              @csrf
+              <x-adminlte-card title="{{ __('general_content.general_information_trans_key') }}" theme="primary" maximizable>
+                <div class="row">
+                  <div class="form-group col-md-1">
+                    <div class="text-muted">
+                      <label for="label">{{ __('general_content.external_id_trans_key') }}</label>
+                      <b class="d-block">{{ $Companie->code }}</b>
                     </div>
                   </div>
-                  <div class="card card-body">
-                    <div class="row">
-                        <label for="InputWebSite">{{ __('general_content.site_link_trans_key') }}</label>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
-                              </div>
-                              <input type="text" class="form-control"  name="website" id="website" value="{{ $Companie->website }}" placeholder="Web site">
-                          </div>
-                      </div>
-                      <div class="form-group col-md-3">
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
-                              </div>
-                              <input type="text" class="form-control"  name="fbsite" id="fbsite"  value="{{ $Companie->fbsite }}"  placeholder="Facebook">
-                          </div>
-                      </div>
-                      <div class="form-group col-md-3">
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
-                              </div>
-                              <input type="text" class="form-control"  name="twittersite" id="twittersite" value="{{ $Companie->twittersite }}"  placeholder="X">
-                          </div>
-                      </div>
-                      <div class="form-group col-md-3">
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
-                              </div>
-                          <input type="text" class="form-control"  name="lkdsite" id="lkdsite" value="{{ $Companie->lkdsite }}"  placeholder="Linkedin">
-                          </div>
-                      </div>
+                  <div class="form-group col-md-2">
+                    <label for="companies_notification">{{__('general_content.active_trans_key') }}</label>
+                    <div class="input-group">
+                          @if($Companie->active == 1)  
+                              <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  checked />
+                          @else
+                              <x-adminlte-input-switch name="active" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"  />
+                          @endif
                     </div>
                   </div>
-                  <div class="card card-body">
-                    <div class="row">
-                        <label for="siren">{{ __('general_content.administrative_information_trans_key') }}</label>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                            <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="{{ __('general_content.reg_number_trans_key') }}"  @if($Companie->client_type == 2) disabled @endif>
-                            @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                  @if($Companie->client_type == 1) 
+                  <div class="form-group col-md-4">
+                    <label for="label">{{ __('general_content.name_company_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
                         </div>
-                        <div class="form-group col-md-3">
-                            <input type="text" class="form-control" name="naf_code" id="naf_code"  value="{{ $Companie->naf_code }}" placeholder="{{ __('general_content.naf_code_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
-                            @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                        </div>
-                        <div class="col-3">
-                            <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="{{ __('general_content.vat_number_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
-                            @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
-                        </div>
+                        <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="{{ __('general_content.name_company_trans_key') }}">
                     </div>
                   </div>
-                  <div class="card card-body">
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                            <label for="statu_customer">{{ __('general_content.status_client_trans_key') }}</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                </div>
-                                <select class="form-control" name="statu_customer" id="statu_customer" value="statu_customer">
-                                    <option value="">{{__('general_content.select_status_trans_key') }}</option>
-                                    <option value="1" @if($Companie->statu_customer == 1 ) Selected @endif>{{__('general_content.inactive_trans_key') }}</option>
-                                    <option value="2" @if($Companie->statu_customer == 2 ) Selected @endif>{{__('general_content.active_trans_key') }}</option>
-                                    <option value="3" @if($Companie->statu_customer == 3 ) Selected @endif>{{__('general_content.prospect_trans_key') }}</option>
-                                </select>
-                            </div>
+                  @else
+                  <div class="form-group col-md-2">
+                    <label for="label">{{ __('general_content.civility_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label for="discount">{{__('general_content.discount_trans_key') }} :</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                                </div>
-                                <input type="number" class="form-control" name="discount" id="discount" value="{{ $Companie->discount }}" placeholder="{{ __('general_content.discount_trans_key') }}">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="account_general_customer">{{ __('general_content.general_account_trans_key') }}</label>
-                            <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" value="{{ $Companie->account_general_customer }}" placeholder="{{ __('general_content.general_account_trans_key') }}">
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="account_auxiliary_customer">{{ __('general_content.auxiliary_account_trans_key') }}</label>
-                            <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" value="{{ $Companie->account_auxiliary_customer }}" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
-                        </div>
+                        <input type="text" class="form-control" name="civility"  id="civility" value="{{ $Companie->civility }}" placeholder="{{ __('general_content.civility_trans_key') }}">
                     </div>
                   </div>
-                  <div class="card card-body">
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                            <label for="statu_supplier">{{ __('general_content.status_supplier_trans_key') }}</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                </div>
-                                <select class="form-control" name="statu_supplier" id="statu_supplier"  value="statu_supplier">
-                                    <option value="">{{__('general_content.select_status_trans_key') }}</option>
-                                    <option value="1" @if($Companie->statu_supplier == 1 ) Selected @endif>{{__('general_content.inactive_trans_key') }}</option>
-                                    <option value="2" @if($Companie->statu_supplier == 2 ) Selected @endif>{{__('general_content.active_trans_key') }}</option>
-                                </select>
-                            </div>
+                  <div class="form-group col-md-2">
+                    <label for="label">{{ __('general_content.first_name_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label for="recept_controle">{{ __('general_content.reception_control_trans_key') }}</label>
-                            <select class="form-control" name="recept_controle" id="recept_controle" value="recept_controle">
-                                <option value="">{{ __('general_content.select_controle_trans_key') }}</option>
-                                <option value="1" @if($Companie->recept_controle == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
-                                <option value="2" @if($Companie->recept_controle == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="account_general_supplier">{{ __('general_content.general_account_trans_key') }}</label>
-                            <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  value="{{ $Companie->account_general_supplier }}" placeholder="{{ __('general_content.general_account_trans_key') }}">
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="account_auxiliary_supplier">{{ __('general_content.auxiliary_account_trans_key') }}</label>
-                            <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  value="{{ $Companie->account_auxiliary_supplier }}" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
-                        </div>
+                        <input type="text" class="form-control" name="label"  id="label" value="{{ $Companie->label }}" placeholder="{{ __('general_content.first_name_trans_key') }}">
                     </div>
                   </div>
-                  <div class="card card-body">
-                        <x-FormTextareaComment  comment="{{ $Companie->comment }}" />
+                  <div class="form-group col-md-2">
+                    <label for="last_name">{{ __('general_content.contact_name_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                        </div>
+                        <input type="text" class="form-control" name="last_name"  id="last_name" value="{{ $Companie->last_name }}" placeholder="{{ __('general_content.contact_name_trans_key') }}">
+                    </div>
                   </div>
-                  <x-slot name="footerSlot">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                  </x-slot>
-                </form>
-              </div>
-            </x-adminlte-card>
-            <div class="form-group col-md-3">
-              <x-adminlte-card title="{{ __('general_content.information_trans_key') }}" theme="secondary" maximizable>
-                  @if($Companie->website )
-                  <a href="{{ $Companie->website }}" class="text-gray">
-                    <i class="fab fa-internet-explorer fa-2x"></i>
-                  </a>
                   @endif
-                  @if($Companie->fbsite )
-                  <a href="{{ $Companie->fbsite }}" class="text-gray">
-                    <i class="fab fa-facebook-square fa-2x"></i>
-                  </a>
-                  @endif
-                  @if($Companie->twittersite )
-                  <a href="{{ $Companie->twittersite }}" class="text-gray">
-                    <i class="fab fa-twitter-square fa-2x"></i>
-                  </a>
-                  @endif
-                  @if($Companie->lkdsite )
-                  <a href="{{ $Companie->lkdsite }}" class="text-gray">
-                    <i class="fab fa-linkedin fa-2x"></i>
-                  </a>
-                  @endif
+                  <div class="form-group col-md-3">
+                    <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <select class="form-control" name="user_id" id="user_id" value="user_id">
+                            <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
+                        @foreach ($userSelect as $item)
+                            <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
+                        @endforeach
+                        </select>
+                    </div>
+                  </div>
+                </div>
               </x-adminlte-card>
-              @include('include.file-store', ['inputName' => "companies_id",'inputValue' => $Companie->id,'filesList' => $Companie->files,])
-            </div>
+
+              <x-adminlte-card title="{{ __('general_content.site_link_trans_key') }}" theme="secondary" maximizable>
+                <div class="row">
+                  <div class="form-group col-md-3">
+                      <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fab fa-internet-explorer"></i></span>
+                          </div>
+                          <input type="text" class="form-control"  name="website" id="website" value="{{ $Companie->website }}" placeholder="Web site">
+                      </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fab fa-facebook-square"></i></span>
+                          </div>
+                          <input type="text" class="form-control"  name="fbsite" id="fbsite"  value="{{ $Companie->fbsite }}"  placeholder="Facebook">
+                      </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fab fa-twitter-square"></i></span>
+                          </div>
+                          <input type="text" class="form-control"  name="twittersite" id="twittersite" value="{{ $Companie->twittersite }}"  placeholder="X">
+                      </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fab fa-linkedin"></i></span>
+                          </div>
+                      <input type="text" class="form-control"  name="lkdsite" id="lkdsite" value="{{ $Companie->lkdsite }}"  placeholder="Linkedin">
+                      </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    @if($Companie->website )
+                    <a href="{{ $Companie->website }}" class="text-gray">
+                      <i class="fab fa-internet-explorer fa-2x"></i>
+                    </a>
+                    @endif
+                  </div>
+                  <div class="form-group col-md-3">
+                    @if($Companie->fbsite )
+                    <a href="{{ $Companie->fbsite }}" class="text-gray">
+                      <i class="fab fa-facebook-square fa-2x"></i>
+                    </a>
+                    @endif
+                  </div>
+                  <div class="form-group col-md-3">
+                    @if($Companie->twittersite )
+                    <a href="{{ $Companie->twittersite }}" class="text-gray">
+                      <i class="fab fa-twitter-square fa-2x"></i>
+                    </a>
+                    @endif
+                  </div>
+                  <div class="form-group col-md-3">
+                    @if($Companie->lkdsite )
+                    <a href="{{ $Companie->lkdsite }}" class="text-gray">
+                      <i class="fab fa-linkedin fa-2x"></i>
+                    </a>
+                    @endif
+                  </div>
+                </div>
+              </x-adminlte-card>
+
+              <x-adminlte-card title="{{ __('general_content.administrative_information_trans_key') }}" theme="warning" maximizable>
+                <div class="row">
+                  <div class="form-group col-md-3">
+                        <input type="text" class="form-control" name="siren" id="siren"  value="{{ $Companie->siren }}" placeholder="{{ __('general_content.reg_number_trans_key') }}"  @if($Companie->client_type == 2) disabled @endif>
+                        @error('siren') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="form-group col-md-3">
+                        <input type="text" class="form-control" name="naf_code" id="naf_code"  value="{{ $Companie->naf_code }}" placeholder="{{ __('general_content.naf_code_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
+                        @error('naf_code') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="{{ __('general_content.vat_number_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
+                        @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                </div>
+              </x-adminlte-card>
+
+              <x-adminlte-card theme="lime" theme-mode="outline">
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <label for="statu_customer">{{ __('general_content.status_client_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                        </div>
+                        <select class="form-control" name="statu_customer" id="statu_customer" value="statu_customer">
+                            <option value="">{{__('general_content.select_status_trans_key') }}</option>
+                            <option value="1" @if($Companie->statu_customer == 1 ) Selected @endif>{{__('general_content.inactive_trans_key') }}</option>
+                            <option value="2" @if($Companie->statu_customer == 2 ) Selected @endif>{{__('general_content.active_trans_key') }}</option>
+                            <option value="3" @if($Companie->statu_customer == 3 ) Selected @endif>{{__('general_content.prospect_trans_key') }}</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <label for="discount">{{__('general_content.discount_trans_key') }} :</label>
+                      <div class="input-group">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                          </div>
+                          <input type="number" class="form-control" name="discount" id="discount" value="{{ $Companie->discount }}" placeholder="{{ __('general_content.discount_trans_key') }}">
+                      </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <label for="account_general_customer">{{ __('general_content.general_account_trans_key') }}</label>
+                      <input type="number" class="form-control" name="account_general_customer" id="account_general_customer" value="{{ $Companie->account_general_customer }}" placeholder="{{ __('general_content.general_account_trans_key') }}">
+                  </div>
+                  <div class="form-group col-md-3">
+                      <label for="account_auxiliary_customer">{{ __('general_content.auxiliary_account_trans_key') }}</label>
+                      <input type="number" class="form-control" name="account_auxiliary_customer" id="account_auxiliary_customer" value="{{ $Companie->account_auxiliary_customer }}" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
+                  </div>
+                </div>
+              </x-adminlte-card>
+
+              <x-adminlte-card theme="purple" theme-mode="outline">
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <label for="statu_supplier">{{ __('general_content.status_supplier_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                        </div>
+                        <select class="form-control" name="statu_supplier" id="statu_supplier"  value="statu_supplier">
+                            <option value="">{{__('general_content.select_status_trans_key') }}</option>
+                            <option value="1" @if($Companie->statu_supplier == 1 ) Selected @endif>{{__('general_content.inactive_trans_key') }}</option>
+                            <option value="2" @if($Companie->statu_supplier == 2 ) Selected @endif>{{__('general_content.active_trans_key') }}</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <label for="recept_controle">{{ __('general_content.reception_control_trans_key') }}</label>
+                      <select class="form-control" name="recept_controle" id="recept_controle" value="recept_controle">
+                          <option value="">{{ __('general_content.select_controle_trans_key') }}</option>
+                          <option value="1" @if($Companie->recept_controle == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
+                          <option value="2" @if($Companie->recept_controle == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                      </select>
+                  </div>
+                  <div class="form-group col-md-3">
+                      <label for="account_general_supplier">{{ __('general_content.general_account_trans_key') }}</label>
+                      <input type="number" class="form-control" id="account_general_supplier" name="account_general_supplier"  value="{{ $Companie->account_general_supplier }}" placeholder="{{ __('general_content.general_account_trans_key') }}">
+                  </div>
+                  <div class="form-group col-md-3">
+                      <label for="account_auxiliary_supplier">{{ __('general_content.auxiliary_account_trans_key') }}</label>
+                      <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  value="{{ $Companie->account_auxiliary_supplier }}" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
+                  </div>
+                </div>
+              </x-adminlte-card>
+
+              <x-adminlte-card theme="primary" theme-mode="outline">
+                <x-FormTextareaComment  comment="{{ $Companie->comment }}" />
+              </x-adminlte-card>
+
+              <x-adminlte-card title="{{ __('BARECODE') }}" theme="orange" maximizable>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                      <input type="text" class="form-control" name="barcode_value" id="barcode_value"  value="{{ $Companie->barcode_value }}" >
+                      @error('barcode_value') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                  </div>
+                </div>
+              </x-adminlte-card>
+
+              <div class="card-footer">
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+              </div>
+            </form>
           </div>
+
+          <div class="col-md-3">
+            @include('include.file-store', ['inputName' => "companies_id",'inputValue' => $Companie->id,'filesList' => $Companie->files,])
+          
+            @if($Companie->barcode_value)
+            <x-adminlte-card title="{{ __('BARECODE') }}" theme="orange" maximizable>
+              @php echo DNS2D::getBarcodeHTML($Companie->barcode_value, 'QRCODE'); @endphp
+            </x-adminlte-card>
+            @endif
+
+          </div>
+        </div>
       </div>  
       <div class="tab-pane " id="Adresses">
         <div class="row">
