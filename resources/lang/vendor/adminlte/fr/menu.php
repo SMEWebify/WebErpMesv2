@@ -8,7 +8,7 @@ return [
     'french_trans_key'                         => 'Français',
     'vietnamese_trans_key'                     => 'Vietnamien',
     'dashboard_trans_key'                      => 'Tableau de bord',
-    'companies_trans_key'                      => 'Sociétés',
+    'companies_trans_key'                      => 'Tiers',
     'leads_trans_key'                          => 'Leads',
     'opportunities_trans_key'                  => 'Opportunités',
     'quote_trans_key'                          => 'Devis',
