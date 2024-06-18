@@ -497,13 +497,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         ['get', 'post'],
         '/navbar/search',
         'App\Http\Controllers\SearchController@showNavbarSearchResults'
+        
     );
 
     require __DIR__.'/auth.php';
 
     Auth::routes();
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', 'App\Http\Controllers\HomeController@index')->middleware(['auth'])->name('home');
 
     Livewire::setUpdateRoute(function ($handle) {
         return Route::post('/livewire/update', $handle);
