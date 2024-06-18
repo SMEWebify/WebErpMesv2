@@ -115,47 +115,93 @@
           @endif
         </div>
       </div>
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">
-            <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  />  
-            - #{{ __('general_content.line_trans_key') }} {{ $Task->OrderLines->label }}
-            @if( $Task->OrderLines->product_id && $Task->OrderLines->product->drawing_file)
-            -  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->OrderLines->product->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
-            @endif
-            - #{{ $Task->id }} {{ __('general_content.task_detail_trans_key') }}  {{ $Task->label }}
-          </h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="{{ __('general_content.collapse_trans_key') }}">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" title="{{ __('general_content.remove_trans_key') }}">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <div class="card-body">
+      <x-adminlte-card title=" #{{ $Task->id }} {{ __('general_content.task_detail_trans_key') }}  {{ $Task->label }}" theme="teal" maximizable>
           @include('include.alert-result')
           <div class="row">
-            <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+            <div class="col-md-2">
+              <h4>{{ __('general_content.informations_trans_key') }}</h4> 
+              <div class="row md-2">
+                <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }} #{{ __('general_content.line_trans_key') }} {{ $Task->OrderLines->label }}"  /> 
+              </div>
+              <div class="row md-2">
+                <p>
+                  @if( $Task->OrderLines->product_id && $Task->OrderLines->product->drawing_file)
+                  <a class="btn btn-info" href="{{ asset('drawing/'. $Task->OrderLines->product->drawing_file) }}" target="_blank"><i class="fas fa-barcode "></i>{{ $Task->OrderLines->product->label }}</a>
+                  @endif
+                </p>
+              </div>
+              @if($Task->service->picture )
               <div class="row">
-                @if($Task->service->picture )
-                <div class="col-12 col-sm-1"> 
-                    <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'. $Task->service->picture) }}">
+                  <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'. $Task->service->picture) }}">
+              </div>
+              @endif
+              @if($Task->service->type == 1 or  $Task->service->type == 7)
+              <div class="row">
+                <x-adminlte-info-box title="{{ __('general_content.total_time_trans_key') }}" text="{{ $Task->getTotalLogTime() }} h" icon="fa fa-stopwatch" theme="warning"/>
+              </div>
+              @endif
+              <div class="row">
+                <x-adminlte-info-box title="{{ __('general_content.finish_part_qty_trans_key') }}" text="{{ $Task->getTotalLogGoodQt() }} item(s)" icon="fa fa-database" theme="success"/>
+              </div>
+              <div class="row">
+                <x-adminlte-info-box title="{{ __('general_content.bad_part_qty_trans_key') }}" text="{{ $Task->getTotalLogBadQt() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
+              </div>
+              <div class="text-muted">
+                <p class="text-sm">{{ __('general_content.statu_trans_key') }}  
+                  <b class="d-block">{{ $Task->status['title'] }}</b>
+                </p>
+                <div class="row">
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.cost_trans_key') }}
+                      <b class="d-block">{{ $Task->unit_cost }} {{ $Factory->curency }}</b>
+                    </p>
+                  </div>
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.margin_trans_key') }}  
+                      <b class="d-block">{{ $Task->margin() }} %</b>
+                    </p>
+                  </div>
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.price_trans_key') }}
+                      <b class="d-block">{{ $Task->unit_price }} {{ $Factory->curency }}</b>
+                    </p>
+                  </div>
                 </div>
-                @endif
                 @if($Task->service->type == 1 or  $Task->service->type == 7)
-                <div class="col-12 col-sm-3">
-                  <x-adminlte-info-box title="{{ __('general_content.total_time_trans_key') }}" text="{{ $Task->getTotalLogTime() }} h" icon="fa fa-stopwatch" theme="warning"/>
+                <div class="row">
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.setting_time_trans_key') }}
+                      <b class="d-block">{{ $Task->seting_time }} s</b>
+                    </p>
+                  </div>
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.unit_time_trans_key') }}
+                      <b class="d-block">{{ $Task->unit_time }} s</b>
+                    </p>
+                  </div>
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.total_time_trans_key') }}
+                      <b class="d-block">{{ $Task->TotalTime() }} h</b>
+                    </p>
+                  </div>
                 </div>
                 @endif
-                <div class="col-12 col-sm-3">
-                  <x-adminlte-info-box title="{{ __('general_content.finish_part_qty_trans_key') }}" text="{{ $Task->getTotalLogGoodQt() }} item(s)" icon="fa fa-database" theme="success"/>
-                </div>
-                <div class="col-12 col-sm-3">
-                  <x-adminlte-info-box title="{{ __('general_content.bad_part_qty_trans_key') }}" text="{{ $Task->getTotalLogBadQt() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <p class="text-sm">{{ __('general_content.progress_trans_key') }}
+                    <b class="d-block">{{ $Task->progress() }} %</b>
+                  </p>
+                  
+                  @if($Task->progress() > 100 )
+                    <x-adminlte-progress theme="teal" value="100" animated with-label/>
+                  @else
+                    <x-adminlte-progress theme="teal" value="{{ $Task->progress() }}" animated with-label/>
+                  @endif
                 </div>
               </div>
+            </div>
+            <div class="col-md-6">
               <div class="row">
                 <div class="col-12">
                   <h4>{{ __('general_content.logs_activity_trans_key') }}</h4>   
@@ -210,7 +256,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+            <div class="col-md-4">
               <h3 class="text-primary">
                 {{ __('general_content.task_trans_key') }}  #{{ $Task->id }} {{ $Task->service['label'] }} 
               </h3>
@@ -221,40 +267,37 @@
                   <a class="btn btn-info" href="{{ asset('drawing/'. $Task->Component->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
                 </h5>
               @endif
-              
-              
-              <hr>
               <div class="row">
                 @if($Task->service->type == 1 or  $Task->service->type == 7)
                   @if($lastTaskActivities)
-                    <div class="col-2 ">
+                    <div class="form-group col-md-2 ">
                       <a class="btn btn-app bg-success @if($lastTaskActivities->type == 1 || $lastTaskActivities->type == 3) disabled @endif " wire:click="StartTimeTask({{$Task->id}})">
                         <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
                       </a>
                     </div>
-                    <div class="col-2 ">
+                    <div class="form-group col-md-2 ">
                       <a class="btn btn-app bg-warning @if($lastTaskActivities->type == 2 || $lastTaskActivities->type == 3) disabled @endif " wire:click="EndTimeTask({{$Task->id}})">
                         <i class="fas fa-{{ __('general_content.pause_trans_key') }}"></i> {{ __('general_content.pause_trans_key') }}
                       </a>
                     </div>
-                    <div class="col-2">
+                    <div class="form-group col-md-2 ">
                       <a class="btn btn-app bg-danger @if($lastTaskActivities->type == 3) disabled @endif " wire:click="EndTask({{$Task->id}})">
                         <i class="fas fa-stop"></i> {{ __('general_content.end_trans_key') }}
                       </a>
                     </div>
                   @else
-                    <div class="col-2 ">
+                  <div class="form-group col-md-2 ">
                       <a class="btn btn-app bg-success" wire:click="StartTimeTask({{$Task->id}})">
                         <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
                       </a>
                     </div>
                   @endif
                 @else
-                <div class="col-2 ">
+                <div class="form-group col-md-2 ">
                   <a class="btn btn-app bg-success" href="{{ route('purchases.request') }}" >{{ __('general_content.new_purchase_document_trans_key') }}</a>
                 </div>
                 
-                <div class="col-2">
+                <div class="form-group col-md-2 ">
                   <a class="btn btn-app bg-danger " wire:click="EndTask({{$Task->id}})">
                     <i class="fas fa-stop"></i> {{ __('general_content.end_trans_key') }}
                   </a>
@@ -318,18 +361,18 @@
               </div>
               <hr>
               <div class="row">
-                <div class="col-2 text-muted">
+                <div class="col-md-2 text-muted">
                   <p class="text-sm">{{ __('general_content.end_date_trans_key') }}  
                     <b class="d-block">{{ $Task->getFormattedEndDateAttribute() }}</b>
                   </p>
                 </div>
-                <div class="col-2 text-muted">
+                <div class="col-md-2 text-muted">
                   <div class="form-group">
                     <label for="not_recalculate">Not Recalculate</label>
                     <input type="checkbox" id="not_recalculate" wire:model.live="not_recalculate" style=" display:flex; align-items:center;">
                 </div>
                 </div>
-                <div class="col-8 text-muted">
+                <div class="col-md-8 text-muted">
                   <form wire:submit.prevent="updateDateTask">
                     <label for="end_date">{{ __('general_content.end_date_trans_key') }} :</label>
                     <div class="input-group input-group-sm">
@@ -346,61 +389,6 @@
                 </div>
               </div>
               <hr>
-              <div class="text-muted">
-                <p class="text-sm">{{ __('general_content.statu_trans_key') }}  
-                  <b class="d-block">{{ $Task->status['title'] }}</b>
-                </p>
-                <div class="row">
-                  <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.cost_trans_key') }}
-                      <b class="d-block">{{ $Task->unit_cost }} {{ $Factory->curency }}</b>
-                    </p>
-                  </div>
-                  <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.margin_trans_key') }}  
-                      <b class="d-block">{{ $Task->margin() }} %</b>
-                    </p>
-                  </div>
-                  <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.price_trans_key') }}
-                      <b class="d-block">{{ $Task->unit_price }} {{ $Factory->curency }}</b>
-                    </p>
-                  </div>
-                </div>
-                @if($Task->service->type == 1 or  $Task->service->type == 7)
-                <div class="row">
-                  <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.setting_time_trans_key') }}
-                      <b class="d-block">{{ $Task->seting_time }} s</b>
-                    </p>
-                  </div>
-                  <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.unit_time_trans_key') }}
-                      <b class="d-block">{{ $Task->unit_time }} s</b>
-                    </p>
-                  </div>
-                  <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.total_time_trans_key') }}
-                      <b class="d-block">{{ $Task->TotalTime() }} h</b>
-                    </p>
-                  </div>
-                </div>
-                @endif
-              </div>
-              <div class="row">
-                <div class="col-12">
-                  <p class="text-sm">{{ __('general_content.progress_trans_key') }}
-                    <b class="d-block">{{ $Task->progress() }} %</b>
-                  </p>
-                  
-                  @if($Task->progress() > 100 )
-                    <x-adminlte-progress theme="teal" value="100" animated/>
-                  @else
-                    <x-adminlte-progress theme="teal" value="{{ $Task->progress() }}" animated/>
-                  @endif
-                </div>
-              </div>
-              <hr>
               <div class="row">
                 <div class="col-12">
                   <a href="#" class="dropdown-item " wire:click="createNC({{$Task->id}}, {{$Task->OrderLines->order->companies_id}}, {{$Task->methods_services_id}})" ><span class="text-warning"><i class="fa fa-light fa-fw  fa-exclamation"></i>{{ __('general_content.new_non_conformitie_trans_key') }}</span></a>
@@ -408,8 +396,13 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
+      </x-adminlte-card>
+
+      @if($StockLocationsProducts && ($Task->service->type != 1 || $Task->service->type != 7))
+        <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>
+          @include('include.table-stock-locations-products')
+        </x-adminlte-card>
+      @endif
     @endif
   @endempty
   

@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
@@ -41,6 +42,9 @@ class TaskStatu extends Component
 
     public $tasksOpen, $tasksInProgress, $tasksPending, $tasksOngoing, $tasksCompleted, $averageProcessingTime, $userProductivity, $totalResourcesAllocated, $resourceHours; 
 
+    public $StockLocationsProducts = null; 
+
+    public $userSelect;
 
     // Validation Rules
     protected $rules = [
@@ -48,7 +52,7 @@ class TaskStatu extends Component
         'addBadQt' =>'required|numeric|min:0',
     ];
 
-    public function mount($TaskId, $tasksOpen, $tasksInProgress, $tasksPending, $tasksOngoing, $tasksCompleted, $averageProcessingTime, $userProductivity, $totalResourcesAllocated, $resourceHours) 
+    public function mount($TaskId) 
     {
         $this->user_id = Auth::id();
         $this->search = $TaskId;
@@ -56,8 +60,11 @@ class TaskStatu extends Component
         $this->lastTaskActivities = TaskActivities::where('task_id', $this->search)->latest()->first();
         $this->taskActivities = TaskActivities::where('task_id', $this->search)->get();
         $this->Task = Task::with('OrderLines.order')->find($this->search);
+        $this->userSelect = User::select('id', 'name')->get();
        // $this->end_date = $this->Task->end_date;
-
+        if($this->Task->component_id){
+            $this->StockLocationsProducts = StockLocationProducts::where('products_id', $this->Task->component_id)->get(); 
+        }
         // Organiser les données pour la timeline
         $this->timelineData = [];
 
@@ -193,11 +200,16 @@ class TaskStatu extends Component
                     ->first();
             }
         }
-        
+
+        if($this->Task->component_id){
+            $this->StockLocationsProducts = StockLocationProducts::where('products_id', $this->Task->component_id)->get(); 
+        }
+
         return view('livewire.task-statu', [
             'Task' => $this->Task,
             'taskActivities' => $this->taskActivities,
             'lastTaskActivities' => $this->lastTaskActivities,
+            'StockLocationsProducts' => $this->StockLocationsProducts,
         ]);
     }
 
@@ -379,4 +391,9 @@ class TaskStatu extends Component
     return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
     }
 
+    public function goToTask($taskId) 
+    {
+        // Rédirection ou mise à jour de la vue avec la nouvelle tâche
+        $this->mount($taskId);
+    }
 }
