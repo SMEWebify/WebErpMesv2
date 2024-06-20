@@ -372,18 +372,23 @@
       <x-adminlte-card title="{{ __('general_content.latest_products_trans_key') }}" theme="dark" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
         <div class="row">  
           @forelse ($LastProducts as $LastProduct)
+          @php
+            if($LastProduct->picture)
+              $picture = asset('/images/products/'. $LastProduct->picture);
+            else {
+              $picture = Avatar::create($LastProduct->code)->toBase64();
+            }
+          @endphp
           <div class="col-md-2">
-            @if($LastProduct->picture)
             <x-adminlte-profile-widget name="{{ $LastProduct->label }} {{ $LastProduct->ind }}" desc="{{ $LastProduct->family->label }}" theme="lightblue"
-                img=" {{ asset('/images/products/'. $LastProduct->picture) }}" layout-type="classic"> 
-            @endif
+                img="{{ $picture }}"
+                layout-type="classic"> 
+
                 <x-adminlte-profile-row-item icon="fas fa-cash-register " title="{{ __('general_content.purchased_price_trans_key') }}" text=" {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}"
                     url="#" badge="teal"/>
                 <x-adminlte-profile-row-item icon="fas fa-shopping-cart" title="{{ __('general_content.price_trans_key') }}"
                     text="{{ $LastProduct->selling_price }}  {{ $Factory->curency }}" url="#" badge="lightblue"/>
             </x-adminlte-profile-widget>
-            
-            
           </div>
           <!-- /.item -->
           @empty
