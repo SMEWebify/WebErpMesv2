@@ -373,8 +373,10 @@
         <div class="row">  
           @forelse ($LastProducts as $LastProduct)
           <div class="col-md-2">
+            @if($LastProduct->picture)
             <x-adminlte-profile-widget name="{{ $LastProduct->label }} {{ $LastProduct->ind }}" desc="{{ $LastProduct->family->label }}" theme="lightblue"
-                img="@if($LastProduct->picture) {{ asset('/images/products/'. $LastProduct->picture) }} @endif" layout-type="classic">
+                img=" {{ asset('/images/products/'. $LastProduct->picture) }}" layout-type="classic"> 
+            @endif
                 <x-adminlte-profile-row-item icon="fas fa-cash-register " title="{{ __('general_content.purchased_price_trans_key') }}" text=" {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}"
                     url="#" badge="teal"/>
                 <x-adminlte-profile-row-item icon="fas fa-shopping-cart" title="{{ __('general_content.price_trans_key') }}"
