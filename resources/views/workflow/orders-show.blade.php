@@ -213,8 +213,8 @@
         @if($Order->statu == 1)
         <x-InfocalloutComponent note="{{ __('general_content.csv_quote_info_trans_key') }}"  />
 
-        <x-adminlte-card title="{{ __('general_content.choose_file_trans_key') }}" theme="primary" maximizable>
-          <form method="POST" action="{{ route('orders.import', ['idOrder'=>  $Order->id]) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('orders.import', ['idOrder'=>  $Order->id]) }}" enctype="multipart/form-data">
+          <x-adminlte-card title="{{ __('general_content.choose_file_trans_key') }}" theme="primary" maximizable>
               @csrf
               <div class="card-body">
                   {{-- Placeholder, sm size and prepend icon --}}
@@ -309,8 +309,8 @@
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
-          </form>
-        </x-adminlte-card>
+          </x-adminlte-card>
+        </form>
         @else
         <x-adminlte-alert theme="info" title="Info">
             {{ __('general_content.info_statu_trans_key') }}
