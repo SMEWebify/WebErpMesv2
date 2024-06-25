@@ -314,6 +314,7 @@ return [
             'text'    => 'companies_trans_key',
             'icon'    => 'far fa-building',
             'url'     => 'companies',
+            'icon_color' => 'info',
             'can'     => ['companies-menu'],
         ],
         [
@@ -347,12 +348,18 @@ return [
             'text'    => 'orders_trans_key',
             'icon'    => 'fas fa-shopping-cart',
             'url'  => 'orders',
-            'can'  => ['quotes-menu'],
+            'icon_color' => 'warning',
+            'can'  => ['orders-menu'],
             'submenu' => [
                 [
                     'key'  => 'orders_lines_list',
                     'text' => 'orders_lines_list_trans_key',
                     'url'  => 'orders/lines',
+                ],
+                [
+                    'text' => 'order_calendar_trans_key',
+                    'url'  => 'production/calendar',
+                    'icon_color' => 'warning',
                 ],
             ]
         ],
@@ -361,11 +368,6 @@ return [
             'icon' => 'fas fa-calendar-alt',
             'can'  => ['scheduling-menu'],
             'submenu' => [
-                [
-                    'text' => 'order_calendar_trans_key',
-                    'url'  => 'production/calendar',
-                    'icon_color' => 'warning',
-                ],
                 [
                     'text' => 'load_planning_trans_key',
                     'url'  => 'production/load-planning',
@@ -402,6 +404,7 @@ return [
             'key'  => 'delivery_notes',
             'text'    => 'delivery_notes_trans_key',
             'icon'    => 'fas fa-receipt',
+            'icon_color' => 'purple',
             'can'  => ['deliverys-menu'],
             'submenu' => [
                 [
@@ -414,6 +417,7 @@ return [
             'key'  => 'invoices',
             'text'    => 'invoices_trans_key',
             'icon'    => 'fas fa-calculator',
+            'icon_color' => 'danger',
             'can'  => ['invoices-menu'],
             'submenu' => [
                 [
@@ -453,6 +457,7 @@ return [
         [
             'text'    => 'purchase_trans_key',
             'icon'    => 'fas fa-cash-register',
+            'icon_color' => 'primary',
             'can'  => ['purchases-menu'],
             'submenu' => [
                 [
