@@ -25,12 +25,15 @@ class StoreAdressRequest extends FormRequest
     {
         return [
             //
+            'companies_id'=>'required',
             'ordre' =>'required|numeric|gt:0',
             'label'=>'required',
             'adress'=>'required',
             'zipcode'=>'required',
             'city'=>'required',
             'country'=>'required',
+            'number'=>'nullable|string',
+            'mail'=>'nullable|string',
         ];
     }
 }

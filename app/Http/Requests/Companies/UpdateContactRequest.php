@@ -25,8 +25,13 @@ class UpdateContactRequest extends FormRequest
     {
         return [
             'ordre' =>'required|numeric|gt:0',
+            'civility'=>'nullable|string',
             'first_name'=>'required',
-            'name'=>'required'
+            'name'=>'required',
+            'function'=>'nullable|string',
+            'number'=>'nullable|string',
+            'mobile'=>'nullable|string',
+            'mail'=>'nullable|string',
         ];
     }
 }

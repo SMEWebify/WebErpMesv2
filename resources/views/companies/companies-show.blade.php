@@ -417,8 +417,8 @@
           <!-- /.card secondary -->
           </div>
           <div class="col-md-4">
-            <x-adminlte-card title="{{ __('general_content.new_address_trans_key') }}" theme="secondary" maximizable>
-              <form method="POST" action="{{ route('addresses.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('addresses.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.new_address_trans_key') }}" theme="secondary" maximizable>
                 @csrf
                 <div class="row">
                   <div class="form-group col-md-12">
@@ -483,8 +483,8 @@
                 <x-slot name="footerSlot">
                   <button type="submit" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
                 </x-slot>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
         </div>
       <!-- /.row -->
@@ -610,8 +610,8 @@
           <!-- /.card secondary -->
           </div>
           <div class="col-md-4">
-            <x-adminlte-card title="{{ __('general_content.new_contact_trans_key') }}" theme="secondary" maximizable>
-              <form method="POST" action="{{ route('contacts.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('contacts.store', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.new_contact_trans_key') }}" theme="secondary" maximizable>
                 @csrf
                 <div class="row">
                   <div class="form-group col-md-6">
@@ -671,8 +671,8 @@
                 <x-slot name="footerSlot">
                   <button type="submit" class="btn btn-danger btn-flat"><i class="fas fa-lg fa-save"></i>{{ __('general_content.submit_trans_key') }}</button>
                 </x-slot>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
         <!-- /.row -->
         </div> 

@@ -31,6 +31,8 @@ class UpdateAdressRequest extends FormRequest
             'zipcode'=>'required',
             'city'=>'required',
             'country'=>'required',
+            'number'=>'nullable|string',
+            'mail'=>'nullable|string',
         ];
     }
 }
