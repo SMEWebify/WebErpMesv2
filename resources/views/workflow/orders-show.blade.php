@@ -23,7 +23,9 @@
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}</a></li>
       @endif
+      @if($Order->type == 1)
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
+      @endif
     </ul>
   </div>
   <!-- /.card-header -->
