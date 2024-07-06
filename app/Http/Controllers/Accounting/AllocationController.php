@@ -16,12 +16,7 @@ class AllocationController extends Controller
      */
     public function store(StoreAllocationRequest $request)
     {
-        $Allocation = AccountingAllocation::create($request->only('account',
-                                                                'label', 
-                                                                'accounting_vats_id',
-                                                                'vat_account', 
-                                                                'code_account',
-                                                                'type_imputation'));
+        $allocation = AccountingAllocation::create($request->validated());
         return redirect()->route('accounting')->with('success', 'Successfully created allocation.');
     }
 
@@ -31,13 +26,8 @@ class AllocationController extends Controller
      */
     public function update(UpdateAllocationRequest $request)
     {
-        $Allocation = AccountingAllocation::find($request->id);
-        $Allocation->label=$request->label;
-        $Allocation->accounting_vats_id=$request->accounting_vats_id;
-        $Allocation->vat_account=$request->vat_account;
-        $Allocation->code_account=$request->code_account;
-        $Allocation->type_imputation=$request->type_imputation;
-        $Allocation->save();
+        $allocation = AccountingAllocation::findOrFail($request->id);
+        $allocation->update($request->validated());
         return redirect()->route('accounting')->with('success', 'Successfully updated allocation.');
     }
 }

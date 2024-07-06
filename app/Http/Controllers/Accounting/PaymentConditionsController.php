@@ -16,11 +16,7 @@ class PaymentConditionsController extends Controller
      */
     public function store(StorePaymentConditionRequest $request)
     {
-        $PaymentCondition = AccountingPaymentConditions::create($request->only('code',
-                                                            'label',
-                                                            'number_of_month',
-                                                            'number_of_day',
-                                                            'month_end'));
+        $paymentCondition = AccountingPaymentConditions::create($request->validated());
         return redirect()->route('accounting')->with('success', 'Successfully created payment condition mode.');
     }
 
@@ -30,14 +26,14 @@ class PaymentConditionsController extends Controller
      */
     public function update(UpdatePaymentConditionRequest $request)
     {
-        if($request->default == 1) AccountingPaymentConditions::query()->update(['default' => 0]);
-        $PaymentCondition = AccountingPaymentConditions::find($request->id);
-        $PaymentCondition->label=$request->label;
-        $PaymentCondition->number_of_month=$request->number_of_month;
-        $PaymentCondition->number_of_day=$request->number_of_day;
-        $PaymentCondition->month_end=$request->month_end;
-        $PaymentCondition->default=$request->default;
-        $PaymentCondition->save();
+        $paymentCondition = AccountingPaymentConditions::findOrFail($request->id);
+        $paymentCondition->update($request->validated());
+
+        // Set other payment conditions to non-default if this one is marked default
+        if ($request->default) {
+            AccountingPaymentConditions::where('id', '!=', $paymentCondition->id)->update(['default' => 0]);
+        }
+
         return redirect()->route('accounting')->with('success', 'Successfully updated payment condition mode.');
     }
 }

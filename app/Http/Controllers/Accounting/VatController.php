@@ -15,9 +15,7 @@ class VatController extends Controller
      */
     public function store(StoreVatRequest $request)
     {
-        $VaT = AccountingVat::create($request->only('code',
-                                                    'label',
-                                                    'rate'));
+        $vat = AccountingVat::create($request->validated());
         return redirect()->route('accounting')->with('success', 'Successfully created VAT type.');
     }
 
@@ -27,12 +25,14 @@ class VatController extends Controller
      */
     public function update(UpdateVatRequest $request)
     { 
-        if($request->default == 1) AccountingVat::query()->update(['default' => 0]);
-        $AccountingVat = AccountingVat::find($request->id);
-        $AccountingVat->label=$request->label;
-        $AccountingVat->rate=$request->rate;
-        $AccountingVat->default=$request->default;
-        $AccountingVat->save();
+        $vat = AccountingVat::findOrFail($request->id);
+
+        $vat->update($request->validated());
+
+        // Set other VATs to non-default if this one is marked default
+        if ($request->default) {
+            AccountingVat::where('id', '!=', $vat->id)->update(['default' => 0]);
+        }
         return redirect()->route('accounting')->with('success', 'Successfully updated VAT type.');
     }
 }

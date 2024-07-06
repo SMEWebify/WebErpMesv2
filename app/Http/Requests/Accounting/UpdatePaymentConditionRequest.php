@@ -25,7 +25,11 @@ class UpdatePaymentConditionRequest extends FormRequest
     {
         return [
             //
-            'label'=>'required',
+            'label'=>'required|string',
+            'number_of_month'=>'integer',
+            'number_of_day'=>'integer',
+            'month_end'=>'integer',
+            'default'=>'integer',
         ];
     }
 }

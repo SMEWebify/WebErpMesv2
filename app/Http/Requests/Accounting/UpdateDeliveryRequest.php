@@ -25,7 +25,8 @@ class UpdateDeliveryRequest extends FormRequest
     {
         return [
             //
-            'label'=>'required',
+            'label'=>'required|string',
+            'default'=>'integer',
         ];
     }
 }

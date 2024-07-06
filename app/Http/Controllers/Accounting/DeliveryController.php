@@ -16,7 +16,7 @@ class DeliveryController extends Controller
      */
     public function store(StoreDeliveryRequest $request)
     {
-        $Delevery = AccountingDelivery::create($request->only('code','label'));
+        $delivery = AccountingDelivery::create($request->validated());
         return redirect()->route('accounting')->with('success', 'Successfully created delevery mode.');
     }
 
@@ -26,11 +26,14 @@ class DeliveryController extends Controller
      */
     public function update(UpdateDeliveryRequest $request)
     {
-        if($request->default == 1) AccountingDelivery::query()->update(['default' => 0]);
-        $AccountingDelivery = AccountingDelivery::find($request->id);
-        $AccountingDelivery->label=$request->label;
-        $AccountingDelivery->default=$request->default;
-        $AccountingDelivery->save();
+        $delivery = AccountingDelivery::findOrFail($request->id);
+        $delivery->update($request->validated());
+
+        // Set other deliveries to non-default if this one is marked default
+        if ($request->default) {
+            AccountingDelivery::where('id', '!=', $delivery->id)->update(['default' => 0]);
+        }
+
         return redirect()->route('accounting')->with('success', 'Successfully updated delevery mode.');
     }
 }

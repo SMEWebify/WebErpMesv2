@@ -27,6 +27,9 @@ class StorePaymentConditionRequest extends FormRequest
             //
             'code' =>'required|unique:accounting_payment_conditions',
             'label'=>'required',
+            'number_of_month'=>'integer',
+            'number_of_day'=>'integer',
+            'month_end'=>'integer',
         ];
     }
 }

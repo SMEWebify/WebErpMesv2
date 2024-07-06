@@ -16,9 +16,7 @@ class PaymentMethodController extends Controller
      */
     public function store(StorePaymentMethodRequest $request)
     {
-        $PaymentMethode = AccountingPaymentMethod::create($request->only('code',
-                                                                        'label',
-                                                                        'code_account'));
+        $paymentMethod = AccountingPaymentMethod::create($request->validated());
         return redirect()->route('accounting')->with('success', 'Successfully created payment method mode.');
     }
 
@@ -28,12 +26,14 @@ class PaymentMethodController extends Controller
      */
     public function update(UpdatePaymentMethodRequest $request)
     {
-        if($request->default == 1) AccountingPaymentMethod::query()->update(['default' => 0]);
-        $PaymentMethod = AccountingPaymentMethod::find($request->id);
-        $PaymentMethod->label=$request->label;
-        $PaymentMethod->code_account=$request->code_account;
-        $PaymentMethod->default=$request->default;
-        $PaymentMethod->save();
+        $paymentMethod = AccountingPaymentMethod::findOrFail($request->id);
+
+        $paymentMethod->update($request->validated());
+
+        // Set other payment methods to non-default if this one is marked default
+        if ($request->default) {
+            AccountingPaymentMethod::where('id', '!=', $paymentMethod->id)->update(['default' => 0]);
+        }
         return redirect()->route('accounting')->with('success', 'Successfully updated payment method mode.');
     }
 }

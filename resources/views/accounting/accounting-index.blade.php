@@ -63,9 +63,9 @@
                         <i class="fa fa-lg fa-fw  fa-edit"></i>
                       </button>
                       <!-- Modal {{ $PaymentCondition->id }} -->
-                      <x-adminlte-modal id="PaymentCondition{{ $PaymentCondition->id }}" title="Update {{ $PaymentCondition->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('accounting.paymentCondition.update', ['id' => $PaymentCondition->id]) }}" enctype="multipart/form-data">
-                          @csrf
+                      <form method="POST" action="{{ route('accounting.paymentCondition.update', ['id' => $PaymentCondition->id]) }}" enctype="multipart/form-data">
+                        <x-adminlte-modal id="PaymentCondition{{ $PaymentCondition->id }}" title="Update {{ $PaymentCondition->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                        @csrf
                           <div class="card-body">
                             <div class="form-group">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -102,8 +102,8 @@
                           <x-slot name="footerSlot">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </x-slot>
-                        </form>
-                      </x-adminlte-modal>
+                        </x-adminlte-modal>
+                      </form>
                     </td>
                   </tr>
                   @empty
@@ -127,8 +127,8 @@
         </div>
 
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_payment_conditions_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('accounting.paymentCondition.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('accounting.paymentCondition.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_payment_conditions_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -166,8 +166,8 @@
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -208,9 +208,9 @@
                         <i class="fa fa-lg fa-fw  fa-edit"></i>
                       </button>
                       <!-- Modal {{ $PaymentMethod->id }} -->
-                      <x-adminlte-modal id="PaymentMethod{{ $PaymentMethod->id }}" title="Update {{ $PaymentMethod->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('accounting.paymentMethod.update', ['id' => $PaymentMethod->id]) }}" enctype="multipart/form-data">
-                          @csrf
+                      <form method="POST" action="{{ route('accounting.paymentMethod.update', ['id' => $PaymentMethod->id]) }}" enctype="multipart/form-data">
+                        <x-adminlte-modal id="PaymentMethod{{ $PaymentMethod->id }}" title="Update {{ $PaymentMethod->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                        @csrf
                           <div class="card-body">
                             <div class="form-group">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -236,8 +236,8 @@
                           <div class="card-footer">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
-                        </form>
-                      </x-adminlte-modal>
+                        </x-adminlte-modal>
+                      </form>
                     </td>
                   </tr>
                   @empty
@@ -259,8 +259,8 @@
         </div>
 
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_payment_methods_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('accounting.paymentMethod.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('accounting.paymentMethod.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_payment_methods_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -286,9 +286,9 @@
               </div>
               <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                </x-slot>
-            </form>
-          </x-adminlte-card>
+              </x-slot>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -330,8 +330,8 @@
                         <i class="fa fa-lg fa-fw  fa-edit"></i>
                       </button>
                       <!-- Modal {{ $VAT->id }} -->
-                      <x-adminlte-modal id="VAT{{ $VAT->id }}" title="Update {{ $VAT->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                         <form method="POST" action="{{ route('accounting.vat.update', ['id' => $VAT->id]) }}" enctype="multipart/form-data">
+                          <x-adminlte-modal id="VAT{{ $VAT->id }}" title="Update {{ $VAT->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                           @csrf
                           <div class="card-body">
                             <div class="form-group">
@@ -363,8 +363,8 @@
                           <div class="card-footer">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                         </div>
-                        </form>
-                      </x-adminlte-modal>
+                        </x-adminlte-modal>
+                      </form>
                     </td>
                   </tr>
                   @empty
@@ -387,8 +387,8 @@
         </div>
 
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_vat_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('accounting.vat.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('accounting.vat.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_vat_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -418,10 +418,10 @@
                 </div>
               </div>
               <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                </x-slot>
-            </form>
-          </x-adminlte-card>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+              </x-slot>
+            </x-adminlte-card>
+          </form>
           <!-- /.card body -->
         </div>
         <!-- /.card secondary -->
@@ -469,9 +469,9 @@
                         <i class="fa fa-lg fa-fw  fa-edit"></i>
                       </button>
                       <!-- Modal {{ $Allocation->id }} -->
-                      <x-adminlte-modal id="Allocation{{ $Allocation->id }}" title="Update {{ $Allocation->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                        <form method="POST" action="{{ route('accounting.allocation.update', ['id' => $Allocation->id]) }}" enctype="multipart/form-data">
-                          @csrf
+                      <form method="POST" action="{{ route('accounting.allocation.update', ['id' => $Allocation->id]) }}" enctype="multipart/form-data">
+                        <x-adminlte-modal id="Allocation{{ $Allocation->id }}" title="Update {{ $Allocation->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                        @csrf
                           <div class="card-body">
                             <div class="form-group">
                               <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -520,8 +520,8 @@
                           <div class="card-footer">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
-                        </form>
-                      </x-adminlte-modal>
+                        </x-adminlte-modal>
+                      </form>
                     </td>
                   </tr>
                   @empty
@@ -546,8 +546,8 @@
         </div>
 
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_accounting_allocations_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('accounting.allocation.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('accounting.allocation.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_accounting_allocations_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="account">Account (or {{ __('general_content.external_id_trans_key') }})</label>
@@ -597,10 +597,10 @@
                 </select>
               </div>
               <x-slot name="footerSlot">
-                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                </x-slot>
-            </form>
-          </x-adminlte-card>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+              </x-slot>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -685,8 +685,8 @@
         </div>
 
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_delevery_method_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('accounting.delivery.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('accounting.delivery.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_delevery_method_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -709,8 +709,8 @@
               <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>

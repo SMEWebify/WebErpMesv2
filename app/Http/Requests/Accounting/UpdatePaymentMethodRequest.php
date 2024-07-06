@@ -25,7 +25,9 @@ class UpdatePaymentMethodRequest extends FormRequest
     {
         return [
             //
-            'label'=>'required',
+            'label'=>'required|string',
+            'code_account'=>'string',
+            'default'=>'integer',
         ];
     }
 }

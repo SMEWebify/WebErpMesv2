@@ -28,6 +28,9 @@ class StoreAllocationRequest extends FormRequest
             'account' =>'required|unique:accounting_allocations',
             'label'=>'required',
             'accounting_vats_id'=>'required',
+            'vat_account'=>'integer',
+            'code_account'=>'integer',
+            'type_imputation'=>'integer',
         ];
     }
 }
