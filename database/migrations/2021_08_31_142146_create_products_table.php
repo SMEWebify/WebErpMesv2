@@ -34,7 +34,7 @@ class CreateProductsTable extends Migration
 			$table->decimal('x_oversize', 10, 3)->nullable();
 			$table->decimal('y_oversize', 10, 3)->nullable();
 			$table->decimal('z_oversize', 10, 3)->nullable();
-			$table->text('comment', 65535)->nullable();
+			$table->text('comment')->nullable();
             $table->integer('tracability_type')->default(1);
             $table->decimal('qty_eco_min', 10, 3)->nullable();
 			$table->decimal('qty_eco_max', 10, 3)->nullable();

@@ -20,11 +20,11 @@ class CreateQualityDerogationsTable extends Migration
             $table->integer('statu');
 			$table->integer('type');
 			$table->integer('user_id');
-			$table->text('pb_descp', 65535);
-			$table->text('proposal', 65535);
-			$table->text('reply', 65535);
+			$table->text('pb_descp');
+			$table->text('proposal');
+			$table->text('reply');
 			$table->integer('quality_non_conformitie_id')->nullable();
-			$table->text('decision', 65535);
+			$table->text('decision');
             $table->timestamps();
         });
     }

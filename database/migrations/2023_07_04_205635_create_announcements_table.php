@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
 			$table->string('title');
 			$table->integer('user_id');
-			$table->text('comment', 65535)->nullable();
+			$table->text('comment')->nullable();
             $table->timestamps();
         });
     }

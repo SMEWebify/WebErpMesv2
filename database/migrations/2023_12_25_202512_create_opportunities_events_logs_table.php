@@ -22,7 +22,7 @@ return new class extends Migration
             #4 = Sales Meeting
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-			$table->text('comment', 65535)->nullable();
+			$table->text('comment')->nullable();
             $table->timestamps();
         });
     }

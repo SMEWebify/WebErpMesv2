@@ -20,9 +20,9 @@ class CreateQualityActionsTable extends Migration
             $table->text('statu');
             $table->text('type');
 			$table->integer('user_id');
-			$table->text('pb_descp', 65535)->nullable();
-			$table->text('cause', 65535)->nullable();
-			$table->text('action', 65535)->nullable();
+			$table->text('pb_descp')->nullable();
+			$table->text('cause')->nullable();
+			$table->text('action')->nullable();
 			$table->string('color');
 			$table->integer('quality_non_conformitie_id')->nullable();
             $table->timestamps();

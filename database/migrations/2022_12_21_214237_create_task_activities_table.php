@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('timestamp');
             $table->integer('good_qt')->default(0);
 			$table->integer('bad_qt')->default(0);
-			$table->text('comment', 65535)->nullable();
+			$table->text('comment')->nullable();
             $table->timestamps();
         });
     }

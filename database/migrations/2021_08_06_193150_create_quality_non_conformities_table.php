@@ -28,11 +28,11 @@ class CreateQualityNonConformitiesTable extends Migration
 			$table->integer('user_id');
 			$table->integer('service_id')->nullable();
 			$table->integer('failure_id')->nullable();
-			$table->text('failure_comment', 65535)->nullable();
+			$table->text('failure_comment')->nullable();
 			$table->integer('causes_id')->nullable();
-			$table->text('causes_comment', 65535)->nullable();
+			$table->text('causes_comment')->nullable();
 			$table->integer('correction_id')->nullable();
-			$table->text('correction_comment', 65535)->nullable();
+			$table->text('correction_comment')->nullable();
 			$table->integer('companie_id')->nullable();
 			$table->integer('order_lines_id')->nullable();
 			$table->integer('task_id')->nullable();

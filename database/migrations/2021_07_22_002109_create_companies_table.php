@@ -39,7 +39,7 @@ class CreateCompaniesTable extends Migration
 			$table->integer('account_general_supplier')->nullable()->default(0);
 			$table->integer('account_auxiliary_supplier')->nullable()->default(0);
 			$table->integer('recept_controle')->default(0);
-			$table->text('comment', 65535)->nullable();
+			$table->text('comment')->nullable();
 			$table->string('sector_id')->nullable();
             $table->boolean('active')->default(1);
             $table->timestamps();

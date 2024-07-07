@@ -20,7 +20,7 @@ class CreateStockLocationsTable extends Migration
 			$table->integer('stocks_id');
             $table->integer('user_id');
 			$table->date('end_date')->nullable();
-            $table->text('comment', 65535)->nullable();
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
     }

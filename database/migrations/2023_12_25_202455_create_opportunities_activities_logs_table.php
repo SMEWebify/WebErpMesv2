@@ -32,7 +32,7 @@ return new class extends Migration
             #3 = Lukewarm 
             #4 = Cold
             $table->date('due_date')->nullable();
-			$table->text('comment', 65535)->nullable();
+			$table->text('comment')->nullable();
             $table->timestamps();
         });
     }

@@ -24,7 +24,7 @@ class CreateMethodsRessourcesTable extends Migration
 			$table->integer('section_id');
 			$table->string('color');
 			$table->integer('methods_services_id');
-			$table->text('comment', 65535)->nullable();
+			$table->text('comment')->nullable();
             $table->timestamps();
         });
     }
