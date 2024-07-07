@@ -11,7 +11,7 @@ use App\Http\Requests\Workflow\UpdateQuoteLineDetailsRequest;
 class QuoteLinesController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {    
@@ -19,8 +19,8 @@ class QuoteLinesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update($idQuote, UpdateQuoteLineDetailsRequest $request)
     {
@@ -46,8 +46,8 @@ class QuoteLinesController extends Controller
     }
     
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreImage($idQuote,Request $request)
     {

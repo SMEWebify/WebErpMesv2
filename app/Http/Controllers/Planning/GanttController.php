@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 class GanttController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {

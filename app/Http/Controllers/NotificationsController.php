@@ -12,7 +12,7 @@ class NotificationsController extends Controller
     /**
      * Get the new notification data for the navbar notification.
      *
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      * @return Array
      */
     public function getNotificationsData(Request $request)

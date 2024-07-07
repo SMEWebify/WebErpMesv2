@@ -27,7 +27,7 @@ class ProductsController extends Controller
     }
 
     /**
-     * @return view
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -36,7 +36,7 @@ class ProductsController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function show($id)
     {
@@ -81,8 +81,8 @@ class ProductsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreSupplier(Request $request){
 
@@ -119,8 +119,8 @@ class ProductsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreImage(Request $request)
     {
@@ -146,8 +146,8 @@ class ProductsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreDrawing(Request $request)
     {
@@ -169,8 +169,8 @@ class ProductsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreStl(Request $request)
     {
@@ -192,8 +192,8 @@ class ProductsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreSvg(Request $request)
     {
@@ -215,8 +215,8 @@ class ProductsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateProductsRequest $request)
     {
@@ -253,7 +253,7 @@ class ProductsController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function duplicate($id)
     {

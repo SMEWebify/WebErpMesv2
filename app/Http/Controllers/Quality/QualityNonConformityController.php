@@ -10,8 +10,8 @@ use App\Http\Requests\Quality\UpdateQualityNonConformityRequest;
 class QualityNonConformityController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreQualityNonConformityRequest $request)
     {
@@ -33,7 +33,7 @@ class QualityNonConformityController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateQualityNonConformityRequest $request)
     {

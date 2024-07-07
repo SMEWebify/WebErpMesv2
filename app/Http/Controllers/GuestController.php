@@ -14,7 +14,7 @@ use League\CommonMark\Extension\SmartPunct\Quote;
 class GuestController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -22,7 +22,7 @@ class GuestController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function ShowQuoteDocument($uuid)
     {
@@ -67,7 +67,7 @@ class GuestController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function ShowOrderDocument($uuid)
     {

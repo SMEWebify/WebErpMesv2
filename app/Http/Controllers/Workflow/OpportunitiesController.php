@@ -19,8 +19,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\Opportunities;
 use App\Notifications\QuoteNotification;
-use App\Models\Companies\CompaniesContacts;
-use App\Models\Companies\CompaniesAddresses;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Workflow\OpportunitiesEventsLogs;
@@ -40,7 +38,7 @@ class OpportunitiesController extends Controller
         $this->SelectDataService = $SelectDataService;
     }
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {   
@@ -91,7 +89,7 @@ class OpportunitiesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function show(Opportunities $id)
     {  
@@ -238,8 +236,8 @@ class OpportunitiesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateOpportunityRequest $request)
     {
@@ -257,8 +255,8 @@ class OpportunitiesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function storeQuote(Opportunities $id)
     {

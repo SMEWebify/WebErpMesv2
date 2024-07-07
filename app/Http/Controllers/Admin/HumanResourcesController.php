@@ -33,7 +33,7 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -55,7 +55,7 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function ShowUser($id)
     {
@@ -76,8 +76,8 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function UpdateUser(Request $request, int $id)
     {
@@ -102,8 +102,8 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function LockUser(Request $request, int $id)
     {
@@ -114,8 +114,8 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function storeUserEmploymentContract(StoreUserEmploymentContractRequest $request)
     {
@@ -142,8 +142,8 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function updateUserEmploymentContract(UpdateUserEmploymentContractRequest $request)
     {

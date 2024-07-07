@@ -3,25 +3,14 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Planning\Status;
 use App\Models\Workflow\Quotes;
 use App\Models\Admin\CustomField;
 use App\Services\QuoteCalculator;
 use App\Traits\NextPreviousTrait;
 use Illuminate\Support\Facades\DB;
-
-use App\Models\Companies\Companies;
-use App\Models\Workflow\QuoteLines;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
-use App\Models\Companies\CompaniesContacts;
-use App\Models\Companies\CompaniesAddresses;
-use App\Models\Accounting\AccountingDelivery;
-use League\CommonMark\Extension\SmartPunct\Quote;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
-use App\Models\Accounting\AccountingPaymentMethod;
-use App\Models\Accounting\AccountingPaymentConditions;
 
 class QuotesController extends Controller
 {
@@ -34,7 +23,7 @@ class QuotesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -59,7 +48,7 @@ class QuotesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function show(Quotes $id)
     {
@@ -109,8 +98,8 @@ class QuotesController extends Controller
     }
     
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateQuoteRequest $request)
     {

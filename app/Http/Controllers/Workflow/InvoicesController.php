@@ -26,7 +26,7 @@ class InvoicesController extends Controller
 {
     use NextPreviousTrait;
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {    
@@ -108,7 +108,7 @@ class InvoicesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function request()
     {    
@@ -182,7 +182,7 @@ class InvoicesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function show(Invoices $id)
     {
@@ -218,8 +218,8 @@ class InvoicesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateInvoiceRequest $request)
     {
@@ -244,7 +244,7 @@ class InvoicesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function export()
     {   

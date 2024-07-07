@@ -18,7 +18,7 @@ use App\Models\Methods\MethodsServices;
 class HomeController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {

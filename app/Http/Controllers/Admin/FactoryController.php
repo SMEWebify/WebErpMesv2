@@ -27,7 +27,7 @@ class FactoryController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -63,8 +63,8 @@ class FactoryController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateFactoryRequest $request)
     {
@@ -119,8 +119,8 @@ class FactoryController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function storeAnnouncement(StoreAnnouncementRequest $request)
     {
@@ -136,7 +136,7 @@ class FactoryController extends Controller
 
     /**
      * @param id $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function deleteAnnouncement($id)
     {

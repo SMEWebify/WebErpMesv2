@@ -11,8 +11,8 @@ class RessourcesController extends Controller
 {
     
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreRessourceRequest $request)
     {
@@ -33,7 +33,7 @@ class RessourcesController extends Controller
 
         /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateRessourceRequest $request)
     {
@@ -53,8 +53,8 @@ class RessourcesController extends Controller
 
     
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreImage(Request $request)
     {

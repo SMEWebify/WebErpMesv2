@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class SerialNumbersController extends Controller
 {
     /**
-     * @return view
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {

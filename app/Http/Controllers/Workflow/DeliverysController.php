@@ -19,7 +19,7 @@ class DeliverysController extends Controller
     use NextPreviousTrait;
     
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {    
@@ -44,7 +44,7 @@ class DeliverysController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function request()
     {    
@@ -53,7 +53,7 @@ class DeliverysController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function show(Deliverys $id)
     {
@@ -86,8 +86,8 @@ class DeliverysController extends Controller
     }
     
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateDeliveryRequest $request)
     {

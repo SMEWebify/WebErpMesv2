@@ -10,8 +10,8 @@ use App\Http\Requests\Quality\UpdateQualityFailureRequest;
 class QualityFailureController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreQualityFailureRequest $request)
     {
@@ -21,7 +21,7 @@ class QualityFailureController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateQualityFailureRequest $request)
     {

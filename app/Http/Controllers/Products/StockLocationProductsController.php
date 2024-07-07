@@ -134,7 +134,7 @@ class StockLocationProductsController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateStockLocationProductsRequest $request)
     {
@@ -150,7 +150,7 @@ class StockLocationProductsController extends Controller
     
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function entryFromInternalOrder(StoreStockMoveRequest $request)
     {
@@ -184,7 +184,7 @@ class StockLocationProductsController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
     {
@@ -205,7 +205,7 @@ class StockLocationProductsController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function entry(StoreStockMoveRequest $request)
     {
@@ -224,7 +224,7 @@ class StockLocationProductsController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function sorting(StoreStockMoveRequest $request)
     {

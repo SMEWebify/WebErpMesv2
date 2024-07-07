@@ -10,8 +10,8 @@ use App\Http\Requests\Methods\UpdateToolRequest;
 class ToolsController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreToolRequest $request)
     {
@@ -34,7 +34,7 @@ class ToolsController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateToolRequest $request)
     {
@@ -50,8 +50,8 @@ class ToolsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreImage(Request $request)
     {

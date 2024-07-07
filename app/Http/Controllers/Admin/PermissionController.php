@@ -14,7 +14,7 @@ class PermissionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(Request $request)
     {
@@ -32,7 +32,7 @@ class PermissionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\permission  $permission
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(Request $request, Permission $permission)
     {
@@ -46,7 +46,7 @@ class PermissionController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Permission  $Permission
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function destroy(Permission $permission)
     {
@@ -60,7 +60,7 @@ class PermissionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\permission  $permission
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function assignRole(Request $request, Permission $permission)
     {
@@ -77,7 +77,7 @@ class PermissionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\permission  $permission
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function removeRole(Permission $permission, Role $role)
     {

@@ -12,7 +12,7 @@ use App\Http\Requests\UpdateSettingNotificationRequest;
 class UsersController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function List()
     {
@@ -23,7 +23,7 @@ class UsersController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function profile()
     {

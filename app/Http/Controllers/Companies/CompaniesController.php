@@ -30,7 +30,7 @@ class CompaniesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -43,7 +43,7 @@ class CompaniesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function show(Companies $id)
     {
@@ -61,7 +61,7 @@ class CompaniesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateCompanieRequest $request)
     {

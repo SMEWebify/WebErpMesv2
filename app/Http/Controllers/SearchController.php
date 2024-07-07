@@ -17,8 +17,8 @@ class SearchController extends Controller
 /**
      * Show the navbar search results.
      *
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function showNavbarSearchResults(Request $request)
     {

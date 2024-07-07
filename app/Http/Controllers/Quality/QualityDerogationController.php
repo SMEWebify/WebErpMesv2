@@ -10,8 +10,8 @@ use App\Http\Requests\Quality\UpdateQualityDerogationRequest;
 class QualityDerogationController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreQualityDerogationRequest $request)
     {
@@ -30,7 +30,7 @@ class QualityDerogationController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateQualityDerogationRequest $request)
     {

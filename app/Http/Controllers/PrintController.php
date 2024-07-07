@@ -31,7 +31,7 @@ class PrintController extends Controller
 
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getQuotePdf(Quotes $Document)
     {
@@ -65,7 +65,7 @@ class PrintController extends Controller
     
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getOrderPdf(Orders $Document)
     {
@@ -101,7 +101,7 @@ class PrintController extends Controller
     
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getOrderConfirmPdf(Orders $Document)
     {
@@ -135,7 +135,7 @@ class PrintController extends Controller
     
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function printOrderManufacturingInstruction(Orders $Document)
     {
@@ -149,7 +149,7 @@ class PrintController extends Controller
 
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getDeliveryPdf(Deliverys $Document)
     {
@@ -165,7 +165,7 @@ class PrintController extends Controller
     
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getInvoicePdf(Invoices $Document)
     {
@@ -337,7 +337,7 @@ class PrintController extends Controller
     
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getPurchaseQuotationPdf(PurchasesQuotation $Document)
     {
@@ -353,7 +353,7 @@ class PrintController extends Controller
 
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getPurchasePdf(Purchases $Document)
     {
@@ -370,7 +370,7 @@ class PrintController extends Controller
 
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getReceiptPdf(PurchaseReceipt $Document)
     {
@@ -385,7 +385,7 @@ class PrintController extends Controller
 
     /**
      * @param $Document
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function getNCPdf(QualityNonConformity $Document)
     {

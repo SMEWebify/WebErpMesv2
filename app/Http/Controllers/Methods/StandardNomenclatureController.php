@@ -11,8 +11,8 @@ use App\Http\Requests\Methods\UpdateStandardNomenclatureRequest;
 class StandardNomenclatureController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreStandardNomenclatureRequest $request)
     {
@@ -22,7 +22,7 @@ class StandardNomenclatureController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateStandardNomenclatureRequest $request)
     {

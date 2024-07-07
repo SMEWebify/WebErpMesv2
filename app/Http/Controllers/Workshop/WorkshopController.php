@@ -11,7 +11,7 @@ use App\Models\Planning\TaskResources;
 class WorkshopController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -19,7 +19,7 @@ class WorkshopController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function taskLines()
     {

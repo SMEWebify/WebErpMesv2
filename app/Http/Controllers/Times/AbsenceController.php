@@ -12,8 +12,8 @@ use App\Http\Requests\Times\UpdateAbsenceRequest;
 class AbsenceController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreAbsenceRequest $request)
     {
@@ -29,7 +29,7 @@ class AbsenceController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateAbsenceRequest $request)
     {

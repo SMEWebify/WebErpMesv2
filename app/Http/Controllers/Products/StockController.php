@@ -78,7 +78,7 @@ class StockController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateStockRequest $request)
     {

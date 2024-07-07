@@ -11,7 +11,7 @@ use App\Http\Requests\Workflow\UpdateOrderLineDetailsRequest;
 class OrderLinesController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {    
@@ -19,8 +19,8 @@ class OrderLinesController extends Controller
     }
 
         /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function update($idOrder, UpdateOrderLineDetailsRequest $request)
     {
@@ -46,8 +46,8 @@ class OrderLinesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreImage($idOrder,Request $request)
     {

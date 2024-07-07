@@ -40,7 +40,7 @@ class PurchasesController extends Controller
     }
     
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function request()
     {   
@@ -48,7 +48,7 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function quotation()
     {    
@@ -64,7 +64,7 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function purchase()
     {   
@@ -158,8 +158,8 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function storePurchase(StorePurchaseRequest  $request)
     {
@@ -170,7 +170,7 @@ class PurchasesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function showQuotation(PurchasesQuotation $id)
     {   
@@ -191,7 +191,7 @@ class PurchasesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function showPurchase(Purchases $id)
     {   
@@ -223,8 +223,8 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @param Request $request, $id
-     * @return View
+     * @param \Illuminate\Http\Request $request, $id
+     * @return \Illuminate\Contracts\View\View
      */
     public function storePurchaseOrder(Request $request, $id)
     { 
@@ -315,7 +315,7 @@ class PurchasesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function showReceipt(PurchaseReceipt $id)
     {   
@@ -341,7 +341,7 @@ class PurchasesController extends Controller
 
     /**
      * @param $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function showInvoice(PurchaseInvoice $id)
     {   
@@ -357,8 +357,8 @@ class PurchasesController extends Controller
     
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function updatePurchase(UpdatePurchaseRequest $request)
     {
@@ -375,8 +375,8 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function updatePurchaseQuotation(UpdatePurchaseQuotationRequest $request)
     {
@@ -394,8 +394,8 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function updatePurchaseReceipt(UpdatePurchaseReceiptRequest $request)
     {
@@ -410,7 +410,7 @@ class PurchasesController extends Controller
     }
     
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function waintingReceipt()
     {    
@@ -418,7 +418,7 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function receipt()
     {    
@@ -433,7 +433,7 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function waintingInvoice()
     {    
@@ -441,7 +441,7 @@ class PurchasesController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function invoice()
     {   

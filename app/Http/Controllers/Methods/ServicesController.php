@@ -10,8 +10,8 @@ use App\Http\Requests\Methods\UpdateServicesRequest;
 class ServicesController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreServicesRequest $request)
     {
@@ -34,7 +34,7 @@ class ServicesController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateServicesRequest $request)
     {
@@ -53,8 +53,8 @@ class ServicesController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function StoreImage(Request $request)
     {

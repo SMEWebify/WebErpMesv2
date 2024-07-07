@@ -14,7 +14,7 @@ class RoleController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(Request $request)
     {
@@ -33,7 +33,7 @@ class RoleController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\id  $id
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(Request $request,$id)
     {
@@ -50,7 +50,7 @@ class RoleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Role  $role
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function destroy(Role $role)
     {
@@ -62,7 +62,7 @@ class RoleController extends Controller
      * Store the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function RolePemissionStore(Request $request){
 

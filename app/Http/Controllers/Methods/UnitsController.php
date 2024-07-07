@@ -10,8 +10,8 @@ use App\Http\Requests\Methods\UpdateUnitRequest;
 class UnitsController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreUnitRequest $request)
     {
@@ -21,7 +21,7 @@ class UnitsController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateUnitRequest $request)
     {

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class LeadsController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {    

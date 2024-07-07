@@ -10,8 +10,8 @@ use App\Http\Requests\Quality\StoreQualityCorrectionRequest;
 class QualityCorrectionController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreQualityCorrectionRequest $request)
     {
@@ -21,7 +21,7 @@ class QualityCorrectionController extends Controller
 
     /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateQualityCorrectionRequest $request)
     {

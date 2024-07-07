@@ -23,7 +23,7 @@ use App\Models\Methods\MethodsStandardNomenclature;
 class TaskController extends Controller
 {
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -33,7 +33,7 @@ class TaskController extends Controller
 
         /**
      * @param  $id_type, $id_page, $id_line
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function manage($id_type, $id_page, $id_line)
     {
@@ -74,7 +74,7 @@ class TaskController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function kanban()
     {
@@ -87,8 +87,8 @@ class TaskController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function sync(Request $request)
     {
@@ -138,7 +138,7 @@ class TaskController extends Controller
     }
 
     /**
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function statu(Request $request)
     {

@@ -11,8 +11,8 @@ use App\Http\Requests\Accounting\UpdateDeliveryRequest;
 class DeliveryController extends Controller
 {
     /**
-     * @param Request $request
-     * @return View
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(StoreDeliveryRequest $request)
     {
@@ -22,7 +22,7 @@ class DeliveryController extends Controller
 
         /**
      * @param $request
-     * @return View
+     * @return \Illuminate\Contracts\View\View
      */
     public function update(UpdateDeliveryRequest $request)
     {
