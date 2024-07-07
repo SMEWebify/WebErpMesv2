@@ -61,7 +61,7 @@ class CompaniesController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Contracts\View\View
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateCompanieRequest $request)
     {

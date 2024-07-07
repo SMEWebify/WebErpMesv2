@@ -82,10 +82,10 @@ class ProductsController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function StoreSupplier(Request $request){
-
+    public function StoreSupplier(Request $request)
+    {
         $product = Products::find($request->product_id);
         if (!$product) {
             return redirect()->back()->withErrors(['message' => 'Product not found.']);
@@ -120,7 +120,7 @@ class ProductsController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreImage(Request $request)
     {
@@ -147,7 +147,7 @@ class ProductsController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreDrawing(Request $request)
     {
@@ -170,7 +170,7 @@ class ProductsController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreStl(Request $request)
     {
@@ -193,7 +193,7 @@ class ProductsController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreSvg(Request $request)
     {
@@ -216,7 +216,7 @@ class ProductsController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateProductsRequest $request)
     {
@@ -253,7 +253,7 @@ class ProductsController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function duplicate($id)
     {

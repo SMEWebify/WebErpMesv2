@@ -25,7 +25,10 @@ class StockController extends Controller
         $this->SelectDataService = $SelectDataService;
     }
 
-    //
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
         $stocks = Stocks::withCount('StockLocation')->get();
@@ -55,12 +58,20 @@ class StockController extends Controller
         ]);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreStockRequest $request)
     {
         $Stock = Stocks::create($request->only('code','label', 'user_id'));
         return redirect()->route('products.stock.show', ['id' => $Stock->id])->with('success', 'Successfully created new stock');
     }
 
+        /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
     public function show($id)
     {
         $Stock = Stocks::findOrFail($id);
@@ -77,9 +88,9 @@ class StockController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
-     */
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
+    */
     public function update(UpdateStockRequest $request)
     {
         $Stock = Stocks::find($request->id);
@@ -89,11 +100,19 @@ class StockController extends Controller
         return redirect()->route('products.stock')->with('success', 'Successfully updated stock '.  $Stock->label);
     }
 
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Contracts\View\View
+     */
     public function detail(Request $request)
     {
         return view('products/stock-detail-show', ['StockDetailId' => $request->id]);
     }
 
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
+    */
     public function detailUpdate(Request $request)
     {
         $StockDetail = StockMove::find($request->id);

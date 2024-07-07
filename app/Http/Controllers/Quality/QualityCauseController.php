@@ -11,7 +11,7 @@ class QualityCauseController extends Controller
 {
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreQualityCauseRequest $request)
     {
@@ -19,9 +19,9 @@ class QualityCauseController extends Controller
         return redirect()->route('quality')->with('success', 'Successfully created cause type.');
     }
 
-        /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateQualityCauseRequest $request)
     {

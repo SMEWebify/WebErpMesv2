@@ -11,7 +11,7 @@ class ToolsController extends Controller
 {
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreToolRequest $request)
     {
@@ -33,8 +33,8 @@ class ToolsController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateToolRequest $request)
     {
@@ -51,7 +51,7 @@ class ToolsController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreImage(Request $request)
     {

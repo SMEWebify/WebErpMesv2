@@ -20,7 +20,7 @@ class QuoteLinesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($idQuote, UpdateQuoteLineDetailsRequest $request)
     {
@@ -47,7 +47,7 @@ class QuoteLinesController extends Controller
     
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreImage($idQuote,Request $request)
     {

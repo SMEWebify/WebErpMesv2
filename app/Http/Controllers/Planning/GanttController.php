@@ -28,7 +28,7 @@ class GanttController extends Controller
     }
 
     /**
-     * @return Json 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function get(){
 

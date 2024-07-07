@@ -159,7 +159,7 @@ class PurchasesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function storePurchase(StorePurchaseRequest  $request)
     {
@@ -224,7 +224,7 @@ class PurchasesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request, $id
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function storePurchaseOrder(Request $request, $id)
     { 
@@ -358,7 +358,7 @@ class PurchasesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function updatePurchase(UpdatePurchaseRequest $request)
     {
@@ -376,7 +376,7 @@ class PurchasesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function updatePurchaseQuotation(UpdatePurchaseQuotationRequest $request)
     {
@@ -395,7 +395,7 @@ class PurchasesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function updatePurchaseReceipt(UpdatePurchaseReceiptRequest $request)
     {

@@ -13,7 +13,7 @@ class AbsenceController extends Controller
 {
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreAbsenceRequest $request)
     {
@@ -28,8 +28,8 @@ class AbsenceController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateAbsenceRequest $request)
     {

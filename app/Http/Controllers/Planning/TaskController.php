@@ -31,7 +31,7 @@ class TaskController extends Controller
         return view('workflow/task-index');
     }
 
-        /**
+    /**
      * @param  $id_type, $id_page, $id_line
      * @return \Illuminate\Contracts\View\View
      */
@@ -87,7 +87,7 @@ class TaskController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @return \Illuminate\Contracts\View\View
      */
     public function sync(Request $request)

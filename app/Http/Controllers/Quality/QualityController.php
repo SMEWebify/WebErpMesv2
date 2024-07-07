@@ -149,7 +149,6 @@ class QualityController extends Controller
             'FailuresSelect' =>  $FailuresSelect,
             'QualityCorrections' => $QualityCorrections,
             'CorrectionsSelect' => $CorrectionsSelect ,
-            'QualityDerogations' => $QualityDerogations,
             'QualityNonConformitys' => $QualityNonConformitys,
             'NonConformitysSelect' =>  $NonConformitysSelect,
             'LastNonConformity' => $LastNonConformity,

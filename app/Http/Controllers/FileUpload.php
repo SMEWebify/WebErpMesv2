@@ -7,6 +7,10 @@ use App\Http\Requests\StoreFileRequest;
 
 class FileUpload extends Controller
 {
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function fileUpload(StoreFileRequest $request){
 
         $fileName = auth()->id() . '_' . time() . '.'. $request->file->extension();  
@@ -37,7 +41,11 @@ class FileUpload extends Controller
 
         return back()->with('success','File has been uploaded.')->with('file', $fileName);
     }
-
+    
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function photoUpload(StoreFileRequest $request){
 
         $fileName = auth()->id() . '_' . time() . '.'. $request->file->extension();  

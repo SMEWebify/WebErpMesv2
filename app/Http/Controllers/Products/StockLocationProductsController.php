@@ -20,6 +20,10 @@ use App\Http\Requests\Products\UpdateStockLocationProductsRequest;
 
 class StockLocationProductsController extends Controller
 {
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
     public function show($id)
     {
         
@@ -56,6 +60,10 @@ class StockLocationProductsController extends Controller
         return redirect()->route('products.stocklocation.show', ['id' => $StockLocationProduct->stock_locations_id])->with('success', 'Successfully created new stock line');
     }
 
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeFromInternalOrder(StoreStockLocationProductsRequest $request)
     {
         $StockLocationProduct = StockLocationProducts::create($request->only('code',
@@ -100,6 +108,10 @@ class StockLocationProductsController extends Controller
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
     }
 
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeFromPurchaseOrder(StoreStockLocationProductsRequest $request)
     {
         $StockLocationProduct = StockLocationProducts::create($request->only('code',
@@ -133,8 +145,8 @@ class StockLocationProductsController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateStockLocationProductsRequest $request)
     {
@@ -149,8 +161,8 @@ class StockLocationProductsController extends Controller
 
     
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function entryFromInternalOrder(StoreStockMoveRequest $request)
     {
@@ -180,11 +192,11 @@ class StockLocationProductsController extends Controller
         $OrderLine->save();
 
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
-   }
+    }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
     {
@@ -204,8 +216,8 @@ class StockLocationProductsController extends Controller
    }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function entry(StoreStockMoveRequest $request)
     {
@@ -223,8 +235,8 @@ class StockLocationProductsController extends Controller
    }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function sorting(StoreStockMoveRequest $request)
     {

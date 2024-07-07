@@ -237,7 +237,7 @@ class OpportunitiesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateOpportunityRequest $request)
     {
@@ -256,7 +256,7 @@ class OpportunitiesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeQuote(Opportunities $id)
     {

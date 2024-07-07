@@ -77,7 +77,7 @@ class HumanResourcesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function UpdateUser(Request $request, int $id)
     {
@@ -103,7 +103,7 @@ class HumanResourcesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function LockUser(Request $request, int $id)
     {
@@ -115,7 +115,7 @@ class HumanResourcesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeUserEmploymentContract(StoreUserEmploymentContractRequest $request)
     {
@@ -143,7 +143,7 @@ class HumanResourcesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateUserEmploymentContract(UpdateUserEmploymentContractRequest $request)
     {
@@ -168,6 +168,10 @@ class HumanResourcesController extends Controller
         return redirect()->route('human.resources.show.user', ['id' => $UserEmploymentContract->user_id])->with('success', 'Successfully update contract');
     }
     
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeUserExpenseCategorie(StoreUserExpenseCategorieRequest $request)
     {
         // Create Line
@@ -179,6 +183,10 @@ class HumanResourcesController extends Controller
         return redirect()->route('human.resources')->with('success', 'Successfully add category');
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateUserExpenseCategorie(UpdateUserExpenseCategorieRequest $request)
     {
         // Create Line
@@ -190,6 +198,10 @@ class HumanResourcesController extends Controller
         return redirect()->route('human.resources')->with('success', 'Successfully update category');
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeUserExpenseReport(StoreUserExpenseReportRequest $request)
     {
         // Create Line
@@ -202,6 +214,10 @@ class HumanResourcesController extends Controller
         return redirect()->route('user.profile', ['id' => Auth::id()])->with('success', 'Successfully add expense report');
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateUserExpenseReport(UpdateUserExpenseReportRequest $request)
     {
         // updpate Line
@@ -214,6 +230,10 @@ class HumanResourcesController extends Controller
         return redirect()->route('user.profile', ['id' =>Auth::id()])->with('success', 'Successfully update  expense report');
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+      * @return \Illuminate\Contracts\View\View
+     */
     public function ShowExpenseUser($id)
     {
         $UserExpenseReports = UserExpenseReport::findOrFail($id);
@@ -228,6 +248,10 @@ class HumanResourcesController extends Controller
         ]);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeExpenseUser(StoreUserExpenseRequest $request, int $report_id)
     {
         // Create Line
@@ -256,6 +280,10 @@ class HumanResourcesController extends Controller
         return redirect()->route('human.resources.show.expense', ['id' => $report_id])->with('success', 'Successfully add expense report');
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateExpenseUser(UpdateUserExpenseRequest $request)
     {
         $UserExpense = UserExpense::findOrFail($request->id);
@@ -272,6 +300,10 @@ class HumanResourcesController extends Controller
         return redirect()->route('human.resources.show.expense', ['id' => $UserExpense->report_id])->with('success', 'Successfully add expense report');
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function valideExpenseUser(Request $request)
     {
         // valide Line

@@ -12,7 +12,7 @@ class SectionsController extends Controller
     
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreSectionRequest $request)
     {
@@ -21,8 +21,8 @@ class SectionsController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateSectiontRequest $request)
     {

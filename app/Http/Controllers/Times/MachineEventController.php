@@ -12,7 +12,7 @@ class MachineEventController extends Controller
 {
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreMachineEventRequest $request)
     {
@@ -21,8 +21,8 @@ class MachineEventController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateMachineEventRequest $request)
     {

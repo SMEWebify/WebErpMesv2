@@ -11,7 +11,7 @@ class ServicesController extends Controller
 {
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreServicesRequest $request)
     {
@@ -33,8 +33,8 @@ class ServicesController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateServicesRequest $request)
     {
@@ -54,7 +54,7 @@ class ServicesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreImage(Request $request)
     {

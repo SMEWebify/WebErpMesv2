@@ -11,7 +11,6 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin\CustomFieldValue;
-use App\Models\Accounting\AccountingVat;
 use Spatie\Permission\Models\Permission;
 use App\Http\Requests\Admin\UpdateFactoryRequest;
 use App\Http\Requests\Admin\StoreCustomFieldRequest;
@@ -64,7 +63,7 @@ class FactoryController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateFactoryRequest $request)
     {
@@ -120,7 +119,7 @@ class FactoryController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeAnnouncement(StoreAnnouncementRequest $request)
     {
@@ -135,8 +134,8 @@ class FactoryController extends Controller
     }
 
     /**
-     * @param id $id
-     * @return \Illuminate\Contracts\View\View
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteAnnouncement($id)
     {
@@ -151,12 +150,10 @@ class FactoryController extends Controller
     * Store a newly created custom field in storage.
     *
     * @param  \Illuminate\Http\Request  $request
-    * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
     */
     public function storeCustomField(StoreCustomFieldRequest $request)
     {
-
-
         // Création d'un nouveau champ personnalisé
         $customField = CustomField::create([
             'name' => $request->name,
@@ -172,7 +169,7 @@ class FactoryController extends Controller
     * Store a newly created custom field in storage.
     *
     * @param  \Illuminate\Http\Request  $request
-    * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
     */
     public function storeOrUpdateCustomField(Request $request, $id, $type)
     {

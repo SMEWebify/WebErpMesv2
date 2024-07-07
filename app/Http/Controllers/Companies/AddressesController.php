@@ -10,7 +10,7 @@ class AddressesController extends Controller
 {
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreAdressRequest $request)
     {
@@ -20,7 +20,7 @@ class AddressesController extends Controller
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateAdressRequest $request)
     {

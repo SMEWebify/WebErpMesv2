@@ -21,7 +21,11 @@ class StockLocationController extends Controller
     {
         $this->SelectDataService = $SelectDataService;
     }
-    //
+    
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
     public function show($id)
     {
         $StockLocation = StockLocation::findOrFail($id);
@@ -41,6 +45,10 @@ class StockLocationController extends Controller
         ]);
     }
 
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreStockLocationRequest $request)
     {
         $StockLocation = StockLocation::create($request->only('code',
@@ -55,8 +63,8 @@ class StockLocationController extends Controller
     }
 
     /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateStockLocationRequest $request)
     {

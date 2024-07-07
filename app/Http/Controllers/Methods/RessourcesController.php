@@ -12,7 +12,7 @@ class RessourcesController extends Controller
     
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreRessourceRequest $request)
     {
@@ -31,13 +31,12 @@ class RessourcesController extends Controller
         return redirect()->route('methods')->with('success', 'Successfully created ressource.');
     }
 
-        /**
-     * @param $request
-     * @return \Illuminate\Contracts\View\View
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateRessourceRequest $request)
     {
-        
         $Ressource = MethodsRessources::find($request->id);
         $Ressource->ordre=$request->ordre;
         $Ressource->label=$request->label;
@@ -54,7 +53,7 @@ class RessourcesController extends Controller
     
     /**
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
+      * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreImage(Request $request)
     {
