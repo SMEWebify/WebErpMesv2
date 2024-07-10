@@ -7,7 +7,7 @@ use App\Models\File;
 use App\Models\User;
 use App\Models\GuestVisits;
 use App\Models\Workflow\Orders;
-use App\Services\QuoteCalculator;
+use App\Services\QuoteCalculatorService;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 
@@ -116,8 +116,8 @@ class Quotes extends Model
 
     public function getTotalPriceAttribute()
     {
-        $quoteCalculator = new QuoteCalculator($this);
-        return $quoteCalculator->getTotalPrice();
+        $QuoteCalculatorService = new QuoteCalculatorService($this);
+        return $QuoteCalculatorService->getTotalPrice();
     }
 
     public function guestVisits()

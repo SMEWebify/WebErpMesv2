@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
-use App\Services\OrderCalculator;
-use App\Services\QuoteCalculator;
+use App\Services\OrderCalculatorService;
+use App\Services\QuoteCalculatorService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use League\CommonMark\Extension\SmartPunct\Quote;
@@ -31,14 +31,14 @@ class GuestController extends Controller
             return view('guest/guest');
         }
         
-        $QuoteCalculator = new QuoteCalculator($Quote);
-        $totalPrice = $QuoteCalculator->getTotalPrice();
-        $subPrice = $QuoteCalculator->getSubTotal();
-        $vatPrice = $QuoteCalculator->getVatTotal();
-        $TotalServiceProductTime = $QuoteCalculator->getTotalProductTimeByService();
-        $TotalServiceSettingTime = $QuoteCalculator->getTotalSettingTimeByService();
-        $TotalServiceCost = $QuoteCalculator->getTotalCostByService();
-        $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
+        $QuoteCalculatorService = new QuoteCalculatorService($Quote);
+        $totalPrice = $QuoteCalculatorService->getTotalPrice();
+        $subPrice = $QuoteCalculatorService->getSubTotal();
+        $vatPrice = $QuoteCalculatorService->getVatTotal();
+        $TotalServiceProductTime = $QuoteCalculatorService->getTotalProductTimeByService();
+        $TotalServiceSettingTime = $QuoteCalculatorService->getTotalSettingTimeByService();
+        $TotalServiceCost = $QuoteCalculatorService->getTotalCostByService();
+        $TotalServicePrice = $QuoteCalculatorService->getTotalPriceByService();
         
         // Save visit information to database
         $this->logVisit(request(), $Quote->id);
@@ -76,14 +76,14 @@ class GuestController extends Controller
             return view('guest/guest');
         }
         
-        $OrderCalculator = new OrderCalculator($Order);
-        $totalPrice = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
-        $TotalServiceProductTime = $OrderCalculator->getTotalProductTimeByService();
-        $TotalServiceSettingTime = $OrderCalculator->getTotalSettingTimeByService();
-        $TotalServiceCost = $OrderCalculator->getTotalCostByService();
-        $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
+        $OrderCalculatorService = new OrderCalculatorService($Order);
+        $totalPrice = $OrderCalculatorService->getTotalPrice();
+        $subPrice = $OrderCalculatorService->getSubTotal();
+        $vatPrice = $OrderCalculatorService->getVatTotal();
+        $TotalServiceProductTime = $OrderCalculatorService->getTotalProductTimeByService();
+        $TotalServiceSettingTime = $OrderCalculatorService->getTotalSettingTimeByService();
+        $TotalServiceCost = $OrderCalculatorService->getTotalCostByService();
+        $TotalServicePrice = $OrderCalculatorService->getTotalPriceByService();
         
         return view('guest/guest-order-info', [
             'Order' => $Order,

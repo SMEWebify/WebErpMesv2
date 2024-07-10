@@ -5,7 +5,7 @@ use App\Models\Purchases\Purchases;
 use App\Repositories\Money;
 use App\Repositories\Tax;
 
-class PurchaseCalculator
+class PurchaseCalculatorService
 {
     /**
      * @var Purchases

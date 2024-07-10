@@ -5,7 +5,7 @@ use App\Models\Workflow\Invoices;
 use App\Repositories\Money;
 use App\Repositories\Tax;
 
-class InvoiceCalculator
+class InvoiceCalculatorService
 {
     /**
      * @var invoices

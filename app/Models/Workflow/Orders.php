@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
-use App\Services\OrderCalculator;
+use App\Services\OrderCalculatorService;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
@@ -110,8 +110,8 @@ class Orders extends Model
 
     public function getTotalPriceAttribute()
     {
-        $orderCalculator = new OrderCalculator($this);
-        return $orderCalculator->getTotalPrice();
+        $OrderCalculatorService = new OrderCalculatorService($this);
+        return $OrderCalculatorService->getTotalPrice();
     }
 
     public function getAveragePercentProgressLinesAttribute()

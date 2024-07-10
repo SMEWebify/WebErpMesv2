@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Workflow;
 use Carbon\Carbon;
 use App\Models\Workflow\Quotes;
 use App\Models\Admin\CustomField;
-use App\Services\QuoteCalculator;
+use App\Services\QuoteCalculatorService;
 use App\Traits\NextPreviousTrait;
 use Illuminate\Support\Facades\DB;
 use App\Services\SelectDataService;
@@ -58,14 +58,14 @@ class QuotesController extends Controller
         $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
         $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
         $AccountingDeleveriesSelect =  $this->SelectDataService->getAccountingDelivery();
-        $QuoteCalculator = new QuoteCalculator($id);
-        $totalPrice = $QuoteCalculator->getTotalPrice();
-        $subPrice = $QuoteCalculator->getSubTotal();
-        $vatPrice = $QuoteCalculator->getVatTotal();
-        $TotalServiceProductTime = $QuoteCalculator->getTotalProductTimeByService();
-        $TotalServiceSettingTime = $QuoteCalculator->getTotalSettingTimeByService();
-        $TotalServiceCost = $QuoteCalculator->getTotalCostByService();
-        $TotalServicePrice = $QuoteCalculator->getTotalPriceByService();
+        $QuoteCalculatorService = new QuoteCalculatorService($id);
+        $totalPrice = $QuoteCalculatorService->getTotalPrice();
+        $subPrice = $QuoteCalculatorService->getSubTotal();
+        $vatPrice = $QuoteCalculatorService->getVatTotal();
+        $TotalServiceProductTime = $QuoteCalculatorService->getTotalProductTimeByService();
+        $TotalServiceSettingTime = $QuoteCalculatorService->getTotalSettingTimeByService();
+        $TotalServiceCost = $QuoteCalculatorService->getTotalCostByService();
+        $TotalServicePrice = $QuoteCalculatorService->getTotalPriceByService();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Quotes(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'quote')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {

@@ -13,7 +13,7 @@ use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
-use App\Services\PurchaseCalculator;
+use App\Services\PurchaseCalculatorService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\StockLocation;
 use App\Models\Purchases\PurchaseLines;
@@ -198,8 +198,8 @@ class PurchasesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
-        $PurchaseCalculator = new PurchaseCalculator($id);
-        $totalPrice = $PurchaseCalculator->getTotalPrice();
+        $PurchaseCalculatorService = new PurchaseCalculatorService($id);
+        $totalPrice = $PurchaseCalculatorService->getTotalPrice();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Purchases(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'purchase')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {

@@ -6,7 +6,7 @@ use App\Models\File;
 use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
-use App\Services\InvoiceCalculator;
+use App\Services\InvoiceCalculatorService;
 use App\Models\Workflow\InvoiceLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
@@ -70,8 +70,8 @@ class Invoices extends Model
 
     public function getTotalPriceAttribute()
     {
-        $invoiceCalculator = new InvoiceCalculator($this);
-        return $invoiceCalculator->getTotalPrice();
+        $InvoiceCalculatorService = new InvoiceCalculatorService($this);
+        return $InvoiceCalculatorService->getTotalPrice();
     }
 
     // Relationship with the files associated with the Quote

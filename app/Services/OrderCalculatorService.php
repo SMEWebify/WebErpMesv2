@@ -5,7 +5,7 @@ use App\Models\Workflow\Orders;
 use App\Repositories\Money;
 use App\Repositories\Tax;
 
-class OrderCalculator
+class OrderCalculatorService
 {
     /**
      * @var Order

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Models\Admin\CustomField;
 use App\Models\Workflow\Invoices;
 use App\Traits\NextPreviousTrait;
@@ -13,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Events\DeliveryLineUpdated;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
-use App\Services\InvoiceCalculator;
+use App\Services\InvoiceCalculatorService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\InvoiceLines;
@@ -189,10 +188,10 @@ class InvoicesController extends Controller
         $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
         $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-        $OrderCalculator = new InvoiceCalculator($id);
-        $totalPrice = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
+        $OrderCalculatorService = new InvoiceCalculatorService($id);
+        $totalPrice = $OrderCalculatorService->getTotalPrice();
+        $subPrice = $OrderCalculatorService->getSubTotal();
+        $vatPrice = $OrderCalculatorService->getVatTotal();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Invoices(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'invoice')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {

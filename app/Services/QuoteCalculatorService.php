@@ -5,7 +5,7 @@ use App\Models\Workflow\Quotes;
 use App\Repositories\Money;
 use App\Repositories\Tax;
 
-class QuoteCalculator
+class QuoteCalculatorService
 {
     /**
      * @var Quote

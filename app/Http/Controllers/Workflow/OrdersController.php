@@ -3,21 +3,14 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
-use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Admin\CustomField;
-use App\Services\OrderCalculator;
+use App\Services\OrderCalculatorService;
 use App\Traits\NextPreviousTrait;
 use Illuminate\Support\Facades\DB;
-use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
-use App\Models\Companies\CompaniesContacts;
-use App\Models\Companies\CompaniesAddresses;
-use App\Models\Accounting\AccountingDelivery;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
-use App\Models\Accounting\AccountingPaymentMethod;
-use App\Models\Accounting\AccountingPaymentConditions;
 
 class OrdersController extends Controller
 {
@@ -64,14 +57,14 @@ class OrdersController extends Controller
         $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
         $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
         $AccountingDeleveriesSelect = $this->SelectDataService->getAccountingDelivery();
-        $OrderCalculator = new OrderCalculator($id);
-        $totalPrice = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
-        $TotalServiceProductTime = $OrderCalculator->getTotalProductTimeByService();
-        $TotalServiceSettingTime = $OrderCalculator->getTotalSettingTimeByService();
-        $TotalServiceCost = $OrderCalculator->getTotalCostByService();
-        $TotalServicePrice = $OrderCalculator->getTotalPriceByService();
+        $OrderCalculatorService = new OrderCalculatorService($id);
+        $totalPrice = $OrderCalculatorService->getTotalPrice();
+        $subPrice = $OrderCalculatorService->getSubTotal();
+        $vatPrice = $OrderCalculatorService->getVatTotal();
+        $TotalServiceProductTime = $OrderCalculatorService->getTotalProductTimeByService();
+        $TotalServiceSettingTime = $OrderCalculatorService->getTotalSettingTimeByService();
+        $TotalServiceCost = $OrderCalculatorService->getTotalCostByService();
+        $TotalServicePrice = $OrderCalculatorService->getTotalPriceByService();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Orders(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'order')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {

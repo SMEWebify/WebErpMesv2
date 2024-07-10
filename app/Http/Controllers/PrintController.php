@@ -9,12 +9,12 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
-use App\Services\OrderCalculator;
-use App\Services\QuoteCalculator;
+use App\Services\OrderCalculatorService;
+use App\Services\QuoteCalculatorService;
 use App\Models\Workflow\Deliverys;
 use App\Models\Purchases\Purchases;
-use App\Services\InvoiceCalculator;
-use App\Services\PurchaseCalculator;
+use App\Services\InvoiceCalculatorService;
+use App\Services\PurchaseCalculatorService;
 
 use horstoeko\zugferd\ZugferdProfiles;
 use App\Models\Purchases\PurchaseReceipt;
@@ -36,11 +36,11 @@ class PrintController extends Controller
     public function getQuotePdf(Quotes $Document)
     {
         $typeDocumentName = __('general_content.quote_trans_key'); 
-        $QuoteCalculator = new QuoteCalculator($Document);
+        $QuoteCalculatorService = new QuoteCalculatorService($Document);
         $Factory = Factory::first();
-        $totalPrices = $QuoteCalculator->getTotalPrice();
-        $subPrice = $QuoteCalculator->getSubTotal();
-        $vatPrice = $QuoteCalculator->getVatTotal();
+        $totalPrices = $QuoteCalculatorService->getTotalPrice();
+        $subPrice = $QuoteCalculatorService->getSubTotal();
+        $vatPrice = $QuoteCalculatorService->getVatTotal();
         $Document->Lines = $Document->QuoteLines;
         unset($Document->QuoteLines);
         $image= $Factory->getImageFactoryPath();
@@ -70,11 +70,11 @@ class PrintController extends Controller
     public function getOrderPdf(Orders $Document)
     {
         $typeDocumentName = __('general_content.order_trans_key');
-        $OrderCalculator = new OrderCalculator($Document);
+        $OrderCalculatorService = new OrderCalculatorService($Document);
         $Factory = Factory::first();
-        $totalPrices = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
+        $totalPrices = $OrderCalculatorService->getTotalPrice();
+        $subPrice = $OrderCalculatorService->getSubTotal();
+        $vatPrice = $OrderCalculatorService->getVatTotal();
         $Document->Lines = $Document->OrderLines;
         unset($Document->OrderLines);
         $image= $Factory->getImageFactoryPath();
@@ -106,11 +106,11 @@ class PrintController extends Controller
     public function getOrderConfirmPdf(Orders $Document)
     {
         $typeDocumentName = __('general_content.order_confirm_trans_key');
-        $OrderCalculator = new OrderCalculator($Document);
+        $OrderCalculatorService = new OrderCalculatorService($Document);
         $Factory = Factory::first();
-        $totalPrices = $OrderCalculator->getTotalPrice();
-        $subPrice = $OrderCalculator->getSubTotal();
-        $vatPrice = $OrderCalculator->getVatTotal();
+        $totalPrices = $OrderCalculatorService->getTotalPrice();
+        $subPrice = $OrderCalculatorService->getSubTotal();
+        $vatPrice = $OrderCalculatorService->getVatTotal();
         $Document->Lines = $Document->OrderLines;
         unset($Document->OrderLines);
         $image= $Factory->getImageFactoryPath();
@@ -170,11 +170,11 @@ class PrintController extends Controller
     public function getInvoicePdf(Invoices $Document)
     {
         $typeDocumentName = __('general_content.invoice_trans_key');
-        $InvoiceCalculator = new InvoiceCalculator($Document);
+        $InvoiceCalculatorService = new InvoiceCalculatorService($Document);
         $Factory = Factory::first();
-        $totalPrices = $InvoiceCalculator->getTotalPrice();
-        $subPrice = $InvoiceCalculator->getSubTotal();
-        $vatPrice = $InvoiceCalculator->getVatTotal();
+        $totalPrices = $InvoiceCalculatorService->getTotalPrice();
+        $subPrice = $InvoiceCalculatorService->getSubTotal();
+        $vatPrice = $InvoiceCalculatorService->getVatTotal();
         $Document->Lines = $Document->invoiceLines;
         unset($Document->invoiceLines);
         $image= $Factory->getImageFactoryPath();;
@@ -187,11 +187,11 @@ class PrintController extends Controller
     {
 
         $typeDocumentName = __('general_content.invoice_trans_key');
-        $InvoiceCalculator = new InvoiceCalculator($Document);
+        $InvoiceCalculatorService = new InvoiceCalculatorService($Document);
         $Factory = Factory::first();
-        $totalPrices = $InvoiceCalculator->getTotalPrice();
-        $subPrice = $InvoiceCalculator->getSubTotal();
-        $vatPrice = $InvoiceCalculator->getVatTotal();
+        $totalPrices = $InvoiceCalculatorService->getTotalPrice();
+        $subPrice = $InvoiceCalculatorService->getSubTotal();
+        $vatPrice = $InvoiceCalculatorService->getVatTotal();
         $Document->Lines = $Document->invoiceLines;
         unset($Document->invoiceLines);
         $image= $Factory->getImageFactoryPath();;
@@ -358,9 +358,9 @@ class PrintController extends Controller
     public function getPurchasePdf(Purchases $Document)
     {
         $typeDocumentName = __('general_content.purchase_order_trans_key');
-        $PurchaseCalculator = new PurchaseCalculator($Document);
+        $PurchaseCalculatorService = new PurchaseCalculatorService($Document);
         $Factory = Factory::first();
-        $totalPrices = $PurchaseCalculator->getTotalPrice();
+        $totalPrices = $PurchaseCalculatorService->getTotalPrice();
         $Document->Lines = $Document->PurchaseLines;
         unset($Document->PurchaseLines);
         $image= $Factory->getImageFactoryPath();;

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Workflow;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Workflow\OpportunitiesActivitiesLogs;
 use App\Http\Requests\Workflow\StoreOpportunityActivityRequest;
