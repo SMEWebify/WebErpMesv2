@@ -180,7 +180,7 @@
                     <span class="input-group-text"><i class="far fa-file"></i></span>
                   </div>
                   <div class="custom-file">
-                    <input type="hidden" name="delivery_id" value="{{ $Delivery->id }}" >
+                    <input type="hidden" name="deliverys_id" value="{{ $Delivery->id }}" >
                     <input type="file" name="file" accept="image/*" capture="camera" class="custom-file-input" id="chooseFile">
                     <label class="custom-file-label" for="chooseFile">{{ __('general_content.take_photo_trans_key') }}</label>
                   </div>
