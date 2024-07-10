@@ -146,8 +146,8 @@
         <!-- /.card secondary -->
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_absence_request_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('times.absence.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('times.absence.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_absence_request_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
@@ -190,8 +190,8 @@
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -277,8 +277,8 @@
         <!-- /.card secondary -->
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_banck_holiday_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('times.banckholiday.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('times.banckholiday.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_banck_holiday_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -303,8 +303,8 @@
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -413,8 +413,8 @@
         <!-- /.card primary -->
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_improduct_time_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('times.improducttime.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('times.improducttime.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_improduct_time_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -456,8 +456,8 @@
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -580,8 +580,8 @@
         <!-- /.card primary -->
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_machine_event_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('times.machineevent.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('times.machineevent.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_machine_event_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -638,8 +638,8 @@
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </x-slot>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>

@@ -26,8 +26,8 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
-              <form method="POST" action="{{ route('receipt.update', ['id' => $PurchaseReceipt->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('receipt.update', ['id' => $PurchaseReceipt->id]) }}" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
                   <div class="card card-body">
                     <div class="row">
@@ -86,8 +86,8 @@
                   <div class="modal-footer">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
           <div class="col-md-3">
             <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>

@@ -117,8 +117,8 @@
     </div>
     <!-- /.col-md-8 card-secondary-->
     <div class="col-md-4">
-      <x-adminlte-card title="{{ __('general_content.new_entry_stock_trans_key') }}" theme="secondary" maximizable>
-        <form  method="POST" action="{{ route('products.stockline.manual.entry') }}" class="form-horizontal">
+      <form  method="POST" action="{{ route('products.stockline.manual.entry') }}" class="form-horizontal">
+        <x-adminlte-card title="{{ __('general_content.new_entry_stock_trans_key') }}" theme="secondary" maximizable>
           @csrf
           <div class="form-group">
             <label for="typ_move">{{__('general_content.move_Type_trans_key') }}</label>
@@ -189,12 +189,11 @@
           <x-slot name="footerSlot">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
-        </form>
-      <!-- /.card secondary -->
-      </x-adminlte-card>
+        </x-adminlte-card>
+      </form>
 
-      <x-adminlte-card title="{{ __('general_content.new_sorting_stock_trans_key') }}" theme="warning" maximizable>
-        <form  method="POST" action="{{ route('products.stockline.sorting') }}" class="form-horizontal">
+      <form  method="POST" action="{{ route('products.stockline.sorting') }}" class="form-horizontal">
+        <x-adminlte-card title="{{ __('general_content.new_sorting_stock_trans_key') }}" theme="warning" maximizable>
           @csrf
           <div class="form-group">
             <label for="typ_move">{{__('general_content.move_Type_trans_key') }}</label>
@@ -259,8 +258,8 @@
           <x-slot name="footerSlot">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
-        </form>
-      </x-adminlte-card>
+        </x-adminlte-card>
+      </form>
     <!-- /.card secondary -->
     </div>
     <!-- /.col-md-4 -->

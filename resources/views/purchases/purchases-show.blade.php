@@ -28,8 +28,9 @@
       <div class="tab-pane active" id="Purchase">
         <div class="row">
           <div class="col-md-9">
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
-              <form method="POST" action="{{ route('purchase.update', ['id' => $Purchase->id]) }}" enctype="multipart/form-data">
+            @include('include.alert-result')
+            <form method="POST" action="{{ route('purchase.update', ['id' => $Purchase->id]) }}" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
                   <div class="card card-body">
                     <div class="row">
@@ -59,7 +60,6 @@
                     <div class="row">
                       <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
                     </div>
-                    @include('include.alert-result')
                     @if( $Purchase->companies_contacts_id == 0 & $Purchase->companies_addresses_id ==0)
                     <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
                     @endif
@@ -88,8 +88,8 @@
                   <div class="modal-footer">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
           <div class="col-md-3">
             

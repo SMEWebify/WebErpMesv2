@@ -31,9 +31,9 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
-              <form method="POST" action="{{ route('opportunities.update', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
-                @csrf 
+            <form method="POST" action="{{ route('opportunities.update', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
+              @csrf 
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 <div class="card card-body">
                   <div class="row">
                     <div class="form-group col-md-6">
@@ -104,8 +104,8 @@
                   <x-slot name="footerSlot">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </x-slot>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
           <div class="col-md-3">
             <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info" maximizable>
@@ -308,9 +308,9 @@
             </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.new_activity_trans_key') }}" theme="secondary" maximizable>
-              <form  method="POST" action="{{ route('opportunities.store.activity', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
-                @csrf
+            <form  method="POST" action="{{ route('opportunities.store.activity', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.new_activity_trans_key') }}" theme="secondary" maximizable>
+              @csrf
                 <div class="form-group">
                   <label for="label">{{__('general_content.label_trans_key') }}</label>
                   <div class="input-group">
@@ -361,8 +361,8 @@
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </x-slot>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
         </div>
       </div>
@@ -464,8 +464,8 @@
             </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.new_event_trans_key') }}" theme="secondary" maximizable>
-              <form  method="POST" action="{{ route('opportunities.store.event', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
+            <form  method="POST" action="{{ route('opportunities.store.event', ['id' => $Opportunity->id]) }}" class="form-horizontal" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.new_event_trans_key') }}" theme="secondary" maximizable>
                 @csrf
                 <div class="form-group">
                   <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -506,8 +506,8 @@
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </x-slot>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
         </div>
       </div>

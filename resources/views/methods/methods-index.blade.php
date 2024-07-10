@@ -201,8 +201,8 @@
         <!-- /.card secondary -->
         </div>
         <div class="col-md-4">
-          <x-adminlte-card title="{{ __('general_content.new_service_trans_key') }}" theme="secondary" maximizable>
-            <form method="POST" action="{{ route('methods.service.create') }}" enctype="multipart/form-data">
+          <form method="POST" action="{{ route('methods.service.create') }}" enctype="multipart/form-data">
+            <x-adminlte-card title="{{ __('general_content.new_service_trans_key') }}" theme="secondary" maximizable>
               @csrf
                 <div class="form-group">
                   <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -298,8 +298,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
           <!-- /.card body -->
         </div>
         <!-- /.card secondary -->
@@ -480,8 +480,8 @@
         <!-- /.card secondary -->
         </div>
         <div class="col-md-4">
-          <x-adminlte-card title="{{ __('general_content.new_ressource_trans_key') }}" theme="secondary" maximizable>
-            <form method="POST" action="{{ route('methods.ressource.create')}}" enctype="multipart/form-data">
+          <form method="POST" action="{{ route('methods.ressource.create')}}" enctype="multipart/form-data">
+            <x-adminlte-card title="{{ __('general_content.new_ressource_trans_key') }}" theme="secondary" maximizable>
               @csrf
                 <div class="form-group">
                   <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -582,8 +582,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
       </div>
       <!-- /.row -->
@@ -689,8 +689,8 @@
         <!-- /.card secondary -->
         </div>
         <div class="col-md-4">
-          <x-adminlte-card title="{{ __('general_content.new_section_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('methods.section.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('methods.section.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_section_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
@@ -740,8 +740,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -829,8 +829,8 @@
           <!-- /.card secondary -->
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_location_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('methods.location.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('methods.location.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_location_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -865,8 +865,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -975,8 +975,8 @@
         <!-- /.card secondary -->
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_unit_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('methods.unit.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('methods.unit.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_unit_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -1014,8 +1014,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -1103,8 +1103,8 @@
           <!-- /.card secondary -->
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_family_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('methods.family.create') }}" class="form-horizontal">
+          <form  method="POST" action="{{ route('methods.family.create') }}" class="form-horizontal">
+            <x-adminlte-card title="{{ __('general_content.new_family_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -1142,8 +1142,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -1286,8 +1286,8 @@
           </x-adminlte-card>
         </div>
         <div class="col-md-6">
-          <x-adminlte-card title="{{ __('general_content.new_tool_trans_key') }}" theme="secondary" maximizable>
-            <form  method="POST" action="{{ route('methods.tool.create') }}" class="form-horizontal" enctype="multipart/form-data">
+          <form  method="POST" action="{{ route('methods.tool.create') }}" class="form-horizontal" enctype="multipart/form-data">
+            <x-adminlte-card title="{{ __('general_content.new_tool_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="form-group">
                 <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -1355,8 +1355,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -1438,9 +1438,9 @@
         </x-adminlte-card>
       </div>
       <div class="col-md-6">
-        <x-adminlte-card title="{{ __('general_content.new_standard_bom_trans_key') }}" theme="secondary" maximizable>
-          <form  method="POST" action="{{ route('methods.standard.nomenclature.create') }}" class="form-horizontal" enctype="multipart/form-data">
-            @csrf
+        <form  method="POST" action="{{ route('methods.standard.nomenclature.create') }}" class="form-horizontal" enctype="multipart/form-data">
+          <x-adminlte-card title="{{ __('general_content.new_standard_bom_trans_key') }}" theme="secondary" maximizable>
+          @csrf
             <div class="form-group">
               <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
               <div class="input-group">
@@ -1465,8 +1465,8 @@
             <div class="card-footer">
               <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
             </div>
-          </form>
-        </x-adminlte-card>
+          </x-adminlte-card>
+        </form>
       </div>
     </div>
     <!-- /.row -->

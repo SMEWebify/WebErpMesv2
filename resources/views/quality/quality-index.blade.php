@@ -240,8 +240,8 @@
       <!-- /.row -->
       </div>
       <hr>
-      <x-adminlte-card title="{{ __('general_content.new_action_trans_key') }}" theme="secondary" maximizable>
         <form method="POST" action="{{ route('quality.action.create')}}" >
+          <x-adminlte-card title="{{ __('general_content.new_action_trans_key') }}" theme="secondary" maximizable>
             @csrf
             <div class="form-row">
               <div class="form-group col-md-4">
@@ -333,13 +333,13 @@
               </div>
               
             <!-- /.row -->
-            </div>
+          </div>
           <x-slot name="footerSlot">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </x-slot>
-        </form>
-      <!-- /.card-body -->
-      </x-adminlte-card>
+        <!-- /.card-body -->
+        </x-adminlte-card>
+      </form>
     </div>
     <!-- /.tab-pane -->
     <div class="tab-pane" id="Derogations">
@@ -523,100 +523,100 @@
       <!-- /.row -->
       </div>
       <hr>
-      <x-adminlte-card title="{{ __('general_content.new_derogation_trans_key') }}" theme="secondary" maximizable>
-        <form method="POST" action="{{ route('quality.derogation.create')}}" >  
-            @csrf
-            <div class="form-row">
-              <div class="form-group col-md-2">
-                <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                  </div>
-                  <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="DER-{{ $LastDerogation->id ?? '0' }}  ">
+      <form method="POST" action="{{ route('quality.derogation.create')}}" >  
+        <x-adminlte-card title="{{ __('general_content.new_derogation_trans_key') }}" theme="secondary" maximizable>
+          @csrf
+          <div class="form-row">
+            <div class="form-group col-md-2">
+              <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </div>
+                <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="DER-{{ $LastDerogation->id ?? '0' }}  ">
               </div>
-              <div class="form-group col-md-2">
-                <label for="label">{{__('general_content.label_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                  </div>
-                  <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
+            </div>
+            <div class="form-group col-md-2">
+              <label for="label">{{__('general_content.label_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
+                <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
               </div>
-              <div class="form-group col-md-2">
-                <label for="type">{{ __('general_content.type_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                  </div>
-                  <select class="form-control" name="type" id="type">
-                    <option value="1">{{ __('general_content.internal_trans_key') }}</option>
-                    <option value="2">{{ __('general_content.external_trans_key') }}</option>
-                  </select>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="type">{{ __('general_content.type_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                 </div>
+                <select class="form-control" name="type" id="type">
+                  <option value="1">{{ __('general_content.internal_trans_key') }}</option>
+                  <option value="2">{{ __('general_content.external_trans_key') }}</option>
+                </select>
               </div>
-              <div class="form-group col-md-2">
-                <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                  </div>
-                  <select class="form-control" name="statu" id="statu">
-                    <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
-                    <option value="2">{{ __('general_content.waiting_customer_data_trans_key') }}</option>
-                    <option value="3">{{ __('general_content.validate_trans_key') }}</option>
-                    <option value="4">{{ __('general_content.canceled_trans_key') }}</option>
-                  </select>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                 </div>
+                <select class="form-control" name="statu" id="statu">
+                  <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
+                  <option value="2">{{ __('general_content.waiting_customer_data_trans_key') }}</option>
+                  <option value="3">{{ __('general_content.validate_trans_key') }}</option>
+                  <option value="4">{{ __('general_content.canceled_trans_key') }}</option>
+                </select>
               </div>
-              <div class="form-group col-md-2">
-                <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                  </div>
-                  <select class="form-control" name="user_id" id="user_id">
-                    @foreach ($userSelect as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                    @endforeach
-                  </select>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
                 </div>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
-                <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
-                  <option value="null">-</option>
-                  @foreach ($NonConformitysSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->code }}</option>
+                <select class="form-control" name="user_id" id="user_id">
+                  @foreach ($userSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->name }}</option>
                   @endforeach
                 </select>
               </div>
-              <div class="form-group col-md-2">
-                <label>{{ __('general_content.problem_description_trans_key') }}</label>
-                <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..." required></textarea>
-              </div>
-              <div class="form-group col-md-2">
-                <label>{{ __('general_content.proposal_description_trans_key') }}</label>
-                <textarea class="form-control" rows="3" name="proposal"  placeholder="..." required></textarea>
-              </div>
-              <div class="form-group col-md-2">
-                <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
-                <textarea class="form-control" rows="3" name="reply"  placeholder="..." required></textarea>
-              </div>
-              <div class="form-group col-md-2">
-                <label>{{ __('general_content.decision_description_trans_key') }}</label>
-                <textarea class="form-control" rows="3" name="decision"  placeholder="..." required></textarea>
-              </div>
-              
-            <!-- /.row -->
             </div>
-            <x-slot name="footerSlot">
-              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-            </x-slot>
-        </form>
-      </x-adminlte-card>
+            <div class="form-group col-md-2">
+              <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
+              <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
+                <option value="null">-</option>
+                @foreach ($NonConformitysSelect as $item)
+                <option value="{{ $item->id }}">{{ $item->code }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{{ __('general_content.problem_description_trans_key') }}</label>
+              <textarea class="form-control" rows="3" name="pb_descp"  placeholder="..." required></textarea>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{{ __('general_content.proposal_description_trans_key') }}</label>
+              <textarea class="form-control" rows="3" name="proposal"  placeholder="..." required></textarea>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{{ __('general_content.customer_reply_description_trans_key') }}</label>
+              <textarea class="form-control" rows="3" name="reply"  placeholder="..." required></textarea>
+            </div>
+            <div class="form-group col-md-2">
+              <label>{{ __('general_content.decision_description_trans_key') }}</label>
+              <textarea class="form-control" rows="3" name="decision"  placeholder="..." required></textarea>
+            </div>
+            
+          <!-- /.row -->
+          </div>
+          <x-slot name="footerSlot">
+            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+          </x-slot>
+        </x-adminlte-card>
+      </form>
     </div>
     <!-- /.tab-pane -->
     <div class="tab-pane" id="NonConformities">
@@ -902,144 +902,144 @@
       <!-- /.row -->
       </div>
       <hr>
-      <x-adminlte-card title="{{ __('general_content.new_non_conformitie_trans_key') }}" theme="secondary" maximizable>
-        <form method="POST" action="{{ route('quality.nonConformitie.create')}}" > 
-            @csrf
-            <div class="form-row">
-              <div class="form-group col-md-4">
-                <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                  </div>
-                  <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="NC-{{ $LastNonConformity->id ?? '0' }}  ">
-                </div>    
-              </div>
-              <div class="form-group col-md-4">
-                <label for="label">{{__('general_content.label_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                  </div>
-                  <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
+      <form method="POST" action="{{ route('quality.nonConformitie.create')}}" > 
+        <x-adminlte-card title="{{ __('general_content.new_non_conformitie_trans_key') }}" theme="secondary" maximizable>
+          @csrf
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </div>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="type">{{ __('general_content.type_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                  </div>
-                  <select class="form-control" name="type" id="type">
-                    <option value="1">{{ __('general_content.internal_trans_key') }}</option>
-                    <option value="2">{{ __('general_content.external_trans_key') }}</option>
-                  </select>
+                <input type="text" class="form-control"  name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" value="NC-{{ $LastNonConformity->id ?? '0' }}  ">
+              </div>    
+            </div>
+            <div class="form-group col-md-4">
+              <label for="label">{{__('general_content.label_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
+                <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
               </div>
-              <div class="form-group col-md-4">
-                <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                  </div>
-                  <select class="form-control" name="statu" id="statu">
-                    <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
-                    <option value="2">{{ __('general_content.waiting_customer_data_trans_key') }}</option>
-                    <option value="3">{{ __('general_content.validate_trans_key') }}</option>
-                    <option value="4">{{ __('general_content.canceled_trans_key') }}</option>
-                  </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="type">{{ __('general_content.type_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                 </div>
+                <select class="form-control" name="type" id="type">
+                  <option value="1">{{ __('general_content.internal_trans_key') }}</option>
+                  <option value="2">{{ __('general_content.external_trans_key') }}</option>
+                </select>
               </div>
-              <div class="form-group col-md-4">
-                <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                  </div>
-                  <select class="form-control" name="user_id" id="user_id">
-                    @foreach ($userSelect as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="statu">{{ __('general_content.statu_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                </div>
+                <select class="form-control" name="statu" id="statu">
+                  <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
+                  <option value="2">{{ __('general_content.waiting_customer_data_trans_key') }}</option>
+                  <option value="3">{{ __('general_content.validate_trans_key') }}</option>
+                  <option value="4">{{ __('general_content.canceled_trans_key') }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                </div>
+                <select class="form-control" name="user_id" id="user_id">
+                  @foreach ($userSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->name }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-list"></i></span>
+                </div>
+                <select class="form-control" name="service_id" id="service_id">
+                  <option value="">N/A</option>
+                  @foreach ($ServicesSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="companie_id">{{ __('general_content.companie_concern_trans_key') }}</label>
+              <select class="form-control" name="companie_id" id="companie_id">
+                @foreach ($CompaniesSelect as $item)
+                <option value="{{ $item->id }}">{{ $item->label }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="form-group col-md-12">
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label for="failure_id">{{ __('general_content.failure_type_trans_key') }}</label>
+                  <select class="form-control" name="failure_id" id="failure_id">
+                    <option value="">N/A</option>
+                    @foreach ($FailuresSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @endforeach
                   </select>
                 </div>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-list"></i></span>
-                  </div>
-                  <select class="form-control" name="service_id" id="service_id">
+                <div class="form-group col-md-4">
+                  <label for="causes_id">{{ __('general_content.cause_type_trans_key') }}</label>
+                  <select class="form-control" name="causes_id" id="causes_id">
                     <option value="">N/A</option>
-                    @foreach ($ServicesSelect as $item)
+                    @foreach ($CausesSelect as $item)
+                    <option value="{{ $item->id }}">{{ $item->label }}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="correction_id">{{ __('general_content.correction_type_trans_key') }}</label>
+                  <select class="form-control" name="correction_id" id="correction_id">
+                    <option value="">N/A</option>
+                    @foreach ($CorrectionsSelect as $item)
                     <option value="{{ $item->id }}">{{ $item->label }}</option>
                     @endforeach
                   </select>
                 </div>
               </div>
-              <div class="form-group col-md-12">
-                <label for="companie_id">{{ __('general_content.companie_concern_trans_key') }}</label>
-                <select class="form-control" name="companie_id" id="companie_id">
-                  @foreach ($CompaniesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->label }}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-4">
-                    <label for="failure_id">{{ __('general_content.failure_type_trans_key') }}</label>
-                    <select class="form-control" name="failure_id" id="failure_id">
-                      <option value="">N/A</option>
-                      @foreach ($FailuresSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->label }}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="causes_id">{{ __('general_content.cause_type_trans_key') }}</label>
-                    <select class="form-control" name="causes_id" id="causes_id">
-                      <option value="">N/A</option>
-                      @foreach ($CausesSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->label }}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="correction_id">{{ __('general_content.correction_type_trans_key') }}</label>
-                    <select class="form-control" name="correction_id" id="correction_id">
-                      <option value="">N/A</option>
-                      @foreach ($CorrectionsSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->label }}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group col-md-12">
-                <div class="row">
-                  <div class="form-group col-md-4">
-                    <label>{{ __('general_content.failure_comment_trans_key') }}</label>
-                    <textarea class="form-control" rows="3" name="failure_comment"  placeholder="..." ></textarea>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label>{{ __('general_content.cause_comment_trans_key') }}</label>
-                    <textarea class="form-control" rows="3" name="causes_comment"  placeholder="..." ></textarea>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label>{{ __('general_content.correction_comment_trans_key') }}</label>
-                    <textarea class="form-control" rows="3" name="correction_comment"  placeholder="..."></textarea>
-                  </div>
-                </div>
-              </div>
-            <!-- /.row -->
             </div>
-            <x-slot name="footerSlot">
-              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-            </x-slot>
-        </form>
-        <!-- /.card-body -->
-      </x-adminlte-card>
+            <div class="form-group col-md-12">
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label>{{ __('general_content.failure_comment_trans_key') }}</label>
+                  <textarea class="form-control" rows="3" name="failure_comment"  placeholder="..." ></textarea>
+                </div>
+                <div class="form-group col-md-4">
+                  <label>{{ __('general_content.cause_comment_trans_key') }}</label>
+                  <textarea class="form-control" rows="3" name="causes_comment"  placeholder="..." ></textarea>
+                </div>
+                <div class="form-group col-md-4">
+                  <label>{{ __('general_content.correction_comment_trans_key') }}</label>
+                  <textarea class="form-control" rows="3" name="correction_comment"  placeholder="..."></textarea>
+                </div>
+              </div>
+            </div>
+          <!-- /.row -->
+          </div>
+          <x-slot name="footerSlot">
+            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+          </x-slot>
+          <!-- /.card-body -->
+        </x-adminlte-card>
+      </form>
     </div>
     <!-- /.tab-pane -->
     <div class="tab-pane" id="MeasuringDevices">
@@ -1172,8 +1172,8 @@
         <!-- /.col-md-7 card-primary -->
         </div>
         <div class="col-md-5">
-          <x-adminlte-card title="{{ __('general_content.new_measuring_devices_trans_key') }}" theme="secondary" maximizable>
-            <form method="POST" action="{{ route('quality.device.create')}}" enctype="multipart/form-data">
+          <form method="POST" action="{{ route('quality.device.create')}}" enctype="multipart/form-data">
+            <x-adminlte-card title="{{ __('general_content.new_measuring_devices_trans_key') }}" theme="secondary" maximizable>
               @csrf
               <div class="row">
                 <div class="form-group col-md-4">
@@ -1246,8 +1246,8 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
-          </x-adminlte-card>
+            </x-adminlte-card>
+          </form>
         </div>
         <!-- /.card secondary -->
       </div>
@@ -1311,8 +1311,8 @@
             </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.new_failure_trans_key') }}" theme="secondary" maximizable>
-              <form  method="POST" action="{{ route('quality.failure.create') }}" class="form-horizontal">
+            <form  method="POST" action="{{ route('quality.failure.create') }}" class="form-horizontal">
+              <x-adminlte-card title="{{ __('general_content.new_failure_trans_key') }}" theme="secondary" maximizable>
                 @csrf
                 <div class="form-group">
                   <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -1335,8 +1335,8 @@
                 <div class="card-footer">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </div>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
         <!-- /.row -->
         </div>
@@ -1395,8 +1395,8 @@
               </x-adminlte-card>
             </div>
             <div class="col-md-6">
-              <x-adminlte-card title="{{ __('general_content.new_cause_trans_key') }}" theme="secondary" maximizable>
-                <form  method="POST" action="{{ route('quality.cause.create') }}" class="form-horizontal">
+              <form  method="POST" action="{{ route('quality.cause.create') }}" class="form-horizontal">
+                <x-adminlte-card title="{{ __('general_content.new_cause_trans_key') }}" theme="secondary" maximizable>
                   @csrf
                   <div class="form-group">
                     <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -1419,8 +1419,8 @@
                   <div class="card-footer">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                   </div>
-                </form>
               </x-adminlte-card>
+            </form>
           </div>
         <!-- /.row -->
         </div>
@@ -1479,32 +1479,32 @@
               </x-adminlte-card>
             </div>
             <div class="col-md-6">
-              <x-adminlte-card title="{{ __('general_content.new_correction_trans_key') }}" theme="secondary" maximizable>
-                  <form  method="POST" action="{{ route('quality.correction.create') }}" class="form-horizontal">
-                    @csrf
-                    <div class="form-group">
-                      <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
-                        </div>
-                        <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
+              <form  method="POST" action="{{ route('quality.correction.create') }}" class="form-horizontal">
+                <x-adminlte-card title="{{ __('general_content.new_correction_trans_key') }}" theme="secondary" maximizable>
+                  @csrf
+                  <div class="form-group">
+                    <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                       </div>
+                      <input type="text" class="form-control" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                     </div>
-                    <div class="form-group">
-                      <label for="label">{{__('general_content.label_trans_key') }}</label>
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
-                        </div>
-                        <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="label">{{__('general_content.label_trans_key') }}</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text"><i class="fas fa-tags"></i></span>
                       </div>
+                      <input type="text" class="form-control" name="label"  id="label" placeholder="{{__('general_content.label_trans_key') }}">
                     </div>
-                    <div class="card-footer">
-                      <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
-                    </div>
-                  </form>
+                  </div>
+                  <div class="card-footer">
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                  </div>
                 </x-adminlte-card>
+              </form>
             </div>
           <!-- /.row -->
         </div>

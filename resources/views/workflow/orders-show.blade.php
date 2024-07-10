@@ -36,8 +36,8 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
-              <form method="POST" action="{{ route('orders.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('orders.update', ['id' => $Order->id]) }}" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf
                   <div class="card card-body">
                     <div class="row">
@@ -72,58 +72,58 @@
                       </div>
                     </div>
                   </div>
-                  @else
-                  <input type="hidden" name="companies_id" value="{{ $Order->companies_id }}">
-                  <input type="hidden" name="customer_reference" value="{{ $Order->customer_reference }}">
-                  <input type="hidden" name="companies_addresses_id" value="{{ $Order->companies_addresses_id }}">
-                  <input type="hidden" name="companies_contacts_id" value="{{ $Order->companies_contacts_id }}">
-                  <x-adminlte-alert theme="info" title="Info">
-                    The customer <x-CompanieButton id="{{ $Order->companie['id'] }}" label="{{ $Order->companie['label'] }}"  /> is currently disabled, you cannot change the customer name, contact and address.
-                  </x-adminlte-alert>
-                  @endif
-                  <div class="card card-body">
-                    <div class="row">
-                      <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
+                @else
+                <input type="hidden" name="companies_id" value="{{ $Order->companies_id }}">
+                <input type="hidden" name="customer_reference" value="{{ $Order->customer_reference }}">
+                <input type="hidden" name="companies_addresses_id" value="{{ $Order->companies_addresses_id }}">
+                <input type="hidden" name="companies_contacts_id" value="{{ $Order->companies_contacts_id }}">
+                <x-adminlte-alert theme="info" title="Info">
+                  The customer <x-CompanieButton id="{{ $Order->companie['id'] }}" label="{{ $Order->companie['label'] }}"  /> is currently disabled, you cannot change the customer name, contact and address.
+                </x-adminlte-alert>
+                @endif
+                <div class="card card-body">
+                  <div class="row">
+                    <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                      @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Order->accounting_payment_conditions_id])
                     </div>
-                    <hr>
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                        @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Order->accounting_payment_conditions_id])
-                      </div>
-                      <div class="form-group col-md-6">
-                          @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Order->accounting_payment_methods_id])
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                          @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Order->accounting_deliveries_id])
-                      </div>
-                      <div class="form-group col-md-6">
-                        <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
-                        <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
-                      </div>
+                    <div class="form-group col-md-6">
+                        @include('include.form.form-select-paymentMethods',['accountingPaymentMethodsId' =>   $Order->accounting_payment_methods_id])
                     </div>
                   </div>
-                  @else
-                  <div class="card card-body">
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                        <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
-                        <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
-                      </div>
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                        @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Order->accounting_deliveries_id])
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
+                      <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                     </div>
                   </div>
-                  @endif
-                  <div class="card card-body">
-                    <div class="row">
-                      <x-FormTextareaComment  comment="{{ $Order->comment }}" />
+                </div>
+                @else
+                <div class="card card-body">
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                      <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
+                      <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
                     </div>
                   </div>
-                  <x-slot name="footerSlot">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                  </x-slot>
-              </form>
-            </x-adminlte-card>
+                </div>
+                @endif
+                <div class="card card-body">
+                  <div class="row">
+                    <x-FormTextareaComment  comment="{{ $Order->comment }}" />
+                  </div>
+                </div>
+                <x-slot name="footerSlot">
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                </x-slot>
+              </x-adminlte-card>
+            </form>
           </div>
           <div class="col-md-3">
             @if($Order->quotes_id)

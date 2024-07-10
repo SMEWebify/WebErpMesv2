@@ -43,8 +43,8 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
-              <form method="POST" action="{{ route('products.update', ['id' => $Product->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('products.update', ['id' => $Product->id]) }}" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf
                 <div class="card card-body">
                   <div class="row">
@@ -314,8 +314,8 @@
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
 
           <div class="col-md-3">
@@ -604,9 +604,9 @@
             </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.supplier_trans_key') }}" theme="secondary" maximizable>
-              <form  method="POST" action="{{ route('products.supplier.create') }}" class="form-horizontal" enctype="multipart/form-data">
-                @csrf
+            <form  method="POST" action="{{ route('products.supplier.create') }}" class="form-horizontal" enctype="multipart/form-data">
+              <x-adminlte-card title="{{ __('general_content.supplier_trans_key') }}" theme="secondary" maximizable>
+              @csrf
                 <input type="hidden" name="product_id" value="{{ $Product->id }}">
                 <div class="form-group">
                   <label for="compannie_id">{{ __('general_content.supplier_trans_key') }}</label>
@@ -622,8 +622,8 @@
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                 </x-slot>
-              </form>
-            </x-adminlte-card>
+              </x-adminlte-card>
+            </form>
           </div>
         </div>
         <!-- /.row -->

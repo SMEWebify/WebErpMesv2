@@ -26,8 +26,8 @@
     <!-- /.col-md-8 card-secondary-->
     </div>
     <div class="col-md-4">
-      <x-adminlte-card title="{{ __('general_content.new_stock_location_product_trans_key') }}" theme="secondary" maximizable>
-        <form  method="POST" action="{{ route('products.stockline.store') }}" class="form-horizontal">
+      <form  method="POST" action="{{ route('products.stockline.store') }}" class="form-horizontal">
+        <x-adminlte-card title="{{ __('general_content.new_stock_location_product_trans_key') }}" theme="secondary" maximizable>
           @csrf
           <div class="form-group">
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
@@ -85,8 +85,8 @@
           <div class="card-footer">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
           </div>
-        </form>
-      </x-adminlte-card>
+        </x-adminlte-card>
+      </form>
     </div>
     <!-- /.card secondary -->
   </div>

@@ -49,20 +49,38 @@
                             <hr>
                             <div class="form-row">
                                 <div class="col-12">
-                                    <label for="companies_id">{{ __('general_content.companie_trans_key') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                        </div>
-                                        <select class="form-control" wire:model.change="companies_id" name="companies_id" id="companies_id">
-                                            <option value="">{{ __('general_content.select_company_trans_key') }}</option>
-                                            @forelse ($CompanieSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
-                                            @empty
-                                            <option value="">{{ __('general_content.no_select_company_trans_key') }}</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
+                                    <x-adminlte-select2 name="companies_id" id="companies_id" label="{{ __('general_content.companie_trans_key') }}" label-class="text-lightblue"
+                                        igroup-size="lg" data-placeholder="{{ __('general_content.select_task_trans_key') }}">
+                                        <x-slot name="prependSlot">
+                                            <div class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-building"></i>
+                                            </div>
+                                        </x-slot>
+                                        <option value="null">{{ __('general_content.no_select_company_trans_key') }}</option>
+                                        @forelse ($CompanieSelect as $item)
+                                        <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                        @empty
+                                        <option value="">{{ __('general_content.no_select_company_trans_key') }}</option>
+                                        @endforelse
+                                    </x-adminlte-select2>
+                                    
+                                    
+
+                                    @push('scripts')
+                                        <script>
+                                            $(document).ready(function () {
+                                                $('#companies_id').select2();
+                                                $('#companies_id').on('change', function (e) {
+                                                    let data = $(this).val();
+                                                    @this.set('companies_id', data);
+                                                });
+                                                window.livewire.on('productStore', () => {
+                                                    $('#companies_id').select2();
+                                                });
+                                            });  
+                                        </script>
+                                    @endpush
+
                                     @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
