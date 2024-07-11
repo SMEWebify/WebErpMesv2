@@ -123,9 +123,8 @@
               <div class="row md-2">
                 <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }} #{{ __('general_content.line_trans_key') }} {{ $Task->OrderLines->label }}"  /> 
                   @if( $Task->OrderLines->OrderLineDetails->picture)
-                    <a class="btn btn-info" href="{{ asset('drawing/'. $Task->Component->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
-                  </h5>
-                @endif
+                    <a class="btn btn-info" href="{{ asset('images/order-lines/'. $Task->OrderLines->OrderLineDetails->picture) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                  @endif
               </div>
               <div class="row md-2">
                 <p>
