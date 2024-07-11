@@ -62,8 +62,10 @@ class TaskStatu extends Component
         $this->Task = Task::with('OrderLines.order')->find($this->search);
         $this->userSelect = User::select('id', 'name')->get();
        // $this->end_date = $this->Task->end_date;
-        if($this->Task->component_id){
-            $this->StockLocationsProducts = StockLocationProducts::where('products_id', $this->Task->component_id)->get(); 
+       if($this->Task){
+            if($this->Task->component_id){
+                $this->StockLocationsProducts = StockLocationProducts::where('products_id', $this->Task->component_id)->get(); 
+            }
         }
         // Organiser les données pour la timeline
         $this->timelineData = [];
@@ -201,10 +203,12 @@ class TaskStatu extends Component
             }
         }
 
-        if($this->Task->component_id){
-            $this->StockLocationsProducts = StockLocationProducts::where('products_id', $this->Task->component_id)->get(); 
+        if($this->Task){
+            if($this->Task->component_id){
+                $this->StockLocationsProducts = StockLocationProducts::where('products_id', $this->Task->component_id)->get(); 
+            }
         }
-
+        
         return view('livewire.task-statu', [
             'Task' => $this->Task,
             'taskActivities' => $this->taskActivities,
