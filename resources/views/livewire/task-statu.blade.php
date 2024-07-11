@@ -122,6 +122,10 @@
               <h4>{{ __('general_content.informations_trans_key') }}</h4> 
               <div class="row md-2">
                 <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }} #{{ __('general_content.line_trans_key') }} {{ $Task->OrderLines->label }}"  /> 
+                  @if( $Task->OrderLines->OrderLineDetails->picture)
+                    <a class="btn btn-info" href="{{ asset('drawing/'. $Task->Component->drawing_file) }}" target="_blank"><i class="fa fa-lg fa-fw fa-eye"></i></a>
+                  </h5>
+                @endif
               </div>
               <div class="row md-2">
                 <p>
@@ -135,7 +139,7 @@
                   <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'. $Task->service->picture) }}">
               </div>
               @endif
-              @if($Task->service->type == 1 or  $Task->service->type == 7)
+              @if($Task->service->type == 1)
               <div class="row">
                 <x-adminlte-info-box title="{{ __('general_content.total_time_trans_key') }}" text="{{ $Task->getTotalLogTime() }} h" icon="fa fa-stopwatch" theme="warning"/>
               </div>
@@ -167,7 +171,7 @@
                     </p>
                   </div>
                 </div>
-                @if($Task->service->type == 1 or  $Task->service->type == 7)
+                @if($Task->service->type == 1)
                 <div class="row">
                   <div class="col-4">
                     <p class="text-sm">{{ __('general_content.setting_time_trans_key') }}
@@ -205,7 +209,7 @@
               <div class="row">
                 <div class="col-12">
                   <h4>{{ __('general_content.logs_activity_trans_key') }}</h4>   
-                  @if($Task->service->type == 1 or  $Task->service->type == 7)
+                  @if($Task->service->type == 1 )
                     @forelse ($taskActivities as $taskActivitie)
                           @if($taskActivitie->type == 1)
                             <p class="lead">{{ $taskActivitie->user->name }} - {{ __('general_content.set_to_start_trans_key') }} - {{ $taskActivitie->GetPrettyCreatedAttribute() }} </p>
@@ -268,7 +272,7 @@
                 </h5>
               @endif
               <div class="row">
-                @if($Task->service->type == 1 or  $Task->service->type == 7)
+                @if($Task->service->type == 1 )
                   @if($lastTaskActivities)
                     <div class="form-group col-md-2 ">
                       <a class="btn btn-app bg-success @if($lastTaskActivities->type == 1 || $lastTaskActivities->type == 3) disabled @endif " wire:click="StartTimeTask({{$Task->id}})">
