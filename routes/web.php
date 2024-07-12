@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
 |--------------------------------------------------------------------------
@@ -123,6 +124,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/export', 'App\Http\Controllers\Workflow\InvoicesController@export')->name('invoices.export');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
+    });
+
+    Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\CreditNoteController@index')->name('credit-notes');
+        Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice'); 
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@show')->name('credit-notes.show');
     });
 
     Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
@@ -301,7 +308,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu');
         Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->name('production.task');
         Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->name('production.kanban');
-        Route::get('/calendar', 'App\Http\Controllers\Planning\CalendarController@index')->name('production.calendar');
+        Route::get('/calendar/orders', 'App\Http\Controllers\Planning\CalendarController@calendarOders')->name('production.calendar.orders');
+        Route::get('/calendar/tasks', 'App\Http\Controllers\Planning\CalendarController@calendarTasks')->name('production.calendar.tasks');
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
         
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');

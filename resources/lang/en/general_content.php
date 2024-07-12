@@ -139,6 +139,7 @@ return [
     'to_submit_trans_key'                      => 'To submit',
     'submitted_trans_key'                      => 'Submitted',
     'approved_trans_key'                       => 'Approved',
+    'rejected_trans_key'                       => 'Rejected',
     
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
@@ -653,6 +654,7 @@ return [
     'tasks_list_trans_key'                     => 'Tasks list',
     'task_type_trans_key'                      => 'Task type',
     'tasks_statu_trans_key'                    => 'Task management',
+    'tasks_calendar_trans_key'                 => 'Tasks calendar',
     'add_generic_task_trans_key'               => 'Add generic task',
     'tasks_info_1_trans_key'                   => 'You can add a generic task that is not linked to an order. These are not displayed in the workflow.',
     'no_call_task_trans_key'                   => 'No task call',
@@ -716,6 +718,12 @@ return [
     'late_payment_time_trans_key'              => 'Late payment rate',
     'incoterm_trans_key'                       => 'Incoterm',
     
+    //CREDIT NOTE
+    'credit_notes_trans_key'                   => 'Credit notes',
+    'credit_note_trans_key'                    => 'Credit note',
+    'credit_notes_list_trans_key'              => 'Credit notes  list',
+    'new_credit_note_trans_key'                => 'New credit note',
+
     //PRODUCT
     'product_trans_key'                        => 'Product',
     'products_trans_key'                       => 'Products',

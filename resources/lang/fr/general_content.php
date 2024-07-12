@@ -139,6 +139,7 @@ return [
     'to_submit_trans_key'                      => 'Soumettre',
     'submitted_trans_key'                      => 'Soumise',
     'approved_trans_key'                       => 'Approuvée',
+    'rejected_trans_key'                       => 'Refusée',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',
@@ -653,6 +654,7 @@ return [
     'tasks_list_trans_key'                     => 'Liste des tâches',
     'task_type_trans_key'                      => 'Type de tâche',
     'tasks_statu_trans_key'                    => 'Management des tâches',
+    'tasks_calendar_trans_key'                 => 'Calendrier des tâches',
     'add_generic_task_trans_key'               => 'Ajouter une tache générique',
     'tasks_info_1_trans_key'                   => 'Vous pouvez ajouter une tâche générique qui n\'est pas liée à une commande. Celle-ci ne sont pas affichés dans le workflow.',
     'no_call_task_trans_key'                   => 'Aucun appel de tâche',
@@ -715,6 +717,12 @@ return [
     'average_payment_time_trans_key'           => 'Délai moyen de paiement',
     'late_payment_time_trans_key'              => 'Taux de retard de paiement',
     'incoterm_trans_key'                       => 'Incoterm',
+
+    //CREDIT NOTE
+    'credit_notes_trans_key'                   => 'Avoirs',
+    'credit_note_trans_key'                    => 'Avoir',
+    'credit_notes_list_trans_key'              => 'Liste des avoirs',
+    'new_credit_note_trans_key'                => 'Nouvel avoir',
 
     //PRODUCT
     'product_trans_key'                        => 'Produit',

@@ -10,8 +10,17 @@ class CalendarController extends Controller
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    public function index()
+    public function calendarOders()
     {
-        return view('workflow/calendar-index');
+        return view('workflow/calendar-index', ['eventType' => 'orders']);
+    }
+
+    /**
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function calendarTasks()
+    {
+        return view('workflow/calendar-index', ['eventType' => 'tasks']);
     }
 }

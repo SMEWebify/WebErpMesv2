@@ -83,7 +83,7 @@
                 <div class="col-md-1">
                   <div class="progress-group alert alert-warning">
                       <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id]) }}"><i class="fas fa-calculator"></i></a> {{ $incomingOrder->order['code'] }}<br/>
-                      <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $incomingOrder->delivery_date }}
+                      <a href="{{ route('production.calendar.orders') }}"><i class="fas fa-calendar-alt"></i></a> {{ $incomingOrder->delivery_date }}
                   </div>
                 </div>
                 <!-- /.col-md-1 -->
@@ -122,7 +122,7 @@
               <div class="col-md-1">
                   <div class="progress-group alert alert-danger">
                       <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id]) }}"><i class="fas fa-calculator"></i></a> {{ $LateOrder->order['code'] }}<br/>
-                      <a href="{{ route('production.calendar') }}"><i class="fas fa-calendar-alt"></i></a> {{ $LateOrder->delivery_date }}
+                      <a href="{{ route('production.calendar.orders') }}"><i class="fas fa-calendar-alt"></i></a> {{ $LateOrder->delivery_date }}
                   </div>
               </div>
               <!-- /.col-md-1 -->

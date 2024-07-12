@@ -358,7 +358,7 @@ return [
                 ],
                 [
                     'text' => 'order_calendar_trans_key',
-                    'url'  => 'production/calendar',
+                    'url'  => 'production/calendar/orders',
                     'icon_color' => 'warning',
                 ],
             ]
@@ -379,16 +379,19 @@ return [
                     'icon_color' => 'primary',
                 ],
                 [
+                    'text' => 'tasks_calendar_trans_key',
+                    'url'  => 'production/calendar/tasks',
+                    'icon_color' => 'primary',
+                ],
+                [
                     'text' => 'tasks_statu_trans_key',
                     'url'  => 'production/Task/Statu',
                     'icon_color' => 'primary',
-                    'label'       => 'Beta',
-                    'label_color' => 'danger',
                 ],
                 [
                     'text' => 'workflow_trans_key',
                     'url'  => 'production/kanban',
-                    'icon_color' => 'primary',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'gantt_trans_key',
@@ -427,6 +430,11 @@ return [
                 [
                     'text' => 'export_invoices_lines_list_trans_key',
                     'url'  => 'invoices/export',
+                ],
+                
+                [
+                    'text' => 'credit_notes_trans_key',
+                    'url'  => 'credit-notes',
                 ],
             ]
         ],
