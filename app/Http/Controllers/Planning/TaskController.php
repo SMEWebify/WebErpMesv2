@@ -17,6 +17,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskResources;
+use App\Models\Methods\MethodsServices;
 use App\Models\Planning\TaskActivities;
 use App\Models\Methods\MethodsStandardNomenclature;
 
@@ -76,14 +77,25 @@ class TaskController extends Controller
     /**
      * @return \Illuminate\Contracts\View\View
      */
-    public function kanban()
+    public function kanban(Request $request)
     {
-        $tasks = Status::where('title', '!=', 'Supplied')
-                        ->orderBy('order', 'ASC')
-                        ->with('tasks.OrderLines.order')
-                        ->with('tasks.service')
-                        ->get();
-        return view('workflow/kanban-index', compact('tasks'));
+         // Retrieve services
+        $services = MethodsServices::all();
+
+        // Initialize the task query
+        $tasksQuery = Status::where('title', '!=', 'Supplied')
+                            ->orderBy('order', 'ASC')
+                            ->with(['tasks' => function ($query) use ($request) {
+                                // Filter tasks by methods_services_id if provided
+                                if ($request->has('methods_services_id') && !empty($request->input('methods_services_id'))) {
+                                    $query->where('tasks.methods_services_id', $request->input('methods_services_id'));
+                                }
+                            }, 'tasks.OrderLines.order', 'tasks.service']);
+
+        // Retrieve filtered tasks
+        $tasks = $tasksQuery->get();
+
+        return view('workflow/kanban-index', compact('tasks', 'services'));
     }
 
     /**
