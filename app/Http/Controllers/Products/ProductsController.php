@@ -9,6 +9,7 @@ use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
 use App\Services\SelectDataService;
+use App\Services\ABC_MFR_CalculatorService;
 use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsServices;
@@ -21,9 +22,12 @@ class ProductsController extends Controller
     use NextPreviousTrait;
     
     protected $SelectDataService;
-    public function __construct(SelectDataService $SelectDataService)
+    protected $abcFMRService;
+
+    public function __construct(SelectDataService $SelectDataService, ABC_MFR_CalculatorService $abcFMRService)
     {
         $this->SelectDataService = $SelectDataService;
+        $this->abcFMRService = $abcFMRService;
     }
 
     /**
@@ -62,6 +66,7 @@ class ProductsController extends Controller
 
 
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Products(), $Product->id);
+        $finalAnalysis = $this->abcFMRService->calculateABC_FMR($Product->id);
 
         return view('products/products-show', [
             'userSelect' => $userSelect,
@@ -77,6 +82,7 @@ class ProductsController extends Controller
             'nextUrl' =>  $nextUrl,
             'SupplierSelect' =>  $SupplierSelect,
             'StockLocationsProducts' =>  $StockLocationsProducts,
+            'finalAnalysis' =>  $finalAnalysis,
         ]);
     }
 

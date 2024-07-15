@@ -472,6 +472,26 @@
                 @php echo '<img src="data:image/jpeg;base64,' . DNS1D::getBarcodePNG  (strval($Product->id), $Factory->task_barre_code, 4,60,array(1,1,1), true). '" alt="barcode"   />'; @endphp
               </p>
             </x-adminlte-card>
+
+            <x-adminlte-card title="{{ __('ABC/FMR') }}" theme="danger" maximizable>
+              <div >
+                <div class="row justify-content-center">
+                      <div class="col-3 mb-1 mr-1 bg-warning text-center" id="AR" ><h1>AR</h1></div>
+                      <div class="col-3 mb-1 mr-1 bg-success text-center" id="AM" ><h1>AM</h1></div>
+                      <div class="col-3 mb-1 bg-success text-center" id="AF" ><h1>AF</h1></div>
+                  </div>
+                  <div class="row justify-content-center">
+                      <div class="col-3 mb-1 mr-1 bg-warning text-center" id="BR" ><h1>BR</h1></div>
+                      <div class="col-3 mb-1 mr-1 bg-success text-center" id="BM" ><h1>BM</h1></div>
+                      <div class="col-3 mb-1 bg-success text-center" id="BF" ><h1>BF</h1></div>
+                </div>
+                <div class="row justify-content-center">
+                      <div class="col-3 mb-1 mr-1 bg-danger text-center" id="CR" ><h1>CR</h1></div>
+                      <div class="col-3 mb-1 mr-1 bg-purple text-center" id="CM" ><h1>CM</h1></div>
+                      <div class="col-3 mb-1 bg-purple text-center" id="CF" ><h1>CF</h1></div>
+              </div>
+              </div>
+            </x-adminlte-card>
           </div>
         </div>
       </div>
@@ -675,6 +695,20 @@
 @stop
 
 @section('js')
+<script>
+  // Données passées de Laravel à JavaScript
+  const analysisData = @json($finalAnalysis);
+
+  // Parcourir les données et placer les croix dans les bonnes cellules
+  analysisData.forEach(product => {
+      const cellId = product.category;
+      const cell = document.getElementById(cellId);
+      if (cell) {
+          cell.innerHTML += '<span class="cross">✕</span>';
+      }
+  });
+</script>
+
 <script type="module">
   // Récupérer l'élément conteneur par son ID
   const container = document.getElementById('scene-container');
