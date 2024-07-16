@@ -572,7 +572,9 @@ return [
     'order_to_be_delivered_trans_key'          => 'Commandes à livrée(s)',
     'delivered_month_in_progress_trans_key'    => 'Total livré du mois',
     'remaining_month_trans_key'                => 'Total restant à livrer',
-    
+    'niko_niko_team_trans_key'                 => 'Niko Niko - Humeur de l\'équipe aujourd\'hui',
+    'no_niko_niko_team_trans_key'              => 'Aucune humeur aujourd\'hui',
+
     //COMPANIES
     'companies_trans_key'                      => 'Tiers',
     'companie_trans_key'                       => 'Tier',

@@ -29,16 +29,16 @@ return [
     'shape' => 'circle',
 
     // Image width, in pixel
-    'width' => 50,
+    'width' => 35,
 
     // Image height, in pixel
-    'height' => 50,
+    'height' => 35,
 
     // Number of characters used as initials. If name consists of single word, the first N character will be used
     'chars' => 2,
 
     // font size
-    'fontSize' => 24,
+    'fontSize' => 20,
 
     // convert initial letter in uppercase
     'uppercase' => false,

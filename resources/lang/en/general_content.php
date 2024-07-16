@@ -572,6 +572,8 @@ return [
     'order_to_be_delivered_trans_key'          => 'Order to be delivered',
     'delivered_month_in_progress_trans_key'    => 'Total Delivered for the month',
     'remaining_month_trans_key'                => 'Total remaining to deliver',
+    'niko_niko_team_trans_key'                 => 'Niko Niko - Team Moods Today',
+    'no_niko_niko_team_trans_key'              => 'No team mood today',
     
     //COMPANIES
     'companies_trans_key'                      => 'Third party',

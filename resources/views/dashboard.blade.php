@@ -16,7 +16,16 @@
       flex-direction: column;
       justify-content: space-between;
   }
+  .team-mood-item {
+      display: inline-block;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-right: 10px;
+      white-space: nowrap;
+  }
 </style>
+
   @if($userRoleCount < 1)
   <div class="card">
     <div class="card-body">
@@ -30,7 +39,7 @@
   @endif
 
   <div class="row ">
-    <div class="col-lg-3 col-md-4">
+    <div class="col-lg-2">
       <x-adminlte-small-box title="{{$data['customers_count']}}"
                             text="{{ __('general_content.client_trans_key') }}" 
                             icon="far fa-building"
@@ -39,7 +48,7 @@
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
-    <div class="col-lg-3 col-md-4">
+    <div class="col-lg-2 col-md-2">
       <x-adminlte-small-box title="{{ $data['suppliers_count'] }}"
                             text="{{ __('general_content.suppliers_trans_key') }}" 
                             icon="far fa-building"
@@ -48,7 +57,7 @@
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
-    <div class="col-lg-3 col-md-4">
+    <div class="col-lg-2 col-md-2">
       <x-adminlte-small-box title="{{ $data['quotes_count'] }}" 
                             text="{{ __('general_content.quote_trans_key') }}" 
                             icon="fas fa-calculator"
@@ -57,13 +66,19 @@
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
-    <div class="col-lg-3 col-md-4">
+    <div class="col-lg-2 col-md-2">
       <x-adminlte-small-box title="{{ $data['orders_count'] }}" 
                             text="{{ __('general_content.orders_trans_key') }}" 
                             icon="fas fa-shopping-cart"
                             theme="yellow" 
                             url="{{ route('orders') }}" 
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-4 col-md-4">
+      <x-adminlte-card title="{{ __('general_content.niko_niko_team_trans_key') }}" theme="lime"> 
+        @livewire('mood-tracker')
+      </x-adminlte-card>
     </div>
     <!-- ./col -->
 
