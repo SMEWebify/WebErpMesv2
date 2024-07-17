@@ -383,6 +383,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     
         // Routes for Action
         Route::group(['prefix' => 'action'], function () {
+            Route::get('/', 'App\Http\Controllers\Quality\QualityActionController@index')->name('quality.action');
             Route::post('/create', 'App\Http\Controllers\Quality\QualityActionController@store')->name('quality.action.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityActionController@update')->name('quality.action.update');
         });
@@ -395,12 +396,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     
         // Routes for NonConformitie
         Route::group(['prefix' => 'nonConformitie'], function () {
+            Route::get('/', 'App\Http\Controllers\Quality\QualityNonConformityController@index')->name('quality.nonConformitie');
             Route::post('/create', 'App\Http\Controllers\Quality\QualityNonConformityController@store')->name('quality.nonConformitie.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@update')->name('quality.nonConformitie.update');
         });
     
         // Routes for Derogation
         Route::group(['prefix' => 'derogation'], function () {
+            Route::get('/', 'App\Http\Controllers\Quality\QualityDerogationController@index')->name('quality.derogation');
             Route::post('/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->name('quality.derogation.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityDerogationController@update')->name('quality.derogation.update');
         });

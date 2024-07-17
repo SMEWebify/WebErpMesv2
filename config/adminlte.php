@@ -498,8 +498,27 @@ return [
             
             'text' => 'quality_trans_key',
             'icon'    => 'fas fa-ruler-combined',
-            'url'  => 'quality',
+            'icon_color' => 'info',
             'can'  => ['quality-menu'],
+            
+            'submenu' => [
+                [
+                    'text' => 'dashboard_trans_key',
+                    'url'  => 'quality',
+                ],
+                [
+                    'text' => 'action_trans_key',
+                    'url'  => 'quality/action',
+                ],
+                [
+                    'text' => 'derogations_trans_key',
+                    'url'  => 'quality/derogation',
+                ],
+                [
+                    'text' => 'non_conformities_trans_key',
+                    'url'  => 'quality/nonConformitie',
+                ],
+            ],
         ],
         ['header' => 'settings_trans_key'],
         [

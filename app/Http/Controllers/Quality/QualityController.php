@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Quality;
 
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
 use App\Models\Quality\QualityCause;
 use App\Models\Quality\QualityAction;
 use App\Models\Quality\QualityFailure;
-use App\Models\Methods\MethodsServices;
 use App\Models\Quality\QualityCorrection;
 use App\Models\Quality\QualityDerogation;
 use App\Models\Quality\QualityControlDevice;
@@ -29,31 +27,17 @@ class QualityController extends Controller
      */
     public function index()
     {
-
         $userSelect = $this->SelectDataService->getUsers();
         $ServicesSelect = $this->SelectDataService->getServices();
-        $CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->orderBy('label')->get();
-        $CausesSelect = $this->SelectDataService->getQualityCause();
-        $FailuresSelect = $this->SelectDataService->getQualityFailure();
-        $CorrectionsSelect = $this->SelectDataService->getQualityCorrection();
-        $NonConformitysSelect = $this->SelectDataService->getQualityNonConformity();
 
-        $QualityActions = QualityAction::orderBy('id')->paginate(10);
         $QualityCauses = QualityCause::All();
         $QualityFailures = QualityFailure::All();
         $QualityCorrections = QualityCorrection::All();
-        $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
-        $QualityNonConformitys = QualityNonConformity::orderBy('id')->paginate(10);
         $QualityControlDevices = QualityControlDevice::orderBy('id')->paginate(10);
-        $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
-
-        $LastAction =  DB::table('quality_actions')->orderBy('id', 'desc')->first();
-        $LastNonConformity =  DB::table('quality_non_conformities')->orderBy('id', 'desc')->first();
-        $LastDerogation =  DB::table('quality_derogations')->orderBy('id', 'desc')->first();
         
         //*************bar**********************
 
-        // Nombre total d'entrées pour chaque catégorie
+        // Total number of entries for each category
         $totalDerogations = QualityDerogation::count();
         $totalDerogationsOpen = QualityDerogation::where('statu',1)->count();
         $totalNonConformities = QualityNonConformity::count();
@@ -61,49 +45,49 @@ class QualityController extends Controller
         $totalActions = QualityAction::count();
         $totalActionsOpen = QualityAction::where('statu',1)->count();
 
-        // Nombre d'entrées internes pour chaque catégorie
+        // Number of internal entries for each category
         $internalDerogations = QualityDerogation::where('type', 1)->count();
         $internalNonConformities = QualityNonConformity::where('type', 1)->count();
         $internalActions = QualityAction::where('type', 1)->count();
 
-        // Calculer le taux d'interne en pourcentage pour chaque catégorie
+        // Calculate the internal rate as a percentage for each category
         $internalDerogationRate = ($totalDerogations > 0) ? ($internalDerogations / $totalDerogations) * 100 : 0;
         $internalNonConformityRate = ($totalNonConformities > 0) ? ($internalNonConformities / $totalNonConformities) * 100 : 0;
         $internalActionRate = ($totalActions > 0) ? ($internalActions / $totalActions) * 100 : 0;
 
-        // Taux d'externe en pourcentage
+        // External rate as a percentage
         $externalDerogationRate = 100 - $internalDerogationRate;
         $externalNonConformityRate = 100 - $internalNonConformityRate;
         $externalActionRate = 100 - $internalActionRate;
 
         //*****************bar **********************/
-            // Requête pour obtenir les 10 plus grands générateurs de non-conformités
-            $topGenerators = QualityNonConformity::select('companie_id', \DB::raw('COUNT(*) as count'))
-            ->whereNotNull('companie_id')
-            ->groupBy('companie_id')
-            ->orderByDesc('companie_id')
-            ->orderByDesc('count')
-            ->limit(7)
-            ->get();
+        // Query to obtain the 10 largest generators of non-conformities
+        $topGenerators = QualityNonConformity::select('companie_id', \DB::raw('COUNT(*) as count'))
+        ->whereNotNull('companie_id')
+        ->groupBy('companie_id')
+        ->orderByDesc('companie_id')
+        ->orderByDesc('count')
+        ->limit(7)
+        ->get();
 
-            // Récupération des noms des entreprises associées aux identifiants
-            $companies = Companies::orderByDesc('id')
-                                    ->whereIn('id', $topGenerators->pluck('companie_id'))
-                                    ->pluck('label', 'id');
+        // Retrieval of company names associated with identifiers
+        $companies = Companies::orderByDesc('id')
+                                ->whereIn('id', $topGenerators->pluck('companie_id'))
+                                ->pluck('label', 'id');
 
-            // Tableau de couleurs par défaut
-            $defaultColors = [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
-                'rgba(255, 205, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(201, 203, 207, 0.2)'
-            ];
+        // Default color table
+        $defaultColors = [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(201, 203, 207, 0.2)'
+        ];
 
-            // Préparation des données pour le graphique
-            $chartData = [
+       // Preparing data for the chart
+        $chartData = [
             'labels' => $companies->values()->all(),
             'datasets' => [
                 [
@@ -113,7 +97,7 @@ class QualityController extends Controller
                     'beginAtZero' => true,
                 ],
             ],
-            ];
+        ];
 
         //********************radar********************************
         $allStatus = [1, 2, 3, 4];
@@ -139,23 +123,12 @@ class QualityController extends Controller
         ksort($actionStatusCounts);
         
         return view('quality/quality-index', [
-            'QualityActions' => $QualityActions,
-            'LastAction' => $LastAction,
-            'QualityDerogations' => $QualityDerogations, 
-            'LastDerogation' =>  $LastDerogation,
             'QualityCauses' => $QualityCauses,
-            'CausesSelect' =>  $CausesSelect,
             'QualityFailures' => $QualityFailures,
-            'FailuresSelect' =>  $FailuresSelect,
             'QualityCorrections' => $QualityCorrections,
-            'CorrectionsSelect' => $CorrectionsSelect ,
-            'QualityNonConformitys' => $QualityNonConformitys,
-            'NonConformitysSelect' =>  $NonConformitysSelect,
-            'LastNonConformity' => $LastNonConformity,
             'QualityControlDevices' => $QualityControlDevices,
             'userSelect' => $userSelect,
             'ServicesSelect' =>  $ServicesSelect,
-            'CompaniesSelect' =>  $CompaniesSelect,
             'derogationStatusCounts' => $derogationStatusCounts,
             'nonConformityStatusCounts' => $nonConformityStatusCounts,
             'actionStatusCounts' => $actionStatusCounts, 

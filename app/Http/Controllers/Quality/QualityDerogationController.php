@@ -3,12 +3,41 @@
 namespace App\Http\Controllers\Quality;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Services\SelectDataService;
 use App\Models\Quality\QualityDerogation;
 use App\Http\Requests\Quality\StoreQualityDerogationRequest;
 use App\Http\Requests\Quality\UpdateQualityDerogationRequest;
 
 class QualityDerogationController extends Controller
 {
+    
+    protected $SelectDataService;
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+    
+    
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function index()
+    {
+
+        $userSelect = $this->SelectDataService->getUsers();
+        $NonConformitysSelect = $this->SelectDataService->getQualityNonConformity();
+        $QualityDerogations = QualityDerogation::orderBy('id')->paginate(10);
+        $LastDerogation =  DB::table('quality_derogations')->orderBy('id', 'desc')->first();
+        
+        return view('quality/quality-derogations', [
+            'LastDerogation' =>  $LastDerogation,
+            'QualityDerogations' => $QualityDerogations,
+            'NonConformitysSelect' =>  $NonConformitysSelect,
+            'userSelect' => $userSelect,
+        ]);
+    }
+    
     /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -25,7 +54,7 @@ class QualityDerogationController extends Controller
                                                                 'reply', 
                                                                 'quality_non_conformitie_id',  
                                                                 'decision'));
-        return redirect()->route('quality')->with('success', 'Successfully created derogation.');
+        return redirect()->route('quality.derogation')->with('success', 'Successfully created derogation.');
     }
 
     /**
@@ -45,6 +74,6 @@ class QualityDerogationController extends Controller
         $QualityDerogation->quality_non_conformitie_id=$request->quality_non_conformitie_id;
         $QualityDerogation->decision=$request->decision;
         $QualityDerogation->save();
-        return redirect()->route('quality')->with('success', 'Successfully updated derogation.');
+        return redirect()->route('quality.derogation')->with('success', 'Successfully updated derogation.');
     }
 }

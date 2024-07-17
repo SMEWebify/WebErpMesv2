@@ -1,6 +1,6 @@
 <div>
     <div class="row">
-        <div class="col-lg-4 btn-group" role="group" aria-label="Mood Selection">
+        <div class="col-lg-5 btn-group" role="group" aria-label="Mood Selection">
             <button type="button" class="btn btn-outline-success {{ $mood == 'happy' ? 'active' : '' }}" wire:click="selectMood('happy')">
                 😊 
             </button>
@@ -12,7 +12,7 @@
             </button>
         </div>
 
-        <div class="col-lg-8">
+        <div class="col-lg-7">
             @if ($teamMoods->isEmpty())
                 <p>{{ __('general_content.no_niko_niko_team_trans_key') }}</p>
             @else
