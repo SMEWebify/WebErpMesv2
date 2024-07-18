@@ -407,6 +407,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Quality\QualityDerogationController@store')->name('quality.derogation.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityDerogationController@update')->name('quality.derogation.update');
         });
+
+        // Routes for AMDEC
+        Route::group(['prefix' => 'amdec'], function () {
+            Route::get('/', 'App\Http\Controllers\Quality\QualityAmdecController@index')->name('quality.amdec');
+            Route::post('/create', 'App\Http\Controllers\Quality\QualityAmdecController@store')->name('quality.amdec.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityAmdecController@update')->name('quality.amdec.update');
+        });
     
         // Routes for Failure
         Route::group(['prefix' => 'failure'], function () {

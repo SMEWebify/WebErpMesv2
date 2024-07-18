@@ -52,6 +52,7 @@ return [
     'action_trans_key'                         => 'Actions',
     'derogations_trans_key'                    => 'Dérogations',
     'non_conformities_trans_key'               => 'Non conformités',
+    'amdec_trans_key'                          => 'AMDEC',
     'settings_trans_key'                       => 'Paramètres',
     'methods_trans_key'                        => 'Méthodes',
     'accounting_trans_key'                     => 'Comptabilité',

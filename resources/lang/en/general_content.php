@@ -253,6 +253,14 @@ return [
     'tax_trans_key'                            => 'Tax',
     'no_tax_trans_key'                         => 'No tax',
     
+    'failure_mode_trans_key'                   => 'Failure Mode',
+    'effect_trans_key'                         => 'Effect',
+    'severity_trans_key'                       => 'Severity (1 to 10)',
+    'occurrence_trans_key'                     => 'Occurrence (1 to 10)',
+    'detection_trans_key'                      => 'Detection (1 to 10)',
+    'current_control_trans_key'                => 'Current Control',
+    'recommended_action_trans_key'             => 'Recommended Action',
+
     //GENERAL CONTENT TABLE
     'no_data_trans_key'                        => 'No data available in table',
 
@@ -825,7 +833,9 @@ return [
     'measuring_devices_note_trans_key'         => 'The measuring devices used to measure quality.',
     'non_conformitie_note_trans_key'           => 'Non-conformity sheets are documents summing up data related to a quality issue that arose within your company, with a customer, or with a supplier and the extra costs it generated..',
     'quality_setting_note_trans_key'           => 'To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource.',
-    
+    'amdec_trans_key'                          => 'FMEA',
+    'new_amdec_trans_key'                      => 'Nouvelle FMEA',
+
     //METHODS
     'methods_trans_key'                        => 'Methods',
     'service_trans_key'                        => 'Service',

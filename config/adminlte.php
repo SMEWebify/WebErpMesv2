@@ -518,6 +518,10 @@ return [
                     'text' => 'non_conformities_trans_key',
                     'url'  => 'quality/nonConformitie',
                 ],
+                [
+                    'text' => 'amdec_trans_key',
+                    'url'  => 'quality/amdec',
+                ],
             ],
         ],
         ['header' => 'settings_trans_key'],

@@ -253,6 +253,14 @@ return [
     'tax_trans_key'                            => 'Taxe',
     'no_tax_trans_key'                         => 'Aucune taxe',
 
+    'failure_mode_trans_key'                   => 'Mode de défaillance',
+    'effect_trans_key'                         => 'Effet',
+    'severity_trans_key'                       => 'Sévérité (1 à 10)',
+    'occurrence_trans_key'                     => 'Occurrence (1 à 10)',
+    'detection_trans_key'                      => 'Détection (1 à 10)',
+    'current_control_trans_key'                => 'Contrôle actuel',
+    'recommended_action_trans_key'             => 'Action recommandée',
+
     //GENERAL CONTENT TABLE
     'no_data_trans_key'                        => 'Aucune données',
 
@@ -822,7 +830,9 @@ return [
     'measuring_devices_note_trans_key'         => 'Les appareils de mesure utilisés pour mesurer la qualité.',
     'non_conformitie_note_trans_key'           => 'Les fiches de non-conformité sont des documents récapitulant les données liées à un problème qualité survenu au sein de votre entreprise, chez un client ou chez un fournisseur et les surcoûts que cela a engendré.',
     'quality_setting_note_trans_key'           => 'Pour éviter toute perte de temps, vous avez la possibilité de prédéfinir les défauts, causes et/ou mesures de correction que vous utiliserez le plus. Il vous suffira alors de faire le choix pertinent lors de la création d\'une fiche de non-conformité ou des interventions de maintenance d\'une ressource.',
-    
+    'amdec_trans_key'                          => 'AMDEC',
+    'new_amdec_trans_key'                      => 'Nouvelle AMDEC',
+
     //METHODS
     'methods_trans_key'                        => 'Méthodes',
     'service_trans_key'                        => 'Service',

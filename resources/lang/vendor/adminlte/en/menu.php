@@ -52,6 +52,7 @@ return [
     'action_trans_key'                         => 'Actions',
     'derogations_trans_key'                    => 'Derogations',
     'non_conformities_trans_key'               => 'Non conformities',
+    'amdec_trans_key'                          => 'FMEA',
     'settings_trans_key'                       => 'Settings',
     'methods_trans_key'                        => 'Methods',
     'accounting_trans_key'                     => 'Accounting',
