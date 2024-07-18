@@ -910,7 +910,10 @@ return [
     'name_field_trans_key'                     => 'Nom du champs',
     'type_field_trans_key'                     => 'Type de champs',
     'entity_type_trans_key'                    => 'Type associé',
-    
+    'roles_and_permissions_trans_key'          => 'Rôles & permissions',
+    'import_export_trans_key'                  => 'Imports/Exports',
+    'logs_view_trans_key'                      => 'Logs view',
+
     //PROFIL
     'profile_trans_key'                        => 'Profil',
     'information_trans_key'                    => 'Information',

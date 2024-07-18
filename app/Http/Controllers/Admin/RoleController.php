@@ -6,9 +6,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function index()
+    {
+        
+        $Roles = Role::all();
+        $Permissions = Permission::all();
+
+        return view('admin/factory-roles-permissions', [
+            'Roles' => $Roles,
+            'Permissions' => $Permissions,
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -25,7 +41,7 @@ class RoleController extends Controller
             $role->givePermissionTo(collect($request->permissions)->pluck('id')->toArray());
         }*/
 
-        return to_route('admin.factory')->with('success', 'Role Created successfully.');
+        return to_route('admin.roles.permissions')->with('success', 'Role Created successfully.');
     }
 
     /**
@@ -43,7 +59,7 @@ class RoleController extends Controller
         
         $role->syncPermissions($request->permission);
         
-        return to_route('admin.factory')->with('success', 'Role updated successfully.');
+        return to_route('admin.roles.permissions')->with('success', 'Role updated successfully.');
     }
 
     /**
@@ -55,7 +71,7 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $role->delete();
-        return to_route('admin.factory')->with('success', 'Role deleted successfully.');
+        return to_route('admin.roles.permissions')->with('success', 'Role deleted successfully.');
     }
 
      /**
@@ -70,7 +86,7 @@ class RoleController extends Controller
         $role->syncPermissions($request->permission);
 
         
-        return to_route('admin.factory')->with('success', 'Permissions added in Role successfully.');
+        return to_route('admin.roles.permissions')->with('success', 'Permissions added in Role successfully.');
         /*$data = array();
         $permissions = ;
         foreach($permissions as $key => $item){

@@ -59,6 +59,10 @@ return [
     'human_resources_trans_key'                => 'Ressources humaine',
     'users_trans_key'                          => 'Utilisateurs',
     'your_company_trans_key'                   => 'Votre entreprise',
+    'factory_settings_trans_key'               => 'Réglage société',
+    'roles_and_permissions_trans_key'          => 'Rôles & permissions',
+    'import_export_trans_key'                  => 'Imports/Exports',
+    'logs_view_trans_key'                      => 'Logs view',
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',
 ];

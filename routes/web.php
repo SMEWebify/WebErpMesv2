@@ -53,7 +53,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->name('addresses.edit');
         });
     
-        Route::post('/import', 'App\Http\Controllers\Companies\CompaniesController@import')->name('companies.import');
+        Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importCompanies')->name('companies.import');
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.update');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
 
@@ -322,6 +322,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/factory/update', 'App\Http\Controllers\Admin\FactoryController@update')->middleware(['auth'])->name('admin.factory.update');
         Route::get('/factory', 'App\Http\Controllers\Admin\FactoryController@index')->middleware(['auth'])->name('admin.factory');
 
+        Route::get('/roles-permissions/', 'App\Http\Controllers\Admin\RoleController@index')->middleware(['auth'])->name('admin.roles.permissions');
         Route::post('/factory/role/store', 'App\Http\Controllers\Admin\RoleController@store')->middleware(['auth'])->name('admin.factory.role.store');
         Route::post('/factory/role/update/{id}', 'App\Http\Controllers\Admin\RoleController@update')->middleware(['auth'])->name('admin.factory.role.update');
         Route::get('/factory/role/delete/{role}', 'App\Http\Controllers\Admin\RoleController@destroy')->middleware(['auth'])->name('admin.factory.role.destroy');
@@ -332,6 +333,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/factory/custom-field/store', 'App\Http\Controllers\Admin\FactoryController@storeCustomField')->middleware(['auth'])->name('admin.factory.custom.field.store');
         Route::post('/factory/custom-field-value/storeOrUpdate/{id}/{type}', 'App\Http\Controllers\Admin\FactoryController@storeOrUpdateCustomField')->middleware(['auth'])->name('admin.factory.custom.field.value.store.update');
         
+        
+        Route::get('/imports-exports/', 'App\Http\Controllers\Admin\ImportsExportsController@index')->middleware(['auth'])->name('admin.imports.exports');
+
+        Route::get('/logs-view/', 'App\Http\Controllers\Admin\FactoryController@logsView')->middleware(['auth'])->name('admin.logs.view');
     });
 
     Route::group(['prefix' => 'human-resources', 'middleware' => ['auth', 'check.factory']], function () {

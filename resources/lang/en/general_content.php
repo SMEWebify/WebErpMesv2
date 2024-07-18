@@ -913,7 +913,10 @@ return [
     'name_field_trans_key'                     => 'Name field',
     'type_field_trans_key'                     => 'Type field',
     'entity_type_trans_key'                    => 'Type entity',
-    
+    'roles_and_permissions_trans_key'          => 'Roles & permissions',
+    'import_export_trans_key'                  => 'Imports/Exports',
+    'logs_view_trans_key'                      => 'Logs view',
+
     //PROFIL
     'profile_trans_key'                        => 'Profile',
     'information_trans_key'                    => 'Information',

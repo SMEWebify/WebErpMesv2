@@ -24,7 +24,7 @@ class PermissionController extends Controller
 
         Permission::create($validated);
 
-        return to_route('admin.factory')->with('success', 'Permission Created successfully.');
+        return to_route('admin.roles.permissions')->with('success', 'Permission Created successfully.');
     }
 
     /**
@@ -52,7 +52,7 @@ class PermissionController extends Controller
     {
         $permission->delete();
         
-        return to_route('admin.factory')->with('success', 'Permission deleted successfully.');
+        return to_route('admin.roles.permissions')->with('success', 'Permission deleted successfully.');
     }
 
     /**

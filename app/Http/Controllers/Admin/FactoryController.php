@@ -5,13 +5,11 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
 use App\Models\Admin\CustomField;
-use Spatie\Permission\Models\Role;
 use App\Models\Admin\Announcements;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin\CustomFieldValue;
-use Spatie\Permission\Models\Permission;
 use App\Http\Requests\Admin\UpdateFactoryRequest;
 use App\Http\Requests\Admin\StoreCustomFieldRequest;
 use App\Http\Requests\Admin\StoreAnnouncementRequest;
@@ -32,8 +30,6 @@ class FactoryController extends Controller
     {
         $AnnouncementLines = Announcements::get()->All();
         $VATSelect = $this->SelectDataService->getVATSelect();
-        $Roles = Role::all();
-        $Permissions = Permission::all();
         $Factory = Factory::first();
         $CustomFields = CustomField::all();
 
@@ -54,8 +50,6 @@ class FactoryController extends Controller
         return view('admin/factory-index', [
             'AnnouncementLines' => $AnnouncementLines,
             'VATSelect' => $VATSelect,
-            'Roles' => $Roles,
-            'Permissions' => $Permissions,
             'Factory' => $Factory,
             'CustomFields' => $CustomFields,
         ]);
@@ -219,5 +213,13 @@ class FactoryController extends Controller
         else{
             return redirect()->back()->withErrors(['msg' => 'Something went wrong']);
         }
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function logsView()
+    {
+        return view('admin/factory-logs-view');
     }
 }

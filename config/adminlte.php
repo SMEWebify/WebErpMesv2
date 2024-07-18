@@ -495,12 +495,10 @@ return [
             ],
         ],
         [
-            
             'text' => 'quality_trans_key',
             'icon'    => 'fas fa-ruler-combined',
             'icon_color' => 'info',
             'can'  => ['quality-menu'],
-            
             'submenu' => [
                 [
                     'text' => 'dashboard_trans_key',
@@ -551,9 +549,26 @@ return [
         ],
         [
             'text' => 'your_company_trans_key',
-            'url'  => 'admin/factory',
             'icon'    => 'fas fa-industry',
             'can'  => ['your-company-menu'],
+            'submenu' => [
+                [
+                    'text' => 'factory_settings_trans_key',
+                    'url'  => 'admin/factory',
+                ],
+                [
+                    'text' => 'roles_and_permissions_trans_key',
+                    'url'  => 'admin/roles-permissions',
+                ],
+                [
+                    'text' => 'import_export_trans_key',
+                    'url'  => 'admin/imports-exports',
+                ],
+                [
+                    'text' => 'logs_view_trans_key',
+                    'url'  => 'admin/logs-view',
+                ],
+            ],
         ],
         ['header' => 'W.E.M.'],
         [

@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Companies;
 
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
-use App\Services\ImportCsvService;
-use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
@@ -51,12 +49,6 @@ class CompaniesController extends Controller
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Companies(), $id->id);
         $Companie = $id;
         return view('companies/companies-show', compact('Companie', 'userSelect', 'previousUrl', 'nextUrl'));
-    }
-
-    public function import(Request $request, ImportCsvService $importCsvService)
-    {   
-        $importCsvService->importCompanies($request);
-        return redirect()->back();
     }
 
     /**
