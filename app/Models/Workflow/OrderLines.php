@@ -198,6 +198,11 @@ class OrderLines extends Model
         return ($SumPercentTech +  $SumPercentBOM)/$TotalCountTask;
     }
 
+    public function getAveragePercentProgressDeleveryAttribute()
+    {
+        return ($this->delivered_qty / $this->qty)*100;
+    }
+
     public function SubAssembly()
     {
         return $this->hasMany(SubAssembly::class, 'order_lines_id')->orderBy('ordre');
