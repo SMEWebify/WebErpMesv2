@@ -41,7 +41,7 @@
   <div class="row ">
     <div class="col-lg-2">
       <x-adminlte-small-box title="{{$data['customers_count']}}"
-                            text="{{ __('general_content.client_trans_key') }}" 
+                            text="{{ __('general_content.new_client_trans_key') }}" 
                             icon="far fa-building"
                             theme="info" 
                             url="{{ route('companies') }}" 

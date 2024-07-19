@@ -554,6 +554,7 @@ return [
     //DASHBOARD
     'dashboard_trans_key'                      => 'Tableau de bord',
     'client_trans_key'                         => 'Clients',
+    'new_client_trans_key'                     => 'Nouveaux client',
     'suppliers_trans_key'                      => 'Fournisseur',
     'view_details_trans_key'                   => 'Voir détail',
     'monthly_recap_report_trans_key'           => 'Rapport récapitulatif mensuel',
