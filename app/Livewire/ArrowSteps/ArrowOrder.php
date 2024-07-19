@@ -4,7 +4,6 @@ namespace App\Livewire\ArrowSteps;
 
 use Livewire\Component;
 use App\Models\Workflow\Orders;
-use App\Models\Workflow\OrderLines;
 
 class ArrowOrder extends Component
 {
