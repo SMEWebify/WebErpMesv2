@@ -134,6 +134,31 @@
             
             <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
               @include('include.sub-total-price')
+              @if($Order->Rating->isNotEmpty())
+                @php
+                    $Rating = $Order->Rating->toArray();
+                @endphp
+                
+                <table class="table table-hover">
+                  <tr>
+                    <td colspan="2">
+                      <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
+                      @for ($i = 1; $i <= 5; $i++)
+                          @if ($i <= $Rating[0]['rating'])
+                              <span class="badge badge-warning">&#9733;</span>
+                          @else
+                              <span class="badge badge-info">&#9734;</span>
+                          @endif
+                      @endfor
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      {{ $Rating[0]['comment'] }}
+                    </td>
+                  </tr>
+                </table>
+              @endif  
             </x-adminlte-card>
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
@@ -152,45 +177,20 @@
                     <tr>
                       <td style="width:50%">{{  __('general_content.mnaufacturing_instruction_trans_key') }}</td>
                       <td>
-                        <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i>Print</a>
+                        <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-info btn-sm"><i class="fas fa-print"></i>Print</a>
                       </td>
                     </tr>
                     
-                    @if($Order->type == 1)
-                    <tr>
-                      <td colspan="2">
-                        @if($Order->uuid)
-                        <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
-                        <p>
-                          <input type="text" class="form-control"  value="{{ Request::root() }}/guest/order/{{  $Order->uuid }}">
-                        </p>
-                        @endif
-                      </td>
-                    </tr>
+                    @if($Order->type == 1 && $Order->uuid)
+                      <tr>
+                        <td style="width:50%">{{ __('general_content.public_link_trans_key') }}</td>
+                        <td>
+                          <button class="btn btn-info btn-sm" onclick="copyToClipboard('{{ Request::root() }}/guest/order/{{ $Order->uuid }}')">
+                            <i class="fas fa-copy"></i> {{ __('general_content.copy_trans_key') }} 
+                          </button>
+                        </td>
+                      </tr>
                     @endif
-
-                    @if($Order->Rating->isNotEmpty())
-                        @php
-                            $Rating = $Order->Rating->toArray();
-                        @endphp
-                        <tr>
-                          <td colspan="2">
-                            <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
-                            @for ($i = 1; $i <= 5; $i++)
-                                @if ($i <= $Rating[0]['rating'])
-                                    <span class="badge badge-warning">&#9733;</span>
-                                @else
-                                    <span class="badge badge-info">&#9734;</span>
-                                @endif
-                            @endfor
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="2">
-                            {{ $Rating[0]['comment'] }}
-                          </td>
-                        </tr>
-                    @endif  
                 </table>
               </div>
             </x-adminlte-card>
@@ -524,5 +524,29 @@
     $(document).ready(function(){
       $('[data-toggle="tooltip"]').tooltip(); // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-toggle="tooltip"
     });
+  </script>
+
+  <script>
+    function copyToClipboard(text) {
+        // Create a temporary textarea element
+        var tempTextarea = document.createElement("textarea");
+        tempTextarea.value = text;
+        
+        // Add it to the document body
+        document.body.appendChild(tempTextarea);
+        
+        // Select the text in the textarea
+        tempTextarea.select();
+        tempTextarea.setSelectionRange(0, 99999); // For mobile devices
+        
+        // Copy the text inside the textarea to clipboard
+        document.execCommand("copy");
+        
+        // Remove the temporary textarea
+        document.body.removeChild(tempTextarea);
+        
+        // Optionally, you can show a message indicating that the text has been copied
+        // alert("Lien copié dans le presse-papier !");
+    }
   </script>
 @stop

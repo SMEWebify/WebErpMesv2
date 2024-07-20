@@ -149,25 +149,26 @@
                 </tr>
                 @if($Quote->uuid)
                 <tr>
-                  <td colspan="2">
-                    <h5 class="mt-5 text-muted">{{ __('general_content.public_link_trans_key') }} </h5>
-                    <p>
-                      <input type="text" class="form-control"  value="{{ Request::root() }}/guest/quote/{{  $Quote->uuid }}">
-                    </p>
+                  <td style="width:50%">{{ __('general_content.public_link_trans_key') }}</td>
+                  <td>
+                    <button class="btn btn-info btn-sm" onclick="copyToClipboard('{{ Request::root() }}/guest/quote/{{ $Quote->uuid }}')">
+                      <i class="fas fa-copy"></i> {{ __('general_content.copy_trans_key') }} 
+                    </button>
                   </td>
                 </tr>
                 @endif
+                
                 @forelse($Quote->Orders as $Order)
                 <tr>
                     <td style="width:50%"><x-OrderButton id="{{ $Order->id }}" code="{{ $Order->code }}"  /></td>
                     <td><x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" /></td>
                 </tr>
                 @empty
-                <tr>
+                <!--<tr>
                   <td colspan="2">
                       {{ __('general_content.no_data_trans_key') }}
                   </td>
-                </tr>
+                </tr>-->
                 @endforelse
               </table>
             </x-adminlte-card>
@@ -496,18 +497,42 @@
     });
   </script>
 
-<script type="text/javascript">
-  $('.custom-file-input').on('change',function(){
-    // Obtient le nom du fichier sélectionné
-    var fileName = $(this).val().split('\\').pop(); 
-    // Sélectionne le label correspondant et met à jour son contenu
-    $(this).next('.custom-file-label').addClass("selected").html(fileName);
-  });
-</script>
+  <script type="text/javascript">
+    $('.custom-file-input').on('change',function(){
+      // Obtient le nom du fichier sélectionné
+      var fileName = $(this).val().split('\\').pop(); 
+      // Sélectionne le label correspondant et met à jour son contenu
+      $(this).next('.custom-file-label').addClass("selected").html(fileName);
+    });
+  </script>
 
-<script type="text/javascript">
-  $(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-toggle="tooltip"
-  });
-</script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip(); // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-toggle="tooltip"
+    });
+  </script>
+
+  <script>
+    function copyToClipboard(text) {
+        // Create a temporary textarea element
+        var tempTextarea = document.createElement("textarea");
+        tempTextarea.value = text;
+        
+        // Add it to the document body
+        document.body.appendChild(tempTextarea);
+        
+        // Select the text in the textarea
+        tempTextarea.select();
+        tempTextarea.setSelectionRange(0, 99999); // For mobile devices
+        
+        // Copy the text inside the textarea to clipboard
+        document.execCommand("copy");
+        
+        // Remove the temporary textarea
+        document.body.removeChild(tempTextarea);
+        
+        // Optionally, you can show a message indicating that the text has been copied
+        // alert("Lien copié dans le presse-papier !");
+    }
+  </script>
 @stop

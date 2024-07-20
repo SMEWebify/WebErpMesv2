@@ -432,7 +432,8 @@ return [
     'viewer_file_trans_key'                    => 'Viewer',
     'attached_file_trans_key'                  => 'Attached files',
     'take_photo_trans_key'                     => 'Take a picture',
-    'public_link_trans_key'                    => 'Public link',
+    'public_link_trans_key'                    => 'Public secure link',
+    'copy_trans_key'                           => 'Copy',
     'add_to_document_trans_key'                => 'Add to new document',
     'preferred_supplier_trans_key'             => 'Preferreds suppliers',
     

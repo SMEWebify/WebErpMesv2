@@ -432,7 +432,8 @@ return [
     'viewer_file_trans_key'                    => 'Visioneuse',
     'attached_file_trans_key'                  => 'Fichier(s) attaché(s)',
     'take_photo_trans_key'                     => 'Télécharger la photo',
-    'public_link_trans_key'                    => 'Lien publique',
+    'public_link_trans_key'                    => 'Lien publique sécurisé',
+    'copy_trans_key'                           => 'Copier',
     'add_to_document_trans_key'                => 'Ajouter au nouveau document',
     'preferred_supplier_trans_key'             => 'Fournisseurs préférés',
 
