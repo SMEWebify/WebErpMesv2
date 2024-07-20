@@ -47,9 +47,7 @@
                                 @if($OrderLine->product_id ) <x-ButtonTextView route="{{ route('products.show', ['id' => $OrderLine->product_id])}}" />@endif
                             </td>
                             <td>{{ $OrderLine->label }}</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm" data-toggle="tooltip" title="{{ __('general_content.delivered_trans_key') }} qty : {{ $OrderLine->delivered_qty }} <br /> Invoiced qty : {{ $OrderLine->invoiced_qty }}">{{ $OrderLine->qty }}</a>
-                            </td>
+                            <td> {{ $OrderLine->qty }}</td>
                             <td>{{ $OrderLine->Unit['label'] }}</td>
                             <td>{{ $OrderLine->selling_price }}</td>
                             <td>{{ $OrderLine->discount }}</td>
@@ -77,8 +75,9 @@
                                     @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
                                 @else
                                     @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
-                                    @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
-                                    @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif @if(4 == $OrderLine->delivery_status )  <span class="badge badge-primary">{{ __('general_content.delivered_without_dn_trans_key') }}</span>@endif
+                                    @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_delivered_trans_key') }} ({{ $OrderLine->delivered_qty }} )</span>@endif
+                                    @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }} ({{ $OrderLine->delivered_qty }} )</span>@endif
+                                    @if(4 == $OrderLine->delivery_status )  <span class="badge badge-primary">{{ __('general_content.delivered_without_dn_trans_key') }} ({{ $OrderLine->delivered_qty }} )</span>@endif
                                 @endif
                                 
                                 @if(1 != $OrderLine->delivery_status )
@@ -90,8 +89,12 @@
                                     -
                                 @else
                                     @if(1 == $OrderLine->invoice_status )  <span class="badge badge-info">{{ __('general_content.not_invoiced_trans_key') }}</span>@endif
-                                    @if(2 == $OrderLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
-                                    @if(3 == $OrderLine->invoice_status )  <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>@endif
+                                    @if(2 == $OrderLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.partly_invoiced_trans_key') }} ( {{ $OrderLine->invoiced_qty }} )</span>@endif
+                                    @if(3 == $OrderLine->invoice_status )  <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }} ( {{ $OrderLine->invoiced_qty }} )</span>@endif
+                                    
+                                    @if(1 != $OrderLine->invoice_status )
+                                        <x-adminlte-progress theme="teal" value="{{ $OrderLine->getAveragePercentProgressInvoiceAttribute() }}" with-label animated/>
+                                    @endif
                                 @endif
                             </td>
                             <td>

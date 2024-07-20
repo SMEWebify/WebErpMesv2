@@ -10,6 +10,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use App\Models\Products\SerialNumbers;
+use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
@@ -71,6 +72,11 @@ class OrderLines extends Model
     public function OrderLineDetails()
     {
         return $this->hasOne(OrderLineDetails::class, 'order_lines_id');
+    }
+
+    public function DeliveryLines()
+    {
+        return $this->hasMany(DeliveryLines::class);
     }
 
     public function QualityNonConformity()
@@ -201,6 +207,11 @@ class OrderLines extends Model
     public function getAveragePercentProgressDeleveryAttribute()
     {
         return ($this->delivered_qty / $this->qty)*100;
+    }
+
+    public function getAveragePercentProgressInvoiceAttribute()
+    {
+        return ($this->invoiced_qty / $this->qty)*100;
     }
 
     public function SubAssembly()
