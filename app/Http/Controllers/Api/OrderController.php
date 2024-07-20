@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Workflow\Orders;
-use App\Services\OrderCalculator;
+use App\Services\OrderCalculatorService;
 use App\Models\Companies\Companies;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
@@ -19,7 +19,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Orders  $id
+     * @param  \App\Models\Workflow\Orders  $id
      * @return \Illuminate\Http\Response
      */
     public function show(Orders $order)

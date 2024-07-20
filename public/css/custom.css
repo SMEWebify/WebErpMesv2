@@ -98,7 +98,7 @@
 
 .arrow-steps .step.done {
     color: #ffffff;
-    background-color: #3490dc;
+    background-color: #0e9124;
 }
 
 .arrow-steps .step.done a {
@@ -107,5 +107,5 @@
 }
 
 .arrow-steps .step.done:after {
-    border-left: 17px solid #3490dc;
+    border-left: 17px solid #0e9124;
 }

@@ -23,6 +23,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->name('guest.quote.show');
     Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->name('guest.order.show');
     Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
+    //Rating
+    Route::post('/order/ratings', 'App\Http\Controllers\Workflow\OrdersRatingController@store')->name('order.ratings.store');
 
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'check.factory'])->name('dashboard');
 
@@ -108,6 +110,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');
         Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->name('orders.update.detail.picture');
         Route::post('/{idOrder}/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.import');
+    
     });
 
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {

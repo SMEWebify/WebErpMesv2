@@ -45,6 +45,7 @@ class OrdersController extends Controller
         return view('workflow/orders-index')->with('data',$data);
     }
 
+    
     /**
      * @param $id
      * @return \Illuminate\Contracts\View\View

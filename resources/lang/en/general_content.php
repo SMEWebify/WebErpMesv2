@@ -192,6 +192,7 @@ return [
     'supplier_ref_trans_key'                   => 'Supplier ref',
     'supplier_trans_key'                       => 'Supplier',
     'supplier_rate_trans_key'                  => 'Supplier rate',
+    'order_rate_trans_key'                     => 'Order rate',
     'qty_reciept_trans_key'                    => 'Qty Receipt',
     'qty_purchase_trans_key'                   => 'Qty purchase',
     'qty_invoice_trans_key'                    => 'Qty Invoice',

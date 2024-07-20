@@ -260,6 +260,50 @@
                                 </address>
                             </div>
                         </div>
+                        <div class="card mb-4">
+                            @if($Order->Rating->isEmpty())
+                                <form action="{{ route('order.ratings.store') }}" method="POST">
+                                    @csrf
+                                    <div class="card-body">
+                                        <input type="hidden" name="orders_id" value="{{ $Order->id }}" >
+                                        <input type="hidden" name="companies_id" value="{{ $Order->companies_id }}" >
+                                        <div class="form-group">
+                                            <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
+                                            <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-star-half-alt"></i></span>
+                                            </div>
+                                            <select name="rating" id="rating" class="form-control">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <x-FormTextareaComment  comment="" />
+                                        </div>
+                                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                                    </div>
+                                </form> 
+                            @else
+                                @php
+                                    $Rating = $Order->Rating->toArray();
+                                @endphp
+                                <div class="card-body">
+                                    <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        @if ($i <= $Rating[0]['rating'])
+                                            <span class="badge badge-warning">&#9733;</span>
+                                        @else
+                                            <span class="badge badge-info">&#9734;</span>
+                                        @endif
+                                    @endfor
+                                </div>
+                            @endif  
+                        </div>
                     </div>
                 </div>
             </div>

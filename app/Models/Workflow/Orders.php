@@ -6,12 +6,12 @@ use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
-use App\Services\OrderCalculatorService;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\OrderRating;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Services\OrderCalculatorService;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
@@ -127,6 +127,12 @@ class Orders extends Model
         if($TotalCountLines <= 0 ) $TotalCountLines = 1;
 
         return $SumPercent/$TotalCountLines;
+    }
+
+    // Relationship with the Rating associated with the Purchases
+    public function Rating()
+    {
+        return $this->hasMany(OrderRating::class);
     }
 
     public function getActivitylogOptions(): LogOptions

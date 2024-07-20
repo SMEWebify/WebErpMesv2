@@ -168,6 +168,29 @@
                       </td>
                     </tr>
                     @endif
+
+                    @if($Order->Rating->isNotEmpty())
+                        @php
+                            $Rating = $Order->Rating->toArray();
+                        @endphp
+                        <tr>
+                          <td colspan="2">
+                            <label for="rating">{{ __('general_content.order_rate_trans_key') }}</label>
+                            @for ($i = 1; $i <= 5; $i++)
+                                @if ($i <= $Rating[0]['rating'])
+                                    <span class="badge badge-warning">&#9733;</span>
+                                @else
+                                    <span class="badge badge-info">&#9734;</span>
+                                @endif
+                            @endfor
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                            {{ $Rating[0]['comment'] }}
+                          </td>
+                        </tr>
+                    @endif  
                 </table>
               </div>
             </x-adminlte-card>
