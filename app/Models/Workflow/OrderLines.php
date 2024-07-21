@@ -9,6 +9,7 @@ use App\Models\Products\StockMove;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
+use App\Models\Workflow\InvoiceLines;
 use App\Models\Products\SerialNumbers;
 use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
@@ -76,7 +77,12 @@ class OrderLines extends Model
 
     public function DeliveryLines()
     {
-        return $this->hasMany(DeliveryLines::class);
+        return $this->hasMany(DeliveryLines::class, 'order_line_id');
+    }
+
+    public function InvoiceLines()
+    {
+        return $this->hasMany(InvoiceLines::class, 'order_line_id');
     }
 
     public function QualityNonConformity()
