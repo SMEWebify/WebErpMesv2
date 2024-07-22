@@ -94,6 +94,16 @@
                           <x-ButtonTextPDF route="{{ route('pdf.delivery', ['Document' => $Delivery->id])}}" />
                         </td>
                     </tr> 
+                    @if($Delivery->uuid)
+                    <tr>
+                      <td style="width:50%">{{ __('general_content.public_link_trans_key') }}</td>
+                      <td>
+                        <button class="btn btn-info btn-sm" onclick="copyToClipboard('{{ Request::root() }}/guest/delivery/{{ $Delivery->uuid }}')">
+                          <i class="fas fa-copy"></i> {{ __('general_content.copy_trans_key') }} 
+                        </button>
+                      </td>
+                    </tr>
+                    @endif
                     @if (!$allDelivered)
                     <tr>
                       <td> 
@@ -222,4 +232,27 @@
 @stop
 
 @section('js')
+  <script>
+  function copyToClipboard(text) {
+      // Create a temporary textarea element
+      var tempTextarea = document.createElement("textarea");
+      tempTextarea.value = text;
+      
+      // Add it to the document body
+      document.body.appendChild(tempTextarea);
+      
+      // Select the text in the textarea
+      tempTextarea.select();
+      tempTextarea.setSelectionRange(0, 99999); // For mobile devices
+      
+      // Copy the text inside the textarea to clipboard
+      document.execCommand("copy");
+      
+      // Remove the temporary textarea
+      document.body.removeChild(tempTextarea);
+      
+      // Optionally, you can show a message indicating that the text has been copied
+      // alert("Lien copié dans le presse-papier !");
+  }
+</script>
 @stop

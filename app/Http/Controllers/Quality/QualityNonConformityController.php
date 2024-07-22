@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Quality;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
+use App\Models\Workflow\OrderLines;
 use App\Models\Quality\QualityNonConformity;
 use App\Http\Requests\Quality\StoreQualityNonConformityRequest;
 use App\Http\Requests\Quality\UpdateQualityNonConformityRequest;
+use App\Models\Workflow\DeliveryLines;
 
 class QualityNonConformityController extends Controller
 {
@@ -69,6 +70,23 @@ class QualityNonConformityController extends Controller
                                                                 'correction_comment',   
                                                                 'companie_id'));
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
+    }
+
+    public function createNCFromDelivery($id){
+        $DeliveryLine = DeliveryLines::find($id);
+        $NewNonConformity = QualityNonConformity::create([
+            'code'=> "NC-OR-#". $DeliveryLine->OrderLine->orders_id,
+            'label'=>"NC-L-#". $DeliveryLine->OrderLine->id,
+            'statu'=>1,
+            'type'=>2,
+            'user_id'=>$DeliveryLine->delivery->user_id,
+            'companie_id'=>$DeliveryLine->delivery->companies_id,
+            'order_lines_id'=>$DeliveryLine->OrderLine->id,
+            'deliverys_id'=>$DeliveryLine->deliverys_id,
+            'delivery_line_id'=>$id,
+        ]);
+
+        return redirect()->back()->with('success', 'Successfully created non conformitie.');
     }
 
     /**

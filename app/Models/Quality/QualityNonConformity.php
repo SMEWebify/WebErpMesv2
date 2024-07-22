@@ -4,16 +4,18 @@ namespace App\Models\Quality;
 
 use App\Models\File;
 use App\Models\User;
+use App\Models\Planning\Task;
+use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Models\Quality\QualityCause;
 use App\Models\Quality\QualityAction;
 use App\Models\Quality\QualityFailure;
+use App\Models\Workflow\DeliveryLines;
 use App\Models\Methods\MethodsServices;
-use App\Models\Planning\Task;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Quality\QualityCorrection;
 use App\Models\Quality\QualityDerogation;
-use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QualityNonConformity extends Model
@@ -34,9 +36,12 @@ class QualityNonConformity extends Model
                         'correction_comment', 
                         'causes_comment',  
                         'companie_id',  
-                        'order_lines_id',  
+                        'order_lines_id', 
+                        'deliverys_id',
+                        'delivery_line_id', 
                         'task_id',
-                        'qty'];
+                        'qty',
+                        'resolution_date'];
 
     public function service()
     {
@@ -81,6 +86,16 @@ class QualityNonConformity extends Model
     public function orderLine()
     {
         return $this->belongsTo(OrderLines::class, 'order_lines_id');
+    }
+
+    public function delivery()
+    {
+        return $this->belongsTo(Deliverys::class, 'deliverys_id');
+    }
+
+    public function DeliveryLines()
+    {
+        return $this->belongsTo(DeliveryLines::class, 'delivery_line_id');
     }
 
     public function task()

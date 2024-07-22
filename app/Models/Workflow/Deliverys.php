@@ -13,13 +13,15 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Deliverys extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['code', 
+    protected $fillable = ['uuid',
+                            'code', 
                             'label', 
                             'companies_id', 
                             'companies_contacts_id',   
@@ -70,6 +72,11 @@ class Deliverys extends Model
     public function photos()
     {
         return $this->hasMany(File::class)->where('as_photo', 1);
+    }
+
+    public function QualityNonConformity()
+    {
+        return $this->hasMany(QualityNonConformity::class);
     }
 
     public function GetshortCreatedAttribute()

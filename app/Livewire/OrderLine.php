@@ -423,7 +423,7 @@ class OrderLine extends Component
             'order_lines_id'=>$id,
         ]);
 
-        return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
+        return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
 
     
@@ -454,6 +454,7 @@ class OrderLine extends Component
 
              // Create delivery note
             $DeliveryCreated = Deliverys::create([
+                'uuid'=> Str::uuid(),
                 'code'=>$deliveryCode,  
                 'label'=>$deliveryCode,
                 'companies_id'=>$OrderData->companies_id,   

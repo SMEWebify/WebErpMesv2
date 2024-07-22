@@ -56,9 +56,6 @@ class DeliverysController extends Controller
      */
     public function show(Deliverys $id)
     {
-        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Deliverys(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'delivery')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
@@ -74,9 +71,6 @@ class DeliverysController extends Controller
 
         return view('workflow/deliverys-show', [
             'Delivery' => $id,
-            'CompanieSelect' => $CompanieSelect,
-            'AddressSelect' => $AddressSelect,
-            'ContactSelect' => $ContactSelect,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'CustomFields' => $CustomFields,

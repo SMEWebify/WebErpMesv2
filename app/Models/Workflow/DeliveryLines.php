@@ -6,6 +6,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Workflow\InvoiceLines;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DeliveryLines extends Model
@@ -31,6 +32,11 @@ class DeliveryLines extends Model
     public function InvoiceLines()
     {
         return $this->belongsTo(InvoiceLines::class, 'delivery_line_id');
+    }
+
+    public function QualityNonConformity()
+    {
+        return $this->hasOne(QualityNonConformity::class, 'delivery_line_id');
     }
 
     public function GetPrettyCreatedAttribute()

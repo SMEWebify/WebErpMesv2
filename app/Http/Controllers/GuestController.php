@@ -9,6 +9,7 @@ use App\Services\OrderCalculatorService;
 use App\Services\QuoteCalculatorService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Workflow\Deliverys;
 use League\CommonMark\Extension\SmartPunct\Quote;
 
 class GuestController extends Controller
@@ -94,6 +95,21 @@ class GuestController extends Controller
             'TotalServiceSettingTime'=> $TotalServiceSettingTime,
             'TotalServiceCost'=> $TotalServiceCost,
             'TotalServicePrice'=> $TotalServicePrice,
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function ShowDeliveryDocument($uuid)
+    {
+        $Delivery = Deliverys::where('uuid', $uuid)->first();
+        if(empty($Delivery)){
+            return view('guest/guest');
+        }
+        
+        return view('guest/guest-delivery-info', [
+            'Delivery' => $Delivery,
         ]);
     }
 }

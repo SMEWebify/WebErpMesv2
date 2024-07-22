@@ -22,6 +22,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->name('guest.quote.show');
     Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->name('guest.order.show');
+    Route::get('/guest/delivery/{uuid}', 'App\Http\Controllers\GuestController@ShowDeliveryDocument')->name('guest.delivery.show');
+    Route::get('/guest/nonConformitie/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
     Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
     //Rating
     Route::post('/order/ratings', 'App\Http\Controllers\Workflow\OrdersRatingController@store')->name('order.ratings.store');

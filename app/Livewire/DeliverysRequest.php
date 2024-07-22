@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
-use App\Models\Workflow\Orders;
 use App\Events\OrderLineUpdated;
 use App\Models\Products\StockMove;
 use App\Models\Workflow\Deliverys;
@@ -141,6 +140,7 @@ class DeliverysRequest extends Component
         if($i>0){
             // Create delivery note
             $DeliveryCreated = Deliverys::create([
+                                                'uuid'=> Str::uuid(),
                                                 'code'=>$this->code,  
                                                 'label'=>$this->label, 
                                                 'companies_id'=>$this->companies_id,   

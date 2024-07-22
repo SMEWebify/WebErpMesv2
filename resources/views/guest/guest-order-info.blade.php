@@ -36,7 +36,6 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))
         <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
@@ -62,6 +61,10 @@
 
 </head>
     <body>
+        
+        <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
         <style>
             body{
                 background:#eee;
@@ -146,9 +149,28 @@
                                             <td>{{ $DocumentLine->VAT['rate'] }} %</td>
                                             <td>
                                                 @if(1 == $DocumentLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
-                                                @if(2 == $DocumentLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
-                                                @if(3 == $DocumentLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
-                                            </td>
+                                                @if(2 == $DocumentLine->delivery_status )  
+                                                <a href="#" data-toggle="modal" data-target="#modalDeliveryFor{{ $DocumentLine->id }}"><span class="badge badge-warning">{{ __('general_content.partly_delivered_trans_key') }} ({{ $DocumentLine->delivered_qty }} )</span></a>
+                                                @endif
+                                                @if(3 == $DocumentLine->delivery_status )  
+                                                <a href="#" data-toggle="modal" data-target="#modalDeliveryFor{{ $DocumentLine->id }}"><span class="badge badge-success">{{ __('general_content.delivered_trans_key') }} ({{ $DocumentLine->delivered_qty }} )</span></a>
+                                                @endif
+                                                @if(4 == $DocumentLine->delivery_status )  <span class="badge badge-primary" >{{ __('general_content.delivered_without_dn_trans_key') }} ({{ $DocumentLine->delivered_qty }} )</span>@endif
+                                            
+                                                {{-- Modal for delivery detail --}}
+                                                <x-adminlte-modal id="modalDeliveryFor{{ $DocumentLine->id }}" title="{{__('general_content.deliverys_notes_list_trans_key') }}" theme="info"
+                                                    icon="fas fa-bolt" size='lg' disable-animations>
+                                                    <ul>
+                                                        @foreach($DocumentLine->DeliveryLines as $deliveryLine)
+                                                            <li>
+                                                                {{ __('general_content.delivery_notes_trans_key') }}: {{ $deliveryLine->delivery->code }} <br>
+                                                                {{ __('general_content.qty_trans_key') }} : {{ $deliveryLine->qty }} <br>
+                                                                {{__('general_content.created_at_trans_key') }} : {{ $deliveryLine->GetPrettyCreatedAttribute() }} <br>
+                                                                <x-ButtonTextView route="{{ route('guest.delivery.show', ['uuid' => $deliveryLine->delivery->uuid])}}" />
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </x-adminlte-modal></td>
                                             <td>
                                                 @if(1 == $DocumentLine->invoice_status )  <span class="badge badge-info">{{ __('general_content.not_invoiced_trans_key') }}</span>@endif
                                                 @if(2 == $DocumentLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
