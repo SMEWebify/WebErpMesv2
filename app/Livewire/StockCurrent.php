@@ -22,8 +22,6 @@ class StockCurrent extends Component
 {
 
     public $produitsAvecStock = [];
-    public $stockAndNeed = true;
-
     public $Factory = [];
     
     public function mount()
