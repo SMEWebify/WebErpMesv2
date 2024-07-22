@@ -18,7 +18,7 @@
         "php": "^8.1.0",
         "ext-zip": "*",
         "barryvdh/laravel-dompdf": "2.0.1",
-        "fruitcake/laravel-cors": "dev-develop",
+        "doctrine/dbal": "^3.8",
         "fruitcake/php-cors": "^1.2",
         "guzzlehttp/guzzle": "^7.0.1",
         "horstoeko/zugferd": "^1",
