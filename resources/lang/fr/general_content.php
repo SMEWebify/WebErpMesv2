@@ -652,6 +652,7 @@ return [
     //LOAD PLANNING
     'load_planning_trans_key'                  => 'Planning de charge',
     'load_planning_info_1_trans_key'           => 'Actuellement, la charge journalière est bloquée à 16 heures.',
+    'display_hours_diff_trans_key'             => 'Différence de temps',
 
     //WORKFLOW
     'workflow_trans_key'                       => 'Workflow',

@@ -43,6 +43,14 @@
           <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
           <input type="date" class="form-control" name="end_date"  id="end_date" required value="{{ $endDate ?? '' }}">
         </div>
+        <div class="form-group col-4">
+          <label for="display_hours_diff">{{ __('general_content.display_hours_diff_trans_key') }}</label>
+          @if($displayHoursDiff)  
+          <x-adminlte-input-switch name="display_hours_diff" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked />
+          @else
+          <x-adminlte-input-switch name="display_hours_diff" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+          @endif
+        </div>
         <div class="form-group col-2">
           <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
         </div>
@@ -64,7 +72,7 @@
           </tr>
         </thead>
         <tbody>
-        @foreach ($services as $service)
+          @foreach ($services as $service)
             <tr>
               <td>
                 @if($service->picture )
@@ -86,20 +94,43 @@
                               }
                           }
                           $tooltipContent = implode(', ', $tachesComposees);
-                      @endphp
-                          @if($structureRateLoad[$singleDay][$service->id] >= 100) style="background-color:#ff2f00; " 
-                          @elseif ($structureRateLoad[$singleDay][$service->id] >= 80) style="background-color: #d6300b ; " 
-                          @elseif ($structureRateLoad[$singleDay][$service->id] >= 50) style="background-color: #db7814 ; " 
-                          @elseif ($structureRateLoad[$singleDay][$service->id] >= 20) style="background-color: #d2e010 ; " 
-                          @else style="background-color: #35ba23 ; " 
+                        @endphp
+                          @if ($displayHoursDiff)
+                              @if(round(16 - ($structureRateLoad[$singleDay][$service->id] / 100) * 16, 2) <= 0) style="background-color:#35ba23; " 
+                              @elseif (round(16 - ($structureRateLoad[$singleDay][$service->id] / 100) * 16, 2) <= 4) style="background-color: #d2e010 ; " 
+                              @elseif (round(16 - ($structureRateLoad[$singleDay][$service->id] / 100) * 16, 2) <= 8) style="background-color: #db7814 ; " 
+                              @elseif (round(16 - ($structureRateLoad[$singleDay][$service->id] / 100) * 16, 2) <= 12) style="background-color: #d6300b ; " 
+                              @else style="background-color: #ff2f00 ; " 
+                              @endif
+                              title="{{ $tooltipContent }}">
+                              @if( round(16 - ($structureRateLoad[$singleDay][$service->id] / 100) * 16, 2) <= 0)
+                                +  {{ round(($structureRateLoad[$singleDay][$service->id] / 100) * 16 - 16, 2) }} h
+                              @else
+                              - {{ round(16 - ($structureRateLoad[$singleDay][$service->id] / 100) * 16, 2) }} h
+                              @endif
+                          @else
+                              @if($structureRateLoad[$singleDay][$service->id] >= 100) style="background-color:#ff2f00; " 
+                              @elseif ($structureRateLoad[$singleDay][$service->id] >= 80) style="background-color: #d6300b ; " 
+                              @elseif ($structureRateLoad[$singleDay][$service->id] >= 50) style="background-color: #db7814 ; " 
+                              @elseif ($structureRateLoad[$singleDay][$service->id] >= 20) style="background-color: #d2e010 ; " 
+                              @else style="background-color: #35ba23 ; " 
+                              @endif
+                              title="{{ $tooltipContent }}">
+                              {{ $structureRateLoad[$singleDay][$service->id] . '%' }}
                           @endif
-                          title="{{ $tooltipContent }}">{{ $structureRateLoad[$singleDay][$service->id] . '%' }}</td>
+
+                        </td>
                     @else
-                        <td style="{{ date('N', strtotime($singleDay)) >= 6 ? 'background-color:#bff0ff;' :'' }}">N/A</td>
+                      @if($displayHoursDiff)
+                          <td style="background-color: #ff2f00 ; " >-16 h
+                      @else
+                          <td style="{{ date('N', strtotime($singleDay)) >= 6 ? 'background-color:#bff0ff;' :'' }}">N/A
+                      @endif
+                      </td>
                     @endif
                 @endforeach
             </tr>
-        @endforeach
+          @endforeach
         </tbody>
       </table>
     </div>

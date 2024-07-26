@@ -652,6 +652,8 @@ return [
     //LOAD PLANNING
     'load_planning_trans_key'                  => 'Load planning',
     'load_planning_info_1_trans_key'           => 'Currently the charge per day is stuck at 16 hours',
+    'display_hours_diff_trans_key'             => 'Time difference',
+    
 
     //WORKFLOW
     'workflow_trans_key'                       => 'Workflow',

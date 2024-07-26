@@ -17,6 +17,9 @@ class PlanningController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d')); // Default, 1 month from today
 
+         // Retrieve the state of the display_hours_diff checkbox
+        $displayHoursDiff = $request->input('display_hours_diff', false);
+
         // Check that the start date is not greater than the end date
         if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
             return redirect()->route('production.load.planning')->withErrors(['The start date must be before or equal to the end date.']);
@@ -139,6 +142,7 @@ class PlanningController extends Controller
         }
 
         
-        return view('workflow/planning-index', compact('taches', 'countTaskNullRessource', 'countTaskNullDate', 'tasksPerServiceDay', 'structureRateLoad', 'services', 'possibleDates', 'startDate', 'endDate'));
+        return view('workflow/planning-index', compact('taches', 'countTaskNullRessource', 'countTaskNullDate', 'tasksPerServiceDay', 'structureRateLoad', 'services', 'possibleDates', 'startDate', 'endDate', 'displayHoursDiff'));
+    
     }
 }
