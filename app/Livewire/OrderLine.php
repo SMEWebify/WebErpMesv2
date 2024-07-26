@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
@@ -27,7 +28,9 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Quality\QualityNonConformity;
+use Illuminate\Support\Facades\Notification;
 use App\Models\Products\StockLocationProducts;
+use App\Notifications\NonConformityNotification;
 
 class OrderLine extends Component
 {
@@ -422,7 +425,8 @@ class OrderLine extends Component
             'companie_id'=>$companie_id,
             'order_lines_id'=>$id,
         ]);
-
+        $users = User::where('non_conformity_notification', 1)->get();
+        Notification::send($users, new NonConformityNotification($NewNonConformity));
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
 

@@ -99,6 +99,16 @@
                                         @endif
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.new_non_conformitie_trans_key') }}</label></div>
+                                    <div class="col-8">
+                                        @if($UserProfil->non_conformity_notification == 1)  
+                                        <x-adminlte-input-switch name="non_conformity_notification" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                                        @else
+                                        <x-adminlte-input-switch name="non_conformity_notification" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                        @endif
+                                    </div>
+                                </div>
                                 <x-slot name="footerSlot">
                                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                 </x-slot>

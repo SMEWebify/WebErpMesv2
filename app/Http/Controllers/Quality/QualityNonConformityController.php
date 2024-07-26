@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Quality;
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
-use App\Services\SelectDataService;
 use App\Models\Workflow\OrderLines;
+use App\Services\SelectDataService;
+use App\Models\Workflow\DeliveryLines;
 use App\Models\Quality\QualityNonConformity;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NonConformityNotification;
 use App\Http\Requests\Quality\StoreQualityNonConformityRequest;
 use App\Http\Requests\Quality\UpdateQualityNonConformityRequest;
-use App\Models\Workflow\DeliveryLines;
 
 class QualityNonConformityController extends Controller
 {
@@ -69,6 +72,10 @@ class QualityNonConformityController extends Controller
                                                                 'correction_id',  
                                                                 'correction_comment',   
                                                                 'companie_id'));
+                                                                
+        // notification for all user in database
+        $users = User::where('non_conformity_notification', 1)->get();
+        Notification::send($users, new NonConformityNotification($NonConformity));
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
 
@@ -86,6 +93,9 @@ class QualityNonConformityController extends Controller
             'delivery_line_id'=>$id,
         ]);
 
+        // notification for all user in database
+        $users = User::where('non_conformity_notification', 1)->get();
+        Notification::send($users, new NonConformityNotification($NewNonConformity));
         return redirect()->back()->with('success', 'Successfully created non conformitie.');
     }
 

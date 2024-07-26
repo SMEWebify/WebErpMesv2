@@ -21,6 +21,7 @@ class NotificationLine extends Component
             if($notification->type == 'App\Notifications\QuoteNotification') $type = 'fas fa-calculator';
             if($notification->type == 'App\Notifications\OrderNotification') $type = 'fas fa-shopping-cart';
             if($notification->type == 'App\Notifications\CompanieNotification') $type = 'far fa-building';
+            if($notification->type == 'App\Notifications\NonConformityNotification') $type = 'fas fa-exclamation';
             
             $NotificaitonId = $notification->id;
             $id = $notification->data['id'];

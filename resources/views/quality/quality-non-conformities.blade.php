@@ -25,6 +25,7 @@
                 <th>{{__('general_content.customer_trans_key') }}</th>
                 <th>{{__('general_content.order_trans_key') }}</th>
                 <th>{{__('general_content.task_trans_key') }}</th>
+                <th>{{__('general_content.delivery_notes_trans_key') }}</th>
                 <th>{{__('general_content.created_at_trans_key') }}</th>
                 <th>{{__('general_content.action_trans_key') }}</th>
             </tr>
@@ -62,6 +63,13 @@
                 <td>
                   @if($QualityNonConformity->task_id)
                   <a href="{{ route('production.task.statu.id', ['id' => $QualityNonConformity->task_id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                  @else
+                  N/A
+                  @endif
+                </td>
+                <td>
+                  @if($QualityNonConformity->deliverys_id)
+                  <a href="{{ route('deliverys.show', ['id' => $QualityNonConformity->deliverys_id]) }}" class="btn btn-sm btn-primary">{{ $QualityNonConformity->delivery['code'] }}</a>
                   @else
                   N/A
                   @endif
@@ -279,6 +287,7 @@
                 <th>{{__('general_content.customer_trans_key') }}</th>
                 <th>{{__('general_content.order_trans_key') }}</th>
                 <th>{{__('general_content.task_trans_key') }}</th>
+                <th>{{__('general_content.delivery_notes_trans_key') }}</th>
                 <th>{{__('general_content.created_at_trans_key') }}</th>
                 <th>{{__('general_content.action_trans_key') }}</th>
               </tr>

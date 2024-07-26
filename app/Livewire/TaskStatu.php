@@ -14,7 +14,9 @@ use App\Models\Products\StockMove;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Planning\TaskActivities;
 use App\Models\Quality\QualityNonConformity;
+use Illuminate\Support\Facades\Notification;
 use App\Models\Products\StockLocationProducts;
+use App\Notifications\NonConformityNotification;
 
 class TaskStatu extends Component
 {
@@ -391,8 +393,10 @@ class TaskStatu extends Component
             'companie_id'=>$companie_id,
             'task_id'=>$id,
         ]);
-
-    return redirect()->route('quality')->with('success', 'Successfully created non conformitie.');
+        // notification for all user in database
+        $users = User::where('non_conformity_notification', 1)->get();
+        Notification::send($users, new NonConformityNotification($NewNonConformity));
+        return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
 
     public function goToTask($taskId) 
