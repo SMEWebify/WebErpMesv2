@@ -7,9 +7,6 @@ use App\Repositories\Tax;
 
 class OrderCalculatorService
 {
-    /**
-     * @var Order
-     */
     private $order;
 
     public $TotalPrice;

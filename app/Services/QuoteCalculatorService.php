@@ -7,9 +7,6 @@ use App\Repositories\Tax;
 
 class QuoteCalculatorService
 {
-    /**
-     * @var Quote
-     */
     private $quote;
 
     public $TotalPrice;

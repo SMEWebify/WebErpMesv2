@@ -185,13 +185,10 @@ class InvoicesController extends Controller
      */
     public function show(Invoices $id)
     {
-        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->get();
-        $OrderCalculatorService = new InvoiceCalculatorService($id);
-        $totalPrice = $OrderCalculatorService->getTotalPrice();
-        $subPrice = $OrderCalculatorService->getSubTotal();
-        $vatPrice = $OrderCalculatorService->getVatTotal();
+        $InvoiceCalculatorService = new InvoiceCalculatorService($id);
+        $totalPrice = $InvoiceCalculatorService->getTotalPrice();
+        $subPrice = $InvoiceCalculatorService->getSubTotal();
+        $vatPrice = $InvoiceCalculatorService->getVatTotal();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Invoices(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'invoice')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
@@ -204,9 +201,6 @@ class InvoicesController extends Controller
 
         return view('workflow/invoices-show', [
             'Invoice' => $id,
-            'CompanieSelect' => $CompanieSelect,
-            'AddressSelect' => $AddressSelect,
-            'ContactSelect' => $ContactSelect,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,

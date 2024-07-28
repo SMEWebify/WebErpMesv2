@@ -7,21 +7,22 @@ use PDF;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
-use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
-use App\Services\OrderCalculatorService;
-use App\Services\QuoteCalculatorService;
 use App\Models\Workflow\Deliverys;
 use App\Models\Purchases\Purchases;
+use App\Models\Workflow\CreditNotes;
+use horstoeko\zugferd\ZugferdProfiles;
+use App\Services\OrderCalculatorService;
+use App\Services\QuoteCalculatorService;
+
+use App\Models\Purchases\PurchaseReceipt;
 use App\Services\InvoiceCalculatorService;
 use App\Services\PurchaseCalculatorService;
-
-use horstoeko\zugferd\ZugferdProfiles;
-use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Quality\QualityNonConformity;
-use horstoeko\zugferd\ZugferdDocumentBuilder;
+use App\Services\CreditNoteCalculatorService;
 
+use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
 use horstoeko\zugferd\codelists\ZugferdPaymentMeans;
 use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
@@ -332,7 +333,23 @@ class PrintController extends Controller
             $zugferdpdf->saveDocument(public_path('pdf\invoices') . '\\'. $typeDocumentName .'-'. $Document->id .'.pdf');
             return response()->file(public_path('pdf\invoices') . '\\'. $typeDocumentName .'-'. $Document->id .'.pdf');
     }
+
+
     
+    public function getCreditNotePdf(CreditNotes $Document)
+    {
+        $typeDocumentName = __('general_content.credit_note_trans_key');
+        $CreditNoteCalculatorService = new CreditNoteCalculatorService($Document);
+        $Factory = Factory::first();
+        $totalPrices = $CreditNoteCalculatorService->getTotalPrice();
+        $subPrice = $CreditNoteCalculatorService->getSubTotal();
+        $vatPrice = $CreditNoteCalculatorService->getVatTotal();
+        $Document->Lines = $Document->creditNotelines;
+        unset($Document->creditNotelines);
+        $image= $Factory->getImageFactoryPath();;
+        $pdf = PDF::loadView('print/pdf-credit-note', compact('typeDocumentName','Document', 'Factory','image','totalPrices','subPrice','vatPrice','image'));
+        return $pdf->stream();
+    }
     
     
     /**

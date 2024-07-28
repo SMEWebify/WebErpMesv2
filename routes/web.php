@@ -134,7 +134,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\CreditNoteController@index')->name('credit-notes');
         Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice'); 
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@show')->name('credit-notes.show');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@show')->name('credit.notes.show');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@update')->name('credit.notes.update');
     });
 
     Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
@@ -172,7 +173,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->name('pdf.order');
         Route::get('/order/Confirm/{Document}', 'App\Http\Controllers\PrintController@getOrderConfirmPdf')->name('pdf.orders.confirm');
         Route::get('/delivery/{Document}', 'App\Http\Controllers\PrintController@getDeliveryPdf')->name('pdf.delivery');
-        Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@getInvoicePdf')->name('pdf.invoice');
+        Route::get('/invoice/{Document}', 'App\Http\Controllers\PrintController@getInvoicePdf')->name('pdf.invoice');;
+        Route::get('/credit-note/{Document}', 'App\Http\Controllers\PrintController@getCreditNotePdf')->name('pdf.credit.note');
         Route::get('/facture-x/{Document}', 'App\Http\Controllers\PrintController@getInvoiceFactureX')->name('pdf.facturex');
         Route::get('/purchase/quotation/{Document}', 'App\Http\Controllers\PrintController@getPurchaseQuotationPdf')->name('pdf.purchase.quotation');
         Route::get('/purchase/{Document}', 'App\Http\Controllers\PrintController@getPurchasePdf')->name('pdf.purchase');
