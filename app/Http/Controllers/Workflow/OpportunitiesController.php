@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use App\Events\QuoteCreated;
 use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
@@ -303,8 +304,8 @@ class OpportunitiesController extends Controller
         //change opp statu
         Opportunities::where('id', $id->id)->update(['statu'=>2]);
 
-        //change statu companie
-        Companies::where('id', $id->companies_id)->update(['statu_customer'=>2]);
+        // Trigger the event
+        event(new QuoteCreated($QuotesCreated));
         return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
     }
 }

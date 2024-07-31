@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use App\Events\OrderCreated;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
@@ -384,7 +385,8 @@ class QuoteLine extends Component
             $users = User::where('orders_notification', 1)->get();
             Notification::send($users, new OrderNotification($OrdersCreated));
 
-            Companies::where('id', $QuoteData->companies_id)->update(['statu_customer'=>3]);
+           // Trigger the event
+            event(new OrderCreated($OrdersCreated));
 
             if($OrdersCreated){
                 // Create lines

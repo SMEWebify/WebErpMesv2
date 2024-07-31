@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use App\Events\QuoteCreated;
 use Livewire\WithPagination;
 use App\Models\Workflow\Quotes;
 use App\Models\Companies\Companies;
@@ -165,8 +166,8 @@ class QuotesIndex extends Component
             $users = User::where('quotes_notification', 1)->get();
             Notification::send($users, new QuoteNotification($QuotesCreated));
 
-            //change statu companie
-            Companies::where('id', $this->companies_id)->update(['statu_customer'=>2]);
+            // Trigger the event
+            event(new QuoteCreated($QuotesCreated));
             return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
     }
 
@@ -212,8 +213,9 @@ class QuotesIndex extends Component
                                     'mobile'=>$this->CustomerMobile,    
                                     'mail'=>$this->CustomerContactMail, 
                         ]); 
-     // Set Flash Message
-    session()->flash('success','Line added Successfully');
-}
+
+        // Set Flash Message
+        session()->flash('success','Line added Successfully');
+    }
 }
 

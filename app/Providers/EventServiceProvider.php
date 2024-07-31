@@ -2,16 +2,20 @@
 
 namespace App\Providers;
 
+use App\Events\OrderCreated;
+use App\Events\QuoteCreated;
 use App\Events\TaskChangeStatu;
 use App\Events\OrderLineUpdated;
 use App\Events\QuoteStatusChanged;
 use App\Events\DeliveryLineUpdated;
 use Illuminate\Support\Facades\Event;
+use App\Listeners\UpdateCompanyStatus;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\UpdateDeliveryStatus;
 use App\Listeners\UpdateOpportunityStatus;
 use App\Listeners\CheckOrderLineTaskStatus;
 use App\Listeners\CheckOrderDeliveredStatus;
+use App\Listeners\UpdateCompanyStatusForOrder;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -36,8 +40,14 @@ class EventServiceProvider extends ServiceProvider
             CheckOrderLineTaskStatus::class,
         ],
         QuoteStatusChanged::class => [
-        UpdateOpportunityStatus::class,
-    ],
+            UpdateOpportunityStatus::class,
+        ],
+        QuoteCreated::class => [
+            UpdateCompanyStatus::class,
+        ],
+        OrderCreated::class => [
+            UpdateCompanyStatusForOrder::class,
+        ],
     ];
 
     /**
