@@ -15,7 +15,11 @@ class ToolsController extends Controller
      */
     public function store(StoreToolRequest $request)
     {
-        $Tool =  MethodsTools::create($request->only('code','label', 'ETAT','cost', 'end_date','comment', 'qty'));
+        $Tool =  MethodsTools::create($request->only('code','label', 'cost', 'end_date','comment', 'qty'));
+
+        if($request->ETAT) $Tool->ETAT=1;
+        else $Tool->ETAT = 2;
+        $Tool->save();
 
         if($request->hasFile('picture')){
             $Tool = MethodsTools::findOrFail($Tool->id);
@@ -40,7 +44,10 @@ class ToolsController extends Controller
     {
         $Tool = MethodsTools::find($request->id);
         $Tool->label=$request->label;
-        $Tool->ETAT=$request->ETAT;
+
+        if($request->etat_update) $Tool->ETAT=1;
+        else $Tool->ETAT = 2;
+
         $Tool->cost=$request->cost;
         $Tool->end_date=$request->end_date;
         $Tool->qty=$request->qty;

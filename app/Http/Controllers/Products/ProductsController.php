@@ -231,9 +231,11 @@ class ProductsController extends Controller
         $Product->ind=$request->ind;
         $Product->methods_services_id = $request->methods_services_id; 
         $Product->methods_families_id = $request->methods_families_id; 
-        $Product->purchased = $request->purchased; 
+        if($request->purchased) $Product->purchased=1;
+        else $Product->purchased = 2;
         $Product->purchased_price = $request->purchased_price; 
-        $Product->sold = $request->sold; 
+        if($request->sold) $Product->sold=1;
+        else $Product->sold = 2;
         $Product->selling_price = $request->selling_price; 
         $Product->methods_units_id = $request->methods_units_id; 
         $Product->material = $request->material; 

@@ -62,7 +62,6 @@ class QualityNonConformityController extends Controller
         $NonConformity =  QualityNonConformity::create($request->only('code',
                                                                 'label', 
                                                                 'statu',
-                                                                'type', 
                                                                 'user_id',
                                                                 'service_id',  
                                                                 'failure_id',  
@@ -72,6 +71,10 @@ class QualityNonConformityController extends Controller
                                                                 'correction_id',  
                                                                 'correction_comment',   
                                                                 'companie_id'));
+
+        if($request->type) $NonConformity->type=1;
+        else $NonConformity->type = 2;
+        $NonConformity->save(); 
                                                                 
         // notification for all user in database
         $users = User::where('non_conformity_notification', 1)->get();
@@ -108,7 +111,10 @@ class QualityNonConformityController extends Controller
         $QualityNonConformity = QualityNonConformity::find($request->id);
         $QualityNonConformity->label=$request->label;
         $QualityNonConformity->statu=$request->statu;
-        $QualityNonConformity->type=$request->type;
+        
+        if($request->type_update) $QualityNonConformity->type=1;
+        else $QualityNonConformity->type = 2;
+
         $QualityNonConformity->user_id=$request->user_id;
         $QualityNonConformity->service_id=$request->service_id;
         $QualityNonConformity->failure_id=$request->failure_id;

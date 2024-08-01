@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use App\Events\OrderCreated;
 use Livewire\WithPagination;
 use App\Models\Workflow\Orders;
 use App\Models\Companies\Companies;
@@ -214,9 +215,9 @@ class OrdersIndex extends Component
         $users = User::where('orders_notification', 1)->get();
         Notification::send($users, new OrderNotification($OrdersCreated));
 
-        if($this->type == 1){
-            //change statu companie
-            Companies::where('id', $this->companies_id)->update(['statu_customer'=>3]);
+        if($this->type == false){
+            // Trigger the event
+            event(new OrderCreated($OrdersCreated));
         }
 
         return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');

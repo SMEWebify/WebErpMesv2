@@ -16,7 +16,14 @@ class RessourcesController extends Controller
      */
     public function store(StoreRessourceRequest $request)
     {
-        $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label','mask_time', 'capacity','section_id', 'color', 'methods_services_id'));
+        
+
+        $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label', 'capacity','section_id', 'color', 'methods_services_id'));
+        
+        if($request->mask_time) $Ressource->mask_time=1;
+        else $Ressource->mask_time = 2;
+        $Ressource->save();
+
         if($request->hasFile('picture')){
             $Ressource = MethodsRessources::findOrFail($Ressource->id);
             $file =  $request->file('picture');
@@ -40,7 +47,10 @@ class RessourcesController extends Controller
         $Ressource = MethodsRessources::find($request->id);
         $Ressource->ordre=$request->ordre;
         $Ressource->label=$request->label;
-        $Ressource->mask_time=$request->mask_time;
+
+        if($request->mask_time_update) $Ressource->mask_time=1;
+        else $Ressource->mask_time = 2;
+
         $Ressource->capacity=$request->capacity;
         $Ressource->section_id=$request->section_id;
         $Ressource->color=$request->color;

@@ -16,7 +16,11 @@ class MachineEventController extends Controller
      */
     public function store(StoreMachineEventRequest $request)
     {
-        $TimesMachineEvent = TimesMachineEvent::create($request->only('code', 'ordre', 'label', 'mask_time', 'color', 'etat'));
+        $TimesMachineEvent = TimesMachineEvent::create($request->only('code', 'ordre', 'label', 'color', 'etat'));
+        if($request->mask_time) $TimesMachineEvent->mask_time=1;
+        else $TimesMachineEvent->mask_time = 2;
+        $TimesMachineEvent->save();
+
         return redirect()->route('times')->with('success', 'Successfully created machine event type.');
     }
 
@@ -29,7 +33,10 @@ class MachineEventController extends Controller
         $MachineEvent = TimesMachineEvent::find($request->id);
         $MachineEvent->ordre=$request->ordre;
         $MachineEvent ->label=$request->label;
-        $MachineEvent->mask_time=$request->mask_time;
+
+        if($request->mask_time_event_update) $MachineEvent->mask_time=1;
+        else $MachineEvent->mask_time = 2;
+
         $MachineEvent->color=$request->color;
         $MachineEvent->etat=$request->etat;
         $MachineEvent->save();

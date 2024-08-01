@@ -23,8 +23,8 @@
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
                                         <input type="text" class="form-control" wire:model.live="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
-                                        @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                     </div>
+                                    @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="label">{{ __('general_content.name_order_trans_key') }}</label>

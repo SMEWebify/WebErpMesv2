@@ -109,15 +109,13 @@
                             </div>
                           </div>
                           <div class="form-group">
-                            <label for="type">{{ __('general_content.type_trans_key') }}</label>
-                            <div class="input-group">
-                              <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                              </div>
-                              <select class="form-control" name="type" id="type">
-                                <option value="1" @if($QualityDerogation->type == 1  ) Selected @endif>{{ __('general_content.internal_trans_key') }}</option>
-                                <option value="2" @if($QualityDerogation->type == 2  ) Selected @endif>{{ __('general_content.external_trans_key') }}</option>
-                              </select>
+                            <div class="col-4 text-left"><label for="type_update{{ $QualityDerogation->id }}" class="col-form-label">{{ __('general_content.type_trans_key') }}</label></div>
+                            <div class="col-8">
+                                @if($QualityDerogation->type == 1)  
+                                <x-adminlte-input-switch id="type_update{{ $QualityDerogation->id }}" name="type_update" data-on-text="{{ __('general_content.internal_trans_key') }}" data-off-text="{{ __('general_content.external_trans_key') }}" data-on-color="teal" checked/>
+                                @else
+                                <x-adminlte-input-switch id="type_update{{ $QualityDerogation->id }}" name="type_update" data-on-text="{{ __('general_content.internal_trans_key') }}" data-off-text="{{ __('general_content.external_trans_key') }}" data-on-color="teal" />
+                                @endif
                             </div>
                           </div>
                           <div class="form-group">
@@ -212,20 +210,13 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
-                <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}">
+                <input type="text" class="form-control"  name="label" id="label" placeholder="{{__('general_content.label_trans_key') }}" required>
               </div>
             </div>
             <div class="form-group col-md-2">
-              <label for="type">{{ __('general_content.type_trans_key') }}</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                </div>
-                <select class="form-control" name="type" id="type">
-                  <option value="1">{{ __('general_content.internal_trans_key') }}</option>
-                  <option value="2">{{ __('general_content.external_trans_key') }}</option>
-                </select>
-              </div>
+              <label for="type" class="col-form-label">{{ __('general_content.type_trans_key') }}</label>
+              <x-adminlte-input-switch name="type" data-on-text="{{ __('general_content.internal_trans_key') }}" data-off-text="{{ __('general_content.external_trans_key') }}"
+              data-on-color="teal" checked/>
             </div>
             <div class="form-group col-md-2">
               <label for="statu">{{ __('general_content.statu_trans_key') }}</label>

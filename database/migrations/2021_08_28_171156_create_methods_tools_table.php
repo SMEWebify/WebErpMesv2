@@ -18,6 +18,8 @@ class CreateMethodsToolsTable extends Migration
             $table->string('code');
 			$table->string('label')->nullable();
 			$table->integer('ETAT');
+            #1 - Used
+            #2 - unused
             $table->decimal('cost', 11, 3)->nullable();
 			$table->string('picture')->nullable();
 			$table->date('end_date')->nullable();

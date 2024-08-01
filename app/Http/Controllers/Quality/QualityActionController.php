@@ -46,13 +46,17 @@ class QualityActionController extends Controller
         $Action = QualityAction::create($request->only('code',
                                                         'label', 
                                                         'statu',
-                                                        'type', 
                                                         'user_id',
                                                         'pb_descp',  
                                                         'cause',  
                                                         'action', 
                                                         'color', 
                                                         'quality_non_conformitie_id'));
+
+        if($request->type) $Action->type=1;
+        else $Action->type = 2;
+        $Action->save(); 
+        
         return redirect()->route('quality.action')->with('success', 'Successfully created action.');
     }
 
@@ -65,7 +69,10 @@ class QualityActionController extends Controller
         $QualityAction = QualityAction::find($request->id);
         $QualityAction->label=$request->label;
         $QualityAction->statu=$request->statu;
-        $QualityAction->type=$request->type;
+
+        if($request->type_update) $QualityAction->type=1;
+        else $QualityAction->type = 2;
+        
         $QualityAction->user_id=$request->user_id;
         $QualityAction->pb_descp=$request->pb_descp;
         $QualityAction->cause=$request->cause;

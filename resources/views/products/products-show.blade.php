@@ -125,31 +125,26 @@
                 <div class="card card-body">
                   <div class="row">
                       <div class="form-group col-md-4">
-                          <label for="purchased">{{ __('general_content.purchased_trans_key') }}</label>
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                              </div>
-                              <select class="form-control" name="purchased" id="purchased">
-                                  <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
-                                  <option value="2" @if($Product->purchased == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
-                                  <option value="1" @if($Product->purchased == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
-                              </select>
-                          </div>
+                        <div class="col-4 text-left"><label for="purchased" class="col-form-label">{{ __('general_content.purchased_trans_key') }}</label></div>
+                        <div class="col-8">
+                            @if($Product->purchased == 1)  
+                            <x-adminlte-input-switch id="purchased" name="purchased" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                            @else
+                            <x-adminlte-input-switch id="purchased" name="purchased" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                            @endif
+                        </div>
                       </div>
                       <div class="form-group col-md-4">
-                          <label for="sold">{{ __('general_content.sold_trans_key') }}</label>
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                              </div>
-                              <select class="form-control" name="sold" id="sold">
-                                  <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
-                                  <option value="2" @if($Product->sold == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
-                                  <option value="1" @if($Product->sold == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
-                              </select>
-                          </div>
+                        <div class="col-4 text-left"><label for="sold" class="col-form-label">{{ __('general_content.sold_trans_key') }}</label></div>
+                        <div class="col-8">
+                            @if($Product->sold == 1)  
+                            <x-adminlte-input-switch id="sold" name="sold" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                            @else
+                            <x-adminlte-input-switch id="sold" name="sold" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                            @endif
+                        </div>
                       </div>
+
                       <div class="form-group col-md-4">
                           <label for="tracability_type">{{ __('general_content.tracability_trans_key') }}</label>
                           <select class="form-control" name="tracability_type" id="tracability_type">

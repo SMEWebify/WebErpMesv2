@@ -29,7 +29,6 @@ class StorePaymentConditionRequest extends FormRequest
             'label'=>'required',
             'number_of_month'=>'integer',
             'number_of_day'=>'integer',
-            'month_end'=>'integer',
         ];
     }
 }

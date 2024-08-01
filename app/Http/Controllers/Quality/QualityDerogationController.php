@@ -47,13 +47,17 @@ class QualityDerogationController extends Controller
         $Derogation =  QualityDerogation::create($request->only('code',
                                                                 'label', 
                                                                 'statu',
-                                                                'type', 
                                                                 'user_id',
                                                                 'pb_descp',  
                                                                 'proposal', 
                                                                 'reply', 
                                                                 'quality_non_conformitie_id',  
                                                                 'decision'));
+
+        if($request->type) $Derogation->type=1;
+        else $Derogation->type = 2;
+        $Derogation->save();
+
         return redirect()->route('quality.derogation')->with('success', 'Successfully created derogation.');
     }
 
@@ -66,7 +70,10 @@ class QualityDerogationController extends Controller
         $QualityDerogation = QualityDerogation::find($request->id);
         $QualityDerogation->label=$request->label;
         $QualityDerogation->statu=$request->statu;
-        $QualityDerogation->type=$request->type;
+
+        if($request->type_update) $QualityDerogation->type=1;
+        else $QualityDerogation->type = 2;
+
         $QualityDerogation->user_id=$request->user_id;
         $QualityDerogation->pb_descp=$request->pb_descp;
         $QualityDerogation->proposal=$request->proposal;

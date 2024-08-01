@@ -16,7 +16,11 @@ class BanckHolidayController extends Controller
      */
     public function store(StoreBanckHolidayRequest $request)
     {
-        $TimesBanckHoliday = TimesBanckHoliday::create($request->only('fixed', 'date', 'label'));
+        $TimesBanckHoliday = TimesBanckHoliday::create($request->only('date', 'label'));
+        if($request->fixed) $TimesBanckHoliday->fixed=1;
+        else $TimesBanckHoliday->fixed = 2;
+        $TimesBanckHoliday->save();
+
         return redirect()->route('times')->with('success', 'Successfully created Banck Holiday.');
     }
 
@@ -27,7 +31,10 @@ class BanckHolidayController extends Controller
     public function update(UpdateBanckHolidayRequest $request)
     {
         $BanckHoliday = TimesBanckHoliday::find($request->id);
-        $BanckHoliday->fixed=$request->fixed;
+
+        if($request->fixed_update) $BanckHoliday->fixed=1;
+        else $BanckHoliday->fixed = 2;
+
         $BanckHoliday->date=$request->date;
         $BanckHoliday->label=$request->label;
         $BanckHoliday->save();

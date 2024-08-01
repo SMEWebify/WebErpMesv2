@@ -85,19 +85,23 @@
                               <input type="number" class="form-control" name="number_of_day"  id="number_of_day" placeholder="{{__('general_content.number_of_day_trans_key') }}" value="{{ $PaymentCondition->number_of_day }}">
                             </div>
                             <div class="form-group">
-                              <label for="month_end">{{__('general_content.end_of_month_trans_key') }}</label>
-                              <select class="form-control" name="month_end" id="month_end">
-                                  <option value="2" @if($PaymentCondition->month_end == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
-                                  <option value="1" @if($PaymentCondition->month_end == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
-                              </select>
+                              <div class="col-4 text-left"><label for="month_end_update{{ $PaymentCondition->id }}" class="col-form-label">{{ __('general_content.end_of_month_trans_key') }}</label></div>
+                              <div class="col-8">
+                                  @if($PaymentCondition->month_end == 1)  
+                                  <x-adminlte-input-switch id="month_end_update{{ $PaymentCondition->id }}" name="month_end_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                                  @else
+                                  <x-adminlte-input-switch id="month_end_update{{ $PaymentCondition->id }}" name="month_end_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                  @endif
+                              </div>
                             </div>
                             <div class="form-group">
-                              <label for="month_end">{{__('general_content.by_default_trans_key') }}</label>
+                              <label for="default">{{__('general_content.by_default_trans_key') }}</label>
                               <select class="form-control" name="default" id="default">
                                   <option value="0" @if($PaymentCondition->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                   <option value="1" @if($PaymentCondition->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                               </select>
                             </div>
+                            
                           </div>
                           <x-slot name="footerSlot">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -157,11 +161,9 @@
                 <input type="number" class="form-control" name="number_of_day"  id="number_of_day" placeholder="{{__('general_content.number_of_day_trans_key') }}">
               </div>
               <div class="form-group">
-                <label for="month_end">{{__('general_content.end_of_month_trans_key') }}</label>
-                <select class="form-control" name="month_end" id="month_end">
-                    <option value="2">{{ __('general_content.no_trans_key') }}</option>
-                    <option value="1">{{ __('general_content.yes_trans_key') }}</option>
-                </select>
+                <label for="month_end" class="col-form-label">{{ __('general_content.end_of_month_trans_key') }}</label>
+                <x-adminlte-input-switch name="month_end" id="month_end" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}"
+                data-on-color="teal" checked/>
               </div>
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

@@ -25,7 +25,7 @@ class UpdateBanckHolidayRequest extends FormRequest
     {
         return [
             //
-            'date' =>'required|unique:times_banck_holidays',
+            'date' =>'required',
             'label'=>'required',
         ];
     }

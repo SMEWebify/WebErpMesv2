@@ -325,6 +325,7 @@
                   <th>{{ __('general_content.section_trans_key') }}</th>
                   <th>{{ __('general_content.color_trans_key') }}</th>
                   <th>{{ __('general_content.service_trans_key') }}</th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -375,16 +376,14 @@
                               </div>
                             </div>
                             <div class="form-group">
-                                <label for="mask_time">{{__('general_content.mask_time_trans_key') }} ?</label>
-                                <div class="input-group">
-                                  <div class="input-group-prepend">
-                                      <span class="input-group-text"><i class="fas fa-user-times"></i></span>
-                                  </div>
-                                  <select class="form-control" name="mask_time" id="mask_time">
-                                      <option value="2" @if($MethodsRessource->mask_time == 2  ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
-                                      <option value="1" @if($MethodsRessource->mask_time == 1  ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
-                                  </select>
-                                </div>
+                              <div class="col-4 text-left"><label for="mask_time_update{{ $MethodsRessource->id }}" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label></div>
+                              <div class="col-8">
+                                  @if($MethodsRessource->mask_time == 1)  
+                                  <x-adminlte-input-switch id="mask_time_update{{ $MethodsRessource->id }}" name="mask_time_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                                  @else
+                                  <x-adminlte-input-switch id="mask_time_update{{ $MethodsRessource->id }}" name="mask_time_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                  @endif
+                              </div>
                             </div>
                             <div class="form-group">
                               <label for="capacity">Hour capacity by week</label>
@@ -472,6 +471,7 @@
                     <th>{{ __('general_content.section_trans_key') }}</th>
                     <th>{{ __('general_content.color_trans_key') }}</th>
                     <th>{{ __('general_content.service_trans_key') }}</th>
+                    <th></th>
                   </tr>
                 </tfoot>
                 </table>
@@ -511,16 +511,9 @@
                   </div>
                 </div>
                 <div class="form-group">
-                    <label for="mask_time">{{__('general_content.mask_time_trans_key') }} ?</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                          <span class="input-group-text"><i class="fas fa-user-times"></i></span>
-                      </div>
-                      <select class="form-control" name="mask_time" id="mask_time">
-                          <option value="2">{{ __('general_content.no_trans_key') }}</option>
-                          <option value="1">{{ __('general_content.yes_trans_key') }}</option>
-                      </select>
-                    </div>
+                    <label for="mask_time" class="col-form-label">{{ __('general_content.mask_time_trans_key') }}</label>
+                    <x-adminlte-input-switch name="mask_time" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}"
+                    data-on-color="teal" checked/>
                 </div>
                 <div class="form-group">
                   <label for="capacity">Hour capacity by week</label>
@@ -942,7 +935,7 @@
                               </div>
                             </div>
                             <div class="form-group">
-                              <label for="month_end">{{__('general_content.by_default_trans_key') }}</label>
+                              <label for="default">{{__('general_content.by_default_trans_key') }}</label>
                               <select class="form-control" name="default" id="default">
                                   <option value="0" @if($MethodsUnit->default == 0) selected @endif>{{ __('general_content.no_trans_key') }}</option>
                                   <option value="1" @if($MethodsUnit->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
@@ -1179,8 +1172,8 @@
                     <td>{{ $MethodsTool->code }}</td>
                     <td>{{ $MethodsTool->label }}</td>
                     <td>
-                      @if($MethodsTool->ETAT  == 1) {{ __('general_content.unsed_trans_key') }} @endif
-                      @if($MethodsTool->ETAT  == 2) {{ __('general_content.used_trans_key') }} @endif
+                      @if($MethodsTool->ETAT  == 1) {{ __('general_content.used_trans_key') }} @endif
+                      @if($MethodsTool->ETAT  == 2) {{ __('general_content.unsed_trans_key') }} @endif
                     </td>
                     <td>{{ $MethodsTool->cost }}</td>
                     <td>{{ $MethodsTool->end_date }}</td>
@@ -1205,15 +1198,13 @@
                               </div>
                             </div>
                             <div class="form-group">
-                              <label for="ETAT">{{ __('general_content.statu_trans_key') }}</label>
-                              <div class="input-group">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                                </div>
-                                <select class="form-control" name="ETAT" id="ETAT">
-                                  <option value="1" @if($MethodsTool->ETAT == 1 ) Selected @endif>{{ __('general_content.unsed_trans_key') }}</option>
-                                  <option value="2" @if($MethodsTool->ETAT == 2  ) Selected @endif>{{ __('general_content.used_trans_key') }}</option>
-                                </select>
+                              <div class="col-4 text-left"><label for="etat_update{{ $MethodsTool->id }}" class="col-form-label">{{ __('general_content.etat_trans_key') }}</label></div>
+                              <div class="col-8">
+                                  @if($MethodsTool->ETAT == 1)  
+                                  <x-adminlte-input-switch id="etat_update{{ $MethodsTool->id }}" name="etat_update" data-on-text="{{ __('general_content.used_trans_key') }}" data-off-text="{{ __('general_content.unsed_trans_key') }}" data-on-color="teal" checked/>
+                                  @else
+                                  <x-adminlte-input-switch id="etat_update{{ $MethodsTool->id }}" name="etat_update" data-on-text="{{ __('general_content.used_trans_key') }}" data-off-text="{{ __('general_content.unsed_trans_key') }}" data-on-color="teal" />
+                                  @endif
                               </div>
                             </div>
                             <div class="form-group">
@@ -1308,16 +1299,9 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="ETAT">{{ __('general_content.statu_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
-                  </div>
-                  <select class="form-control" name="ETAT" id="ETAT">
-                    <option value="1">{{ __('general_content.unsed_trans_key') }}</option>
-                    <option value="2">{{ __('general_content.used_trans_key') }}</option>
-                  </select>
-                </div>
+                  <label for="ETAT" class="col-form-label">{{ __('general_content.etat_trans_key') }}</label>
+                  <x-adminlte-input-switch name="ETAT" data-on-text="{{ __('general_content.used_trans_key') }}" data-off-text="{{ __('general_content.unsed_trans_key') }}"
+                  data-on-color="teal" checked/>
               </div>
               <div class="form-group">
                 <label for="cost">{{ __('general_content.cost_trans_key') }}</label>

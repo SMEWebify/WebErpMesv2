@@ -17,6 +17,10 @@ class PaymentConditionsController extends Controller
     public function store(StorePaymentConditionRequest $request)
     {
         $paymentCondition = AccountingPaymentConditions::create($request->validated());
+        if($request->month_end) $paymentCondition->month_end=1;
+        else $paymentCondition->month_end = 2;
+        $paymentCondition->save();
+
         return redirect()->route('accounting')->with('success', 'Successfully created payment condition mode.');
     }
 
@@ -28,6 +32,11 @@ class PaymentConditionsController extends Controller
     {
         $paymentCondition = AccountingPaymentConditions::findOrFail($request->id);
         $paymentCondition->update($request->validated());
+
+        if($request->month_end_update) $paymentCondition->month_end=1;
+        else $paymentCondition->month_end = 2;
+        
+        $paymentCondition->save();
 
         // Set other payment conditions to non-default if this one is marked default
         if ($request->default) {
