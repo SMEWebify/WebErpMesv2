@@ -28,9 +28,8 @@
             <div class="col-md-9">
                 @include('include.alert-result')
                 <form method="POST" action="{{ route('credit.notes.update', ['id' => $CreditNotes->id]) }}" enctype="multipart/form-data">
-                <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
-                    @csrf
-                    <div class="card card-body">
+                    <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
+                        @csrf
                         <div class="row">
                             <div class="form-group col-md-4">
                                 <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $CreditNotes->code }}
@@ -57,16 +56,13 @@
                             <div class="form-group col-md-6">
                             </div>
                         </div>
-                    </div>
-                    <div class="card card-body">
                         <div class="row">
                             <x-FormTextareaComment  comment="{{ $CreditNotes->reason }}" />
                         </div>
-                    </div>
-                    <x-slot name="footerSlot">
-                        <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                    </x-slot>
-                </x-adminlte-card>
+                        <x-slot name="footerSlot">
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                        </x-slot>
+                    </x-adminlte-card>
                 </form>
             </div>
 

@@ -37,41 +37,36 @@
             <form method="POST" action="{{ route('quotes.update', ['id' => $Quote->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
-                <div class="card card-body">
-                  <div class="row">
-                    <div class="form-group col-md-6">
-                      <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Quote->code }}
-                    </div>
-                    <div class="form-group col-md-6">
-                      @include('include.form.form-input-label',['label' =>__('general_content.name_quote_trans_key'), 'Value' =>  $Quote->label])
-                    </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Quote->code }}
+                  </div>
+                  <div class="form-group col-md-6">
+                    @include('include.form.form-input-label',['label' =>__('general_content.name_quote_trans_key'), 'Value' =>  $Quote->label])
                   </div>
                 </div>
-                @if($Quote->companie['active'] == 1)
-                  <div class="card card-body">
-                    <div class="row">
-                      <label for="InputWebSite" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
+                  @if($Quote->companie['active'] == 1)
+                  <div class="row">
+                    <label for="companies_id" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                        @if($Quote->opportunities_id)
+                        {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  />
+                        @else
+                              @include('include.form.form-select-companie',['companiesId' =>  $Quote->companies_id])
+                        @endif
                     </div>
-                    <hr>
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                          @if($Quote->opportunities_id)
-                          {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  />
-                          @else
-                                @include('include.form.form-select-companie',['companiesId' =>  $Quote->companies_id])
-                          @endif
-                      </div>
-                      <div class="form-group col-md-6">
-                        @include('include.form.form-input-customerInfo',['customerReference' =>  $Quote->customer_reference])
-                      </div>
+                    <div class="form-group col-md-6">
+                      @include('include.form.form-input-customerInfo',['customerReference' =>  $Quote->customer_reference])
                     </div>
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                        @include('include.form.form-select-adress',['adressId' =>   $Quote->companies_addresses_id])
-                      </div>
-                      <div class="form-group col-md-6">
-                        @include('include.form.form-select-contact',['contactId' =>   $Quote->companies_contacts_id])
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                      @include('include.form.form-select-adress',['adressId' =>   $Quote->companies_addresses_id])
+                    </div>
+                    <div class="form-group col-md-6">
+                      @include('include.form.form-select-contact',['contactId' =>   $Quote->companies_contacts_id])
                     </div>
                   </div>
                 @else
@@ -83,11 +78,9 @@
                   The customer <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
                 </x-adminlte-alert>
                 @endif
-                <div class="card card-body">
                   <div class="row">
                     <label for="InputWebSite">{{ __('general_content.date_pay_info_trans_key') }}</label>
                   </div>
-                  <hr>
                   <div class="row">
                     <div class="form-group col-md-6">
                       @include('include.form.form-select-paymentCondition',['accountingPaymentConditionsId' =>   $Quote->accounting_payment_conditions_id])
@@ -101,7 +94,7 @@
                         @include('include.form.form-select-delivery',['accountingDeliveriesId' =>   $Quote->accounting_deliveries_id])
                     </div>
                     <div class="form-group col-md-6">
-                      <label for="label">{{ __('general_content.validity_date_trans_key') }}</label>
+                      <label for="validity_date">{{ __('general_content.validity_date_trans_key') }}</label>
                       <div class="input-group">
                         <div class="input-group-text bg-gradient-secondary">
                           <i class="fas fa-calendar-day"></i>
@@ -110,15 +103,12 @@
                       </div>
                     </div>
                   </div>
+                <div class="row">
+                  <x-FormTextareaComment  comment="{{ $Quote->comment }}" />
                 </div>
-                <div class="card card-body">
-                  <div class="row">
-                    <x-FormTextareaComment  comment="{{ $Quote->comment }}" />
-                  </div>
-                </div>
-                <div class="card-footer">
+                <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                </div>
+                </x-slot>
               </x-adminlte-card>
             </form>
           </div>

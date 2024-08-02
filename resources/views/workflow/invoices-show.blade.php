@@ -33,44 +33,40 @@
             <form method="POST" action="{{ route('invoices.update', ['id' => $Invoice->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf
-                <div class="card card-body">
-                  <div class="row">
-                    <div class="form-group col-md-4">
-                      <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Invoice->code }}
-                    </div>
-                    <div class="form-group col-md-4">
-                      <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
-                        <x-slot name="prependSlot">
-                            <div class="input-group-text bg-gradient-success">
-                                <i class="fas fa-exclamation"></i>
-                            </div>
-                        </x-slot>
-                        <option value="1" @if(1 == $Invoice->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
-                        <option value="2" @if(2 == $Invoice->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
-                        <option value="3" @if(3 == $Invoice->statu ) Selected @endif >{{ __('general_content.pending_trans_key') }}</option>
-                        <option value="4" @if(4 == $Invoice->statu ) Selected @endif >{{ __('general_content.unpaid_trans_key') }}</option>
-                        <option value="5" @if(5 == $Invoice->statu ) Selected @endif >{{ __('general_content.paid_trans_key') }}</option>
-                      </x-adminlte-select>
-                    </div>
-                    <div class="form-group col-md-4">
-                      @include('include.form.form-input-label',['label' => __('general_content.label_trans_key'), 'Value' =>  $Invoice->label])
-                    </div>
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Invoice->code }}
                   </div>
-                  <div class="row">
-                    <div class="form-group col-md-6">
-                      <label for="label">{{ __('general_content.due_date_trans_key') }}</label>
-                      <input type="date" class="form-control" name="due_date"  id="due_date" value="{{  $Invoice->due_date }}">
-                    </div>
-                    <div class="form-group col-md-6">
-                      <label for="incoterm">{{ __('general_content.incoterm_trans_key') }}</label>
-                      <input type="text" class="form-control" name="incoterm"  id="incoterm" value="{{  $Invoice->incoterm }}">
-                    </div>
+                  <div class="form-group col-md-4">
+                    <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
+                      <x-slot name="prependSlot">
+                          <div class="input-group-text bg-gradient-success">
+                              <i class="fas fa-exclamation"></i>
+                          </div>
+                      </x-slot>
+                      <option value="1" @if(1 == $Invoice->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
+                      <option value="2" @if(2 == $Invoice->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
+                      <option value="3" @if(3 == $Invoice->statu ) Selected @endif >{{ __('general_content.pending_trans_key') }}</option>
+                      <option value="4" @if(4 == $Invoice->statu ) Selected @endif >{{ __('general_content.unpaid_trans_key') }}</option>
+                      <option value="5" @if(5 == $Invoice->statu ) Selected @endif >{{ __('general_content.paid_trans_key') }}</option>
+                    </x-adminlte-select>
+                  </div>
+                  <div class="form-group col-md-4">
+                    @include('include.form.form-input-label',['label' => __('general_content.label_trans_key'), 'Value' =>  $Invoice->label])
                   </div>
                 </div>
-                <div class="card card-body">
-                  <div class="row">
-                    <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="label">{{ __('general_content.due_date_trans_key') }}</label>
+                    <input type="date" class="form-control" name="due_date"  id="due_date" value="{{  $Invoice->due_date }}">
                   </div>
+                  <div class="form-group col-md-6">
+                    <label for="incoterm">{{ __('general_content.incoterm_trans_key') }}</label>
+                    <input type="text" class="form-control" name="incoterm"  id="incoterm" value="{{  $Invoice->incoterm }}">
+                  </div>
+                </div>
+                <div class="row">
+                  <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
                 </div>
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>

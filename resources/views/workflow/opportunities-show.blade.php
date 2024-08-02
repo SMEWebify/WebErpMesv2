@@ -34,31 +34,26 @@
             <form method="POST" action="{{ route('opportunities.update', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
               @csrf 
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
-                <div class="card card-body">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    @include('include.form.form-input-label',['label' =>__('general_content.name_opportunity_trans_key'), 'Value' =>  $Opportunity->label])
+                  </div>
+                </div>
+                @if($Opportunity->companie['active'] == 1)
                   <div class="row">
-                    <div class="form-group col-md-6">
-                        @include('include.form.form-input-label',['label' =>__('general_content.name_opportunity_trans_key'), 'Value' =>  $Opportunity->label])
-                      </div>
+                    <label for="CutomerInfo" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-12">
+                      @include('include.form.form-select-companie',['companiesId' =>  $Opportunity->companies_id])
                     </div>
                   </div>
-                @if($Opportunity->companie['active'] == 1)
-                  <div class="card card-body">
-                    <div class="row">
-                      <label for="CutomerInfo" class="text-info">{{ __('general_content.customer_info_trans_key') }}</label>
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                      @include('include.form.form-select-adress',['adressId' =>   $Opportunity->companies_addresses_id])
                     </div>
-                    <hr>
-                    <div class="row">
-                      <div class="form-group col-md-12">
-                        @include('include.form.form-select-companie',['companiesId' =>  $Opportunity->companies_id])
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                        @include('include.form.form-select-adress',['adressId' =>   $Opportunity->companies_addresses_id])
-                      </div>
-                      <div class="form-group col-md-6">
-                        @include('include.form.form-select-contact',['contactId' =>   $Opportunity->companies_contacts_id])
-                      </div>
+                    <div class="form-group col-md-6">
+                      @include('include.form.form-select-contact',['contactId' =>   $Opportunity->companies_contacts_id])
                     </div>
                   </div>
                   @else
@@ -70,36 +65,31 @@
                     The customer <x-CompanieButton id="{{ $Opportunity->companie['id'] }}" label="{{ $Opportunity->companie['label'] }}"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
                   </x-adminlte-alert>
                   @endif
-                  <div class="card card-body">
-                    <div class="row">
-                      <label for="GeneralInfo">{{ __('general_content.general_information_trans_key') }}</label>
+                  <div class="row">
+                    <label for="GeneralInfo">{{ __('general_content.general_information_trans_key') }}</label>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                      <x-adminlte-input type="number" name="probality" label="{{ __('general_content.probality_trans_key') }}" placeholder="50" value="{{  $Opportunity->probality }}" label-class="text-success">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-gradient-success">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </x-slot>
+                      </x-adminlte-input>
                     </div>
-                    <hr>
-                    <div class="row">
-                      <div class="form-group col-md-6">
-                        <x-adminlte-input type="number" name="probality" label="{{ __('general_content.probality_trans_key') }}" placeholder="50" value="{{  $Opportunity->probality }}" label-class="text-success">
-                          <x-slot name="prependSlot">
-                              <div class="input-group-text bg-gradient-success">
-                                  <i class="fas fa-percentage"></i>
-                              </div>
-                          </x-slot>
-                        </x-adminlte-input>
-                      </div>
-                      <div class="form-group col-md-6">
-                        <x-adminlte-input  type="number" name="budget" label="{{ __('general_content.budget_trans_key') }}" placeholder="0" value="{{  $Opportunity->budget }}" label-class="text-success">
-                          <x-slot name="prependSlot">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">{{ $Factory->curency }}</span>
-                              </div>
-                          </x-slot>
-                        </x-adminlte-input>
-                      </div>
+                    <div class="form-group col-md-6">
+                      <x-adminlte-input  type="number" name="budget" label="{{ __('general_content.budget_trans_key') }}" placeholder="0" value="{{  $Opportunity->budget }}" label-class="text-success">
+                        <x-slot name="prependSlot">
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">{{ $Factory->curency }}</span>
+                            </div>
+                        </x-slot>
+                      </x-adminlte-input>
                     </div>
                   </div>
-                  <div class="card card-body">
-                    <div class="row">
-                      <x-FormTextareaComment  comment="{{ $Opportunity->comment }}" />
-                    </div>
+                  <div class="row">
+                    <x-FormTextareaComment  comment="{{ $Opportunity->comment }}" />
                   </div>
                   <x-slot name="footerSlot">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>

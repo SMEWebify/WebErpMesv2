@@ -29,7 +29,6 @@
             <form method="POST" action="{{ route('receipt.update', ['id' => $PurchaseReceipt->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
-                  <div class="card card-body">
                     <div class="row">
                       <div class="form-group col-md-3">
                         <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $PurchaseReceipt->code }}
@@ -59,8 +58,6 @@
                         </x-adminlte-input>
                       </div>
                     </div>
-                  </div>
-                  <div class="card card-body">
                     <div class="row">
                       <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
                     </div>
@@ -77,12 +74,9 @@
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="card card-body">
                     <div class="row">
                       <x-FormTextareaComment  comment="{{ $PurchaseReceipt->comment }}" />
                     </div>
-                  </div>
                   <div class="modal-footer">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                   </div>

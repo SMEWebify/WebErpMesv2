@@ -32,62 +32,56 @@
             <form method="POST" action="{{ route('purchase.update', ['id' => $Purchase->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
-                  <div class="card card-body">
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                        <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}
-                      </div>
-                      <div class="form-group col-md-3">
-                        <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
-                          <x-slot name="prependSlot">
-                              <div class="input-group-text bg-gradient-success">
-                                  <i class="fas fa-exclamation"></i>
-                              </div>
-                          </x-slot>
-                          <option value="1" @if(1 == $Purchase->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
-                          <option value="2" @if(2 == $Purchase->statu ) Selected @endif >{{ __('general_content.ordered_trans_key') }}</option>
-                          <option value="3" @if(3 == $Purchase->statu ) Selected @endif >{{ __('general_content.partly_received_trans_key') }}</option>
-                          <option value="4" @if(4 == $Purchase->statu ) Selected @endif >{{ __('general_content.rceived_trans_key') }}</option>
-                          <option value="5" @if(5 == $Purchase->statu ) Selected @endif >{{ __('general_content.canceled_trans_key') }}</option>
-                        </x-adminlte-select>
-                      </div>
-                      <div class="form-group col-md-3">
-                        @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_trans_key'), 'Value' =>  $Purchase->label])
-                      </div>
-                    </div>
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}
                   </div>
-                  <div class="card card-body">
-                    <div class="row">
-                      <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
-                    </div>
-                    @if( $Purchase->companies_contacts_id == 0 & $Purchase->companies_addresses_id ==0)
-                    <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
-                    @endif
-                    <div class="row">
-                      <div class="form-group col-md-5">
-                        @include('include.form.form-select-companie',['companiesId' =>  $Purchase->companies_id])
-                      </div>
-                      <div class="form-group col-md-5">
-                        
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="form-group col-md-5">
-                        @include('include.form.form-select-adress',['adressId' =>   $Purchase->companies_addresses_id])
-                      </div>
-                      <div class="form-group col-md-5">
-                        @include('include.form.form-select-contact',['contactId' =>   $Purchase->companies_contacts_id])
-                      </div>
-                    </div>
+                  <div class="form-group col-md-4">
+                    <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
+                      <x-slot name="prependSlot">
+                          <div class="input-group-text bg-gradient-success">
+                              <i class="fas fa-exclamation"></i>
+                          </div>
+                      </x-slot>
+                      <option value="1" @if(1 == $Purchase->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
+                      <option value="2" @if(2 == $Purchase->statu ) Selected @endif >{{ __('general_content.ordered_trans_key') }}</option>
+                      <option value="3" @if(3 == $Purchase->statu ) Selected @endif >{{ __('general_content.partly_received_trans_key') }}</option>
+                      <option value="4" @if(4 == $Purchase->statu ) Selected @endif >{{ __('general_content.rceived_trans_key') }}</option>
+                      <option value="5" @if(5 == $Purchase->statu ) Selected @endif >{{ __('general_content.canceled_trans_key') }}</option>
+                    </x-adminlte-select>
                   </div>
-                  <div class="card card-body">
-                    <div class="row">
-                      <x-FormTextareaComment  comment="{{ $Purchase->comment }}" />
-                    </div>
+                  <div class="form-group col-md-4">
+                    @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_trans_key'), 'Value' =>  $Purchase->label])
                   </div>
-                  <div class="modal-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                </div>
+                <div class="row">
+                  <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
+                </div>
+                @if( $Purchase->companies_contacts_id == 0 & $Purchase->companies_addresses_id ==0)
+                <x-adminlte-alert theme="info" title="Info">{{  __('general_content.update_valide_trans_key') }}</x-adminlte-alert>
+                @endif
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    @include('include.form.form-select-companie',['companiesId' =>  $Purchase->companies_id])
                   </div>
+                  <div class="form-group col-md-6">
+                    
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    @include('include.form.form-select-adress',['adressId' =>   $Purchase->companies_addresses_id])
+                  </div>
+                  <div class="form-group col-md-6">
+                    @include('include.form.form-select-contact',['contactId' =>   $Purchase->companies_contacts_id])
+                  </div>
+                </div>
+                <div class="row">
+                  <x-FormTextareaComment  comment="{{ $Purchase->comment }}" />
+                </div>
+                <x-slot name="footerSlot">
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                </x-slot>
               </x-adminlte-card>
             </form>
           </div>
