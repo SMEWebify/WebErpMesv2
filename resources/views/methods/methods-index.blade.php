@@ -144,7 +144,7 @@
                                 <select class="form-control" name="compannie_id" id="compannie_id">
                                   <option value="NULL">-</option>
                                   @forelse ($SupplierSelect as $item)
-                                  <option value="{{ $item->id }}">{{ $item->label }}</option>
+                                  <option value="{{ $item->id }}" @if($MethodsService->compannie_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                   @empty
                                   <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
                                   @endforelse
