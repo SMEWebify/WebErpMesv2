@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Workflow;
+namespace App\Http\Controllers\Workshop;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
