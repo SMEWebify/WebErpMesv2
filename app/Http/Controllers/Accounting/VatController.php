@@ -10,7 +10,9 @@ use App\Http\Requests\Accounting\UpdateVatRequest;
 class VatController extends Controller
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a newly created VAT type in storage.
+     *
+     * @param \App\Http\Requests\Accounting\StoreVatRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreVatRequest $request)
@@ -20,13 +22,14 @@ class VatController extends Controller
     }
 
     /**
-    * @param \Illuminate\Http\Request $request
+     * Update the specified VAT type in storage.
+     *
+     * @param \App\Http\Requests\Accounting\UpdateVatRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateVatRequest $request)
     { 
         $vat = AccountingVat::findOrFail($request->id);
-
         $vat->update($request->validated());
 
         // Set other VATs to non-default if this one is marked default

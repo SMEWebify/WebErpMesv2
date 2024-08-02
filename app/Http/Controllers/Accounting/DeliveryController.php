@@ -11,7 +11,9 @@ use App\Http\Requests\Accounting\UpdateDeliveryRequest;
 class DeliveryController extends Controller
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a newly created delivery in storage.
+     *
+     * @param \App\Http\Requests\Accounting\StoreDeliveryRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreDeliveryRequest $request)
@@ -20,8 +22,10 @@ class DeliveryController extends Controller
         return redirect()->route('accounting')->with('success', 'Successfully created delevery mode.');
     }
 
-        /**
-    * @param \Illuminate\Http\Request $request
+    /**
+     * Update the specified delivery in storage.
+     *
+     * @param \App\Http\Requests\Accounting\UpdateDeliveryRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateDeliveryRequest $request)

@@ -11,7 +11,9 @@ use App\Http\Requests\Accounting\UpdatePaymentMethodRequest;
 class PaymentMethodController extends Controller
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a newly created payment method in storage.
+     *
+     * @param \App\Http\Requests\Accounting\StorePaymentMethodRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StorePaymentMethodRequest $request)
@@ -21,13 +23,14 @@ class PaymentMethodController extends Controller
     }
 
     /**
-    * @param \Illuminate\Http\Request $request
+     * Update the specified payment method in storage.
+     *
+     * @param \App\Http\Requests\Accounting\UpdatePaymentMethodRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdatePaymentMethodRequest $request)
     {
         $paymentMethod = AccountingPaymentMethod::findOrFail($request->id);
-
         $paymentMethod->update($request->validated());
 
         // Set other payment methods to non-default if this one is marked default

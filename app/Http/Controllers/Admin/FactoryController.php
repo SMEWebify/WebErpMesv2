@@ -56,6 +56,8 @@ class FactoryController extends Controller
     }
 
     /**
+     * Update the specified factory in storage.
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -112,6 +114,8 @@ class FactoryController extends Controller
     }
 
     /**
+     * Store a newly created announcement in storage.
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -167,14 +171,14 @@ class FactoryController extends Controller
     */
     public function storeOrUpdateCustomField(Request $request, $id, $type)
     {
-        // Validez les données du formulaire
+        // Validate the form data
         $validatedData = $request->validate([
-            'custom_fields' => 'array', // Vous pouvez ajouter des règles de validation supplémentaires ici
+            'custom_fields' => 'array', // You can add additional validation rules here
         ]);
 
-        // Parcourez les données soumises par le formulaire et créez ou mettez à jour les valeurs des champs personnalisés
+        // Loop through the data submitted by the form and create or update custom field values
         foreach ($validatedData['custom_fields'] as $fieldId => $fieldValue) {
-            // Vérifiez si la valeur du champ personnalisé existe déjà en base de données
+            // Check if the custom field value already exists in the database
             $customFieldValue = CustomFieldValue::where('custom_field_id', $fieldId)
                                                 ->where('entity_id', $id)
                                                 ->where('entity_type', $type)
@@ -182,36 +186,32 @@ class FactoryController extends Controller
 
             
             if ($customFieldValue) {
-                // Si la valeur existe, mettez à jour sa valeur
+                // If the value exists, update its value
                 $customFieldValue->update(['value' => $fieldValue]);
             } else {
-                // Sinon, créez une nouvelle valeur pour ce champ personnalisé
+                // Otherwise, create a new value for this custom field
                 CustomFieldValue::create([
                     'custom_field_id' => $fieldId,
                     'entity_id' => $id,
-                    'entity_type' =>  $type, // Vous pouvez adapter cela en fonction de votre logique métier
+                    'entity_type' =>  $type, 
                     'value' => $fieldValue,
                 ]);
             }
         }
-
-        if( $type=='quote'){
-            return redirect()->route('quotes.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
-        }
-        elseif( $type=='order'){
-            return redirect()->route('orders.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
-        }
-        elseif( $type=='delivery'){
-            return redirect()->route('deliverys.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
-        }
-        elseif( $type=='invoice'){
-            return redirect()->route('invoices.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
-        }
-        elseif( $type=='purchase'){
-            return redirect()->route('purchases.show', ['id' =>   $id])->with('success', 'Successfully updated custom fields');
-        }
-        else{
-            return redirect()->back()->withErrors(['msg' => 'Something went wrong']);
+        
+        switch ($type) {
+            case 'quote':
+                return redirect()->route('quotes.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
+            case 'order':
+                return redirect()->route('orders.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
+            case 'delivery':
+                return redirect()->route('deliverys.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
+            case 'invoice':
+                return redirect()->route('invoices.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
+            case 'purchase':
+                return redirect()->route('purchases.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
+            default:
+                return redirect()->back()->withErrors(['msg' => 'Something went wrong']);
         }
     }
 

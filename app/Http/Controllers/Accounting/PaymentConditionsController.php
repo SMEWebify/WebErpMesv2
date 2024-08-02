@@ -11,31 +11,31 @@ use App\Http\Requests\Accounting\UpdatePaymentConditionRequest;
 class PaymentConditionsController extends Controller
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a newly created payment condition in storage.
+     *
+     * @param \App\Http\Requests\Accounting\StorePaymentConditionRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StorePaymentConditionRequest $request)
     {
         $paymentCondition = AccountingPaymentConditions::create($request->validated());
-        if($request->month_end) $paymentCondition->month_end=1;
-        else $paymentCondition->month_end = 2;
+        $paymentCondition->month_end = $request->month_end ? 1 : 2;
         $paymentCondition->save();
 
         return redirect()->route('accounting')->with('success', 'Successfully created payment condition mode.');
     }
 
     /**
-    * @param \Illuminate\Http\Request $request
+     * Update the specified payment condition in storage.
+     *
+     * @param \App\Http\Requests\Accounting\UpdatePaymentConditionRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdatePaymentConditionRequest $request)
     {
         $paymentCondition = AccountingPaymentConditions::findOrFail($request->id);
         $paymentCondition->update($request->validated());
-
-        if($request->month_end_update) $paymentCondition->month_end=1;
-        else $paymentCondition->month_end = 2;
-        
+        $paymentCondition->month_end = $request->month_end_update ? 1 : 2;
         $paymentCondition->save();
 
         // Set other payment conditions to non-default if this one is marked default

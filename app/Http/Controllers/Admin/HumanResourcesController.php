@@ -33,6 +33,8 @@ class HumanResourcesController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
      * @return \Illuminate\Contracts\View\View
      */
     public function index()
@@ -55,6 +57,9 @@ class HumanResourcesController extends Controller
     }
 
     /**
+     * Display the specified user.
+     *
+     * @param int $id
      * @return \Illuminate\Contracts\View\View
      */
     public function ShowUser($id)
@@ -65,6 +70,7 @@ class HumanResourcesController extends Controller
         $UserEmploymentContracts = UserEmploymentContracts::where('user_id', $id)->get();
         $UserExpenseReports = UserExpenseReport::where('user_id', $id)->get();
         $Roles = Role::all();
+
         return view('admin/users-show', [
             'User' => $User,
             'Roles' => $Roles,
@@ -76,7 +82,10 @@ class HumanResourcesController extends Controller
     }
 
     /**
+     * Update the specified user.
+     *
      * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function UpdateUser(Request $request, int $id)
@@ -102,7 +111,10 @@ class HumanResourcesController extends Controller
     }
 
     /**
+     * Lock a user until a specified date.
+     *
      * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function LockUser(Request $request, int $id)
@@ -114,12 +126,14 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a new user employment contract.
+     *
+      * @param \App\Http\Requests\Admin\StoreUserEmploymentContractRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeUserEmploymentContract(StoreUserEmploymentContractRequest $request)
     {
-        // Create Line
+        // Create a new user employment contract
         $UserEmploymentContract = UserEmploymentContracts::create([
                                                                     'user_id'=>$request->user_id, 
                                                                     'statu'=>$request->statu,  
@@ -142,34 +156,38 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * Update the user employment contract.
+     *
+     * @param \App\Http\Requests\Admin\UpdateUserEmploymentContractRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateUserEmploymentContract(UpdateUserEmploymentContractRequest $request)
     {
-        // Create Line
-        $UserEmploymentContract = UserEmploymentContracts::findOrFail($request->id);
-        $UserEmploymentContract->statu  =$request->statu;
-        $UserEmploymentContract->methods_section_id =$request->methods_section_id;
-        $UserEmploymentContract->signature_date  =$request->signature_date;
-        $UserEmploymentContract->type_of_contract  =$request->type_of_contract; 
-        $UserEmploymentContract->start_date = $request->start_date; 
-        $UserEmploymentContract->duration_trial_period = $request->duration_trial_period; 
-        $UserEmploymentContract->end_date = $request->end_date; 
-        $UserEmploymentContract->weekly_duration =$request->weekly_duration; 
-        $UserEmploymentContract->position = $request->position;
-        $UserEmploymentContract->coefficient =$request->coefficient;
-        $UserEmploymentContract->hourly_gross_salary =$request->hourly_gross_salary;
-        $UserEmploymentContract->minimum_monthly_salary =$request->minimum_monthly_salary;
-        $UserEmploymentContract->annual_gross_salary =$request->annual_gross_salary;
-        $UserEmploymentContract->end_of_contract_reason =$request->end_of_contract_reason;
-        $UserEmploymentContract->save();
-
-        return redirect()->route('human.resources.show.user', ['id' => $UserEmploymentContract->user_id])->with('success', 'Successfully update contract');
+        // Find the contract by ID and update it
+        $userEmploymentContract = UserEmploymentContracts::findOrFail($request->id);
+        $userEmploymentContract->update($request->only([
+            'statu',
+            'methods_section_id',
+            'signature_date',
+            'type_of_contract',
+            'start_date',
+            'duration_trial_period',
+            'end_date',
+            'weekly_duration',
+            'position',
+            'coefficient',
+            'hourly_gross_salary',
+            'minimum_monthly_salary',
+            'annual_gross_salary',
+            'end_of_contract_reason'
+        ]));
+        return redirect()->route('human.resources.show.user', ['id' => $userEmploymentContract->user_id])->with('success', 'Successfully update contract');
     }
     
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a new user expense category.
+     *
+     * @param \App\Http\Requests\Admin\StoreUserExpenseCategorieRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeUserExpenseCategorie(StoreUserExpenseCategorieRequest $request)
@@ -184,22 +202,24 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * Update the user expense category.
+     *
+     * @param \App\Http\Requests\Admin\UpdateUserExpenseCategorieRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateUserExpenseCategorie(UpdateUserExpenseCategorieRequest $request)
     {
-        // Create Line
-        $UserExpenseCategory = UserExpenseCategory::findOrFail($request->id);
-        $UserExpenseCategory->label  =$request->label;
-        $UserExpenseCategory->description =$request->description;
-        $UserExpenseCategory->save();
+        // Find the category by ID and update it
+        $userExpenseCategory = UserExpenseCategory::findOrFail($request->id);
+        $userExpenseCategory->update($request->only(['label', 'description']));
 
         return redirect()->route('human.resources')->with('success', 'Successfully update category');
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a new user expense report.
+     *
+     * @param \App\Http\Requests\Admin\StoreUserExpenseReportRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeUserExpenseReport(StoreUserExpenseReportRequest $request)
@@ -215,24 +235,29 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * Update the user's expense report.
+     *
+     * @param \App\Http\Requests\Admin\UpdateUserExpenseReportRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateUserExpenseReport(UpdateUserExpenseReportRequest $request)
     {
         // updpate Line
-        $UserExpenseReport = UserExpenseReport::findOrFail($request->id);
-        $UserExpenseReport->label  =$request->label;
-        $UserExpenseReport->status =$request->status;
-        $UserExpenseReport->date =$request->date;
-        $UserExpenseReport->save();
+        $userExpenseReport = UserExpenseReport::findOrFail($request->id);
+        $userExpenseReport->update($request->only([
+            'label',
+            'status',
+            'date'
+        ]));
 
         return redirect()->route('user.profile', ['id' =>Auth::id()])->with('success', 'Successfully update  expense report');
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-      * @return \Illuminate\Contracts\View\View
+     * Display the specified user expense report.
+     *
+     * @param int $id
+     * @return \Illuminate\Contracts\View\View
      */
     public function ShowExpenseUser($id)
     {
@@ -249,7 +274,10 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a new user expense.
+     *
+     * @param \App\Http\Requests\Admin\StoreUserExpenseRequest $request
+     * @param int $report_id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeExpenseUser(StoreUserExpenseRequest $request, int $report_id)
@@ -268,8 +296,8 @@ class HumanResourcesController extends Controller
                                                 'order_id'=>$request->order_id, 
                                             ]);
 
+         // Handle file upload if present
         if($request->hasFile('scan_file')){
-            $UserExpense = UserExpense::findOrFail($UserExpense->id);
             $file =  $request->file('scan_file');
             $filename = time() . '_' . $file->getClientOriginalName();
             $request->scan_file->move(public_path('file/Expense'), $filename);
@@ -281,26 +309,31 @@ class HumanResourcesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * Update the user's expense.
+     *
+     * @param \App\Http\Requests\Admin\UpdateUserExpenseRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateExpenseUser(UpdateUserExpenseRequest $request)
     {
-        $UserExpense = UserExpense::findOrFail($request->id);
-        $UserExpense->category_id  =$request->category_id;
-        $UserExpense->expense_date =$request->expense_date;
-        $UserExpense->location =$request->location;
-        $UserExpense->description =$request->description;
-        $UserExpense->amount =$request->amount;
-        $UserExpense->payer_id =$request->payer_id;
-        $UserExpense->tax =$request->tax;
-        $UserExpense->order_id =$request->order_id;
-        $UserExpense->save();
+        $userExpense = UserExpense::findOrFail($request->id);
+        $userExpense->update($request->only([
+            'category_id',
+            'expense_date',
+            'location',
+            'description',
+            'amount',
+            'payer_id',
+            'tax',
+            'order_id'
+        ]));
 
-        return redirect()->route('human.resources.show.expense', ['id' => $UserExpense->report_id])->with('success', 'Successfully add expense report');
+        return redirect()->route('human.resources.show.expense', ['id' => $userExpense->report_id])->with('success', 'Successfully add expense report');
     }
 
     /**
+     * Validate the user's expense report.
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */

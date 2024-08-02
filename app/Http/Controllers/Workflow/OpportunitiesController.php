@@ -11,7 +11,6 @@ use App\Models\Workflow\Quotes;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
-use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
@@ -37,6 +36,7 @@ class OpportunitiesController extends Controller
     {
         $this->SelectDataService = $SelectDataService;
     }
+
     /**
      * @return \Illuminate\Contracts\View\View
      */
@@ -87,38 +87,41 @@ class OpportunitiesController extends Controller
                                                         ))->with('data',$data);
     }
 
-    /**
-     * @param $id
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function show(Opportunities $id)
-    {  
-        $CompanieSelect = $this->SelectDataService->getCompanies();
-        $AddressSelect = $this->SelectDataService->getAddress();
-        $ContactSelect = $this->SelectDataService->getContact();
-        $Activities = OpportunitiesActivitiesLogs::where('opportunities_id', $id->id)->orderBy('id')->get();
-        $Events = OpportunitiesEventsLogs::where('opportunities_id', $id->id)->orderBy('id')->get();
-        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Opportunities(), $id->id);
-        $Factory = Factory::first();
+    private function loadOpportunityRelations(Opportunities $opportunity)
+    {
+        return $opportunity->load('lead', 'activities', 'events', 'quotes');
+    }
 
-        // Récupérer l'opportunité avec les relations nécessaires
-        $opportunite = $id->load('lead', 'activities', 'events', 'quotes');
+    private function getActivities($opportunityId)
+    {
+        return OpportunitiesActivitiesLogs::where('opportunities_id', $opportunityId)->orderBy('id')->get();
+    }
 
-        // Organiser les données pour la timeline
+    private function getEvents($opportunityId)
+    {
+        return OpportunitiesEventsLogs::where('opportunities_id', $opportunityId)->orderBy('id')->get();
+    }
+
+    private function getFactory()
+    {
+        return Factory::first();
+    }
+    
+    private function organizeTimelineData(Opportunities $opportunity, $factory)
+    {
         $timelineData = [];
 
-        // Ajouter les leads s'il y en a
-        if ($opportunite->lead) {
+        if ($opportunity->lead) {
             $timelineData[] = [
-                'date' => $opportunite->lead->created_at->format('d M Y'),
+                'date' => $opportunity->lead->created_at->format('d M Y'),
                 'icon' => 'fas fa-globe bg-info',
-                'content' =>  "Lead " . $opportunite->lead->campaign,
-                'details' => $opportunite->lead->GetPrettyCreatedAttribute(),
+                'content' => "Lead " . $opportunity->lead->campaign,
+                'details' => $opportunity->lead->GetPrettyCreatedAttribute(),
             ];
         }
 
         // Ajouter les événements s'il y en a
-        foreach ($opportunite->events as $event) {
+        foreach ($opportunity->events as $event) {
 
             if($event->type  == 1) $type = __('general_content.activity_maketing_trans_key') ;
             if($event->type  == 2) $type = __('general_content.internal_meeting_trans_key') ;
@@ -134,7 +137,7 @@ class OpportunitiesController extends Controller
         }
 
         // Ajouter les activités s'il y en a
-        foreach ($opportunite->activities as $activity) {
+        foreach ($opportunity->activities as $activity) {
             if($activity->type  == 1) $type = __('general_content.activity_maketing_trans_key');
             if($activity->type  == 2) $type = __('general_content.email_send_trans_key');
             if($activity->type  == 3) $type = __('general_content.pre_sakes_aactivity_trans_key');
@@ -150,7 +153,7 @@ class OpportunitiesController extends Controller
         }
 
         // Ajouter les devis s'il y en a
-        foreach ($opportunite->quotes as $quote) {
+        foreach ($opportunity->quotes as $quote) {
 
             // Ajouter les commandes issues des devis
             $orders = Orders::where('quotes_id', $quote->id)->get();
@@ -192,35 +195,50 @@ class OpportunitiesController extends Controller
                 $timelineData[] = [
                     'date' => $order->created_at->format('d M Y'),
                     'icon' => 'fas fa-shopping-cart bg-secondary',
-                    'content' => __('general_content.order_trans_key') ." ". $order->label . " - ". __('general_content.total_price_trans_key') ." : ". $order->getTotalPriceAttribute() . " ". $Factory->curency,
+                    'content' => __('general_content.order_trans_key') ." ". $order->label . " - ". __('general_content.total_price_trans_key') ." : ". $order->getTotalPriceAttribute() . " ". $factory->curency,
                     'details' => $order->GetPrettyCreatedAttribute(),
                 ];
-                
-               
             }
 
             $timelineData[] = [
                 'date' => $quote->created_at->format('d M Y'),
                 'icon' => 'fas fa-calculator  bg-success', 
-                'content' => __('general_content.quote_trans_key') ." ". $quote->label . " - ". __('general_content.total_price_trans_key') ." : ". $quote->getTotalPriceAttribute() . " ". $Factory->curency,
+                'content' => __('general_content.quote_trans_key') ." ". $quote->label . " - ". __('general_content.total_price_trans_key') ." : ". $quote->getTotalPriceAttribute() . " ". $factory->curency,
                 'details' => $quote->GetPrettyCreatedAttribute(),
             ];
         }
 
         // Ajouter l'opportunité initiale
         $timelineData[] = [
-            'date' => $opportunite->created_at->format('d M Y'),
+            'date' => $opportunity->created_at->format('d M Y'),
             'icon' => 'fa fa-tags bg-primary',
             'content' => "Opportunité créée",
-            'details' => $opportunite->GetPrettyCreatedAttribute(),
+            'details' => $opportunity->GetPrettyCreatedAttribute(),
         ];
 
          // Trier le tableau par date
         usort($timelineData, function ($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
         });
- 
-         // Passer les données à la vue
+
+        return $timelineData;
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function show(Opportunities $id)
+    {  
+        $CompanieSelect = $this->SelectDataService->getCompanies();
+        $AddressSelect = $this->SelectDataService->getAddress();
+        $ContactSelect = $this->SelectDataService->getContact();
+        $Activities = $this->getActivities($id->id);
+        $Events = $this->getEvents($id->id);
+        list($previousUrl, $nextUrl) = $this->getNextPrevious(new Opportunities(), $id->id);
+        $factory = $this->getFactory();
+        $opportunity = $this->loadOpportunityRelations($id);
+        $timelineData = $this->organizeTimelineData($opportunity, $factory);
 
         return view('workflow/opportunities-show', [
             'Opportunity' => $id,
@@ -241,17 +259,20 @@ class OpportunitiesController extends Controller
      */
     public function update(UpdateOpportunityRequest $request)
     {
-        $Opportunity = Opportunities::findOrFail($request->id);
-        $Opportunity->label=$request->label;
-        $Opportunity->companies_id=$request->companies_id;
-        $Opportunity->companies_contacts_id=$request->companies_contacts_id;
-        $Opportunity->companies_addresses_id=$request->companies_addresses_id;
-        $Opportunity->budget=$request->budget;
-        $Opportunity->probality=$request->probality;
-        $Opportunity->comment=$request->comment;
-        $Opportunity->save();
+        $opportunity = Opportunities::findOrFail($request->id);
+
+        $opportunity->update([
+            'label' => $request->label,
+            'companies_id' => $request->companies_id,
+            'companies_contacts_id' => $request->companies_contacts_id,
+            'companies_addresses_id' => $request->companies_addresses_id,
+            'budget' => $request->budget,
+            'probality' => $request->probality,
+            'comment' => $request->comment,
+        ]);
         
-        return redirect()->route('opportunities.show', ['id' =>  $Opportunity->id])->with('success', 'Successfully updated opportunity');
+        return redirect()->route('opportunities.show', ['id' =>  $opportunity->id])
+                            ->with('success', 'Successfully updated opportunity');
     }
 
     /**

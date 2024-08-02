@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

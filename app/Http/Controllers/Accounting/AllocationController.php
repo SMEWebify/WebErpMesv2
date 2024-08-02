@@ -11,7 +11,9 @@ use App\Http\Requests\Accounting\UpdateAllocationRequest;
 class AllocationController extends Controller
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * Store a newly created allocation in storage.
+     *
+     * @param \App\Http\Requests\Accounting\StoreAllocationRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreAllocationRequest $request)
@@ -21,7 +23,9 @@ class AllocationController extends Controller
     }
 
     /**
-    * @param \Illuminate\Http\Request $request
+     * Update the specified allocation in storage.
+     *
+     * @param \App\Http\Requests\Accounting\UpdateAllocationRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateAllocationRequest $request)
