@@ -3,14 +3,38 @@
 namespace App\Http\Controllers\Methods;
 
 use Illuminate\Http\Request;
+use App\Services\SelectDataService;
 use App\Models\Methods\MethodsTools;
 use App\Http\Requests\Methods\StoreToolRequest;
 use App\Http\Requests\Methods\UpdateToolRequest;
 
 class ToolsController extends Controller
 {
+    
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+    
     /**
-     * @param \Illuminate\Http\Request $request
+     * Display a listing of the tools.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function index()
+    {
+        $MethodsTools = MethodsTools::orderBy('code')->get();
+        return view('methods/methods-tools', [
+            'MethodsTools' => $MethodsTools,
+        ]);
+    }
+    
+    /**
+     * Store a newly created tool in storage.
+     *
+     * @param \App\Http\Requests\Methods\StoreToolRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreToolRequest $request)
@@ -33,27 +57,28 @@ class ToolsController extends Controller
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
         }
 
-        return redirect()->route('methods')->with('success', 'Successfully created tool.');
+        return redirect()->route('methods.tool')->with('success', 'Successfully created tool.');
     }
 
     /**
-    * @param \Illuminate\Http\Request $request
+     * Update the specified tool in storage.
+     *
+     * @param \App\Http\Requests\Methods\UpdateToolRequest $request
     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateToolRequest $request)
     {
-        $Tool = MethodsTools::find($request->id);
-        $Tool->label=$request->label;
+        $tool = MethodsTools::findOrFail($request->id);
 
-        if($request->etat_update) $Tool->ETAT=1;
-        else $Tool->ETAT = 2;
+        $tool->update([
+            'label' => $request->label,
+            'ETAT' => $request->etat_update ? 1 : 2,
+            'cost' => $request->cost,
+            'end_date' => $request->end_date,
+            'qty' => $request->qty,
+        ]);
 
-        $Tool->cost=$request->cost;
-        $Tool->end_date=$request->end_date;
-        $Tool->qty=$request->qty;
-        $Tool->save();
-
-        return redirect()->route('methods')->with('success', 'Successfully updated tool.');
+        return redirect()->route('methods.tool')->with('success', 'Successfully updated tool.');
     }
 
     /**
@@ -74,7 +99,7 @@ class ToolsController extends Controller
             $request->picture->move(public_path('images/methods'), $filename);
             $Service->update(['picture' => $filename]);
             $Service->save();
-            return redirect()->route('methods')->with('success', 'Successfully updated tool.');
+            return redirect()->route('methods.tool')->with('success', 'Successfully updated tool.');
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);

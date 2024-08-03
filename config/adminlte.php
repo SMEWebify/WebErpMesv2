@@ -534,6 +534,40 @@ return [
             'icon'   => 'fas fa-cogs',
             'url'  => 'methods',
             'can'  => ['methods-menu'],
+            'submenu' => [
+                [
+                    'text' => 'methods_services_trans_key',
+                    'url'  => 'methods/service',
+                ],
+                [
+                    'text' => 'methods_ressources_trans_key',
+                    'url'  => 'methods/ressources',
+                ],
+                [
+                    'text' => 'methods_sections_trans_key',
+                    'url'  => 'methods/section',
+                ],
+                [
+                    'text' => 'methods_locations_trans_key',
+                    'url'  => 'methods/location',
+                ],
+                [
+                    'text' => 'methods_units_trans_key',
+                    'url'  => 'methods/unit',
+                ],
+                [
+                    'text' => 'methods_familys_trans_key',
+                    'url'  => 'methods/family',
+                ],
+                [
+                    'text' => 'methods_tools_trans_key',
+                    'url'  => 'methods/tool',
+                ],
+                [
+                    'text' => 'methods_standard_bom_trans_key',
+                    'url'  => 'methods/standard-nomenclature',
+                ],
+            ],
         ],
         [
             'text' => 'accounting_trans_key',

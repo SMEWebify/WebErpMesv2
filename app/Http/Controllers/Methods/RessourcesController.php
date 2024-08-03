@@ -3,21 +3,46 @@
 namespace App\Http\Controllers\Methods;
 
 use Illuminate\Http\Request;
+use App\Services\SelectDataService;
 use App\Models\Methods\MethodsRessources;
 use App\Http\Requests\Methods\StoreRessourceRequest;
 use App\Http\Requests\Methods\UpdateRessourceRequest;
 
 class RessourcesController extends Controller
 {
-    
+    protected $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
+    {
+        $this->SelectDataService = $SelectDataService;
+    }
+
     /**
-     * @param \Illuminate\Http\Request $request
+     * Display a listing of the ressources.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function index()
+    {
+        $MethodsRessources = MethodsRessources::orderBy('ordre')->get();
+        $SectionsSelect = $this->SelectDataService->getSection();
+        $ServicesSelect = $this->SelectDataService->getServices();
+        return view('methods/methods-ressources', [
+            'MethodsRessources' => $MethodsRessources,
+            'SectionsSelect' => $SectionsSelect,
+            'ServicesSelect' => $ServicesSelect,
+        ]);
+    }
+
+    /**
+     * Store a newly created ressource in storage.
+     *
+     * @param \App\Http\Requests\Methods\StoreRessourceRequest $request
       * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreRessourceRequest $request)
     {
         
-
         $Ressource =  MethodsRessources::create($request->only('ordre','code', 'label', 'capacity','section_id', 'color', 'methods_services_id'));
         
         if($request->mask_time) $Ressource->mask_time=1;
@@ -35,31 +60,31 @@ class RessourcesController extends Controller
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
         }
-        return redirect()->route('methods')->with('success', 'Successfully created ressource.');
+        return redirect()->route('methods.ressource')->with('success', 'Successfully created ressource.');
     }
 
     /**
-    * @param \Illuminate\Http\Request $request
+     * Update the specified ressource in storage.
+     *
+     * @param \App\Http\Requests\Methods\UpdateRessourceRequest $request
     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateRessourceRequest $request)
     {
-        $Ressource = MethodsRessources::find($request->id);
-        $Ressource->ordre=$request->ordre;
-        $Ressource->label=$request->label;
+        $ressource = MethodsRessources::findOrFail($request->id);
 
-        if($request->mask_time_update) $Ressource->mask_time=1;
-        else $Ressource->mask_time = 2;
+        $ressource->update([
+            'ordre' => $request->ordre,
+            'label' => $request->label,
+            'mask_time' => $request->mask_time_update ? 1 : 2,
+            'capacity' => $request->capacity,
+            'section_id' => $request->section_id,
+            'color' => $request->color,
+            'methods_services_id' => $request->methods_services_id,
+        ]);
 
-        $Ressource->capacity=$request->capacity;
-        $Ressource->section_id=$request->section_id;
-        $Ressource->color=$request->color;
-        $Ressource->methods_services_id=$request->methods_services_id;
-        $Ressource->save();
-
-        return redirect()->route('methods')->with('success', 'Successfully updated ressource.');
+        return redirect()->route('methods.ressource')->with('success', 'Successfully updated ressource.');
     }
-
     
     /**
      * @param \Illuminate\Http\Request $request
@@ -79,7 +104,7 @@ class RessourcesController extends Controller
             $request->picture->move(public_path('images/ressources'), $filename);
             $Service->update(['picture' => $filename]);
             $Service->save();
-            return redirect()->route('methods')->with('success', 'Successfully updated ressource.');
+            return redirect()->route('methods.ressource')->with('success', 'Successfully updated ressource.');
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);

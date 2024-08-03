@@ -452,18 +452,21 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     
         // Routes for Unit
         Route::group(['prefix' => 'unit'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\UnitsController@index')->name('methods.unit');
             Route::post('/create', 'App\Http\Controllers\Methods\UnitsController@store')->name('methods.unit.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\UnitsController@update')->name('methods.unit.update');
         });
     
         // Routes for Family
         Route::group(['prefix' => 'family'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\FamiliesController@index')->name('methods.family');
             Route::post('/create', 'App\Http\Controllers\Methods\FamiliesController@store')->name('methods.family.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\FamiliesController@update')->name('methods.family.update');
         });
     
         // Routes for Service
         Route::group(['prefix' => 'service'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\ServicesController@index')->name('methods.service');
             Route::post('/create', 'App\Http\Controllers\Methods\ServicesController@store')->name('methods.service.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\ServicesController@update')->name('methods.service.update');
             Route::post('/edit/{id}/image', 'App\Http\Controllers\Methods\ServicesController@StoreImage')->name('methods.service.update.picture');
@@ -471,12 +474,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     
         // Routes for Section
         Route::group(['prefix' => 'section'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\SectionsController@index')->name('methods.section');
             Route::post('/create', 'App\Http\Controllers\Methods\SectionsController@store')->name('methods.section.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\SectionsController@update')->name('methods.section.update');
         });
     
         // Routes for Ressources
         Route::group(['prefix' => 'ressources'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\RessourcesController@index')->name('methods.ressource');
             Route::post('/create', 'App\Http\Controllers\Methods\RessourcesController@store')->name('methods.ressource.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\RessourcesController@update')->name('methods.ressource.update');
             Route::post('/edit/{id}/image', 'App\Http\Controllers\Methods\RessourcesController@StoreImage')->name('methods.ressource.update.picture');
@@ -484,12 +489,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     
         // Routes for Location
         Route::group(['prefix' => 'location'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\LocationsController@index')->name('methods.location');
             Route::post('/create', 'App\Http\Controllers\Methods\LocationsController@store')->name('methods.location.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\LocationsController@update')->name('methods.location.update');
         });
     
         // Routes for Tool
         Route::group(['prefix' => 'tool'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\ToolsController@index')->name('methods.tool');
             Route::post('/create', 'App\Http\Controllers\Methods\ToolsController@store')->name('methods.tool.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->name('methods.tool.update');
             Route::post('/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->name('methods.tool.update.picture');
@@ -497,6 +504,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         // Routes for Standard Nomenclature
         Route::group(['prefix' => 'standard-nomenclature'], function () {
+            Route::get('/', 'App\Http\Controllers\Methods\StandardNomenclatureController@index')->name('methods.standard.nomenclature');
             Route::post('/create', 'App\Http\Controllers\Methods\StandardNomenclatureController@store')->name('methods.standard.nomenclature.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\StandardNomenclatureController@update')->name('methods.standard.nomenclature.update');
         });
