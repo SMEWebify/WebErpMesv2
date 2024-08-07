@@ -25,13 +25,9 @@ class UnitsController extends Controller
      */
     public function index()
     {
-        $RessourcesSelect = $this->SelectDataService->getRessources();
         $MethodsUnits = MethodsUnits::orderBy('id')->get();
-        $MethodsLocations = MethodsLocation::orderBy('id')->get();
-        return view('methods/methods-locations', [
+        return view('methods/methods-untis', [
             'MethodsUnits' => $MethodsUnits,
-            'MethodsLocations' => $MethodsLocations,
-            'RessourcesSelect' => $RessourcesSelect,
         ]);
     }
     
