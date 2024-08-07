@@ -71,7 +71,6 @@ class OrderLine extends Component
         'ordre' =>'required|numeric|gt:0',
         'label'=>'required',
         'qty'=>'required|min:1|not_in:0',
-        'methods_units_id'=>'required',
         'selling_price'=>'required|numeric|gt:0',
         'discount'=>'required',
     ];
@@ -138,27 +137,28 @@ class OrderLine extends Component
     }
 
     public function storeOrderLine(){
-        $AccountingVat = 0;
         if($this->OrderType == 2){
             $this->validate([
                 'product_id' => 'required',
                 'ordre' =>'required|numeric|gt:0',
                 'label'=>'required',
                 'qty'=>'required|min:1|not_in:0',
-                'methods_units_id'=>'required',
                 'selling_price'=>'required|numeric|gt:0',
                 'discount'=>'required',
             ]);
 
-            $AccountingVat = AccountingVat::getDefault(); 
-            $AccountingVat = ($AccountingVat->id  ?? 0);
-    
-            if($AccountingVat == 0 ){
-                return redirect()->route('orders.show', ['id' =>  $this->orders_id])->with('error', 'No VAT default settings');
-            }
         }
         else{
             $this->validate();
+        }
+
+        $AccountingVat = AccountingVat::getDefault(); 
+        $MethodsUnits = MethodsUnits::getDefault(); 
+        $AccountingVat = ($AccountingVat->id  ?? 0);
+        $MethodsUnits = ($MethodsUnits->id  ?? 0);
+
+        if($AccountingVat == 0|| $MethodsUnits == 0 ){
+            return redirect()->route('orders.show', ['id' =>  $this->orders_id])->with('error', 'No default settings');
         }
 
         $date = date_create($this->delivery_date);
@@ -174,7 +174,7 @@ class OrderLine extends Component
             'qty'=>$this->qty,
             'delivered_remaining_qty'=>$this->qty,
             'invoiced_remaining_qty'=>$this->qty,
-            'methods_units_id'=>$this->methods_units_id,
+            'methods_units_id'=>$MethodsUnits,
             'selling_price'=>$this->selling_price,
             'discount'=>$this->discount,
             'accounting_vats_id'=>$AccountingVat,

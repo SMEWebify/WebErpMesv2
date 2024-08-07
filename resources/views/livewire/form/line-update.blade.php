@@ -11,7 +11,7 @@
             @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
-            <label for="product_id">{{ __('general_content.delivery_date_trans_key') }}</label>
+            <label for="product_id">{{ __('general_content.product_trans_key') }}</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-barcode"></i></span>

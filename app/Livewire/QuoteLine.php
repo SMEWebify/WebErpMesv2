@@ -62,7 +62,6 @@ class QuoteLine extends Component
         'ordre' =>'required|numeric|min:0|not_in:0',
         'label'=>'required',
         'qty'=>'required|min:1|not_in:0',
-        'methods_units_id'=>'required',
         'selling_price'=>'required|numeric|min:0|not_in:0',
         'discount'=>'required',
     ];
@@ -134,10 +133,12 @@ class QuoteLine extends Component
         // Create Line
         
         $AccountingVat = AccountingVat::getDefault(); 
+        $MethodsUnits = MethodsUnits::getDefault(); 
         $AccountingVat = ($AccountingVat->id  ?? 0);
+        $MethodsUnits = ($MethodsUnits->id  ?? 0);
 
-        if($AccountingVat == 0 ){
-            return redirect()->route('quotes.show', ['id' =>  $this->quotes_id])->with('error', 'No VAT default settings');
+        if($AccountingVat == 0|| $MethodsUnits == 0 ){
+            return redirect()->route('quotes.show', ['id' =>  $this->quotes_id])->with('error', 'No default settings');
         }
 
         $NewQuoteLine = Quotelines::create([
@@ -147,7 +148,7 @@ class QuoteLine extends Component
             'product_id'=>$this->product_id,
             'label'=>$this->label,
             'qty'=>$this->qty,
-            'methods_units_id'=>$this->methods_units_id,
+            'methods_units_id'=>$MethodsUnits,
             'selling_price'=>$this->selling_price,
             'discount'=>$this->discount,
             'accounting_vats_id'=>$AccountingVat,

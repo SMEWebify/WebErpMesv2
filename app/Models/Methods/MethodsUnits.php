@@ -3,6 +3,7 @@
 namespace App\Models\Methods;
 
 use App\Models\Planning\Task;
+use App\Traits\HasDefaultTrait;
 use App\Models\Products\Products;
 use App\Models\Workflow\QuoteLines;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MethodsUnits extends Model
 {
-    use HasFactory;
+    use HasFactory; use HasDefaultTrait;
 
     protected $fillable = ['code',  'label',  'type', 'default'];
 
