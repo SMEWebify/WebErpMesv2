@@ -284,6 +284,15 @@
             </x-adminlte-card>
             @endif
 
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="purple" maximizable>
+              <p>
+                <a class="btn btn-success btn-sm" href="{{ route('companies.store.quote', ['id' => $Companie->id ]) }}">
+                  <i class="fas fa-folder"></i>
+                  {{ __('general_content.new_quote_trans_key') }}
+                </a>
+              </p>
+            </x-adminlte-card>
+
           </div>
         </div>
       </div>  

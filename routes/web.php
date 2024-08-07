@@ -61,6 +61,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.update');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
 
+        Route::get('/store/quote/{id}', 'App\Http\Controllers\Companies\CompaniesController@storeQuote')->name('companies.store.quote');
+
         //Rating
         Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('companies.ratings.store');
     });
