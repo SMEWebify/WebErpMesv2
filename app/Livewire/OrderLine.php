@@ -47,7 +47,7 @@ class OrderLine extends Component
     public $OrderType;
     public $status_id;
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ordre, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $order_lines_id, $orders_id, $ordre = 1, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $code='';
     public $label='';
     public $qty= 0;
@@ -56,7 +56,7 @@ class OrderLine extends Component
     public $ProductsSelect = [];
     public $UnitsSelect = [];
     public $VATSelect = [];
-    public $Factory = [];
+    public $Factory;
     public $ProductSelect  = [];
 
     public $data = [];
@@ -74,7 +74,6 @@ class OrderLine extends Component
         'methods_units_id'=>'required',
         'selling_price'=>'required|numeric|gt:0',
         'discount'=>'required',
-        'accounting_vats_id'=>'required',
     ];
 
     public function sortBy($field)
@@ -139,7 +138,7 @@ class OrderLine extends Component
     }
 
     public function storeOrderLine(){
-        
+        $AccountingVat = 0;
         if($this->OrderType == 2){
             $this->validate([
                 'product_id' => 'required',
@@ -149,8 +148,14 @@ class OrderLine extends Component
                 'methods_units_id'=>'required',
                 'selling_price'=>'required|numeric|gt:0',
                 'discount'=>'required',
-                'accounting_vats_id'=>'required',
             ]);
+
+            $AccountingVat = AccountingVat::getDefault(); 
+            $AccountingVat = ($AccountingVat->id  ?? 0);
+    
+            if($AccountingVat == 0 ){
+                return redirect()->route('orders.show', ['id' =>  $this->orders_id])->with('error', 'No VAT default settings');
+            }
         }
         else{
             $this->validate();
@@ -172,7 +177,7 @@ class OrderLine extends Component
             'methods_units_id'=>$this->methods_units_id,
             'selling_price'=>$this->selling_price,
             'discount'=>$this->discount,
-            'accounting_vats_id'=>$this->accounting_vats_id,
+            'accounting_vats_id'=>$AccountingVat,
             'internal_delay'=>$internalDelay,
             'delivery_date'=>$this->delivery_date,
         ]);

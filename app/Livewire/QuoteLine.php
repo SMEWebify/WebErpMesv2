@@ -43,7 +43,7 @@ class QuoteLine extends Component
     public $status_id;
 
     public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ordre, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $quote_lines_id, $quotes_id, $ordre = 1, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $code='';
     public $label='';
     public $qty= 0;
@@ -52,7 +52,7 @@ class QuoteLine extends Component
     public $ProductsSelect = [];
     public $UnitsSelect = [];
     public $VATSelect = [];
-    public $Factory = [];
+    public $Factory;
     public $ProductSelect  = [];
 
     public $data = [];
@@ -65,7 +65,6 @@ class QuoteLine extends Component
         'methods_units_id'=>'required',
         'selling_price'=>'required|numeric|min:0|not_in:0',
         'discount'=>'required',
-        'accounting_vats_id'=>'required',
     ];
 
     public function sortBy($field)
@@ -133,6 +132,14 @@ class QuoteLine extends Component
     public function storeQuoteLine(){
         $this->validate();
         // Create Line
+        
+        $AccountingVat = AccountingVat::getDefault(); 
+        $AccountingVat = ($AccountingVat->id  ?? 0);
+
+        if($AccountingVat == 0 ){
+            return redirect()->route('quotes.show', ['id' =>  $this->quotes_id])->with('error', 'No VAT default settings');
+        }
+
         $NewQuoteLine = Quotelines::create([
             'quotes_id'=>$this->quotes_id,
             'ordre'=>$this->ordre,
@@ -143,7 +150,7 @@ class QuoteLine extends Component
             'methods_units_id'=>$this->methods_units_id,
             'selling_price'=>$this->selling_price,
             'discount'=>$this->discount,
-            'accounting_vats_id'=>$this->accounting_vats_id,
+            'accounting_vats_id'=>$AccountingVat,
             'delivery_date'=>$this->delivery_date,
         ]);
         

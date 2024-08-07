@@ -291,9 +291,9 @@ class OpportunitiesController extends Controller
             $label = "QT-". $LastQuote->id;
         }
 
-        $accounting_payment_conditions = AccountingPaymentConditions::select('id')->where( 'default', 1)->first(); 
-        $accounting_payment_methods = AccountingPaymentMethod::select('id')->where( 'default', 1)->first(); 
-        $accounting_deliveries = AccountingDelivery::select('id')->where( 'default', 1)->first(); 
+        $accounting_payment_conditions = AccountingPaymentConditions::getDefault(); 
+        $accounting_payment_methods = AccountingPaymentMethod::getDefault();  
+        $accounting_deliveries = AccountingDelivery::getDefault(); 
 
         $accounting_payment_conditions = ($accounting_payment_conditions->id ?? 0); 
         $accounting_payment_methods = ($accounting_payment_methods->id  ?? 0);  
