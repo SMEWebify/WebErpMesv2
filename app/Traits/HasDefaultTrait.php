@@ -9,8 +9,14 @@ trait HasDefaultTrait
      *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public static function getDefault()
+    public static function getDefault(array $conditions = [])
     {
-        return self::where('default', 1)->first();
+        $query = self::where('default', 1);
+
+        foreach ($conditions as $field => $value) {
+            $query->where($field, $value);
+        }
+
+        return $query->first();
     }
 }

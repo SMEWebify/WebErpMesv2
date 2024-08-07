@@ -101,7 +101,6 @@
                                   <option value="1" @if($PaymentCondition->default == 1) selected @endif>{{ __('general_content.yes_trans_key') }}</option>
                               </select>
                             </div>
-                            
                           </div>
                           <x-slot name="footerSlot">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -121,6 +120,7 @@
                     <th>{{__('general_content.number_of_month_trans_key') }}</th>
                     <th>{{__('general_content.number_of_day_trans_key') }}</th>
                     <th>{{__('general_content.end_of_month_trans_key') }}</th>
+                    <th></th>
                     <th></th>
                   </tr>
                 </tfoot>
@@ -251,6 +251,7 @@
                     <th>{{ __('general_content.external_id_trans_key') }}</th>
                     <th>{{ __('general_content.description_trans_key') }}</th>
                     <th>{{__('general_content.code_account_trans_key') }}</th>
+                    <th></th>
                     <th></th>
                   </tr>
                 </tfoot>
@@ -670,13 +671,14 @@
                     </td>
                   </tr>
                   @empty
-                    <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
                   <tr>
                     <th>{{ __('general_content.external_id_trans_key') }}</th>
                     <th>{{ __('general_content.description_trans_key') }}</th>
+                    <th></th>
                     <th></th>
                   </tr>
                 </tfoot>

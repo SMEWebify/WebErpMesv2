@@ -28,6 +28,8 @@ class ContactsController extends Controller
     {
         $contact = CompaniesContacts::findOrFail($request->id);
         $contact->update($request->validated()); // Use mass assignment with validation
+        if($request->defaultContact_update) $contact->default=1;
+        else $contact->default = 0;
         $contact->save();
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully updated contact');
     }

@@ -303,6 +303,7 @@
                       <th>{{ __('general_content.country_trans_key') }}</th>
                       <th>{{ __('general_content.phone_trans_key') }}</th>
                       <th>{{ __('general_content.email_trans_key') }}</th>
+                      <th></th>
                       <th>{{ __('general_content.action_trans_key') }}</th>
                     </tr>
                   </thead>
@@ -317,6 +318,12 @@
                       <td>{{ $Address->country }}</td>
                       <td>{{ $Address->number }}</td>
                       <td>{{ $Address->mail }}</td>
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input class="custom-control-input" type="radio" id="customRadioAddress{{ $Address->id }}" name="customRadioAddress{{ $Address->id }}"  @if( $Address->default == 1 ) checked @endif disabled>
+                          <label for="customRadioAddress{{ $Address->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                        </div>
+                      </td>
                       <td class=" py-0 align-middle">
                         <!-- Button Modal -->
                         <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Address{{ $Address->id }}">
@@ -328,7 +335,7 @@
                             @csrf
                             <div class="card-body">
                               <div class="row">
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -339,7 +346,7 @@
                                         <input type="hidden" name="companies_id" value="{{ $Address->companies_id }}">
                                     </div>
                                 </div>
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="label">{{__('general_content.label_trans_key') }}</label>
                                   <div class="input-group">
                                     <div class="input-group-prepend">
@@ -351,38 +358,50 @@
                               </div>
                               <hr>
                               <div class="row">
-                                <div class="col-5">
+                                <div class="form-group col-md-12">
                                   <label for="adress">{{ __('general_content.adress_name_trans_key') }}</label>
                                   <input type="text" class="form-control" name="adress"  id="adress" placeholder="{{ __('general_content.adress_name_trans_key') }}" value="{{ $Address->adress }}">
                                 </div>
                               </div>
                               <div class="row">
-                                <div class="col-5">
+                                <div class="form-group col-md-12">
                                   <label for="zipcode">{{ __('general_content.postal_code_trans_key') }}</label>
                                   <input type="text" class="form-control" name="zipcode"  id="zipcode" placeholder="{{ __('general_content.postal_code_trans_key') }}" value="{{ $Address->zipcode }}">
                                 </div>
                               </div>
                               <div class="row">
-                                <div class="col-5">
+                                <div class="form-group col-md-12">
                                   <label for="city">{{ __('general_content.city_trans_key') }}</label>
                                   <input type="text" class="form-control" name="city"  id="city" placeholder="{{ __('general_content.city_trans_key') }}" value="{{ $Address->city }}">
                                 </div>
                               </div>
                               <div class="row">
-                                <div class="col-5">
+                                <div class="form-group col-md-12">
                                   <label for="country">{{ __('general_content.country_trans_key') }}</label>
                                   <input type="text" class="form-control" name="country"  id="country" placeholder="{{ __('general_content.country_trans_key') }}" value="{{ $Address->country }}">
                                 </div>
                               </div>
-                              <hr>
+                              
                               <div class="row">
-                                <div class="col-5">
+                                <div class="form-group col-md-12">
                                   <label for="number">{{ __('general_content.phone_trans_key') }}</label>
                                   <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}" value="{{ $Address->number }}">
                                 </div>
-                                <div class="col-5">
+                              </div>
+                              <div class="row">
+                                <div class="form-group col-md-12">
                                   <label for="mail">{{ __('general_content.email_trans_key') }}</label>
                                   <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}" value="{{ $Address->mail }}">
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-4 text-left"><label for="defaultAddress{{ $Address->id }}" class="col-form-label">{{ __('general_content.by_default_trans_key') }}</label></div>
+                                <div class="col-8">
+                                    @if($Address->default == 1)  
+                                    <x-adminlte-input-switch id="defaultAddress{{ $Address->id }}" name="defaultAdress_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                                    @else
+                                    <x-adminlte-input-switch id="defaultAddress{{ $Address->id }}" name="defaultAdress_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                    @endif
                                 </div>
                               </div>
                             </div>
@@ -408,6 +427,7 @@
                       <th>{{ __('general_content.country_trans_key') }}</th>
                       <th>{{ __('general_content.phone_trans_key') }}</th>
                       <th>{{ __('general_content.email_trans_key') }}</th>
+                      <th></th>
                       <th>{{ __('general_content.action_trans_key') }}</th>
                     </tr>
                   </tfoot>
@@ -504,6 +524,7 @@
                       <th>{{ __('general_content.email_trans_key') }}</th>
                       <th>{{ __('general_content.phone_trans_key') }}</th>
                       <th>{{ __('general_content.mobile_phone_trans_key') }}</th>
+                      <th></th>
                       <th>{{ __('general_content.action_trans_key') }}</th>
                     </tr>
                   </thead>
@@ -517,6 +538,12 @@
                       <td>{{ $Contact->mail }}</td>
                       <td>{{ $Contact->number }}</td>
                       <td>{{ $Contact->mobile }}</td>
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input class="custom-control-input" type="radio" id="customRadioContact{{ $Contact->id }}" name="customRadioContact{{ $Contact->id }}"  @if( $Contact->default == 1 ) checked @endif disabled>
+                          <label for="customRadioContact{{ $Contact->id }}" class="custom-control-label">{{__('general_content.by_default_trans_key') }}</label>
+                        </div>
+                      </td>
                       <td class=" py-0 align-middle">
                         <!-- Button Modal -->
                         <button type="button" class="btn bg-teal" data-toggle="modal" data-target="#Contact{{ $Contact->id }}">
@@ -528,7 +555,7 @@
                             @csrf
                             <div class="card-body">
                               <div class="row">
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="ordre">{{ __('general_content.sort_trans_key') }}:</label>
                                   <div class="input-group">
                                     <div class="input-group-prepend">
@@ -539,7 +566,7 @@
                                     <input type="hidden" name="id" value="{{ $Contact->id }}">
                                   </div>
                                 </div>
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="civility">{{ __('general_content.civility_trans_key') }}</label>
                                   <select class="form-control" name="civility">
                                     <option value="{{ __('general_content.miss_trans_key') }}" @if( $Contact->civility ==__('general_content.miss_trans_key')) Selected @endIf >{{ __('general_content.miss_trans_key') }}</option>
@@ -550,11 +577,11 @@
                                 </div>
                               </div>
                               <div class="row">
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="first_name">{{ __('general_content.first_name_trans_key') }}</label>
                                   <input type="text" class="form-control" name="first_name"  id="first_name" placeholder="{{ __('general_content.first_name_trans_key') }}" value="{{ $Contact->first_name }}">
                                 </div>
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="name">{{ __('general_content.name_trans_key') }}</label>
                                   <input type="text" class="form-control" name="name"  id="name" placeholder="{{ __('general_content.name_trans_key') }}" value="{{ $Contact->name }}">
                                 </div>
@@ -566,11 +593,11 @@
                               </div>
                               <hr>
                               <div class="row">
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="number">{{ __('general_content.phone_trans_key') }}</label>
                                   <input type="text" class="form-control" name="number"  id="number" placeholder="{{ __('general_content.phone_trans_key') }}"  value="{{ $Contact->number }}">
                                 </div>
-                                <div class="col-5">
+                                <div class="col-6">
                                   <label for="mobile">{{ __('general_content.mobile_phone_trans_key') }}</label>
                                   <input type="text" class="form-control" name="mobile"  id="mobile" placeholder="{{ __('general_content.mobile_phone_trans_key') }}"  value="{{ $Contact->mobile }}">
                                 </div>
@@ -578,6 +605,16 @@
                               <div class="form-group">
                                 <label for="mail">{{ __('general_content.email_trans_key') }}</label>
                                 <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}"  value="{{ $Contact->mail }}">
+                              </div>
+                              <div class="row">
+                                <div class="col-4 text-left"><label for="defaultContact{{ $Contact->id }}" class="col-form-label">{{ __('general_content.by_default_trans_key') }}</label></div>
+                                <div class="col-8">
+                                    @if($Contact->default == 1)  
+                                    <x-adminlte-input-switch id="defaultContact{{ $Contact->id }}" name="defaultContact_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+                                    @else
+                                    <x-adminlte-input-switch id="defaultContact{{ $Contact->id }}" name="defaultContact_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                                    @endif
+                                </div>
                               </div>
                             </div>
                             <!-- /.card-body -->
@@ -601,6 +638,7 @@
                       <th>{{ __('general_content.email_trans_key') }}</th>
                       <th>{{ __('general_content.phone_trans_key') }}</th>
                       <th>{{ __('general_content.mobile_phone_trans_key') }}</th>
+                      <th></th>
                       <th>{{ __('general_content.action_trans_key') }}</th>
                     </tr>
                   </tfoot>

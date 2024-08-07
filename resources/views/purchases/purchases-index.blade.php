@@ -21,6 +21,8 @@
   <!-- /.card-header -->
   <div class="tab-content p-3">
     <div class="tab-pane active" id="Dashboard">
+      
+      @include('include.alert-result')
       <div class="row">
         <div class="col-md-3">
           <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>

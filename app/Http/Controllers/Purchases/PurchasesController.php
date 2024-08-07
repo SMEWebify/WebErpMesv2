@@ -133,8 +133,8 @@ class PurchasesController extends Controller
         $LastPurchase =  Purchases::latest()->first();
         //if we have no id, define 0 
         if($LastPurchase == Null){
-            $code =  "-0";
-            $label = "-0";
+            $code =  "PU-0";
+            $label = "PU-0";
         }
         // else we use is from db
         else{
@@ -163,9 +163,23 @@ class PurchasesController extends Controller
      */
     public function storePurchase(StorePurchaseRequest  $request)
     {
-        $PurchaseOrderCreated = Purchases::create($request->only('code', 'label','companies_id','user_id'));
+        $defaultAddress = CompaniesAddresses::getDefault(['companies_id' => $request->companies_id]);
+        $defaultContact = CompaniesContacts::getDefault(['companies_id' => $request->companies_id]);
+        $purchaseData = $request->only('code', 'label', 'companies_id', 'user_id');
+        
+        $defaultAddress = ($defaultAddress->id  ?? 0);
+        $defaultContact = ($defaultContact->id  ?? 0);
 
-        return redirect()->route('purchases.show', ['id' => $PurchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
+        if($defaultAddress == 0 || $defaultContact == 0 ){
+            return redirect()->back()->with('error', 'No default settings');
+        }
+
+        $purchaseData['companies_addresses_id'] = $defaultAddress;
+        $purchaseData['companies_contacts_id'] = $defaultContact;
+
+        $purchaseOrderCreated = Purchases::create($purchaseData);
+
+        return redirect()->route('purchases.show', ['id' => $purchaseOrderCreated->id])->with('success', 'Successfully created new purchase order');
     }
 
     /**

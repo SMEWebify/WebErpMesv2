@@ -30,6 +30,9 @@ class AddressesController extends Controller
     {
         $adress = CompaniesAddresses::findOrFail($request->id);
         $adress->update($request->validated()); 
+        if($request->defaultAdress_update) $adress->default=1;
+        else $adress->default = 0;
+        $adress->save();
         return redirect()->route('companies.show', ['id' =>  $request->companies_id])->with('success', 'Successfully updated adress');
     }
 }
