@@ -17,14 +17,14 @@ class CreatePurchaseReceiptsTable extends Migration
             $table->id();
             $table->string('code');
 			$table->string('label');
-			$table->integer('companies_id');
-			$table->integer('companies_contacts_id');
-			$table->integer('companies_addresses_id');
+			$table->unsignedBigInteger('companies_id');
+			$table->unsignedBigInteger('companies_contacts_id');
+			$table->unsignedBigInteger('companies_addresses_id');
             $table->string('delivery_note_number')->nullable();
 			$table->integer('statu')->default(1);
             #1 = In progress
             #2 = Stock
-			$table->integer('user_id');
+			$table->unsignedBigInteger('user_id');
 			$table->text('comment')->nullable();
             $table->timestamps();
 

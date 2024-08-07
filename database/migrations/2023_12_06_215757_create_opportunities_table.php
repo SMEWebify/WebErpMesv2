@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('opportunities', function (Blueprint $table) {
             $table->id();
             $table->string('uuid');
-			$table->integer('companies_id');
-			$table->integer('companies_contacts_id');
-			$table->integer('companies_addresses_id');
-			$table->integer('user_id')->nullable();
+			$table->unsignedBigInteger('companies_id');
+			$table->unsignedBigInteger('companies_contacts_id');
+			$table->unsignedBigInteger('companies_addresses_id');
+			$table->unsignedBigInteger('user_id')->nullable();
 			$table->integer('leads_id')->nullable();
 			$table->string('label');
 			$table->decimal('budget', 10, 3);

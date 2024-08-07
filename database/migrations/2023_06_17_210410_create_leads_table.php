@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-			$table->integer('companies_id');
-			$table->integer('companies_contacts_id');
-			$table->integer('companies_addresses_id');
-			$table->integer('user_id')->nullable();
+			$table->unsignedBigInteger('companies_id');
+			$table->unsignedBigInteger('companies_contacts_id');
+			$table->unsignedBigInteger('companies_addresses_id');
+			$table->unsignedBigInteger('user_id')->nullable();
             $table->integer('statu')->default(1);
             #1 = New
             #2 = Assigned

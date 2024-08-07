@@ -17,9 +17,9 @@ class CreatePurchasesQuotationsTable extends Migration
             $table->id();
             $table->string('code');
 			$table->string('label');
-			$table->integer('companies_id');
-			$table->integer('companies_contacts_id');
-			$table->integer('companies_addresses_id');
+			$table->unsignedBigInteger('companies_id');
+			$table->unsignedBigInteger('companies_contacts_id');
+			$table->unsignedBigInteger('companies_addresses_id');
 			$table->date('delay')->nullable();
 			$table->integer('statu')->default(1);
             #1 = In progress
@@ -28,7 +28,7 @@ class CreatePurchasesQuotationsTable extends Migration
             #4 = Received
             #5 = PO partly created
             #6 = PO Created
-			$table->integer('user_id');
+			$table->unsignedBigInteger('user_id');
 			$table->text('comment')->nullable();
             $table->timestamps();
 

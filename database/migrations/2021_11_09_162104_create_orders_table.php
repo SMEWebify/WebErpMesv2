@@ -19,16 +19,16 @@ class CreateOrdersTable extends Migration
             $table->string('code');
 			$table->string('label');
 			$table->string('customer_reference')->nullable();
-			$table->integer('companies_id');
-			$table->integer('companies_contacts_id');
-			$table->integer('companies_addresses_id');
+			$table->unsignedBigInteger('companies_id');
+			$table->unsignedBigInteger('companies_contacts_id');
+			$table->unsignedBigInteger('companies_addresses_id');
 			$table->date('validity_date')->nullable();
 			$table->integer('statu')->default(1);
             #1 = Open
             #2 = In progress
             #3 = Delivered
             #4 = Partly delivered
-			$table->integer('user_id');
+			$table->unsignedBigInteger('user_id');
 			$table->integer('accounting_payment_conditions_id');
 			$table->integer('accounting_payment_methods_id');
 			$table->integer('accounting_deliveries_id');
