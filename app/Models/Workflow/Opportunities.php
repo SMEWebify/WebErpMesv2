@@ -7,9 +7,11 @@ use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Leads;
 use App\Models\Workflow\Quotes;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Workflow\OpportunitiesEventsLogs;
 use App\Models\Workflow\OpportunitiesActivitiesLogs;
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Opportunities extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'uuid',
@@ -92,5 +94,11 @@ class Opportunities extends Model
     public function GetPrettyCreatedAttribute()
     {
         return Carbon::parse($this->created_at)->diffForHumans();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly(['label', 'statu', 'probality']);
+        // Chain fluent methods for configuration options
     }
 }

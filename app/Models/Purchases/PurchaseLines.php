@@ -4,17 +4,19 @@ namespace App\Models\Purchases;
 
 use App\Models\Planning\Task;
 use App\Models\Products\Products;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Purchases\Purchases;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Products\StockLocation;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Accounting\AccountingAllocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseLines extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = ['purchases_id', 
                             'tasks_id', 
@@ -73,5 +75,11 @@ class PurchaseLines extends Model
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly([ 'code', 'label', 'statu']);
+        // Chain fluent methods for configuration options
     }
 }

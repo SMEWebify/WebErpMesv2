@@ -3,16 +3,18 @@
 namespace App\Models\Purchases;
 
 use App\Models\User;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchaseQuotationLines;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchasesQuotation extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = ['code', 
                             'label', 
@@ -52,5 +54,11 @@ class PurchasesQuotation extends Model
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly([ 'code', 'label', 'statu']);
+        // Chain fluent methods for configuration options
     }
 }

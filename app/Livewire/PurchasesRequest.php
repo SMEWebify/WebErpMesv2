@@ -11,6 +11,8 @@ use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Purchases\PurchaseQuotationLines;
 
@@ -166,12 +168,23 @@ class PurchasesRequest extends Component
                 return redirect()->back()->with('error', 'No status in kanban for define progress');
             }
 
+            $defaultAddress = CompaniesAddresses::getDefault(['companies_id' => $this->companies_id]);
+            $defaultContact = CompaniesContacts::getDefault(['companies_id' => $this->companies_id]);
+            $defaultAddress = ($defaultAddress->id  ?? 0);
+            $defaultContact = ($defaultContact->id  ?? 0);
+    
+            if($defaultAddress == 0 || $defaultContact == 0 ){
+                return redirect()->back()->with('error', 'No default settings');
+            }
+
             // Create puchase order
             if($this->document_type == 'PU'){
                 $PurchaseOrderCreated = Purchases::create([
                     'code'=>$this->code,  
                     'label'=>$this->label, 
-                    'companies_id'=>$this->companies_id,   
+                    'companies_id'=>$this->companies_id,  
+                    'companies_addresses_id'=>$defaultAddress, 
+                    'companies_contacts_id'=>$defaultContact,  
                     'user_id'=>$this->user_id,
                 ]);
 
@@ -222,7 +235,9 @@ class PurchasesRequest extends Component
                 $PurchaseQuotationCreated = PurchasesQuotation::create([
                     'code'=>$this->code,  
                     'label'=>$this->label, 
-                    'companies_id'=>$this->companies_id,   
+                    'companies_id'=>$this->companies_id,
+                    'companies_addresses_id'=>$defaultAddress, 
+                    'companies_contacts_id'=>$defaultContact,   
                     'user_id'=>$this->user_id,
                 ]);
 

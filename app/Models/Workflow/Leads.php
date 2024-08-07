@@ -4,15 +4,17 @@ namespace App\Models\Workflow;
 
 use Carbon\Carbon;
 use App\Models\User;
+use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Leads extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'companies_id',
@@ -54,5 +56,11 @@ class Leads extends Model
     public function GetPrettyCreatedAttribute()
     {
         return Carbon::parse($this->created_at)->diffForHumans();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly(['campaign', 'source', 'status']);
+        // Chain fluent methods for configuration options
     }
 }
