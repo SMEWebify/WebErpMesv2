@@ -51,11 +51,14 @@ class WorkshopController extends Controller
         })->count();
 
         // Calculation of the average OF processing time
+        $averageProcessingTime = 0;
         $tasksWithEndDate = Task::whereNotNull('end_date')->get();
-        $totalTime = $tasksWithEndDate->sum(function ($task) {
-            return $task->getTotalLogTime() * 3600; //in second time
-        });
-        $averageProcessingTime = $totalTime / $tasksWithEndDate->count();
+        if($tasksWithEndDate->count() > 0){
+            $totalTime = $tasksWithEndDate->sum(function ($task) {
+                return $task->getTotalLogTime() * 3600; //in second time
+            });
+            $averageProcessingTime = $totalTime / $tasksWithEndDate->count();
+        }
 
         // User productivity
         $userProductivity = DB::table('task_activities')
