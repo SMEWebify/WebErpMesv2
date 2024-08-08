@@ -201,14 +201,7 @@
                             @if(5 == $Lead->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif 
                         </td>
                         <td> 
-                            <div class="input-group-prepend">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                <div class="dropdown-menu">
-                                    <a href="#" class="dropdown-item" wire:click="inProgress({{$Lead->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i>{{ __('general_content.in_progress_trans_key') }}</span></a>
-                                    <a href="#" class="dropdown-item " wire:click="storeOpportunity({{$Lead->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i>{{ __('general_content.converted_trans_key') }}</span></a>
-                                    <a href="#" class="dropdown-item" wire:click="lost({{$Lead->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.lost_trans_key') }}</span></a>
-                                </div>
-                            </div>
+                            <x-ButtonTextView route="{{ route('leads.show', ['id' => $Lead->id])}}" />
                         </td>
                     </tr>
                     @empty
@@ -279,14 +272,7 @@
                             </p>
                         </div>
                         <div class="card-footer bg-secondary">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Actions
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="actionMenu">
-                                <a class="dropdown-item" wire:click="inProgress({{ $Lead->id }})">{{ __('general_content.in_progress_trans_key') }}</a>
-                                <a class="dropdown-item" wire:click="storeOpportunity({{ $Lead->id }})">{{ __('general_content.converted_trans_key') }}</a>
-                                <a class="dropdown-item" wire:click="lost({{ $Lead->id }})">{{ __('general_content.lost_trans_key') }}</a>
-                            </div>
+                            <x-ButtonTextView route="{{ route('leads.show', ['id' => $Lead->id])}}" />
                         </div>
                     </div>
                 </div>

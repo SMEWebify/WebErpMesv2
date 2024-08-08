@@ -67,9 +67,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('companies.ratings.store');
     });
 
-    Route::group(['prefix' => 'leads'], function () {
+    Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'check.factory']], function () {
         //leads
-        Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->middleware(['auth', 'check.factory'])->name('leads'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->name('leads');
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show'); 
+        Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\LeadsController@update')->name('leads.update');
+        Route::get('/store/opportunity/{id}', 'App\Http\Controllers\Workflow\LeadsController@storeOpportunity')->name('leads.store.opportunity');
     });
 
     Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'check.factory']], function () {

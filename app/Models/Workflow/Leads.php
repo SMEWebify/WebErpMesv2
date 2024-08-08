@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\Opportunities;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -50,6 +51,12 @@ class Leads extends Model
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Relationship with the lead associated with the Opportunities
+    public function Opportunity()
+    {
+        return $this->hasMany(Opportunities::class, 'leads_id');
     }
 
     //Get Created attribute like '	06 December 2023'

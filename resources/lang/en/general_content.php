@@ -601,6 +601,7 @@ return [
 
     //LEADS
     'leads_trans_key'                          => 'Leads',
+    'lead_trans_key'                           => 'Lead',
     'new_leads_trans_key'                      => 'New Lead',
     
     //OPPORTUNITIES

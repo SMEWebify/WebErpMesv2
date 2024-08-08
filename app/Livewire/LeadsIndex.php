@@ -104,38 +104,7 @@ class LeadsIndex extends Component
                         'campaign'=>$this->campaign, 
                         'comment'=>$this->comment, 
         ]);
-
         
         return redirect()->route('leads')->with('success', 'New lead add successfully');
-    }
-
-    public function inProgress($leadId){
-        Leads::where('id',$leadId)->update(['statu'=>'3']);
-    }
-
-    public function lost($leadId){
-        Leads::where('id',$leadId)->update(['statu'=>'5']);
-    }
-
-    public function storeOpportunity($leadId){
-        
-        Leads::where('id',$leadId)->update(['statu'=>'4']);
-
-        $LeadToStore = Leads::find($leadId);
-
-        // Create opportunity
-        $OpportunityCreated = Opportunities::create([
-                        'uuid'=> Str::uuid(),
-                        'companies_id'=>$LeadToStore->companies_id,  
-                        'companies_contacts_id'=>$LeadToStore->companies_contacts_id,    
-                        'companies_addresses_id'=>$LeadToStore->companies_addresses_id,   
-                        'user_id'=>Auth::id(),    
-                        'label'=>'#LEAD'. $leadId .'#'. $LeadToStore->source .'#'. $LeadToStore->campaign ,
-                        'leads_id'=>$leadId, 
-                        'budget'=>0,   
-                        'probality'=>50, 
-        ]);
-        
-        return redirect()->route('opportunities.show', ['id' => $OpportunityCreated->id])->with('success', 'Successfully created new opportunity');
     }
 }
