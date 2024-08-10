@@ -22,6 +22,7 @@
         "fruitcake/php-cors": "^1.2",
         "guzzlehttp/guzzle": "^7.0.1",
         "horstoeko/zugferd": "^1",
+        "jenssegers/agent": "^2.6",
         "jeroennoten/laravel-adminlte": "^3.9.2",
         "laravel/framework": "^10.0",
         "laravel/tinker": "^2.5",

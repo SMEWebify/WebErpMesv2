@@ -27,26 +27,46 @@
                     <div class="col-md-3">
                         <x-adminlte-card title="{{ __('general_content.information_trans_key') }}" theme="secondary" maximizable>
                             <div class="card-body">
-                                {{ __('general_content.created_at_trans_key') }} : {{ $UserProfil->GetPrettyCreatedAttribute() }}
+                                <strong> {{ __('general_content.created_at_trans_key') }} :</strong> {{ $UserProfil->GetPrettyCreatedAttribute() }}
                             </div>
                             <div class="card-body">
-                                {{ __('general_content.employment_statu_trans_key') }} : {{ $UserProfil->employment_status}}
+                                <strong>{{ __('general_content.employment_statu_trans_key') }} :</strong> {{ $UserProfil->employment_status}}
                             </div>
                             <div class="card-body">
-                                {{ __('general_content.job_title_trans_key') }} : {{ $UserProfil->job_title}}
+                                <strong>{{ __('general_content.job_title_trans_key') }} :</strong> {{ $UserProfil->job_title}}
                             </div>
                             <div class="card-body">
-                                {{ __('general_content.pay_grade_trans_key') }} : {{ $UserProfil->pay_grade}}
+                                <strong>{{ __('general_content.pay_grade_trans_key') }} :</strong> {{ $UserProfil->pay_grade}}
                             </div>
                             <div class="card-body">
-                                {{ __('general_content.work_station_id_trans_key') }} : {{ $UserProfil->work_station_id}}
+                                <strong>{{ __('general_content.work_station_id_trans_key') }} :</strong> {{ $UserProfil->work_station_id}}
                             </div>
                             <div class="card-body">
-                                {{ __('general_content.joined_date_trans_key') }} : {{ $UserProfil->joined_date}}
+                                <strong>{{ __('general_content.joined_date_trans_key') }} :</strong> {{ $UserProfil->joined_date}}
                             </div>
                             <div class="card-body">
-                                {{ __('general_content.confirmation_date_trans_key') }} : {{ $UserProfil->confirmation_date}}
+                                <strong>{{ __('general_content.confirmation_date_trans_key') }} : </strong>{{ $UserProfil->confirmation_date}}
                             </div>
+                        </x-adminlte-card>
+                        <x-adminlte-card title="{{ __('general_content.information_trans_key') }} [FR] for support" theme="purple" maximizable>
+                            
+                            <div class="card-body"><strong>Adresse IP :</strong> {{ $data['ipAddress'] }}</div>
+                            
+                            <div class="card-body"><strong>Navigateur :</strong> {{ $data['browser'] }}</div>
+                            
+                            <div class="card-body"><strong>Version navigateur :</strong> {{ $data['browserVersion'] }}</div>
+                            
+                            <div class="card-body"><strong>Système d'exploitation :</strong> {{ $data['platform'] }}</div>
+                            
+                            <div class="card-body"><strong>Version Système d'exploitation :</strong> {{ $data['platformVersion'] }}</div>
+                            
+                            <div class="card-body"><strong>Langue du Navigateur :</strong> {{ $data['language'] }}</div>
+                            
+                            <div class="card-body"><strong>Device :</strong> {{ $data['device'] }}</div>
+                            
+                            <div class="card-body"><strong>Desktop :</strong> -{{ $data['isDesktop'] }}-</div>
+                            
+                            <div class="card-body"><strong>Is Phone :</strong> -{{ $data['isPhone'] }}-</div>
                         </x-adminlte-card>
                     </div>
                 </div>

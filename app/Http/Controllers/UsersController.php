@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Jenssegers\Agent\Agent;
 use Illuminate\Http\Request;
 use App\Models\UserExpenseReport;
 use App\Models\Times\TimesAbsence;
@@ -30,10 +31,24 @@ class UsersController extends Controller
         $UserProfil = User::find(Auth::user()->id);
         $TimesAbsences = TimesAbsence::where('user_id', Auth::user()->id)->get();
         $ExpenseReports = UserExpenseReport::where('user_id', Auth::user()->id)->get();
+        $agent = new Agent();
+        $data = [
+            'ipAddress' => request()->ip(),
+            'browser' => $agent->browser(),
+            'browserVersion' =>  $agent->version($agent->browser()),
+            'platform' => $agent->platform(),
+            'platformVersion' => $agent->version($agent->platform()),
+            'device' => $agent->device(),
+            'isDesktop' => $agent->isDesktop(),
+            'isPhone' => $agent->isPhone(),
+            'language' => request()->getPreferredLanguage(),
+        ];
+
         return view('profile', [
             'UserProfil' => $UserProfil,
             'TimesAbsences' => $TimesAbsences,
-            'ExpenseReports' => $ExpenseReports,
+            'ExpenseReports' => $ExpenseReports, 
+            'data' => $data
         ]);
     }
 
