@@ -19,11 +19,9 @@ class PurchaseInvoice extends Model
     protected $fillable = ['code', 
                             'label', 
                             'companies_id', 
-                            'companies_contacts_id',   
-                            'companies_addresses_id',
                             'statu',  
                             'user_id',
-                            'comment',
+                            'comment', 
                         ];
 
     public function companie()
@@ -31,15 +29,6 @@ class PurchaseInvoice extends Model
         return $this->belongsTo(Companies::class, 'companies_id');
     }
 
-    public function contact()
-    {
-        return $this->belongsTo(CompaniesContacts::class, 'companies_contacts_id');
-    }
-
-    public function adresse()
-    {
-        return $this->belongsTo(CompaniesAddresses::class, 'companies_addresses_id');
-    }
 
     public function UserManagement()
     {

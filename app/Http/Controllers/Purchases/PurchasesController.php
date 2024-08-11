@@ -13,13 +13,14 @@ use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
-use App\Services\PurchaseCalculatorService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\StockLocation;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Accounting\AccountingVat;
 use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Companies\CompaniesContacts;
+use App\Services\PurchaseCalculatorService;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Products\StockLocationProducts;
@@ -27,6 +28,7 @@ use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Purchases\PurchaseQuotationLines;
 use App\Http\Requests\Purchases\StorePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
+use App\Http\Requests\Purchases\UpdatePurchaseInvoiceRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
 
@@ -214,6 +216,8 @@ class PurchasesController extends Controller
         $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
         $PurchaseCalculatorService = new PurchaseCalculatorService($id);
         $totalPrice = $PurchaseCalculatorService->getTotalPrice();
+        $subPrice = $PurchaseCalculatorService->getSubTotal();
+        $vatPrice = $PurchaseCalculatorService->getVatTotal();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Purchases(), $id->id);
         $CustomFields = CustomField::where('custom_fields.related_type', '=', 'purchase')
                                     ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
@@ -230,6 +234,8 @@ class PurchasesController extends Controller
             'AddressSelect' => $AddressSelect,
             'ContactSelect' => $ContactSelect,
             'totalPrices' => $totalPrice,
+            'subPrice' => $subPrice,
+            'vatPrice' => $vatPrice,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'CustomFields' => $CustomFields,
@@ -254,13 +260,25 @@ class PurchasesController extends Controller
             else{
                 $purchaseCode = "PU-". $LastPurchase->id;
             }
+
+            $defaultAddress = CompaniesAddresses::getDefault(['companies_id' => $purchaseData->companies_id]);
+            $defaultContact = CompaniesContacts::getDefault(['companies_id' => $purchaseData->companies_id]);
+            $AccountingVat = AccountingVat::getDefault(); 
+            $defaultAddress = ($defaultAddress->id  ?? 0);
+            $defaultContact = ($defaultContact->id  ?? 0);
+            $AccountingVat = ($AccountingVat->id  ?? 0);
+    
+            if($defaultAddress == 0 || $defaultContact == 0 || $AccountingVat == 0){
+                return redirect()->back()->with('error', 'No default settings');
+            }
+
             // Create order
             $PurchaseOrderCreated = Purchases::create([
                 'code'=> $purchaseCode,  
                 'label'=> $purchaseCode, 
                 'companies_id'=>$purchaseData->companies_id, 
-                //'companies_contacts_id' 
-                //'companies_addresses_id' 
+                'companies_contacts_id' =>$defaultContact,
+                'companies_addresses_id' =>$defaultAddress,
                 //'statu' => defaut 1
                 'user_id'=>Auth::id(),
                 //'Comment' => defaut emtpy
@@ -300,7 +318,7 @@ class PurchasesController extends Controller
                             //'receipt_qty' =>, defaut to 0
                             //'invoiced_qty' =>, defaut to 0
                             'methods_units_id' => $Task->methods_units_id,
-                            //'accounting_allocation_id' => , can be null
+                            'accounting_vats_id' => $AccountingVat,
                             //'stock_locations_id' => , can be null
                             'statu' => 1
                         ]); 
@@ -378,7 +396,6 @@ class PurchasesController extends Controller
     {
         $Purchases = Purchases::find($request->id);
         $Purchases->label=$request->label;
-        $Purchases->statu=$request->statu;
         $Purchases->companies_id=$request->companies_id;
         $Purchases->companies_contacts_id=$request->companies_contacts_id;
         $Purchases->companies_addresses_id=$request->companies_addresses_id;
@@ -423,6 +440,21 @@ class PurchasesController extends Controller
         return redirect()->route('purchase.receipts.show', ['id' =>  $PurchaseReceipt->id])->with('success', 'Successfully updated reciept');
     }
     
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updatePurchaseInvoice(UpdatePurchaseInvoiceRequest $request)
+    {
+        $PurchaseInvoice = PurchaseInvoice::find($request->id);
+        $PurchaseInvoice->label=$request->label;
+        $PurchaseInvoice->statu=$request->statu;
+        $PurchaseInvoice->comment=$request->comment;
+        $PurchaseInvoice->save();
+        
+        return redirect()->route('purchase.invoices.show', ['id' =>  $PurchaseInvoice->id])->with('success', 'Successfully updated reciept');
+    }
+
     /**
      * @return \Illuminate\Contracts\View\View
      */

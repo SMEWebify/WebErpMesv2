@@ -8,6 +8,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
+use App\Events\PurchaseReceiptCreated;
 use App\Models\Planning\TaskActivities;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceipt;
@@ -126,7 +127,6 @@ class PurchasesWaintingReceipt extends Component
                 //if not best to find request value, but we cant send hidden data with livewire
                 //How pass all information from task information ?
                 $PurchaseLines = PurchaseLines::find($key);
-                
                 // Create delivery line
                 $ReceiptLines = PurchaseReceiptLines::create([
                     'purchase_receipt_id' => $ReceiptCreated->id, 
@@ -152,6 +152,10 @@ class PurchasesWaintingReceipt extends Component
                     'comment'=>'',
                 ]);
             } 
+
+            
+            //event for purchase statu
+            event(new PurchaseReceiptCreated($ReceiptCreated));
 
             return redirect()->route('purchase.receipts.show', ['id' => $ReceiptCreated->id])->with('success', 'Successfully created new receipt');
         }

@@ -14,7 +14,7 @@ class AddDefaultToCompaniesContactsTable extends Migration
     public function up()
     {
         Schema::table('companies_contacts', function (Blueprint $table) {
-            $table->integer('default')->default(0);
+            $table->integer('default')->default(0)->after('mail');
         });
     }
 

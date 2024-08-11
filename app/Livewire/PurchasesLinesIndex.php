@@ -29,7 +29,7 @@ class PurchasesLinesIndex extends Component
     public $OrderType;
     public $status_id;
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ordre,$product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $purchase_lines_id, $ordre = 1,$product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
     public $code='';
     public $label='';
     public $qty= 0;
@@ -43,6 +43,15 @@ class PurchasesLinesIndex extends Component
     public $BOMServicesSelect = [];
     public $TechProductList = [];
     public $BOMProductList = [];
+
+    // Validation Rules
+    protected $rules = [
+        'ordre' =>'required|numeric|gt:0',
+        'label'=>'required',
+        'qty'=>'required|min:1|not_in:0',
+        'selling_price'=>'required|numeric|gt:0',
+        'discount'=>'required',
+    ];
 
     public function sortBy($field)
     {
@@ -61,7 +70,7 @@ class PurchasesLinesIndex extends Component
 
     public function mount($purchase_id, $OrderStatu) 
     {
-        $this->orders_id = $purchase_id;
+        $this->purchase_id = $purchase_id;
         $this->order_Statu = $OrderStatu;
         $this->Factory = Factory::first();
         $this->status_id = Status::select('id')->orderBy('order')->first();
@@ -101,12 +110,18 @@ class PurchasesLinesIndex extends Component
             'selling_price'=>'required|numeric|gt:0',
             'discount'=>'required',
             'methods_units_id'=>'required',
-            'accounting_vats_id'=>'required',
         ]);
+
+        $AccountingVat = AccountingVat::getDefault(); 
+        $AccountingVat = ($AccountingVat->id  ?? 0);
+
+        if($AccountingVat == 0){
+            return redirect()->route('purchases.show', ['id' =>  $this->purchase_id])->with('error', 'No default settings');
+        }
         
         // Create Line
         $NewPurchaseLines = PurchaseLines::create([
-            'purchases_id'=>$this->orders_id,
+            'purchases_id'=>$this->purchase_id,
             'ordre'=>$this->ordre,
             'code'=>$this->code,
             'product_id'=>$this->product_id,
@@ -115,7 +130,7 @@ class PurchasesLinesIndex extends Component
             'selling_price'=>$this->selling_price,
             'discount'=>$this->discount,
             'methods_units_id'=>$this->methods_units_id,
-            'accounting_vats_id'=>$this->accounting_vats_id,
+            'accounting_vats_id'=>$AccountingVat,
         ]);
 
         // Set Flash Message
@@ -145,5 +160,42 @@ class PurchasesLinesIndex extends Component
         $this->code = '';
         $this->product_id = '';
         $this->label = '';
+    }
+
+    public function editPurchaseLine($id){
+        $Line = PurchaseLines::findOrFail($id);
+        $this->purchase_lines_id = $id;
+        $this->ordre = $Line->ordre;
+        $this->code = $Line->code;
+        $this->product_id = $Line->product_id;
+        $this->label = $Line->label;
+        $this->qty = $Line->qty;
+        $this->methods_units_id = $Line->methods_units_id;
+        $this->selling_price = $Line->selling_price;
+        $this->discount = $Line->discount;
+        $this->accounting_vats_id = $Line->accounting_vats_id;
+        $this->delivery_date = $Line->delivery_date;     
+        $this->statu = $Line->statu;
+        $this->updateLines = true;
+    }
+
+    public function updatePurchaseLine(){
+        // Validate request
+        $this->validate();
+        // Update line
+        PurchaseLines::find($this->purchase_lines_id)->fill([
+            'ordre'=>$this->ordre,
+            'code'=>$this->code,
+            'product_id'=>$this->product_id,
+            'label'=>$this->label,
+            'qty'=>$this->qty,
+            'methods_units_id'=>$this->methods_units_id,
+            'selling_price'=>$this->selling_price,
+            'discount'=>$this->discount,
+            'accounting_vats_id'=>$this->accounting_vats_id,
+            'delivery_date'=>$this->delivery_date,
+            'statu'=>$this->statu,
+        ])->save();
+        session()->flash('success','Line Updated Successfully');
     }
 }

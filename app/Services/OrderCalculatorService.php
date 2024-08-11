@@ -58,7 +58,7 @@ class OrderCalculatorService
             $SubTotal += ($orderLine->qty * $orderLine->selling_price)-($orderLine->qty * $orderLine->selling_price)*($orderLine->discount/100);
         }
         return $SubTotal;
-    }
+    } 
 
     public function getTotalProductTimeByService()
     {

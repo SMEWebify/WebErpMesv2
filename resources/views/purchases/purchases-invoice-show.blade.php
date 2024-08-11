@@ -30,10 +30,10 @@
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
                 <div class="row">
-                  <div class="col-3">
+                  <div class="col-6">
                     <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $PurchaseInvoice->code }}
                   </div>
-                  <div class="col-3">
+                  <div class="col-6">
                     <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
                       <x-slot name="prependSlot">
                           <div class="input-group-text bg-gradient-success">
@@ -42,36 +42,13 @@
                       </x-slot>
                       <option value="1" @if(1 == $PurchaseInvoice->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
                       <option value="2" @if(2 == $PurchaseInvoice->statu ) Selected @endif >{{ __('general_content.to_be_posted_trans_key') }}</option>
-                      <option value="3" @if(2 == $PurchaseInvoice->statu ) Selected @endif >{{ __('general_content.closed_trans_key') }}</option>
+                      <option value="3" @if(3 == $PurchaseInvoice->statu ) Selected @endif >{{ __('general_content.closed_trans_key') }}</option>
                     </x-adminlte-select>
                   </div>
-                  <div class="col-3">
+                </div>
+                <div class="row">
+                  <div class="col-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_invoice_trans_key'), 'Value' =>  $PurchaseInvoice->label])
-                  </div>
-                  <div class="col-3">
-                    <x-adminlte-input name="delivery_note_number" label="{{ __('general_content.delivery_note_number_trans_key') }}" placeholder="{{ __('general_content.delivery_note_number_trans_key') }}" value="{{  $PurchaseInvoice->delivery_note_number }}" label-class="text-success">
-                      <x-slot name="prependSlot">
-                        <div class="input-group-text bg-gradient-success">
-                              <i class="fas fa-tags"></i>
-                          </div>
-                      </x-slot>
-                    </x-adminlte-input>
-                  </div>
-                </div>
-                <div class="row">
-                  <label for="InputWebSite">{{ __('general_content.supplier_info_trans_key') }}</label>
-                </div>
-                <div class="row">
-                  <div class="col-5">
-                    <label for="companies_id">{{ __('general_content.companie_trans_key') }}</label>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <a class="btn btn-primary btn-sm" href="{{ route('companies.show', ['id' => $PurchaseInvoice->companie->id])}}">
-                          <i class="fas fa-buildin"></i>
-                          {{  $PurchaseInvoice->companie->code }} - {{  $PurchaseInvoice->companie->label }}
-                        </a>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 <div class="row">
@@ -83,34 +60,16 @@
               </x-adminlte-card>
             </form>
           </div>
-          <!--<div class="col-md-3">
-            <div class="card card-secondary">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.informations_trans_key') }}</h3>
+          <div class="col-md-3">
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
+              <div class="card-body">
+                {{ __('general_content.created_at_trans_key') }} :  {{ $PurchaseInvoice->GetPrettyCreatedAttribute() }}
               </div>
-              <div class="card-body table-responsive p-0">
-                  <table class="table table-hover">
-                    <tr>
-                    </tr>
-                  </table>
+              <div class="card-body">
+                {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $PurchaseInvoice->companie['id'] }}" label="{{ $PurchaseInvoice->companie['label'] }}"  />
               </div>
-            </div>
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">{{ __('general_content.options_trans_key') }}</h3>
-              </div>
-              <div class="card-body table-responsive p-0">
-                  <table class="table table-hover">
-                  <tr>
-                      <td style="width:50%"> 
-                      </td>
-                      <td>
-                      </td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </div>-->
+            </x-adminlte-card>
+          </div>
         </div>
       </div>    
       <div class="tab-pane " id="PurchaseLines">
@@ -127,6 +86,8 @@
                   <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
                   <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                   <th>{{ __('general_content.price_trans_key') }}</th>
+                  <th>{{ __('general_content.discount_trans_key') }}</th>
+                  <th>{{ __('general_content.vat_trans_key') }}</th> 
                 </tr>
               </thead>
               <tbody>
@@ -164,7 +125,15 @@
                     </td>
                     <td>{{ $PurchaseInvoiceLine->purchaseLines->supplier_ref }}</td>
                     <td>{{ $PurchaseInvoiceLine->purchaseReceiptLines->receipt_qty }}</td>
-                    <td>{{ $PurchaseInvoiceLine->purchaseLines->selling_price  }} {{ $Factory->curency }}</td>
+                    <td>{{ $PurchaseInvoiceLine->purchaseLines->selling_price }} {{ $Factory->curency }}</td>
+                    <td>{{ $PurchaseInvoiceLine->purchaseLines->discount }} %</td>
+                    <td> 
+                        @if($PurchaseInvoiceLine->purchaseLines->accounting_vats_id)
+                        {{ $PurchaseInvoiceLine->purchaseLines->VAT['rate'] }} %
+                        @else
+                        -
+                        @endif
+                    </td>
                   </tr>
                 @empty
                   <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}."  />
@@ -178,6 +147,8 @@
                     <th>{{ __('general_content.supplier_ref_trans_key') }}</th>
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <th>{{ __('general_content.price_trans_key') }}</th>
+                    <th>{{ __('general_content.discount_trans_key') }}</th>
+                    <th>{{ __('general_content.vat_trans_key') }}</th> 
                   </tr>
                 </tfoot>
               </tbody>

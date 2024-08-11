@@ -3,6 +3,7 @@
 @section('title', __('general_content.purchase_trans_key'))
 
 @section('content_header')
+  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <x-Content-header-previous-button  h1="{{  __('general_content.purchase_trans_key') }} : {{  $Purchase->code }}" previous="{{ $previousUrl }}" list="{{ route('purchases') }}" next="{{ $nextUrl }}"/>
 @stop
 
@@ -26,6 +27,8 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Purchase">
+        
+        @livewire('arrow-steps.arrow-purchase', ['PurchaseId' => $Purchase->id, 'PurchaseStatu' => $Purchase->statu])
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -33,24 +36,10 @@
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-6">
                     <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}
                   </div>
-                  <div class="form-group col-md-4">
-                    <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
-                      <x-slot name="prependSlot">
-                          <div class="input-group-text bg-gradient-success">
-                              <i class="fas fa-exclamation"></i>
-                          </div>
-                      </x-slot>
-                      <option value="1" @if(1 == $Purchase->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
-                      <option value="2" @if(2 == $Purchase->statu ) Selected @endif >{{ __('general_content.ordered_trans_key') }}</option>
-                      <option value="3" @if(3 == $Purchase->statu ) Selected @endif >{{ __('general_content.partly_received_trans_key') }}</option>
-                      <option value="4" @if(4 == $Purchase->statu ) Selected @endif >{{ __('general_content.rceived_trans_key') }}</option>
-                      <option value="5" @if(5 == $Purchase->statu ) Selected @endif >{{ __('general_content.canceled_trans_key') }}</option>
-                    </x-adminlte-select>
-                  </div>
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_trans_key'), 'Value' =>  $Purchase->label])
                   </div>
                 </div>
@@ -88,14 +77,7 @@
           <div class="col-md-3">
             
             <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
-              <div class="table-responsive p-0">
-                <table class="table table-hover">
-                  <tr>
-                    <th>Total:</th>
-                    <td>{{ $totalPrices }} {{ $Factory->curency }}</td>
-                  </tr>
-                </table>
-              </div>
+              @include('include.sub-total-price')
             </x-adminlte-card>
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>

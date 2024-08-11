@@ -20,8 +20,6 @@ class PurchaseReceipt extends Model
     protected $fillable = ['code', 
                             'label', 
                             'companies_id', 
-                            'companies_contacts_id',   
-                            'companies_addresses_id',
                             'delivery_note_number',  
                             'statu',  
                             'user_id',
@@ -31,16 +29,6 @@ class PurchaseReceipt extends Model
     public function companie()
     {
         return $this->belongsTo(Companies::class, 'companies_id');
-    }
-
-    public function contact()
-    {
-        return $this->belongsTo(CompaniesContacts::class, 'companies_contacts_id');
-    }
-
-    public function adresse()
-    {
-        return $this->belongsTo(CompaniesAddresses::class, 'companies_addresses_id');
     }
 
     public function UserManagement()

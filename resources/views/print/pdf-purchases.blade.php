@@ -90,7 +90,7 @@
                         <th align="left">{{ __('general_content.qty_trans_key') }}</th>
                         <th align="left">{{ __('general_content.price_trans_key') }}</th>
                         <th align="left">{{ __('general_content.discount_trans_key') }}</th>
-                        <th align="left">{{ __('general_content.total_selling_trans_key') }}</th>
+                        <th align="left">{{ __('general_content.vat_trans_key') }}</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -112,7 +112,13 @@
                         <td>{{ $DocumentLine->qty }}</td>
                         <td>{{ $DocumentLine->selling_price }} {{ $Factory->curency }}</td>
                         <td>{{ $DocumentLine->discount }} %</td>
-                        <td>{{ $DocumentLine->total_selling_price }} {{ $Factory->curency }}</td>
+                        <td> 
+                            @if($DocumentLine->accounting_vats_id)
+                            {{ $DocumentLine->VAT['rate'] }} %
+                            @else
+                            -
+                            @endif
+                        </td>
                     </tr>
                     @empty
                         <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}"  />

@@ -9,6 +9,7 @@ use App\Models\Purchases\Purchases;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Products\StockLocation;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Accounting\AccountingVat;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Accounting\AccountingAllocation;
@@ -33,7 +34,7 @@ class PurchaseLines extends Model
                             'receipt_qty',
                             'invoiced_qty',
                             'methods_units_id',
-                            'accounting_allocation_id',
+                            'accounting_vats_id',
                             'stock_locations_id',
                         ];
 
@@ -65,6 +66,11 @@ class PurchaseLines extends Model
     public function allocation()
     {
         return $this->belongsTo(AccountingAllocation::class, 'accounting_allocation_id');
+    }
+
+    public function VAT()
+    {
+        return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
     }
 
     public function stockLocation()

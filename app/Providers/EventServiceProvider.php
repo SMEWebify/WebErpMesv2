@@ -9,9 +9,11 @@ use App\Events\OrderLineUpdated;
 use App\Events\QuoteStatusChanged;
 use App\Events\DeliveryLineUpdated;
 use Illuminate\Support\Facades\Event;
+use App\Events\PurchaseReceiptCreated;
 use App\Listeners\UpdateCompanyStatus;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\UpdateDeliveryStatus;
+use App\Listeners\UpdatePurchaseStatus;
 use App\Listeners\UpdateOpportunityStatus;
 use App\Listeners\CheckOrderLineTaskStatus;
 use App\Listeners\CheckOrderDeliveredStatus;
@@ -47,6 +49,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderCreated::class => [
             UpdateCompanyStatusForOrder::class,
+        ],
+        PurchaseReceiptCreated::class => [
+            UpdatePurchaseStatus::class,
         ],
     ];
 

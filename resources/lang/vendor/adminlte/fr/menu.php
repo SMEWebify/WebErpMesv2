@@ -54,6 +54,7 @@ return [
     'non_conformities_trans_key'               => 'Non conformités',
     'amdec_trans_key'                          => 'AMDEC',
     'settings_trans_key'                       => 'Paramètres',
+    'settings_time_trans_key'                  => 'Temps management',
     'methods_trans_key'                        => 'Méthodes',
     'methods_services_trans_key'               => 'Services',
     'methods_ressources_trans_key'             => 'Ressources',

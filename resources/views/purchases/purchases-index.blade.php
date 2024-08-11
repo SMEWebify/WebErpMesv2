@@ -148,7 +148,7 @@
                                       <select class="form-control"  name="companies_id" id="companies_id" required>
                                           <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                                       @forelse ($SupplierSelect as $item)
-                                          <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                          <option value="{{ $item->id }}" >{{ $item->code }} - {{ $item->label }}</option>
                                       @empty
                                           <option value="">{{ __('general_content.no_select_company_trans_key') }}</option>
                                       @endforelse
@@ -165,7 +165,7 @@
                                         <select class="form-control"  name="user_id" id="user_id" required>
                                             <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                                             @foreach ($userSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}" @if( Auth::id() == $item->id) Selected @endif>{{ $item->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

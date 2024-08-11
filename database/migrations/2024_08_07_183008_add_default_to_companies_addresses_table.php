@@ -14,7 +14,7 @@ class AddDefaultToCompaniesAddressesTable  extends Migration
     public function up()
     {
         Schema::table('companies_addresses', function (Blueprint $table) {
-            $table->integer('default')->default(0);
+            $table->integer('default')->default(0)->after('mail');
         });
     }
 

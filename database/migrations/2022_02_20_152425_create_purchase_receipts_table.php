@@ -30,8 +30,6 @@ class CreatePurchaseReceiptsTable extends Migration
 
             // Foreign Key Constraints
             $table->foreign('companies_id')->references('id')->on('companies')->onDelete('cascade');
-            $table->foreign('companies_contacts_id')->references('id')->on('companies_contacts')->onDelete('cascade');
-            $table->foreign('companies_addresses_id')->references('id')->on('companies_addresses')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }

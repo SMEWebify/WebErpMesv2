@@ -11,6 +11,7 @@ use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Accounting\AccountingVat;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchasesQuotation;
@@ -170,10 +171,12 @@ class PurchasesRequest extends Component
 
             $defaultAddress = CompaniesAddresses::getDefault(['companies_id' => $this->companies_id]);
             $defaultContact = CompaniesContacts::getDefault(['companies_id' => $this->companies_id]);
+            $AccountingVat = AccountingVat::getDefault(); 
             $defaultAddress = ($defaultAddress->id  ?? 0);
             $defaultContact = ($defaultContact->id  ?? 0);
+            $AccountingVat = ($AccountingVat->id  ?? 0);
     
-            if($defaultAddress == 0 || $defaultContact == 0 ){
+            if($defaultAddress == 0 || $defaultContact == 0 || $AccountingVat == 0){
                 return redirect()->back()->with('error', 'No default settings');
             }
 
@@ -212,7 +215,7 @@ class PurchasesRequest extends Component
                                 //'receipt_qty' =>, defaut to 0
                                 //'invoiced_qty' =>, defaut to 0
                                 'methods_units_id' => $Task->methods_units_id,
-                                //'accounting_allocation_id' => , can be null
+                                'accounting_vats_id' => $AccountingVat,
                                 //'stock_locations_id' => , can be null
                                 'statu' => 1
                             ]); 

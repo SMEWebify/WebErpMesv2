@@ -6,12 +6,12 @@
 
             @if($OrderStatu == 1)
                 @if($updateLines)
-                <form wire:submit.prevent="update">
-                            <input type="hidden" wire:model.live="order_lines_id">
+                <form wire:submit.prevent="updatePurchaseLine">
+                            <input type="hidden" wire:model.live="purchase_lines_id">
                             @include('livewire.form.line-update')
                 @else
                 <form wire:submit.prevent="storeOrderLine">
-                            <input type="hidden"  name="orders_id"  id="orders_id" value="1" wire:model.live="orders_id" >
+                            <input type="hidden"  name="purchase_id"  id="purchase_id" value="1" wire:model.live="purchase_id" >
                             @include('livewire.form.line-create')
                 @endif
             @else
@@ -34,7 +34,7 @@
                             <tr>
                                 <th>{{ __('general_content.order_trans_key') }}</th>
                                 <th>{{ __('general_content.qty_trans_key') }}</th>
-                                <th>{{ __('general_content.order_trans_key') }} {{__('general_content.label_trans_key') }}</th>
+                                <th>{{ __('general_content.order_trans_key') }} {{ __('general_content.label_trans_key') }}</th>
                                 <th>{{__('general_content.label_trans_key') }}</th>
                                 <th>{{ __('general_content.product_trans_key') }}</th>
                                 <th>{{ __('general_content.qty_trans_key') }}</th>
@@ -42,7 +42,8 @@
                                 <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
                                 <th>{{ __('general_content.price_trans_key') }}</th>
                                 <th>{{ __('general_content.discount_trans_key') }}</th>
-                                <th>{{ __('general_content.total_selling_trans_key') }}</th>
+                                <th>{{ __('general_content.vat_trans_key') }}</th> 
+                                <th>{{__('general_content.action_trans_key') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,7 +99,21 @@
                                 <td>{{ $PurchaseLine->invoiced_qty }}</td>
                                 <td>{{ $PurchaseLine->selling_price }} {{ $Factory->curency }}</td>
                                 <td>{{ $PurchaseLine->discount }} %</td>
-                                <td>{{ $PurchaseLine->total_selling_price }} {{ $Factory->curency }}</td>
+                                <td> 
+                                    @if($PurchaseLine->accounting_vats_id)
+                                    {{ $PurchaseLine->VAT['rate'] }} %
+                                    @else
+                                    -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($OrderStatu == 1)
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item" wire:click="editPurchaseLine({{$PurchaseLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> {{ __('general_content.edit_line_trans_key') }}</span></a>
+                                    </div>
+                                    @endif
+                                </td>
                             </tr>
                             @empty
                             <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
@@ -115,7 +130,8 @@
                                 <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
                                 <th>{{ __('general_content.price_trans_key') }}</th>
                                 <th>{{ __('general_content.discount_trans_key') }}</th>
-                                <th>{{ __('general_content.total_selling_trans_key') }}</th>
+                                <th>{{ __('general_content.vat_trans_key') }}</th>
+                                <th>{{__('general_content.action_trans_key') }}</th>
                             </tr>
                         </tfoot>
                     </table>
