@@ -113,7 +113,6 @@ class TaskCalculationDate extends Component
                     $endDate = date("Y-m-d H:i:s", $DatetimeLine-$totalTaskLineTime);
                     $UpdateTask = Task::find($Task->id);
                     $UpdateTask->end_date = $endDate;
-                    $UpdateTask->save();
                     
                     $this->progressDateLog .= '<li>End date : '. $endDate .' updated for task #'. $Task->id  .'</li>';
                     
@@ -134,6 +133,11 @@ class TaskCalculationDate extends Component
                     
                     //now we add time in sec
                     $totalTaskLineTime += ($Task->TotalTime()+$addfirsthour+$addTime)*3600;
+                    
+                    $startDate = date("Y-m-d H:i:s", $DatetimeLine-$totalTaskLineTime);
+                    $UpdateTask->start_date = $startDate;
+                    $UpdateTask->save();
+
                     $order = $Task->order_lines_id;
 
                     $this->countTaskCalculateDate += 1;

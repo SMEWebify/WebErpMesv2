@@ -5,12 +5,12 @@
 @section('content_header')
 	<div class="row mb-2">
 		<div class="col-sm-6">
-			<h1>{{__('general_content.gantt_trans_key') }}</h1>
+			<h1>{{ __('general_content.gantt_trans_key') }}</h1>
 		</div>
 		<div class="col-sm-6">
 			<!-- Button Modal -->
 			<button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#taskCalculationDate">
-				{{__('general_content.gantt_info_1_trans_key') }} ({{ $countTaskNullDate }})
+				{{ __('general_content.gantt_info_1_trans_key') }} ({{ $countTaskNullDate }})
 			</button>
 		</div>
 	</div>
@@ -20,84 +20,120 @@
 
 @section('content')
 	@livewire('task-calculation-date')
-    <div id="gantt_here" style='width:100%; height:800px;'></div>
+	<x-adminlte-card theme="lime" theme-mode="outline">
+		@include('include.alert-result')
+		<form action="{{ route('production.gantt') }}" method="GET">
+			<div class="row">
+				<div class="form-group col-4">
+					<x-adminlte-select2 name="order_line_id" id="order_line_id" label="{{ __('general_content.select_order_line_trans_key') }}" label-class="text-secondary"
+						igroup-size="lg" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
+						<x-slot name="prependSlot">
+							<div class="input-group-text bg-gradient-secondary">
+								<i class="fas fa-list"></i>
+							</div>
+						</x-slot>
+						<option value="null">{{ __('general_content.select_order_line_trans_key') }}</option>
+						@foreach ($OrderLineList as $item)
+						<option value="{{ $item->id }}">#{{ $item->id }} {{ $item->label }} - {{ $item->Order->code }}</option>
+						@endforeach
+					</x-adminlte-select2>
+				</div>
+				<div class="form-group col-2">
+					<x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+				</div>
+			</div>
+		</form>
+	</x-adminlte-card>
+	<x-adminlte-card theme="lime" theme-mode="outline">
+        <div class="row">
+            <div class="col-12">
+                <div id="chart_div"></div>
+            </div>
+        </div>
+    
+	</x-adminlte-card>
 @stop
 
 @section('css')
 <style type="text/css">
-    .weekend{
+    .weekend {
         background: #a5cfeb !important;
     }
-	.gantt_task_cell.no_work_hour {
-		background-color: #a5cfeb;
-	}
-	.gantt_task_row.gantt_selected .gantt_task_cell.no_work_hour {
-		background-color: #F8EC9C;
-	}
 </style>
 @stop
 
-
 @section('js')
-<script type="text/javascript">
-	gantt.config.date_format = "%Y-%m-%d %H:%i:%s";
-	gantt.config.min_column_width = 20;
-	gantt.config.scale_height = 90;
-	gantt.config.fit_tasks = true; 
-	gantt.config.work_time = true;
-	gantt.config.skip_off_time = true;
-	gantt.config.duration_unit = "hour";
-	gantt.config.duration_step = 1; 
-	gantt.config.show_tasks_outside_timescale = true;
-	gantt.config.readonly = true;
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+	google.charts.load("current", { packages: ["gantt"] });
+	google.charts.setOnLoadCallback(drawChart);
 
-	gantt.setWorkTime({hours: [8, 12, 13, 17]});//global working hours. 8:00-12:00, 13:00-18:00
-	gantt.setWorkTime({day: 0, hours: false});// make  day-off
-	gantt.setWorkTime({day: 6, hours: false});// make  day-off
+	function toMilliseconds(minutes) {
+		return minutes * 60 * 1000;
+	}
 
-	// default columns definition
-	gantt.config.columns = [
-		{name:"text",       label:"Task name",  width:"*", tree:true, width:220 },
-		{name:"start_date", label:"Start time", align:"center" },
-		{name:"end_date",   label:"End date",   align:"center" },
-		{name:"duration",   label:"Duration (h)",   align:"center", width:120 },
-	];
+	function hoursToMilliseconds(hours) {
+		return hours * 60 * 60 * 1000;
+	}
 
-	var daysStyle = function(date){
-		var dateToStr = gantt.date.date_to_str("%D");
-		if (dateToStr(date) == "Sun"||dateToStr(date) == "Sat")  return "weekend";
-	
-		return "";
-	};
+	function drawChart() {
+		// Remplacez 'your_order_lines_id' par la variable PHP correspondant à l'ID de la ligne de commande
+		let orderLinesId = {{ $orderLineId }};
 
-	gantt.config.scales = [
-		{unit: "day", step: 1, format: "%l, %F %d", css:daysStyle},
-		{unit: "hour", step: 1, format: "%G"}
-	];
+		fetch(`/api/gantt/order/${orderLinesId}`)
+			.then(response => response.json())
+			.then(data => {
+				const tasks = data.data.map(task => [
+					task.id.toString(),  // Task ID
+					task.label,          // Task Name
+					task.resource,       // Resource
+					task.start_date ? new Date(task.start_date.date) : null,  // Start Date
+					task.end_date ? new Date(task.end_date.date) : null,      // End Date
+					hoursToMilliseconds(task.duration),  // Duration in milliseconds
+					task.progress,       // Percent Complete
+					task.dependencies ? task.dependencies.toString() : null    // Dependencies
+				]);
 
-	gantt.templates.scale_cell_class = function(date){
-		if(!gantt.isWorkTime({task:task, date: date})){
-			return "weekend";
-		}
-		return "";
-	};
-	gantt.templates.timeline_cell_class = function(task,date){
-		if(!gantt.isWorkTime({task:task, date: date})){
-			return "weekend" ;
-		}
-		return "";
-	};
-	gantt.templates.timeline_cell_class = function (task, date) {
-		if (!gantt.isWorkTime(date, 'hour')) {
-			return ("no_work_hour");
-		}
-		return "";
-	};
-	
-	gantt.init("gantt_here");
-	gantt.load("/api/gantt/data");
-</script> 
+				var otherData = new google.visualization.DataTable();
+				otherData.addColumn("string", "Task ID");
+				otherData.addColumn("string", "Task Name");
+				otherData.addColumn("string", "Resource");
+				otherData.addColumn("date", "Start");
+				otherData.addColumn("date", "End");
+				otherData.addColumn("number", "Duration");
+				otherData.addColumn("number", "Percent Complete");
+				otherData.addColumn("string", "Dependencies");
+
+				otherData.addRows(tasks);
+
+				var options = {
+						height: 600, 
+						gantt: {
+							defaultStartDate: new Date(),
+							percentEnabled: true,
+							timeline: {
+								showRowLabels: true,        // Affiche les étiquettes des lignes
+								showBarLabels: true,        // Affiche les étiquettes des barres de tâches
+								colorByRowLabel: true,      // Colore les lignes par étiquette
+								groupByRowLabel: false,     // Ne regroupe pas les tâches par étiquette
+								weekStart: 1,               // Commence la semaine le lundi
+								// Format d'affichage en fonction du type d'échelle choisi
+								dayFormat: 'd MMM',         // Format pour les jours
+								weekFormat: 'MMM d',        // Format pour les semaines
+								monthFormat: 'MMM yyyy',    // Format pour les mois
+								quarterFormat: '[Q]Q yyyy', // Format pour les trimestres
+								yearFormat: 'yyyy',         // Format pour les années
+							}
+						},
+					};
+
+				var chart = new google.visualization.Gantt(
+					document.getElementById("chart_div")
+				);
+
+				chart.draw(otherData, options);
+			});
+	}
+</script>
+
 @stop
-
-
-

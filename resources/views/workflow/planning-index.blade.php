@@ -43,7 +43,7 @@
           <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
           <input type="date" class="form-control" name="end_date"  id="end_date" required value="{{ $endDate ?? '' }}">
         </div>
-        <div class="form-group col-4">
+        <div class="form-group col-2">
           <label for="display_hours_diff">{{ __('general_content.display_hours_diff_trans_key') }}</label>
           @if($displayHoursDiff)  
           <x-adminlte-input-switch name="display_hours_diff" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked />
@@ -57,7 +57,6 @@
       </div>
     </form>
   </x-adminlte-card>
-
 
   <x-adminlte-card theme="lime" theme-mode="outline">
     <div class="table-responsive">

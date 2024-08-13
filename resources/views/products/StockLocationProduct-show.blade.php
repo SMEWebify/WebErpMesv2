@@ -228,7 +228,7 @@
                 </x-slot>
                 <option value="null">{{ __('general_content.select_order_line_trans_key') }}</option>
                 @foreach ($OrderLineList as $item)
-                <option value="{{ $item->id }}">#{{ $item->id }} - {{ $item->Order->code }}</option>
+                <option value="{{ $item->id }}">#{{ $item->id }} {{ $item->label }} - {{ $item->Order->code }}</option>
                 @endforeach
               </x-adminlte-select2>
           </div>

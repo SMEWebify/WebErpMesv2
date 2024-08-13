@@ -22,7 +22,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/gantt/data', 'App\Http\Controllers\Planning\GanttController@get');
+//https://github.com/SMEWebify/WebErpMesv2/issues/507
+// old route => Route::get('/gantt/data', 'App\Http\Controllers\Planning\GanttController@get');
+// new route :
+Route::get('/gantt/order/{order_lines_id}', 'App\Http\Controllers\Planning\GanttController@getTasksByOrderLine');
 
 Route::apiResource('company',CompanyController::class);
 Route::apiResource('quote',QuoteController::class);

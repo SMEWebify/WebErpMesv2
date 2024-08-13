@@ -524,7 +524,7 @@ return [
         ],
         ['header' => 'settings_trans_key'],
         [
-            'text' => 'Setting times',
+            'text' => 'settings_time_trans_key',
             'icon'    => 'fas fa-user-clock',
             'url'  => 'times',
             'can'  => ['settings-time-menu'],
@@ -809,21 +809,6 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//unpkg.com/dropzone@5/dist/min/dropzone.min.js',
-                ],
-            ],
-        ],
-        'dhtmlxGantt ' => [
-            'active' => true,
-            'files' => [
-                [
-                    'type' => 'css',
-                    'asset' => true,
-                    'location' => '//cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css',
-                ],
-                [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => '//cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js',
                 ],
             ],
         ],
