@@ -6,8 +6,8 @@ Please use the following versions of WEM as they are currently being supported w
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.08    | :white_check_mark: |
-| < 1.07  | :x:                |
+| 1.11    | :white_check_mark: |
+| < 1.10  | :x:                |
 
 ## Reporting a Vulnerability
 
