@@ -12,6 +12,7 @@ use App\Models\Workflow\OrderLines;
 use App\Services\InvoiceKPIService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
+use App\Services\InvoiceLineService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\DeliveryLines;
@@ -27,14 +28,17 @@ class InvoicesController extends Controller
 
     protected $invoiceKPIService;
     protected $customFieldService;
+    protected $invoiceLineService;
 
     public function __construct(
                     InvoiceKPIService $invoiceKPIService,
-                    CustomFieldService $customFieldService
+                    CustomFieldService $customFieldService,
+                    InvoiceLineService $invoiceLineService,
             ){
-        $this->invoiceKPIService = $invoiceKPIService;
-        $this->customFieldService = $customFieldService;
-    }
+                $this->invoiceKPIService = $invoiceKPIService;
+                $this->customFieldService = $customFieldService;
+                $this->invoiceLineService = $invoiceLineService;
+            }
     
     public function index()
     {    
@@ -104,15 +108,8 @@ class InvoicesController extends Controller
         $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
         foreach ($DeliveryLines as $DeliveryLine) {
             if($DeliveryLine->invoice_status != 4){
-                // Create  invoice line
-                $InvoiceLines = InvoiceLines::create([
-                    'invoices_id' => $InvoiceCreated->id,
-                    'order_line_id' => $DeliveryLine->order_line_id, 
-                    'delivery_line_id' => $DeliveryLine->id, 
-                    'ordre' => $DeliveryLine->ordre, 
-                    'qty' => $DeliveryLine->qty,
-                    'statu' => 1
-                ]); 
+                // Create invoice line
+                $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $DeliveryLine->ordre, $DeliveryLine->qty);
 
                 $DeliveryLine->invoice_status = 4; 
                 $DeliveryLine->save();
@@ -136,7 +133,6 @@ class InvoicesController extends Controller
 
         // return view on new document
         return redirect()->route('invoices.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new invoice');
-
     }
 
     /**

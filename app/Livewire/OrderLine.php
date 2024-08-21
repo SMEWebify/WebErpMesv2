@@ -17,12 +17,13 @@ use App\Models\Workflow\Invoices;
 use App\Models\Products\StockMove;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\App;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
+use App\Services\InvoiceLineService;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Workflow\InvoiceLines;
+use App\Services\DeliveryLineService;
 use App\Models\Products\SerialNumbers;
-use App\Models\Workflow\DeliveryLines;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
@@ -65,6 +66,16 @@ class OrderLine extends Component
     
     private $deleveryOrdre = 10;
     private $invoiceOrdre = 10;
+
+    protected $deliveryLineService;
+    protected $invoiceLineService;
+
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->deliveryLineService = App::make(DeliveryLineService::class);
+        $this->invoiceLineService = App::make(InvoiceLineService::class);
+    }
 
     // Validation Rules
     protected $rules = [
@@ -434,7 +445,6 @@ class OrderLine extends Component
         Notification::send($users, new NonConformityNotification($NewNonConformity));
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
-
     
     public function storeDelevery($orderId){
         //check if line exist
@@ -479,13 +489,7 @@ class OrderLine extends Component
                     //get data to dulicate for new order
                     $OrderLineData = OrderLines::find($key);
                     // Create delivery line
-                    $DeliveryLines = DeliveryLines::create([
-                        'deliverys_id' => $DeliveryCreated->id,
-                        'order_line_id' => $key, 
-                        'ordre' => $this->deleveryOrdre,
-                        'qty' => $OrderLineData->delivered_remaining_qty,
-                        'statu' => 1
-                    ]); 
+                    $this->deliveryLineService->createDeliveryLine($DeliveryCreated, $key, $this->deleveryOrdre, $OrderLineData->delivered_remaining_qty);
 
                     if($this->CreateSerialNumber){
                         $productId = null;
@@ -521,9 +525,7 @@ class OrderLine extends Component
                         // update order statu info
                         event(new OrderLineUpdated($OrderLineData->id));
                     }
-
                     
-
                     $TaskRelation = $OrderLineData->Task()->get();
 
                     if($this->RemoveFromStock && $OrderLineData->product_id && $TaskRelation->isEmpty()){
@@ -616,14 +618,7 @@ class OrderLine extends Component
                     //get data to dulicate for new order
                     $OrderLineData = OrderLines::find($key);
                     // Create invoice line
-                    $InvoiceLines = InvoiceLines::create([
-                        'invoices_id' => $InvoiceCreated->id,
-                        'order_line_id' => $key, 
-                        'delivery_line_id' => null, 
-                        'ordre' => $this->invoiceOrdre,
-                        'qty' => $OrderLineData->invoiced_remaining_qty,
-                        'statu' => 1
-                    ]); 
+                    $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $key, null, $this->invoiceOrdre, $OrderLineData->invoiced_remaining_qty);
 
                     if($this->CreateSerialNumber){
                         $productId = null;

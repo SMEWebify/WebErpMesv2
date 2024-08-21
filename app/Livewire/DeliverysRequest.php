@@ -10,15 +10,23 @@ use App\Models\Products\StockMove;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use App\Services\DeliveryLineService;
 use App\Models\Products\SerialNumbers;
-use App\Models\Workflow\DeliveryLines;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Products\StockLocationProducts;
 
 class DeliverysRequest extends Component
 {
+    protected $deliveryLineService;
+    
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->deliveryLineService = App::make(DeliveryLineService::class);
+    }
 
     //use WithPagination;
     //protected $paginationTheme = 'bootstrap';
@@ -128,7 +136,6 @@ class DeliverysRequest extends Component
         //check if line exist
         $i = 0;
         
-        
         foreach ($this->data as $key => $item) {
             if(array_key_exists("order_line_id",$this->data[$key])){
                 if($this->data[$key]['order_line_id'] != false ){
@@ -155,15 +162,7 @@ class DeliverysRequest extends Component
                 if(array_key_exists("order_line_id",$this->data[$key])){
                     if($this->data[$key]['order_line_id'] != false ){
                         // Create delivery line
-                        $DeliveryLines = DeliveryLines::create([
-                            'deliverys_id' => $DeliveryCreated->id,
-                            'order_line_id' => $key, 
-                            'ordre' => $this->ordre,
-                            'qty' => $this->data[$key]['scumQty'],
-                            'statu' => 1
-                        ]); 
-
-                        
+                        $this->deliveryLineService->createDeliveryLine($DeliveryCreated, $key, $this->ordre, $this->data[$key]['scumQty']);
 
                         // update order line info
                         //same function from stock location product controller

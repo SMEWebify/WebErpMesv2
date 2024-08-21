@@ -10,8 +10,9 @@ use App\Models\Workflow\Invoices;
 use App\Events\DeliveryLineUpdated;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\App;
+use App\Services\InvoiceLineService;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
@@ -32,6 +33,14 @@ class InvoicesRequest extends Component
     public $LastInvoice;
     public $idCompanie = '';
     private $ordre = 10;
+
+    protected $invoiceLineService;
+
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->invoiceLineService = App::make(InvoiceLineService::class);
+    }
 
     // Validation Rules
     protected $rules = [
@@ -144,15 +153,8 @@ class InvoicesRequest extends Component
                         //if not best to find request value, but we cant send hidden data with livewire
                         //How pass order_line_id & qty delivered ?
                         $DeliveryLine = DeliveryLines::find($key);
-                        // Create  invoice line
-                        $InvoiceLines = InvoiceLines::create([
-                            'invoices_id' => $InvoiceCreated->id,
-                            'order_line_id' => $DeliveryLine->order_line_id, 
-                            'delivery_line_id' => $DeliveryLine->id, 
-                            'ordre' => $this->ordre,
-                            'qty' => $DeliveryLine->qty,
-                            'statu' => 1
-                        ]); 
+                        // Create invoice line
+                        $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $this->ordre, $DeliveryLine->qty);
                         
                         $DeliveryLine->invoice_status = 4; 
                         $DeliveryLine->save();

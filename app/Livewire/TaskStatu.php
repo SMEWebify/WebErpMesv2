@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
@@ -17,6 +16,7 @@ use App\Models\Quality\QualityNonConformity;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Products\StockLocationProducts;
 use App\Notifications\NonConformityNotification;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class TaskStatu extends Component
 {
@@ -114,25 +114,29 @@ class TaskStatu extends Component
         }
 
         foreach ($this->taskActivities as $taskActivitie){
+
+            if ($taskActivitie->user && $taskActivitie->user->name) { $userName = $taskActivitie->user->name; }
+            else{$userName = 'System'; }
+
             if($taskActivitie->type == 1){
                 $class = '';
-                $content =  $taskActivitie->user->name .' - '. __('general_content.set_to_start_trans_key');
+                $content =  $userName .' - '. __('general_content.set_to_start_trans_key');
             }
             elseif ($taskActivitie->type == 2){
                 $class = 'primary';
-                $content =  $taskActivitie->user->name .' - '. __('general_content.set_to_end_trans_key');
+                $content =  $userName .' - '. __('general_content.set_to_end_trans_key');
             }
             elseif ($taskActivitie->type == 3){
                 $class = 'info';
-                $content =  $taskActivitie->user->name .' - '. __('general_content.set_to_finish_trans_key');
+                $content =  $userName .' - '. __('general_content.set_to_finish_trans_key');
             }
             elseif ($taskActivitie->type == 4){
                 $class = 'success';
-                $content =  $taskActivitie->user->name .' - '. __('general_content.declare_finish_trans_key') .' '. $taskActivitie->good_qt .' '.  __('general_content.part_trans_key');
+                $content =  $userName .' - '. __('general_content.declare_finish_trans_key') .' '. $taskActivitie->good_qt .' '.  __('general_content.part_trans_key');
             }
             elseif ($taskActivitie->type == 5){
                 $class = 'danger';
-                $content =  $taskActivitie->user->name .' - '. __('general_content.declare_rejected_trans_key') .' '. $taskActivitie->bad_qt .' '. __('general_content.part_trans_key');
+                $content =  $userName .' - '. __('general_content.declare_rejected_trans_key') .' '. $taskActivitie->bad_qt .' '. __('general_content.part_trans_key');
             }
 
             $this->timelineData[] = [
