@@ -8,15 +8,37 @@ use Illuminate\Http\Request;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
-use App\Models\Admin\Announcements;
+use App\Services\OrderKPIService;
+use App\Services\QuoteKPIService;
 use Illuminate\Support\Facades\DB;
+use App\Models\Admin\Announcements;
 use App\Models\Workflow\OrderLines;
+use App\Services\InvoiceKPIService;
+use App\Services\DeliveryKPIService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin\EstimatedBudgets;
 use App\Models\Methods\MethodsServices;
 
 class HomeController extends Controller
 {
+
+    protected $orderKPIService;
+    protected $deliveryKPIService;
+    protected $quoteKPIService;
+    protected $invoiceKPIService;
+
+    public function __construct(
+        OrderKPIService $orderKPIService, 
+        DeliveryKPIService $deliveryKPIService,
+        QuoteKPIService $quoteKPIService,
+        InvoiceKPIService $invoiceKPIService,
+        ){
+        $this->orderKPIService = $orderKPIService;
+        $this->deliveryKPIService = $deliveryKPIService;
+        $this->quoteKPIService = $quoteKPIService;
+        $this->invoiceKPIService = $invoiceKPIService;
+    }
+
     /**
      * @return \Illuminate\Contracts\View\View
      */
@@ -65,52 +87,16 @@ class HomeController extends Controller
                             +$data['estimatedBudget'][0]->amount12;
 
         //Order data for chart
-        $data['orderMonthlyRecap'] = DB::table('order_lines')
-                                                            ->selectRaw('
-                                                                MONTH(delivery_date) AS month,
-                                                                SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
-                                                            ')
-                                                            ->leftJoin('orders', function($join) {
-                                                                $join->on('order_lines.orders_id', '=', 'orders.id')
-                                                                    ->where('orders.type', '=', 1);
-                                                            })
-                                                            ->whereYear('order_lines.created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(order_lines.delivery_date) ')
-                                                            ->get();
+        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear);
 
         //Delivery data for chart
-        $data['deliveryMonthlyRecap'] = DB::table('delivery_lines')->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
-                                                                    ->selectRaw('
-                                                                        MONTH(delivery_lines.created_at) AS month,
-                                                                        SUM((order_lines.selling_price * delivery_lines.qty)-(order_lines.selling_price * delivery_lines.qty)*(order_lines.discount/100)) AS orderSum
-                                                                    ')
-                                                                    ->whereYear('delivery_lines.created_at', $CurentYear)
-                                                                    ->groupByRaw('MONTH(delivery_lines.created_at) ')
-                                                                    ->get();
+        $data['deliveryMonthlyRecap'] = $this->deliveryKPIService->getDeliveryMonthlyRecap($CurentYear);
 
         //Invoices data for chart
-        $data['invoiceMonthlyRecap'] = DB::table('invoice_lines')
-                                                            ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
-                                                            ->selectRaw('
-                                                                MONTH(invoice_lines.created_at) AS month,
-                                                                SUM((order_lines.selling_price * invoice_lines.qty)-(order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100)) AS orderSum
-                                                            ')
-                                                            ->whereYear('invoice_lines.created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(invoice_lines.created_at) ')
-                                                            ->get();
+        $data['invoiceMonthlyRecap'] = $this->invoiceKPIService->getInvoiceMonthlyRecap($CurentYear);
 
         //Total ForCast
-        $orderTotalForCast = DB::table('order_lines') ->selectRaw('
-                                                                ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderTotalForCast
-                                                        ')
-                                                        ->leftJoin('orders', function($join) {
-                                                            $join->on('order_lines.orders_id', '=', 'orders.id')
-                                                                ->where('orders.type', '=', 1);
-                                                        })
-                                                        ->where('delivery_status', '=', 1)
-                                                        ->orwhere('delivery_status', '=', 2)
-                                                        ->whereYear('order_lines.delivery_date', $CurentYear)
-                                                        ->get();
+        $orderTotalForCast = $this->orderKPIService->getOrderTotalForCast($CurentYear);
 
         //Total Delivered
         $orderTotalDelivered =0;
@@ -157,11 +143,8 @@ class HomeController extends Controller
                                                         ->get();
 
         //Quote data for chart
-        $data['quotesDataRate'] = DB::table('quotes')
-                                    ->select('statu', DB::raw('count(*) as QuoteCountRate'))
-                                    ->whereYear('created_at', $CurentYear)
-                                    ->groupBy('statu')
-                                    ->get();
+        $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear);
+
         //5 last Quotes add 
         $LastQuotes = Quotes::orderBy('id', 'desc')->take(5)->get();
         //5 lastest Orders add 
@@ -186,21 +169,9 @@ class HomeController extends Controller
         $LastProducts = Products::orderBy('id', 'desc')->take(6)->get();
 
         //total price
-        $data['delivered_month_in_progress'] = DB::table('delivery_lines')
-                                                ->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
-                                                ->selectRaw('FLOOR(SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100))) AS orderSum')
-                                                ->whereYear('delivery_lines.created_at', '=', $CurentYear)
-                                                ->whereMonth('delivery_lines.created_at', $CurentMonth)
-                                                ->get();
+        $data['delivered_month_in_progress'] = $this->deliveryKPIService->getDeliveryMonthlyProgress($CurentMonth, $CurentYear);
                                                 
-        $data['remaining_order'] =  DB::table('order_lines')
-                                                ->selectRaw('
-                                                    FLOOR(SUM((selling_price * qty)-(selling_price * qty)*(discount/100))) AS orderSum
-                                                ')
-                                                ->whereYear('delivery_date', '=', $CurentYear)
-                                                ->whereMonth('delivery_date', $CurentMonth)
-                                                ->groupByRaw('MONTH(delivery_date) ')
-                                                ->get();
+        $data['remaining_order'] =   $this->orderKPIService->getOrderMonthlyRemaining($CurentMonth, $CurentYear);
 
         return view('dashboard', [
             'userRoleCount' => $userRoleCount,

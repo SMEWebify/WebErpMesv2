@@ -4,22 +4,30 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use App\Models\Workflow\Orders;
-use App\Models\Admin\CustomField;
-use App\Services\OrderCalculatorService;
+use App\Services\OrderKPIService;
 use App\Traits\NextPreviousTrait;
-use Illuminate\Support\Facades\DB;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
+use App\Services\CustomFieldService;
+use App\Services\OrderCalculatorService;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
 
 class OrdersController extends Controller
 {
     use NextPreviousTrait;
-    protected $SelectDataService;
 
-    public function __construct(SelectDataService $SelectDataService)
-    {
+    protected $SelectDataService;
+    protected $orderKPIService;
+    protected $customFieldService;
+
+    public function __construct(
+                                SelectDataService $SelectDataService, 
+                                OrderKPIService $orderKPIService,
+                                CustomFieldService $customFieldService
+                    ){
         $this->SelectDataService = $SelectDataService;
+        $this->orderKPIService = $orderKPIService;
+        $this->customFieldService = $customFieldService;
     }
 
     /**
@@ -28,19 +36,8 @@ class OrdersController extends Controller
     public function index()
     {   
         $currentYear = Carbon::now()->format('Y');
-        //Order data for chart
-        $ordersDataRate = DB::table('orders')
-                                    ->select('statu', DB::raw('count(*) as OrderCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
-        //Order data for chart
-        $orderMonthlyRecap = DB::table('order_lines')->selectRaw('
-                                                                MONTH(delivery_date) AS month,
-                                                                SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
-                                                            ')
-                                                            ->whereYear('created_at', $currentYear)
-                                                            ->groupByRaw('MONTH(delivery_date) ')
-                                                            ->get();
+        $ordersDataRate =  $this->orderKPIService->getOrdersDataRate();
+        $orderMonthlyRecap = $this->orderKPIService->getOrderMonthlyRecap($currentYear);
 
         // Prepare data array
         $data = [
@@ -77,18 +74,8 @@ class OrdersController extends Controller
         $TotalServiceCost = $OrderCalculatorService->getTotalCostByService();
         $TotalServicePrice = $OrderCalculatorService->getTotalPriceByService();
 
-        // Retrieve previous and next URLs for navigation
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Orders(), $id->id);
-
-        // Fetch custom fields related to the order
-        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'order')
-                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
-                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
-                                                ->where('cfv.entity_type', '=', 'order')
-                                                ->where('cfv.entity_id', '=', $id->id);
-                                    })
-                                    ->select('custom_fields.*', 'cfv.value as field_value')
-                                    ->get();
+        $CustomFields = $this->customFieldService->getCustomFieldsWithValues('order', $id->id);
 
         return view('workflow/orders-show', [
             'Order' => $id,

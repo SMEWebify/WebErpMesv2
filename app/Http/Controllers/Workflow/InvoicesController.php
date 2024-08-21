@@ -4,21 +4,18 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use App\Models\Admin\CustomField;
 use App\Models\Workflow\Invoices;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
-use Illuminate\Support\Facades\DB;
 use App\Events\DeliveryLineUpdated;
-use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
-use App\Services\InvoiceCalculatorService;
+use App\Services\InvoiceKPIService;
 use App\Http\Controllers\Controller;
+use App\Services\CustomFieldService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\DeliveryLines;
-use App\Models\Companies\CompaniesContacts;
-use App\Models\Companies\CompaniesAddresses;
+use App\Services\InvoiceCalculatorService;
 use App\Http\Requests\Workflow\UpdateInvoiceRequest;
 
 class InvoicesController extends Controller
@@ -27,71 +24,34 @@ class InvoicesController extends Controller
     /**
      * @return \Illuminate\Contracts\View\View
      */
+
+    protected $invoiceKPIService;
+    protected $customFieldService;
+
+    public function __construct(
+                    InvoiceKPIService $invoiceKPIService,
+                    CustomFieldService $customFieldService
+            ){
+        $this->invoiceKPIService = $invoiceKPIService;
+        $this->customFieldService = $customFieldService;
+    }
+    
     public function index()
     {    
         $CurentYear = Carbon::now()->format('Y');
-        //Invoices data for chart
-        $data['invoicesDataRate'] = DB::table('invoices')
-                                    ->select('statu', DB::raw('count(*) as InvoiceCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
-        //Invoices data for chart
-        $data['invoiceMonthlyRecap'] = DB::table('invoice_lines')
-                                                            ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
-                                                            ->selectRaw('
-                                                                MONTH(invoice_lines.created_at) AS month,
-                                                                SUM((order_lines.selling_price * invoice_lines.qty)-(order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100)) AS orderSum
-                                                            ')
-                                                            ->whereYear('invoice_lines.created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(invoice_lines.created_at) ')
-                                                            ->get();
 
-        // Total number of invoices
-        $totalInvoices = Invoices::count();
+        $data['invoicesDataRate'] = $this->invoiceKPIService->getInvoicesDataRate();
+        $data['invoiceMonthlyRecap'] = $this->invoiceKPIService->getInvoiceMonthlyRecap($CurentYear);
 
-        // Total amount of invoices
-        $totalInvoiceAmount = Invoices::all()->reduce(function ($carry, $invoice) {
-            return $carry + $invoice->getTotalPriceAttribute();
-        }, 0);
-
-        // Total amount of payments received
-        // Make sure the getTotalPriceAttribute method returns the total amount paid
-        $totalPaymentsReceived = Invoices::where('statu', 5)->get()->reduce(function ($carry, $invoice) {
-            return $carry + $invoice->getTotalPriceAttribute();
-        }, 0);
-
-        // Paid vs. unpaid invoices
-        $paidInvoices = Invoices::where('statu', 5)->count();
-        $unpaidInvoices = Invoices::where('statu','!=', 4)->count();
-
-    // Average payment deadline (Make sure you have payment_date and due_date fields in the invoices table)
-        $averagePaymentDelay = Invoices::whereNotNull('payment_date')
-                                        ->select(DB::raw('AVG(DATEDIFF(payment_date, due_date)) as avg_delay'))
-                                        ->value('avg_delay');
-
-        // Late payment rate
-        $latePaymentRate = Invoices::where('statu', 4)
-                                    ->where('due_date', '<', now())
-                                    ->count() / ($totalInvoices ?: 1) * 100;
-
-        // Top customers by invoiced amount
-        $topClients = Invoices::select('companies_id', DB::raw('SUM((invoice_lines.qty * order_lines.selling_price) - (invoice_lines.qty * order_lines.selling_price)*(order_lines.discount/100)) as total_amount'))
-                                ->join('invoice_lines', 'invoices.id', '=', 'invoice_lines.invoices_id')
-                                ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
-                                ->groupBy('companies_id')
-                                ->orderByDesc('total_amount')
-                                ->take(5)
-                                ->get();
-
-    // Top products/services billed
-        $topProducts = InvoiceLines::select('order_lines.product_id', DB::raw('SUM(invoice_lines.qty) as total_quantity'))
-                                    ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
-                                    ->groupBy('order_lines.product_id')
-                                    ->orderByDesc('total_quantity')
-                                    ->take(5)
-                                    ->get();
-
-
+        $totalInvoices = $this->invoiceKPIService->getTotalInvoicesCount();
+        $totalInvoiceAmount = $this->invoiceKPIService->getTotalInvoiceAmount();
+        $totalPaymentsReceived = $this->invoiceKPIService->getTotalPaymentsReceived();
+        $paidInvoices = $this->invoiceKPIService->getPaidInvoicesCount();
+        $unpaidInvoices = $this->invoiceKPIService->getUnpaidInvoicesCount();
+        $averagePaymentDelay = $this->invoiceKPIService->getAveragePaymentDelay();
+        $latePaymentRate = $this->invoiceKPIService->getLatePaymentRate($totalInvoices);
+        $topClients = $this->invoiceKPIService->getTopClients();
+        $topProducts = $this->invoiceKPIService->getTopProducts();
 
         return view('workflow/invoices-index', compact(
                                                         'totalInvoices',
@@ -190,14 +150,7 @@ class InvoicesController extends Controller
         $subPrice = $InvoiceCalculatorService->getSubTotal();
         $vatPrice = $InvoiceCalculatorService->getVatTotal();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Invoices(), $id->id);
-        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'invoice')
-                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
-                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
-                                                ->where('cfv.entity_type', '=', 'invoice')
-                                                ->where('cfv.entity_id', '=', $id->id);
-                                    })
-                                    ->select('custom_fields.*', 'cfv.value as field_value')
-                                    ->get();
+        $CustomFields = $this->customFieldService->getCustomFieldsWithValues('invoice', $id->id);
 
         return view('workflow/invoices-show', [
             'Invoice' => $id,

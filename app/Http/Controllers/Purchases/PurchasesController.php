@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Purchases;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
-use App\Models\Admin\CustomField;
 use App\Traits\NextPreviousTrait;
-use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
+use App\Services\CustomFieldService;
+use App\Services\PurchaseKPIService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\StockLocation;
 use App\Models\Purchases\PurchaseLines;
@@ -35,10 +34,19 @@ use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
 class PurchasesController extends Controller
 {
     use NextPreviousTrait;
+
     protected $SelectDataService;
-    public function __construct(SelectDataService $SelectDataService)
-    {
+    protected $purchaseKPIService;
+    protected $customFieldService;
+
+    public function __construct(
+            SelectDataService $SelectDataService, 
+            PurchaseKPIService $purchaseKPIService,
+            CustomFieldService $customFieldService
+        ){
         $this->SelectDataService = $SelectDataService;
+        $this->purchaseKPIService = $purchaseKPIService;
+        $this->customFieldService = $customFieldService;
     }
     
     /**
@@ -54,13 +62,7 @@ class PurchasesController extends Controller
      */
     public function quotation()
     {    
-        $CurentYear = Carbon::now()->format('Y');
-        //Purchases data for chart
-        $data['purchasesQuotationDataRate'] = DB::table('purchases_quotations')
-                                    ->select('statu', DB::raw('count(*) as PurchaseQuotationCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
-
+        $data['purchasesQuotationDataRate'] = $this->purchaseKPIService->getPurchaseQuotationDataRate();
                                                             
         return view('purchases/purchases-quotation')->with('data',$data);
     }
@@ -70,68 +72,22 @@ class PurchasesController extends Controller
      */
     public function purchase()
     {   
-        $CurentYear = Carbon::now()->format('Y');
-        //Purchases data for chart
-        $data['purchasesDataRate'] = DB::table('purchases')
-                                    ->select('statu', DB::raw('count(*) as PurchaseCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
-        //Purchases data for chart
-        $data['purchaseMonthlyRecap'] = DB::table('purchase_lines')
-                                                            ->join('tasks', 'purchase_lines.tasks_id', '=', 'tasks.id')
-                                                            ->join('order_lines', 'tasks.order_lines_id', '=', 'order_lines.id')
-                                                            ->selectRaw('
-                                                                MONTH(purchase_lines.created_at) AS month,
-                                                                SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS purchaseSum
-                                                            ')
-                                                            ->whereYear('purchase_lines.created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(purchase_lines.created_at) ')
-                                                            ->get();
+        $data['purchasesDataRate'] = $this->purchaseKPIService->getPurchasesDataRate();
+        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap();
 
-        $topRatedSuppliers = Companies::where('statu_supplier', 2 ) // Filter active suppliers
-                                                            ->withCount('rating') // Count the number of evaluations
-                                                            ->having('rating_count', '>', 0) // Exclude suppliers without reviews
-                                                                ->orderByDesc(function ($company) {
-                                                                    return $company->select(DB::raw('avg(rating)'))
-                                                                        ->from('supplier_ratings')
-                                                                        ->whereColumn('companies_id', 'companies.id');
-                                                                })
-                                                                ->take(5) // Limit results to the first 5 suppliers
-                                                                ->get();
-
-        $averageReceptionDelayBySupplier = PurchaseReceiptLines::join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
-                                                                ->join('purchases', 'purchase_lines.purchases_id', '=', 'purchases.id')
-                                                                ->join('companies', 'purchases.companies_id', '=', 'companies.id') // Join the suppliers table
-                                                                ->selectRaw('companies.label AS supplier_name, AVG(DATEDIFF(purchase_receipt_lines.created_at, purchase_lines.created_at)) AS avg_reception_delay')
-                                                                ->groupBy('companies.label') // Group by supplier
-                                                                ->get();
-
-        // Sorting results by average reception time in ascending order
-        $sortedByAvgReceptionDelay = $averageReceptionDelayBySupplier->sortBy('avg_reception_delay');
-        // Collect the 5 suppliers with the shortest deadlines
+        $topRatedSuppliers = $this->purchaseKPIService->getTopRatedSuppliers();
+        $sortedByAvgReceptionDelay = $this->purchaseKPIService->getAverageReceptionDelayBySupplier();
         $top5FastestSuppliers = $sortedByAvgReceptionDelay->take(5);
-        // Retrieve the 5 suppliers with the longest lead times
         $top5SlowestSuppliers = $sortedByAvgReceptionDelay->reverse()->take(5);
 
-        $topProducts = PurchaseLines::select('products.label', 'purchase_lines.product_id', DB::raw('SUM(purchase_lines.qty) as total_quantity'))
-                                    ->join('products', 'products.id', '=', 'purchase_lines.product_id')
-                                    ->groupBy('purchase_lines.product_id', 'products.label')
-                                    ->orderByDesc('total_quantity')
-                                    ->take(5)
-                                    ->get();
-
-        $totalPurchaseAmount = PurchaseLines::sum('total_selling_price');
-        $totalPurchaseCount = PurchaseLines::count();
-        $averageAmount = $totalPurchaseCount > 0 ? $totalPurchaseAmount / $totalPurchaseCount : 0;
-        
-        $totalPurchaseLineCount = PurchaseLines::count();
-        $totalPurchasesAmount = PurchaseLines::sum('total_selling_price');
+        $topProducts = $this->purchaseKPIService->getTopProducts();
+        $averageAmount = $this->purchaseKPIService->getAverageAmount();
+        $totalPurchaseLineCount = $this->purchaseKPIService->getTotalPurchaseCount();
+        $totalPurchasesAmount = $this->purchaseKPIService->getTotalPurchaseAmount();
 
         $userSelect = $this->SelectDataService->getUsers();
         $SupplierSelect = $this->SelectDataService->getSupplier();
 
-        
-        $LastPurchase = 0;
         $LastPurchase =  Purchases::latest()->first();
         //if we have no id, define 0 
         if($LastPurchase == Null){
@@ -219,14 +175,7 @@ class PurchasesController extends Controller
         $subPrice = $PurchaseCalculatorService->getSubTotal();
         $vatPrice = $PurchaseCalculatorService->getVatTotal();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Purchases(), $id->id);
-        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'purchase')
-                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
-                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
-                                                ->where('cfv.entity_type', '=', 'purchase')
-                                                ->where('cfv.entity_id', '=', $id->id);
-                                    })
-                                    ->select('custom_fields.*', 'cfv.value as field_value')
-                                    ->get();
+        $CustomFields = $this->customFieldService->getCustomFieldsWithValues('purchase', $id->id);
 
         return view('purchases/purchases-show', [
             'Purchase' => $id,
@@ -468,13 +417,7 @@ class PurchasesController extends Controller
      */
     public function receipt()
     {    
-        $CurentYear = Carbon::now()->format('Y');
-        //Purchases data for chart
-        $data['PurchaseReciepCountDataRate'] = DB::table('purchase_receipts')
-                                    ->select('statu', DB::raw('count(*) as PurchaseReciepCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
-
+        $data['PurchaseReciepCountDataRate'] = $this->purchaseKPIService->getPurchaseReciepCountDataRate();
         return view('purchases/purchases-receipt')->with('data',$data);
     }
 
@@ -491,24 +434,8 @@ class PurchasesController extends Controller
      */
     public function invoice()
     {   
-        $CurentYear = Carbon::now()->format('Y');
-        //Purchases data for chart
-        $data['purchasesDataRate'] = DB::table('purchase_invoices')
-                                    ->select('statu', DB::raw('count(*) as PurchaseInvoiceCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
-        //Purchases data for chart
-        $data['purchaseMonthlyRecap'] = DB::table('purchase_invoice_lines')
-                                                            ->join('purchase_lines', 'purchase_invoice_lines.purchase_line_id', '=', 'purchase_lines.id')
-                                                            ->join('tasks', 'purchase_lines.tasks_id', '=', 'tasks.id')
-                                                            ->join('order_lines', 'tasks.order_lines_id', '=', 'order_lines.id')
-                                                            ->selectRaw('
-                                                                MONTH(purchase_lines.created_at) AS month,
-                                                                SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS purchaseSum
-                                                            ')
-                                                            ->whereYear('purchase_invoice_lines.created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(purchase_invoice_lines.created_at) ')
-                                                            ->get();
+        $data['purchasesDataRate'] = $this->purchaseKPIService->getPurchaseInvoiceDataRate();
+        $data['purchaseInvoiceMonthlyRecap'] = $this->purchaseKPIService->getPurchaseInvoiceMonthlyRecap();
                                                             
         return view('purchases/purchases-invoice')->with('data',$data);
     }

@@ -4,22 +4,29 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use App\Models\Workflow\Quotes;
-use App\Models\Admin\CustomField;
-use App\Services\QuoteCalculatorService;
+use App\Services\QuoteKPIService;
 use App\Traits\NextPreviousTrait;
-use Illuminate\Support\Facades\DB;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
+use App\Services\CustomFieldService;
+use App\Services\QuoteCalculatorService;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 
 class QuotesController extends Controller
 {
     use NextPreviousTrait;
     protected $SelectDataService;
+    protected $quoteKPIService;
+    protected $customFieldService;
 
-    public function __construct(SelectDataService $SelectDataService)
-    {
+    public function __construct(
+        SelectDataService $SelectDataService, 
+        QuoteKPIService $quoteKPIService,
+        CustomFieldService $customFieldService
+        ){
         $this->SelectDataService = $SelectDataService;
+        $this->quoteKPIService = $quoteKPIService;
+        $this->customFieldService = $customFieldService;
     }
 
     /**
@@ -28,20 +35,10 @@ class QuotesController extends Controller
     public function index()
     {
         $CurentYear = Carbon::now()->format('Y');
-
         //Quote data for chart
-        $data['quotesDataRate'] = DB::table('quotes')
-                                    ->select('statu', DB::raw('count(*) as QuoteCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
+        $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear);
         //Quote data for chart
-        $data['quoteMonthlyRecap'] = DB::table('quote_lines')->selectRaw('
-                                                                MONTH(delivery_date) AS month,
-                                                                SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS quoteSum
-                                                            ')
-                                                            ->whereYear('created_at', $CurentYear)
-                                                            ->groupByRaw('MONTH(delivery_date) ')
-                                                            ->get();
+        $data['quoteMonthlyRecap'] = $this->quoteKPIService->getQuotesrMonthlyRecap($CurentYear);
 
         return view('workflow/quotes-index')->with('data',$data);
     }
@@ -67,14 +64,8 @@ class QuotesController extends Controller
         $TotalServiceCost = $QuoteCalculatorService->getTotalCostByService();
         $TotalServicePrice = $QuoteCalculatorService->getTotalPriceByService();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Quotes(), $id->id);
-        $CustomFields = CustomField::where('custom_fields.related_type', '=', 'quote')
-                                    ->leftJoin('custom_field_values  as cfv', function($join) use ($id) {
-                                        $join->on('custom_fields.id', '=', 'cfv.custom_field_id')
-                                                ->where('cfv.entity_type', '=', 'quote')
-                                                ->where('cfv.entity_id', '=', $id->id);
-                                    })
-                                    ->select('custom_fields.*', 'cfv.value as field_value')
-                                    ->get();
+        $CustomFields = $this->customFieldService->getCustomFieldsWithValues('quote', $id->id);
+
 
         return view('workflow/quotes-show', [
             'Quote' => $id,

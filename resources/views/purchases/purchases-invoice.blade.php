@@ -93,7 +93,7 @@
             data                : [
                                 @php ($j = 1)
                                 @for($iM =1;$iM<=12;$iM++)
-                                  @foreach ($data['purchaseMonthlyRecap'] as $key => $item)
+                                  @foreach ($data['purchaseInvoiceMonthlyRecap'] as $key => $item)
                                   @php ($j = 1)
                                     @if($iM  == $item->month) 
                                     "{{ $item->purchaseSum }}",

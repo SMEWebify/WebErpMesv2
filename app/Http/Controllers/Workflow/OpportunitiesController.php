@@ -14,10 +14,12 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
+use App\Services\CustomFieldService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\Opportunities;
 use App\Notifications\QuoteNotification;
+use App\Services\OpportunitiesKPIService;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Workflow\OpportunitiesEventsLogs;
@@ -31,60 +33,38 @@ class OpportunitiesController extends Controller
     use NextPreviousTrait;
 
     protected $SelectDataService;
+    protected $opportunitiesKPIService;
+    protected $customFieldService;
 
-    public function __construct(SelectDataService $SelectDataService)
-    {
+    public function __construct(
+            SelectDataService $SelectDataService, 
+            OpportunitiesKPIService $opportunitiesKPIService,
+            CustomFieldService $customFieldService
+        ){
         $this->SelectDataService = $SelectDataService;
+        $this->opportunitiesKPIService = $opportunitiesKPIService;
+        $this->customFieldService = $customFieldService;
     }
 
     /**
      * @return \Illuminate\Contracts\View\View
      */
     public function index()
-    {   
-        //Quote data for chart
-        $data['opportunitiesDataRate'] = DB::table('opportunities')
-                                    ->select('statu', DB::raw('count(*) as OpportunitiesCountRate'))
-                                    ->groupBy('statu')
-                                    ->get();
+    {
+        // Using the OpportunitiesKPIService to retrieve KPI data
+        $data['opportunitiesDataRate'] = $this->opportunitiesKPIService->getOpportunitiesDataRate();
+        $recentActivities = $this->opportunitiesKPIService->getRecentActivities();
+        $opportunitiesByAmount = $this->opportunitiesKPIService->getOpportunitiesByAmount();
+        $opportunitiesByCloseDate = $this->opportunitiesKPIService->getOpportunitiesByCloseDate();
+        $opportunitiesByCompany = $this->opportunitiesKPIService->getOpportunitiesByCompany();
+        $opportunitiesCount = $this->opportunitiesKPIService->getOpportunitiesCount();
+        $quotesSummary = $this->opportunitiesKPIService->getQuotesSummary();
 
-        $recentActivities = OpportunitiesActivitiesLogs::latest()->take(5)->get();
-
-
-        $opportunitiesByAmount = Opportunities::select('probality', DB::raw('SUM(budget) as total_amount'))
-                                            ->groupBy('probality')
-                                            ->get();
-
-        $opportunitiesByCloseDate = Opportunities::select('close_date', DB::raw('count(*) as count'))
-                                                    ->groupBy('close_date')
-                                                    ->get();
-
-        $opportunitiesByCompany = Opportunities::with('companie')
-                                ->select('companies_id', DB::raw('count(*) as count'))
-                                ->groupBy('companies_id')
-                                ->get();
-
-        $opportunitiesCount = Opportunities::count();
-
-
-        $quotesWon = Quotes::where('statu', 3)->whereNotNull('opportunities_id')->get();
-                                $totalQuotesWon = $quotesWon->sum(function ($quote) {
-                                    return $quote->getTotalPriceAttribute();
-                                });
-
-        $quotesLost = Quotes::where('statu', 4)->whereNotNull('opportunities_id')->get();
-                            $totalQuotesLost = $quotesLost->sum(function ($quote) {
-                                return $quote->getTotalPriceAttribute();
-                            });
-
-        return view('workflow/opportunities-index', compact( 'recentActivities',  
-                                                            'opportunitiesByAmount', 
-                                                            'opportunitiesByCloseDate', 
-                                                            'opportunitiesByCompany', 
-                                                            'totalQuotesWon', 
-                                                            'totalQuotesLost',
-                                                            'opportunitiesCount'
-                                                        ))->with('data',$data);
+        return view('workflow/opportunities-index', array_merge(
+            compact('recentActivities', 'opportunitiesByAmount', 'opportunitiesByCloseDate', 
+                    'opportunitiesByCompany', 'opportunitiesCount'), 
+            $quotesSummary
+        ))->with('data', $data);
     }
 
     private function loadOpportunityRelations(Opportunities $opportunity)
