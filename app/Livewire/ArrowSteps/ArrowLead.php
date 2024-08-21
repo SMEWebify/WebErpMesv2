@@ -18,7 +18,7 @@ class ArrowLead extends Component
 
     public function render()
     {
-        return view('livewire.arrow-steps.arrow-Lead');
+        return view('livewire.arrow-steps.arrow-lead');
     }
 
     public function changeStatu($statuNumber){
