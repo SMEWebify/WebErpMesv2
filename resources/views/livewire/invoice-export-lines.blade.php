@@ -2,11 +2,6 @@
     <div class="card">
         @include('include.alert-result')
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-10">
-                    @include('include.search-card')
-                </div>
-            </div>
             <div class="card-body ">
                 <div class="row">
                     <div class="btn-group">
@@ -65,8 +60,14 @@
                             <td>{{ $InvoiceExportLines->OrderLine->VAT['rate'] }} %</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" wire:model.live="selectedInvoiceLine.{{ $InvoiceExportLines->id }}" id="{{ $InvoiceExportLines->id }}.invoice_line_id"  type="checkbox">
-                                    <label for="{{ $InvoiceExportLines->id }}.invoice_line_id" class="custom-control-label">{{ __('general_content.add_export_trans_key') }}</label>
+                                    <input class="custom-control-input" 
+                                           wire:model="selectedInvoiceLine.{{ $InvoiceExportLines->id }}" 
+                                           id="{{ $InvoiceExportLines->id }}.invoice_line_id"  
+                                           type="checkbox">
+                                    <label for="{{ $InvoiceExportLines->id }}.invoice_line_id" 
+                                           class="custom-control-label">
+                                        {{ __('general_content.add_export_trans_key') }}
+                                    </label>
                                 </div>
                             </td>
                         </tr>

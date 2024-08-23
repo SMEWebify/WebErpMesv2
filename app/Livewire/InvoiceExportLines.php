@@ -3,34 +3,20 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use App\Exports\InvoiceLinesExport;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Collection;
 use App\Models\Workflow\InvoiceLines;
 
 class InvoiceExportLines extends Component
 {
-
-    public $search = 'enter the invoice code to export';
-    public $sortField = 'ordre'; // default sorting field
-    public $sortAsc = true; // default sort direction
-
     public $InvoiceExportLineslist;
     public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
     public $data = [];
 
     //export
     public Collection $selectedInvoiceLine;
-
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortAsc = !$this->sortAsc; 
-        } else {
-            $this->sortAsc = true; 
-        }
-        $this->sortField = $field;
-    }
 
     public function mount() 
     {
@@ -40,12 +26,8 @@ class InvoiceExportLines extends Component
 
     public function render()
     {
-        //Select lines list to export
-        $value =$this->search;
-        $InvoiceExportLineslist = $this->InvoiceExportLineslist = InvoiceLines::whereHas('invoice', function($q) use( $value) {
-                                                                                    $q->where('invoices.code','like', '%'.$value.'%'); 
-                                                                                })
-                                                                                ->get();
+        $InvoiceExportLineslist = $this->InvoiceExportLineslist = InvoiceLines::where('exported', false) // Filter only non-exported lines
+                                                                            ->get();
 
         return view('livewire.invoice-export-lines', [
             'InvoiceExportLineslist' => $InvoiceExportLineslist,
@@ -61,8 +43,13 @@ class InvoiceExportLines extends Component
     {
 
         if(!in_array($ext, ['csv', 'xlsx', 'pdf'])){
-            code:Response::HTTP_NOT_FOUND;
+            abort(Response::HTTP_NOT_FOUND);
         }
+
+        $selectedInvoiceLines = $this->getSelectedInvoiceLine();
+
+        // Marquer les lignes comme exportées
+        InvoiceLines::whereIn('id', $selectedInvoiceLines)->update(['exported' => true]);
 
         return Excel::download(new InvoiceLinesExport($this-> getSelectedInvoiceLine()), 'invoiceLines.'. $ext);
     }
