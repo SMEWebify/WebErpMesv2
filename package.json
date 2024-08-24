@@ -13,7 +13,7 @@
         "@tailwindcss/forms": "^0.2.1",
         "alpinejs": "^2.7.3",
         "autoprefixer": "^10.4.17",
-        "axios": "^1.6.7",
+        "axios": "^1.7.4",
         "bootstrap": "^4.6.2",
         "jquery": "^3.7.1",
         "laravel-mix": "^6.0.49",
