@@ -794,7 +794,10 @@ return [
     'purchase_order_trans_key'                 => 'Commande achat',
     'top_rated_supplier_trans_key'             => 'Top fournisseurr',
     'delevery_time_trans_key'                  => 'Délais de reception (moy jours)',
-
+    'average_purchase_price_trans_key'         => 'Prix ​​d\'achat moyen',
+    'most_purchased_products_trans_key'        => 'Produits les plus achetés',
+    'suppliers_longest_times_trans_key'        => 'Fournisseurs avec les délais de réception les plus longs',
+    'suppliers_shortest_times_trans_key'       => 'Fournisseurs avec les délais de réception les plus courts',
 
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Demande d\'achat',
@@ -807,6 +810,8 @@ return [
     //PURCHASE RECIEPT
     'po_receipt_trans_key'                     => 'CA reçue',
     'name_purchase_reciept_trans_key'          => 'Nom du reçu',
+    'po_receipt_note_trans_key'                => 'Reception en attente de controle',
+    'validate_control_trans_key'               => 'Valider le contrôle',
 
     'waiting_to_invoice_trans_key'             => 'Attente de facturation',
 

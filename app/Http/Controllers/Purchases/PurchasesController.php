@@ -388,6 +388,23 @@ class PurchasesController extends Controller
         
         return redirect()->route('purchase.receipts.show', ['id' =>  $PurchaseReceipt->id])->with('success', 'Successfully updated reciept');
     }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateReceptionControl(Request $request, $id)
+    {
+        $purchaseReceipt = PurchaseReceipt::findOrFail($id);
+
+        $purchaseReceipt->reception_controlled = 1;
+        $purchaseReceipt->reception_control_date = now(); 
+        $purchaseReceipt->reception_control_user_id = auth()->user()->id; 
+
+        $purchaseReceipt->save();
+
+        return redirect()->back()->with('success', 'Contrôle de réception mis à jour avec succès.');
+    }
     
     /**
      * @param \Illuminate\Http\Request $request

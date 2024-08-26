@@ -26,6 +26,7 @@ class CreatePurchaseReceiptsTable extends Migration
             #2 = Stock
 			$table->unsignedBigInteger('user_id');
 			$table->text('comment')->nullable();
+            
             $table->timestamps();
 
             // Foreign Key Constraints

@@ -811,6 +811,8 @@ return [
     //PURCHASE RECIEPT
     'po_receipt_trans_key'                     => 'PO receipt',
     'name_purchase_reciept_trans_key'          => 'Name of receipt',
+    'po_receipt_note_trans_key'                => 'Reception awaiting inspection',
+    'validate_control_trans_key'               => 'Validate inspection',
 
     'waiting_to_invoice_trans_key'             => 'Waiting to invoice',
 

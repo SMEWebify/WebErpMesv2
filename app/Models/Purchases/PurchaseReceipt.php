@@ -7,9 +7,7 @@ use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
-use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchaseReceiptLines;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -24,6 +22,9 @@ class PurchaseReceipt extends Model
                             'statu',  
                             'user_id',
                             'comment',
+                            'reception_controlled',  
+                            'reception_control_date',
+                            'reception_control_user_id',
                         ];
 
     public function companie()
@@ -34,6 +35,11 @@ class PurchaseReceipt extends Model
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function UserReceptionControl()
+    {
+        return $this->belongsTo(User::class, 'reception_control_user_id');
     }
 
     public function PurchaseReceiptLines()
@@ -50,6 +56,11 @@ class PurchaseReceipt extends Model
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function GetPrettyControlDateAttribute()
+    {
+        return date('d F Y', strtotime($this->reception_control_date));
     }
 
     public function getActivitylogOptions(): LogOptions

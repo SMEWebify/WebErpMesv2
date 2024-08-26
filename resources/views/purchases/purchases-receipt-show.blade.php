@@ -26,6 +26,15 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
+            @if($PurchaseReceipt->companie->recept_controle == 1 && $PurchaseReceipt->reception_controlled == 0)
+            <x-adminlte-alert theme="warning" title="Warning">
+              {{ __('general_content.po_receipt_note_trans_key') }} 
+              <form action="{{ route('purchase.receipts.reception_control', $PurchaseReceipt->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-primary">{{ __('general_content.validate_control_trans_key') }}</button>
+              </form>
+            </x-adminlte-alert>
+            @endif
             <form method="POST" action="{{ route('receipt.update', ['id' => $PurchaseReceipt->id]) }}" enctype="multipart/form-data">
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf 
@@ -80,6 +89,11 @@
               <div class="card-body">
                 {{ __('general_content.delevery_time_trans_key') }} :  {{ $averageReceptionDelay }}
               </div>
+              @if($PurchaseReceipt->companie->recept_controle == 1 && $PurchaseReceipt->reception_controlled == 1)
+              <div class="card-body">
+                {{ __('general_content.reception_control_trans_key') }} :  {{ $PurchaseReceipt->UserReceptionControl['name'] }} - {{ $PurchaseReceipt->GetPrettyControlDateAttribute() }}
+              </div>
+              @endif
             </x-adminlte-card>
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>

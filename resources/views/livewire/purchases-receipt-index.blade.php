@@ -17,6 +17,7 @@
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')"   role="button" href="#">{{__('general_content.id_trans_key') }} @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
+                        <th>{{__('general_content.po_receipt_note_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
@@ -31,6 +32,12 @@
                         <td>{{ $PurchasesReceipt->label }}</td>
                         <td>{{ $PurchasesReceipt->companie['label'] }}</td>
                         <td>{{ $PurchasesReceipt->purchase_receipt_lines_count }}</td>
+                        <td>
+                            @if($PurchasesReceipt->companie->recept_controle == 1 && $PurchasesReceipt->reception_controlled == 0)  <span class="badge badge-info">{{ __('general_content.yes_trans_key') }}</span>
+                            @elseif(1 == $PurchasesReceipt->reception_controlled )  <span class="badge badge-success">{{ __('general_content.no_trans_key') }}</span>
+                            @else<span class="badge badge-success">{{ __('general_content.no_trans_key') }}</span>
+                            @endif
+                        </td>
                         <td>
                             @if(1 == $PurchasesReceipt->statu )  <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span>@endif
                             @if(2 == $PurchasesReceipt->statu )  <span class="badge badge-warning">{{ __('general_content.stock_trans_key') }}</span>@endif
@@ -51,6 +58,7 @@
                         <th>{{__('general_content.label_trans_key') }}</th>
                         <th>{{__('general_content.customer_trans_key') }}</th>
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
+                        <th>{{__('general_content.po_receipt_note_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
                         <th>{{__('general_content.action_trans_key') }}</th>
