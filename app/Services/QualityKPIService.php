@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Models\Quality\QualityCause;
 use App\Models\Quality\QualityAction;
 use App\Models\Quality\QualityFailure;
@@ -10,7 +12,6 @@ use App\Models\Quality\QualityCorrection;
 use App\Models\Quality\QualityDerogation;
 use App\Models\Quality\QualityControlDevice;
 use App\Models\Quality\QualityNonConformity;
-use Illuminate\Support\Facades\DB;
 
 class QualityKPIService
 {
@@ -122,5 +123,21 @@ class QualityKPIService
         ksort($actionStatusCounts);
 
         return compact('derogationStatusCounts', 'nonConformityStatusCounts', 'actionStatusCounts');
+    }
+
+    public function GetCalculateLitigationRate()
+    {
+        // Calculate the total number of order lines
+        $totalOrderLines = OrderLines::count();
+        // Calculate the number of disputed order lines
+        $litigationCount = QualityNonConformity::whereNotNull('order_lines_id')->count();
+        // Calculate the litigation rate
+        if ($totalOrderLines > 0) {
+            $litigationRate = ($litigationCount / $totalOrderLines) * 100;
+        } else {
+            $litigationRate = 0;
+        }
+        // Return the result
+        return round($litigationRate,2);
     }
 }

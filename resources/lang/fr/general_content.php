@@ -842,6 +842,7 @@ return [
     'quality_setting_note_trans_key'           => 'Pour éviter toute perte de temps, vous avez la possibilité de prédéfinir les défauts, causes et/ou mesures de correction que vous utiliserez le plus. Il vous suffira alors de faire le choix pertinent lors de la création d\'une fiche de non-conformité ou des interventions de maintenance d\'une ressource.',
     'amdec_trans_key'                          => 'AMDEC',
     'new_amdec_trans_key'                      => 'Nouvelle AMDEC',
+    'litigation_rate_trans_key'                => 'Taux de litige',
 
     //METHODS
     'methods_trans_key'                        => 'Méthodes',

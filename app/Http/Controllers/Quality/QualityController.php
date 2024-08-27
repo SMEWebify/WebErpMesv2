@@ -44,6 +44,7 @@ class QualityController extends Controller
         $rates = $this->qualityKPIService->getInternalExternalRates();
         $chartData = $this->qualityKPIService->getTopGenerators();
         $statusCounts = $this->qualityKPIService->getStatusCounts();
+        $litigationRate = $this->qualityKPIService->GetCalculateLitigationRate();
 
         
         return view('quality/quality-index', array_merge([
@@ -54,6 +55,7 @@ class QualityController extends Controller
                                                         'userSelect' => $userSelect,
                                                         'ServicesSelect' =>  $ServicesSelect,
                                                         'chartData'=> $chartData,
+                                                        'litigationRate'=> $litigationRate,
                                                         ]
                                                         , $generalStats, $rates, $statusCounts));
     }

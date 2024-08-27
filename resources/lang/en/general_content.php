@@ -843,6 +843,7 @@ return [
     'quality_setting_note_trans_key'           => 'To avoid any waste of time, you have the possibility to predefine the defects, causes and/or correction measures that you will use the most. You will then simply have to make the relevant selection when creating a non-conformity sheet or the maintenance interventions of a resource.',
     'amdec_trans_key'                          => 'FMEA',
     'new_amdec_trans_key'                      => 'Nouvelle FMEA',
+    'litigation_rate_trans_key'                => 'Litigation rate',
 
     //METHODS
     'methods_trans_key'                        => 'Methods',
