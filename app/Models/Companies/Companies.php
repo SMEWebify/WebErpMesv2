@@ -21,7 +21,9 @@ class Companies extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code', 
+    protected $fillable = [
+                            'uuid',
+                            'code', 
                             'client_type',
                             'civility',
                             'label',

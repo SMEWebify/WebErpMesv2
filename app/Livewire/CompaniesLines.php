@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +102,7 @@ class CompaniesLines extends Component
         $this->validate();
             // Create Line
             $CompaniesCreated = Companies::create([
+                'uuid'=> Str::uuid(),
                 'code'=>$this->code, 
                 'client_type' => $this->client_type,
                 'civility' => $this->civility,

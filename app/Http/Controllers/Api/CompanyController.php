@@ -12,11 +12,15 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Companies  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Companies\Companies  $id
      */
     public function show(Companies $company)
     {
         return new CompanieResource($company);
+    }
+
+    public function index()
+    {
+        return Companies::all();
     }
 }

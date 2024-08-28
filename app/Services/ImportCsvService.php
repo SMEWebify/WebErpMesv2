@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
@@ -116,6 +117,7 @@ class ImportCsvService
 
                     // Create the company record
                     Companies::create([
+                            'uuid'=> Str::uuid(),
                             'code'=>utf8_encode($data[$request->code]),
                             'client_type'=> 1,
                             'label'=> array_key_exists($request->label,  $importData) ? $data[$request->label] : null,
