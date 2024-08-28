@@ -23,7 +23,7 @@ class StoreCustomFieldRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'type' => 'required|string|in:text,number,checkbox', 
+            'type' => 'required|string|in:text,number,checkbox,date', 
             'related_type' => 'required|string|in:quote,order,delivery,invoice,purchase', 
         
         ];

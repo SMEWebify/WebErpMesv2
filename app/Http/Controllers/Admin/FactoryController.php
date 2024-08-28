@@ -152,14 +152,14 @@ class FactoryController extends Controller
     */
     public function storeCustomField(StoreCustomFieldRequest $request)
     {
-        // Création d'un nouveau champ personnalisé
+        // Create a new custom field
         $customField = CustomField::create([
             'name' => $request->name,
             'type' => $request->type,
             'related_type' => $request->related_type,
         ]);
 
-        // Redirection vers une page de confirmation ou une autre action
+        // Redirect to a confirmation page or other action
         return redirect()->route('admin.factory')->with('success', 'Custom field created successfully.');
     }
 

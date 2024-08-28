@@ -659,6 +659,7 @@
                                             <option value="text">Text</option>
                                             <option value="number">Number</option>
                                             <option value="checkbox">Checkbox</option>
+                                            <option value="date">Date</option>
                                         </select>
                                     </div>
                                 </div>
