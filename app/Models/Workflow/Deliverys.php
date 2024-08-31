@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Workflow\Orders;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
+use App\Models\Purchases\Purchases;
 use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
@@ -30,6 +31,8 @@ class Deliverys extends Model
                             'user_id',
                             'comment',
                             'order_id',
+                            'purchases_id',
+                            'tracking_number',
                         ];
 
     public function companie()
@@ -72,6 +75,12 @@ class Deliverys extends Model
     public function photos()
     {
         return $this->hasMany(File::class)->where('as_photo', 1);
+    }
+
+    // Relationship with purchase associated with the delevery
+    public function purchase()
+    {
+        return $this->belongsTo(Purchases::class, 'purchases_id');
     }
 
     public function QualityNonConformity()

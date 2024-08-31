@@ -26,6 +26,7 @@ class UpdateDeliveryRequest extends FormRequest
         return [
             //
             'label'=>'required',
+            'tracking_number'=>'string',
         ];
     }
 }

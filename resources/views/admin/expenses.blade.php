@@ -135,7 +135,7 @@
                                 </div>
                                 <div class="form-group">
                                     <x-adminlte-select2 name="order_id" id="order_id" label="{{ __('general_content.select_order_trans_key') }}" label-class="text-secondary"
-                                        igroup-size="lg" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
+                                        igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
                                         <x-slot name="prependSlot">
                                             <div class="input-group-text bg-gradient-secondary">
                                                 <i class="fas fa-list"></i>
@@ -254,7 +254,7 @@
                 
                 <div class="form-group">
                     <x-adminlte-select2 name="order_id" id="order_id" label="{{ __('general_content.select_order_trans_key') }}" label-class="text-secondary"
-                        igroup-size="lg" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
+                        igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
                         <x-slot name="prependSlot">
                             <div class="input-group-text bg-gradient-secondary">
                                 <i class="fas fa-list"></i>

@@ -220,7 +220,7 @@
           </div>
           <div class="form-group">
               <x-adminlte-select2 name="order_line_id" id="order_line_id" label="{{ __('general_content.select_order_line_trans_key') }}" label-class="text-secondary"
-                igroup-size="lg" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
+                igroup-size="s" data-placeholder="{{ __('general_content.select_order_line_trans_key') }}">
                 <x-slot name="prependSlot">
                     <div class="input-group-text bg-gradient-secondary">
                         <i class="fas fa-list"></i>
@@ -234,7 +234,7 @@
           </div>
           <div class="form-group">
               <x-adminlte-select2 name="task_id" id="task_id" label="{{ __('general_content.task_trans_key') }}" label-class="text-lightblue"
-                igroup-size="lg" data-placeholder="{{ __('general_content.select_task_trans_key') }}">
+                igroup-size="s" data-placeholder="{{ __('general_content.select_task_trans_key') }}">
                 <x-slot name="prependSlot">
                     <div class="input-group-text bg-gradient-info">
                         <i class="fas fa-list"></i>

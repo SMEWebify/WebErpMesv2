@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Workflow\Orders;
+use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Companies\Companies;
-use App\Http\Controllers\Controller;
+use App\Models\Purchases\Purchases;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Quality\QualityCause;
 use App\Models\Methods\MethodsSection;
@@ -21,7 +23,6 @@ use App\Models\Quality\QualityNonConformity;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
-
 
 class SelectDataService
 {
@@ -119,5 +120,25 @@ class SelectDataService
     public function getQualityNonConformity()
     {
         return QualityNonConformity::select('id', 'code')->orderBy('code')->get();
+    }
+
+    public function getQuotes()
+    {
+        return Quotes::select('id', 'code')->orderBy('code')->get();
+    }
+
+    public function getOrders()
+    {
+        return Orders::select('id', 'code')->orderBy('code')->get();
+    }
+
+    public function getOrdersLines()
+    {
+        return Orders::select('id', 'code')->orderBy('code')->get();
+    }
+
+    public function getPurchases()
+    {
+        return Purchases::select('id', 'code')->orderBy('code')->get();
     }
 }

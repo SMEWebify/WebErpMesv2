@@ -232,7 +232,7 @@
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <x-adminlte-select2 name="product_id" id="product_id" label="{{ __('general_content.product_trans_key') }}" label-class="text-lightblue"
-                        igroup-size="lg" data-placeholder="Select an product...">
+                        igroup-size="s" data-placeholder="Select an product...">
                         <x-slot name="prependSlot">
                             <div class="input-group-text bg-gradient-info">
                                 <i class="fas fa-barcode"></i>

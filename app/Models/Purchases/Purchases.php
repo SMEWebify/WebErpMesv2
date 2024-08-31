@@ -12,6 +12,7 @@ use App\Models\Companies\SupplierRating;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Workflow\Deliverys;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Purchases extends Model
@@ -65,6 +66,11 @@ class Purchases extends Model
         return $this->hasMany(SupplierRating::class);
     }
         
+    // Relationship with the deliveries associated with the Purchases
+    public function deliveries()
+    {
+        return $this->hasMany(Deliverys::class);
+    }
 
     public function GetPrettyCreatedAttribute()
     {

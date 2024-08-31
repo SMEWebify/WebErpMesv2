@@ -148,7 +148,7 @@
                       <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseReceiptLine->purchaseLines->purchase->id])}}">
                         <i class="fas fa-folder"></i>
                         {{ $PurchaseReceiptLine->purchaseLines->purchase->code }}
-                    </a>
+                      </a>
                     </td>
                     <td>
                       @if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null)

@@ -193,7 +193,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-12">
                         @if ($Delivery->comment)
                         <!-- Customer Notes -->
                         <div class="card mb-4">
@@ -216,6 +216,19 @@
                                 </address>
                             </div>
                         </div>
+                        
+                        @if($Delivery->purchases_id)
+                        <div class="card mb-4">
+                            <!-- Shipping information -->
+                            <div class="card-body">
+                                <h3 class="h6">{{ __('general_content.suppliers_trans_key') }}</h3>
+                                <p>{{ $Delivery->purchase->companie['label'] }}</p>
+                                
+                                <h3 class="h6">{{ __('general_content.tracking_number_note_trans_key') }}</h3>
+                                <p>{{  $Delivery->tracking_number }} </p>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>

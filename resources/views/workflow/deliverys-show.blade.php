@@ -53,9 +53,32 @@
                   <div class="form-group col-md-6">
                   </div>
                   <div class="form-group col-md-6">
-                    @include('include.form.form-input-label',['label' =>'Name of delivery', 'Value' =>  $Delivery->label])
+                    @include('include.form.form-input-label',['label' =>__('general_content.name_of_deliverys_notes_trans_key'), 'Value' =>  $Delivery->label])
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <x-adminlte-select2 name="purchases_id" id="purchases_id" label="{{ __('general_content.name_purchase_trans_key') }}" label-class="text-secondary"
+                    igroup-size="s" data-placeholder="{{ __('general_content.name_purchase_trans_key') }}">
+                    <x-slot name="prependSlot">
+                        <div class="input-group-text bg-gradient-secondary">
+                            <i class="fas fa-list"></i>
+                        </div>
+                    </x-slot>
+                    <option value="NULL">{{ __('general_content.select_purchase_order_trans_key') }}</option>
+                      @foreach ($PruchasesSelect as $item)
+                      <option value="{{ $item->id }}" @if($item->id == $Delivery->purchases_id) Selected @endif>{{ $item->code }}</option>
+                      @endforeach
+                  </x-adminlte-select2>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="tracking_number">{{ __('general_content.tracking_number_note_trans_key') }}</label>
+                    <input type="text" class="form-control" name="tracking_number"  id="tracking_number" value="{{  $Delivery->tracking_number }}">
+                  </div>
+                </div>
+
+                
+                
                 <div class="row">
                   <x-FormTextareaComment  comment="{{ $Delivery->comment }}" />
                 </div>
@@ -66,7 +89,7 @@
             </form>
           </div>
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
               <div class="table-responsive">
                 <div class="card-body">
                   {{ __('general_content.created_at_trans_key') }} :  {{ $Delivery->GetPrettyCreatedAttribute() }}
@@ -80,7 +103,18 @@
                 <div class="card-body">
                   {{ __('general_content.contact_name_trans_key') }} :  {{ $Delivery->contact['first_name'] }} - {{ $Delivery->contact['name'] }}
                 </div>
-              </div>
+                @if($Delivery->purchases_id)
+                <div class="card-body">
+                  {{ __('general_content.name_purchase_trans_key') }} : 
+                  <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $Delivery->purchases_id])}}">
+                    <i class="fas fa-folder"></i>
+                    {{ $Delivery->purchase->code }}
+                  </a>
+                </div>
+                <div class="card-body">
+                  {{ __('general_content.suppliers_trans_key') }} : <x-CompanieButton id="{{ $Delivery->purchase->companies_id }}" label="{{ $Delivery->purchase->companie['label'] }}"  />
+                </div>
+                @endif
             </x-adminlte-card>
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>

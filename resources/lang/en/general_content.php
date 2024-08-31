@@ -388,6 +388,7 @@ return [
     'select_task_trans_key'                    => 'Select task',
     'select_order_trans_key'                   => 'Select order',
     'select_order_line_trans_key'              => 'Select order line',
+    'select_purchase_order_trans_key'          => 'Select purchase order',
     'select_categorie_trans_key'               => 'Select categorie',
     'reception_control_trans_key'              => 'Reception control',
     
@@ -714,6 +715,7 @@ return [
     'deliverys_notes_list_trans_key'           => 'Deliverys notes list',
     'name_of_deliverys_notes_trans_key'        => 'Name of Delivery note',
     'new_delivery_note_trans_key'              => 'New delivery note',
+    'tracking_number_note_trans_key'           => 'Tracking number',
 
     //INVOICE
     'invoices_trans_key'                       => 'Invoices',    

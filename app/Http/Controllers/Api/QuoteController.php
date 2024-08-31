@@ -12,8 +12,8 @@ class QuoteController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Quotes  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Workflow\Quotes  $quote
+     * @return \App\Http\Resources\QuoteResource
      */
     public function show(Quotes $quote)
     {

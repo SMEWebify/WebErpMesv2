@@ -388,6 +388,7 @@ return [
     'select_task_trans_key'                    => 'Selectionner la tâche',
     'select_order_trans_key'                   => 'Selectionner la commande',
     'select_order_line_trans_key'              => 'Selectionner une ligne de commande',
+    'select_purchase_order_trans_key'          => 'Selectionner la commande achat',
     'select_categorie_trans_key'               => 'Selectionner la categorie',
     'reception_control_trans_key'              => 'Controle de reception',
 
@@ -713,6 +714,7 @@ return [
     'deliverys_notes_list_trans_key'           => 'Liste des nons de livraisons',
     'name_of_deliverys_notes_trans_key'        => 'Nom du bon de livraison',
     'new_delivery_note_trans_key'              => 'Nouveau bon de livraison',
+    'tracking_number_note_trans_key'           => 'Numéro de suivis',
 
     //INVOICE
     'invoices_trans_key'                       => 'Factures',

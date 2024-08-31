@@ -54,7 +54,7 @@
           </div>
           <div class="form-group">
             <x-adminlte-select2 name="products_id" id="products_id" label="{{ __('general_content.product_trans_key') }}" label-class="text-lightblue"
-                  igroup-size="lg" data-placeholder="Select an product...">
+                  igroup-size="s" data-placeholder="Select an product...">
                   <x-slot name="prependSlot">
                       <div class="input-group-text bg-gradient-info">
                           <i class="fas fa-barcode"></i>
