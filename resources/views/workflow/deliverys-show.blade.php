@@ -59,26 +59,23 @@
                 <div class="row">
                   <div class="form-group col-md-6">
                     <x-adminlte-select2 name="purchases_id" id="purchases_id" label="{{ __('general_content.name_purchase_trans_key') }}" label-class="text-secondary"
-                    igroup-size="s" data-placeholder="{{ __('general_content.name_purchase_trans_key') }}">
-                    <x-slot name="prependSlot">
-                        <div class="input-group-text bg-gradient-secondary">
-                            <i class="fas fa-list"></i>
-                        </div>
-                    </x-slot>
-                    <option value="NULL">{{ __('general_content.select_purchase_order_trans_key') }}</option>
-                      @foreach ($PruchasesSelect as $item)
-                      <option value="{{ $item->id }}" @if($item->id == $Delivery->purchases_id) Selected @endif>{{ $item->code }}</option>
-                      @endforeach
-                  </x-adminlte-select2>
+                      igroup-size="s" data-placeholder="{{ __('general_content.name_purchase_trans_key') }}">
+                      <x-slot name="prependSlot">
+                          <div class="input-group-text bg-gradient-secondary">
+                              <i class="fas fa-list"></i>
+                          </div>
+                      </x-slot>
+                      <option value="NULL">{{ __('general_content.select_purchase_order_trans_key') }}</option>
+                        @foreach ($PruchasesSelect as $item)
+                        <option value="{{ $item->id }}" @if($item->id == $Delivery->purchases_id) Selected @endif>{{ $item->code }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
                   </div>
                   <div class="form-group col-md-6">
                     <label for="tracking_number">{{ __('general_content.tracking_number_note_trans_key') }}</label>
                     <input type="text" class="form-control" name="tracking_number"  id="tracking_number" value="{{  $Delivery->tracking_number }}">
                   </div>
                 </div>
-
-                
-                
                 <div class="row">
                   <x-FormTextareaComment  comment="{{ $Delivery->comment }}" />
                 </div>
@@ -115,6 +112,7 @@
                   {{ __('general_content.suppliers_trans_key') }} : <x-CompanieButton id="{{ $Delivery->purchase->companies_id }}" label="{{ $Delivery->purchase->companie['label'] }}"  />
                 </div>
                 @endif
+              </div>
             </x-adminlte-card>
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
