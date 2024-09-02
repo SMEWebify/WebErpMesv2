@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Workflow\Orders;
+use App\Models\Workflow\Packaging;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
@@ -75,6 +76,12 @@ class Deliverys extends Model
     public function photos()
     {
         return $this->hasMany(File::class)->where('as_photo', 1);
+    }
+
+    // Relationship with the packagings associated with the delevery
+    public function packaging()
+    {
+        return $this->hasMany(Packaging::class);
     }
 
     // Relationship with purchase associated with the delevery

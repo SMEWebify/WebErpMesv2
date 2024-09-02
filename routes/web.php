@@ -124,6 +124,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys'); 
         Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request'); 
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
+        Route::post('{id}/packaging/store/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsStore')->name('deliverys.packagings.store');
+        Route::post('{id}/packaging/update/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsUpdate')->name('deliverys.packagings.update');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->name('deliverys.show');
     });
 

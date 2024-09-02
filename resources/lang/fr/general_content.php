@@ -463,7 +463,8 @@ return [
     'material_trans_key'                       => 'Matière',
     'thickness_trans_key'                      => 'Epaisseur',
     'finishing_trans_key'                      => 'Finition',
-    'weight_trans_key'                         => 'Poids',
+    'weight_trans_key'                         => 'Poids net',
+    'gross_weight_trans_key'                   => 'Poids brut',
     'x_size_trans_key'                         => 'Taille X',
     'y_size_trans_key'                         => 'Taille Y',
     'z_size_trans_key'                         => 'Taille Z',
@@ -546,6 +547,9 @@ return [
 
     'probality_trans_key'                      => 'Probabilité',
     'budget_trans_key'                         => 'Budget',
+
+    'loaded_date_trans_key'                    => 'Loaded Date',
+    'packing_date_trans_key'                   => 'Packing Date',
 
     //NOTIFICATION
     'unread_list_trans_key'                    => ' Liste non lus',
@@ -715,6 +719,7 @@ return [
     'name_of_deliverys_notes_trans_key'        => 'Nom du bon de livraison',
     'new_delivery_note_trans_key'              => 'Nouveau bon de livraison',
     'tracking_number_note_trans_key'           => 'Numéro de suivis',
+    'packaging_trans_key'                      => 'Packaging',
 
     //INVOICE
     'invoices_trans_key'                       => 'Factures',

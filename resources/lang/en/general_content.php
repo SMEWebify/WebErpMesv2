@@ -463,7 +463,8 @@ return [
     'material_trans_key'                       => 'Material',
     'finishing_trans_key'                      => 'Finishing',
     'thickness_trans_key'                      => 'Thickness',
-    'weight_trans_key'                         => 'Weight',
+    'weight_trans_key'                         => 'Net weight',
+    'gross_weight_trans_key'                   => 'Gross weight',
     'x_size_trans_key'                         => 'X size',
     'y_size_trans_key'                         => 'Y size',
     'z_size_trans_key'                         => 'Z size',
@@ -546,6 +547,9 @@ return [
 
     'probality_trans_key'                      => 'Probability',
     'budget_trans_key'                         => 'Budget',
+
+    'loaded_date_trans_key'                    => 'Date de chargement',
+    'packing_date_trans_key'                   => 'Date d\'emballage',
 
     //NOTIFICATION
     'unread_list_trans_key'                    => ' Unread List',
@@ -716,6 +720,8 @@ return [
     'name_of_deliverys_notes_trans_key'        => 'Name of Delivery note',
     'new_delivery_note_trans_key'              => 'New delivery note',
     'tracking_number_note_trans_key'           => 'Tracking number',
+    'packaging_trans_key'                      => 'Packaging',
+    'new_packaging_trans_key'                  => 'New packaging',
 
     //INVOICE
     'invoices_trans_key'                       => 'Invoices',    
