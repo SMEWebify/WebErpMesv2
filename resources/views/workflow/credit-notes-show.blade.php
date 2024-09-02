@@ -17,7 +17,7 @@
   <div class="card-header p-2">
     <ul class="nav nav-pills">
         <li class="nav-item"><a class="nav-link active" href="#CreditNotes" data-toggle="tab">{{ __('general_content.invoice_info_trans_key') }}</a></li>
-        <li class="nav-item"><a class="nav-link" href="#CreditNotesLines" data-toggle="tab">{{ __('general_content.invoice_lines_trans_key') }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="#CreditNotesLines" data-toggle="tab">{{ __('general_content.invoice_lines_trans_key') }} ({{ count($CreditNotes->creditNotelines) }})</a></li>
         </ul>
     </div>
     <!-- /.card-header -->

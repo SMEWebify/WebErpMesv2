@@ -18,8 +18,8 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Opportunity" data-toggle="tab">{{ __('general_content.opportunity_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#TimeLine" data-toggle="tab">TimeLine</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Activities" data-toggle="tab">{{ __('general_content.activities_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Events" data-toggle="tab">{{ __('general_content.events_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Activities" data-toggle="tab">{{ __('general_content.activities_trans_key') }} ({{ count($ActivitiesList) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Events" data-toggle="tab">{{ __('general_content.events_trans_key') }} ({{ count($EventsList) }})</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
