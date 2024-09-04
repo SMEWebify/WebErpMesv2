@@ -68,20 +68,7 @@
           </div>
           <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
-                
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    </div>
-                    <select class="form-control" name="user_id" id="user_id">
-                        <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
-                    @foreach ($UsersSelect as $item)
-                        <option value="{{ $item->id }}" @if($Lead->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
-                    @endforeach
-                    </select>
-                </div>
-                @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+              @include('include.form.form-select-user',['userId' =>   $Lead->user_id])
             </div>
             <div class="form-group col-md-6">
                 <label for="priority">{{ __('general_content.priority_trans_key') }}</label>

@@ -34,7 +34,7 @@ class PurchasesRequest extends Component
     public $PurchasesRequestsLineslist;
     public $code, $label, $user_id; 
     public $updateLines = false;
-    public $CompaniesSelect = [];
+    public $CompanieSelect = [];
     public $data = [];
     public $qty = [];
 
@@ -97,7 +97,7 @@ class PurchasesRequest extends Component
             $this->LastPurchaseQuotation = $this->LastPurchaseQuotation->id;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('statu_supplier', '=', 2)->orderBy('code')->get();
+        $this->CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('statu_supplier', '=', 2)->orderBy('code')->get();
     }
     
     public function changeDocument() 

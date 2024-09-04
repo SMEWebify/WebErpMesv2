@@ -73,20 +73,7 @@
                 <div class="card card-body">
                   <div class="row">
                       <div class="form-group col-md-4">
-                          <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label> 
-                          <div class="input-group">
-                              <div class="input-group-prepend">
-                                  <span class="input-group-text"><i class="fas fa-list"></i></span>
-                              </div>
-                              <select class="form-control" name="methods_services_id" id="methods_services_id">
-                                  <option value="">{{ __('general_content.select_service_trans_key') }}</option>
-                                  @forelse ($ServicesSelect as $item)
-                                  <option value="{{ $item->id }}" @if($Product->methods_services_id == $item->id ) Selected @endif  >{{ $item->label }}</option>
-                                  @empty
-                                      <option value="">{{ __('general_content.no_service_trans_key') }}</option>
-                                  @endforelse
-                              </select>
-                          </div>
+                          @include('include.form.form-select-service',['serviceId' =>  $Product->methods_services_id  ])
                       </div>
                       <div class="form-group col-md-4">
                           <label for="methods_families_id">{{ __('general_content.select_family_trans_key') }}</label>
@@ -624,15 +611,18 @@
               @csrf
                 <input type="hidden" name="product_id" value="{{ $Product->id }}">
                 <div class="form-group">
-                  <label for="compannie_id">{{ __('general_content.supplier_trans_key') }}</label>
-                    <select class="form-control" name="compannie_id" id="compannie_id">
+                    <x-adminlte-select2 name="companies_id" id="companies_id" label="{{ __('general_content.supplier_trans_key') }}" label-class="text-info"
+                      igroup-size="s" data-placeholder="{{ __('general_content.supplier_trans_key') }}">
+                      <x-slot name="prependSlot">
+                          <div class="input-group-text bg-gradient-info">
+                              <i class="fas fa-building"></i>
+                          </div>
+                      </x-slot>
                       <option value="NULL">-</option>
-                      @forelse ($SupplierSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->label }}</option>
-                      @empty
-                      <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
-                      @endforelse
-                    </select>
+                      @foreach ($CompanieSelect as $item)
+                      <option value="{{ $item->id }}" >{{ $item->code }} - {{ $item->label }}</option>
+                      @endforeach
+                  </x-adminlte-select2>
                 </div>
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

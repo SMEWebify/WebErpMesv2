@@ -33,6 +33,7 @@
         "mcamara/laravel-localization": "^1.8.0",
         "milon/barcode": "10.0.0",
         "monolog/monolog": "^3.0",
+        "phpoffice/phpspreadsheet": "^2.2.1",
         "protonemedia/laravel-cross-eloquent-search": "^3.2.0",
         "psr/simple-cache": "2.0",
         "setasign/fpdf": "^1.8",

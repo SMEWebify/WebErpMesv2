@@ -25,10 +25,10 @@ class ServicesController extends Controller
     public function index()
     {
         $MethodsServices = MethodsServices::orderBy('ordre')->get();
-        $SupplierSelect = $this->SelectDataService->getSupplier();
+        $CompanieSelect = $this->SelectDataService->getSupplier();
         return view('methods/methods-services', [
             'MethodsServices' => $MethodsServices,
-            'SupplierSelect' => $SupplierSelect,
+            'CompanieSelect' => $CompanieSelect,
         ]);
     }
     
@@ -40,7 +40,7 @@ class ServicesController extends Controller
      */
     public function store(StoreServicesRequest $request)
     {
-        $Service =  MethodsServices::create($request->only('code','ordre', 'label','type', 'hourly_rate','margin', 'color', 'compannie_id'));
+        $Service =  MethodsServices::create($request->only('code','ordre', 'label','type', 'hourly_rate','margin', 'color', 'companies_id'));
         
         if($request->hasFile('picture')){
             $Service = MethodsServices::findOrFail($Service->id);
@@ -66,7 +66,7 @@ class ServicesController extends Controller
     public function update(UpdateServicesRequest $request)
     {
         $service = MethodsServices::findOrFail($request->id);
-        $service->update($request->only(['ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'compannie_id']));
+        $service->update($request->only(['ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'companies_id']));
         return redirect()->route('methods.service')->with('success', 'Successfully updated service.');
     }
 

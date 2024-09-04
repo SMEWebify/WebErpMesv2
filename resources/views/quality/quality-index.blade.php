@@ -110,12 +110,12 @@
                               </div>
                             </div>
                             <div class="form-group col-md-6">
-                              <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+                              <label for="service_id_{{ $QualityControlDevice->id }}">{{ __('general_content.service_trans_key') }}</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-list"></i></span>
                                 </div>
-                                <select class="form-control" name="service_id" id="service_id">
+                                <select class="form-control" name="service_id" id="service_id_{{ $QualityControlDevice->id }}">
                                   @foreach ($ServicesSelect as $item)
                                   <option value="{{ $item->id }}"  @if($QualityControlDevice->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                                   @endforeach
@@ -125,12 +125,12 @@
                           </div>
                           <div class="row">
                             <div class="form-group col-md-6">
-                              <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
+                              <label for="user_id_{{ $QualityControlDevice->id }}">{{ __('general_content.user_trans_key') }}</label>
                               <div class="input-group">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-user"></i></span>
                                 </div>
-                                <select class="form-control" name="user_id" id="user_id">
+                                <select class="form-control" name="user_id" id="user_id_{{ $QualityControlDevice->id }}">
                                   @foreach ($userSelect as $item)
                                   <option value="{{ $item->id }}" @if($QualityControlDevice->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                                   @endforeach
@@ -215,32 +215,12 @@
                   </div>
                 </div>
                 <div class="form-group col-md-4">
-                  <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-list"></i></span>
-                    </div>
-                    <select class="form-control" name="service_id" id="service_id">
-                      @foreach ($ServicesSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->label }}</option>
-                      @endforeach
-                    </select>
-                  </div>
+                  @include('include.form.form-select-service',['serviceId' => null  ])
                 </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-4">
-                  <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    </div>
-                    <select class="form-control" name="user_id" id="user_id">
-                      @foreach ($userSelect as $item)
-                      <option value="{{ $item->id }}">{{ $item->name }}</option>
-                      @endforeach
-                    </select>
-                  </div>
+                  @include('include.form.form-select-user',['userId' =>   null])
                 </div>
                 <div class="form-group col-md-4">
                   <label for="label">{{ __('general_content.serial_number_trans_key') }}</label>

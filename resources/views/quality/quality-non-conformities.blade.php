@@ -175,12 +175,12 @@
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
+                          <label for="user_id_{{ $QualityNonConformity->id }}">{{ __('general_content.user_trans_key') }}</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" name="user_id" id="user_id">
+                            <select class="form-control" name="user_id" id="user_id_{{ $QualityNonConformity->id }}">
                               @foreach ($userSelect as $item)
                               <option value="{{ $item->id }}"  @if($QualityNonConformity->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                               @endforeach
@@ -188,12 +188,12 @@
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
+                          <label for="service_id_{{ $QualityNonConformity->id }}">{{ __('general_content.service_trans_key') }}</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
-                            <select class="form-control" name="service_id" id="service_id">
+                            <select class="form-control" name="service_id" id="service_id_{{ $QualityNonConformity->id }}">
                               <option value="">N/A</option>
                               @foreach ($ServicesSelect as $item)
                               <option value="{{ $item->id }}" @if($QualityNonConformity->service_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
@@ -202,9 +202,9 @@
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="companie_id">{{ __('general_content.companie_concern_trans_key') }}</label>
-                          <select class="form-control" name="companie_id" id="companie_id" @if($QualityNonConformity->order_lines_id || $QualityNonConformity->task_id) disabled @endif>
-                            @foreach ($CompaniesSelect as $item)
+                          <label for="companie_id_{{ $QualityNonConformity->id }}">{{ __('general_content.companie_concern_trans_key') }}</label>
+                          <select class="form-control" name="companie_id" id="companie_id_{{ $QualityNonConformity->id }}" @if($QualityNonConformity->order_lines_id || $QualityNonConformity->task_id) disabled @endif>
+                            @foreach ($CompanieSelect as $item)
                             <option value="{{ $item->id }}"  @if($QualityNonConformity->companie_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                             @endforeach
                           </select>
@@ -342,39 +342,23 @@
                 </div>
               </div>
               <div class="form-group col-md-4">
-                <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                  </div>
-                  <select class="form-control" name="user_id" id="user_id">
-                    @foreach ($userSelect as $item)
-                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                    @endforeach
-                  </select>
-                </div>
+                @include('include.form.form-select-user',['userId' =>  null ])
               </div>
               <div class="form-group col-md-4">
-                <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><i class="fas fa-list"></i></span>
-                  </div>
-                  <select class="form-control" name="service_id" id="service_id">
-                    <option value="">N/A</option>
-                    @foreach ($ServicesSelect as $item)
-                    <option value="{{ $item->id }}">{{ $item->label }}</option>
-                    @endforeach
-                  </select>
-                </div>
+                @include('include.form.form-select-service',['serviceId' => null  ])
               </div>
               <div class="form-group col-md-12">
-                <label for="companie_id">{{ __('general_content.companie_concern_trans_key') }}</label>
-                <select class="form-control" name="companie_id" id="companie_id">
-                  @foreach ($CompaniesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->label }}</option>
+                <x-adminlte-select2 name="companie_id" id="companie_id" label="{{ __('general_content.companie_concern_trans_key') }}" label-class="text-info"
+                  igroup-size="s" data-placeholder="{{ __('general_content.companie_concern_trans_key') }}">
+                  <x-slot name="prependSlot">
+                      <div class="input-group-text bg-gradient-info">
+                          <i class="fas fa-building"></i>
+                      </div>
+                  </x-slot>
+                  @foreach ($CompanieSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                   @endforeach
-                </select>
+              </x-adminlte-select2>
               </div>
               <div class="form-group col-md-12">
                 <div class="row">

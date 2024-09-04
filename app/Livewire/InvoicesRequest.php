@@ -27,7 +27,7 @@ class InvoicesRequest extends Component
     public $DeliverysRequestsLineslist;
     public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
     public $updateLines = false;
-    public $CompaniesSelect = [];
+    public $CompanieSelect = [];
     public $data = [];
     public $qty = [];
     public $LastInvoice;
@@ -90,7 +90,7 @@ class InvoicesRequest extends Component
                                             ->unique();
 
         // Filter companies based on unique IDs
-        $this->CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')
+        $this->CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')
                 ->whereIn('id', $companyIdsInDeliveryLines)
                 ->orderBy('code')
                 ->get();

@@ -27,7 +27,7 @@ class PurchasesWaintingReceipt extends Component
     public $PurchasesWaintingReceiptLineslist;
     public $code, $label, $user_id; 
     public $updateLines = false;
-    public $CompaniesSelect = [];
+    public $CompanieSelect = [];
     public $data = [];
     public $qty = [];
     
@@ -73,7 +73,7 @@ class PurchasesWaintingReceipt extends Component
             $this->label = $this->document_type ."-". $this->LastReceipt;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'label', 'code')->where('statu_supplier', '=', 2)->orderBy('code')->get();
+        $this->CompanieSelect = Companies::select('id', 'label', 'code')->where('statu_supplier', '=', 2)->orderBy('code')->get();
     }
 
     public function render()

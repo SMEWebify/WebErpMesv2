@@ -51,7 +51,7 @@ class ProductsController extends Controller
         $ServicesSelect = $this->SelectDataService->getServices();
         $UnitsSelect = $this->SelectDataService->getUnitsSelect();
         $FamiliesSelect = $this->SelectDataService->getFamilies();
-        $SupplierSelect = $this->SelectDataService->getSupplier();
+        $CompanieSelect = $this->SelectDataService->getSupplier();
 
         $status_id = Status::select('id')->orderBy('order')->first();
         $StockLocationsProducts = StockLocationProducts::where('products_id', $id)->get(); 
@@ -80,7 +80,7 @@ class ProductsController extends Controller
             'FamiliesSelect' => $FamiliesSelect,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
-            'SupplierSelect' =>  $SupplierSelect,
+            'CompanieSelect' =>  $CompanieSelect,
             'StockLocationsProducts' =>  $StockLocationsProducts,
             'finalAnalysis' =>  $finalAnalysis,
         ]);
@@ -97,7 +97,7 @@ class ProductsController extends Controller
             return redirect()->back()->withErrors(['message' => 'Product not found.']);
         }
         else{
-            $product->preferredSuppliers()->attach($request->compannie_id);
+            $product->preferredSuppliers()->attach($request->companies_id);
             return redirect()->route('products.show', ['id' =>  $request->product_id])->with('success', 'Successfully add supplier.');
         }
     }

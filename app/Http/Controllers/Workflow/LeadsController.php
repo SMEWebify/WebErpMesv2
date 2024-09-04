@@ -37,9 +37,9 @@ class LeadsController extends Controller
     public function show(Leads $id)
     {  
         $CompanieSelect = $this->SelectDataService->getCompanies();
-        $AddressSelect = $this->SelectDataService->getAddress();
-        $ContactSelect = $this->SelectDataService->getContact();
-        $UsersSelect = $this->SelectDataService->getUsers();
+        $AddressSelect = $this->SelectDataService->getAddress($id->companies_id);
+        $ContactSelect = $this->SelectDataService->getContact($id->companies_id);
+        $userSelect = $this->SelectDataService->getUsers();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Leads(), $id->id);
 
         return view('workflow/leads-show', [
@@ -49,7 +49,7 @@ class LeadsController extends Controller
             'ContactSelect' => $ContactSelect,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
-            'UsersSelect' =>  $UsersSelect,
+            'userSelect' =>  $userSelect,
         ]);
     }
 

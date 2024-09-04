@@ -34,22 +34,41 @@ class SelectDataService
     
     public function getCompanies()
     {
-        return Companies::select('id', 'code','client_type','civility','label','last_name')->where('active', 1)->get();
+        return Companies::select('id', 'code', 'client_type', 'civility', 'label', 'last_name')
+                            ->orderBy('label')
+                            ->where('active', 1)
+                            ->whereIn('statu_customer', [2, 3])
+                            ->get(); 
     }
 
     public function getSupplier()
     {
-        return Companies::select('id', 'code','client_type','civility','label','last_name')->orderBy('label')->where('statu_supplier', 2)->get();
+        return Companies::select('id', 'code','client_type','civility','label','last_name')
+                        ->orderBy('label')
+                        ->where('statu_supplier', 2)
+                        ->get();
     }
 
-    public function getAddress()
+    public function getAddress($companiesId = null)
     {
-        return CompaniesAddresses::select('id', 'label','adress')->get();
+        $query = CompaniesAddresses::select('id', 'label', 'adress');
+        
+        if ($companiesId) {
+            $query->where('companies_id', $companiesId);
+        }
+
+        return $query->get();
     }
 
-    public function getContact()
+    public function getContact($companiesId = null)
     {
-        return CompaniesContacts::select('id', 'first_name','name')->get();
+        $query = CompaniesContacts::select('id', 'first_name', 'name');
+        
+        if ($companiesId) {
+            $query->where('companies_id', $companiesId);
+        }
+    
+        return $query->get();
     }
 
     public function getAccountingPaymentConditions()

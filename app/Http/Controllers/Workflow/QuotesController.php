@@ -50,8 +50,8 @@ class QuotesController extends Controller
     public function show(Quotes $id)
     {
         $CompanieSelect = $this->SelectDataService->getCompanies();
-        $AddressSelect = $this->SelectDataService->getAddress();
-        $ContactSelect = $this->SelectDataService->getContact();
+        $AddressSelect = $this->SelectDataService->getAddress($id->companies_id);
+        $ContactSelect = $this->SelectDataService->getContact($id->companies_id);
         $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
         $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
         $AccountingDeleveriesSelect =  $this->SelectDataService->getAccountingDelivery();

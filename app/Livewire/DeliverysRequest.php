@@ -41,7 +41,7 @@ class DeliverysRequest extends Component
     public $updateLines = false;
     public $RemoveFromStock = false;
     public $CreateSerialNumber = false;
-    public $CompaniesSelect = [];
+    public $CompanieSelect = [];
     public $data = [];
     public $qty = [];
 
@@ -97,7 +97,7 @@ class DeliverysRequest extends Component
                                             ->unique();
 
         // Filter companies based on unique IDs
-        $this->CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')
+        $this->CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')
                                             ->whereIn('id', $companyIdsInOrderLines)
                                             ->orderBy('code')
                                             ->get();

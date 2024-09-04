@@ -29,6 +29,7 @@ class StoreQualityControlDeviceRequest extends FormRequest
             'label'=>'required',
             'serial_number'=>'required|unique:quality_control_devices',
             'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'service_id'=>'required',
         ];
     }
 }

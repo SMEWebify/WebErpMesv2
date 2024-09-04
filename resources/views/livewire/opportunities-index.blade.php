@@ -33,7 +33,7 @@
                                         </div>
                                         <select class="form-control"  wire:model.live="user_id" name="user_id" id="user_id">
                                             <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
-                                            @foreach ($UsersSelect as $item)
+                                            @foreach ($userSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endforeach
                                         </select>

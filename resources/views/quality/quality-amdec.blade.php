@@ -191,27 +191,27 @@
                         </td>
                     </tr>
                 @empty
-                    <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"/>
+                    <x-EmptyDataLine col="15" text="{{ __('general_content.no_data_trans_key') }}"/>
                 @endforelse
                 </tbody>
                 <tfoot>
-                <tr>
-                    <th>{{ __('general_content.product_trans_key') }}</th>
-                    <th>{{ __('general_content.user_trans_key') }}</th>
-                    <th></th>
-                    <th>{{ __('general_content.failure_mode_trans_key') }}</th>
-                    <th>{{ __('general_content.effect_trans_key') }}</th>
-                    <th>{{ __('general_content.cause_trans_key') }}</th>
-                    <th>{{ __('general_content.severity_trans_key') }}</th>
-                    <th>{{ __('general_content.occurrence_trans_key') }}</th>
-                    <th></th>
-                    <th>{{ __('general_content.detection_trans_key') }}</th>
-                    <th>{{ __('RPN') }}</th>
-                    <th>{{ __('general_content.current_control_trans_key') }}</th>
-                    <th>{{ __('general_content.recommended_action_trans_key') }}</th>
-                    <th>{{ __('general_content.created_at_trans_key') }}</th>
-                    <th></th>
-                </tr>
+                    <tr>
+                        <th>{{ __('general_content.product_trans_key') }}</th>
+                        <th>{{ __('general_content.user_trans_key') }}</th>
+                        <th></th>
+                        <th>{{ __('general_content.failure_mode_trans_key') }}</th>
+                        <th>{{ __('general_content.effect_trans_key') }}</th>
+                        <th>{{ __('general_content.cause_trans_key') }}</th>
+                        <th>{{ __('general_content.severity_trans_key') }}</th>
+                        <th>{{ __('general_content.occurrence_trans_key') }}</th>
+                        <th></th>
+                        <th>{{ __('general_content.detection_trans_key') }}</th>
+                        <th>{{ __('RPN') }}</th>
+                        <th>{{ __('general_content.current_control_trans_key') }}</th>
+                        <th>{{ __('general_content.recommended_action_trans_key') }}</th>
+                        <th>{{ __('general_content.created_at_trans_key') }}</th>
+                        <th></th>
+                    </tr>
                 </tfoot>
             </table>
             <!-- /.row -->
@@ -244,17 +244,7 @@
                     </x-adminlte-select2>
                 </div>
                 <div class="form-group col-md-4">
-                    <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-                    <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    </div>
-                    <select class="form-control" name="user_id" id="user_id">
-                        @foreach ($userSelect as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                    </select>
-                    </div>
+                    @include('include.form.form-select-user',['userId' =>   null])
                 </div>
             </div>
 

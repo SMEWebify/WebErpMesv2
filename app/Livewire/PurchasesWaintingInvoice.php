@@ -26,7 +26,7 @@ class PurchasesWaintingInvoice extends Component
     public $PurchasesWaintingInvoiceLineslist;
     public $code, $user_id; 
     public $updateLines = false;
-    public $CompaniesSelect = [];
+    public $CompanieSelect = [];
     public $data = [];
 
     // Validation Rules
@@ -67,7 +67,7 @@ class PurchasesWaintingInvoice extends Component
             $this->label = $this->document_type ."-". $this->LastInvoice;
         }
 
-        $this->CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('statu_supplier', '=', 2)->orderBy('code')->get();
+        $this->CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('statu_supplier', '=', 2)->orderBy('code')->get();
     }
 
     

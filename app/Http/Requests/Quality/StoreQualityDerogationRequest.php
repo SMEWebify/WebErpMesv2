@@ -27,6 +27,7 @@ class StoreQualityDerogationRequest extends FormRequest
             //
             'code' =>'required|unique:quality_derogations',
             'label'=>'required',
+            'user_id'=>'required',
         ];
     }
 }

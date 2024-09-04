@@ -51,12 +51,12 @@
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
+                          <label for="methods_services_id_{{ $MethodsFamilie->id }}">{{ __('general_content.service_trans_key') }}</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
-                            <select class="form-control" name="methods_services_id" id="methods_services_id">
+                            <select class="form-control" name="methods_services_id" id="methods_services_id_{{ $MethodsFamilie->id }}">
                               @forelse ($ServicesSelect as $item)
                               <option value="{{ $item->id }}" @if($MethodsFamilie->methods_services_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                               @empty
@@ -113,19 +113,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-list"></i></span>
-              </div>
-              <select class="form-control" name="methods_services_id" id="methods_services_id">
-                @forelse ($ServicesSelect as $item)
-                <option value="{{ $item->id }}">{{ $item->label }}</option>
-                @empty
-                <option value="">{{ __('general_content.no_service_trans_key') }}</option>
-                @endforelse
-              </select>
-            </div>
+            @include('include.form.form-select-service',['serviceId' => null  ])
           </div>
           <div class="card-footer">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

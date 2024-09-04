@@ -28,6 +28,7 @@ class StoreSectionRequest extends FormRequest
             'ordre' =>'required|numeric|gt:0',
             'code' =>'required|unique:methods_sections',
             'label'=>'required',
+            'user_id'=>'required',
         ];
     }
 }

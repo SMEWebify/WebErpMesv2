@@ -31,7 +31,7 @@ class QualityNonConformityController extends Controller
 
         $userSelect = $this->SelectDataService->getUsers();
         $ServicesSelect = $this->SelectDataService->getServices();
-        $CompaniesSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->orderBy('label')->get();
+        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->orderBy('label')->get();
         $CausesSelect = $this->SelectDataService->getQualityCause();
         $FailuresSelect = $this->SelectDataService->getQualityFailure();
         $CorrectionsSelect = $this->SelectDataService->getQualityCorrection();
@@ -46,7 +46,7 @@ class QualityNonConformityController extends Controller
             'NonConformitysSelect' =>  $NonConformitysSelect,
             'userSelect' => $userSelect,
             'ServicesSelect' =>  $ServicesSelect,
-            'CompaniesSelect' =>  $CompaniesSelect,
+            'CompanieSelect' =>  $CompanieSelect,
             'CausesSelect' =>  $CausesSelect,
             'CorrectionsSelect' => $CorrectionsSelect,
             'FailuresSelect' =>  $FailuresSelect,

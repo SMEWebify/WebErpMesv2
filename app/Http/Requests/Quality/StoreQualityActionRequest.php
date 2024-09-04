@@ -27,6 +27,7 @@ class StoreQualityActionRequest extends FormRequest
             //
             'code' =>'required|unique:quality_actions',
             'label'=>'required',
+            'user_id'=>'required',
         ];
     }
 }

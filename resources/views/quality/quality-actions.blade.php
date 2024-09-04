@@ -117,30 +117,31 @@
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
+                          <label for="user_id_{{ $QualityAction->id }}">{{ __('general_content.user_trans_key') }}</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" name="user_id" id="user_id">
+                            <select class="form-control" name="user_id" id="user_id_{{ $QualityAction->id }}">
                               @foreach ($userSelect as $item)
                               <option value="{{ $item->id }}"  @if($QualityAction->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                               @endforeach
                             </select>
                           </div>
                         </div>
+                        
                         <div class="form-group">
-                          <label for="color">{{ __('general_content.color_trans_key') }}</label>
-                          <input type="color" class="form-control"  name="color" id="color" value="{{ $QualityAction->color }}">
-                        </div>
-                        <div class="form-group">
-                          <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
-                          <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
+                          <label for="quality_non_conformitie_id_{{ $QualityAction->id }}">{{ __('general_content.non_conformitie_trans_key') }}</label>
+                          <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id_{{ $QualityAction->id }}">
                             <option value="null">-</option>
                             @foreach ($NonConformitysSelect as $item)
                             <option value="{{ $item->id }}"  @if($QualityAction->quality_non_conformitie_id == $item->id  ) Selected @endif>{{ $item->code }}</option>
                             @endforeach
                           </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="color">{{ __('general_content.color_trans_key') }}</label>
+                          <input type="color" class="form-control"  name="color" id="color" value="{{ $QualityAction->color }}">
                         </div>
                         <div class="form-group">
                           <label>{{ __('general_content.problem_description_trans_key') }}</label>
@@ -234,30 +235,14 @@
               data-on-color="teal" checked/>
             </div>
             <div class="form-group col-md-3">
-              <label for="user_id">{{ __('general_content.user_trans_key') }}</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-user"></i></span>
-                </div>
-                <select class="form-control" name="user_id" id="user_id">
-                  @foreach ($userSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->name }}</option>
-                  @endforeach
-                </select>
-              </div>
+              @include('include.form.form-select-user',['userId' =>  null ])
+            </div>
+            <div class="form-group col-md-3">
+              @include('include.form.form-select-nc',['ncId' =>  null])
             </div>
             <div class="form-group col-md-3">
               <label for="color">{{ __('general_content.color_trans_key') }}</label>
               <input type="color" class="form-control"  name="color" id="color" >
-            </div>
-            <div class="form-group col-md-3">
-              <label for="quality_non_conformitie_id">{{ __('general_content.non_conformitie_trans_key') }}</label>
-              <select class="form-control" name="quality_non_conformitie_id" id="quality_non_conformitie_id">
-                <option value="null">-</option>
-                @foreach ($NonConformitysSelect as $item)
-                <option value="{{ $item->id }}">{{ $item->code }}</option>
-                @endforeach
-              </select>
             </div>
             <!-- /.row -->
           </div>

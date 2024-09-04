@@ -68,12 +68,12 @@
                         </div>
                         
                         <div class="form-group">
-                          <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
+                          <label for="user_id_{{ $MethodsSection->id }}">{{ __('general_content.user_management_trans_key') }}</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" name="user_id" id="user_id">
+                            <select class="form-control" name="user_id" id="user_id_{{ $MethodsSection->id }}">
                               @foreach ($userSelect as $item)
                               <option value="{{ $item->id }}" @if($MethodsSection->user_id == $item->id  ) Selected @endif>{{ $item->name }}</option>
                               @endforeach
@@ -145,17 +145,7 @@
           </div>
           
           <div class="form-group">
-            <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-user"></i></span>
-              </div>
-              <select class="form-control" name="user_id" id="user_id">
-                @foreach ($userSelect as $item)
-                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach
-              </select>
-            </div>
+            @include('include.form.form-select-user',['userId' =>  null ])
           </div>
           <div class="card-footer">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

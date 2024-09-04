@@ -211,8 +211,8 @@ class OpportunitiesController extends Controller
     public function show(Opportunities $id)
     {  
         $CompanieSelect = $this->SelectDataService->getCompanies();
-        $AddressSelect = $this->SelectDataService->getAddress();
-        $ContactSelect = $this->SelectDataService->getContact();
+        $AddressSelect = $this->SelectDataService->getAddress($id->companies_id);
+        $ContactSelect = $this->SelectDataService->getContact($id->companies_id);
         $Activities = $this->getActivities($id->id);
         $Events = $this->getEvents($id->id);
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Opportunities(), $id->id);

@@ -86,18 +86,7 @@
                   </div>
                   @endif
                   <div class="form-group col-md-3">
-                    <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        </div>
-                        <select class="form-control" name="user_id" id="user_id" value="user_id">
-                            <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
-                        @foreach ($userSelect as $item)
-                            <option value="{{ $item->id }}" @if($Companie->user_id == $item->id ) Selected @endif >{{ $item->name }}</option>
-                        @endforeach
-                        </select>
-                    </div>
+                    @include('include.form.form-select-user',['userId' =>   $Companie->user_id])
                   </div>
                 </div>
               </x-adminlte-card>

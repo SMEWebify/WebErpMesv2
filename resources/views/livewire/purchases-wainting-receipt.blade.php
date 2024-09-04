@@ -13,7 +13,7 @@
                                 </div>
                                 <select class="form-control" wire:model.live="companies_id" name="companies_id" id="companies_id">
                                     <option value="">{{ __('general_content.select_company_trans_key') }}</option>
-                                @forelse ($CompaniesSelect as $item)
+                                @forelse ($CompanieSelect as $item)
                                     <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
                                 @empty
                                     <option value="">{{ __('general_content.no_select_company_trans_key') }}</option>

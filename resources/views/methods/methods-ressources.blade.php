@@ -116,12 +116,12 @@
                           </div>
                         </div>
                         <div class="form-group">
-                          <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
+                          <label for="methods_services_id_{{ $MethodsRessource->id }}">{{ __('general_content.service_trans_key') }}</label>
                           <div class="input-group">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
-                            <select class="form-control" name="methods_services_id" id="methods_services_id">
+                            <select class="form-control" name="methods_services_id" id="methods_services_id_{{ $MethodsRessource->id }}">
                               @forelse ($ServicesSelect as $item)
                               <option value="{{ $item->id }}" @if($MethodsRessource->methods_services_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                               @empty
@@ -258,19 +258,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="methods_services_id">{{ __('general_content.service_trans_key') }}</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-list"></i></span>
-                </div>
-                <select class="form-control" name="methods_services_id" id="methods_services_id">
-                  @forelse ($ServicesSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->label }}</option>
-                  @empty
-                  <option value="">{{ __('general_content.no_service_trans_key') }}</option>
-                  @endforelse
-                </select>
-              </div>
+              @include('include.form.form-select-service',['serviceId' =>  null ])
             </div>
           <!-- /.form-group -->
           </div>

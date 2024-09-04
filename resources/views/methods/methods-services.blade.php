@@ -122,11 +122,11 @@
                           <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}">
                         </div>
                         <div class="form-group">
-                          <label for="compannie_id">{{ __('general_content.supplier_trans_key') }}</label>
-                            <select class="form-control" name="compannie_id" id="compannie_id">
+                          <label for="companies_id_{{ $MethodsService->id }}">{{ __('general_content.supplier_trans_key') }}</label>
+                            <select class="form-control" name="companies_id" id="companies_id_{{ $MethodsService->id }}">
                               <option value="NULL">-</option>
-                              @forelse ($SupplierSelect as $item)
-                              <option value="{{ $item->id }}" @if($MethodsService->compannie_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                              @forelse ($CompanieSelect as $item)
+                              <option value="{{ $item->id }}" @if($MethodsService->companies_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
                               @empty
                               <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
                               @endforelse
@@ -265,15 +265,7 @@
                 </div>
             </div>
             <div class="form-group">
-              <label for="compannie_id">{{ __('general_content.supplier_trans_key') }} (no mandatory)</label>
-                <select class="form-control" name="compannie_id" id="compannie_id">
-                  <option value="NULL">-</option>
-                  @forelse ($SupplierSelect as $item)
-                  <option value="{{ $item->id }}">{{ $item->label }}</option>
-                  @empty
-                  <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
-                  @endforelse
-                </select>
+              @include('include.form.form-select-companie',['companiesId' =>  null])
             </div>
           <!-- /.form-group -->
           </div>

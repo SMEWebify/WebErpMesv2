@@ -46,9 +46,6 @@ for run to production, follow this link :  [wiki page (install to run)](https://
 
 -----------------
 
-:building_construction: Project Feature, follow this link : [wiki page](https://github.com/SMEWebify/WebErpMesv2/wiki/Features)
-  
------------------
 
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
 

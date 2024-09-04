@@ -86,7 +86,7 @@ class PurchasesController extends Controller
         $totalPurchasesAmount = $this->purchaseKPIService->getTotalPurchaseAmount();
 
         $userSelect = $this->SelectDataService->getUsers();
-        $SupplierSelect = $this->SelectDataService->getSupplier();
+        $CompanieSelect = $this->SelectDataService->getSupplier();
 
         $LastPurchase =  Purchases::latest()->first();
         //if we have no id, define 0 
@@ -109,7 +109,7 @@ class PurchasesController extends Controller
                                                     'totalPurchaseLineCount' => $totalPurchaseLineCount,
                                                     'totalPurchasesAmount' => $totalPurchasesAmount,
                                                     'userSelect' => $userSelect,
-                                                    'SupplierSelect' => $SupplierSelect,
+                                                    'CompanieSelect' => $CompanieSelect,
                                                     'code' => $code,
                                                     'label' => $label,
                                                 ])->with('data',$data);
@@ -146,9 +146,9 @@ class PurchasesController extends Controller
      */
     public function showQuotation(PurchasesQuotation $id)
     {   
-        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
+        $CompanieSelect = $this->SelectDataService->getSupplier();
+        $AddressSelect = $this->SelectDataService->getAddress($id->companies_id);
+        $ContactSelect = $this->SelectDataService->getContact($id->companies_id);
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchasesQuotation(), $id->id);
                                     
         return view('purchases/purchases-quotation-show', [
@@ -167,9 +167,9 @@ class PurchasesController extends Controller
      */
     public function showPurchase(Purchases $id)
     {   
-        $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->get();
-        $AddressSelect = CompaniesAddresses::select('id', 'label','adress')->where('companies_id', $id->companies_id)->get();
-        $ContactSelect = CompaniesContacts::select('id', 'first_name','name')->where('companies_id', $id->companies_id)->get();
+        $CompanieSelect = $this->SelectDataService->getSupplier();
+        $AddressSelect = $this->SelectDataService->getAddress($id->companies_id);
+        $ContactSelect = $this->SelectDataService->getContact($id->companies_id);
         $PurchaseCalculatorService = new PurchaseCalculatorService($id);
         $totalPrice = $PurchaseCalculatorService->getTotalPrice();
         $subPrice = $PurchaseCalculatorService->getSubTotal();

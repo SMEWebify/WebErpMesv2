@@ -104,7 +104,7 @@
 
         <div class="col-md-3">
             <!-- Modal -->
-            <div wire:ignore.self class="modal fade" id="ModalPurchase" tabindex="-1" role="dialog" aria-labelledby="ModalPurchaseTitle" aria-hidden="true">
+            <div  class="modal fade" id="ModalPurchase" tabindex="-1" role="dialog" aria-labelledby="ModalPurchaseTitle" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                   <div class="modal-content ">
                       <div class="modal-header bg-success">
@@ -119,7 +119,7 @@
                           <div class="card card-body">
                               @include('include.alert-result')
                               <div class="form-row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-6">
                                   <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                                   <div class="input-group">
                                       <div class="input-group-prepend">
@@ -129,7 +129,7 @@
                                   </div>
                                   @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-6">
                                     <label for="label">{{ __('general_content.label_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -139,37 +139,13 @@
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="form-group col-md-3">
-                                  <label for="companies_id">{{ __('general_content.sort_companie_trans_key') }}</label>
-                                  <div class="input-group">
-                                      <div class="input-group-prepend">
-                                          <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                      </div>
-                                      <select class="form-control"  name="companies_id" id="companies_id" required>
-                                          <option value="">{{ __('general_content.select_company_trans_key') }}</option>
-                                      @forelse ($SupplierSelect as $item)
-                                          <option value="{{ $item->id }}" >{{ $item->code }} - {{ $item->label }}</option>
-                                      @empty
-                                          <option value="">{{ __('general_content.no_select_company_trans_key') }}</option>
-                                      @endforelse
-                                      </select>
-                                  </div>
-                                  @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                               </div>
-                                <div class="form-group col-md-3">
-                                    <label for="user_id">{{ __('general_content.user_management_trans_key') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                        </div>
-                                        <select class="form-control"  name="user_id" id="user_id" required>
-                                            <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
-                                            @foreach ($userSelect as $item)
-                                            <option value="{{ $item->id }}" @if( Auth::id() == $item->id) Selected @endif>{{ $item->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    @error('user_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                              <div class="form-row">
+                                <div class="form-group col-md-6">
+                                  @include('include.form.form-select-companie',['companiesId' =>  null])
+                                </div>
+                                <div class="form-group col-md-6">
+                                  @include('include.form.form-select-user',['userId' =>   null])
                                 </div>
                               </div>
                               <div class="modal-footer">
