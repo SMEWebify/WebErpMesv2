@@ -53,7 +53,8 @@
                     <div class="form-group col-md-6">
                         @if($Quote->opportunities_id)
                         {{ __('general_content.companie_trans_key') }} :  <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  />
-                        @else
+                          <input type="hidden" name="companies_id" value="{{ $Quote->companies_id }}">
+                          @else
                               @include('include.form.form-select-companie',['companiesId' =>  $Quote->companies_id])
                         @endif
                     </div>
