@@ -694,6 +694,7 @@ return [
     'end_trans_key'                            => 'Fin',
     'finish_part_qty_trans_key'                => 'Nombre de pièce finie',
     'bad_part_qty_trans_key'                   => 'Nombre de pièce mauvaise',
+    'net_production_qty_trans_key'             => 'Production net',
     'search_task_trans_key'                    => 'Recherche une tâche',
     'calculate_task_trans_key'                 => 'Calculer les tâches',
     'calculate_date_task_trans_key'            => 'Calcul des dates des tâches',

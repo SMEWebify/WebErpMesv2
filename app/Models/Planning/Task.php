@@ -21,7 +21,6 @@ use App\Models\Methods\MethodsRessources;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
-use Symfony\Component\Validator\Constraints\NotNull;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
@@ -210,6 +209,11 @@ class Task extends Model
         return   TaskActivities::where('task_id', $this->id)
                                 ->where('type', 5)
                                 ->sum('bad_qt');
+    }
+
+    public function getTotalNetGoodQt()
+    {
+        return  $this->getTotalLogGoodQt()-$this->getTotalLogBadQt();
     }
 
     public function getFormattedEndDateAttribute()

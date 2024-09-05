@@ -144,11 +144,16 @@
               </div>
               @endif
               <div class="row">
-                <x-adminlte-info-box title="{{ __('general_content.finish_part_qty_trans_key') }}" text="{{ $Task->getTotalLogGoodQt() }} item(s)" icon="fa fa-database" theme="success"/>
+                <x-adminlte-info-box title="{{ __('general_content.finish_part_qty_trans_key') }}" text="{{ $Task->getTotalLogGoodQt() }} item(s)" icon="fa fa-database" theme="info"/>
               </div>
               <div class="row">
                 <x-adminlte-info-box title="{{ __('general_content.bad_part_qty_trans_key') }}" text="{{ $Task->getTotalLogBadQt() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
               </div>
+              <div class="row">
+                <x-adminlte-info-box title="{{ __('general_content.net_production_qty_trans_key') }}" text="{{ $Task->getTotalNetGoodQt() }} item(s)" icon="fa fa-check" theme="success "/>
+              </div>
+
+              
               <div class="text-muted">
                 <p class="text-sm">{{ __('general_content.statu_trans_key') }}  
                   <b class="d-block">{{ $Task->status['title'] }}</b>
@@ -273,34 +278,36 @@
               <div class="row">
                 @if($Task->service->type == 1 )
                   @if($lastTaskActivities)
-                    <div class="form-group col-md-2 ">
+                    <div class="form-group col-md-4 ">
                       <a class="btn btn-app bg-success @if($lastTaskActivities->type == 1 || $lastTaskActivities->type == 3) disabled @endif " wire:click="StartTimeTask({{$Task->id}})">
-                        <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
+                        <i class="fas fa-play"></i> {{ __('general_content.play_trans_key') }}
                       </a>
                     </div>
-                    <div class="form-group col-md-2 ">
+                    <div class="form-group col-md-4 ">
                       <a class="btn btn-app bg-warning @if($lastTaskActivities->type == 2 || $lastTaskActivities->type == 3) disabled @endif " wire:click="EndTimeTask({{$Task->id}})">
-                        <i class="fas fa-{{ __('general_content.pause_trans_key') }}"></i> {{ __('general_content.pause_trans_key') }}
+                        <i class="fas fa-pause"></i> {{ __('general_content.pause_trans_key') }}
                       </a>
                     </div>
-                    <div class="form-group col-md-2 ">
+                    <div class="form-group col-md-4 ">
                       <a class="btn btn-app bg-danger @if($lastTaskActivities->type == 3) disabled @endif " wire:click="EndTask({{$Task->id}})">
                         <i class="fas fa-stop"></i> {{ __('general_content.end_trans_key') }}
                       </a>
                     </div>
                   @else
-                  <div class="form-group col-md-2 ">
+                  <div class="form-group col-md-4 ">
                       <a class="btn btn-app bg-success" wire:click="StartTimeTask({{$Task->id}})">
-                        <i class="fas fa-{{ __('general_content.play_trans_key') }}"></i> {{ __('general_content.play_trans_key') }}
+                        <i class="fas fa-play"></i> {{ __('general_content.play_trans_key') }}
                       </a>
                     </div>
                   @endif
                 @else
-                <div class="form-group col-md-2 ">
-                  <a class="btn btn-app bg-success" href="{{ route('purchases.request') }}" >{{ __('general_content.new_purchase_document_trans_key') }}</a>
+                <div class="form-group col-md-4 ">
+                  <a class="btn btn-app bg-success" href="{{ route('purchases.request') }}" >
+                    <i class="fas  fa-cash-register"></i>{{ __('general_content.new_purchase_document_trans_key') }}
+                  </a>
                 </div>
                 
-                <div class="form-group col-md-2 ">
+                <div class="form-group col-md-4 ">
                   <a class="btn btn-app bg-danger " wire:click="EndTask({{$Task->id}})">
                     <i class="fas fa-stop"></i> {{ __('general_content.end_trans_key') }}
                   </a>
@@ -332,6 +339,23 @@
                 <div class="col-12 ">
                   <form wire:submit.prevent="addGoodQtFromUser">
                       <label for="addGoodQt">{{ __('general_content.good_rejected_trans_key') }} :</label>
+                      <div class="row">
+                        <div class="form-group col-md-4 ">
+                          <a class="btn btn-app bg-info " wire:click="FastaddGoodQt(1)">
+                            <i class="fas fa-thumbs-up"></i> +1
+                          </a>
+                        </div>
+                        <div class="form-group col-md-4 ">
+                          <a class="btn btn-app bg-info " wire:click="FastaddGoodQt(10)">
+                            <i class="fas fa-thumbs-up"></i> +10
+                          </a>
+                        </div>
+                        <div class="form-group col-md-4 ">
+                          <a class="btn btn-app bg-info " wire:click="FastaddGoodQt(100)">
+                            <i class="fas fa-thumbs-up"></i> +100
+                          </a>
+                        </div>
+                      </div>
                       <div class="input-group input-group-sm">
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-times"></i></span>
@@ -349,6 +373,23 @@
                 <div class="col-12 ">
                   <form wire:submit.prevent="addRejectedQt">
                     <label for="addBadQt">{{ __('general_content.quantity_rejected_trans_key') }} :</label>
+                    <div class="row">
+                      <div class="form-group col-md-4 ">
+                        <a class="btn btn-app bg-orange " wire:click="FastaddBadQt(1)">
+                          <i class="fas fa-thumbs-down"></i> -1
+                        </a>
+                      </div>
+                      <div class="form-group col-md-4 ">
+                        <a class="btn btn-app bg-orange " wire:click="FastaddBadQt(10)">
+                          <i class="fas fa-thumbs-down"></i> -10
+                        </a>
+                      </div>
+                      <div class="form-group col-md-4 ">
+                        <a class="btn btn-app bg-orange " wire:click="FastaddBadQt(100)">
+                          <i class="fas fa-thumbs-down"></i> -100
+                        </a>
+                      </div>
+                    </div>
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-times"></i></span>

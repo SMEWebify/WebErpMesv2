@@ -695,6 +695,7 @@ return [
     'end_trans_key'                            => 'End',
     'finish_part_qty_trans_key'                => 'Finish parts qty',
     'bad_part_qty_trans_key'                   => 'Bad part qty',
+    'net_production_qty_trans_key'             => 'Net production',
     'search_task_trans_key'                    => 'Search Task',
     'calculate_task_trans_key'                 => 'Calculate Task(s)',
     'calculate_date_task_trans_key'            => 'Task Calculation Date',

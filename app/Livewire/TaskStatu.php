@@ -307,6 +307,24 @@ class TaskStatu extends Component
         session()->flash('success','Log activitie added successfully');
     }
 
+    public function FastaddGoodQt($qty)
+    {
+        $this->addGoodQt += $qty;
+        // Create Line
+        TaskActivities::create([
+            'task_id'=> $this->search,
+            'user_id'=>$this->user_id,
+            'type'=>'4',
+            'good_qt'=>$qty,
+            'comment'=>'',
+        ]);
+
+        $this->render();
+
+        // Set Flash Message
+        session()->flash('success','Log activitie added successfully');
+    }
+
     public function addGoodQtFromStock($composantId, $taskId)
     {
         
@@ -367,6 +385,24 @@ class TaskStatu extends Component
             'user_id'=>$this->user_id,
             'type'=>'5',
             'bad_qt'=>$this->addBadQt,
+            'comment'=>'',
+        ]);
+
+        $this->render();
+
+        // Set Flash Message
+        session()->flash('success','Log activitie added successfully');
+    }
+
+    public function FastaddBadQt($qty)
+    {
+        $this->addGoodQt -= $qty;
+        // Create Line
+        TaskActivities::create([
+            'task_id'=> $this->search,
+            'user_id'=>$this->user_id,
+            'type'=>'5',
+            'bad_qt'=>$qty,
             'comment'=>'',
         ]);
 
