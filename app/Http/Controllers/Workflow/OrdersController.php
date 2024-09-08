@@ -10,6 +10,8 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\OrderCalculatorService;
+use App\Services\OrderInvoiceDataService;
+use App\Services\OrderBusinessBalanceService;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
 
 class OrdersController extends Controller
@@ -19,15 +21,21 @@ class OrdersController extends Controller
     protected $SelectDataService;
     protected $orderKPIService;
     protected $customFieldService;
+    protected $OrderBusinessBalanceService;
+    protected $OrderInvoiceDataService;
 
     public function __construct(
                                 SelectDataService $SelectDataService, 
                                 OrderKPIService $orderKPIService,
-                                CustomFieldService $customFieldService
+                                CustomFieldService $customFieldService,
+                                OrderBusinessBalanceService $OrderBusinessBalanceService, 
+                                OrderInvoiceDataService $OrderInvoiceDataService,
                     ){
         $this->SelectDataService = $SelectDataService;
         $this->orderKPIService = $orderKPIService;
         $this->customFieldService = $customFieldService;
+        $this->OrderBusinessBalanceService = $OrderBusinessBalanceService;
+        $this->OrderInvoiceDataService = $OrderInvoiceDataService;
     }
 
     /**
@@ -73,6 +81,11 @@ class OrdersController extends Controller
         $TotalServiceSettingTime = $OrderCalculatorService->getTotalSettingTimeByService();
         $TotalServiceCost = $OrderCalculatorService->getTotalCostByService();
         $TotalServicePrice = $OrderCalculatorService->getTotalPriceByService();
+        
+        $businessBalance = $this->OrderBusinessBalanceService->getBusinessBalance($id);
+        $businessBalancetotals = $this->OrderBusinessBalanceService->getBusinessBalanceTotals($id);
+        $invoicedAmount = $this->OrderInvoiceDataService->getInvoicingAmount($id);
+        $receivedPayment = $this->OrderInvoiceDataService->getInvoicingReceivedPayment($id);
 
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Orders(), $id->id);
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('order', $id->id);
@@ -95,6 +108,10 @@ class OrdersController extends Controller
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
             'CustomFields' => $CustomFields,
+            'businessBalance' => $businessBalance,
+            'businessBalancetotals' => $businessBalancetotals,
+            'invoicedAmount' => $invoicedAmount,
+            'receivedPayment' => $receivedPayment,
         ]);
     }
     

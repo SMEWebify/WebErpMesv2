@@ -150,10 +150,21 @@ class Task extends Model
         return $this->GetOrderQtyLine()*$this->unit_time;
     }
 
+    public function TotalCost()
+    {
+        return round($this->GetOrderQtyLine()*$this->unit_cost,2);
+    }
+
+    public function TotalPrice()
+    {
+        return round($this->GetOrderQtyLine()*$this->unit_price,2);
+    }
+
     public function Margin()
     {
         return round((($this->unit_price/$this->unit_cost)-1)*100,2);
     }
+    
 
     public function TotalTime()
     {
@@ -187,6 +198,11 @@ class Task extends Model
     public function getTotalLogTime()
     {
         return   round(($this->getTotalLogStartTime()-$this->getTotalLogEndTime())/3600,2);
+    }
+
+    public function getTotalRealizedCost()
+    {
+        return   round($this->getTotalLogTime()*$this->service->hourly_rate,2);
     }
 
     public function progress()

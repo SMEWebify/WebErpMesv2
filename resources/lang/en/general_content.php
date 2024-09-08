@@ -216,6 +216,8 @@ return [
     'start_date_trans_key'                     => 'Start date',  
     'end_date_trans_key'                       => 'End date',
     'date_time_trans_key'                      => 'Date time',
+    'hour_trans_key'                           => 'Your',
+    'hours_trans_key'                          => 'Yours',
     'task_trans_key'                           => 'Task',
     'nc_trans_key'                             => 'NC',
     'failure_trans_key'                        => 'Failure',
@@ -649,6 +651,11 @@ return [
     'order_type_trans_key'                     => 'Order type',
     'customer_type_order_trans_key'            => 'Customer sales order',
     'internal_type_order_trans_key'            => 'Internal sales order',
+    'forecast_margin_trans_key'                => 'Forecast margin',
+    'current_margin_trans_key'                 => 'Current margin',
+    'manufacturing_range_trans_key'            => 'Manufacturing range',
+    'accomplished_trans_key'                   => 'Accomplished',
+    'gap_trans_key'                            => 'Gap',
     
     'info_statu_trans_key'                     => 'The document status does not allow adding / modifying / deleting lines.',
     
@@ -660,7 +667,6 @@ return [
     'load_planning_info_1_trans_key'           => 'Currently the charge per day is stuck at 16 hours',
     'display_hours_diff_trans_key'             => 'Time difference',
     
-
     //WORKFLOW
     'workflow_trans_key'                       => 'Workflow',
     'workflow_info_1_trans_key'                => 'The views are configured in the \'Your company\' page.',
@@ -742,7 +748,8 @@ return [
     'average_payment_time_trans_key'           => 'Average payment time',
     'late_payment_time_trans_key'              => 'Late payment rate',
     'incoterm_trans_key'                       => 'Incoterm',
-    
+    'still_invoiced_trans_key'                 => 'Still to be invoiced',
+
     //CREDIT NOTE
     'credit_notes_trans_key'                   => 'Credit notes',
     'credit_note_trans_key'                    => 'Credit note',

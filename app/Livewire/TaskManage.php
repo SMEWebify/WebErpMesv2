@@ -428,6 +428,7 @@ class TaskManage extends Component
         // Update line
         Task::find($this->taskId)->fill([
             'ordre' => $this->ordre, 
+            'label' => $this->label,
             'methods_services_id' => $this->methods_services_id,  
             'component_id' => $this->component_id,  
             'seting_time' => $this->seting_time,   

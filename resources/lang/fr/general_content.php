@@ -216,6 +216,8 @@ return [
     'start_date_trans_key'                     => 'Date de début',  
     'end_date_trans_key'                       => 'Date de fin',  
     'date_time_trans_key'                      => 'Date et heure',
+    'hour_trans_key'                           => 'Heure',
+    'hours_trans_key'                          => 'Heures',
     'task_trans_key'                           => 'Tache',
     'nc_trans_key'                             => 'NC',
     'failure_trans_key'                        => 'Défaillance',
@@ -649,7 +651,12 @@ return [
     'order_type_trans_key'                     => 'Type de commande',
     'customer_type_order_trans_key'            => 'Commande client',
     'internal_type_order_trans_key'            => 'Commande interne',
-
+    'forecast_margin_trans_key'                => 'Marge prévisionnelle',
+    'current_margin_trans_key'                 => 'Marge courante',
+    'manufacturing_range_trans_key'            => 'Gamme',
+    'accomplished_trans_key'                   => 'Réalisé',
+    'gap_trans_key'                            => 'Ecart',
+    
     'info_statu_trans_key'                     => 'Le statut du document ne permet pas d\'ajouter/modifier/supprimer des lignes.',
 
     'scheduling_trans_key'                     => 'Scheduling',
@@ -721,12 +728,13 @@ return [
     'new_delivery_note_trans_key'              => 'Nouveau bon de livraison',
     'tracking_number_note_trans_key'           => 'Numéro de suivis',
     'packaging_trans_key'                      => 'Packaging',
+    'new_packaging_trans_key'                  => 'Nouveau packaging',
 
     //INVOICE
     'invoices_trans_key'                       => 'Factures',
     'invoice_trans_key'                        => 'Facture',
     'invoices_request_trans_key'               => 'Attente de facture',
-    'invoices_list_trans_key'                  => 'Factures  liste',
+    'invoices_list_trans_key'                  => 'Factures liste',
     'invoices_export_trans_key'                => 'Exporter ligne de facture',
     'others_trans_key'                         => 'Autres',
     'new_invoice_trans_key'                    => 'Nouvelle facture',
@@ -740,6 +748,7 @@ return [
     'average_payment_time_trans_key'           => 'Délai moyen de paiement',
     'late_payment_time_trans_key'              => 'Taux de retard de paiement',
     'incoterm_trans_key'                       => 'Incoterm',
+    'still_invoiced_trans_key'                 => 'Reste à facturer',
 
     //CREDIT NOTE
     'credit_notes_trans_key'                   => 'Avoirs',

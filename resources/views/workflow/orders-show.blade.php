@@ -19,6 +19,7 @@
       <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.order_line_trans_key') }}  ({{ count($Order->OrderLines) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li><li class="nav-item">
+      <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">Bilan d'affaire</a></li><li class="nav-item">
       <!--<a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
@@ -198,7 +199,6 @@
                 </table>
               </div>
             </x-adminlte-card>
-            
             @include('include.file-store', ['inputName' => "order_id",'inputValue' => $Order->id,'filesList' => $Order->files,])
           </div>
         </div>
@@ -229,7 +229,73 @@
               </x-adminlte-card>
           </div>
         </div>
-      </div>  
+      </div> 
+      <div class="tab-pane" id="Bilan">
+        <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr class="bg-dark disabled color-palette">
+                  <th></th>
+                  <th colspan="3" class="bg-info disabled color-palette">{{ __('general_content.manufacturing_range_trans_key') }}</th>
+                  <th colspan="2" class="bg-danger disabled color-palette">{{ __('general_content.accomplished_trans_key') }}</th>
+                  <th colspan="2" class="bg-orange disabled color-palette">{{ __('general_content.gap_trans_key') }}</th>
+              </tr>
+                <tr >
+                    <th>{{ __('general_content.service_trans_key') }}</th>
+                    <th class="bg-info disabled color-palette">{{ __('general_content.hours_trans_key') }}</th>
+                    <th class="bg-info disabled color-palette">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th> 
+                    <th class="bg-info disabled color-palette">{{ __('general_content.selling_price_trans_key') }} ({{ $Factory->curency }})</th>
+                    <th class="bg-danger disabled color-palette">{{ __('general_content.hours_trans_key') }}</th>
+                    <th class="bg-danger disabled color-palette">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                    <th class="bg-orange disabled color-palette">{{ __('general_content.hours_trans_key') }}</th>
+                    <th class="bg-orange disabled color-palette">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($businessBalance as $group => $data)
+                    <tr>
+                        <td>{{ strtoupper($group) }}</td>
+                        <td class="bg-info disabled color-palette">{{ $data['total_hours'] }} h</td>
+                        <td class="bg-info disabled color-palette">{{ $data['total_cost'] }}</td>
+                        <td class="bg-info disabled color-palette">{{ $data['total_price'] }}</td>
+                        <td class="bg-danger disabled color-palette">{{ $data['realized_hours'] }} h</td>
+                        <td class="bg-danger disabled color-palette">{{ $data['realized_cost'] }}</td>
+                        <td class="bg-orange disabled color-palette">{{ $data['difference_hours'] }} h</td>
+                        <td class="bg-orange disabled color-palette">{{ $data['difference_cost'] }}</td>
+                    </tr>
+                @empty
+                <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
+                @endforelse
+            </tbody>
+            <tfoot>
+              <tr class="bg-gray disabled color-palette">
+                <td><strong>{{ __('general_content.total_trans_key') }}</strong></td>
+                <td><strong>{{ number_format($businessBalancetotals['total_hours'], 2) }} h</strong></td>
+                <td><strong>{{ number_format($businessBalancetotals['total_cost'], 2) }} {{ $Factory->curency }}</strong></td>
+                <td><strong>{{ number_format($businessBalancetotals['total_price'], 2) }} {{ $Factory->curency }}</strong></td>
+                <td><strong>{{ number_format($businessBalancetotals['realized_hours'], 2) }} h</strong></td>
+                <td><strong>{{ number_format($businessBalancetotals['realized_cost'], 2) }} {{ $Factory->curency }}</strong></td>
+                <td><strong>{{ number_format($businessBalancetotals['difference_hours'], 2) }} h</strong></td>
+                <td><strong>{{ number_format($businessBalancetotals['difference_cost'], 2) }} {{ $Factory->curency }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </x-adminlte-card>
+        
+        @if($Order->type == 1)
+        <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="warning" maximizable>
+          <p><strong>{{ __('general_content.progress_trans_key') }} :</strong> {{ number_format($Order->getAveragePercentProgressLinesAttribute(), 2) }} %</p>
+          <p><strong>{{ __('general_content.amount_trans_key') }} :</strong> {{ number_format($totalPrices, 2)  }} {{ $Factory->curency }}</p>
+
+          <p><strong>{{ __('general_content.amount_of_invoice_trans_key') }} :</strong> {{ number_format($invoicedAmount, 2) }} {{ $Factory->curency }}</p>
+          <p><strong>{{ __('general_content.still_invoiced_trans_key') }} :</strong> {{ number_format($totalPrices - $invoicedAmount, 2) }} {{ $Factory->curency }} @if($totalPrices > 0 )({{ number_format($invoicedAmount / $totalPrices * 100, 2) }} %)@endif</p>
+          <p><strong>{{ __('general_content.payments_received_of_invoice_trans_key') }} :</strong> {{ number_format($receivedPayment, 2) }} {{ $Factory->curency }}</p>          
+          
+          <p><strong>{{ __('general_content.forecast_margin_trans_key') }} :</strong> {{ number_format($totalPrices - $businessBalancetotals['total_cost'], 2) }} {{ $Factory->curency }} @if($businessBalancetotals['total_cost'] > 0 )({{ number_format(($totalPrices-$businessBalancetotals['total_cost'] )/ $businessBalancetotals['total_cost'] * 100, 2) }} %)@endif</p>
+          <p><strong>{{ __('general_content.current_margin_trans_key') }} :</strong> {{ number_format($totalPrices - $businessBalancetotals['realized_cost'], 2) }} {{ $Factory->curency }} @if($businessBalancetotals['realized_cost'] > 0 )({{ number_format(($totalPrices -$businessBalancetotals['realized_cost'])/ $businessBalancetotals['realized_cost'] * 100, 2) }} %)@endif</p>
+        </x-adminlte-card>
+        @endif
+      </div> 
       <div class="tab-pane " id="Views">
       </div>
       @if($CustomFields)
