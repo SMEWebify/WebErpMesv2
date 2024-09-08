@@ -157,7 +157,6 @@
                     @endforeach
                 </ul>
             @endif
-
         
             <form wire:submit.prevent="importBOMCSV" class="form-inline">
                 <div class="form-group mb-2">

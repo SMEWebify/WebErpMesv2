@@ -719,6 +719,7 @@ return [
     'user_productivity_trans_key'              => 'Productivité des utilisateurs',
     'task_count_trans_key'                     => 'Nombre de tâches',
     'total_hours_per_resource_trans_key'       => 'Heures totales par ressource',
+    'trs_trans_key'                            => 'TRS',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Bons de livraisons',
@@ -925,7 +926,6 @@ return [
     'add_value_day_offer_trans_key'            => 'Jour supplémentaire de validité de l\'offre',
     'add_value_day_delivery_trans_key'         => 'Délai de livraison d\'un jour supplémentaire',
     'day_trans_key'                            => 'Jour(s)',
-    'hour_trans_key'                           => 'Heure(s)',
     'header_font_color_trans_key'              => 'Couleur d’en-tête',
     'manufacturing_information_trans_key'      => 'Informations de fabrication',
     'bare_code_type_trans_key'                 => 'Type de code pour la tâche de déclaration',

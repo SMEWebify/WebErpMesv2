@@ -352,7 +352,7 @@
                                             <i class="fa fa-lg fa-fw  fas fa-list"></i>
                                         </button>
                                         <!-- Modal {{ $OrderLine->id }} -->
-                                        <x-adminlte-modal id="OrderLineTasks{{ $OrderLine->id }}" title="Task detail for {{ $OrderLine->label }}" theme="warning" icon="fa fa-pen" size='lg' disable-animations>
+                                        <x-adminlte-modal id="OrderLineTasks{{ $OrderLine->id }}" title="Task detail for {{ $OrderLine->label }}" theme="warning" icon="fa fa-pen" size='xl' disable-animations>
                                             <div class="card-body">
                                                 <div class="row">
                                                     <table class="table table-hover">
@@ -366,6 +366,7 @@
                                                                 <th>{{ __('general_content.cost_trans_key') }}</th>
                                                                 <th>{{ __('general_content.margin_trans_key') }}</th>
                                                                 <th>{{ __('general_content.price_trans_key') }}</th>
+                                                                <th>{{ __('general_content.trs_trans_key') }}</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -389,6 +390,7 @@
                                                                 <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
                                                                 <td>{{ $Task->Margin() }} %</td>
                                                                 <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
+                                                                <td>{{ $Task->getTRSAttribute() }} %</td>
                                                             </tr>
                                                             @empty
                                                             <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />

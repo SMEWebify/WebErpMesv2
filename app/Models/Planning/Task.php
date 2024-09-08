@@ -240,6 +240,50 @@ class Task extends Model
         return "NULL";
     }
 
+    // Calculation of availability time
+    public function getAvailabilityAttribute()
+    {
+        $plannedTime = $this->TotalTime();
+        if ($plannedTime <= 0) {
+            return 0;
+        }
+        $operationalTime = $this->getTotalLogTime();
+        return $operationalTime / $plannedTime;
+    }
+
+    // Performance calculation
+    public function getPerformanceAttribute()
+    {
+        $producedQty = $this->getTotalLogGoodQt();
+        $theoreticalQty = $this->GetOrderQtyLine(); 
+        if ($theoreticalQty <= 0) {
+            return 0;
+        }
+        return $producedQty / $theoreticalQty;
+    }
+
+    // Quality calculation
+    public function getQualityAttribute()
+    {
+        $goodQty = $this->getTotalLogGoodQt();
+        $totalQty = $goodQty + $this->getTotalLogBadQt();
+        if ($totalQty <= 0) {
+            return 0;
+        }
+        return $goodQty / $totalQty;
+    }
+
+    // calculation TRS/OEE
+    public function getTRSAttribute()
+    {
+        $availability = $this->availability;
+        $performance = $this->performance; 
+        $quality = $this->quality;
+        $trs = $availability * $performance * $quality * 100; 
+
+        return number_format($trs, 2);
+    }
+
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

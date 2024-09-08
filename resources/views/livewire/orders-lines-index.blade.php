@@ -156,6 +156,7 @@
                                                             <th>{{ __('general_content.cost_trans_key') }}</th>
                                                             <th>{{ __('general_content.margin_trans_key') }}</th>
                                                             <th>{{ __('general_content.price_trans_key') }}</th>
+                                                            <th>{{ __('general_content.trs_trans_key') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -179,6 +180,7 @@
                                                             <td>{{ $Task->unit_cost }} {{ $Factory->curency }}</td>
                                                             <td>{{ $Task->Margin() }} %</td>
                                                             <td>{{ $Task->unit_price }} {{ $Factory->curency }}</td>
+                                                            <td>{{ $Task->getTRSAttribute() }} %</td>
                                                         </tr>
                                                         @empty
                                                         <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />

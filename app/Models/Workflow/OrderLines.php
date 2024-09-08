@@ -225,6 +225,22 @@ class OrderLines extends Model
         return $this->hasMany(SubAssembly::class, 'order_lines_id')->orderBy('ordre');
     }
 
+    // Calculation of the Overall Equipment Effectiveness for an order line
+    public function getTRSAttribute()
+    {
+        $tasks = $this->Task;
+
+        if ($tasks->isEmpty()) {
+            return 0;
+        }
+
+        $availability = $tasks->avg('availability');
+        $performance = $tasks->avg('performance');
+        $quality = $tasks->avg('quality');
+
+        return round($availability * $performance * $quality * 100, 2);
+    }
+
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

@@ -155,9 +155,18 @@
 
               
               <div class="text-muted">
-                <p class="text-sm">{{ __('general_content.statu_trans_key') }}  
-                  <b class="d-block">{{ $Task->status['title'] }}</b>
-                </p>
+                <div class="row">
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.statu_trans_key') }}  
+                      <b class="d-block">{{ $Task->status['title'] }}</b>
+                    </p>
+                  </div>
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.qty_trans_key') }}  
+                      <b class="d-block">{{ $Task->GetOrderQtyLine() }}</b>
+                    </p>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-4">
                     <p class="text-sm">{{ __('general_content.cost_trans_key') }}
@@ -193,6 +202,20 @@
                     </p>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.trs_trans_key') }}
+                      <b class="d-block">{{ $Task->getTotalLogTime()  }}</b>
+                    </p>
+                  </div>
+                  <div class="col-4">
+                    <p class="text-sm">{{ __('general_content.trs_trans_key') }}
+                      <b class="d-block">{{ $Task->getTRSAttribute()  }} %</b>
+                    </p>
+                  </div>
+                  <div class="col-4">
+                  </div>
+                </div>
                 @endif
               </div>
               <div class="row">
@@ -208,6 +231,7 @@
                   @endif
                 </div>
               </div>
+              
             </div>
             <div class="col-md-6">
               <div class="row">

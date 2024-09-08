@@ -216,8 +216,8 @@ return [
     'start_date_trans_key'                     => 'Start date',  
     'end_date_trans_key'                       => 'End date',
     'date_time_trans_key'                      => 'Date time',
-    'hour_trans_key'                           => 'Your',
-    'hours_trans_key'                          => 'Yours',
+    'hour_trans_key'                           => 'Hour',
+    'hours_trans_key'                          => 'Hours',
     'task_trans_key'                           => 'Task',
     'nc_trans_key'                             => 'NC',
     'failure_trans_key'                        => 'Failure',
@@ -719,6 +719,7 @@ return [
     'user_productivity_trans_key'              => 'User Productivity',
     'task_count_trans_key'                     => 'Number of tasks',
     'total_hours_per_resource_trans_key'       => 'Total hours per resource',
+    'trs_trans_key'                            => 'OEE',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Delivery notes',
@@ -925,7 +926,6 @@ return [
     'add_value_day_offer_trans_key'            => 'Additional day of validity of the offer',
     'add_value_day_delivery_trans_key'         => 'Additional day delivery delay',
     'day_trans_key'                            => 'Day(s)',
-    'hour_trans_key'                           => 'Hour(s)',
     'header_font_color_trans_key'              => 'Header font Color',
     'manufacturing_information_trans_key'      => 'Manufacturing information',
     'bare_code_type_trans_key'                 => 'Code bare type for declare task',
