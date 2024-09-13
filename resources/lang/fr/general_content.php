@@ -588,8 +588,10 @@ return [
     'no_product_trans_key'                     => 'Aucun produit, accédez à la page du produit pour ajouter un article',
     'announcement_trans_key'                   => 'Annonces',
     'order_to_be_delivered_trans_key'          => 'Commandes à livrée(s)',
+    'order_to_be_invoiced_trans_key'           => 'Commandes à facturée(s)',
     'delivered_month_in_progress_trans_key'    => 'Total livré du mois',
     'remaining_month_trans_key'                => 'Total restant à livrer',
+    'remaining_invoice_month_trans_key'        => 'Total restant à facturer',
     'niko_niko_team_trans_key'                 => 'Niko Niko - Humeur de l\'équipe aujourd\'hui',
     'no_niko_niko_team_trans_key'              => 'Aucune humeur aujourd\'hui',
 

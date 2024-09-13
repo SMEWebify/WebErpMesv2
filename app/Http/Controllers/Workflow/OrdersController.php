@@ -43,17 +43,28 @@ class OrdersController extends Controller
      */
     public function index()
     {   
-        $currentYear = Carbon::now()->format('Y');
-        $ordersDataRate =  $this->orderKPIService->getOrdersDataRate();
-        $orderMonthlyRecap = $this->orderKPIService->getOrderMonthlyRecap($currentYear);
+        $CurentYear = now()->year;
 
-        // Prepare data array
-        $data = [
-            'ordersDataRate' => $ordersDataRate,
-            'orderMonthlyRecap' => $orderMonthlyRecap,
-        ];
-
-        return view('workflow/orders-index')->with('data',$data);
+        // Récupérer les KPI
+        $deliveredOrdersPercentage = $this->orderKPIService->getDeliveredOrdersPercentage();
+        $invoicedOrdersPercentage = $this->orderKPIService->getInvoicedOrdersPercentage();
+        $pendingDeliveries = $this->orderKPIService->getPendingDeliveries();
+        $lateOrdersCount = $this->orderKPIService->getLateOrdersCount();
+        $remainingDeliveryOrder =   $this->orderKPIService->getOrderMonthlyRemainingToDelivery(now()->month, $CurentYear);
+        $remainingInvoiceOrder =   $this->orderKPIService->getOrderMonthlyRemainingToInvoice();
+        $data['ordersDataRate']= $this->orderKPIService->getOrdersDataRate();
+        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear);
+        $data['orderMonthlyRecapPreviousYear'] = $this->orderKPIService->getOrderMonthlyRecapPreviousYear($CurentYear);
+        
+        return view('workflow/orders-index', compact(
+            'deliveredOrdersPercentage',
+            'invoicedOrdersPercentage',
+            'pendingDeliveries',
+            'lateOrdersCount',
+            'remainingDeliveryOrder',
+            'remainingInvoiceOrder',
+            'data',
+        ));
     }
     
     /**

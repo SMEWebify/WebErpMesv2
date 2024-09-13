@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
@@ -169,9 +168,9 @@ class HomeController extends Controller
         $LastProducts = Products::orderBy('id', 'desc')->take(6)->get();
 
         //total price
-        $data['delivered_month_in_progress'] = $this->deliveryKPIService->getDeliveryMonthlyProgress($CurentMonth, $CurentYear);
+        $deliveredMonthInProgress = $this->deliveryKPIService->getDeliveryMonthlyProgress($CurentMonth, $CurentYear);
                                                 
-        $data['remaining_order'] =   $this->orderKPIService->getOrderMonthlyRemaining($CurentMonth, $CurentYear);
+        $remainingDeliveryOrder =   $this->orderKPIService->getOrderMonthlyRemainingToDelivery($CurentMonth, $CurentYear);
 
         return view('dashboard', [
             'userRoleCount' => $userRoleCount,
@@ -189,6 +188,8 @@ class HomeController extends Controller
             'ServiceGoals' => $ServiceGoals,
             'Tasks' => $Tasks,
             'EstimatedBudgets' => $EstimatedBudgets,
+            'deliveredMonthInProgress' => $deliveredMonthInProgress,
+            'remainingDeliveryOrder' => $remainingDeliveryOrder
         ])->with('data',$data);
     }
 

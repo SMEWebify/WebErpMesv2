@@ -23,22 +23,22 @@
     <div class="tab-pane active" id="Dashboard">
       <div class="row">
         <div class="col-lg-3">
-          <x-adminlte-small-box title="{{ __('general_content.open_trans_key') }} {{ __('general_content.action_trans_key') }}" text="{{ $totalActionsOpen }}" icon="fas fa-chart-bar text-white"
+          <x-adminlte-small-box title="{{ $totalActionsOpen }}" text="{{ __('general_content.open_trans_key') }} {{ __('general_content.action_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="teal"/>
         </div>
         <!-- ./col -->
         <div class="col-lg-3">
-          <x-adminlte-small-box title="{{ __('general_content.open_trans_key') }} {{ __('general_content.non_conformities_trans_key') }}" text="{{ $totalNonConformitiesOpen }}" icon="fas fa-chart-bar text-white"
+          <x-adminlte-small-box title="{{ $totalNonConformitiesOpen }}" text="{{ __('general_content.open_trans_key') }} {{ __('general_content.non_conformities_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="purple"/>
         </div>
         <!-- ./col -->
         <div class="col-lg-3">
-          <x-adminlte-small-box title="{{ __('general_content.open_trans_key') }} {{ __('general_content.derogations_trans_key') }}" text="{{ $totalDerogationsOpen }}" icon="fas fa-chart-bar text-white"
+          <x-adminlte-small-box title="{{ $totalDerogationsOpen }}" text="{{ __('general_content.open_trans_key') }} {{ __('general_content.derogations_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="info"/>
         </div>
         <!-- ./col -->
         <div class="col-lg-3">
-          <x-adminlte-small-box title="{{ __('general_content.litigation_rate_trans_key') }}" text="{{ $litigationRate }} %" icon="fas fa-chart-bar text-white"
+          <x-adminlte-small-box title="{{ $litigationRate }} %" text="{{ __('general_content.litigation_rate_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="secondary"/>
         </div>
         <!-- ./col -->

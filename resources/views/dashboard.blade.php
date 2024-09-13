@@ -281,16 +281,16 @@
 
     <!-- TABLE: DELIVERED -->
     <div class="col-lg-6 col-md-12">
-      <x-adminlte-small-box title="{{ __('general_content.delivered_month_in_progress_trans_key') }}" 
-                          text="{{ $data['delivered_month_in_progress'][0]->orderSum ?? 0}} {{ $Factory->curency }}" 
+      <x-adminlte-small-box title="{{ number_format($deliveredMonthInProgress[0]->orderSum,2) ?? 0}} {{ $Factory->curency }}" 
+                          text="{{ __('general_content.delivered_month_in_progress_trans_key') }}" 
                           icon="icon fas fa-info"
                           theme="yellow" 
                           url="{{ route('orders') }}" 
                           url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <div class="col-lg-6 col-md-12">
-      <x-adminlte-small-box title="{{ __('general_content.remaining_month_trans_key') }}" 
-                          text="{{ $data['remaining_order'][0]->orderSum ?? 0 -$data['delivered_month_in_progress'][0]->orderSum   ?? 0}}  {{ $Factory->curency }}" 
+      <x-adminlte-small-box title="{{ number_format($remainingDeliveryOrder[0]->orderSum ?? 0 -$remainingDeliveryOrder[0]->orderSum   ?? 0 ,2)}}  {{ $Factory->curency }}" 
+                          text="{{ __('general_content.remaining_month_trans_key') }}" 
                           icon="icon fas fa-info"
                           theme="danger" 
                           url="{{ route('orders') }}" 
@@ -676,7 +676,7 @@
       data: lineChartData,
       options: lineChartOptions
     })
-  </script>
+</script>
 
 <script>
 
