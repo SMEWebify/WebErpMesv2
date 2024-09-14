@@ -139,12 +139,12 @@ class OrderKPIService
     {
         return DB::table('order_lines')
                     ->selectRaw('
-                        FLOOR(SUM((selling_price * qty)-(selling_price * qty)*(discount/100))) AS orderSum
+                        FLOOR(SUM((selling_price * delivered_remaining_qty)-(selling_price * delivered_remaining_qty)*(discount/100))) AS orderSum
                     ')
                     ->whereYear('delivery_date', '=', $year)
                     ->whereMonth('delivery_date', $month)
                     ->groupByRaw('MONTH(delivery_date) ')
-                    ->get();
+                    ->first() ?? (object) ['orderSum' => 0]; 
     }
 
         /**
@@ -156,10 +156,11 @@ class OrderKPIService
     {
         return DB::table('order_lines')
                     ->selectRaw('
-                        FLOOR(SUM((selling_price * qty)-(selling_price * qty)*(discount/100))) AS orderSum
+                        FLOOR(SUM((selling_price * invoiced_remaining_qty)-(selling_price * invoiced_remaining_qty)*(discount/100))) AS orderSum
                     ')
                     ->where('invoice_status', 1)
-                    ->get();
+                    ->Orwhere('invoice_status', 2)
+                    ->first() ?? (object) ['orderSum' => 0]; 
     }
 
     /**

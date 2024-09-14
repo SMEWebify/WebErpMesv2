@@ -36,9 +36,9 @@ class DeliveryKPIService
     {
         return DB::table('delivery_lines')
                     ->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
-                    ->selectRaw('FLOOR(SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100))) AS orderSum')
+                    ->selectRaw('FLOOR(SUM((order_lines.selling_price * delivery_lines.qty)-(order_lines.selling_price * delivery_lines.qty)*(order_lines.discount/100))) AS orderSum')
                     ->whereYear('delivery_lines.created_at', '=', $year)
                     ->whereMonth('delivery_lines.created_at', $month)
-                    ->get();
+                    ->first() ?? (object) ['orderSum' => 0]; 
     }
 }

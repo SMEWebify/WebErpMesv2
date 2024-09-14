@@ -21,10 +21,10 @@
     <div class="tab-pane active" id="Dashboard">
       <div class="row">
         <div class="col-lg-4">
-            <x-adminlte-small-box title="{{ $deliveredOrdersPercentage }}%" text="{{ __('general_content.order_to_be_delivered_trans_key') }}" icon="fas fa-shipping-fast" theme="success"/>
+            <x-adminlte-small-box title="{{ $deliveredOrdersPercentage }}%" text="{{ __('general_content.order_delivered_trans_key') }}" icon="fas fa-shipping-fast" theme="success"/>
         </div>
         <div class="col-lg-4">
-            <x-adminlte-small-box title="{{ $invoicedOrdersPercentage }} %" text="{{ __('general_content.order_to_be_delivered_trans_key') }}" icon="fas fa-file-invoice-dollar" theme="info"/>
+            <x-adminlte-small-box title="{{ $invoicedOrdersPercentage }} %" text="{{ __('general_content.order_invoiced_trans_key') }}" icon="fas fa-file-invoice-dollar" theme="info"/>
         </div>
         <div class="col-lg-4">
             <x-adminlte-small-box title="{{ $pendingDeliveries }}" text="Commandes en attente" icon="fas fa-hourglass-half" theme="warning"/>
@@ -33,11 +33,11 @@
     
     <div class="row">
       <div class="col-lg-4 col-4">
-        <x-adminlte-small-box title="{{ number_format($remainingDeliveryOrder[0]->orderSum ?? 0 -$remainingDeliveryOrder[0]->orderSum   ?? 0 ,2)}}  {{ $Factory->curency }}" 
+        <x-adminlte-small-box title="{{ number_format($remainingDeliveryOrder->orderSum ?? 0 -$remainingDeliveryOrder->orderSum   ?? 0 ,2)}}  {{ $Factory->curency }}" 
             text="{{ __('general_content.remaining_month_trans_key') }}" 
             icon="icon fas fa-info"
             theme="danger" />
-        <x-adminlte-small-box title="{{ number_format($remainingInvoiceOrder[0]->orderSum ?? 0 -$remainingInvoiceOrder[0]->orderSum   ?? 0 ,2)}}  {{ $Factory->curency }}" 
+        <x-adminlte-small-box title="{{ number_format($remainingInvoiceOrder->orderSum ?? 0)}}  {{ $Factory->curency }}" 
               text="{{ __('general_content.remaining_invoice_month_trans_key') }}" 
               icon="icon fas fa-info"
               theme="warning" />

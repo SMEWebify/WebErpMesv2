@@ -281,7 +281,7 @@
 
     <!-- TABLE: DELIVERED -->
     <div class="col-lg-6 col-md-12">
-      <x-adminlte-small-box title="{{ number_format($deliveredMonthInProgress[0]->orderSum,2) ?? 0}} {{ $Factory->curency }}" 
+      <x-adminlte-small-box title="{{ number_format($deliveredMonthInProgress->orderSum,2) ?? 0}} {{ $Factory->curency }}" 
                           text="{{ __('general_content.delivered_month_in_progress_trans_key') }}" 
                           icon="icon fas fa-info"
                           theme="yellow" 
@@ -289,7 +289,7 @@
                           url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <div class="col-lg-6 col-md-12">
-      <x-adminlte-small-box title="{{ number_format($remainingDeliveryOrder[0]->orderSum ?? 0 -$remainingDeliveryOrder[0]->orderSum   ?? 0 ,2)}}  {{ $Factory->curency }}" 
+      <x-adminlte-small-box title="{{ number_format($remainingDeliveryOrder->orderSum ?? 0 - $deliveredMonthInProgress->orderSum   ?? 0 ,2)}}  {{ $Factory->curency }}" 
                           text="{{ __('general_content.remaining_month_trans_key') }}" 
                           icon="icon fas fa-info"
                           theme="danger" 
