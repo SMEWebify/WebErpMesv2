@@ -109,3 +109,27 @@
 .arrow-steps .step.done:after {
     border-left: 17px solid #0e9124;
 }
+
+/** PODIUM **/
+
+.podium {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+.podium-place {
+    margin: 0 20px;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    width: 150px;
+}
+.place-1 {
+    background-color: gold;
+}
+.place-2 {
+    background-color: silver;
+}
+.place-3 {
+    background-color: bronze;
+}

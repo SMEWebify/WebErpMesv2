@@ -7,6 +7,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\DeliveryLines;
 
 class OrderKPIService
 {
@@ -229,24 +230,23 @@ class OrderKPIService
     */
     public function getAverageOrderProcessingTime()
     {
-        $orders = Orders::whereYear('created_at', now()->year)
-            ->whereHas('orderLines', function($query) {
-                $query->whereColumn('delivered_qty', '>=', 'qty');
-            })->get();
+        $orderLines = OrderLines::whereYear('created_at', now()->year)
+                                ->where('delivery_status', 3)
+                                ->get();
 
-        if ($orders->isEmpty()) {
+        if ($orderLines->isEmpty()) {
             return 0;
         }
 
-        $totalDays = $orders->map(function($order) {
-            $lastDeliveryDate = Deliverys::where('order_id', $order->id)
+        $totalDays = $orderLines->map(function($orderLines) {
+            $lastDeliveryDate = DeliveryLines::where('order_line_id', $orderLines->id)
                 ->latest('created_at')
                 ->value('created_at');
             
-            return $lastDeliveryDate ? $lastDeliveryDate->diffInDays($order->created_at) : 0;
+            return $lastDeliveryDate ? $lastDeliveryDate->diffInDays($orderLines->created_at) : 0;
         })->sum();
 
-        return $totalDays / $orders->count();
+        return round($totalDays / $orderLines->count());
     }
 
     /**
