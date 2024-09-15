@@ -14,7 +14,7 @@
         "alpinejs": "^2.7.3",
         "autoprefixer": "^10.4.17",
         "axios": "^1.7.4",
-        "bootstrap": "^4.6.2",
+        "bootstrap": "^5.3.3",
         "jquery": "^3.7.1",
         "laravel-mix": "^6.0.49",
         "lodash": "^4.17.19",
@@ -31,7 +31,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.4",
-        "admin-lte": "^3.2.0",
+        "admin-lte": "^4.0.0-beta2",
         "cross-env": "^7.0.3",
         "flag-icon-css": "^4.1.7",
         "three": "^0.157.0",
