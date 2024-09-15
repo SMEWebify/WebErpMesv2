@@ -591,6 +591,7 @@ return [
     'order_delivered_trans_key'                => 'Commandes livrée(s)',
     'order_to_be_invoiced_trans_key'           => 'Commandes à facturée(s)',
     'order_invoiced_trans_key'                 => 'Commandes facturée(s)',
+    'order_waiting_trans_key'                  => 'Commandes en attente(s)',
     'delivered_month_in_progress_trans_key'    => 'Total livré du mois',
     'remaining_month_trans_key'                => 'Total restant à livrer',
     'remaining_invoice_month_trans_key'        => 'Total restant à facturer',
@@ -623,7 +624,7 @@ return [
     'new_activity_trans_key'                   => 'Nouvelle activité',
     'new_event_trans_key'                      => 'Nouveau événement',
     'opportunities_list_trans_key'             => 'Liste des opportunités',
-    'opportunities_count_trans_key'            => 'Les opportunités comptent',
+    'opportunities_count_trans_key'            => 'Nombre d\'opp',
     'total_amount_won_trans_key'               => 'Montant total gagné',
     'total_amount_lost_trans_key'              => 'Montant total perdu',
     'opportunities_by_company_trans_key'       => 'Opportunités par entreprise',
@@ -723,7 +724,9 @@ return [
     'user_productivity_trans_key'              => 'Productivité des utilisateurs',
     'task_count_trans_key'                     => 'Nombre de tâches',
     'total_hours_per_resource_trans_key'       => 'Heures totales par ressource',
+    'total_hours_per_month_trans_key'          => 'Heures produites sur le mois',
     'trs_trans_key'                            => 'TRS',
+    'trs_per_month_trans_key'                  => 'TRS sur le mois',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Bons de livraisons',

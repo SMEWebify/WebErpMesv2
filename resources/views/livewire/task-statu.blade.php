@@ -10,91 +10,96 @@
   </div>
 
   @empty($Task)
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card text-white bg-primary">
-                <div class="card-header">{{ __('general_content.current_count_task_trans_key') }}</div>
-                <div class="card-body">
-                    <h3 class="card-title">{{ $tasksInProgress }}</h3>
-                </div>
-            </div>
-        </div>
-  
-        <div class="col-md-4 mb-4">
-            <div class="card text-white bg-info">
-                <div class="card-header">{{ __('general_content.goal_task_trans_key') }}</div>
-                <div class="card-body">
-                  <p class="card-text">{{ __('general_content.open_trans_key') }} : <strong>{{ $tasksOpen }}</strong></p>
-                    <p class="card-text">{{ __('general_content.suspended_trans_key') }} : <strong>{{ $tasksPending }}</strong></p>
-                    <p class="card-text">{{ __('general_content.supplied_trans_key') }} : <strong>{{ $tasksOngoing }}</strong></p>
-                    <p class="card-text">{{ __('general_content.finished_trans_key') }} : <strong>{{ $tasksCompleted }}</strong></p>
-                </div>
-            </div>
-        </div>
-  
-        <div class="col-md-4 mb-4">
-            <div class="card text-white bg-success">
-                <div class="card-header">{{ __('general_content.average_time_task_trans_key') }}</div>
-                <div class="card-body">
-                    <h3 class="card-title">{{ round($averageProcessingTime , 2) }} h</h3>
-                </div>
-            </div>
-        </div>
+  <div class="row">
+    <!-- Current count of tasks in progress -->
+    <div class="col-md-4 mb-4">
+        <x-adminlte-small-box 
+            title="{{ $tasksInProgress }}" 
+            text="{{ __('general_content.current_count_task_trans_key') }}" 
+            icon="fas fa-tasks" 
+            theme="primary" />
+        <x-adminlte-small-box 
+            title="{{ $totalProducedHours }} h" 
+            text="{{ __('general_content.total_hours_per_month_trans_key') }}" 
+            icon="fas fa-clock" 
+            theme="success" />
     </div>
-  
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-dark text-white">{{ __('general_content.user_productivity_trans_key') }}</div>
-                <div class="card-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>{{ __('general_content.user_trans_key') }}</th>
-                                <th>{{ __('general_content.task_count_trans_key') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($userProductivity as $user)
-                              @if($user->tasks_count > 0)
-                                <tr>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->tasks_count }}</td>
-                                </tr>
-                              @endif
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+
+    <!-- Task statuses -->
+    <div class="col-md-4 mb-4">
+        <x-adminlte-card title="{{ __('general_content.goal_task_trans_key') }}" theme="purple" icon="fas fa-flag-checkered" collapsible removable>
+            <p class="card-text">{{ __('general_content.open_trans_key') }} : <strong>{{ $tasksOpen }}</strong></p>
+            <p class="card-text">{{ __('general_content.suspended_trans_key') }} : <strong>{{ $tasksPending }}</strong></p>
+            <p class="card-text">{{ __('general_content.supplied_trans_key') }} : <strong>{{ $tasksOngoing }}</strong></p>
+            <p class="card-text">{{ __('general_content.finished_trans_key') }} : <strong>{{ $tasksCompleted }}</strong></p>
+        </x-adminlte-card>
     </div>
-  
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-secondary text-white">{{ __('general_content.total_hours_per_resource_trans_key') }}</div>
-                <div class="card-body">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>{{ __('general_content.ressource_trans_key') }}</th>
-                                <th>{{ __('general_content.total_time_trans_key') }} h</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          @foreach($resourceHours as $resourceName => $totalTime)
+
+    <!-- Average processing time -->
+    <div class="col-md-4 mb-4">
+        <x-adminlte-small-box 
+            title="{{ round($averageProcessingTime, 2) }} h" 
+            text="{{ __('general_content.average_time_task_trans_key') }}" 
+            icon="fas fa-clock" 
+            theme="orange" />
+        <x-adminlte-small-box 
+            title="{{ round($averageTRS, 2) }}%" 
+            text="{{ __('general_content.trs_per_month_trans_key') }}" 
+            icon="fas fa-percentage" 
+            theme="info" />
+      </div>
+  </div>
+
+  <div class="row mt-4">
+      <!-- User productivity -->
+      <div class="col-md-12">
+          <x-adminlte-card title="{{ __('general_content.user_productivity_trans_key') }}" theme="dark" icon="fas fa-users" collapsible>
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>{{ __('general_content.user_trans_key') }}</th>
+                          <th>{{ __('general_content.task_count_trans_key') }}</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach($userProductivity as $user)
+                          @if($user->tasks_count > 0)
+                              <tr>
+                                  <td>{{ $user->name }}</td>
+                                  <td>{{ $user->tasks_count }}</td>
+                              </tr>
+                          @endif
+                      @endforeach
+                  </tbody>
+              </table>
+          </x-adminlte-card>
+      </div>
+  </div>
+
+  <div class="row mt-4">
+      <!-- Resource hours -->
+      <div class="col-md-12">
+          <x-adminlte-card title="{{ __('general_content.total_hours_per_resource_trans_key') }}" theme="secondary" icon="fas fa-clock" collapsible>
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>{{ __('general_content.ressource_trans_key') }}</th>
+                          <th>{{ __('general_content.total_time_trans_key') }} h</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach($resourceHours as $resourceName => $totalTime)
                           <tr>
                               <td>{{ $resourceName }}</td>
                               <td>{{ round($totalTime, 2) }} h</td>
                           </tr>
                       @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+                  </tbody>
+              </table>
+          </x-adminlte-card>
+      </div>
+  </div>
+
   @else
     @if(is_null($Task->order_lines_id))
       <x-adminlte-alert theme="info" title="Info">{{ __('general_content.quote_task_trans_key') }}</x-adminlte-alert>

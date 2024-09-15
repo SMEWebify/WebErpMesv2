@@ -20,6 +20,8 @@
                           'userProductivity' => $userProductivity,
                           'totalResourcesAllocated' => $totalResourcesAllocated,
                           'resourceHours' => $resourceHours,
+                          'totalProducedHours' => $totalProducedHours,
+                          'averageTRS' => $averageTRS,
                           ])
 
       

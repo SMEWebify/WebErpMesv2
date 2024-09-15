@@ -27,7 +27,7 @@
             <x-adminlte-small-box title="{{ $invoicedOrdersPercentage }} %" text="{{ __('general_content.order_invoiced_trans_key') }}" icon="fas fa-file-invoice-dollar" theme="info"/>
         </div>
         <div class="col-lg-4">
-            <x-adminlte-small-box title="{{ $pendingDeliveries }}" text="Commandes en attente" icon="fas fa-hourglass-half" theme="warning"/>
+            <x-adminlte-small-box title="{{ $pendingDeliveries }}" text="{{ __('general_content.order_waiting_trans_key') }}" icon="fas fa-hourglass-half" theme="warning"/>
         </div>
     </div>
     

@@ -591,6 +591,7 @@ return [
     'order_delivered_trans_key'                => 'Order delivered',
     'order_to_be_invoiced_trans_key'           => 'Order to be invoiced',
     'order_invoiced_trans_key'                 => 'Order invoiced',
+    'order_waiting_trans_key'                  => 'Wainting orders',
     'delivered_month_in_progress_trans_key'    => 'Total Delivered for the month',
     'remaining_month_trans_key'                => 'Total remaining to deliver',
     'remaining_invoice_month_trans_key'        => 'Total remaining to invoice',
@@ -723,7 +724,9 @@ return [
     'user_productivity_trans_key'              => 'User Productivity',
     'task_count_trans_key'                     => 'Number of tasks',
     'total_hours_per_resource_trans_key'       => 'Total hours per resource',
+    'total_hours_per_month_trans_key'          => 'Hours produced over the month',
     'trs_trans_key'                            => 'OEE',
+    'trs_per_month_trans_key'                  => 'OEE over the month',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Delivery notes',

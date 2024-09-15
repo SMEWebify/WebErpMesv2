@@ -16,7 +16,6 @@ use App\Models\Quality\QualityNonConformity;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Products\StockLocationProducts;
 use App\Notifications\NonConformityNotification;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 class TaskStatu extends Component
 {
@@ -42,7 +41,7 @@ class TaskStatu extends Component
     private $RecalculateBooleanValue = 0;
     public $end_date;
 
-    public $tasksOpen, $tasksInProgress, $tasksPending, $tasksOngoing, $tasksCompleted, $averageProcessingTime, $userProductivity, $totalResourcesAllocated, $resourceHours; 
+    public $tasksOpen, $tasksInProgress, $tasksPending, $tasksOngoing, $tasksCompleted, $averageProcessingTime, $userProductivity, $totalResourcesAllocated, $resourceHours, $totalProducedHours, $averageTRS;  
 
     public $StockLocationsProducts = null; 
 
