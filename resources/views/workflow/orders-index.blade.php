@@ -42,6 +42,12 @@
               icon="icon fas fa-info"
               theme="warning" />
         <x-adminlte-small-box title="{{ $lateOrdersCount }}" text="{{ __('general_content.late_orders_trans_key') }}" icon="fas fa-exclamation-triangle" theme="orange"/>
+        <x-adminlte-small-box 
+              title="{{ $serviceRate }}%" 
+              text="{{ __('general_content.service_rate_trans_key') }}" 
+              icon="fas fa-chart-line" 
+              theme="primary"
+          />
       </div>
       <div class="col-lg-8 col-8">
         <!-- CHART: TOTAL OVERVIEW -->

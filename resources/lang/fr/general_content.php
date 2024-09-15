@@ -595,6 +595,7 @@ return [
     'delivered_month_in_progress_trans_key'    => 'Total livré du mois',
     'remaining_month_trans_key'                => 'Total restant à livrer',
     'remaining_invoice_month_trans_key'        => 'Total restant à facturer',
+    'service_rate_trans_key'                   => 'Taux de service',
     'niko_niko_team_trans_key'                 => 'Niko Niko - Humeur de l\'équipe aujourd\'hui',
     'no_niko_niko_team_trans_key'              => 'Aucune humeur aujourd\'hui',
 

@@ -267,15 +267,29 @@ class OrderKPIService
     }
 
     /**
-    * Get the number of pending orders for the current year.
+    * Calculate the Service Rate.
     *
-    * An order is pending if it is not fully delivered and the remaining quantity to be delivered is > 0.
+    * The Service Rate is calculated by dividing the number of requests (order lines)
+    * fulfilled on time (those with a delivery date less than or equal to the
+    * expected date) by the total number of requests, then multiplying the result by 100
     *
-    * @return int The number of pending orders.
+    * @return float Service Rate as a percentage
     */
-    public function getPendingOrdersCount()
+    public function getServiceRate()
     {
-        return Orders::whereYear('created_at', now()->year)->where('statu', '!=', 3)->count();
-    }
+        $totalOrderLines = OrderLines::where('delivery_status', 3)->count();
 
+        $onTimeDeliveries = OrderLines::where('delivery_status', 3)
+                                        ->whereHas('DeliveryLines', function ($query) {
+                                            $query->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
+                                        })->count();
+
+        if ($totalOrderLines === 0) {
+            return 0; // Éviter la division par zéro
+        }
+
+        $serviceRate = round(($onTimeDeliveries / $totalOrderLines) * 100,2);
+
+        return $serviceRate;
+    }
 }

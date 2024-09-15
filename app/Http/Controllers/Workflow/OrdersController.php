@@ -52,6 +52,7 @@ class OrdersController extends Controller
         $lateOrdersCount = $this->orderKPIService->getLateOrdersCount();
         $remainingDeliveryOrder =   $this->orderKPIService->getOrderMonthlyRemainingToDelivery(now()->month, $CurentYear);
         $remainingInvoiceOrder =   $this->orderKPIService->getOrderMonthlyRemainingToInvoice();
+        $serviceRate =   $this->orderKPIService->getServiceRate();
         $data['ordersDataRate']= $this->orderKPIService->getOrdersDataRate();
         $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear);
         $data['orderMonthlyRecapPreviousYear'] = $this->orderKPIService->getOrderMonthlyRecapPreviousYear($CurentYear);
@@ -63,6 +64,7 @@ class OrdersController extends Controller
             'lateOrdersCount',
             'remainingDeliveryOrder',
             'remainingInvoiceOrder',
+            'serviceRate',
             'data',
         ));
     }
