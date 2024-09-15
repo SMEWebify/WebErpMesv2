@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Models\Purchases\Purchases;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceiptLines;
-use App\Models\Purchases\Purchases;
 
 class PurchaseKPIService
 {
@@ -31,16 +32,19 @@ class PurchaseKPIService
     public function getPurchaseMonthlyRecap()
     {
         $currentYear = Carbon::now()->format('Y');
-        return DB::table('purchase_lines')
-            ->join('tasks', 'purchase_lines.tasks_id', '=', 'tasks.id')
-            ->join('order_lines', 'tasks.order_lines_id', '=', 'order_lines.id')
-            ->selectRaw('
-                MONTH(purchase_lines.created_at) AS month,
-                SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS purchaseSum
-            ')
-            ->whereYear('purchase_lines.created_at', $currentYear)
-            ->groupByRaw('MONTH(purchase_lines.created_at)')
-            ->get();
+        $cacheKey = 'purchase_monthly_recap_' . $currentYear;
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($currentYear) {
+            return DB::table('purchase_lines')
+                ->join('tasks', 'purchase_lines.tasks_id', '=', 'tasks.id')
+                ->join('order_lines', 'tasks.order_lines_id', '=', 'order_lines.id')
+                ->selectRaw('
+                    MONTH(purchase_lines.created_at) AS month,
+                    SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS purchaseSum
+                ')
+                ->whereYear('purchase_lines.created_at', $currentYear)
+                ->groupByRaw('MONTH(purchase_lines.created_at)')
+                ->get();
+        });
     }
 
     public function getTopRatedSuppliers()

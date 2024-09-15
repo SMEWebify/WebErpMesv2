@@ -5,6 +5,7 @@ namespace App\Services;
 use Carbon\Carbon;
 use App\Models\Planning\Task;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Planning\TaskResources;
 
 class TaskKPIService
@@ -52,27 +53,33 @@ class TaskKPIService
     // Calculation of average task processing time
     public function getAverageProcessingTime()
     {
-        $averageProcessingTime = 0;
-        $tasksWithEndDate = Task::whereNotNull('end_date')->get();
+        $cacheKey = 'average_processing_time_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            $averageProcessingTime = 0;
+            $tasksWithEndDate = Task::whereNotNull('end_date')->get();
 
-        if ($tasksWithEndDate->count() > 0) {
-            $totalTime = $tasksWithEndDate->sum(function ($task) {
-                return $task->getTotalLogTime() * 3600; // en secondes
-            });
-            $averageProcessingTime = $totalTime / $tasksWithEndDate->count();
-        }
+            if ($tasksWithEndDate->count() > 0) {
+                $totalTime = $tasksWithEndDate->sum(function ($task) {
+                    return $task->getTotalLogTime() * 3600; // en secondes
+                });
+                $averageProcessingTime = $totalTime / $tasksWithEndDate->count();
+            }
 
-        return $averageProcessingTime;
+            return $averageProcessingTime;
+        });
     }
 
    // Productivity per user
     public function getUserProductivity()
     {
-        return DB::table('task_activities')
-            ->join('users', 'task_activities.user_id', '=', 'users.id')
-            ->select('users.name', DB::raw('count(task_activities.id) as tasks_count'))
-            ->groupBy('users.name')
-            ->get();
+        $cacheKey = 'user_productivity_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            return DB::table('task_activities')
+                ->join('users', 'task_activities.user_id', '=', 'users.id')
+                ->select('users.name', DB::raw('count(task_activities.id) as tasks_count'))
+                ->groupBy('users.name')
+                ->get();
+        });
     }
 
     // Total number of resources allocated
@@ -110,18 +117,21 @@ class TaskKPIService
      */
     public function getTotalProducedHoursCurrentMonth(): float
     {
-        $currentMonthStart = Carbon::now()->startOfMonth();
-        $currentMonthEnd = Carbon::now()->endOfMonth();
+        $cacheKey = 'total_produced_hour_current_month_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            $currentMonthStart = Carbon::now()->startOfMonth();
+            $currentMonthEnd = Carbon::now()->endOfMonth();
 
-        $tasks = Task::whereBetween('start_date', [$currentMonthStart, $currentMonthEnd])
-                        ->whereNotNull('end_date')
-                        ->get();
+            $tasks = Task::whereBetween('start_date', [$currentMonthStart, $currentMonthEnd])
+                            ->whereNotNull('end_date')
+                            ->get();
 
-        $totalHours = $tasks->sum(function ($task) {
-            return $task->getTotalLogTime();
+            $totalHours = $tasks->sum(function ($task) {
+                return $task->getTotalLogTime();
+            });
+
+            return round($totalHours, 2);
         });
-
-        return round($totalHours, 2);
     }
 
     /**
@@ -133,23 +143,26 @@ class TaskKPIService
     {
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
+        $cacheKey = 'monthly_average_trs_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($currentMonth, $currentYear) {
 
-        // Retrieve tasks for the current month
-        $tasks = Task::whereMonth('start_date', $currentMonth)
-                    ->whereYear('start_date', $currentYear)
-                    ->get();
+            // Retrieve tasks for the current month
+            $tasks = Task::whereMonth('start_date', $currentMonth)
+                        ->whereYear('start_date', $currentYear)
+                        ->get();
 
-        if ($tasks->count() === 0) {
-            return 0; // Returns 0 if no task
-        }
+            if ($tasks->count() === 0) {
+                return 0; // Returns 0 if no task
+            }
 
-       // Calculate the sum of the TRS
-        $totalTRS = $tasks->sum(function ($task) {
-            return $task->getTRSAttribute();
+            // Calculate the sum of the TRS
+            $totalTRS = $tasks->sum(function ($task) {
+                return $task->getTRSAttribute();
+            });
+
+            // Calculate the average TRS
+            return $totalTRS / $tasks->count();
         });
-
-       // Calculate the average TRS
-        return $totalTRS / $tasks->count();
     }
 
 }

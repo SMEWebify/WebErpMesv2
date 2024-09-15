@@ -7,7 +7,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
-use App\Models\Workflow\DeliveryLines;
+use Illuminate\Support\Facades\Cache;
 
 class OrderKPIService
 {
@@ -22,17 +22,20 @@ class OrderKPIService
     */
     public function getDeliveredOrdersPercentage()
     {
-        $totalOrders = OrderLines::whereYear('created_at', now()->year)->count();
-        
-        if ($totalOrders === 0) {
-            return 0;
-        }
+        $cacheKey = 'delivered_orders_percentage_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            $totalOrders = OrderLines::whereYear('created_at', now()->year)->count();
+            
+            if ($totalOrders === 0) {
+                return 0;
+            }
 
-        $deliveredOrders = OrderLines::whereYear('created_at', now()->year)
-                                        ->where('delivery_status', '=', 3)
-                                        ->count();
+            $deliveredOrders = OrderLines::whereYear('created_at', now()->year)
+                                            ->where('delivery_status', '=', 3)
+                                            ->count();
 
-        return round(($deliveredOrders / $totalOrders) * 100,2);
+            return round(($deliveredOrders / $totalOrders) * 100,2);
+        });
     }
 
         /**
@@ -45,17 +48,20 @@ class OrderKPIService
     */
     public function getInvoicedOrdersPercentage()
     {
-        $totalOrders = OrderLines::whereYear('created_at', now()->year)->count();
-        
-        if ($totalOrders === 0) {
-            return 0;
-        }
+        $cacheKey = 'invoiced_orders_percentage_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            $totalOrders = OrderLines::whereYear('created_at', now()->year)->count();
+            
+            if ($totalOrders === 0) {
+                return 0;
+            }
 
-        $invoicedOrders = OrderLines::whereYear('created_at', now()->year)
-                                ->where('invoice_status', 3)
-                                ->count();
+            $invoicedOrders = OrderLines::whereYear('created_at', now()->year)
+                                    ->where('invoice_status', 3)
+                                    ->count();
 
-        return round(($invoicedOrders / $totalOrders) * 100,2);
+            return round(($invoicedOrders / $totalOrders) * 100,2);
+        });
     }
 
     /**
@@ -68,11 +74,14 @@ class OrderKPIService
     */
     public function getLateOrdersCount()
     {
-        return Orders::whereYear('created_at', now()->year)
-            ->whereHas('orderLines', function($query) {
-                $query->where('delivery_status', 1) // delivered quantity < ordered quantity
-                    ->where('delivery_date', '<', now());     // expected delivery date has passed 
-            })->count();
+        $cacheKey = 'late_orders_count_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            return Orders::whereYear('created_at', now()->year)
+                ->whereHas('orderLines', function($query) {
+                    $query->where('delivery_status', 1) // delivered quantity < ordered quantity
+                        ->where('delivery_date', '<', now());     // expected delivery date has passed 
+                })->count();
+        });
     }
 
         /**
@@ -94,19 +103,22 @@ class OrderKPIService
      * @return \Illuminate\Support\Collection
      */
     public function getOrderMonthlyRecap($year)
-    {
-        return DB::table('order_lines')
-                    ->selectRaw('
-                        MONTH(delivery_date) AS month,
-                        SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
-                    ')
-                    ->leftJoin('orders', function($join) {
-                        $join->on('order_lines.orders_id', '=', 'orders.id')
-                            ->where('orders.type', '=', 1);
-                    })
-                    ->whereYear('order_lines.created_at', $year)
-                    ->groupByRaw('MONTH(order_lines.delivery_date)')
-                    ->get();
+    {    
+        $cacheKey = 'order_monthly_recap_' . $year;
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year) {
+            return DB::table('order_lines')
+                        ->selectRaw('
+                            MONTH(delivery_date) AS month,
+                            SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
+                        ')
+                        ->leftJoin('orders', function($join) {
+                            $join->on('order_lines.orders_id', '=', 'orders.id')
+                                ->where('orders.type', '=', 1);
+                        })
+                        ->whereYear('order_lines.created_at', $year)
+                        ->groupByRaw('MONTH(order_lines.delivery_date)')
+                        ->get();
+        });
     }
 
         /**
@@ -117,18 +129,21 @@ class OrderKPIService
     public function getOrderMonthlyRecapPreviousYear($year)
     {
         $lastyear = $year-1;
-        return DB::table('order_lines')
-                    ->selectRaw('
-                        MONTH(delivery_date) AS month,
-                        SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
-                    ')
-                    ->leftJoin('orders', function($join) {
-                        $join->on('order_lines.orders_id', '=', 'orders.id')
-                            ->where('orders.type', '=', 1);
-                    })
-                    ->whereYear('order_lines.created_at', $lastyear)
-                    ->groupByRaw('MONTH(order_lines.delivery_date)')
-                    ->get();
+        $cacheKey = 'order_monthly_recap_lastyear_' . $lastyear;
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($lastyear) {
+            return DB::table('order_lines')
+                        ->selectRaw('
+                            MONTH(delivery_date) AS month,
+                            SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
+                        ')
+                        ->leftJoin('orders', function($join) {
+                            $join->on('order_lines.orders_id', '=', 'orders.id')
+                                ->where('orders.type', '=', 1);
+                        })
+                        ->whereYear('order_lines.created_at', $lastyear)
+                        ->groupByRaw('MONTH(order_lines.delivery_date)')
+                        ->get();
+        });
     }
 
     /**
@@ -138,14 +153,17 @@ class OrderKPIService
      */
     public function getOrderMonthlyRemainingToDelivery($month ,$year)
     {
-        return DB::table('order_lines')
-                    ->selectRaw('
-                        FLOOR(SUM((selling_price * delivered_remaining_qty)-(selling_price * delivered_remaining_qty)*(discount/100))) AS orderSum
-                    ')
-                    ->whereYear('delivery_date', '=', $year)
-                    ->whereMonth('delivery_date', $month)
-                    ->groupByRaw('MONTH(delivery_date) ')
-                    ->first() ?? (object) ['orderSum' => 0]; 
+        $cacheKey = 'order_remaining_delivery_' . $year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function ()use ($year, $month) {
+            return DB::table('order_lines')
+                        ->selectRaw('
+                            FLOOR(SUM((selling_price * delivered_remaining_qty)-(selling_price * delivered_remaining_qty)*(discount/100))) AS orderSum
+                        ')
+                        ->whereYear('delivery_date', '=', $year)
+                        ->whereMonth('delivery_date', $month)
+                        ->groupByRaw('MONTH(delivery_date) ')
+                        ->first() ?? (object) ['orderSum' => 0]; 
+        });
     }
 
         /**
@@ -155,13 +173,16 @@ class OrderKPIService
      */
     public function getOrderMonthlyRemainingToInvoice()
     {
-        return DB::table('order_lines')
-                    ->selectRaw('
-                        FLOOR(SUM((selling_price * invoiced_remaining_qty)-(selling_price * invoiced_remaining_qty)*(discount/100))) AS orderSum
-                    ')
-                    ->where('invoice_status', 1)
-                    ->Orwhere('invoice_status', 2)
-                    ->first() ?? (object) ['orderSum' => 0]; 
+        $cacheKey = 'order_remaining_invoice_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            return DB::table('order_lines')
+                        ->selectRaw('
+                            FLOOR(SUM((selling_price * invoiced_remaining_qty)-(selling_price * invoiced_remaining_qty)*(discount/100))) AS orderSum
+                        ')
+                        ->where('invoice_status', 1)
+                        ->Orwhere('invoice_status', 2)
+                        ->first() ?? (object) ['orderSum' => 0];
+        });
     }
 
     /**
@@ -171,18 +192,21 @@ class OrderKPIService
      */
     public function getOrderTotalForCast($year)
     {
-        return DB::table('order_lines')
-                    ->selectRaw('
-                        ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderTotalForCast
-                    ')
-                    ->leftJoin('orders', function($join) {
-                        $join->on('order_lines.orders_id', '=', 'orders.id')
-                            ->where('orders.type', '=', 1);
-                    })
-                    ->where('delivery_status', '=', 1)
-                    ->orWhere('delivery_status', '=', 2)
-                    ->whereYear('order_lines.delivery_date', $year)
-                    ->get();
+        $cacheKey = 'order_total_forcast_' . now()->year;
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($year) {
+            return DB::table('order_lines')
+                        ->selectRaw('
+                            ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderTotalForCast
+                        ')
+                        ->leftJoin('orders', function($join) {
+                            $join->on('order_lines.orders_id', '=', 'orders.id')
+                                ->where('orders.type', '=', 1);
+                        })
+                        ->where('delivery_status', '=', 1)
+                        ->orWhere('delivery_status', '=', 2)
+                        ->whereYear('order_lines.delivery_date', $year)
+                        ->get();
+        });
     }
 
     /**
@@ -230,23 +254,27 @@ class OrderKPIService
     */
     public function getAverageOrderProcessingTime()
     {
-        $orderLines = OrderLines::whereYear('created_at', now()->year)
-                                ->where('delivery_status', 3)
-                                ->get();
+        $cacheKey = 'average_order_processing_time_' . now()->year;
+        return Cache::remember($cacheKey, now()->addHours(1), function () {
+            $orders = Orders::whereYear('created_at', now()->year)
+                ->whereHas('orderLines', function($query) {
+                    $query->whereColumn('delivered_qty', '>=', 'qty');
+                })->get();
 
-        if ($orderLines->isEmpty()) {
-            return 0;
-        }
+            if ($orders->isEmpty()) {
+                return 0;
+            }
 
-        $totalDays = $orderLines->map(function($orderLines) {
-            $lastDeliveryDate = DeliveryLines::where('order_line_id', $orderLines->id)
-                ->latest('created_at')
-                ->value('created_at');
-            
-            return $lastDeliveryDate ? $lastDeliveryDate->diffInDays($orderLines->created_at) : 0;
-        })->sum();
+            $totalDays = $orders->map(function($order) {
+                $lastDeliveryDate = Deliverys::where('order_id', $order->id)
+                    ->latest('created_at')
+                    ->value('created_at');
+                
+                return $lastDeliveryDate ? $lastDeliveryDate->diffInDays($order->created_at) : 0;
+            })->sum();
 
-        return round($totalDays / $orderLines->count());
+            return $totalDays / $orders->count(); 
+        });
     }
 
     /**
@@ -258,12 +286,24 @@ class OrderKPIService
     public function getTopCustomersByOrderVolume($limit = 5)
     {
         return Orders::select('companies_id', DB::raw('COUNT(*) as order_count'))
-            ->whereYear('created_at', now()->year)
-            ->groupBy('companies_id')
-            ->orderBy('order_count', 'desc')
-            ->take($limit)
-            ->with('companie') // Assuming a relationship with companie model
-            ->get();
+                        ->whereYear('created_at', now()->year)
+                        ->groupBy('companies_id')
+                        ->orderBy('order_count', 'desc')
+                        ->take($limit)
+                        ->with('companie') // Assuming a relationship with companie model
+                        ->get();
+    }
+
+    /**
+    * Get the number of pending orders for the current year.
+    *
+    * An order is pending if it is not fully delivered and the remaining quantity to be delivered is > 0.
+    *
+    * @return int The number of pending orders.
+    */
+    public function getPendingOrdersCount()
+    {
+        return Orders::whereYear('created_at', now()->year)->where('statu', '!=', 3)->count();
     }
 
     /**
@@ -277,19 +317,23 @@ class OrderKPIService
     */
     public function getServiceRate()
     {
-        $totalOrderLines = OrderLines::where('delivery_status', 3)->count();
+        $cacheKey = 'service_rate_' . now()->year;
+        return Cache::remember($cacheKey, now()->addHours(1), function () {
+            $totalOrderLines = OrderLines::where('delivery_status', 3)->count();
 
-        $onTimeDeliveries = OrderLines::where('delivery_status', 3)
-                                        ->whereHas('DeliveryLines', function ($query) {
-                                            $query->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
-                                        })->count();
+            $onTimeDeliveries = OrderLines::where('delivery_status', 3)
+                                            ->whereHas('DeliveryLines', function ($query) {
+                                                $query->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
+                                            })->count();
 
-        if ($totalOrderLines === 0) {
-            return 0; // Éviter la division par zéro
-        }
+            if ($totalOrderLines === 0) {
+                return 0; // Éviter la division par zéro
+            }
 
-        $serviceRate = round(($onTimeDeliveries / $totalOrderLines) * 100,2);
+            $serviceRate = round(($onTimeDeliveries / $totalOrderLines) * 100,2);
 
-        return $serviceRate;
+            return $serviceRate;
+        });
     }
+
 }

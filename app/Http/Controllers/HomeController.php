@@ -27,16 +27,16 @@ class HomeController extends Controller
     protected $invoiceKPIService;
 
     public function __construct(
-        OrderKPIService $orderKPIService, 
-        DeliveryKPIService $deliveryKPIService,
-        QuoteKPIService $quoteKPIService,
-        InvoiceKPIService $invoiceKPIService,
-        ){
-        $this->orderKPIService = $orderKPIService;
-        $this->deliveryKPIService = $deliveryKPIService;
-        $this->quoteKPIService = $quoteKPIService;
-        $this->invoiceKPIService = $invoiceKPIService;
-    }
+                                OrderKPIService $orderKPIService, 
+                                DeliveryKPIService $deliveryKPIService,
+                                QuoteKPIService $quoteKPIService,
+                                InvoiceKPIService $invoiceKPIService,
+                        ){
+                            $this->orderKPIService = $orderKPIService;
+                            $this->deliveryKPIService = $deliveryKPIService;
+                            $this->quoteKPIService = $quoteKPIService;
+                            $this->invoiceKPIService = $invoiceKPIService;
+                        }
 
     /**
      * @return \Illuminate\Contracts\View\View
