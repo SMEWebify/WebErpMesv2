@@ -63,7 +63,11 @@
                         @endif
                     </h3>
                     <div class="customer-details text-center">
+                        @if($customer->companie)
                         <strong>{{ $customer->companie->label }}</strong>
+                        @else
+                        <strong>internal</strong>
+                        @endif
                         <p>{{ __('general_content.orders_trans_key') }}: {{ $customer->order_count }}</p> 
                     </div>
                 </div>

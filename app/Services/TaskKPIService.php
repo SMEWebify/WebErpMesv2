@@ -151,13 +151,15 @@ class TaskKPIService
                         ->whereYear('start_date', $currentYear)
                         ->get();
 
+
             if ($tasks->count() === 0) {
                 return 0; // Returns 0 if no task
             }
 
             // Calculate the sum of the TRS
             $totalTRS = $tasks->sum(function ($task) {
-                return $task->getTRSAttribute();
+                $trs = $task->getTRSAttribute();
+                return is_numeric($trs) ? $trs : 0; 
             });
 
             // Calculate the average TRS

@@ -11,13 +11,11 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Services\TaskKPIService;
 use App\Models\Products\Products;
-use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Planning\TaskResources;
 use App\Models\Methods\MethodsServices;
 use App\Models\Planning\TaskActivities;
 use App\Models\Methods\MethodsStandardNomenclature;
@@ -174,7 +172,6 @@ class TaskController extends Controller
         $resourceHours = $this->taskKPIService->getResourceHours();
         $totalProducedHours = $this->taskKPIService->getTotalProducedHoursCurrentMonth();
         $averageTRS = $this->taskKPIService->getMonthlyAverageTRS();
-
         return view('workflow/task-statu', compact(
                                             'tasksOpen',
                                             'tasksInProgress',
