@@ -98,26 +98,36 @@ class OrderKPIService
 
 
     /**
-     * Retrieves the monthly summary of order for the current year.
+     * Retrieves the monthly summary of orders for the current year, filtered by company.
      *
+     * @param int $year
+     * @param int|null $companyId
      * @return \Illuminate\Support\Collection
      */
-    public function getOrderMonthlyRecap($year)
-    {    
-        $cacheKey = 'order_monthly_recap_' . $year;
-        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year) {
-            return DB::table('order_lines')
-                        ->selectRaw('
-                            MONTH(delivery_date) AS month,
-                            SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
-                        ')
-                        ->leftJoin('orders', function($join) {
-                            $join->on('order_lines.orders_id', '=', 'orders.id')
-                                ->where('orders.type', '=', 1);
-                        })
-                        ->whereYear('order_lines.created_at', $year)
-                        ->groupByRaw('MONTH(order_lines.delivery_date)')
-                        ->get();
+    public function getOrderMonthlyRecap($year, $companyId = null)
+    {
+        $cacheKey = 'order_monthly_recap_' . $year . '_company_' . ($companyId ?? 'all');
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year, $companyId) {
+            // Commence la requête avec une jointure et un filtrage éventuel par compagnie
+            $query = DB::table('order_lines')
+                ->selectRaw('
+                    MONTH(delivery_date) AS month,
+                    SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
+                ')
+                ->leftJoin('orders', function ($join) {
+                    $join->on('order_lines.orders_id', '=', 'orders.id')
+                        ->where('orders.type', '=', 1); // Filtre par le type de commande
+                })
+                ->whereYear('order_lines.created_at', $year)
+                ->groupByRaw('MONTH(order_lines.delivery_date)');
+
+            // If a company ID is provided, add the filter
+            if ($companyId) {
+                $query->where('orders.companies_id', $companyId);
+            }
+
+            // Execute and return results
+            return $query->get();
         });
     }
 
@@ -171,17 +181,27 @@ class OrderKPIService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getOrderMonthlyRemainingToInvoice()
+    public function getOrderMonthlyRemainingToInvoice($companyId = null)
     {
-        $cacheKey = 'order_remaining_invoice_' . now()->year;
-        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
-            return DB::table('order_lines')
+        $cacheKey = 'order_remaining_invoice_' . now()->year . '_company_' . ($companyId ?? 'all');
+        
+        return Cache::remember($cacheKey, now()->addMinutes(1), function () use ($companyId) {
+            $query = DB::table('order_lines')
                         ->selectRaw('
                             FLOOR(SUM((selling_price * invoiced_remaining_qty)-(selling_price * invoiced_remaining_qty)*(discount/100))) AS orderSum
                         ')
-                        ->where('invoice_status', 1)
-                        ->Orwhere('invoice_status', 2)
-                        ->first() ?? (object) ['orderSum' => 0];
+                        ->join('orders', 'order_lines.orders_id', '=', 'orders.id');
+
+                        $query->where(function ($subQuery) {
+                            $subQuery->where('order_lines.invoice_status', 1)
+                                        ->orWhere('order_lines.invoice_status', 2);
+                            });
+
+                        if ($companyId) {
+                            $query->where('orders.companies_id', $companyId);
+                        }
+                        
+            return  $query->first() ?? (object) ['orderSum' => 0];
         });
     }
 
@@ -335,5 +355,42 @@ class OrderKPIService
             return $serviceRate;
         });
     }
+
+    /**
+     * Calculates the average order price for a specific company or for all orders if no company ID is provided.
+     * 
+     * This function retrieves the valid orders either for a given company (if $companyId is provided) or for all orders
+     * if no company is specified. It then calculates the total price for each order using the `OrderCalculatorService`
+     * and returns the average order price.
+     *
+     * @param int|null $companyId The ID of the company for which to calculate the average order price. If null, the function calculates the average for all orders.
+     * @return float The average price of the orders for the given company or all orders. Returns 0 if no orders are found.
+     */
+    public function getAverageOrderPriceAttribute($companyId = null)
+    {
+        // If a company ID is provided, filter orders by company
+        $ordersQuery = Orders::where('statu', '!=', 5);
+
+        if ($companyId) {
+            $ordersQuery->where('companies_id', $companyId);
+        }
+
+        $orders = $ordersQuery->get();
+
+        // If no command is found, return 0
+        if ($orders->count() === 0) {
+            return 0;
+        }
+
+        // Use the service to calculate the total for each order
+        $totalPrice = $orders->sum(function ($order) {
+            $OrderCalculatorService = new OrderCalculatorService($order);
+            return $OrderCalculatorService->getTotalPrice();
+        });
+
+        // Calculate and return the average
+        return $totalPrice / $orders->count();
+    }
+
 
 }

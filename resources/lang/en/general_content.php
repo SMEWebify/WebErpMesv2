@@ -461,7 +461,16 @@ return [
     'payment_conditions_trans_key'             => 'Payment Conditions',
     'delevery_method_trans_key'                => 'Delivery method',
     'validity_date_trans_key'                  => 'Validity date',
-    
+    'longitude_trans_key'                      => 'Longitude',
+    'latitude_trans_key'                       => 'Latitude',
+    'delivery_constraint_trans_key'            => 'Delivery constraint',
+    'no_constraints_trans_key'                 => 'No constraint',
+    'no_tolerance_trans_key'                   => 'No tolerance',
+    'tolerance_in_days_trans_key'              => 'Tolerance in days',
+    'tolerance_days_trans_key'                 => 'Tolerance days',
+    'quoted_delivery_note_trans_key'           => 'Quoted delivery note',
+    'order_average_note_trans_key'             => 'Average order',
+
     'material_trans_key'                       => 'Material',
     'finishing_trans_key'                      => 'Finishing',
     'thickness_trans_key'                      => 'Thickness',

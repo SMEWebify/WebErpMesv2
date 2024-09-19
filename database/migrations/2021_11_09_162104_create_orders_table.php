@@ -28,6 +28,8 @@ class CreateOrdersTable extends Migration
             #2 = In progress
             #3 = Delivered
             #4 = Partly delivered
+            #5 =  Stopped
+            #6 = canceled
 			$table->unsignedBigInteger('user_id');
 			$table->integer('accounting_payment_conditions_id');
 			$table->integer('accounting_payment_methods_id');

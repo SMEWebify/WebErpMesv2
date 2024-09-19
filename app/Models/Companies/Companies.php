@@ -47,6 +47,11 @@ class Companies extends Model
                             'comment',
                             'active',
                             'barcode_value',
+                            'longitude',
+                            'latitude',
+                            'delivery_constraint',
+                            'tolerance_days',
+                            'quoted_delivery_note',
                         ];
 
     public function getLabelAttribute()

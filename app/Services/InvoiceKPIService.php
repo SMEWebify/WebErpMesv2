@@ -79,9 +79,15 @@ class InvoiceKPIService
      *
      * @return int
      */
-    public function getPaidInvoicesCount()
+    public function getPaidInvoicesCount($companyId = null)
     {
-        return Invoices::where('statu', 5)->count();
+        $query = Invoices::where('statu', 5);
+    
+        if ($companyId) {
+            $query->where('companies_id', $companyId);
+        }
+    
+        return $query->count();
     }
 
     /**
@@ -89,9 +95,15 @@ class InvoiceKPIService
      *
      * @return int
      */
-    public function getUnpaidInvoicesCount()
+    public function getUnpaidInvoicesCount($companyId = null)
     {
-        return Invoices::where('statu', '!=', 4)->count();
+        $query = Invoices::where('statu', '!=', 4);
+    
+        if ($companyId) {
+            $query->where('companies_id', $companyId);
+        }
+    
+        return $query->count();
     }
 
     /**

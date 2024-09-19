@@ -45,6 +45,10 @@ class UpdateCompanieRequest extends FormRequest
             'recept_controle'=>'required',
             'comment'=> 'nullable|string',
             'barcode_value'=> 'nullable|string',
+            'longitude'=> 'nullable|string',
+            'latitude'=> 'nullable|string',
+            'delivery_constraint'=>'numeric',
+            'tolerance_days'=>'nullable|string',
         ];
     }
 }

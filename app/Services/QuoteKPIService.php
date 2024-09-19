@@ -11,13 +11,19 @@ class QuoteKPIService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getQuotesDataRate($year)
+    public function getQuotesDataRate($year, $companyId = null)
     {
-        return DB::table('quotes')
+        $query = DB::table('quotes')
                     ->select('statu', DB::raw('count(*) as QuoteCountRate'))
                     ->whereYear('created_at', $year)
-                    ->groupBy('statu')
-                    ->get();
+                    ->groupBy('statu');
+
+            // If a company ID is provided, add the filter
+            if ($companyId) {
+                $query->where('companies_id', $companyId);
+            }
+
+            return $query->get();
     }
 
     /**

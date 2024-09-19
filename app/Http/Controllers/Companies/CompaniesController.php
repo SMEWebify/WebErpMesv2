@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Companies;
 use App\Models\User;
 use Illuminate\Support\Str;
 use App\Events\QuoteCreated;
-use Illuminate\Http\Request;
 use App\Models\Workflow\Quotes;
+use App\Services\OrderKPIService;
+use App\Services\QuoteKPIService;
 use App\Traits\NextPreviousTrait;
 use App\Models\Companies\Companies;
+use App\Services\InvoiceKPIService;
 use App\Services\SelectDataService;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\QuoteNotification;
@@ -24,13 +26,24 @@ class CompaniesController extends Controller
 {
     use NextPreviousTrait;
     protected $SelectDataService;
+    protected $orderKPIService;
+    protected $quoteKPIService;
+    protected $invoiceKPIService;
 
-    public function __construct(SelectDataService $SelectDataService)
+    public function __construct(
+        InvoiceKPIService $invoiceKPIService,
+        SelectDataService $SelectDataService, 
+        OrderKPIService $orderKPIService,
+        QuoteKPIService $quoteKPIService,
+    )
     {
         $this->SelectDataService = $SelectDataService;
+        $this->orderKPIService = $orderKPIService;
+        $this->quoteKPIService = $quoteKPIService;
+        $this->invoiceKPIService = $invoiceKPIService;
     }
 
-    protected function getCompanyCounts()
+    protected function getCompanyCounts() 
     {
         $data['ClientCountRate'] = Companies::where('statu_customer', 2)->where('statu_supplier', '!=', 2)->count();
         $data['ProspectCountRate'] = Companies::where('statu_customer', 3)->count();
@@ -57,10 +70,25 @@ class CompaniesController extends Controller
      */
     public function show(Companies $id)
     {
+        $CurentYear = now()->year;
         $userSelect = $this->SelectDataService->getUsers();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Companies(), $id->id);
+        $remainingInvoiceOrder =  $this->orderKPIService->getOrderMonthlyRemainingToInvoice($id->id);
+        $paidInvoices = $this->invoiceKPIService->getPaidInvoicesCount($id->id);
+        $unpaidInvoices = $this->invoiceKPIService->getUnpaidInvoicesCount($id->id);
+        $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear, $id->id);
+        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, $id->id);
+        $data['orderAverage'] = $this->orderKPIService->getAverageOrderPriceAttribute($id->id);
+
         $Companie = $id;
-        return view('companies/companies-show', compact('Companie', 'userSelect', 'previousUrl', 'nextUrl'));
+        return view('companies/companies-show', compact('Companie', 
+                                                                    'userSelect', 
+                                                                                'previousUrl', 
+                                                                                'nextUrl',
+                                                                                'remainingInvoiceOrder',
+                                                                                'paidInvoices',
+                                                                                'unpaidInvoices',
+                                                                                'data',));
     }
 
     /**
@@ -74,6 +102,7 @@ class CompaniesController extends Controller
         $company->update($request->validated());
         // Handle specific cases outside mass assignment
         $company->active = $request->has('active') ? 1 : 0;
+        $company->quoted_delivery_note = $request->has(key: 'quoted_delivery_note') ? 1 : 0;
         $company->save();
 
         return redirect()->route('companies.show', ['id' =>  $company->id])->with('success', 'Successfully updated companie');

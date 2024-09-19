@@ -10,7 +10,8 @@
 <div class="card">
   <div class="card-header p-2">
     <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Company" data-toggle="tab">{{ __('general_content.detail_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Company" data-toggle="tab">{{ __('general_content.detail_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Adresses" data-toggle="tab">{{ __('general_content.adress_trans_key') }} ({{ $Companie->getAddressesCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Contact" data-toggle="tab">{{ __('general_content.contacts_trans_key') }} ({{ $Companie->geContactsCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#lead" data-toggle="tab">{{ __('general_content.leads_trans_key') }} ({{ $Companie->getLeadsCountAttribute() }})</a></li>
@@ -22,7 +23,60 @@
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-      <div class="tab-pane active" id="Company">
+      <div class="tab-pane active" id="Dashboard">
+        <div class="row">
+          <div class="col-lg-3 col-md-3">
+            <x-adminlte-small-box title="{{ number_format($remainingInvoiceOrder->orderSum ?? 0)}}  {{ $Factory->curency }}" 
+              text="{{ __('general_content.remaining_invoice_month_trans_key') }}" 
+              icon="icon fas fa-info"
+              theme="warning" />
+          </div>
+
+          <div class="col-lg-3 col-md-3">
+            <x-adminlte-small-box title="{{ number_format($data['orderAverage'] ?? 0)}}  {{ $Factory->curency }}" 
+              text="{{ __('general_content.order_average_note_trans_key') }}" 
+              icon="icon fas fa-info"
+              theme="orange" />
+          </div>
+          
+          <div class="col-lg-3 col-md-3">
+            <x-adminlte-card  theme="primary" theme-mode="outline">
+              <p class="card-text">{{ __('general_content.bills_paid_trans_key') }} : {{ $paidInvoices }}</p>
+              <p class="card-text">{{ __('general_content.bills_unpaid_trans_key') }}  : {{ $unpaidInvoices }}</p>
+            </x-adminlte-card>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-3 col-md-3">
+            <x-adminlte-card title="{{ __('general_content.quote_transformation_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+              <canvas id="donutChart" width="400" height="400"></canvas>
+            </x-adminlte-card>
+          </div>
+
+          <!-- CHART: TOTAL OVERVIEW -->
+          <div class="col-lg-9 col-md-9">
+            <x-adminlte-card title="{{ __('general_content.monthly_recap_report_trans_key') }}" theme="purple" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+              <div class="row">
+                <div class="col-md-12">
+                  <p class="text-center">
+                    <strong>{{ __('general_content.sales_period_trans_key', ['year' => now()->year]) }}</strong>
+                  </p>
+                  <div class="chart">
+                    <!-- Sales Chart Canvas -->
+                      <canvas id="lineChart" style="min-height: 400px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
+                  </div>
+                  <!-- /.chart-responsive -->
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- ./card-body -->
+            </x-adminlte-card>
+          </div>
+        </div>
+
+      </div>
+      <div class="tab-pane" id="Company">
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -231,7 +285,7 @@
                       <select class="form-control" name="recept_controle" id="recept_controle" value="recept_controle">
                           <option value="">{{ __('general_content.select_controle_trans_key') }}</option>
                           <option value="1" @if($Companie->recept_controle == 1 ) Selected @endif>{{ __('general_content.yes_trans_key') }}</option>
-                          <option value="2" @if($Companie->recept_controle == 2 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
+                          <option value="0" @if($Companie->recept_controle == 0 ) Selected @endif>{{ __('general_content.no_trans_key') }}</option>
                       </select>
                   </div>
                   <div class="form-group col-md-3">
@@ -241,6 +295,53 @@
                   <div class="form-group col-md-3">
                       <label for="account_auxiliary_supplier">{{ __('general_content.auxiliary_account_trans_key') }}</label>
                       <input type="number" class="form-control" id="account_auxiliary_supplier" name="account_auxiliary_supplier"  value="{{ $Companie->account_auxiliary_supplier }}" placeholder="{{ __('general_content.auxiliary_account_trans_key') }}">
+                  </div>
+                </div>
+              </x-adminlte-card>
+
+              <x-adminlte-card theme="dark" theme-mode="outline">
+                <div class="row">
+                  
+                  <div class="form-group col-md-2">
+                      <label for="latitude">{{ __('general_content.latitude_trans_key') }}</label>
+                      <input type="text" class="form-control" name="latitude" id="latitude" value="{{ $Companie->latitude }}" placeholder="{{ __('general_content.latitude_trans_key') }}">
+                  </div>
+
+                  <div class="form-group col-md-2">
+                    <label for="longitude">{{ __('general_content.longitude_trans_key') }}</label>
+                    <input type="text" class="form-control" name="longitude" id="longitude" value="{{ $Companie->longitude }}" placeholder="{{ __('general_content.longitude_trans_key') }}">
+                  </div>
+
+                  <div class="form-group col-md-3">
+                    <label for="delivery_constraint">{{ __('general_content.delivery_constraint_trans_key') }}</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                        </div>
+                        <select class="form-control" name="delivery_constraint" id="delivery_constraint">
+                            <option value="1" @if($Companie->delivery_constraint == 1) Selected @endif>{{ __('general_content.no_constraints_trans_key') }}</option>
+                            <option value="2" @if($Companie->delivery_constraint == 2) Selected @endif>{{ __('general_content.no_tolerance_trans_key') }}</option>
+                            <option value="3" @if($Companie->delivery_constraint == 3) Selected @endif>{{ __('general_content.tolerance_in_days_trans_key') }}</option>
+                        </select>
+                    </div>
+                  </div>
+
+                  @if($Companie->delivery_constraint == 3)
+                      <div class="form-group col-md-3">
+                          <label for="tolerance_days">{{ __('general_content.tolerance_days_trans_key') }}</label>
+                          <input type="number" class="form-control" name="tolerance_days" id="tolerance_days" value="{{ $Companie->tolerance_days }}" placeholder="{{ __('general_content.tolerance_days_trans_key') }}">
+                      </div>
+                  @endif
+
+                  <div class="form-group col-md-2">
+                    <label for="quoted_delivery_note">{{ __('general_content.quoted_delivery_note_trans_key') }}</label>
+                    <div class="input-group">
+                        @if($Companie->quoted_delivery_note == 1)  
+                            <x-adminlte-input-switch name="quoted_delivery_note" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked />
+                        @else
+                            <x-adminlte-input-switch name="quoted_delivery_note" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" />
+                        @endif
+                    </div>
                   </div>
                 </div>
               </x-adminlte-card>
@@ -282,6 +383,11 @@
               </p>
             </x-adminlte-card>
 
+            @if($Companie->latitude && $Companie->longitude)
+            <x-adminlte-card title="Map" theme="success" maximizable>
+              <div id="map" style="width: 100%; height: 400px;"></div>
+            </x-adminlte-card>
+            @endif
           </div>
         </div>
       </div>  
@@ -731,7 +837,154 @@
 @stop
 
 @section('css')
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 @stop
 
 @section('js')
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+  // Vérifie que les coordonnées sont définies dans la variable PHP
+  var latitude = {{ $Companie->latitude ?? '48.8588443' }};  // Remplace par des valeurs par défaut si non disponible
+  var longitude = {{ $Companie->longitude ?? '2.2943506' }};  // Exemple: coordonnées de la Tour Eiffel
+
+  // Initialise la carte
+  var map = L.map('map').setView([latitude, longitude], 13);
+
+  // Charger les tuiles de la carte (OpenStreetMap)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  // Ajouter un marqueur à la position des coordonnées
+  L.marker([latitude, longitude]).addTo(map)
+      .bindPopup('{{ $Companie->label }}')
+      .openPopup();
+</script>
+
+<script>
+  //-------------
+//- PIE CHART -
+//-------------
+  var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+  var donutData        = {
+      labels: [
+        @foreach ($data['quotesDataRate'] as $item)
+              @if(1 == $item->statu )  "Open", @endif
+              @if(2 == $item->statu )  "Send", @endif
+              @if(3 == $item->statu )  "Win", @endif
+              @if(4 == $item->statu )  "Lost", @endif
+              @if(5 == $item->statu )  "{{__('general_content.closed_trans_key') }}", @endif
+              @if(6 == $item->statu )  "Obsolete", @endif
+        @endforeach
+      ],
+      datasets: [
+        {
+          data: [
+                @foreach ($data['quotesDataRate'] as $item)
+                "{{ $item->QuoteCountRate }}",
+                @endforeach
+              ], 
+              backgroundColor: [
+                  'rgba(23, 162, 184, 1)',
+                  'rgba(255, 193, 7, 1)',
+                  'rgba(40, 167, 69, 1)',
+                  'rgba(220, 53, 69, 1)',
+                  'rgba(108, 117, 125, 1)',
+                  'rgba(0, 123, 255, 1)',
+              ],
+        }
+      ]
+    }
+    var donutOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    new Chart(donutChartCanvas, {
+      type: 'pie',
+      data: donutData,
+      options: donutOptions
+    })
+
+  //--------------
+  //- LINE CHART -
+  //--------------
+  // Get context with jQuery - using jQuery's .get() method.
+  var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
+  var areaChartData = {
+      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','November','December' ],
+      datasets: [
+        {
+          label               : 'Order forecast',
+          borderColor         : 'rgba(60,141,188,0.5)',
+          pointRadius          : 5,
+          pointColor          : '#3b8bba',
+          pointStrokeColor    : 'rgba(60,141,188,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data                : [
+                              @php ($j = 1)
+                              @for($iM =1;$iM<=12;$iM++)
+                                @foreach ($data['orderMonthlyRecap'] as $key => $item)
+                                @php ($j = 1)
+                                  @if($iM  == $item->month) 
+                                  "{{ $item->orderSum }}",
+                                    @php ($j = 2)
+                                    @break
+                                  @endif
+                                @endforeach
+                                @if($j == 1) 
+                                  0,
+                                  @php ($j = 1)
+                                @endif
+                              @endfor ]
+        },
+      ]
+    }
+    var areaChartOptions = {
+      maintainAspectRatio : false,
+      responsive : true,
+      legend: {
+        display: true,
+      },
+      scales: {
+        xAxes: [{
+          gridLines : {
+            color:'rgba(0,0,0,0.4)',
+            display : true,
+          }
+        }],
+        yAxes: [{
+          gridLines : {
+            color:'rgba(0,0,0,0.4)',
+            display : true,
+          }
+        }]
+      }
+    }
+
+    // This will get the first returned node in the jQuery collection.
+    new Chart(areaChartCanvas, {
+      type: 'line',
+      data: areaChartData,
+      options: areaChartOptions
+    })
+
+    var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
+    var lineChartOptions = $.extend(true, {}, areaChartOptions)
+    var lineChartData = $.extend(true, {}, areaChartData)
+    lineChartData.datasets[0].fill = true;
+    lineChartData.datasets[1].fill = false;
+    lineChartOptions.datasetFill = false
+
+    var lineChart = new Chart(lineChartCanvas, {
+      type: 'line',
+      data: lineChartData,
+      options: lineChartOptions
+    })
+</script>
 @stop
