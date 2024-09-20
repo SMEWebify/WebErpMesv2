@@ -226,6 +226,7 @@
                         <input type="text" class="form-control" name="intra_community_vat" id="intra_community_vat"  value="{{ $Companie->intra_community_vat }}" placeholder="{{ __('general_content.vat_number_trans_key') }}" @if($Companie->client_type == 2) disabled @endif>
                         @error('intra_community_vat') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
+                    
                 </div>
               </x-adminlte-card>
 

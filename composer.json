@@ -19,6 +19,7 @@
         "ext-zip": "*",
         "barryvdh/laravel-dompdf": "2.0.1",
         "doctrine/dbal": "^3.8",
+        "dragonbe/vies": "^2.3",
         "fruitcake/php-cors": "^1.2",
         "guzzlehttp/guzzle": "^7.0.1",
         "horstoeko/zugferd": "^1",

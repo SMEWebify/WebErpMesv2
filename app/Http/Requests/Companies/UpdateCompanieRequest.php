@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Companies;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\ValidVatNumber;
+use App\Services\CompanyService;
 
 class UpdateCompanieRequest extends FormRequest
 {
@@ -34,7 +36,7 @@ class UpdateCompanieRequest extends FormRequest
             'lkdsite'=> 'nullable|string',
             'siren'=> 'nullable|string', 
             'naf_code'=> 'nullable|string', 
-            'intra_community_vat'=> 'nullable|string',
+            'intra_community_vat'=> ['nullable', 'string', new ValidVatNumber(app(CompanyService::class))], 
             'statu_customer'=>'required',
             'discount'=> 'nullable|numeric',
             'account_general_customer'=> 'nullable|string',

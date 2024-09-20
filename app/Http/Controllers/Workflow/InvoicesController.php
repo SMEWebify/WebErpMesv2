@@ -14,7 +14,6 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\InvoiceLineService;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Workflow\InvoiceLines;
 use App\Models\Workflow\DeliveryLines;
 use App\Services\InvoiceCalculatorService;
 use App\Http\Requests\Workflow\UpdateInvoiceRequest;

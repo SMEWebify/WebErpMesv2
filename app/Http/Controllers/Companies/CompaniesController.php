@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use App\Events\QuoteCreated;
 use App\Models\Workflow\Quotes;
+use App\Services\CompanyService;
 use App\Services\OrderKPIService;
 use App\Services\QuoteKPIService;
 use App\Traits\NextPreviousTrait;
@@ -13,6 +14,7 @@ use App\Models\Companies\Companies;
 use App\Services\InvoiceKPIService;
 use App\Services\SelectDataService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Notifications\QuoteNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
@@ -29,18 +31,21 @@ class CompaniesController extends Controller
     protected $orderKPIService;
     protected $quoteKPIService;
     protected $invoiceKPIService;
+    protected $companyService;
 
     public function __construct(
         InvoiceKPIService $invoiceKPIService,
         SelectDataService $SelectDataService, 
         OrderKPIService $orderKPIService,
         QuoteKPIService $quoteKPIService,
+        CompanyService $companyService,
     )
     {
         $this->SelectDataService = $SelectDataService;
         $this->orderKPIService = $orderKPIService;
         $this->quoteKPIService = $quoteKPIService;
         $this->invoiceKPIService = $invoiceKPIService;
+        $this->companyService = $companyService;
     }
 
     protected function getCompanyCounts() 
@@ -79,16 +84,16 @@ class CompaniesController extends Controller
         $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear, $id->id);
         $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, $id->id);
         $data['orderAverage'] = $this->orderKPIService->getAverageOrderPriceAttribute($id->id);
-
+    
         $Companie = $id;
         return view('companies/companies-show', compact('Companie', 
-                                                                    'userSelect', 
-                                                                                'previousUrl', 
-                                                                                'nextUrl',
-                                                                                'remainingInvoiceOrder',
-                                                                                'paidInvoices',
-                                                                                'unpaidInvoices',
-                                                                                'data',));
+                                                        'userSelect', 
+                                                        'previousUrl', 
+                                                        'nextUrl',
+                                                        'remainingInvoiceOrder',
+                                                        'paidInvoices',
+                                                        'unpaidInvoices',
+                                                        'data',));
     }
 
     /**
@@ -98,7 +103,25 @@ class CompaniesController extends Controller
     public function update(UpdateCompanieRequest $request)
     {
         $company = Companies::findOrFail($request->id);
-        // Update company attributes using mass assignment with validation
+        // Attempt to validate VAT number via SOAP service
+        $vatNumber = $request->input('intra_community_vat');
+        if ($vatNumber) {
+            $countryCode = substr($vatNumber, 0, 2);
+            $vatCode = substr($vatNumber, 2);
+            try {
+                $isValid = $this->companyService->validateVatNumber($countryCode, $vatCode);
+
+                if (!$isValid) {
+                   // Validation failed, but we continue the update
+                    Session::flash('warning', 'Le numéro de TVA est invalide, mais les autres informations ont été mises à jour.');
+                }
+            } catch (\Exception $e) {
+                // Catch the exception from the SOAP service
+                Session::flash('error', 'Le service de validation de la TVA est indisponible. La fiche client a été mise à jour, mais sans validation du numéro de TVA.');
+            }
+        }
+
+        // Update the customer record with the other fields
         $company->update($request->validated());
         // Handle specific cases outside mass assignment
         $company->active = $request->has('active') ? 1 : 0;
