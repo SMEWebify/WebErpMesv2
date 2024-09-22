@@ -2,13 +2,14 @@
 
 namespace App\Models\Workflow;
 
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
-use App\Services\InvoiceCalculatorService;
 use App\Models\Workflow\InvoiceLines;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\InvoiceCalculatorService;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
@@ -63,9 +64,14 @@ class Invoices extends Model
         return $this->hasMany(InvoiceLines::class)->orderBy('ordre');
     }
 
-    public function GetPrettyCreatedAttribute()
+    public function GetshortCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function GetPrettyCreatedAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
 
     public function getTotalPriceAttribute()

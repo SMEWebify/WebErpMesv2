@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use Spatie\Activitylog\LogOptions;
@@ -53,9 +54,14 @@ class PurchaseReceipt extends Model
         return $this->hasMany(File::class, 'purchase_receipts_id');
     }
 
-    public function GetPrettyCreatedAttribute()
+    public function GetshortCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function GetPrettyCreatedAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
 
     public function GetPrettyControlDateAttribute()

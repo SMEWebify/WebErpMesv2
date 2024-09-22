@@ -126,7 +126,7 @@
 @section('js')
 <script>
   
-    //--------------
+  //--------------
   //- LINE CHART -
   //--------------
   // Get context with jQuery - using jQuery's .get() method.

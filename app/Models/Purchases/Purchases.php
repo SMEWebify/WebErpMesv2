@@ -2,8 +2,10 @@
 
 namespace App\Models\Purchases;
 
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
+use App\Models\Workflow\Deliverys;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\PurchaseLines;
@@ -12,7 +14,6 @@ use App\Models\Companies\SupplierRating;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
-use App\Models\Workflow\Deliverys;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Purchases extends Model
@@ -72,9 +73,14 @@ class Purchases extends Model
         return $this->hasMany(Deliverys::class);
     }
 
-    public function GetPrettyCreatedAttribute()
+    public function GetshortCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function GetPrettyCreatedAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
     
     public function getActivitylogOptions(): LogOptions

@@ -37,7 +37,8 @@
                 @csrf 
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}
+                    <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Purchase->code }}</p>
+                    <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Purchase->GetshortCreatedAttribute() }}</p>
                   </div>
                   <div class="form-group col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_trans_key'), 'Value' =>  $Purchase->label])

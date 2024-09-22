@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
@@ -46,14 +47,14 @@ class PurchasesQuotation extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function PurchaseQuotationLines()
+    public function GetshortCreatedAttribute()
     {
-        return $this->hasMany(PurchaseQuotationLines::class)->orderBy('ordre');
+        return date('d F Y', strtotime($this->created_at));
     }
 
     public function GetPrettyCreatedAttribute()
     {
-        return date('d F Y', strtotime($this->created_at));
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
 
     public function getActivitylogOptions(): LogOptions

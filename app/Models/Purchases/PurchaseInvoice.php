@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchases;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
@@ -40,9 +41,14 @@ class PurchaseInvoice extends Model
         return $this->hasMany(PurchaseInvoiceLines::class);
     }
 
-    public function GetPrettyCreatedAttribute()
+    public function GetshortCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
+    }
+
+    public function GetPrettyCreatedAttribute()
+    {
+        return Carbon::parse($this->created_at)->diffForHumans();
     }
 
     public function getActivitylogOptions(): LogOptions
