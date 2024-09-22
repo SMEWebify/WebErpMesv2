@@ -231,8 +231,8 @@
                                 <option value="2">{{ __('general_content.in_progress_trans_key') }}</option>
                                 <option value="3">{{ __('general_content.delivered_trans_key') }}</option>
                                 <option value="4">{{ __('general_content.partly_delivered_trans_key') }}</option>
-                                <!--<option value="5">{{ __('Stopped') }}</option>-->
-                                <!--<option value="6">{{ __('general_content.canceled_trans_key') }}</option>-->
+                                <option value="5">{{ __('general_content.stopped_trans_key') }}</option>
+                                <option value="6">{{ __('general_content.canceled_trans_key') }}</option>
                             </select>
                         </div>
                     </div>
@@ -294,6 +294,9 @@
                                     @if(3 == $Order->statu )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
                                     @if(4 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
                                 @endif
+                                
+                                @if(5 == $Order->statu )  <span class="badge badge-danger">{{ __('general_content.stopped_trans_key') }}</span>@endif
+                                @if(6 == $Order->statu )  <span class="badge badge-warning">{{ __('general_content.canceled_trans_key') }}</span>@endif
                             </td>
                             <td><img src="{{ Avatar::create($Order->UserManagement['name'])->toBase64() }}" /></td>
                             <td>{{ $Order->GetPrettyCreatedAttribute() }}</td>

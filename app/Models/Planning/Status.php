@@ -2,7 +2,6 @@
 
 namespace App\Models\Planning;
 
-use App\Models\User;
 use App\Models\Planning\Task;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

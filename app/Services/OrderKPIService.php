@@ -77,6 +77,7 @@ class OrderKPIService
         $cacheKey = 'late_orders_count_' . now()->year;
         return Cache::remember($cacheKey, now()->addMinutes(10), function () {
             return Orders::whereYear('created_at', now()->year)
+                ->where('statu', '!=', 6)
                 ->whereHas('orderLines', function($query) {
                     $query->where('delivery_status', 1) // delivered quantity < ordered quantity
                         ->where('delivery_date', '<', now());     // expected delivery date has passed 
@@ -95,7 +96,6 @@ class OrderKPIService
     {
         return Orders::where('statu', '!=', '3')->count();
     }
-
 
     /**
      * Retrieves the monthly summary of orders for the current year, filtered by company.
@@ -116,7 +116,8 @@ class OrderKPIService
                 ')
                 ->leftJoin('orders', function ($join) {
                     $join->on('order_lines.orders_id', '=', 'orders.id')
-                        ->where('orders.type', '=', 1); // Filtre par le type de commande
+                        ->where('orders.type', '=', 1)
+                        ->where('orders.statu', '!=', 6); // Filtre par le type de commande
                 })
                 ->whereYear('order_lines.created_at', $year)
                 ->groupByRaw('MONTH(order_lines.delivery_date)');
@@ -148,7 +149,8 @@ class OrderKPIService
                         ')
                         ->leftJoin('orders', function($join) {
                             $join->on('order_lines.orders_id', '=', 'orders.id')
-                                ->where('orders.type', '=', 1);
+                                ->where('orders.type', '=', 1)
+                                ->where('orders.statu', '!=', 6);
                         })
                         ->whereYear('order_lines.created_at', $lastyear)
                         ->groupByRaw('MONTH(order_lines.delivery_date)')
@@ -220,7 +222,8 @@ class OrderKPIService
                         ')
                         ->leftJoin('orders', function($join) {
                             $join->on('order_lines.orders_id', '=', 'orders.id')
-                                ->where('orders.type', '=', 1);
+                                ->where('orders.type', '=', 1)
+                                ->where('orders.statu', '!=', 6);
                         })
                         ->where('delivery_status', '=', 1)
                         ->orWhere('delivery_status', '=', 2)

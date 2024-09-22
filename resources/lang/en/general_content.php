@@ -33,6 +33,7 @@ return [
     'partly_received_trans_key'                => 'Partly received',
     'rceived_trans_key'                        => 'Received',
     'canceled_trans_key'                       => 'Canceled',
+    'stopped_trans_key'                        => 'Stopped',
     'no_task_trans_key'                        => 'No task',
     'created_trans_key'                        => 'Created',
     'to_be_posted_trans_key'                   => 'To be posted',
