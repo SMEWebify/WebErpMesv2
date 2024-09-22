@@ -56,6 +56,8 @@ return [
     'worked_day_trans_key'                     => 'Worked day',
     'to_validate_trans_key'                    => 'To validate',
     'validate_trans_key'                       => 'Validate',
+    'solved_trans_key'                         => 'Solved',
+    'reopen_trans_key'                         => 'Reopen',
     'unvalidate_trans_key'                     => 'Unvalidate',
     'no_traceability_trans_key'                => 'No traceability',
     'with_batch_number_trans_key'              => 'With batch number',
@@ -493,6 +495,7 @@ return [
     'absence_type_day_trans_key'               => 'Absence type day',
     'absence_type_trans_key'                   => 'Absence type',
     'year_trans_key'                           => 'Year',
+    'days_trans_key'                           => 'Days',
     'amount_trans_key'                         => 'Amount',
     
     'by_default_trans_key'                     => 'By default', 
@@ -879,6 +882,7 @@ return [
     'amdec_trans_key'                          => 'FMEA',
     'new_amdec_trans_key'                      => 'Nouvelle FMEA',
     'litigation_rate_trans_key'                => 'Litigation rate',
+    'resolution_time_trans_key'                => 'Resolution time',
 
     //METHODS
     'methods_trans_key'                        => 'Methods',

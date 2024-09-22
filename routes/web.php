@@ -419,6 +419,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/', 'App\Http\Controllers\Quality\QualityNonConformityController@index')->name('quality.nonConformitie');
             Route::post('/create', 'App\Http\Controllers\Quality\QualityNonConformityController@store')->name('quality.nonConformitie.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@update')->name('quality.nonConformitie.update');
+            Route::post('/close/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@closeResolutionDate')->name('quality.nonConformitie.close.resolutionDate');
+            Route::post('/reopen/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@reopenResolutionDate')->name('quality.nonConformitie.reopen.resolutionDate');
         });
     
         // Routes for Derogation

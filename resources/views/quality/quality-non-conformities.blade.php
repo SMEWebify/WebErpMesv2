@@ -43,7 +43,7 @@
                 <td>
                   @if($QualityNonConformity->statu  == 1) <span class="badge badge-info">{{ __('general_content.in_progress_trans_key') }}</span> @endif
                   @if($QualityNonConformity->statu  == 2) <span class="badge badge-warning">{{ __('general_content.waiting_customer_data_trans_key') }}</span> @endif
-                  @if($QualityNonConformity->statu  == 3) <span class="badge badge-success">{{ __('general_content.validate_trans_key') }}</span> @endif
+                  @if($QualityNonConformity->statu  == 3) <span class="badge badge-success">{{ __('general_content.solved_trans_key') }}</span> @endif
                   @if($QualityNonConformity->statu  == 4) <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span> @endif
                 </td>
                 <td>
@@ -159,7 +159,7 @@
                             <select class="form-control" name="statu" id="statu">
                               <option value="1"  @if($QualityNonConformity->statu == 1  ) Selected @endif>{{ __('general_content.in_progress_trans_key') }}</option>
                               <option value="2"  @if($QualityNonConformity->statu == 2  ) Selected @endif>{{ __('general_content.waiting_customer_data_trans_key') }}</option>
-                              <option value="3"  @if($QualityNonConformity->statu == 3  ) Selected @endif>{{ __('general_content.validate_trans_key') }}</option>
+                              <option value="3"  @if($QualityNonConformity->statu == 3  ) Selected @endif>{{ __('general_content.solved_trans_key') }}</option>
                               <option value="4"  @if($QualityNonConformity->statu == 4  ) Selected @endif>{{ __('general_content.canceled_trans_key') }}</option>
                             </select>
                           </div>
@@ -266,6 +266,22 @@
                         <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                       </div>
                     </form>
+                    @if($QualityNonConformity->statu  != 3)
+                    <form action="{{ route('quality.nonConformitie.close.resolutionDate', $QualityNonConformity->id) }}" method="POST">
+                      <div class="card-footer">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">{{ __('general_content.solved_trans_key') }}</button>
+                      </div>
+                    </form>
+                    @else
+                    <form action="{{ route('quality.nonConformitie.reopen.resolutionDate', $QualityNonConformity->id) }}" method="POST">
+                      <div class="card-footer">
+                        @csrf
+                        <button type="submit" class="btn btn-success">{{ __('general_content.reopen_trans_key') }}</button>
+                      </div>
+                    </form>
+                    @endif
+                  
                   </x-adminlte-modal>
                   
                   <x-ButtonTextPDF route="{{ route('pdf.nc', ['Document' => $QualityNonConformity->id])}}" />
@@ -336,7 +352,7 @@
                   <select class="form-control" name="statu" id="statu">
                     <option value="1">{{ __('general_content.in_progress_trans_key') }}</option>
                     <option value="2">{{ __('general_content.waiting_customer_data_trans_key') }}</option>
-                    <option value="3">{{ __('general_content.validate_trans_key') }}</option>
+                    <option value="3">{{ __('general_content.solved_trans_key') }}</option>
                     <option value="4">{{ __('general_content.canceled_trans_key') }}</option>
                   </select>
                 </div>

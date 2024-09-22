@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers\Quality;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Companies\Companies;
 use App\Services\QualityKPIService;
 use App\Services\SelectDataService;
 use App\Models\Quality\QualityCause;
-use App\Models\Quality\QualityAction;
 use App\Models\Quality\QualityFailure;
 use App\Models\Quality\QualityCorrection;
-use App\Models\Quality\QualityDerogation;
 use App\Models\Quality\QualityControlDevice;
-use App\Models\Quality\QualityNonConformity;
 
 class QualityController extends Controller
 {
@@ -45,6 +40,7 @@ class QualityController extends Controller
         $chartData = $this->qualityKPIService->getTopGenerators();
         $statusCounts = $this->qualityKPIService->getStatusCounts();
         $litigationRate = $this->qualityKPIService->GetCalculateLitigationRate();
+        $resolutionTimes = $this->qualityKPIService->getAverageResolutionTime();
 
         
         return view('quality/quality-index', array_merge([
@@ -56,6 +52,7 @@ class QualityController extends Controller
                                                         'ServicesSelect' =>  $ServicesSelect,
                                                         'chartData'=> $chartData,
                                                         'litigationRate'=> $litigationRate,
+                                                        'resolutionTimes'=> $resolutionTimes,
                                                         ]
                                                         , $generalStats, $rates, $statusCounts));
     }

@@ -140,4 +140,36 @@ class QualityKPIService
         // Return the result
         return round($litigationRate,2);
     }
+    /*
+     * Calculates the average resolution time for non-conformities.
+    *
+    * @param int|null $companyId Company ID to filter non-conformities. If null, takes all companies.
+    * @return float Average resolution time in hours (or days if modified).
+    */
+    public function getAverageResolutionTime($companyId = null)
+    {
+        // If a company ID is provided, filter orders by company
+        $resolvedNonConformitiesQuery = QualityNonConformity::whereNotNull('resolution_date');
+
+        if ($companyId) {
+            $resolvedNonConformitiesQuery->where('companies_id', $companyId);
+        }
+
+        $resolvedNonConformities = $resolvedNonConformitiesQuery->get();
+
+        $totalTimeSpent = $resolvedNonConformities->reduce(function ($carry, $nonConformity) {
+            $createdAt = $nonConformity->created_at;
+            $resolutionDate = $nonConformity->resolution_date;
+            $timeSpent = $createdAt->diffInDays($resolutionDate); 
+            return $carry + $timeSpent;
+        }, 0);
+        
+        $resolvedCount = $resolvedNonConformities->count();
+
+        if ($resolvedCount === 0) {
+            return 0; // no case solved
+        }
+
+        return $totalTimeSpent / $resolvedCount;
+    }
 }

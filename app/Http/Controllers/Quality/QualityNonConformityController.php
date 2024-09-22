@@ -128,4 +128,30 @@ class QualityNonConformityController extends Controller
         $QualityNonConformity->save();
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully updated non conformitie.');
     }
+
+    public function closeResolutionDate($id)
+    {
+        $nonConformity = QualityNonConformity::findOrFail($id);
+        
+        if ($nonConformity) {
+            $nonConformity->resolution_date = now();
+            $nonConformity->statu =3;
+            $nonConformity->save();
+            
+            return redirect()->back()->with('success', 'The resolution date has been updated.');
+        }
+    }
+
+    public function reopenResolutionDate($id)
+    {
+        $nonConformity = QualityNonConformity::findOrFail($id);
+        
+        if ($nonConformity) {
+            $nonConformity->resolution_date = null;
+            $nonConformity->statu =1;
+            $nonConformity->save();
+            
+            return redirect()->back()->with('success', 'The NC date has been updated.');
+        }
+    }
 }

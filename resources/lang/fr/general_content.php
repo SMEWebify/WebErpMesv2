@@ -57,6 +57,8 @@ return [
     'to_validate_trans_key'                    => 'A validée',
     'validate_trans_key'                       => 'Validée',
     'unvalidate_trans_key'                     => 'Non-validée',
+    'solved_trans_key'                         => 'Résolue',
+    'reopen_trans_key'                         => 'Réouvrir',
     'no_traceability_trans_key'                => 'Aucune tracabilité',
     'with_batch_number_trans_key'              => 'Avec numéro batch',
     'with_serial_number_trans_key'             => 'Avec numéro de lot',
@@ -493,6 +495,7 @@ return [
     'absence_type_day_trans_key'               => 'Type de jour d\'absence',
     'absence_type_trans_key'                   => 'Type d\'absence',
     'year_trans_key'                           => 'Année',
+    'days_trans_key'                           => 'jours',
     'amount_trans_key'                         => 'Montant',
 
     'by_default_trans_key'                     => 'Par défaut',
@@ -879,6 +882,7 @@ return [
     'amdec_trans_key'                          => 'AMDEC',
     'new_amdec_trans_key'                      => 'Nouvelle AMDEC',
     'litigation_rate_trans_key'                => 'Taux de litige',
+    'resolution_time_trans_key'                => 'Temps de résolution',
 
     //METHODS
     'methods_trans_key'                        => 'Méthodes',

@@ -22,24 +22,29 @@
   <div class="tab-content p-3">
     <div class="tab-pane active" id="Dashboard">
       <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-2">
           <x-adminlte-small-box title="{{ $totalActionsOpen }}" text="{{ __('general_content.open_trans_key') }} {{ __('general_content.action_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="teal"/>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3">
+        <div class="col-lg-2">
           <x-adminlte-small-box title="{{ $totalNonConformitiesOpen }}" text="{{ __('general_content.open_trans_key') }} {{ __('general_content.non_conformities_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="purple"/>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3">
+        <div class="col-lg-2">
           <x-adminlte-small-box title="{{ $totalDerogationsOpen }}" text="{{ __('general_content.open_trans_key') }} {{ __('general_content.derogations_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="info"/>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3">
+        <div class="col-lg-2">
           <x-adminlte-small-box title="{{ $litigationRate }} %" text="{{ __('general_content.litigation_rate_trans_key') }}" icon="fas fa-chart-bar text-white"
               theme="secondary"/>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-2">
+          <x-adminlte-small-box title="{{ $resolutionTimes }} {{ __('general_content.days_trans_key') }}" text="{{ __('general_content.resolution_time_trans_key') }}" icon="icon fas fa-clock text-white"
+              theme="orange"/>
         </div>
         <!-- ./col -->
       </div>

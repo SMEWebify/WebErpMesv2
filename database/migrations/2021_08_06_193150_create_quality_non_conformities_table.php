@@ -20,7 +20,7 @@ class CreateQualityNonConformitiesTable extends Migration
 			$table->integer('statu');
             #1 => In Progress
             #2 => Wainting customer data
-            #3 => Validate
+            #3 => Solved
             #4 => Canceled
 			$table->integer('type');
             #1 => Internal
