@@ -283,6 +283,7 @@ return [
 
     'order_info_trans_key'                     => 'Order info',
     'order_line_trans_key'                     => 'Order lines',
+    'business_Review_trans_key'                => 'Business Review',
 
     'delivery_info_trans_key'                  => 'Delivery info',
     'delivery_lines_trans_key'                 => 'Delivery lines',

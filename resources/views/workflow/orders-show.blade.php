@@ -18,8 +18,10 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.order_line_trans_key') }}  ({{ count($Order->OrderLines) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li><li class="nav-item">
-      <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">Bilan d'affaire</a></li><li class="nav-item">
+      <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
+      <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
+      
       <!--<a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
@@ -298,6 +300,95 @@
         @endif
       </div> 
       <div class="tab-pane " id="Views">
+      </div>
+      <div class="tab-pane" id="purchase">
+        <div class="table-responsive p-0">
+          <table class="table table-hover">
+              <thead>
+                      <tr>
+                          <th>{{ __('general_content.order_trans_key') }}</th>
+                          <th>{{ __('general_content.label_trans_key') }}</th>
+                          <th>{{__('general_content.task_trans_key') }}</th>
+                          <th>{{ __('general_content.product_trans_key') }}</th>
+                          <th>{{ __('general_content.qty_trans_key') }}</th>
+                          <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
+                          <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
+                          <th>{{ __('general_content.price_trans_key') }}</th>
+                          <th>{{ __('general_content.discount_trans_key') }}</th>
+                          <th>{{ __('general_content.vat_trans_key') }}</th> 
+                      </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($Order->OrderLines as $orderLine)
+                      @foreach ($orderLine->purchase_lines as $PurchaseLine)
+                        <tr>
+                          <td>
+                            <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $PurchaseLine->purchases_id])}}">
+                              <i class="fas fa-folder"></i>
+                              {{ $PurchaseLine->purchase->code }}
+                            </a>
+                          </td>
+                          <td>
+                              @if($PurchaseLine->tasks->OrderLines ?? null)
+                                  {{ $PurchaseLine->tasks->OrderLines->label }}
+                              @endif
+                          </td>
+                          <td>
+                              @if($PurchaseLine->tasks_id ?? null)
+                                  <a href="{{ route('production.task.statu.id', ['id' => $PurchaseLine->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                                  #{{ $PurchaseLine->tasks->id }} - {{ $PurchaseLine->tasks->label }}
+                                  @if($PurchaseLine->tasks->component_id )
+                                      - {{ $PurchaseLine->tasks->Component['label'] }}
+                                  @endif
+                              @else
+                                  {{ $PurchaseLine->label }}
+                              @endif
+                          </td>
+                          
+                          <td>
+                              @if($PurchaseLine->tasks_id ?? null)
+                                  @if($PurchaseLine->tasks->component_id ) 
+                                  <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseLine->tasks->component_id])}}" />
+                                  @endif
+                              @else
+                                  @if($PurchaseLine->product_id ) 
+                                      <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseLine->product_id])}}" />
+                                  @endif
+                              @endif
+                          </td>
+                          <td>{{ $PurchaseLine->qty }}</td>
+                          <td>{{ $PurchaseLine->receipt_qty }}</td>
+                          <td>{{ $PurchaseLine->invoiced_qty }}</td>
+                          <td>{{ $PurchaseLine->selling_price }} {{ $Factory->curency }}</td>
+                          <td>{{ $PurchaseLine->discount }} %</td>
+                          <td> 
+                              @if($PurchaseLine->accounting_vats_id)
+                              {{ $PurchaseLine->VAT['rate'] }} %
+                              @else
+                              -
+                              @endif
+                          </td>
+                        </tr>
+                      @endforeach
+                    @empty
+                    <x-EmptyDataLine col="11" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    @endforelse
+                <tfoot>
+                  <tr>
+                      <th>{{ __('general_content.order_trans_key') }}</th>
+                      <th>{{__('general_content.label_trans_key') }}</th>
+                      <th>{{__('general_content.task_trans_key') }}</th>
+                      <th>{{ __('general_content.product_trans_key') }}</th>
+                      <th>{{ __('general_content.qty_trans_key') }}</th>
+                      <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
+                      <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
+                      <th>{{ __('general_content.price_trans_key') }}</th>
+                      <th>{{ __('general_content.discount_trans_key') }}</th>
+                      <th>{{ __('general_content.vat_trans_key') }}</th>
+                  </tr>
+              </tfoot>
+          </table>
+        </div>
       </div>
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">

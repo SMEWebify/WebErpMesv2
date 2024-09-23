@@ -70,6 +70,13 @@ class OrderLines extends Model
         return $this->hasMany(Task::class, 'order_lines_id')->orderBy('ordre');
     }
 
+    public function getPurchaseLinesAttribute()
+    {
+        return $this->Task->flatMap(function ($task) {
+            return $task->purchaseLines;
+        });
+    }
+
     public function OrderLineDetails()
     {
         return $this->hasOne(OrderLineDetails::class, 'order_lines_id');

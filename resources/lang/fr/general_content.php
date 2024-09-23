@@ -283,6 +283,7 @@ return [
 
     'order_info_trans_key'                     => 'Information de commande',
     'order_line_trans_key'                     => 'Ligne de la commande',
+    'business_Review_trans_key'                => 'Bilan d\'affaire',
 
     'delivery_info_trans_key'                  => 'Bon de livraison info',
     'delivery_lines_trans_key'                 => 'Lignes du bon de livraison',
@@ -905,13 +906,13 @@ return [
     'section_info_trans_key'                   => 'La fonction Sections vous permet de définir toutes les sections composant votre entreprise, c\'est-à-dire les zones physiques où sont regroupés les postes de travail et les opérateurs en fonction de leur métier et de leur coût.',
 
     //ACCOUNTING
-    'accounting_trans_key'                      => 'Comptabilité',
+    'accounting_trans_key'                     => 'Comptabilité',
     'new_payment_methods_trans_key'            => 'Nouveau mode de paiement',
     'new_payment_conditions_trans_key'         => 'Nouvelle condition de paiement',
     'new_delevery_method_trans_key'            => 'Noueau mode de livraison',
     'new_vat_trans_key'                        => 'Nouvelle TVA',
-    'accounting_allocations_trans_key'          => 'Allocation comptable',
-    'new_accounting_allocations_trans_key'      => 'Nouvelle allocation comptable',
+    'accounting_allocations_trans_key'         => 'Allocation comptable',
+    'new_accounting_allocations_trans_key'     => 'Nouvelle allocation comptable',
 
     //TIME
     'times_setting_trans_key'                  => 'Réglage temps',  

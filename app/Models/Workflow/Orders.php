@@ -91,6 +91,15 @@ class Orders extends Model
         return $this->hasMany(OrderLines::class)->orderBy('ordre');
     }
 
+    public function getPurchaseLinesCountAttribute()
+    {
+        return $this->OrderLines->sum(function ($orderLine) {
+            return $orderLine->Task->sum(function ($task) {
+                return $task->purchaseLines->count();
+            });
+        });
+    }
+
     // Relationship with the files associated with the Quote
     public function files()
     {
