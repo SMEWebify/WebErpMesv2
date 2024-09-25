@@ -1,57 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
-            bootstrap="vendor/autoload.php"
-            colors="true"
-            processIsolation="false"
-            stopOnFailure="false"
-            backupGlobals="false"
-            backupStaticAttributes="false"
-            convertErrorsToExceptions="true"
-            convertNoticesToExceptions="true"
-            convertWarningsToExceptions="true"
-            forceCoversAnnotation="false"
-            mapTestClassNameToCoveredClassName="false"
-            printerClass="Nunomaduro\Collision\Adapters\Phpunit\Printer">
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./app</directory>
-        </include>
-        <report>
-            <clover outputFile="build/logs/clover.xml"/>
-            <html outputDirectory="build/coverage"/>
-        </report>
-    </coverage>
-
+<phpunit bootstrap="vendor/autoload.php">
     <testsuites>
-        <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
+        <testsuite name="Feature Tests">
+            <directory>./tests/Feature</directory>
         </testsuite>
-        <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
+        <testsuite name="Unit Tests">
+            <directory>./tests/Unit</directory>
         </testsuite>
     </testsuites>
-
-    <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="TELESCOPE_ENABLED" value="false"/>
-    </php>
-
-    <filter>
-        <whitelist processUncoveredFiles="true">
-            <directory suffix=".php">app</directory>
-        </whitelist>
-    </filter>
-
-    <listeners>
-        <listener class="Nunomaduro\Collision\Adapters\Phpunit\Listener"
-                    file="vendor/nunomaduro/collision/adapters/Phpunit/Listener.php"/>
-    </listeners>
 </phpunit>
