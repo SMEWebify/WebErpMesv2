@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => env('AUTH_DRIVER', 'web'),
         'passwords' => 'users',
     ],
 
@@ -40,7 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-
+        'ldap' => [
+            'driver' => 'session',
+            'provider' => 'ldap',
+        ],
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -70,7 +73,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
+        'ldap' => [
+            'driver' => 'ldap',
+            'model' => LdapRecord\Models\ActiveDirectory\User::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

@@ -28,28 +28,46 @@
             <div class="alert alert-danger">{{ session('message') }}</div>
         @endif
 
-        {{-- Email field --}}
+        {{-- Champ de connexion selon le driver --}}
         <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
-
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
+            @if(env('AUTH_DRIVER') === 'ldap')
+                <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
+                       value="{{ old('username') }}" placeholder="{{ __('adminlte::adminlte.username') }}" autofocus>
+                
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-user {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                    </div>
                 </div>
-            </div>
+                
+                @error('username')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
 
-            @error('email')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
+            @else
+                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                       value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
+                
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                    </div>
+                </div>
+                
+                @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            @endif
         </div>
 
         {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                    placeholder="{{ __('adminlte::adminlte.password') }}">
+                   placeholder="{{ __('adminlte::adminlte.password') }}">
 
             <div class="input-group-append">
                 <div class="input-group-text">
@@ -66,7 +84,7 @@
 
         {{-- Mode field --}}
         <div class="input-group mb-3">
-            <select  name="modeView" id="modeView" class="form-control" >
+            <select name="modeView" id="modeView" class="form-control">
                 <option value="desktop">Desktop</option>
                 <option value="workshop">Workshop (Beta)</option>
             </select>
@@ -91,13 +109,12 @@
             </div>
 
             <div class="col-5">
-                <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
+                <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
                     <span class="fas fa-sign-in-alt"></span>
                     {{ __('adminlte::adminlte.sign_in') }}
                 </button>
             </div>
         </div>
-
     </form>
 @stop
 

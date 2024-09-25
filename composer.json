@@ -18,6 +18,7 @@
         "php": "^8.1.0",
         "ext-zip": "*",
         "barryvdh/laravel-dompdf": "2.0.1",
+        "directorytree/ldaprecord-laravel": "^3.3",
         "doctrine/dbal": "^3.8",
         "dragonbe/vies": "^2.3",
         "fruitcake/php-cors": "^1.2",
