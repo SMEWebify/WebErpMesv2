@@ -103,10 +103,10 @@ class QualityNonConformity extends Model
         return $this->belongsTo(Task::class, 'task_id');
     }
 
-    // Relationship with the files associated with the Quote
+    // Relationship with the files associated with the non-conformity
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->morphToMany(File::class, 'fileable');
     }
 
     public function GetPrettyCreatedAttribute()

@@ -58,7 +58,7 @@ class Purchases extends Model
     // Relationship with the files associated with the Purchases
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->morphToMany(File::class, 'fileable');
     }
 
     // Relationship with the Rating associated with the Purchases

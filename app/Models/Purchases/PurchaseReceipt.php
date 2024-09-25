@@ -48,10 +48,10 @@ class PurchaseReceipt extends Model
         return $this->hasMany(PurchaseReceiptLines::class)->orderBy('ordre');
     }
 
-    // Relationship with the files associated with the Quote
+    // Relationship with the files associated with the PurchaseReceipt
     public function files()
     {
-        return $this->hasMany(File::class, 'purchase_receipts_id');
+        return $this->morphToMany(File::class, 'fileable');
     }
 
     public function GetshortCreatedAttribute()

@@ -88,7 +88,7 @@ class Quotes extends Model
     // Relationship with the files associated with the Quote
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->morphToMany(File::class, 'fileable');
     }
     
     // Relationship with the opportunities associated with the Quote

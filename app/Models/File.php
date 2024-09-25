@@ -19,79 +19,69 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class File extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'name',
         'original_file_name',
         'type',
         'size',
-        'companies_id',
-        'opportunities_id',
-        'quotes_id',
-        'orders_id',
-        'deliverys_id',
-        'invoices_id',
-        'products_id',
-        'purchases_id',
-        'purchase_receipts_id',
-        'quality_non_conformities_id',
-        'stock_move_id',
-        'as_photo'
+        'as_photo',
     ];
-    
 
-    public function companie()
+    public function companies()
     {
-        return $this->belongsTo(Companies::class, 'companies_id');
+        return $this->morphedByMany(Companies::class, 'fileable');
+    }
+
+    public function opportunities()
+    {
+        return $this->morphedByMany(Opportunities::class, 'fileable');
     }
 
     public function quotes()
     {
-        return $this->belongsTo(Quotes::class, 'quotes_id');
+        return $this->morphedByMany(Quotes::class, 'fileable');
     }
 
-    public function Opportunities()
+    public function orders()
     {
-        return $this->belongsTo(Opportunities::class, 'opportunities_id');
+        return $this->morphedByMany(Orders::class, 'fileable');
     }
 
-    public function order()
+    public function deliverys()
     {
-        return $this->belongsTo(Orders::class, 'orders_id');
+        return $this->morphedByMany(Deliverys::class, 'fileable');
     }
 
-    public function delivery()
+    public function invoices()
     {
-        return $this->belongsTo(Deliverys::class, 'deliverys_id');
+        return $this->morphedByMany(Invoices::class, 'fileable');
     }
 
-    public function invoice()
+    public function products()
     {
-        return $this->belongsTo(Invoices::class, 'invoices_id');
-    }
-
-    public function product()
-    {
-        return $this->belongsTo(Products::class, 'products_id');
+        return $this->morphedByMany(Products::class, 'fileable');
     }
 
     public function purchaseReceipt()
     {
-        return $this->belongsTo(PurchaseReceipt::class, 'purchase_receipts_id');
+        return $this->morphedByMany(PurchaseReceipt::class, 'fileable');
+    }
+
+    public function stockMove()
+    {
+        return $this->morphedByMany(StockMove::class, 'fileable');
     }
 
     public function qualityNonConformity()
     {
-        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformities_id');
+        return $this->morphedByMany(QualityNonConformity::class, 'fileable');
     }
-
+    
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'users_id');
-    }
-    public function StockMove()
-    {
-        return $this->belongsTo(StockMove::class, 'stock_move_id');
     }
 
     public function GetPrettySize()

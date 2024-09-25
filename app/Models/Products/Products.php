@@ -277,7 +277,7 @@ class Products extends Model
     // Relationship with the files associated with the Quote
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->morphToMany(File::class, 'fileable');
     }
 
     public function SubAssembly()

@@ -202,7 +202,7 @@
                 </table>
               </div>
             </x-adminlte-card>
-            @include('include.file-store', ['inputName' => "order_id",'inputValue' => $Order->id,'filesList' => $Order->files,])
+            @include('include.file-store', ['inputName' => "orders_id",'inputValue' => $Order->id,'filesList' => $Order->files,])
           </div>
         </div>
       </div>   

@@ -70,10 +70,10 @@ class CreditNotes extends Model
         return $creditNoteCalculator->getTotalPrice();
     }
     
-    // Relationship with the files associated with the delevery
+    // Relationship with the files associated with the CreditNotes
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->morphToMany(File::class, 'fileable');
     }
     
     public function GetshortCreatedAttribute()

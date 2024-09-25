@@ -90,7 +90,7 @@ class Orders extends Model
     {
         return $this->hasMany(OrderLines::class)->orderBy('ordre');
     }
-
+    
     public function getPurchaseLinesCountAttribute()
     {
         return $this->OrderLines->sum(function ($orderLine) {
@@ -100,10 +100,10 @@ class Orders extends Model
         });
     }
 
-    // Relationship with the files associated with the Quote
+    // Relationship with the files associated with the order
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->morphToMany(File::class, 'fileable');
     }
 
     public function GetshortCreatedAttribute()

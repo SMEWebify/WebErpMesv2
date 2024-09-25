@@ -69,7 +69,7 @@ class Opportunities extends Model
     // Relationship with the files associated with the Opportunities
     public function files()
     {
-        return $this->hasMany(File::class);
+        return $this->morphToMany(File::class, 'fileable');
     }
 
     // Relationship with the quotes associated with the Opportunities
