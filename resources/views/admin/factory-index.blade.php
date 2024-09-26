@@ -75,6 +75,9 @@
                                         <span class="input-group-text"><i class="fas fa-globe-africa"></i></span>
                                     </div>
                                     <select id="country" name="country" class="form-control">
+                                        @if($Factory->country)
+                                        <option value="{{ $Factory->country }}">{{ $Factory->country }}</option>
+                                        @endif
                                         <option value="Afghanistan">Afghanistan</option>
                                         <option value="Åland Islands">Åland Islands</option>
                                         <option value="Albania">Albania</option>
@@ -487,7 +490,7 @@
                     <x-adminlte-card title="{{ __('general_content.picture_trans_key') }}" theme="warning" collapsible maximizable>
                         @if($Factory->picture)
                         <div class="row">
-                            <img src="{{ asset('/images/factory/'. $Factory->picture) }}" alt="Product Image">
+                            <img src="{{ asset('/images/factory/'. $Factory->picture) }}" style="width:100%;height: auto;" alt="Factory Image" >
                         </div>
                         @endif
                         <div class="row">
