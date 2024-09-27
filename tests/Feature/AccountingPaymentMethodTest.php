@@ -5,11 +5,11 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\Accounting\AccountingPaymentMethod;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AccountingPaymentMethodTest extends TestCase
 {
-    use RefreshDatabase; // Assure que chaque test est exécuté avec une base de données fraîche
+    use DatabaseTransactions;
 
     /**
      * Test the creation of AccountingPaymentMethod using the factory.

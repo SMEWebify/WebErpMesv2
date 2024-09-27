@@ -220,106 +220,150 @@ class OrderLine extends Component
         $this->updateLines = true;
     }
 
-    public function duplicateLine($id){
-        $Orderline = Orderlines::findOrFail($id);
-        $newOrderline = $Orderline->replicate();
-        $newOrderline->ordre = $Orderline->ordre+1;
-        $newOrderline->code = $Orderline->code ."#duplicate". $Orderline->id;
-        $newOrderline->label = $Orderline->label ."#duplicate". $Orderline->id;
-        $newOrderline->save();
-
-        $OrderLineDetails = OrderLineDetails::where('order_lines_id', $id)->first();
-        $newOrderLineDetails = $OrderLineDetails->replicate();
-        $newOrderLineDetails->order_lines_id = $newOrderline->id;
+    public function duplicateLine($id)
+    {
+        // Duplicate the order line
+        $newOrderline = $this->duplicateOrderLine($id);
+    
+        // Duplicate the order line details
+        $this->duplicateOrderLineDetails($id, $newOrderline->id);
+    
+        // Duplicate the tasks
+        $this->duplicateTasks($id, $newOrderline->id);
+    
+        // Duplicate the sub-assemblies
+        $this->duplicateSubAssemblies($id, $newOrderline->id);
+    }
+    
+    private function duplicateOrderLine($id)
+    {
+        $orderLine = Orderlines::findOrFail($id);
+        $newOrderLine = $orderLine->replicate();
+        $newOrderLine->ordre = $orderLine->ordre + 1;
+        $newOrderLine->code = $orderLine->code . "#duplicate" . $orderLine->id;
+        $newOrderLine->label = $orderLine->label . "#duplicate" . $orderLine->id;
+        $newOrderLine->save();
+    
+        return $newOrderLine;
+    }
+    
+    private function duplicateOrderLineDetails($oldOrderLineId, $newOrderLineId)
+    {
+        $orderLineDetails = OrderLineDetails::where('order_lines_id', $oldOrderLineId)->first();
+        $newOrderLineDetails = $orderLineDetails->replicate();
+        $newOrderLineDetails->order_lines_id = $newOrderLineId;
         $newOrderLineDetails->save();
-
-        $Tasks = Task::where('order_lines_id', $id)->get();
-        foreach ($Tasks as $Task) 
-        {
-            $newTask = $Task->replicate();
-            $newTask->order_lines_id = $newOrderline->id;
+    }
+    
+    private function duplicateTasks($oldOrderLineId, $newOrderLineId)
+    {
+        $tasks = Task::where('order_lines_id', $oldOrderLineId)->get();
+        foreach ($tasks as $task) {
+            $newTask = $task->replicate();
+            $newTask->order_lines_id = $newOrderLineId;
             $newTask->save();
         }
-        
-        $SubAssemblyLine = SubAssembly::where('order_lines_id', $id)->get();
-        foreach ($SubAssemblyLine as $SubAssembly) 
-        {
-            $newSubAssembly = $SubAssembly->replicate();
-            $newSubAssembly->order_lines_id = $newOrderline->id;
+    }
+    
+    private function duplicateSubAssemblies($oldOrderLineId, $newOrderLineId)
+    {
+        $subAssemblies = SubAssembly::where('order_lines_id', $oldOrderLineId)->get();
+        foreach ($subAssemblies as $subAssembly) {
+            $newSubAssembly = $subAssembly->replicate();
+            $newSubAssembly->order_lines_id = $newOrderLineId;
             $newSubAssembly->save();
         }
     }
 
-    public function CreatProduct($id){
-
-        $ServiceComponent = MethodsServices::where('type', 8)->first();
-        if(!empty($ServiceComponent->id)){
-            
-            $FamilieComponent = MethodsFamilies::where('methods_services_id', $ServiceComponent->id)->first();
-
-            if(!empty($FamilieComponent->id)){
-                //get data to dulicate for new order
-                $OrderlineData = Orderlines::find($id);
-                $newProduct = Products::create([
-                    'code'=>$OrderlineData->code,
-                    'label'=>$OrderlineData->label,
-                    'methods_services_id'=> $ServiceComponent->id,
-                    'methods_families_id'=> $FamilieComponent->id,
-                    'purchased'=> 2,
-                    'purchased_price'=> 1,
-                    'sold'=> 1,
-                    'selling_price'=> $OrderlineData->selling_price,
-                    'methods_units_id'=>$OrderlineData->methods_units_id,
-                    'tracability_type'=>1,
-                    
-                ]);
-                //update info that order line as task
-                $OrderlineData->product_id = $newProduct->id;
-                $OrderlineData->save();
-
-                //add line detail
-                $OrderLineDetailData = OrderLineDetails::where('order_lines_id', $id)->first();
-                $newProductDetail = Products::findOrFail($newProduct->id);
-                $newProductDetail->material = $OrderLineDetailData->material;
-                $newProductDetail->thickness = $OrderLineDetailData->thickness;
-                $newProductDetail->finishing = $OrderLineDetailData->finishing;
-                $newProductDetail->weight = $OrderLineDetailData->weight;
-                $newProductDetail->x_size = $OrderLineDetailData->x_size;
-                $newProductDetail->y_size = $OrderLineDetailData->y_size;
-                $newProductDetail->z_size = $OrderLineDetailData->z_size;
-                $newProductDetail->x_oversize = $OrderLineDetailData->x_oversize;
-                $newProductDetail->y_oversize = $OrderLineDetailData->y_oversize;
-                $newProductDetail->z_oversize = $OrderLineDetailData->z_oversize;
-                $newProductDetail->diameter = $OrderLineDetailData->diameter;
-                $newProductDetail->diameter_oversize = $OrderLineDetailData->diameter_oversize;
-                $newProductDetail->save();
-
-                $Tasks = Task::where('order_lines_id', $id)->get();
-                foreach ($Tasks as $Task) 
-                {
-                    $newTask = $Task->replicate();
-                    $newTask->products_id = $newProduct->id;
-                    $newTask->order_lines_id = null;
-                    $newTask->save();
-                }
-                
-                $SubAssemblyLine = SubAssembly::where('order_lines_id', $id)->get();
-                foreach ($SubAssemblyLine as $SubAssembly) 
-                {
-                    $newSubAssembly = $SubAssembly->replicate();
-                    $newSubAssembly->products_id = $newProduct->id;
-                    $newSubAssembly->order_lines_id = null;
-                    $newSubAssembly->save();
-                }
-                
-                session()->flash('success','Product created Successfully');
+    public function createProduct($id)
+    {
+        $serviceComponent = MethodsServices::where('type', 8)->first();
+    
+        if ($serviceComponent) {
+            $familyComponent = MethodsFamilies::where('methods_services_id', $serviceComponent->id)->first();
+    
+            if ($familyComponent) {
+                // Get data to duplicate for new order
+                $orderLineData = Orderlines::findOrFail($id);
+                $newProduct = $this->createNewProduct($orderLineData, $serviceComponent->id, $familyComponent->id);
+    
+                // Update info that order line has task
+                $orderLineData->product_id = $newProduct->id;
+                $orderLineData->save();
+    
+                // Add line detail
+                $this->addProductDetails($newProduct->id, $id);
+    
+                // Duplicate tasks
+                $this->duplicateProductTasks($id, $newProduct->id);
+    
+                // Duplicate sub-assemblies
+                $this->duplicateProductSubAssemblies($id, $newProduct->id);
+    
+                session()->flash('success', 'Product created successfully');
+            } else {
+                session()->flash('error', 'No component family');
             }
-            else{
-                session()->flash('error','No component familly');
-            }
+        } else {
+            session()->flash('error', 'No component service');
         }
-        else{
-            session()->flash('error','No component service');
+    }
+    
+    private function createNewProduct($orderLineData, $serviceComponentId, $familyComponentId)
+    {
+        return Products::create([
+            'code' => $orderLineData->code,
+            'label' => $orderLineData->label,
+            'methods_services_id' => $serviceComponentId,
+            'methods_families_id' => $familyComponentId,
+            'purchased' => 2,
+            'purchased_price' => 1,
+            'sold' => 1,
+            'selling_price' => $orderLineData->selling_price,
+            'methods_units_id' => $orderLineData->methods_units_id,
+            'tracability_type' => 1,
+        ]);
+    }
+    
+    private function addProductDetails($newProductId, $orderLineId)
+    {
+        $orderLineDetailData = OrderLineDetails::where('order_lines_id', $orderLineId)->firstOrFail();
+        $newProductDetail = Products::findOrFail($newProductId);
+    
+        $newProductDetail->material = $orderLineDetailData->material;
+        $newProductDetail->thickness = $orderLineDetailData->thickness;
+        $newProductDetail->finishing = $orderLineDetailData->finishing;
+        $newProductDetail->weight = $orderLineDetailData->weight;
+        $newProductDetail->x_size = $orderLineDetailData->x_size;
+        $newProductDetail->y_size = $orderLineDetailData->y_size;
+        $newProductDetail->z_size = $orderLineDetailData->z_size;
+        $newProductDetail->x_oversize = $orderLineDetailData->x_oversize;
+        $newProductDetail->y_oversize = $orderLineDetailData->y_oversize;
+        $newProductDetail->z_oversize = $orderLineDetailData->z_oversize;
+        $newProductDetail->diameter = $orderLineDetailData->diameter;
+        $newProductDetail->diameter_oversize = $orderLineDetailData->diameter_oversize;
+        $newProductDetail->save();
+    }
+    
+    private function duplicateProductTasks($orderLineId, $newProductId)
+    {
+        $tasks = Task::where('order_lines_id', $orderLineId)->get();
+        foreach ($tasks as $task) {
+            $newTask = $task->replicate();
+            $newTask->products_id = $newProductId;
+            $newTask->order_lines_id = null;
+            $newTask->save();
+        }
+    }
+    
+    private function duplicateProductSubAssemblies($orderLineId, $newProductId)
+    {
+        $subAssemblies = SubAssembly::where('order_lines_id', $orderLineId)->get();
+        foreach ($subAssemblies as $subAssembly) {
+            $newSubAssembly = $subAssembly->replicate();
+            $newSubAssembly->products_id = $newProductId;
+            $newSubAssembly->order_lines_id = null;
+            $newSubAssembly->save();
         }
     }
 

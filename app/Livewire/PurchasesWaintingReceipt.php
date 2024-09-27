@@ -20,7 +20,7 @@ class PurchasesWaintingReceipt extends Component
     public $sortField = 'id'; // default sorting field
     public $sortAsc = true; // default sort direction
     
-    public $LastReceipt= '0';
+    public $LastReceipt= null;
     public $document_type = 'RC';
     public $deliveryNoteNumber;
 

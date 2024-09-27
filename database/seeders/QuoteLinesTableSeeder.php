@@ -16,7 +16,7 @@ class QuoteLinesTableSeeder extends Seeder
     public function run()
     {
         //
-        $QuoteLines = QuoteLines::factory()->count(5000)->create();
+        $QuoteLines = QuoteLines::factory()->count(2000)->create();
 
         foreach ($QuoteLines as $quoteLine) {
             QuoteLineDetails::factory()

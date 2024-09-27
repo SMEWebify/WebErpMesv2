@@ -23,7 +23,7 @@ class CompaniesLines extends Component
 
     public $Companies;
 
-    public $LastCompanie = '1';
+    public $LastCompanie = null;
 
     public $userSelect = [];
     public $code, $label;

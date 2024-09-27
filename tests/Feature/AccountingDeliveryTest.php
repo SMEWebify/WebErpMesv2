@@ -5,11 +5,11 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\Accounting\AccountingDelivery;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AccountingDeliveryTest extends TestCase
 {
-    use RefreshDatabase; // Cela s'assure que la base de données est réinitialisée pour chaque test
+    use DatabaseTransactions;
 
     public function testCreateAccountingDeliveryWithFactoryDefaults()
     {

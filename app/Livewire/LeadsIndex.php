@@ -4,12 +4,9 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
-use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Workflow\Leads;
 use App\Models\Companies\Companies;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Workflow\Opportunities;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 

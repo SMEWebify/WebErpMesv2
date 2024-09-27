@@ -14,6 +14,6 @@ class CreateTaskSeeder extends Seeder
     public function run()
     {
         // Créer 5000 tâches en utilisant la factory
-        Task::factory()->count(5000)->create();
+        Task::factory()->count(3000)->create();
     }
 }

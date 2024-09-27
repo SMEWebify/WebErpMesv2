@@ -94,6 +94,10 @@ class Products extends Model
     {
         $stocks = $this->Stock_location_product;
         $colorStatu = 'danger';
+        if ($stocks->isEmpty()) {
+            return $colorStatu;
+        }
+
         foreach ($stocks as $stock) {
             $currentStock = $stock->getCurrentStockMove();
             $minQty = $stock->mini_qty;

@@ -26,8 +26,8 @@ class PurchasesRequest extends Component
     public $sortField = 'tasks.id'; // default sorting field
     public $sortAsc = true; // default sort direction
     
-    public $LastPurchase = '0';
-    public $LastPurchaseQuotation = '0';
+    public $LastPurchase = null;
+    public $LastPurchaseQuotation = null;
     public $document_type = 'PU';
     public $document_type_label = 'PU';
 

@@ -74,7 +74,7 @@ return [
     'supplies_trans_key'                       => 'Fournitures',
     'supplied_trans_key'                       => 'Fourni',
     'sub_contracting_trans_key'                => 'Sous-traitance',
-    'composed_component_trans_key'             => 'Composant composé',
+    'composed_component_trans_key'             => 'Article composé',
     'unsed_trans_key'                          => 'Utilisé',
     'used_trans_key'                           => 'Non-utilisé',
     'mass_trans_key'                           => 'Masse',

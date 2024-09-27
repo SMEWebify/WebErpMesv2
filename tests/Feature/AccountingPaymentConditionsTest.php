@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Accounting\AccountingPaymentConditions;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AccountingPaymentConditionsTest extends TestCase
 {
-    use RefreshDatabase; // Assure que chaque test est exécuté avec une base de données fraîche
+    use DatabaseTransactions;
 
     /**
      * Test the creation of AccountingPaymentConditions using the factory.

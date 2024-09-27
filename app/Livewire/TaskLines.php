@@ -84,9 +84,9 @@ class TaskLines extends Component
             ->where(function ($query) {
                 $query->where(function ($query) {
                     $query->whereNotNull('sub_assembly_id')
-                          ->whereHas('SubAssembly', function ($query) {
-                              $query->whereNotNull('order_lines_id');
-                          });
+                            ->whereHas('SubAssembly', function ($query) {
+                                $query->whereNotNull('order_lines_id');
+                            });
                 })
                 ->orWhereNotNull('order_lines_id'); // Combine 'or' within the first 'where'
             })

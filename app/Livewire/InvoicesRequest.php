@@ -22,7 +22,7 @@ class InvoicesRequest extends Component
     public $sortField = 'id'; // default sorting field
     public $sortAsc = true; // default sort direction
     
-    public $LastDelivery = '1';
+    public $LastInvoice = null;
 
     public $DeliverysRequestsLineslist;
     public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
@@ -30,7 +30,6 @@ class InvoicesRequest extends Component
     public $CompanieSelect = [];
     public $data = [];
     public $qty = [];
-    public $LastInvoice;
     public $idCompanie = '';
     private $ordre = 10;
 
@@ -61,19 +60,14 @@ class InvoicesRequest extends Component
         $this->sortField = $field;
     }
 
-    public function mount() 
+    public function mount()
     {
         $this->user_id = Auth::id();
-        $this->LastInvoice =  Invoices::latest()->first();
-        if($this->LastInvoice == Null){
-            $this->code = "IN-0";
-            $this->label = "IN-0";
-        }
-        else{
-            $this->code = "IN-". $this->LastInvoice->id;
-            $this->label = "IN-". $this->LastInvoice->id;
-        }
-
+        $this->LastInvoice = Invoices::latest()->first();
+    
+        $invoiceId = $this->LastInvoice ? $this->LastInvoice->id : 0;
+        $this->code = "IN-" . $invoiceId;
+        $this->label = $this->code;
     }
 
     public function render()
@@ -118,72 +112,95 @@ class InvoicesRequest extends Component
         ]);
     }
 
-    public function storeInvoice(){
-        //check rules
-        $this->validate(); 
-        
-        //check if line exist
-        $i = 0;
-        foreach ($this->data as $key => $item) {
-            if(array_key_exists("deliveryLine_id",$this->data[$key])){
-                if($this->data[$key]['deliveryLine_id'] != false ){
-                    $i++;
-                }
-            }
-        }
+    public function storeInvoice()
+    {
+        // Validate the request
+        $this->validate();
 
-        if($i>0){
+        // Check if any delivery line exists
+        if ($this->hasDeliveryLines()) {
             // Create invoice
-            $InvoiceCreated = Invoices::create([
-                                                'uuid'=> Str::uuid(),
-                                                'code'=>$this->code,  
-                                                'label'=>$this->label, 
-                                                'companies_id'=>$this->companies_id,   
-                                                'companies_addresses_id'=>$this->companies_addresses_id,  
-                                                'companies_contacts_id'=>$this->companies_contacts_id,  
-                                                'user_id'=>$this->user_id, 
-                                                'due_date' => Carbon::now()->addDays(30),
-            ]);
+            $invoiceCreated = $this->createInvoice();
 
             // Create invoice note lines
-            foreach ($this->data as $key => $item) {
-                //check if add line to new delivery note is aviable
-                if(array_key_exists("deliveryLine_id",$this->data[$key])){
-                    if($this->data[$key]['deliveryLine_id'] != false ){
-                        //if not best to find request value, but we cant send hidden data with livewire
-                        //How pass order_line_id & qty delivered ?
-                        $DeliveryLine = DeliveryLines::find($key);
-                        // Create invoice line
-                        $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $this->ordre, $DeliveryLine->qty);
-                        
-                        $DeliveryLine->invoice_status = 4; 
-                        $DeliveryLine->save();
-                        
-                        event(new DeliveryLineUpdated($DeliveryLine->id));
+            $this->createInvoiceNoteLines($invoiceCreated);
 
-                        // update order line info
-                        $OrderLine = OrderLines::find($DeliveryLine->order_line_id);
-                        $OrderLine->invoiced_qty =  $OrderLine->invoiced_qty + $DeliveryLine->qty;
-                        $OrderLine->invoiced_remaining_qty = $OrderLine->invoiced_remaining_qty - $DeliveryLine->qty;
-                        //if we are invoiced all part
-                        if($OrderLine->invoiced_remaining_qty == 0){
-                            $OrderLine->invoice_status = 3;
-                        }
-                        else{
-                            $OrderLine->invoice_status = 2;
-                        }
-                        $OrderLine->save();
+            // Redirect to the newly created invoice
+            return redirect()->route('invoices.show', ['id' => $invoiceCreated->id])
+                            ->with('success', 'Successfully created new invoice');
+        } else {
+            return redirect()->route('invoices-request')->with('error', 'No lines selected');
+        }
+    }
 
-                        $this->ordre= $this->ordre+10;
-                    }
-                }  
+    private function hasDeliveryLines()
+    {
+        foreach ($this->data as $item) {
+            if (array_key_exists('deliveryLine_id', $item) && $item['deliveryLine_id'] !== false) {
+                return true;
             }
-                
-            // return view on new document
-            return redirect()->route('invoices.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new invoice');
         }
-        else{
-            return redirect()->route('invoices-request')->with('error', 'no lines selected');
+        return false;
+    }
+
+    private function createInvoice()
+    {
+        return Invoices::create([
+            'uuid' => Str::uuid(),
+            'code' => $this->code,
+            'label' => $this->label,
+            'companies_id' => $this->companies_id,
+            'companies_addresses_id' => $this->companies_addresses_id,
+            'companies_contacts_id' => $this->companies_contacts_id,
+            'user_id' => $this->user_id,
+            'due_date' => Carbon::now()->addDays(30),
+        ]);
+    }
+
+    private function createInvoiceNoteLines($invoiceCreated)
+    {
+        foreach ($this->data as $key => $item) {
+            if ($this->isDeliveryLineValid($item)) {
+                $deliveryLine = DeliveryLines::find($key);
+
+                // Create invoice line
+                $this->invoiceLineService->createInvoiceLine($invoiceCreated, $deliveryLine->order_line_id, $deliveryLine->id, $this->ordre, $deliveryLine->qty);
+
+                // Update delivery line status
+                $this->updateDeliveryLineStatus($deliveryLine);
+
+                // Update order line info
+                $this->updateOrderLineInfo($deliveryLine);
+
+                $this->ordre += 10;
+            }
         }
+    }
+
+    private function isDeliveryLineValid($item)
+    {
+        return array_key_exists('deliveryLine_id', $item) && $item['deliveryLine_id'] !== false;
+    }
+
+    private function updateDeliveryLineStatus($deliveryLine)
+    {
+        $deliveryLine->invoice_status = 4;
+        $deliveryLine->save();
+        event(new DeliveryLineUpdated($deliveryLine->id));
+    }
+
+    private function updateOrderLineInfo($deliveryLine)
+    {
+        $orderLine = OrderLines::find($deliveryLine->order_line_id);
+        $orderLine->invoiced_qty += $deliveryLine->qty;
+        $orderLine->invoiced_remaining_qty -= $deliveryLine->qty;
+
+        if ($orderLine->invoiced_remaining_qty == 0) {
+            $orderLine->invoice_status = 3;
+        } else {
+            $orderLine->invoice_status = 2;
+        }
+
+        $orderLine->save();
     }
 }

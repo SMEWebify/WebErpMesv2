@@ -13,7 +13,6 @@ use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
-use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
@@ -202,99 +201,145 @@ class QuoteLine extends Component
     }
 
     
-    public function duplicateLine($id){
-        $Quoteline = Quotelines::findOrFail($id);
-        $newQuoteline = $Quoteline->replicate();
-        $newQuoteline->ordre = $Quoteline->ordre+1;
-        $newQuoteline->code = $Quoteline->code ."#duplicate". $Quoteline->id;
-        $newQuoteline->label = $Quoteline->label ."#duplicate". $Quoteline->id;
-        $newQuoteline->save();
-
-        $QuotelineDetails = QuoteLineDetails::where('quote_lines_id', $id)->first();
-        $newQuotelineDetails = $QuotelineDetails->replicate();
-        $newQuotelineDetails->quote_lines_id = $newQuoteline->id;
-        $newQuotelineDetails->save();
-
-        $Tasks = Task::where('quote_lines_id', $id)->get();
-        foreach ($Tasks as $Task) 
-        {
-            $newTask = $Task->replicate();
-            $newTask->quote_lines_id = $newQuoteline->id;
+    public function duplicateLine($id)
+    {
+        // Duplicate the quote line
+        $newQuoteLine = $this->duplicateQuoteLine($id);
+    
+        // Duplicate the quote line details
+        $this->duplicateQuoteLineDetails($id, $newQuoteLine->id);
+    
+        // Duplicate the tasks
+        $this->duplicateTasks($id, $newQuoteLine->id);
+    
+        // Duplicate the sub-assemblies
+        $this->duplicateSubAssemblies($id, $newQuoteLine->id);
+    }
+    
+    private function duplicateQuoteLine($id)
+    {
+        $quoteLine = Quotelines::findOrFail($id);
+        $newQuoteLine = $quoteLine->replicate();
+        $newQuoteLine->ordre = $quoteLine->ordre + 1;
+        $newQuoteLine->code = $quoteLine->code . "#duplicate" . $quoteLine->id;
+        $newQuoteLine->label = $quoteLine->label . "#duplicate" . $quoteLine->id;
+        $newQuoteLine->save();
+    
+        return $newQuoteLine;
+    }
+    
+    private function duplicateQuoteLineDetails($oldQuoteLineId, $newQuoteLineId)
+    {
+        $quoteLineDetails = QuoteLineDetails::where('quote_lines_id', $oldQuoteLineId)->first();
+        $newQuoteLineDetails = $quoteLineDetails->replicate();
+        $newQuoteLineDetails->quote_lines_id = $newQuoteLineId;
+        $newQuoteLineDetails->save();
+    }
+    
+    private function duplicateTasks($oldQuoteLineId, $newQuoteLineId)
+    {
+        $tasks = Task::where('quote_lines_id', $oldQuoteLineId)->get();
+        foreach ($tasks as $task) {
+            $newTask = $task->replicate();
+            $newTask->quote_lines_id = $newQuoteLineId;
             $newTask->save();
         }
-        $SubAssemblyLine = SubAssembly::where('quote_lines_id', $id)->get();
-        foreach ($SubAssemblyLine as $SubAssembly) 
-        {
-            $newSubAssembly = $SubAssembly->replicate();
-            $newSubAssembly->quote_lines_id = $newQuoteline->id;
+    }
+    
+    private function duplicateSubAssemblies($oldQuoteLineId, $newQuoteLineId)
+    {
+        $subAssemblies = SubAssembly::where('quote_lines_id', $oldQuoteLineId)->get();
+        foreach ($subAssemblies as $subAssembly) {
+            $newSubAssembly = $subAssembly->replicate();
+            $newSubAssembly->quote_lines_id = $newQuoteLineId;
             $newSubAssembly->save();
         }
     }
     
-    public function CreatProduct($id){
-
-        $ServiceComponent = MethodsServices::where('type', 8)->first();
-        $FamilieComponent = MethodsFamilies::where('methods_services_id', $ServiceComponent->id)->first();
-
-        if(!empty($ServiceComponent->id) && !empty($FamilieComponent->id)){
-            //get data to dulicate for new order
-            $QuoteLineData = Quotelines::find($id);
-            $newProduct = Products::create([
-                'code'=>$QuoteLineData->code,
-                'label'=>$QuoteLineData->label,
-                'methods_services_id'=> $ServiceComponent->id,
-                'methods_families_id'=> $FamilieComponent->id,
-                'purchased'=> 2,
-                'purchased_price'=> 1,
-                'sold'=> 1,
-                'selling_price'=> $QuoteLineData->selling_price,
-                'methods_units_id'=>$QuoteLineData->methods_units_id,
-                'tracability_type'=>1,
-                
-            ]);
-            //update info that order line as task
-            $QuoteLineData->product_id = $newProduct->id;
-            $QuoteLineData->save();
-
-            //add line detail
-            $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $id)->first();
-            $newProductDetail = Products::findOrFail($newProduct->id);
-            $newProductDetail->material = $QuoteLineDetailData->material;
-            $newProductDetail->thickness = $QuoteLineDetailData->thickness;
-            $newProductDetail->finishing = $QuoteLineDetailData->finishing;
-            $newProductDetail->weight = $QuoteLineDetailData->weight;
-            $newProductDetail->x_size = $QuoteLineDetailData->x_size;
-            $newProductDetail->y_size = $QuoteLineDetailData->y_size;
-            $newProductDetail->z_size = $QuoteLineDetailData->z_size;
-            $newProductDetail->x_oversize = $QuoteLineDetailData->x_oversize;
-            $newProductDetail->y_oversize = $QuoteLineDetailData->y_oversize;
-            $newProductDetail->z_oversize = $QuoteLineDetailData->z_oversize;
-            $newProductDetail->diameter = $QuoteLineDetailData->diameter;
-            $newProductDetail->diameter_oversize = $QuoteLineDetailData->diameter_oversize;
-            $newProductDetail->save();
-
-            $Tasks = Task::where('quote_lines_id', $id)->get();
-            foreach ($Tasks as $Task) 
-            {
-                $newTask = $Task->replicate();
-                $newTask->products_id = $newProduct->id;
-                $newTask->quote_lines_id = null;
-                $newTask->save();
-            }
-            
-            $SubAssemblyLine = SubAssembly::where('quote_lines_id', $id)->get();
-            foreach ($SubAssemblyLine as $SubAssembly) 
-            {
-                $newSubAssembly = $SubAssembly->replicate();
-                $newSubAssembly->products_id = $newProduct->id;
-                $newSubAssembly->quote_lines_id = null;
-                $newSubAssembly->save();
-            }
-            
-            session()->flash('success','Product created Successfully');
+    public function createProduct($id)
+    {
+        $serviceComponent = MethodsServices::where('type', 8)->first();
+        $familyComponent = MethodsFamilies::where('methods_services_id', $serviceComponent->id)->first();
+    
+        if ($serviceComponent && $familyComponent) {
+            // Get data to duplicate for new order
+            $quoteLineData = Quotelines::findOrFail($id);
+            $newProduct = $this->createNewProduct($quoteLineData, $serviceComponent->id, $familyComponent->id);
+    
+            // Update info that order line has task
+            $quoteLineData->product_id = $newProduct->id;
+            $quoteLineData->save();
+    
+            // Add line detail
+            $this->addProductDetails($newProduct->id, $id);
+    
+            // Duplicate tasks
+            $this->duplicateProductTasks($id, $newProduct->id);
+    
+            // Duplicate sub-assemblies
+            $this->duplicateProductSubAssemblies($id, $newProduct->id);
+    
+            session()->flash('success', 'Product created successfully');
+        } else {
+            session()->flash('error', 'No component service or family');
         }
-        else{
-            session()->flash('error','No component service or family');
+    }
+    
+    private function createNewProduct($quoteLineData, $serviceComponentId, $familyComponentId)
+    {
+        return Products::create([
+            'code' => $quoteLineData->code,
+            'label' => $quoteLineData->label,
+            'methods_services_id' => $serviceComponentId,
+            'methods_families_id' => $familyComponentId,
+            'purchased' => 2,
+            'purchased_price' => 1,
+            'sold' => 1,
+            'selling_price' => $quoteLineData->selling_price,
+            'methods_units_id' => $quoteLineData->methods_units_id,
+            'tracability_type' => 1,
+        ]);
+    }
+    
+    private function addProductDetails($newProductId, $quoteLineId)
+    {
+        $quoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $quoteLineId)->firstOrFail();
+        $newProductDetail = Products::findOrFail($newProductId);
+    
+        $newProductDetail->material = $quoteLineDetailData->material;
+        $newProductDetail->thickness = $quoteLineDetailData->thickness;
+        $newProductDetail->finishing = $quoteLineDetailData->finishing;
+        $newProductDetail->weight = $quoteLineDetailData->weight;
+        $newProductDetail->x_size = $quoteLineDetailData->x_size;
+        $newProductDetail->y_size = $quoteLineDetailData->y_size;
+        $newProductDetail->z_size = $quoteLineDetailData->z_size;
+        $newProductDetail->x_oversize = $quoteLineDetailData->x_oversize;
+        $newProductDetail->y_oversize = $quoteLineDetailData->y_oversize;
+        $newProductDetail->z_oversize = $quoteLineDetailData->z_oversize;
+        $newProductDetail->diameter = $quoteLineDetailData->diameter;
+        $newProductDetail->diameter_oversize = $quoteLineDetailData->diameter_oversize;
+        $newProductDetail->save();
+    }
+    
+    private function duplicateProductTasks($quoteLineId, $newProductId)
+    {
+        $tasks = Task::where('quote_lines_id', $quoteLineId)->get();
+        foreach ($tasks as $task) {
+            $newTask = $task->replicate();
+            $newTask->products_id = $newProductId;
+            $newTask->quote_lines_id = null;
+            $newTask->save();
+        }
+    }
+    
+    private function duplicateProductSubAssemblies($quoteLineId, $newProductId)
+    {
+        $subAssemblies = SubAssembly::where('quote_lines_id', $quoteLineId)->get();
+        foreach ($subAssemblies as $subAssembly) {
+            $newSubAssembly = $subAssembly->replicate();
+            $newSubAssembly->products_id = $newProductId;
+            $newSubAssembly->quote_lines_id = null;
+            $newSubAssembly->save();
         }
     }
     

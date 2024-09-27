@@ -105,7 +105,6 @@ class UserProfile extends Component
                 'personnal_phone_number'=>$this->personnal_phone_number,
                 'born_date'=>$this->born_date,
                 'desc'=>$this->desc,
-                'personnal_phone_number'=>$this->personnal_phone_number,
                 'nationality'=> $this->nationality,
                 'gender'=> $this->gender,
                 'marital_status'=> $this->marital_status,

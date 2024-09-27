@@ -9,28 +9,29 @@ use App\Models\Purchases\PurchasesQuotation;
 class PurchasesQuotationIndex extends Component
 {
     use WithPagination;
+
     protected $paginationTheme = 'bootstrap';
 
     public $search = '';
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
 
-    public $code; 
-    public $label; 
+    public $code;
+    public $label;
     public $customer_reference;
-    public $companies_id; 
-    public $companies_contacts_id;   
-    public $companies_addresses_id; 
-    public $statu; 
-    public $user_id;   
+    public $companies_id;
+    public $companies_contacts_id;
+    public $companies_addresses_id;
+    public $statu;
+    public $user_id;
     public $comment;
 
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
-            $this->sortAsc = !$this->sortAsc; 
+            $this->sortAsc = !$this->sortAsc;
         } else {
-            $this->sortAsc = true; 
+            $this->sortAsc = true;
         }
         $this->sortField = $field;
     }
@@ -40,16 +41,25 @@ class PurchasesQuotationIndex extends Component
         $this->resetPage();
     }
 
-    public function mount() 
+    public function mount()
     {
-
+        // Initialization logic can be added here if needed
     }
 
     public function render()
     {
-        $PurchasesQuotation = PurchasesQuotation::withCount('PurchaseQuotationLines')->where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $purchasesQuotations = $this->getPurchasesQuotations();
+
         return view('livewire.purchases-quotation-index', [
-            'PurchasesQuotationList' => $PurchasesQuotation,
+            'PurchasesQuotationList' => $purchasesQuotations,
         ]);
+    }
+
+    private function getPurchasesQuotations()
+    {
+        return PurchasesQuotation::withCount('PurchaseQuotationLines')
+            ->where('label', 'like', '%' . $this->search . '%')
+            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+            ->paginate(15);
     }
 }

@@ -29,7 +29,7 @@ class QuotesIndex extends Component
     public $searchIdStatus = '';
     
     public $userSelect = [];
-    public $LastQuote = '1';
+    public $LastQuote = null;
 
     //Quote
     public $code; 
@@ -82,28 +82,30 @@ class QuotesIndex extends Component
         $this->resetPage();
     }
 
-    public function mount() 
+    public function mount()
     {
         $this->user_id = Auth::id();
         $this->userSelect = User::select('id', 'name')->get();
-        $this->LastQuote =  Quotes::orderBy('id', 'desc')->first();
-        
-        $accounting_payment_conditions = AccountingPaymentConditions::select('id')->where( 'default', 1)->first(); 
-        $accounting_payment_methods = AccountingPaymentMethod::select('id')->where( 'default', 1)->first(); 
-        $accounting_deliveries = AccountingDelivery::select('id')->where( 'default', 1)->first(); 
-
-        $this->accounting_payment_conditions_id = ($accounting_payment_conditions->id ?? 0); 
-        $this->accounting_payment_methods_id = ($accounting_payment_methods->id  ?? 0);  
-        $this->accounting_deliveries_id = ($accounting_deliveries->id  ?? 0); 
-
-        if($this->LastQuote == Null){
-            $this->code = "QT-0";
-            $this->label = "QT-0";
-        }
-        else{
-            $this->code = "QT-". $this->LastQuote->id;
-            $this->label = "QT-". $this->LastQuote->id;
-        }
+        $this->LastQuote = Quotes::orderBy('id', 'desc')->first();
+    
+        $this->accounting_payment_conditions_id = $this->getDefaultId(AccountingPaymentConditions::class);
+        $this->accounting_payment_methods_id = $this->getDefaultId(AccountingPaymentMethod::class);
+        $this->accounting_deliveries_id = $this->getDefaultId(AccountingDelivery::class);
+    
+        $this->setQuoteCodeAndLabel();
+    }
+    
+    private function getDefaultId($model)
+    {
+        $record = $model::select('id')->where('default', 1)->first();
+        return $record->id ?? 0;
+    }
+    
+    private function setQuoteCodeAndLabel()
+    {
+        $quoteId = $this->LastQuote ? $this->LastQuote->id : 0;
+        $this->code = "QT-{$quoteId}";
+        $this->label = "QT-{$quoteId}";
     }
 
     public function render()

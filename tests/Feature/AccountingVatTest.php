@@ -5,11 +5,11 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\Accounting\AccountingVat;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class AccountingVatTest extends TestCase
 {
-    use RefreshDatabase; // Assure que chaque test est exécuté avec une base de données fraîche
+    use DatabaseTransactions;
 
     /**
      * Test the creation of AccountingVat using the factory.

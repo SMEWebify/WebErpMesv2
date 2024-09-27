@@ -322,8 +322,13 @@
                                     @endif
                                 @endif
                             </td>
-                            <td class="bg-{{ $BOMline->Component->getColorStockStatu() }} color-palette">{{ $BOMline->Component['code'] }}</td> 
-                            <td><x-ButtonTextView route="{{ route('products.show', ['id' => $BOMline->component_id])}}" /></td>
+                            @if($BOMline->Component)
+                                <td class="bg-{{ $BOMline->Component->getColorStockStatu() }} color-palette">{{ $BOMline->Component['code'] }}</td> 
+                                <td><x-ButtonTextView route="{{ route('products.show', ['id' => $BOMline->component_id])}}" /></td>
+                            @else
+                                <td><span>N/A</span></td>
+                                <td></td>
+                            @endif
                             <td>{{ $BOMline->qty }}</td>
                             <td>{{ $BOMline->unit_cost }} {{ $Factory->curency }}</td>
                             <td>{{ $BOMline->Margin() }} %</td>
