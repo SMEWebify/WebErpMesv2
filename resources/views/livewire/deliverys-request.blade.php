@@ -156,7 +156,12 @@
                         </td>
                         <td>{{ $DeliverysRequestsLine->delivered_remaining_qty }}</td>
                         <td>
-                            <input class="form-control" wire:model.live="data.{{ $DeliverysRequestsLine->id }}.scumQty" placeholder="{{ __('general_content.qty_trans_key') }}" type="number">
+                            <input class="form-control" 
+                            wire:model.live="data.{{ $DeliverysRequestsLine->id }}.scumQty" 
+                            id="data.{{ $DeliverysRequestsLine->id }}.scumQty"
+                            name="data.{{ $DeliverysRequestsLine->id }}.scumQty" 
+                            placeholder="{{ __('general_content.qty_trans_key') }}" 
+                            type="number">
                         </td>
                         <td>{{ $DeliverysRequestsLine->Unit['label'] }}</td>
                         <td>{{ $DeliverysRequestsLine->selling_price }}</td>
@@ -165,8 +170,14 @@
                         <td>{{ $DeliverysRequestsLine->delivery_date }}</td>
                         <td>
                             <div class="custom-control custom-checkbox">
-                                <input class="custom-control-input" value="{{ $DeliverysRequestsLine->id }}" wire:model.live="data.{{ $DeliverysRequestsLine->id }}.order_line_id" id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  type="checkbox">
-                                <label for="data.{{ $DeliverysRequestsLine->id }}.order_line_id" class="custom-control-label">Add to new delivery note</label>
+                                <input class="custom-control-input" 
+                                        value="{{ $DeliverysRequestsLine->id }}" 
+                                        wire:model.live="data.{{ $DeliverysRequestsLine->id }}.order_line_id" 
+                                        name="data.{{ $DeliverysRequestsLine->id }}.order_line_id" 
+                                        id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  
+                                        type="checkbox">
+                                <label for="data.{{ $DeliverysRequestsLine->id }}.order_line_id" 
+                                        class="custom-control-label">Add to new delivery note</label>
                             </div>
                         </td>
                     </tr>
