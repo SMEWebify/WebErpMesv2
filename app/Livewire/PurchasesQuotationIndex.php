@@ -58,8 +58,8 @@ class PurchasesQuotationIndex extends Component
     private function getPurchasesQuotations()
     {
         return PurchasesQuotation::withCount('PurchaseQuotationLines')
-            ->where('label', 'like', '%' . $this->search . '%')
-            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-            ->paginate(15);
+                                ->where('label', 'like', '%' . $this->search . '%')
+                                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                                ->paginate(15);
     }
 }

@@ -47,6 +47,11 @@ class PurchasesQuotation extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function PurchaseQuotationLines()
+    {
+        return $this->hasMany(PurchaseQuotationLines::class)->orderBy('ordre');
+    }
+
     public function GetshortCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));
