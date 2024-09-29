@@ -218,7 +218,7 @@
                 data-on-color="teal" checked/>
             </div>
             <div class="form-group">
-              <label for="capacity">Hour capacity by week</label>
+              <label for="capacity">{{__('general_content.hour_capacity_week_trans_key') }}</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-stopwatch"></i></span>

@@ -18,6 +18,7 @@
     <ul class="nav nav-pills">
       <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }} ({{ count($Quote->QuoteLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Construction" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }} <span class="badge badge-danger right">Beta</span></a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
       @if(count($CustomFields)> 0)
@@ -174,6 +175,170 @@
       </div>   
       <div class="tab-pane " id="Lines">
         @livewire('quote-line', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu, 'QuoteDelay' => $Quote->validity_date])
+      </div>
+      <div class="tab-pane " id="Construction">
+        <form action="{{ route('quotes.project.estimates', ['id' => $Quote->id]) }}" method="POST" enctype="multipart/form-data">
+          @csrf
+      
+          {{-- Exigences du client --}}
+          <div class="form-group">
+              <label for="client_requirements">{{ __('general_content.client_requirement_trans_key') }}</label>
+              <textarea class="form-control" name="client_requirements" id="client_requirements" placeholder="{{ __('general_content.client_requirement_trans_key') }}">{{ old('client_requirements', $projectEstimate->client_requirements ?? '') }}</textarea>
+          </div>
+      
+          {{-- Afficher Exigences du client sur le PDF --}}
+          <div class="form-group">
+              <label for="show_client_requirements_on_pdf">{{ __('general_content.show_client_requirements_on_pdf_trans_key') }}</label>
+              
+              @if(isset($projectEstimate) && $projectEstimate->show_client_requirements_on_pdf == 1)
+                  <x-adminlte-input-switch id="show_client_requirements_on_pdf" name="show_client_requirements_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+              @else
+                  <x-adminlte-input-switch id="show_client_requirements_on_pdf" name="show_client_requirements_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"/>
+              @endif
+          </div>
+      
+          {{-- Plan de mise en page --}}
+          <div class="form-group">
+              <label for="layout_plan">{{ __('general_content.layout_plan_trans_key') }}</label>
+              <textarea class="form-control" name="layout_plan" id="layout_plan" placeholder="{{ __('general_content.layout_plan_trans_key') }}">{{ old('layout_plan', $projectEstimate->layout_plan ?? '') }}</textarea>
+          </div>
+      
+          {{-- Afficher Plan de mise en page sur le PDF --}}
+          <div class="form-group">
+              <label for="show_layout_on_pdf">{{ __('general_content.show_layout_on_pdf_trans_key') }}</label>
+              @if(isset($projectEstimate) && $projectEstimate->show_layout_on_pdf == 1)
+                  <x-adminlte-input-switch id="show_layout_on_pdf" name="show_layout_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+              @else
+                  <x-adminlte-input-switch id="show_layout_on_pdf" name="show_layout_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"/>
+              @endif
+          </div>
+      
+          {{-- Matériaux et Finitions --}}
+          <div class="form-group">
+              <label for="materials_finishes">{{ __('general_content.materials_finishes_trans_key') }}</label>
+              <textarea class="form-control" name="materials_finishes" id="materials_finishes" placeholder="{{ __('general_content.materials_finishes_trans_key') }}">{{ old('materials_finishes', $projectEstimate->materials_finishes ?? '') }}</textarea>
+          </div>
+      
+          {{-- Afficher Matériaux et Finitions sur le PDF --}}
+          <div class="form-group">
+              <label for="show_materials_on_pdf">{{ __('general_content.show_materials_on_pdf_trans_key') }}</label>
+              @if(isset($projectEstimate) && $projectEstimate->show_materials_on_pdf == 1)
+                  <x-adminlte-input-switch id="show_materials_on_pdf" name="show_materials_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+              @else
+                  <x-adminlte-input-switch id="show_materials_on_pdf" name="show_materials_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"/>
+              @endif
+          </div>
+      
+          {{-- Logistique --}}
+          <div class="form-group">
+              <label for="logistics">{{ __('general_content.logistics_trans_key') }}</label>
+              <textarea class="form-control" name="logistics" id="logistics" placeholder="{{ __('general_content.logistics_trans_key') }}">{{ old('logistics', $projectEstimate->logistics ?? '') }}</textarea>
+          </div>
+      
+          {{-- Coût de la logistique --}}
+          <div class="form-group">
+              <label for="logistics_cost">{{ __('general_content.logistics_cost_trans_key') }} ({{ $Factory->curency }})</label>
+              <input type="number" step="0.01" class="form-control" name="logistics_cost" id="logistics_cost" value="{{ old('logistics_cost', $projectEstimate->logistics_cost ?? '') }}">
+          </div>
+      
+          {{-- Afficher Logistique sur le PDF --}}
+          <div class="form-group">
+              <label for="show_logistics_on_pdf">{{ __('general_content.show_logistics_on_pdf_trans_key') }}</label>
+              @if(isset($projectEstimate) && $projectEstimate->show_logistics_on_pdf == 1)
+                  <x-adminlte-input-switch id="show_logistics_on_pdf" name="show_logistics_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+              @else
+                  <x-adminlte-input-switch id="show_logistics_on_pdf" name="show_logistics_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"/>
+              @endif
+          </div>
+      
+          {{-- Coordination avec les entrepreneurs --}}
+          <div class="form-group">
+              <label for="coordination_with_contractors">{{ __('general_content.coordination_with_contractors_trans_key') }}</label>
+              <textarea class="form-control" name="coordination_with_contractors" id="coordination_with_contractors" placeholder="{{ __('general_content.coordination_with_contractors_trans_key') }}">{{ old('coordination_with_contractors_trans_key', $projectEstimate->coordination_with_contractors ?? '') }}</textarea>
+          </div>
+      
+          {{-- Coût des entrepreneurs --}}
+          <div class="form-group">
+              <label for="contractors_cost">{{ __('general_content.contractors_cost_trans_key') }} ({{ $Factory->curency }})</label>
+              <input type="number" step="0.01" class="form-control" name="contractors_cost" id="contractors_cost" value="{{ old('contractors_cost', $projectEstimate->contractors_cost ?? '') }}">
+          </div>
+      
+          {{-- Afficher Entrepreneurs sur le PDF --}}
+          <div class="form-group">
+              <label for="show_contractors_on_pdf">{{ __('general_content.show_contractors_on_pdf_trans_key') }}</label>
+              @if(isset($projectEstimate) && $projectEstimate->show_contractors_on_pdf == 1)
+                  <x-adminlte-input-switch id="show_contractors_on_pdf" name="show_contractors_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+              @else
+                  <x-adminlte-input-switch id="show_contractors_on_pdf" name="show_contractors_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"/>
+              @endif
+          </div>
+      
+          {{-- Gestion des Déchets --}}
+          <div class="form-group">
+              <label for="waste_management">{{ __('general_content.waste_management_trans_key') }}</label>
+              <textarea class="form-control" name="waste_management" id="waste_management" placeholder="{{ __('general_content.waste_management_trans_key') }}">{{ old('waste_management', $projectEstimate->waste_management ?? '') }}</textarea>
+          </div>
+      
+          {{-- Coût de la gestion des déchets --}}
+          <div class="form-group">
+              <label for="waste_management_cost">{{ __('general_content.waste_management_cost_trans_key') }} ({{ $Factory->curency }})</label>
+              <input type="number" step="0.01" class="form-control" name="waste_management_cost" id="waste_management_cost" value="{{ old('waste_management_cost', $projectEstimate->waste_management_cost ?? '') }}">
+          </div>
+      
+          {{-- Afficher Gestion des Déchets sur le PDF --}}
+          <div class="form-group">
+              <label for="show_waste_on_pdf">{{ __('general_content.show_waste_on_pdf_trans_key') }}</label>
+              @if(isset($projectEstimate) && $projectEstimate->show_waste_on_pdf == 1)
+                  <x-adminlte-input-switch id="show_waste_on_pdf" name="show_waste_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+              @else
+                  <x-adminlte-input-switch id="show_waste_on_pdf" name="show_waste_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"/>
+              @endif
+          </div>
+      
+          {{-- Taxes et Frais Additionnels --}}
+          <div class="form-group">
+              <label for="taxes_and_fees">{{ __('general_content.taxes_and_fees_trans_key') }}</label>
+              <textarea class="form-control" name="taxes_and_fees" id="taxes_and_fees" placeholder="{{ __('general_content.taxes_and_fees_trans_key') }}">{{ old('taxes_and_fees', $projectEstimate->taxes_and_fees ?? '') }}</textarea>
+          </div>
+      
+          {{-- Coût des taxes --}}
+          <div class="form-group">
+              <label for="taxes_cost">{{ __('general_content.taxes_cost_trans_key') }} ({{ $Factory->curency }})</label>
+              <input type="number" step="0.01" class="form-control" name="taxes_cost" id="taxes_cost" value="{{ old('taxes_cost', $projectEstimate->taxes_cost ?? '') }}">
+          </div>
+      
+          {{-- Afficher Taxes sur le PDF --}}
+          <div class="form-group">
+              <label for="show_taxes_on_pdf">{{ __('general_content.show_taxes_on_pdf_trans_key') }}</label>
+              @if(isset($projectEstimate) && $projectEstimate->show_taxes_on_pdf == 1)
+                  <x-adminlte-input-switch id="show_taxes_on_pdf" name="show_taxes_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
+              @else
+                  <x-adminlte-input-switch id="show_taxes_on_pdf" name="show_taxes_on_pdf" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal"/>
+              @endif
+          </div>
+      
+          {{-- Date de début des travaux --}}
+          <div class="form-group">
+              <label for="work_start_date">{{ __('general_content.work_start_date_trans_key') }}</label>
+              <input type="date" class="form-control" name="work_start_date" id="work_start_date" value="{{ old('work_start_date', $projectEstimate->work_start_date ?? '') }}">
+          </div>
+      
+          {{-- Date de fin des travaux --}}
+          <div class="form-group">
+              <label for="work_end_date">{{ __('general_content.work_end_date_trans_key') }}</label>
+              <input type="date" class="form-control" name="work_end_date" id="work_end_date" value="{{ old('work_end_date', $projectEstimate->work_end_date ?? '') }}">
+          </div>
+      
+          {{-- Marge de manœuvre (jours) --}}
+          <div class="form-group">
+              <label for="contingency_days">{{ __('general_content.contingency_days_trans_key') }}</label>
+              <input type="number" class="form-control" name="contingency_days" id="contingency_days" value="{{ old('contingency_days', $projectEstimate->contingency_days ?? '') }}">
+          </div>
+      
+          <button type="submit" class="btn btn-primary">{{ __('general_content.update_trans_key') }}</button>
+        </form>
+      
+      
       </div>
       <div class="tab-pane" id="Charts">
         <div class="row">
