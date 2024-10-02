@@ -20,7 +20,7 @@
                 @include('include.alert-result')
                 <form method="POST" action="{{ route('admin.factory.role.store') }}" enctype="multipart/form-data">
                     @csrf
-                    <x-adminlte-card title="{{ __('general_content.make_new_role_trans_key') }}" theme="primary" maximizable>
+                    <x-adminlte-card title="{{ __('general_content.make_new_role_trans_key') }}" theme="info" maximizable>
                         <div class="row">
                             <label for="label" >{{__('general_content.role_trans_key') }} :</label>
                             <div class="input-group">
@@ -124,7 +124,7 @@
                 @include('include.alert-result')
                 <form method="POST" action="{{ route('admin.factory.permissions.store') }}" enctype="multipart/form-data">
                     @csrf
-                    <x-adminlte-card title="{{ __('general_content.make_new_permissions_trans_key') }}" theme="primary" maximizable>
+                    <x-adminlte-card title="{{ __('general_content.make_new_permissions_trans_key') }}" theme="info" maximizable>
                         <div class="row">
                             <!-- /.form-group -->
                             <div class="form-group">
@@ -149,6 +149,7 @@
                                         <option value="methods-menu">methods-menu</option>
                                         <option value="accounting-menu">accounting-menu</option>
                                         <option value="human-resources-menu">human-resources-menu</option>
+                                        <option value="osh-menu">osh-menu</option>
                                         <option value="your-company-menu">your-company-menu</option>
                                     </select>
                                 </div>
@@ -202,7 +203,7 @@
                 <form method="POST" action="{{ route('admin.factory.rolepermissions.store') }}" enctype="multipart/form-data">
                     @csrf
                     
-                    <x-adminlte-card title="{{ __('general_content.add_role_permission_trans_key') }}" theme="primary" maximizable>
+                    <x-adminlte-card title="{{ __('general_content.add_role_permission_trans_key') }}" theme="info" maximizable>
                         <div class="row">
                             <!-- /.form-group -->
                             <div class="form-group">

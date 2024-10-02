@@ -143,6 +143,16 @@ return [
     'submitted_trans_key'                      => 'Submitted',
     'approved_trans_key'                       => 'Approved',
     'rejected_trans_key'                       => 'Rejected',
+    'low_trans_key'                            => 'Low',
+    'moderate_trans_key'                       => 'Moderate',
+    'high_trans_key'                           => 'High',
+    'rare_trans_key'                           => 'Rare',
+    'possible_trans_key'                       => 'Possible',
+    'probable_trans_key'                       => 'Probable',
+    'minor_trans_key'                          => 'Minor',
+    'major_trans_key'                          => 'Major',
+    'critical_trans_key'                       => 'Critical',
+    'expired_trans_key'                        => 'Expired',
     
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
@@ -953,6 +963,26 @@ return [
     'location_expense_trans_key'               => 'Location',
     'expense_categories_trans_key'             => 'Expense categories',
     'new_expense_categories_trans_key'         => 'New expense categories',
+    
+    //OSH
+    'osh_trans_key'                            => 'OSH',
+    'incidents_trans_key'                      => 'Incidents',
+    'risques_trans_key'                        => 'Risks',
+    'formations_trans_key'                     => 'Trainings',
+    'conformites_trans_key'                    => 'Conformities',
+    'osh_training_List_trans_key'              => 'Training List',
+    'type_of_training_trans_key'               => 'Type of Training',
+    'training_date_trans_key'                  => 'Training Date',
+    'expiration_date_trans_key'                => 'Expiration Date',
+    'certification_obtained_trans_key'         => 'Certification Obtained',
+    'new_training_trans_key'                   => 'New Training',
+    'new_risk_trans_key'                       => 'New Risk',
+    'new_conformity_trans_key'                 => 'New Conformity',
+    'new_incident_trans_key'                   => 'New Incident',
+    'severity_class_trans_key'                 => 'Severity',
+    'preventive_measures_class_trans_key'      => 'Preventive Measures',
+    'incident_date_class_trans_key'            => 'Incident Date',
+    'corrective_actions_class_trans_key'       => 'Corrective Actions',
     
     //USER
     'users_trans_key'                          => 'Users',

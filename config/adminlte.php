@@ -309,6 +309,7 @@ return [
             'text'        => 'dashboard_trans_key',
             'url'         => 'dashboard',
             'icon'        => 'fas fa-tachometer-alt',
+            'icon_color' => 'warning',
         ],
         [
             'text'    => 'companies_trans_key',
@@ -321,17 +322,20 @@ return [
             'text'        => 'leads_trans_key',
             'url'         => 'leads',
             'icon'        => 'fas fa-globe',
+            'icon_color' => 'primary',
             'can'         => ['leads-menu'],
         ],
         [
             'text'        => 'opportunities_trans_key',
             'url'         => 'opportunities',
             'icon'        => 'fa fa-tags',
+            'icon_color' => 'danger',
             'can'         => ['opportunities-menu'],
         ],
         [
             'text'    => 'quote_trans_key',
             'icon'    => 'fas fa-calculator',
+            'icon_color' => 'teal',
             'can'  => ['quotes-menu'],
             'submenu' => [
                 [
@@ -355,28 +359,30 @@ return [
                     'key'  => 'orders_lines_list',
                     'text' => 'orders_lines_list_trans_key',
                     'url'  => 'orders/lines',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'order_calendar_trans_key',
                     'url'  => 'production/calendar/orders',
-                    'icon_color' => 'warning',
+                    'icon_color' => 'info',
                 ],
             ]
         ],
         [
             'text'    => 'scheduling_trans_key',
             'icon' => 'fas fa-calendar-alt',
+            'icon_color' => 'info',
             'can'  => ['scheduling-menu'],
             'submenu' => [
                 [
                     'text' => 'load_planning_trans_key',
                     'url'  => 'production/load-planning',
-                    'icon_color' => 'success',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'tasks_list_trans_key',
                     'url'  => 'production/Task',
-                    'icon_color' => 'primary',
+                    'icon_color' => 'info',
                 ],
                 [
                     'text' => 'tasks_calendar_trans_key',
@@ -386,17 +392,17 @@ return [
                 [
                     'text' => 'tasks_statu_trans_key',
                     'url'  => 'production/Task/Statu',
-                    'icon_color' => 'primary',
+                    'icon_color' => 'danger',
                 ],
                 [
                     'text' => 'workflow_trans_key',
                     'url'  => 'production/kanban',
-                    'icon_color' => 'warning',
+                    'icon_color' => 'teal',
                 ],
                 [
                     'text' => 'gantt_trans_key',
                     'url'  => 'production/gantt',
-                    'icon_color' => 'info',
+                    'icon_color' => 'orange',
                     'label'       => 'Beta',
                     'label_color' => 'danger',
                 ],
@@ -407,7 +413,7 @@ return [
             'key'  => 'delivery_notes',
             'text'    => 'delivery_notes_trans_key',
             'icon'    => 'fas fa-receipt',
-            'icon_color' => 'purple',
+            'icon_color' => 'primary',
             'can'  => ['deliverys-menu'],
             'submenu' => [
                 [
@@ -426,15 +432,18 @@ return [
                 [
                     'text' => 'invoices_list_trans_key',
                     'url'  => 'invoices',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'export_invoices_lines_list_trans_key',
                     'url'  => 'invoices/export',
+                    'icon_color' => 'info',
                 ],
                 
                 [
                     'text' => 'credit_notes_trans_key',
                     'url'  => 'credit-notes',
+                    'icon_color' => 'primary',
                 ],
             ]
         ],
@@ -442,19 +451,23 @@ return [
         [
             'text'    => 'product_trans_key',
             'icon'    => 'fas fa-barcode',
+            'icon_color' => 'teal',
             'can'  => ['products-menu'],
             'submenu' => [
                 [
                     'text' => 'product_list_trans_key',
                     'url'  => 'products',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'serial_numbers_trans_key',
                     'url'  => 'products/serial-numbers',
+                    'icon_color' => 'info',
                 ],
                 [
                     'text' => 'stock_trans_key',
                     'url'  => 'products/Stock',
+                    'icon_color' => 'primary',
                 ],
                 /*[
                     'text' => 'inventory_trans_key',
@@ -465,7 +478,7 @@ return [
         [
             'text'    => 'purchase_trans_key',
             'icon'    => 'fas fa-cash-register',
-            'icon_color' => 'primary',
+            'icon_color' => 'orange',
             'can'  => ['purchases-menu'],
             'submenu' => [
                 [
@@ -503,22 +516,27 @@ return [
                 [
                     'text' => 'dashboard_trans_key',
                     'url'  => 'quality',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'action_trans_key',
                     'url'  => 'quality/action',
+                    'icon_color' => 'info',
                 ],
                 [
                     'text' => 'derogations_trans_key',
                     'url'  => 'quality/derogation',
+                    'icon_color' => 'primary',
                 ],
                 [
                     'text' => 'non_conformities_trans_key',
                     'url'  => 'quality/nonConformitie',
+                    'icon_color' => 'danger',
                 ],
                 [
                     'text' => 'amdec_trans_key',
                     'url'  => 'quality/amdec',
+                    'icon_color' => 'teal',
                 ],
             ],
         ],
@@ -538,26 +556,32 @@ return [
                 [
                     'text' => 'methods_services_trans_key',
                     'url'  => 'methods/service',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'methods_ressources_trans_key',
                     'url'  => 'methods/ressources',
+                    'icon_color' => 'info',
                 ],
                 [
                     'text' => 'methods_sections_trans_key',
                     'url'  => 'methods/section',
+                    'icon_color' => 'primary',
                 ],
                 [
                     'text' => 'methods_locations_trans_key',
                     'url'  => 'methods/location',
+                    'icon_color' => 'danger',
                 ],
                 [
                     'text' => 'methods_units_trans_key',
                     'url'  => 'methods/unit',
+                    'icon_color' => 'teal',
                 ],
                 [
                     'text' => 'methods_familys_trans_key',
                     'url'  => 'methods/family',
+                    'icon_color' => 'orange',
                 ],
                 [
                     'text' => 'methods_tools_trans_key',
@@ -566,6 +590,7 @@ return [
                 [
                     'text' => 'methods_standard_bom_trans_key',
                     'url'  => 'methods/standard-nomenclature',
+                    'icon_color' => 'purple',
                 ],
             ],
         ],
@@ -582,6 +607,33 @@ return [
             'can'  => ['human-resources-menu'],
         ],
         [
+            'text' => 'osh_trans_key',
+            'icon'    => 'fas fa-hard-hat',
+            'can'  => ['osh-menu'],
+            'submenu' => [
+                [
+                    'text' => 'incidents_trans_key',
+                    'url'  => 'osh/incidents',
+                    'icon_color' => 'warning',
+                ],
+                [
+                    'text' => 'risques_trans_key',
+                    'url'  => 'osh/risks',
+                    'icon_color' => 'info',
+                ],
+                [
+                    'text' => 'formations_trans_key',
+                    'url'  => 'osh/trainings',
+                    'icon_color' => 'primary',
+                ],
+                [
+                    'text' => 'conformites_trans_key',
+                    'url'  => 'osh/conformities',
+                    'icon_color' => 'success',
+                ],
+            ],
+        ],
+        [
             'text' => 'your_company_trans_key',
             'icon'    => 'fas fa-industry',
             'can'  => ['your-company-menu'],
@@ -589,18 +641,22 @@ return [
                 [
                     'text' => 'factory_settings_trans_key',
                     'url'  => 'admin/factory',
+                    'icon_color' => 'warning',
                 ],
                 [
                     'text' => 'roles_and_permissions_trans_key',
                     'url'  => 'admin/roles-permissions',
+                    'icon_color' => 'info',
                 ],
                 [
                     'text' => 'import_export_trans_key',
                     'url'  => 'admin/imports-exports',
+                    'icon_color' => 'primary',
                 ],
                 [
                     'text' => 'logs_view_trans_key',
                     'url'  => 'admin/logs-view',
+                    'icon_color' => 'success',
                 ],
             ],
         ],
@@ -609,16 +665,19 @@ return [
             'text' => 'licence_trans_key',
             'url'  => 'licence',
             'icon' => 'nav-icon fas fa-file-contract',
+            'icon_color' => 'info',
         ],
         [
             'text' => 'RGPD Policy',
             'url'  => 'rgpd-policy',
             'icon' => 'nav-icon fas fa-cloud',
+            'icon_color' => 'info',
         ],
         [
             'text' => 'release_note_trans_key',
             'url'  => 'https://github.com/SMEWebify/WebErpMesv2/releases',
             'icon' => 'nav-icon fas fa-file-contract',
+            'icon_color' => 'info',
         ],
     ],
 

@@ -14,7 +14,7 @@
   <x-InfocalloutComponent note="{{ __('general_content.family_info_trans_key') }}"  />
   <div class="row">
     <div class="col-md-6">
-      <x-adminlte-card title="{{ __('general_content.families_trans_key') }}" theme="primary" maximizable>
+      <x-adminlte-card title="{{ __('general_content.families_trans_key') }}" theme="orange" maximizable>
         <div class="table-responsive p-0">
           <table class="table table-hover">
             <thead>

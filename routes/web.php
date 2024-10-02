@@ -522,6 +522,32 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
+    Route::group(['prefix' => 'osh', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::group(['prefix' => 'conformities'], function () {
+            Route::get('/', 'App\Http\Controllers\OSH\ConformitiesController@index')->name('osh.conformities');
+            Route::post('/create', 'App\Http\Controllers\OSH\ConformitiesController@store')->name('osh.conformities.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\OSH\ConformitiesController@update')->name('osh.conformities.update');
+        });
+
+        Route::group(['prefix' => 'incidents'], function () {
+            Route::get('/', 'App\Http\Controllers\OSH\IncidentsController@index')->name('osh.incidents');
+            Route::post('/create', 'App\Http\Controllers\OSH\IncidentsController@store')->name('osh.incidents.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\OSH\IncidentsController@update')->name('osh.incidents.update');
+        });
+
+        Route::group(['prefix' => 'risks'], function () {
+            Route::get('/', 'App\Http\Controllers\OSH\RisksController@index')->name('osh.risks');
+            Route::post('/create', 'App\Http\Controllers\OSH\RisksController@store')->name('osh.risks.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\OSH\RisksController@update')->name('osh.risks.update');
+        });
+
+        Route::group(['prefix' => 'trainings'], function () {
+            Route::get('/', 'App\Http\Controllers\OSH\TrainingsController@index')->name('osh.training');
+            Route::post('/create', 'App\Http\Controllers\OSH\TrainingsController@store')->name('osh.training.create');
+            Route::post('/edit/{id}', 'App\Http\Controllers\OSH\TrainingsController@update')->name('osh.training.update');
+        });
+    });
+
     Route::group(['prefix' => 'notifications'], function () {
         Route::get('/get', 'App\Http\Controllers\NotificationsController@getNotificationsData')->middleware(['auth'])->name('notifications.get');
         Route::get('/show', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('notifications.show');

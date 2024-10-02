@@ -12,7 +12,7 @@
   @include('include.alert-result')
   <div class="row">
     <div class="col-md-6">
-      <x-adminlte-card title="{{ __('general_content.tools_trans_key') }}" theme="primary" maximizable>
+      <x-adminlte-card title="{{ __('general_content.tools_trans_key') }}" theme="gray" maximizable>
         <div class="table-responsive p-0">
           <table class="table table-hover">
             <thead>
