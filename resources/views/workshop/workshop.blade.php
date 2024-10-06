@@ -50,6 +50,17 @@
             </div>
         </div>
     </div>
+
+    <!-- ./col -->
+    <div class="row">
+        <div class="col-md-4 offset-md-2">
+            <x-adminlte-card title="{{ __('general_content.niko_niko_team_trans_key') }}" theme="lime"> 
+                @livewire('mood-tracker')
+            </x-adminlte-card>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
 </div>
 
 @stop

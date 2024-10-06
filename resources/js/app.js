@@ -1,25 +1,8 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+// Importez bootstrap.js pour charger les dépendances de Laravel
+import './bootstrap';
 
-require('./bootstrap');
-
-window.Vue = require('vue').default;
-
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
-Vue.component("kanban-board", require("./components/KanbanBoard.vue").default);
+import { createApp } from 'vue';
+import KanbanBoard from './components/KanbanBoard.vue';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -27,6 +10,10 @@ Vue.component("kanban-board", require("./components/KanbanBoard.vue").default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
-    el: '#card',
-});
+const app = createApp({});
+
+// Enregistrez le composant KanbanBoard globalement
+app.component('kanban-board', KanbanBoard);
+
+// Montez l'application sur l'élément avec l'ID #card
+app.mount('#card');

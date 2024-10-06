@@ -8,9 +8,9 @@
         </div>
         <div class="card-body p-3">
           <!-- Tasks -->
-          <draggable class="flex-1 overflow-hidden" v-model="status.tasks" v-bind="taskDragOptions" @end="handleTaskMoved">
-            <transition-group class="flex-1 flex flex-col h-full overflow-x-hidden overflow-y-auto rounded shadow-xs" tag="div">
-              <div v-for="task in status.tasks" :key="task.id" class="card mb-5 bg-light">
+          <draggable v-model="status.tasks" v-bind="taskDragOptions" @end="handleTaskMoved">
+            <template #item="{ element: task }">
+              <div class="card mb-5 bg-light">
                 <div class="card-body p-3">
                   <a :href="'/production/Task/Statu/Id/' + task.id">#{{ task.id }}</a> -
                   <span class="font-weight-bold">
@@ -30,7 +30,7 @@
                   </div>
                 </div>
               </div>
-            </transition-group>
+            </template>
           </draggable>
           <!-- No Tasks -->
           <div v-show="!status.tasks.length && newTaskForStatus !== status.id" class="flex-1 p-4 flex flex-col items-center justify-center">
@@ -46,6 +46,7 @@
 
 <script>
 import draggable from "vuedraggable";
+
 export default {
   components: { draggable },
   props: {

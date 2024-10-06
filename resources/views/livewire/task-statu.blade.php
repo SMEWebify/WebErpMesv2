@@ -464,11 +464,41 @@
               <hr>
               <div class="row">
                 <div class="col-12">
-                  <a href="#" class="dropdown-item " wire:click="createNC({{$Task->id}}, {{$Task->OrderLines->order->companies_id}}, {{$Task->methods_services_id}})" ><span class="text-warning"><i class="fa fa-light fa-fw  fa-exclamation"></i>{{ __('general_content.new_non_conformitie_trans_key') }}</span></a>
+                  <a href="#"  wire:click="createNC({{$Task->id}}, {{$Task->OrderLines->order->companies_id}}, {{$Task->methods_services_id}})" ><span class="text-warning"><i class="fa fa-light fa-fw  fa-exclamation"></i>{{ __('general_content.new_non_conformitie_trans_key') }}</span></a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <!-- Lien pour ouvrir le modal -->
+                  <a href="#"  data-toggle="modal" data-target="#andonAlertModal"><span class="text-danger"><i class="fa fa-light fa-fw  fa-exclamation"></i> Ajouter une alerte</a>
+
+                  <!-- Modal -->
+                  <x-adminlte-modal id="andonAlertModal" title="Ajouter une alerte Andon" theme="danger"
+                      icon="fas fa-bolt" size='lg' disable-animations>
+
+                    <form action="{{ route('workshop.andon.store')}}" method="POST">
+                      @csrf
+                      <div class="form-group">
+                        <label for="type">Type d'alerte</label>
+                        <input type="text" class="form-control" id="type" name="type" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="message">Description</label>
+                        <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+                      </div>
+                      
+                      <!-- Champs cachés pour task_id et resource_id -->
+                      <input type="hidden" id="task_id" name="task_id" value="{{$Task->id}}">
+                      <input type="hidden" id="resource_id" name="resource_id" value="1"> <!-- Remplacez la valeur par l'ID réel de la ressource -->
+
+                      <button type="submit" class="btn btn-primary">Ajouter l'alerte</button>
+                    </form>
+                  </x-adminlte-modal>
                 </div>
               </div>
             </div>
           </div>
+        </div>
       </x-adminlte-card>
 
       @if($StockLocationsProducts && ($Task->service->type != 1 || $Task->service->type != 7))

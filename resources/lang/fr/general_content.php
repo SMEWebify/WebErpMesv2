@@ -623,6 +623,7 @@ return [
     'remaining_invoice_month_trans_key'        => 'Total restant à facturer',
     'service_rate_trans_key'                   => 'Taux de service',
     'average_order_processing_time_trans_key'  => 'Temps moyen de traitement',
+    'order_processing_time_trans_key'          => 'Temps de traitement',
     'niko_niko_team_trans_key'                 => 'Niko Niko - Humeur de l\'équipe aujourd\'hui',
     'no_niko_niko_team_trans_key'              => 'Aucune humeur aujourd\'hui',
 

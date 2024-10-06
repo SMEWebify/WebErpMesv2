@@ -22,6 +22,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityControlDevice;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\Admin\UserEmploymentContracts;
+use App\Models\Planning\AndonAlerts;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -228,6 +229,11 @@ class User extends Authenticatable
     public function files()
     {
         return $this->hasMany(File::class);
+    }
+
+    public function andon()
+    {
+        return $this->hasMany(AndonAlerts::class);
     }
 
     public function userEmploymentContracts()

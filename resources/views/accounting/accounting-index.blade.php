@@ -17,7 +17,7 @@
       <li class="nav-item"><a class="nav-link active" href="#PaymentCondition" data-toggle="tab">{{ __('general_content.payment_conditions_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#PaymentChoice" data-toggle="tab">{{ __('general_content.payment_methods_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#VAT" data-toggle="tab">{{ __('general_content.vat_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#AccountingAllocations" data-toggle="tab"> Accounting allocations</a></li>
+      <li class="nav-item"><a class="nav-link" href="#AccountingAllocations" data-toggle="tab">{{ __('general_content.accounting_allocations_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Delevery" data-toggle="tab">{{ __('general_content.delevery_method_trans_key') }}</a></li>
     </ul>
   </div>

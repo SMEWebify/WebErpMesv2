@@ -16,16 +16,18 @@
         "axios": "^1.7.4",
         "bootstrap": "^5.3.3",
         "jquery": "^3.7.1",
+        "laravel-echo": "^1.16.1",
         "laravel-mix": "^6.0.49",
         "lodash": "^4.17.19",
         "popper.js": "^1.16.1",
         "postcss": "^8.4.35",
         "postcss-import": "^16.1.0",
+        "pusher-js": "^8.4.0-rc2",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.70.0",
         "sass-loader": "^11.0.1",
         "tailwindcss": "^2.2.19",
-        "vue": "^2.7.16",
+        "vue": "^3.5.11",
         "vue-loader": "^17.4.2",
         "vue-template-compiler": "^2.7.16"
     },
@@ -34,7 +36,8 @@
         "admin-lte": "^4.0.0-beta2",
         "cross-env": "^7.0.3",
         "flag-icon-css": "^4.1.7",
+        "socket.io-client": "^4.8.0",
         "three": "^0.157.0",
-        "vuedraggable": "^2.24.3"
+        "vuedraggable": "^4.1.0"
     }
 }
