@@ -34,23 +34,33 @@ class ImportLdapUsers extends Command
     {
         // Retrieve all LDAP users
         $ldapUsers = LdapUser::get();
-
+    
         foreach ($ldapUsers as $ldapUser) {
+            // Access the email and name attributes from the LDAP entry
+            $email = $ldapUser->getFirstAttribute('mail'); // 'mail' est l'attribut LDAP pour l'email
+            $firstName = $ldapUser->getFirstAttribute('givenName'); // 'givenName' est souvent l'attribut pour le prénom
+    
+            // Continue to the next user if email or name is missing
+            if (empty($email) || empty($firstName)) {
+                $this->warn("Skipped user due to missing email or name.");
+                continue;
+            }
+    
             // Check if the user already exists in the database
-            $user = User::where('email', $ldapUser->getEmail())->first();
-
+            $user = User::where('email', $email)->first();
+    
             if (!$user) {
                 // Create the user in Laravel if it does not exist
                 User::create([
-                    'name' => $ldapUser->getFirstName(),
-                    'email' => $ldapUser->getEmail(),
+                    'name' => $firstName,
+                    'email' => $email,
                     'password' => bcrypt('password'), // Generate a temporary password
                 ]);
-
-                $this->info("User {$ldapUser->getFirstName()} imported successfully.");
+    
+                $this->info("User {$firstName} imported successfully.");
             }
         }
-
+    
         $this->info('Import completed.');
     }
 }
