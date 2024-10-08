@@ -234,25 +234,16 @@ class OpportunitiesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\UpdateOpportunityRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateOpportunityRequest $request)
     {
         $opportunity = Opportunities::findOrFail($request->id);
+        $opportunity->update($request->validated());
 
-        $opportunity->update([
-            'label' => $request->label,
-            'companies_id' => $request->companies_id,
-            'companies_contacts_id' => $request->companies_contacts_id,
-            'companies_addresses_id' => $request->companies_addresses_id,
-            'budget' => $request->budget,
-            'probality' => $request->probality,
-            'comment' => $request->comment,
-        ]);
-        
-        return redirect()->route('opportunities.show', ['id' =>  $opportunity->id])
-                            ->with('success', 'Successfully updated opportunity');
+        return redirect()->route('opportunities.show', ['id' => $opportunity->id])
+                        ->with('success', 'Successfully updated opportunity');
     }
 
     /**
@@ -261,53 +252,46 @@ class OpportunitiesController extends Controller
      */
     public function storeQuote(Opportunities $id)
     {
-        $LastQuote =  Quotes::orderBy('id', 'desc')->first();
-        if($LastQuote == Null){
-            $code = "QT-0";
-            $label = "QT-0";
-        }
-        else{
-            $code = "QT-". $LastQuote->id;
-            $label = "QT-". $LastQuote->id;
-        }
+        $lastQuote = Quotes::latest('id')->first();
+        $quoteId = $lastQuote ? $lastQuote->id + 1 : 0;
+        $code = "QT-$quoteId";
+        $label = "QT-$quoteId";
 
-        $accounting_payment_conditions = AccountingPaymentConditions::getDefault(); 
-        $accounting_payment_methods = AccountingPaymentMethod::getDefault();  
-        $accounting_deliveries = AccountingDelivery::getDefault(); 
+        $defaultSettings = [
+            'payment_conditions' => AccountingPaymentConditions::getDefault(),
+            'payment_methods' => AccountingPaymentMethod::getDefault(),
+            'deliveries' => AccountingDelivery::getDefault()
+        ];
 
-        $accounting_payment_conditions = ($accounting_payment_conditions->id ?? 0); 
-        $accounting_payment_methods = ($accounting_payment_methods->id  ?? 0);  
-        $accounting_deliveries = ($accounting_deliveries->id  ?? 0);
-
-        if($accounting_payment_conditions == 0 || $accounting_payment_methods == 0 || $accounting_deliveries == 0){
-            return redirect()->route('opportunities.show', ['id' =>  $id->id])->with('error', 'No default settings');
+        foreach ($defaultSettings as $key => $setting) {
+            if (is_null($setting)) {
+                return redirect()->route('opportunities.show', ['id' => $id->id])
+                                ->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
+            }
         }
 
-        // Create Line
-        $QuotesCreated = Quotes::create([
-                                        'uuid'=> Str::uuid(),
-                                        'code'=>$code,  
-                                        'label'=>$label,  
-                                        'companies_id'=>$id->companies_id,  
-                                        'companies_contacts_id'=>$id->companies_contacts_id,    
-                                        'companies_addresses_id'=>$id->companies_addresses_id,    
-                                        'user_id'=>Auth::id(),     
-                                        'opportunities_id'=>$id->id, 
-                                        'accounting_payment_conditions_id'=>$accounting_payment_conditions,   
-                                        'accounting_payment_methods_id'=>$accounting_payment_methods,   
-                                        'accounting_deliveries_id'=>$accounting_deliveries,   
+        $quotesCreated = Quotes::create([
+            'uuid' => Str::uuid(),
+            'code' => $code,
+            'label' => $label,
+            'companies_id' => $id->companies_id,
+            'companies_contacts_id' => $id->companies_contacts_id,
+            'companies_addresses_id' => $id->companies_addresses_id,
+            'user_id' => Auth::id(),
+            'opportunities_id' => $id->id,
+            'accounting_payment_conditions_id' => $defaultSettings['payment_conditions']->id,
+            'accounting_payment_methods_id' => $defaultSettings['payment_methods']->id,
+            'accounting_deliveries_id' => $defaultSettings['deliveries']->id,
         ]);
 
-        // notification for all user in database
         $users = User::where('quotes_notification', 1)->get();
-        Notification::send($users, new QuoteNotification($QuotesCreated));
+        Notification::send($users, new QuoteNotification($quotesCreated));
 
-        //change opp statu
-        Opportunities::where('id', $id->id)->update(['statu'=>2]);
+        $id->update(['statu' => 2]);
 
-        // Trigger the event
-        event(new QuoteCreated($QuotesCreated));
-        return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
+        event(new QuoteCreated($quotesCreated));
+        return redirect()->route('quotes.show', ['id' => $quotesCreated->id])
+                        ->with('success', 'Successfully created new quote');
     }
 }
 

@@ -24,8 +24,16 @@ class UpdateQuoteRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'label'=>'required',
+            'label' => 'required|string|max:255',
+            'customer_reference' => 'nullable|string|max:255',
+            'companies_id' => 'required|exists:companies,id',
+            'companies_contacts_id' => 'required|exists:companies_contacts,id',
+            'companies_addresses_id' => 'required|exists:companies_addresses,id',
+            'validity_date' => 'nullable|date',
+            'accounting_payment_conditions_id' => 'required|exists:accounting_payment_conditions,id',
+            'accounting_payment_methods_id' => 'required|exists:accounting_payment_methods,id',
+            'accounting_deliveries_id' => 'required|exists:accounting_deliveries,id',
+            'comment' => 'nullable|string',
         ];
     }
 }

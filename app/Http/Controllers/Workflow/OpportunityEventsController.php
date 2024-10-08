@@ -10,29 +10,24 @@ use App\Http\Requests\Workflow\UpdateOpportunityEventRequest;
 class OpportunityEventsController extends Controller
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\StoreOpportunityEventRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreOpportunityEventRequest $request)
     {
-        $Event =  OpportunitiesEventsLogs::create($request->only('opportunities_id','label', 'type','start_date','end_date', 'comment'));
-        return redirect()->route('opportunities.show', ['id' =>  $Event->opportunities_id])->with('success', 'Successfully created event.');
+        $Event = OpportunitiesEventsLogs::create($request->validated());
+        return redirect()->route('opportunities.show', ['id' => $Event->opportunities_id])->with('success', 'Successfully created event.');
     }
 
     /**
-    * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\UpdateOpportunityEventRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateOpportunityEventRequest $request)
     {
-        $Event = OpportunitiesEventsLogs::find($request->id);
-        $Event->label=$request->label;
-        $Event->type=$request->type;
-        $Event->start_date=$request->start_date;
-        $Event->end_date=$request->end_date;
-        $Event->comment=$request->comment;
-        $Event->save();
+        $Event = OpportunitiesEventsLogs::findOrFail($request->id);
+        $Event->update($request->validated());
 
-        return redirect()->route('opportunities.show', ['id' =>  $Event->opportunities_id])->with('success', 'Successfully updated event.');
+        return redirect()->route('opportunities.show', ['id' => $Event->opportunities_id])->with('success', 'Successfully updated event.');
     }
 }

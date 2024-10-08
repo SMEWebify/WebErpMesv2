@@ -69,6 +69,11 @@ class OpportunitiesIndex extends Component
         $this->resetPage();
     }
 
+    public function mount()
+    {
+        $this->userSelect = User::select('id', 'name')->get();
+    }
+
     public function render()
     {
         if(is_numeric($this->idCompanie)){

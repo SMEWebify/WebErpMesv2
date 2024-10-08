@@ -91,25 +91,18 @@ class QuotesController extends Controller
     }
     
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateQuoteRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateQuoteRequest $request)
     {
-        $Quote = Quotes::findOrFail($request->id);
-        $Quote->label=$request->label;
-        $Quote->customer_reference=$request->customer_reference;
-        $Quote->companies_id=$request->companies_id;
-        $Quote->companies_contacts_id=$request->companies_contacts_id;
-        $Quote->companies_addresses_id=$request->companies_addresses_id;
-        $Quote->validity_date=$request->validity_date;
-        $Quote->accounting_payment_conditions_id=$request->accounting_payment_conditions_id;
-        $Quote->accounting_payment_methods_id=$request->accounting_payment_methods_id;
-        $Quote->accounting_deliveries_id=$request->accounting_deliveries_id;
-        $Quote->comment=$request->comment;
+        $validated = $request->validated();
+
+        $Quote = Quotes::findOrFail($validated['id']);
+        $Quote->fill($validated);
         $Quote->save();
         
-        return redirect()->route('quotes.show', ['id' =>  $Quote->id])->with('success', 'Successfully updated quote');
+        return redirect()->route('quotes.show', ['id' => $Quote->id])->with('success', 'Successfully updated quote');
     }
 
     public function saveProjectEstimate(ProjectEstimateRequest $request, $quoteId)

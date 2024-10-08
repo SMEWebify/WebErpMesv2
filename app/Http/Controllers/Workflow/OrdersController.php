@@ -132,7 +132,7 @@ class OrdersController extends Controller
     }
     
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\UpdateOrderRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateOrderRequest $request)
@@ -141,21 +141,10 @@ class OrdersController extends Controller
         $order = Orders::findOrFail($request->id);
 
         // Update the order using mass assignment
-        $order->update([
-            'label' => $request->label,
-            'customer_reference' => $request->customer_reference,
-            'companies_id' => $request->companies_id,
-            'companies_contacts_id' => $request->companies_contacts_id,
-            'companies_addresses_id' => $request->companies_addresses_id,
-            'validity_date' => $request->validity_date,
-            'accounting_payment_conditions_id' => $request->accounting_payment_conditions_id,
-            'accounting_payment_methods_id' => $request->accounting_payment_methods_id,
-            'accounting_deliveries_id' => $request->accounting_deliveries_id,
-            'comment' => $request->comment,
-        ]);
+        $order->update($request->validated());
 
         // Redirect with success message
-        return redirect()->route('orders.show', ['id' =>  $order->id])->with('success', 'Successfully updated Order');
+        return redirect()->route('orders.show', ['id' => $order->id])->with('success', 'Successfully updated Order');
     }
 }
 

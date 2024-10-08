@@ -22,11 +22,12 @@ class StoreOpportunityEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'label'=>'required',
-            'type'=>'required',
-            'start_date'=>'required',
-            'end_date'=>'required',
+            'opportunities_id' => 'required|integer|exists:opportunities,id',
+            'label' => 'required|string|max:255',
+            'type' => 'required|integer|in:1,2,3,4',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'comment' => 'nullable|string',
         ];
     }
 }

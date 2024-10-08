@@ -97,8 +97,8 @@
             </form>
           </div>
           <div class="col-md-3">
+            @if($Opportunity->leads_id)
             <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info" maximizable>
-              @if($Opportunity->leads_id)
               <div class="text-muted">
                 <h3>Lead #{{ $Opportunity->leads_id }} </h3>
                 <p class="text-sm">{{ __('general_content.user_trans_key') }}
@@ -111,8 +111,8 @@
                   <b class="d-block">{{ $Opportunity->lead->campaign }}</b>
                 </p>
               </div>
-              @endif
             </x-adminlte-card>
+            @endif
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
               <p>
                 <a class="btn btn-success btn-sm" href="{{ route('opportunities.store.quote', ['id' => $Opportunity->id ]) }}">
@@ -206,9 +206,9 @@
                           <i class="fa fa-lg fa-fw  fa-edit"></i>
                         </button>
                         <!-- Modal {{ $Activity->id }} -->
-                        <x-adminlte-modal id="Activity{{ $Activity->id }}" title="Update {{ $Activity->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                          <form method="POST" action="{{ route('opportunities.update.activity', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
-                            @csrf
+                        <form method="POST" action="{{ route('opportunities.update.activity', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
+                          @csrf
+                          <x-adminlte-modal id="Activity{{ $Activity->id }}" title="Update {{ $Activity->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                             <div class="card-body">
                               <div class="form-group">
                                 <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -221,7 +221,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label for="type">{{ __('general_content.statu_trans_key') }}</label>
+                                <label for="type">{{ __('general_content.type_trans_key') }}</label>
                                 <div class="input-group">
                                   <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
@@ -274,8 +274,8 @@
                             <x-slot name="footerSlot">
                               <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             </x-slot>
-                          </form>
-                        </x-adminlte-modal>
+                          </x-adminlte-modal>
+                        </form>
                       </td>
                     </tr>
                     @empty
@@ -311,7 +311,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="type">{{ __('general_content.statu_trans_key') }}</label>
+                  <label for="type">{{ __('general_content.type_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
@@ -388,9 +388,9 @@
                           <i class="fa fa-lg fa-fw  fa-edit"></i>
                         </button>
                         <!-- Modal {{ $Event->id }} -->
-                        <x-adminlte-modal id="Event{{ $Event->id }}" title="Update {{ $Event->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
-                          <form method="POST" action="{{ route('opportunities.update.event', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
-                            @csrf
+                        <form method="POST" action="{{ route('opportunities.update.event', ['id' => $Opportunity->id]) }}" enctype="multipart/form-data">
+                          @csrf
+                          <x-adminlte-modal id="Event{{ $Event->id }}" title="Update {{ $Event->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                             <div class="card-body">
                               <div class="form-group">
                                 <label for="label">{{__('general_content.label_trans_key') }}</label>
@@ -403,7 +403,7 @@
                                 </div>
                               </div>
                               <div class="form-group">
-                                <label for="type">{{ __('general_content.statu_trans_key') }}</label>
+                                <label for="type">{{ __('general_content.type_trans_key') }}</label>
                                 <div class="input-group">
                                   <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
@@ -431,8 +431,8 @@
                             <x-slot name="footerSlot">
                               <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             </x-slot>
-                          </form>
-                        </x-adminlte-modal>
+                          </x-adminlte-modal>
+                        </form>
                       </td>
                     </tr>
                     @empty
@@ -467,7 +467,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="type">{{ __('general_content.statu_trans_key') }}</label>
+                  <label for="type">{{ __('general_content.type_trans_key') }}</label>
                   <div class="input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fas fa-exclamation"></i></span>

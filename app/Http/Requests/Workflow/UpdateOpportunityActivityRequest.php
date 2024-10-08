@@ -22,11 +22,12 @@ class UpdateOpportunityActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'label'=>'required',
-            'type'=>'required',
-            'statu'=>'required',
-            'priority'=>'required',
+            'label' => 'required|string|max:255',
+            'type' => 'required|integer|in:1,2,3,4,5',
+            'statu' => 'required|integer|in:1,2,3,4',
+            'priority' => 'required|integer|in:1,2,3,4',
+            'due_date' => 'nullable|date',
+            'comment' => 'nullable|string',
         ];
     }
 }

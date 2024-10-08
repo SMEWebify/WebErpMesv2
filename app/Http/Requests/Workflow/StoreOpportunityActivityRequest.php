@@ -22,10 +22,12 @@ class StoreOpportunityActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'label'=>'required',
-            'type'=>'required',
-            'priority'=>'required',
+            'opportunities_id' => 'required|integer|exists:opportunities,id',
+            'label' => 'required|string|max:255',
+            'type' => 'required|integer|in:1,2,3,4,5',
+            'priority' => 'required|integer|in:1,2,3,4',
+            'due_date' => 'nullable|date',
+            'comment' => 'nullable|string',
         ];
     }
 }

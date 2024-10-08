@@ -19,30 +19,16 @@ class QuoteLinesController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\UpdateQuoteLineDetailsRequest $request
+     * @param int $idQuote
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($idQuote, UpdateQuoteLineDetailsRequest $request)
     {
-        
-        $QuoteLineDetails = QuoteLineDetails::find($request->id);
-        $QuoteLineDetails->x_size=$request->x_size;
-        $QuoteLineDetails->y_size=$request->y_size;
-        $QuoteLineDetails->z_size=$request->z_size;
-        $QuoteLineDetails->x_oversize=$request->x_oversize;
-        $QuoteLineDetails->y_oversize=$request->y_oversize;
-        $QuoteLineDetails->z_oversize=$request->z_oversize;
-        $QuoteLineDetails->diameter=$request->diameter;
-        $QuoteLineDetails->diameter_oversize=$request->diameter_oversize;
-        $QuoteLineDetails->material=$request->material;
-        $QuoteLineDetails->thickness=$request->thickness;
-        $QuoteLineDetails->finishing=$request->finishing;
-        $QuoteLineDetails->weight=$request->weight;
-        $QuoteLineDetails->material_loss_rate=$request->material_loss_rate;
-        $QuoteLineDetails->internal_comment=$request->internal_comment;
-        $QuoteLineDetails->external_comment=$request->external_comment;
-        $QuoteLineDetails->save();
-        return redirect()->route('quotes.show', ['id' =>  $idQuote])->with('success', 'Successfully updated quote detail line');
+        $QuoteLineDetails = QuoteLineDetails::findOrFail($request->id);
+        $QuoteLineDetails->update($request->validated());
+
+        return redirect()->route('quotes.show', ['id' => $idQuote])->with('success', 'Successfully updated quote detail line');
     }
     
     /**

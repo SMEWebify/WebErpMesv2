@@ -18,31 +18,17 @@ class OrderLinesController extends Controller
         return view('workflow/orders-lines-index');
     }
 
-        /**
-     * @param \Illuminate\Http\Request $request
+    /**
+     * @param \App\Http\Requests\UpdateOrderLineDetailsRequest $request
+     * @param int $idOrder
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($idOrder, UpdateOrderLineDetailsRequest $request)
     {
-        
-        $OrderLineDetails = OrderLineDetails::find($request->id);
-        $OrderLineDetails->x_size=$request->x_size;
-        $OrderLineDetails->y_size=$request->y_size;
-        $OrderLineDetails->z_size=$request->z_size;
-        $OrderLineDetails->x_oversize=$request->x_oversize;
-        $OrderLineDetails->y_oversize=$request->y_oversize;
-        $OrderLineDetails->z_oversize=$request->z_oversize;
-        $OrderLineDetails->diameter=$request->diameter;
-        $OrderLineDetails->diameter_oversize=$request->diameter_oversize;
-        $OrderLineDetails->material=$request->material;
-        $OrderLineDetails->thickness=$request->thickness;
-        $OrderLineDetails->finishing = $request->finishing;
-        $OrderLineDetails->weight=$request->weight;
-        $OrderLineDetails->material_loss_rate=$request->material_loss_rate;
-        $OrderLineDetails->internal_comment=$request->internal_comment;
-        $OrderLineDetails->external_comment=$request->external_comment;
-        $OrderLineDetails->save();
-        return redirect()->route('orders.show', ['id' =>  $idOrder])->with('success', 'Successfully updated order detail line');
+        $OrderLineDetails = OrderLineDetails::findOrFail($request->id);
+        $OrderLineDetails->update($request->validated());
+
+        return redirect()->route('orders.show', ['id' => $idOrder])->with('success', 'Successfully updated order detail line');
     }
 
     /**

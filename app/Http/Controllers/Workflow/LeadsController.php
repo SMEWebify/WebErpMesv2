@@ -71,13 +71,16 @@ class LeadsController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeOpportunity($id){
         
-        Leads::where('id',$id)->update(['statu'=>'4']);
+        // Update lead status
+        Leads::where('id', $id)->update(['statu' => '4']);
 
-        $LeadToStore = Leads::findorfail($id);
+        // Retrieve the lead
+        $LeadToStore = Leads::findOrFail($id);
+
         // Create opportunity
         $OpportunityCreated = Opportunities::create([
                         'uuid'=> Str::uuid(),

@@ -131,59 +131,52 @@ class CompaniesController extends Controller
         return redirect()->route('companies.show', ['id' =>  $company->id])->with('success', 'Successfully updated companie');
     }
 
-        /**
+    /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeQuote(Companies $id)
     {
-        $LastQuote =  Quotes::orderBy('id', 'desc')->first();
-        if($LastQuote == Null){
-            $code = "QT-0";
-            $label = "QT-0";
-        }
-        else{
-            $code = "QT-". $LastQuote->id;
-            $label = "QT-". $LastQuote->id;
-        }
+        $lastQuote = Quotes::latest('id')->first();
+        $quoteId = $lastQuote ? $lastQuote->id : 0;
+        $code = "QT-$quoteId";
+        $label = "QT-$quoteId";
 
-        $accounting_payment_conditions = AccountingPaymentConditions::getDefault(); 
-        $accounting_payment_methods = AccountingPaymentMethod::getDefault();  
-        $accounting_deliveries = AccountingDelivery::getDefault(); 
-        $defaultAddress = CompaniesAddresses::getDefault(['companies_id' => $id->id]);
-        $defaultContact = CompaniesContacts::getDefault(['companies_id' => $id->id]);
-        
+        $defaultSettings = [
+            'accounting_payment_conditions' => AccountingPaymentConditions::getDefault(),
+            'accounting_payment_methods' => AccountingPaymentMethod::getDefault(),
+            'accounting_deliveries' => AccountingDelivery::getDefault(),
+            'defaultAddress' => CompaniesAddresses::getDefault(['companies_id' => $id->id]),
+            'defaultContact' => CompaniesContacts::getDefault(['companies_id' => $id->id]),
+        ];
 
-        $accounting_payment_conditions = ($accounting_payment_conditions->id ?? 0); 
-        $accounting_payment_methods = ($accounting_payment_methods->id  ?? 0);  
-        $accounting_deliveries = ($accounting_deliveries->id  ?? 0);
-        $defaultAddress = ($defaultAddress->id  ?? 0);
-        $defaultContact = ($defaultContact->id  ?? 0);
-        
-        if($accounting_payment_conditions == 0 || $accounting_payment_methods == 0 || $accounting_deliveries == 0 || $defaultAddress == 0 || $defaultContact == 0){
-            return redirect()->route('companies.show', ['id' =>  $id->id])->with('error', 'No default settings');
+        foreach ($defaultSettings as $key => $setting) {
+            if (is_null($setting)) {
+                return redirect()->route('companies.show', ['id' => $id->id])->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
+            }
+            $defaultSettings[$key] = $setting->id;
         }
 
-        // Create Line
-        $QuotesCreated = Quotes::create([
-                                        'uuid'=> Str::uuid(),
-                                        'code'=>$code,  
-                                        'label'=>$label,  
-                                        'companies_id'=>$id->id,  
-                                        'companies_contacts_id'=>$defaultContact,    
-                                        'companies_addresses_id'=>$defaultAddress,    
-                                        'user_id'=>Auth::id(), 
-                                        'accounting_payment_conditions_id'=>$accounting_payment_conditions,   
-                                        'accounting_payment_methods_id'=>$accounting_payment_methods,   
-                                        'accounting_deliveries_id'=>$accounting_deliveries,   
+        $quotesCreated = Quotes::create([
+            'uuid' => Str::uuid(),
+            'code' => $code,
+            'label' => $label,
+            'companies_id' => $id->id,
+            'companies_contacts_id' => $defaultSettings['defaultContact'],
+            'companies_addresses_id' => $defaultSettings['defaultAddress'],
+            'user_id' => Auth::id(),
+            'accounting_payment_conditions_id' => $defaultSettings['accounting_payment_conditions'],
+            'accounting_payment_methods_id' => $defaultSettings['accounting_payment_methods'],
+            'accounting_deliveries_id' => $defaultSettings['accounting_deliveries'],
         ]);
 
-        // notification for all user in database
+        // Notification for all users in the database
         $users = User::where('quotes_notification', 1)->get();
-        Notification::send($users, new QuoteNotification($QuotesCreated));
+        Notification::send($users, new QuoteNotification($quotesCreated));
 
         // Trigger the event
-        event(new QuoteCreated($QuotesCreated));
-        return redirect()->route('quotes.show', ['id' => $QuotesCreated->id])->with('success', 'Successfully created new quote');
+        event(new QuoteCreated($quotesCreated));
+
+        return redirect()->route('quotes.show', ['id' => $quotesCreated->id])->with('success', 'Successfully created new quote');
     }
 }

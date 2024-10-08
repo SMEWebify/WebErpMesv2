@@ -22,10 +22,14 @@ class UpdateOpportunityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'label'=>'required',
-            'budget'=>'required',
-            'probality'=>'required',
+            'companies_id' => 'required|exists:companies,id',
+            'companies_contacts_id' => 'required|exists:companies_contacts,id',
+            'companies_addresses_id' => 'required|exists:companies_addresses,id',
+            'label' => 'required|string|max:255',
+            'budget' => 'required|numeric|min:0',
+            'close_date' => 'nullable|date',
+            'probality' => 'required|integer|min:0|max:100',
+            'comment' => 'nullable|string',
         ];
     }
 }
