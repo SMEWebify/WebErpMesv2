@@ -14,6 +14,7 @@ use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\Purchases;
 use App\Models\Quality\QualityNonConformity;
+use App\Models\Workflow\Invoices;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
@@ -52,6 +53,7 @@ class Companies extends Model
                             'delivery_constraint',
                             'tolerance_days',
                             'quoted_delivery_note',
+                            'csv_file_name',
                         ];
 
     public function getLabelAttribute()
@@ -122,6 +124,16 @@ class Companies extends Model
     public function getOrdersCountAttribute()
     {
         return $this->Orders()->count();
+    }
+
+    public function Invoices()
+    {
+        return $this->hasMany(Invoices::class, 'companies_id');
+    }
+
+    public function getInvoicesCountAttribute()
+    {
+        return $this->Invoices()->count();
     }
 
     public function Purchases()

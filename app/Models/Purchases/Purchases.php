@@ -28,6 +28,7 @@ class Purchases extends Model
                             'statu',  
                             'user_id',
                             'comment',
+                            'csv_file_name',
                         ];
 
     public function companie()

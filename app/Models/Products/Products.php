@@ -54,7 +54,8 @@ class Products extends Model
                             'picture',
                             'drawing_file',
                             'stl_file',
-                            'svg_file',];
+                            'svg_file',
+                            'csv_file_name',];
 
     public function service()
     {

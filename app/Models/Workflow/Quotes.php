@@ -39,7 +39,8 @@ class Quotes extends Model
                             'accounting_payment_conditions_id',  
                             'accounting_payment_methods_id',  
                             'accounting_deliveries_id',  
-                            'comment', ];
+                            'comment', 
+                            'csv_file_name',];
 
     // Relationship with the company associated with the quote
     public function companie()

@@ -40,6 +40,7 @@ class Orders extends Model
                             'comment',
                             'quotes_id',
                             'type',
+                            'csv_file_name',
                         ];
 
     // Relationship with the company associated with the order

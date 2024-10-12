@@ -384,7 +384,7 @@
         @if($Quote->statu == 1)
         <x-InfocalloutComponent note="{{ __('general_content.csv_quote_info_trans_key') }}"  />
 
-        <form method="POST" action="{{ route('quotes.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('quotes.lines.import', ['idQuote'=>  $Quote->id]) }}" enctype="multipart/form-data">
           <x-adminlte-card title="{{ __('general_content.choose_file_trans_key') }}" theme="primary" maximizable>
               @csrf
               <div class="card-body">
@@ -404,78 +404,45 @@
                           <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" checked/>
                       </div>
                   </div>
+                  
+                  @php
+                    $fields = [
+                        ['name' => 'code', 'label' => __('general_content.external_id_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'bg-red', 'required' => true],
+                        ['name' => 'label', 'label' => __('general_content.label_trans_key'), 'icon' => 'fas fa-hashtag', 'color' => 'bg-red', 'required' => true],
+                        ['name' => 'qty', 'label' => __('general_content.qty_trans_key'), 'icon' => 'fas fa-circle', 'color' => 'bg-blue', 'type' => 'number', 'required' => false],
+                        ['name' => 'selling_price', 'label' => __('general_content.price_trans_key'), 'icon' => 'fas fa-cash-register', 'color' => 'bg-purple', 'required' => true],
+                        ['name' => 'discount', 'label' => __('general_content.discount_trans_key'), 'icon' => 'fas fa-percentage', 'color' => 'bg-yellow', 'required' => false],
+                        ['name' => 'delivery_date', 'label' => __('general_content.delivery_date_trans_key'), 'icon' => 'fas fa-calendar-alt', 'color' => 'bg-gray', 'required' => false],
+                    ];
+                  @endphp
+
+                  @foreach ($fields as $field)
                   <div class="row">
-                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.external_id_trans_key') }}</label></div>
+                      <div class="col-4 text-right">
+                          <label class="col-form-label">{{ $field['label'] }}</label>
+                      </div>
                       <div class="col-8">
-                          <x-adminlte-input name="code" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number">
-                              <x-slot name="appendSlot">
-                                  <div class="input-group-text bg-red">
-                                      <i class="fas fa-hashtag"></i>
-                                  </div>
-                              </x-slot>
-                          </x-adminlte-input>
+                          @if($field['required'] == true)
+                              <x-adminlte-input name="{{ $field['name'] }}" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required  type="number" min=0>
+                                  <x-slot name="appendSlot">
+                                      <div class="input-group-text {{ $field['color'] }}">
+                                          <i class="{{ $field['icon'] }}"></i>
+                                      </div>
+                                  </x-slot>
+                              </x-adminlte-input>
+                          @else
+                              <x-adminlte-input name="{{ $field['name'] }}" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
+                                  <x-slot name="appendSlot">
+                                      <div class="input-group-text {{ $field['color'] }}">
+                                          <i class="{{ $field['icon'] }}"></i>
+                                      </div>
+                                  </x-slot>
+                              </x-adminlte-input>
+                          @endif
                       </div>
                   </div>
-                  <div class="row">
-                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.description_trans_key') }}</label></div>
-                      <div class="col-8">
-                          <x-adminlte-input name="label" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
-                              <x-slot name="appendSlot">
-                                  <div class="input-group-text bg-red">
-                                      <i class="fas fa-hashtag"></i>
-                                  </div>
-                              </x-slot>
-                          </x-adminlte-input>
-                      </div>
-                  </div>
-                  <div class="row">
-                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.qty_trans_key') }}</label></div>
-                      <div class="col-8">
-                          <x-adminlte-input name="qty" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
-                              <x-slot name="appendSlot">
-                                <div class="input-group-text bg-red">
-                                      <i class="fas fa-hashtag"></i>
-                                  </div>
-                              </x-slot>
-                          </x-adminlte-input>
-                      </div>
-                  </div>
-                  <div class="row">
-                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.price_trans_key') }}</label></div>
-                      <div class="col-8">
-                          <x-adminlte-input name="selling_price" placeholder="{{ __('general_content.set_csv_col_trans_key') }}" required type="number" min=0>
-                              <x-slot name="appendSlot">
-                                <div class="input-group-text bg-red">
-                                      <i class="fas fa-hashtag"></i>
-                                  </div>
-                              </x-slot>
-                          </x-adminlte-input>
-                      </div>
-                  </div>
-                  <div class="row">
-                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.discount_trans_key') }}</label></div>
-                      <div class="col-8">
-                          <x-adminlte-input name="discount" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
-                              <x-slot name="appendSlot">
-                                  <div class="input-group-text bg-blue">
-                                      <i class="fas fa-hashtag"></i>
-                                  </div>
-                              </x-slot>
-                          </x-adminlte-input>
-                      </div>
-                  </div>
-                  <div class="row">
-                      <div class="col-4 text-right"><label class="col-form-label">{{ __('general_content.delivery_date_trans_key') }}</label></div>
-                      <div class="col-8">
-                          <x-adminlte-input name="delivery_date" placeholder="{{ __('general_content.set_csv_col_trans_key') }}"  type="number" min=0>
-                              <x-slot name="appendSlot">
-                                  <div class="input-group-text bg-blue">
-                                      <i class="fas fa-hashtag"></i>
-                                  </div>
-                              </x-slot>
-                          </x-adminlte-input>
-                      </div>
-                  </div>
+                  @endforeach
+
               </div>
               <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

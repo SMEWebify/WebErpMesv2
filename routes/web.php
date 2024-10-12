@@ -1,6 +1,5 @@
 <?php
 
-use Carbon\Carbon;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -109,9 +108,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         //quote line
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');
         Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->name('quotes.update.detail.picture');
-        Route::post('/{idQuote}/import', 'App\Http\Controllers\Workflow\QuoteLinesController@import')->name('quotes.import');
+        Route::post('/{idQuote}/lines/import', 'App\Http\Controllers\Workflow\QuoteLinesController@import')->name('quotes.lines.import');
         //Project estimate
         Route::post('project-estimate/save/{id}', 'App\Http\Controllers\Workflow\QuotesController@saveProjectEstimate')->name('quotes.project.estimates');
+        //import
+        Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importQuotes')->name('quotes.import');
+        
     });
     
 
@@ -124,8 +126,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         //order line
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');
         Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->name('orders.update.detail.picture');
-        Route::post('/{idOrder}/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.import');
-    
+        Route::post('/{idOrder}/lines/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.lines.import');
+        //import
+        Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importOrders')->name('orders.import');
     });
 
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
@@ -276,6 +279,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/drawing', 'App\Http\Controllers\Products\ProductsController@StoreDrawing')->name('products.update.drawing');
         Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
         Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
+
+        //import
+        Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importProducts')->name('products.import');
 
         // Serial numbers routes
         Route::group(['prefix' => 'serial-numbers'], function () {
