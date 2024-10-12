@@ -7,6 +7,7 @@ services:
     entrypoint: "php artisan serve --host=0.0.0.0 --port=8000"
     depends_on:
       - db-dev
+      - redis-dev
     ports:
       - "127.0.0.1:45060:8000"
     env_file: .env
@@ -17,6 +18,7 @@ services:
       DB_DATABASE: laravel
       DB_USERNAME: root
       DB_PASSWORD: wemdev
+      REDIS_HOST: redis-dev
     volumes:
       - ./app:/app/app
 
@@ -28,6 +30,24 @@ services:
       MARIADB_ROOT_PASSWORD: wemdev
     volumes:
       - db-dev_data:/var/lib/mysql
+
+  redis-dev:
+    container_name: redis-dev
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  laravel-echo-server:
+    container_name: laravel-echo-server
+    image: node:16
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    command: "npm run echo-server"
+    depends_on:
+      - wem-dev
+    ports:
+      - "6001:6001"
 
 volumes:
   db-dev_data:
