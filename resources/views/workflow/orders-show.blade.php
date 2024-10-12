@@ -4,6 +4,7 @@
 
 @section('content_header')
   <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+  <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
   <x-Content-header-previous-button  h1="{{ __('general_content.orders_trans_key') }} : {{  $Order->code }}" previous="{{ $previousUrl }}" list="{{ route('orders') }}" next="{{ $nextUrl }}"/>
 @stop
 
@@ -15,8 +16,8 @@
 
 <div class="card">
   <div class="card-header p-2">
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
+    <ul class="nav nav-pills" id="DocumentTabs">
+      <li class="nav-item"><a class="nav-link" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.order_line_trans_key') }}  ({{ count($Order->OrderLines) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
@@ -34,7 +35,7 @@
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-      <div class="tab-pane active" id="Order">
+      <div class="tab-pane" id="Order">
         @livewire('arrow-steps.arrow-order', ['OrderId' => $Order->id, 'OrderType' => $Order->type, 'OrderStatu' => $Order->statu])
         <div class="row">
           <div class="col-md-9">
