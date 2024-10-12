@@ -49,9 +49,6 @@
     <table width="100%">
         <tr>
             <td align="left" style="width: 40%;">
-                @if($Factory->picture)
-                <img src="data:image/png;base64,{{ $image }}" alt="Logo" width="200" class="logo"/>
-                @endif
             </td>
             <td align="center" style="width: 40%;">
                 <div align="center">

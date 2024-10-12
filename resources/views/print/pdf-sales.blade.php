@@ -6,113 +6,126 @@
         <title>{{ $typeDocumentName}} - #{{ $Document->code }}</title>
         <style type="text/css">
             @page {
-                margin: 0px;
+                margin: 350px 25px 50px 25px; 
             }
             body {
-                margin: 0px;
+                margin: 0px; 
+                border: 1px solid {{ $Factory->pdf_header_font_color }};
             }
             * {
                 font-family: Verdana, Arial, sans-serif;
             }
             a {
-                color: #fff;
+                color: #000;
                 text-decoration: none;
             }
             table {
                 font-size: smaller;
+                border-collapse:collapse;
             }
             tfoot tr td {
                 font-weight: bold;
                 font-size: smaller;
             }
-            .invoice table {
-                margin: 15px;
-            }
-            .invoice h3 {
-                margin-left: 15px;
-            }
-            .information {
-                background-color: {{ $Factory->pdf_header_font_color }};
-                color: #FFF;
-            }
-            .information .logo {
-                margin: 5px;
-            }
-            .information table {
+            table th
+            {
                 padding: 10px;
+                margin-top:30px;
+            }
+            header { position: fixed; top: -350px; left: 0px; right: 0px; ; height: 350px; }
+            footer { position: fixed; bottom: -50px; left: 0px; right: 0px; background-color: {{ $Factory->pdf_header_font_color }}; height: 50px; }
+            footer .pagenum:before {
+                content: counter(page);
             }
         </style>
     </head>
     <body>
-        <div class="information">
-            <table width="100%">
+        <header>
+            <table width="100%; border: none; ">
+                <tr>
+                    <td align="left" style="width: 50%; background-color: {{ $Factory->pdf_header_font_color }}">
+                    </td>
+                    <td colspan="2" align="center" style="width: 400%; background-color: {{ $Factory->pdf_header_font_color }}">
+                        <h2>{{ $typeDocumentName }}</h2>
+                        <h3>{{ $Document->code }}</h3>
+                    </td>
+                </tr>
+                <tr>
                     <td align="left" style="width: 40%;">
                         <h3>{{ $Factory->name }}</h3>
                         <pre>
-                        {{ $Factory->address }}
-                        {{ $Factory->zipcode }} {{ $Factory->city }}
-                        {{ __('general_content.phone_trans_key') }} : {{ $Factory->phone_number }}
-                        {{ __('general_content.email_trans_key') }} : {{ $Factory->mail }}
-                        <br /><br />
-                {{ __('general_content.date_trans_key') }} : {{ date('Y-m-d') }}
+{{ $Factory->address }}
+{{ $Factory->zipcode }} {{ $Factory->city }}
+{{ __('general_content.phone_trans_key') }} : {{ $Factory->phone_number }}
+{{ __('general_content.email_trans_key') }} : {{ $Factory->mail }}
+<br />
+<br />
+{{ __('general_content.date_trans_key') }} : {{ date('Y-m-d') }}
                         </pre>
                     </td>
-                    <td align="center">
-                        @if($Factory->picture)
-                        <img src="data:image/png;base64,{{ $image }}" alt="Logo" width="64" class="logo"/>
-                        @endif
-                    </td>
-                    <td align="right" style="width: 40%;">
+                    <td align="left" style="width: 50%;">
                         @if($Document->type == 1 || empty($Document->type))
-                        <h3>{{ $Document->companie['label'] }} </h3>
-                        <pre>
-                            {{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
-                            {{ $Document->adresse['adress'] }}
-                            {{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }}
-                            {{ $Document->adresse['country'] }}
-                            {{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
-                            {{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
-                            <br /><br />
-                            {{ __('general_content.identifier_trans_key') }}: {{ $Document->customer_reference }}
-                        </pre>
+                            <h3>{{ $Document->companie['label'] }} </h3>
+                            <pre>
+{{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
+{{ $Document->adresse['adress'] }}
+{{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }}
+{{ $Document->adresse['country'] }}
+{{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
+{{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
+<br />
+{{ __('general_content.identifier_trans_key') }}: {{ $Document->customer_reference }}
+                            </pre>
                         @else
-                        <h1>{{ __('general_content.internal_order_trans_key') }}</h1>
+<h1>{{ __('general_content.internal_order_trans_key') }}</h1>
                         @endif
                     </td>
                 </tr>
-
             </table>
-        </div>
-        <br/>
-        <div class="invoice">
-            <div align="center"><h3>{{ $typeDocumentName}} - #{{ $Document->code }}</h3></div>
-            <hr style="color: #6c757d">
-            <table width="100%">
-                <thead>
+        </header>
+
+        <footer>
+            <div>
+                <table width="100%">
                     <tr>
-                        <th align="left">{{ __('general_content.description_trans_key') }}</th>
-                        <th align="left">{{ __('general_content.qty_trans_key') }}</th>
-                        <th align="left">{{ __('general_content.unit_trans_key') }}</th>
-                        <th align="left">{{ __('general_content.price_trans_key') }}</th>
-                        <th align="left">{{ __('general_content.discount_trans_key') }}</th>
-                        <th align="left">{{ __('general_content.vat_trans_key') }}</th>
-                        <th align="left">{{ __('general_content.delivery_date_trans_key') }}</th>
+                        <td align="left" style="width: 40%;">
+                            &copy; {{ date('Y') }} - {{ $Factory->name }}
+                        </td>
+                        <td align="right" style="width: 40%;">
+                            <div class="pagenum-container">Page <span class="pagenum"></span></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </footer>
+
+        <main>
+            <table style="width: 100%; " >
+                <thead >
+                    <tr style="background-color: grey;">
+                        <th align="center">{{ __('general_content.description_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.qty_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.unit_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.price_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.discount_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.vat_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.delivery_date_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
-                        <td>
+                        <td align="center">
                             {{ $DocumentLine->label }}<br>
                             <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
                         </td>
-                        <td>{{ $DocumentLine->qty }}</td>
+                        <td align="center">{{ $DocumentLine->qty }}</td>
                         <td>{{ $DocumentLine->Unit['label'] }}</td>
-                        <td>{{ $DocumentLine->selling_price }}  {{ $Factory->curency }}</td>
-                        <td>{{ $DocumentLine->discount }} %</td>
+                        <td>{{ $DocumentLine->selling_price }} {{ $Factory->curency }}</td>
+                        <td align="center">{{ $DocumentLine->discount }} %</td>
                         <td>{{ $DocumentLine->VAT['rate'] }} %</td>
                         @if($DocumentLine->delivery_date )
-                        <td>{{ $DocumentLine->delivery_date }}</td>
+                        <td align="center">{{ $DocumentLine->delivery_date }}</td>
                         @else
                         <td>-</td>
                         @endif
@@ -137,6 +150,9 @@
                             {{  $Document->comment }}
                         </p>
                         @endif
+                        <p class="lead">
+                            <a href="{{ Request::root() }}/guest/quote/{{ $Document->uuid }}"> {{ __('general_content.public_link_trans_key') }}</a>
+                        </p>
                     </td>
                     <td align="right" style="width: 50%;">
                         <table width="80%">
@@ -155,7 +171,7 @@
                                 <td align="right" style="width:30%"> </td>
                             </tr>
                             @endforelse
-                            <tr>
+                            <tr  style=" background-color: {{ $Factory->pdf_header_font_color }}">
                                 <th align="right" style="width:50%">{{ __('general_content.total_trans_key') }} :</th> 
                                 <td align="right" style="width:30%">{{ $totalPrices }} {{ $Factory->curency }}</td>
                             </tr>
@@ -163,19 +179,6 @@
                     </td>
                 </tr>
             </table>
-        </div>
-
-        <div class="information" style="position: absolute; bottom: 0;">
-            <table width="100%">
-                <tr>
-                    <td align="left" style="width: 50%;">
-                        &copy; {{ date('Y') }} - {{ $Factory->name }}
-                    </td>
-                    <td align="right" style="width: 50%;">
-                        {{ $Factory->mail }}
-                    </td>
-                </tr>
-            </table>
-        </div>
+        </main>
     </body>
 </html>
