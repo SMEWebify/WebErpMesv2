@@ -43,6 +43,7 @@ class OrderLines extends Model
                             'internal_delay',
                             'delivery_status',
                             'invoice_status',
+                            'use_calculated_price'
                         ];
 
     public function order()
@@ -158,6 +159,24 @@ class OrderLines extends Model
             return 0;
         }
         return round((($this->getTechnicalCutTotalUnitPricettribute()/$this->getTechnicalCutTotalUnitCostAttribute())-1)*100,2);
+    }
+
+    public function getSellingPriceAttribute()
+    {
+        if ($this->use_calculated_price) {
+            // Sum TechnicalCutTotalUnitPrice, BOMTotalUnitPrice, & SubAssembly unit_price
+            $technicalCutPrice = $this->getTechnicalCutTotalUnitPricettribute();
+            $bomPrice = $this->getBOMTotalUnitPricettribute();
+            $subAssemblyPrice = $this->SubAssembly->reduce(function ($totalUnitPrice, $subAssembly) {
+                return $totalUnitPrice + $subAssembly->unit_price;
+            }, 0);
+            
+            // sum return
+            return $technicalCutPrice + $bomPrice + $subAssemblyPrice;
+        }
+
+        // return curent attribute if false
+        return $this->attributes['selling_price'];
     }
 
     public function BOM()

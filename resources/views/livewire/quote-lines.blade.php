@@ -62,7 +62,9 @@
                             <td>{{ $QuoteLine->label }}</td>
                             <td>{{ $QuoteLine->qty }}</td>
                             <td>{{ $QuoteLine->Unit['label'] }}</td>
-                            <td>{{ $QuoteLine->selling_price }} {{ $Factory->curency }}</td>
+                            <td @if($QuoteLine->use_calculated_price) class="bg-warning color-palette" @endif>
+                                {{ $QuoteLine->selling_price }} {{ $Factory->curency }}
+                            </td>
                             <td>{{ $QuoteLine->discount }} %</td>
                             <td>{{ $QuoteLine->VAT['rate'] }} %</td>
                             <td>{{ $QuoteLine->delivery_date }}</td>
@@ -250,18 +252,18 @@
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                         <div class="dropdown-menu">
                                             @if($QuoteStatu == 1)
-                                            <a href="#" class="dropdown-item " wire:click="duplicateLine({{$QuoteLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> {{ __('general_content.copie_line_trans_key') }}</span></a>
-                                            <a href="#" class="dropdown-item" wire:click="editQuoteLine({{$QuoteLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> {{ __('general_content.edit_line_trans_key') }}</span></a>
-                                            <a href="#" class="dropdown-item" wire:click="destroyQuoteLine({{$QuoteLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.delete_line_trans_key') }}</span></a>
-                                            @if($QuoteLine->product_id )
-                                            <a href="#" class="dropdown-item" wire:click="breakDown({{$QuoteLine->id}})"><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i>{{ __('general_content.break_down_task_trans_key') }}</span></a>
-                                            @endif
+                                                <a href="#" class="dropdown-item " wire:click="duplicateLine({{$QuoteLine->id}})" ><span class="text-info"><i class="fa fa-light fa-fw  fa-copy"></i> {{ __('general_content.copie_line_trans_key') }}</span></a>
+                                                <a href="#" class="dropdown-item" wire:click="editQuoteLine({{$QuoteLine->id}})"><span class="text-primary"><i class="fa fa-lg fa-fw  fa-edit"></i> {{ __('general_content.edit_line_trans_key') }}</span></a>
+                                                <a href="#" class="dropdown-item" wire:click="destroyQuoteLine({{$QuoteLine->id}})" ><span class="text-danger"><i class="fa fa-lg fa-fw fa-trash"></i> {{ __('general_content.delete_line_trans_key') }}</span></a>
+                                                @if($QuoteLine->product_id )
+                                                <a href="#" class="dropdown-item" wire:click="breakDown({{$QuoteLine->id}})"><span class="text-success"><i class="fa fa-lg fa-fw  fas fa-list"></i>{{ __('general_content.break_down_task_trans_key') }}</span></a>
+                                                @endif
                                             @else
                                                 <p class="dropdown-item "><span class="text-info">{{ __('general_content.quote_not_open_trans_key') }}</span></p>
                                             @endif
 
                                             @if($QuoteLine->code && $QuoteLine->label)
-                                            <a href="#" class="dropdown-item" wire:click="CreatProduct({{$QuoteLine->id}})" ><span class="text-success"><i class="fa fa-lg fa-fw fas fa-barcode"></i>{{ __('general_content.create_product_trans_key') }}</span></a>
+                                                <a href="#" class="dropdown-item" wire:click="CreatProduct({{$QuoteLine->id}})" ><span class="text-success"><i class="fa fa-lg fa-fw fas fa-barcode"></i>{{ __('general_content.create_product_trans_key') }}</span></a>
                                             @endif
                                         </div>
                                     </div>
@@ -322,6 +324,25 @@
                                                     {{ __('general_content.view_trans_key') }}
                                                 </a>
                                             </div>
+                                            @if($QuoteStatu == 1)
+                                            <div class="card-footer">
+                                                <div class="btn-group" role="group">
+                                                    @if(!$QuoteLine->use_calculated_price)
+                                                    <!-- Button for use calculated price -->
+                                                    <button type="button" class="btn btn-success"
+                                                            wire:click="enableCalculatedPrice({{ $QuoteLine->id }})">
+                                                            {{ __('general_content.active_calculated_price_trans_key') }}
+                                                    </button>
+                                                    @else
+                                                    <!-- Button for disable calculated price -->
+                                                    <button type="button" class="btn btn-warning"
+                                                            wire:click="disableCalculatedPrice({{ $QuoteLine->id }})">
+                                                            {{ __('general_content.deactivate_calculated_price_trans_key') }}
+                                                    </button>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            @endif
                                         </x-adminlte-modal>
                                         <a href="{{ route('task.manage', ['id_type'=> 'quote_lines_id', 'id_page'=>  $QuoteLine->quotes_id, 'id_line' => $QuoteLine->id])}}" class="dropdown-item" ><span class="text-success"> {{ __('general_content.tasks_trans_key') }}{{  $QuoteLine->getAllTaskCountAttribute() }}</span></a></button>
                                     </div>

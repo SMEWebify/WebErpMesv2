@@ -4,6 +4,7 @@
 
 @section('content_header')
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
     <x-Content-header-previous-button  h1="{{ __('general_content.quote_trans_key') }} : {{  $Quote->code }}" previous="{{ $previousUrl }}" list="{{ route('quotes') }}" next="{{ $nextUrl }}"/>
 @stop
 
@@ -15,8 +16,8 @@
 
 <div class="card">
   <div class="card-header p-2">
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
+    <ul class="nav nav-pills"  id="DocumentTabs">
+      <li class="nav-item"><a class="nav-link " href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }} ({{ count($Quote->QuoteLines) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Construction" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }} <span class="badge badge-danger right">Beta</span></a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
@@ -30,7 +31,7 @@
   <!-- /.card-header -->
   <div class="card-body">
     <div class="tab-content">
-      <div class="tab-pane active" id="Quote">
+      <div class="tab-pane " id="Quote">
         @livewire('arrow-steps.arrow-quote', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu])
         <div class="row">
           <div class="col-md-9">
@@ -631,12 +632,6 @@
       var fileName = $(this).val().split('\\').pop(); 
       // Sélectionne le label correspondant et met à jour son contenu
       $(this).next('.custom-file-label').addClass("selected").html(fileName);
-    });
-  </script>
-
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip(); // Active les infobulles Bootstrap pour tous les éléments qui ont l'attribut data-toggle="tooltip"
     });
   </script>
 

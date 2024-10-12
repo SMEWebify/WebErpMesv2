@@ -49,7 +49,9 @@
                             <td>{{ $OrderLine->label }}</td>
                             <td> {{ $OrderLine->qty }}</td>
                             <td>{{ $OrderLine->Unit['label'] }}</td>
-                            <td>{{ $OrderLine->selling_price }}</td>
+                            <td @if($OrderLine->use_calculated_price) class="bg-warning color-palette" @endif>
+                                {{ $OrderLine->selling_price }} {{ $Factory->curency }}
+                            </td>
                             <td>{{ $OrderLine->discount }}</td>
                             <td>{{ $OrderLine->VAT['label'] }}</td>
                             <td>{{ $OrderLine->delivery_date }}</td>
