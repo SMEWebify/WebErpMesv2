@@ -30,7 +30,8 @@ class QuoteLines extends Model
                             'discount',
                             'accounting_vats_id',
                             'delivery_date',
-                            'statu'
+                            'statu',
+                            'use_calculated_price'
                         ];
 
     public function quote()
@@ -155,6 +156,24 @@ class QuoteLines extends Model
     public function SubAssembly()
     {
         return $this->hasMany(SubAssembly::class, 'quote_lines_id')->orderBy('ordre');
+    }
+
+    public function getSellingPriceAttribute()
+    {
+        if ($this->use_calculated_price) {
+            // Sum TechnicalCutTotalUnitPrice, BOMTotalUnitPrice, & SubAssembly unit_price
+            $technicalCutPrice = $this->getTechnicalCutTotalUnitPricettribute();
+            $bomPrice = $this->getBOMTotalUnitPricettribute();
+            $subAssemblyPrice = $this->SubAssembly->reduce(function ($totalUnitPrice, $subAssembly) {
+                return $totalUnitPrice + $subAssembly->unit_price;
+            }, 0);
+            
+            // sum return
+            return $technicalCutPrice + $bomPrice + $subAssemblyPrice;
+        }
+
+        // return curent attribute if false
+        return $this->attributes['selling_price'];
     }
 
     public function GetPrettyCreatedAttribute()

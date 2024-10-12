@@ -777,6 +777,8 @@ return [
     'total_hours_per_month_trans_key'          => 'Hours produced over the month',
     'trs_trans_key'                            => 'OEE',
     'trs_per_month_trans_key'                  => 'OEE over the month',
+    'active_calculated_price_trans_key'        => 'Activate calculated price',
+    'deactivate_calculated_price_trans_key'    => 'Deactivate calculated price',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Delivery notes',

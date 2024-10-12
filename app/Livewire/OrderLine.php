@@ -48,7 +48,7 @@ class OrderLine extends Component
     public $OrderType;
     public $status_id;
     public $OrderLineslist;
-    public $order_lines_id, $orders_id, $ordre = 1, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $order_lines_id, $orders_id, $ordre = 1, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu, $use_calculated_price;
     public $code='';
     public $label='';
     public $qty= 0;
@@ -218,6 +218,18 @@ class OrderLine extends Component
         $this->delivery_date = $Line->delivery_date;     
         $this->statu = $Line->statu;
         $this->updateLines = true;
+    }
+
+    public function enableCalculatedPrice($idline)
+    {
+        OrderLines::find($idline)->update(['use_calculated_price' => 1]);
+        session()->flash('success','Line Updated Successfully');
+    }
+
+    public function disableCalculatedPrice($idline)
+    {
+        OrderLines::find($idline)->update(['use_calculated_price' => 0]);
+        session()->flash('success','Line Updated Successfully');
     }
 
     public function duplicateLine($id)

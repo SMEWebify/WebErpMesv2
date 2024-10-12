@@ -42,7 +42,7 @@ class QuoteLine extends Component
     public $status_id;
 
     public $QuoteLineslist;
-    public $quote_lines_id, $quotes_id, $ordre = 1, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu;
+    public $quote_lines_id, $quotes_id, $ordre = 1, $product_id, $methods_units_id, $selling_price, $accounting_vats_id, $delivery_date, $statu, $use_calculated_price;
     public $code='';
     public $label='';
     public $qty= 0;
@@ -200,6 +200,17 @@ class QuoteLine extends Component
         session()->flash('success','Line Updated Successfully');
     }
 
+    public function enableCalculatedPrice($idline)
+    {
+        Quotelines::find($idline)->update(['use_calculated_price' => 1]);
+        session()->flash('success','Line Updated Successfully');
+    }
+
+    public function disableCalculatedPrice($idline)
+    {
+        Quotelines::find($idline)->update(['use_calculated_price' => 0]);
+        session()->flash('success','Line Updated Successfully');
+    }
     
     public function duplicateLine($id)
     {
@@ -370,13 +381,13 @@ class QuoteLine extends Component
 
     public function upQuoteLine($idStatu){
         // Update line
-        Quotelines::find($idStatu)->increment('ordre',1);;
+        Quotelines::find($idStatu)->increment('ordre',1);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function downQuoteLine($idStatu){
         // Update line
-        Quotelines::find($idStatu)->decrement('ordre',1);;
+        Quotelines::find($idStatu)->decrement('ordre',1);
         session()->flash('success','Line Updated Successfully');
     }
 

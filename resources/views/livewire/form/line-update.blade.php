@@ -64,7 +64,7 @@
             <button type="submit" class="btn btn-success btn-block">{{ __('general_content.update_trans_key') }}</button>
         </div>
     </div>
-    <div class="row">
+    <div class="form-row">
         <div class="form-group col-md-2">
             <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
             <div class="input-group">

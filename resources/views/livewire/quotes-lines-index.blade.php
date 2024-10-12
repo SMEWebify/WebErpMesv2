@@ -12,7 +12,7 @@
                     <thead>
                         <tr>
                             <th>
-                                <a class="btn btn-secondary" wire:click.prevent="sortBy('quotes_id')" role="button" href="#">Quote @include('include.sort-icon', ['field' => 'quotes_id'])</a>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('quotes_id')" role="button" href="#">{{ __('general_content.quote_trans_key') }} @include('include.sort-icon', ['field' => 'quotes_id'])</a>
                             </th>
                             <th>{{ __('general_content.sort_trans_key') }}</th>
                             <th>
@@ -46,7 +46,9 @@
                             <td>{{ $QuoteLine->label }}</td>
                             <td>{{ $QuoteLine->qty }}</td>
                             <td>{{ $QuoteLine->Unit['label'] }}</td>
-                            <td>{{ $QuoteLine->selling_price }}</td>
+                            <td @if($QuoteLine->use_calculated_price) class="bg-warning color-palette" @endif>
+                                {{ $QuoteLine->selling_price }} {{ $Factory->curency }}
+                            </td>
                             <td>{{ $QuoteLine->discount }}</td>
                             <td>{{ $QuoteLine->VAT['label'] }}</td>
                             <td>{{ $QuoteLine->delivery_date }}</td>
@@ -128,7 +130,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th>Quote</th>
+                            <th>{{ __('general_content.quote_trans_key') }}</th>
                             <th>{{ __('general_content.sort_trans_key') }}</th>
                             <th>{{ __('general_content.external_id_trans_key') }}</th>
                             <th>{{ __('general_content.product_trans_key') }}</th>

@@ -777,6 +777,8 @@ return [
     'total_hours_per_month_trans_key'          => 'Heures produites sur le mois',
     'trs_trans_key'                            => 'TRS',
     'trs_per_month_trans_key'                  => 'TRS sur le mois',
+    'active_calculated_price_trans_key'        => 'Activer le prix calculé',
+    'deactivate_calculated_price_trans_key'    => 'Désactiver le prix calculé',
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Bons de livraisons',
