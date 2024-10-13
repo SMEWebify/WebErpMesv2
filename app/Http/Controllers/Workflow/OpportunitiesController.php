@@ -234,7 +234,7 @@ class OpportunitiesController extends Controller
     }
 
     /**
-     * @param \App\Http\Requests\UpdateOpportunityRequest $request
+     * @param \App\Http\Requests\Workflow\UpdateOpportunityRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateOpportunityRequest $request)

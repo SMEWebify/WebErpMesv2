@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Services\TaskService;
-use App\Models\workflow\DeliveryLines;
+use App\Models\Workflow\DeliveryLines;
 
 class DeliveryLineService
 {
