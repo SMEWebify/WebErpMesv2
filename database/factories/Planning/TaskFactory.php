@@ -2,7 +2,6 @@
 namespace Database\Factories\Planning;
 
 use App\Models\Planning\Task;
-use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
@@ -10,7 +9,7 @@ use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Planning\Task>
  */
 class TaskFactory extends Factory
 {
