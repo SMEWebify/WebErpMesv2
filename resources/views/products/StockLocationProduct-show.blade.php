@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.stock_trans_key')) 
+@section('title', $StockLocationProduct->code . ' '. __('general_content.stock_location_trans_key')) 
 
 @section('content_header')
     <div class="row mb-2">
@@ -22,14 +22,17 @@
   <div class="row">
     <div class="col-md-8 card-primary">
       <div class="row">
-        <div class="col-12 col-sm-4">
-          <x-adminlte-info-box title="Entries" text="{{ $StockLocationProduct->getTotalEntryStockMove() }} item(s)" icon="fa fa-arrow-up" theme="warning"/>
+        <div class="col-12 col-sm-3">
+          <x-adminlte-info-box title="{{__('general_content.weighted_average_price_trans_key') }}" text="{{ $averageCost }} {{ $Factory->curency }}" icon="fas fa-shopping-cart" theme="info"/>
         </div>
-        <div class="col-12 col-sm-4">
-          <x-adminlte-info-box title="Sortings" text="{{ $StockLocationProduct->getTotalSortingStockMove() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
+        <div class="col-12 col-sm-3">
+          <x-adminlte-info-box title="{{__('general_content.entries_stock_trans_key') }}" text="{{ $StockLocationProduct->getTotalEntryStockMove() }} item(s)" icon="fa fa-arrow-up" theme="warning"/>
         </div>
-        <div class="col-12 col-sm-4">
-          <x-adminlte-info-box title="Current {{__('general_content.qty_trans_key') }}" text="{{ $StockLocationProduct->getCurrentStockMove() }} item(s)" icon="fa fa-database" theme="success"/>
+        <div class="col-12 col-sm-3">
+          <x-adminlte-info-box title="{{__('general_content.sortings_stock_trans_key') }}" text="{{ $StockLocationProduct->getTotalSortingStockMove() }} item(s)" icon="fa fa-arrow-down" theme="danger "/>
+        </div>
+        <div class="col-12 col-sm-3">
+          <x-adminlte-info-box title=" {{__('general_content.current_stock_trans_key') }}" text="{{ $StockLocationProduct->getCurrentStockMove() }} item(s)" icon="fa fa-database" theme="success"/>
         </div>
       </div>
         <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>
@@ -87,7 +90,7 @@
                     @if(12 == $StockMove->typ_move ){{__('general_content.manufactured_component_entry_trans_key') }} @endif
                     @if(13 == $StockMove->typ_move ){{__('general_content.direct_inventory_trans_key') }} @endif
                   </td>
-                  <td></td>
+                  <td>{{ $StockMove->component_price}} {{ $Factory->curency }}</td>
                   <td>
                     <div class="btn-group btn-group-sm">
                       <a href="{{ route('products.stock.detail.show', ['id' => $StockMove->id])}}" class="btn btn-info"><i class="fa fa-lg fa-fw fa-eye"></i></a>

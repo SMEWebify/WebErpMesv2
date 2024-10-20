@@ -65,7 +65,7 @@
                         @if(12 == $StockDetails->typ_move ){{__('general_content.manufactured_component_entry_trans_key') }} @endif
                         @if(13 == $StockDetails->typ_move ){{__('general_content.direct_inventory_trans_key') }} @endif
                     </td>
-                    <td></td>
+                    <td>{{ $StockDetails->component_price}} {{ $Factory->curency }}</td>
                 </tr>
             </tbody>
         </table>

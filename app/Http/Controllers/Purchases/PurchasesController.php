@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Traits\NextPreviousTrait;
-use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;

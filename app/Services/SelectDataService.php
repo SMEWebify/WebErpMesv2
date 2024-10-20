@@ -106,6 +106,22 @@ class SelectDataService
         return MethodsServices::select('id', 'label')->orderBy('ordre')->get();
     }
 
+    public function getTechServices()
+    {
+        return MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
+    }
+
+    public function getBOMServices()
+    {
+        return MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
+                                ->orWhere('type', '=', 3)
+                                ->orWhere('type', '=', 4)
+                                ->orWhere('type', '=', 5)
+                                ->orWhere('type', '=', 6)
+                                ->orWhere('type', '=', 8)
+                                ->orderBy('ordre')->get();
+    }
+
     public function getSection()
     {
         return MethodsSection::select('id', 'label')->orderBy('ordre')->get();

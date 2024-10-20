@@ -838,6 +838,8 @@ return [
     'index_trans_key'                          => 'Index',
     'new_product_trans_key'                    => 'New product',
     'price_by_qty_trans_key'                   => 'Price by quantity',
+    'weighted_average_price_trans_key'         => 'Weighted average price',
+    'last_purchase_price_price_trans_key'      => 'Last purchase price',
 
     'serial_numbers_trans_key'                 => 'Serial Numbers',
     'serial_numbers_list_trans_key'            => 'Serial Numbers list',
@@ -856,6 +858,8 @@ return [
     'new_sorting_stock_trans_key'              => 'New sorting stock line',
     'no_product_in_line_stock_trans_key'       => 'No product attached to the order line',
     'current_stock_trans_key'                  => 'Current stock',
+    'entries_stock_trans_key'                  => 'Entries',
+    'sortings_stock_trans_key'                 => 'Sortings',
     'total_stock_trans_key'                    => 'Total stock',
     'view_stock_list_trans_key'                => 'View stock list',
     'stock_requested_trans_key'                => 'Show stock/requested',

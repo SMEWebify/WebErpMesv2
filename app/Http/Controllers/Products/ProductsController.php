@@ -9,10 +9,12 @@ use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
 use App\Services\SelectDataService;
-use App\Services\ABC_MFR_CalculatorService;
 use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsServices;
+use App\Models\Purchases\PurchaseLines;
+use App\Services\StockCalculationService;
+use App\Services\ABC_MFR_CalculatorService;
 use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\UpdateProductsRequest;
@@ -23,11 +25,15 @@ class ProductsController extends Controller
     
     protected $SelectDataService;
     protected $abcFMRService;
+    protected $stockCalculationService;
 
-    public function __construct(SelectDataService $SelectDataService, ABC_MFR_CalculatorService $abcFMRService)
+    public function __construct(SelectDataService $SelectDataService, 
+                                ABC_MFR_CalculatorService $abcFMRService,
+                                StockCalculationService $stockCalculationService)
     {
         $this->SelectDataService = $SelectDataService;
         $this->abcFMRService = $abcFMRService;
+        $this->stockCalculationService = $stockCalculationService;
     }
 
     /**
@@ -39,51 +45,86 @@ class ProductsController extends Controller
     }
 
     /**
+     * Fetch select data for the view.
+     *
+     * @return array
+     */
+    private function fetchSelectData()
+    {
+        return [
+            'userSelect' => $this->SelectDataService->getUsers(),
+            'ProductSelect' => $this->SelectDataService->getProductsSelect(),
+            'ServicesSelect' => $this->SelectDataService->getServices(),
+            'UnitsSelect' => $this->SelectDataService->getUnitsSelect(),
+            'FamiliesSelect' => $this->SelectDataService->getFamilies(),
+            'CompanieSelect' => $this->SelectDataService->getSupplier(),
+            'TechServicesSelect' => $this->SelectDataService->getTechServices(),
+            'BOMServicesSelect' => $this->SelectDataService->getBOMServices(),
+        ];
+    }
+
+    /**
+     * Calculate the last purchase price for a product.
+     *
+     * @param int $productId
+     * @return float
+     */
+    private function calculateLastPurchasePrice($productId)
+    {
+        return PurchaseLines::where('product_id', $productId)
+                            ->orderBy('created_at', 'desc')
+                            ->first()
+                            ->selling_price ?? 0;
+    }
+
+    /**
+     * Calculate the average cost for a product.
+     *
+     * @param int $productId
+     * @return float
+     */
+    private function calculateAverageCost($productId)
+    {
+        $StockLocationsProducts = StockLocationProducts::where('products_id', $productId)->get();
+        $totalWeightedCost = 0;
+        $totalQuantity = 0;
+
+        foreach ($StockLocationsProducts as $stockLocationProduct) {
+            $currentQuantity = $stockLocationProduct->getCurrentStockMove();
+            $weightedAverageCost = $this->stockCalculationService->calculateWeightedAverageCost($stockLocationProduct->id);
+
+            $totalWeightedCost += $currentQuantity * $weightedAverageCost;
+            $totalQuantity += $currentQuantity;
+        }
+
+        return $totalQuantity > 0 ? $totalWeightedCost / $totalQuantity : 0;
+    }
+
+    /**
      * @param $id
      * @return \Illuminate\Contracts\View\View
      */
     public function show($id)
     {
         $Product = Products::findOrFail($id);
-        
-        $userSelect = $this->SelectDataService->getUsers();
-        $ProductSelect = $this->SelectDataService->getProductsSelect();
-        $ServicesSelect = $this->SelectDataService->getServices();
-        $UnitsSelect = $this->SelectDataService->getUnitsSelect();
-        $FamiliesSelect = $this->SelectDataService->getFamilies();
-        $CompanieSelect = $this->SelectDataService->getSupplier();
-
+        $selectData = $this->fetchSelectData();
         $status_id = Status::select('id')->orderBy('order')->first();
-        $StockLocationsProducts = StockLocationProducts::where('products_id', $id)->get(); 
-        $TechServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
-        $BOMServicesSelect = MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
-                                                                            ->orWhere('type', '=', 3)
-                                                                            ->orWhere('type', '=', 4)
-                                                                            ->orWhere('type', '=', 5)
-                                                                            ->orWhere('type', '=', 6)
-                                                                            ->orWhere('type', '=', 8)
-                                                                            ->orderBy('ordre')->get();
-
-
+        $StockLocationsProducts = StockLocationProducts::where('products_id', $id)->get();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Products(), $Product->id);
         $finalAnalysis = $this->abcFMRService->calculateABC_FMR($Product->id);
+        $lastPurchasePrice = $this->calculateLastPurchasePrice($id);
+        $averageCost = $this->calculateAverageCost($id);
 
-        return view('products/products-show', [
-            'userSelect' => $userSelect,
+        return view('products/products-show', array_merge($selectData, [
             'Product' => $Product,
             'status_id' => $status_id,
-            'ProductSelect' => $ProductSelect,
-            'TechServicesSelect' =>  $TechServicesSelect,
-            'BOMServicesSelect' =>  $BOMServicesSelect,
-            'ServicesSelect' => $ServicesSelect,
-            'UnitsSelect' => $UnitsSelect,
-            'FamiliesSelect' => $FamiliesSelect,
-            'previousUrl' =>  $previousUrl,
-            'nextUrl' =>  $nextUrl,
-            'CompanieSelect' =>  $CompanieSelect,
-            'StockLocationsProducts' =>  $StockLocationsProducts,
-            'finalAnalysis' =>  $finalAnalysis,
-        ]);
+            'previousUrl' => $previousUrl,
+            'nextUrl' => $nextUrl,
+            'StockLocationsProducts' => $StockLocationsProducts,
+            'finalAnalysis' => $finalAnalysis,
+            'lastPurchasePrice' => $lastPurchasePrice,
+            'averageCost' => $averageCost,
+        ]));
     }
 
     /**
@@ -125,30 +166,42 @@ class ProductsController extends Controller
     }
 
     /**
+     * Handle file upload and update product.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param string $fileKey
+     * @param string $filePath
+     * @param string $dbColumn
+     * @param string $fileExtension
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function handleFileUpload(Request $request, $fileKey, $filePath, $dbColumn, $fileExtension)
+    {
+        if ($request->hasFile($fileKey)) {
+            $Product = Products::findOrFail($request->id);
+            $file = $request->file($fileKey);
+            $fileName = auth()->id() . '_' . time() . '.' . $fileExtension;
+            $file->move(public_path($filePath), $fileName);
+            $Product->update([$dbColumn => $fileName]);
+            $Product->save();
+
+            return redirect()->route('products.show', ['id' => $Product->id])->with('success', "Successfully updated $fileKey");
+        } else {
+            return back()->withInput()->withErrors(['msg' => "Error, no $fileKey selected"]);
+        }
+    }
+
+    /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function StoreImage(Request $request)
     {
-        
         $request->validate([
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
-        
-        if($request->hasFile('picture')){
-            $Product = Products::findOrFail($request->id);
-            $file =  $request->file('picture');
-            $oringalFileName = $file->getClientOriginalName();
-            $fileName = time() . '_' .  $oringalFileName;
-            $request->picture->move(public_path('images/products'), $fileName);
-            $Product->update(['picture' => $fileName]);
-            $Product->save();
 
-            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated image');
-        }
-        else{
-            return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
-        }
+        return $this->handleFileUpload($request, 'picture', 'images/products', 'picture', 'jpg');
     }
 
     /**
@@ -157,21 +210,7 @@ class ProductsController extends Controller
      */
     public function StoreDrawing(Request $request)
     {
-        if($request->hasFile('drawing')){
-            //$type = $request->file->getClientMimeType();
-            //$size = $request->file->getSize();
-            $Product = Products::findOrFail($request->id);
-            $file =  $request->file('drawing');
-            $fileName = auth()->id() . '' . time() . '.pdf';
-            $request->drawing->move(public_path('drawing'), $fileName);
-            $Product->update(['drawing_file' => $fileName]);
-            $Product->save();
-
-            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated drawing');
-        }
-        else{
-            return back()->withInput()->withErrors(['msg' => 'Error, no drawing selected']);
-        }
+        return $this->handleFileUpload($request, 'drawing', 'drawing', 'drawing_file', 'pdf');
     }
 
     /**
@@ -180,21 +219,7 @@ class ProductsController extends Controller
      */
     public function StoreStl(Request $request)
     {
-        if($request->hasFile('stl')){
-            //$type = $request->file->getClientMimeType();
-            //$size = $request->file->getSize();
-            $Product = Products::findOrFail($request->id);
-            $file =  $request->file('stl');
-            $fileName = auth()->id() . '' . time() . '.stl';
-            $request->stl->move(public_path('stl'), $fileName);
-            $Product->update(['stl_file' => $fileName]);
-            $Product->save();
-
-            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated stl');
-        }
-        else{
-            return back()->withInput()->withErrors(['msg' => 'Error, no stl selected']);
-        }
+        return $this->handleFileUpload($request, 'stl', 'stl', 'stl_file', 'stl');
     }
 
     /**
@@ -203,21 +228,7 @@ class ProductsController extends Controller
      */
     public function StoreSvg(Request $request)
     {
-        if($request->hasFile('svg')){
-            //$type = $request->file->getClientMimeType();
-            //$size = $request->file->getSize();
-            $Product = Products::findOrFail($request->id);
-            $file =  $request->file('svg');
-            $fileName = auth()->id() . '' . time() . '.svg';
-            $request->svg->move(public_path('svg'), $fileName);
-            $Product->update(['svg_file' => $fileName]);
-            $Product->save();
-
-            return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated svg');
-        }
-        else{
-            return back()->withInput()->withErrors(['msg' => 'Error, no svg selected']);
-        }
+        return $this->handleFileUpload($request, 'svg', 'svg', 'svg_file', 'svg');
     }
 
     /**
@@ -227,39 +238,16 @@ class ProductsController extends Controller
     public function update(UpdateProductsRequest $request)
     {
         $Product = Products::findOrFail($request->id);
-        $Product->label = $request->label; 
-        $Product->ind=$request->ind;
-        $Product->methods_services_id = $request->methods_services_id; 
-        $Product->methods_families_id = $request->methods_families_id; 
-        if($request->purchased) $Product->purchased=1;
-        else $Product->purchased = 2;
-        $Product->purchased_price = $request->purchased_price; 
-        if($request->sold) $Product->sold=1;
-        else $Product->sold = 2;
-        $Product->selling_price = $request->selling_price; 
-        $Product->methods_units_id = $request->methods_units_id; 
-        $Product->material = $request->material; 
-        $Product->thickness = $request->thickness; 
-        $Product->weight = $request->weight; 
-        $Product->x_size = $request->x_size; 
-        $Product->y_size = $request->y_size; 
-        $Product->z_size = $request->z_size; 
-        $Product->x_oversize = $request->x_oversize;
-        $Product->y_oversize = $request->y_oversize;
-        $Product->z_oversize = $request->z_oversize;
-        $Product->comment = $request->comment;
-        $Product->tracability_type = $request->tracability_type;
-        $Product->qty_eco_min = $request->qty_eco_min;
-        $Product->qty_eco_max = $request->qty_eco_max;
-        $Product->diameter = $request->diameter;
-        $Product->diameter_oversize = $request->diameter_oversize;
-        $Product->section_size = $request->section_size;
-        $Product->finishing = $request->finishing;
+         // Update the Product record with the other fields
+        $Product->update($request->validated());
+         // Handle specific cases outside mass assignment
+        $Product->purchased = $request->has('purchased') ? 1 : 2;
+        $Product->sold = $request->has(key: 'sold') ? 1 : 2;
         $Product->save();
         return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated product');
     }
 
-    /**
+/**
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -268,26 +256,47 @@ class ProductsController extends Controller
         $Product = Products::findOrFail($id);
         $newProduct = $Product->replicate();
         $newProduct->code = Str::uuid();
-        $newProduct->label = $Product->label ."#duplicate";
+        $newProduct->label = $Product->label . "#duplicate";
         $newProduct->save();
 
-        $Tasks = Task::where('products_id', $id)->get();
-        foreach ($Tasks as $Task) 
-        {
+        $this->duplicateTasks($id, $newProduct->id);
+        $this->duplicateSubAssemblies($id, $newProduct->id);
+
+        return redirect()->route('products.show', ['id' => $newProduct->id])->with('success', 'Successfully duplicated product');
+    }
+
+    /**
+     * Duplicate tasks for the new product.
+     *
+     * @param int $oldProductId
+     * @param int $newProductId
+     * @return void
+     */
+    private function duplicateTasks($oldProductId, $newProductId)
+    {
+        $Tasks = Task::where('products_id', $oldProductId)->get();
+        foreach ($Tasks as $Task) {
             $newTask = $Task->replicate();
-            $newTask->products_id = $newProduct->id;
+            $newTask->products_id = $newProductId;
             $newTask->save();
         }
+    }
 
-        $SubAssemblyLine = SubAssembly::where('products_id', $id)->get();
-        foreach ($SubAssemblyLine as $SubAssembly) 
-        {
+    /**
+     * Duplicate sub-assemblies for the new product.
+     *
+     * @param int $oldProductId
+     * @param int $newProductId
+     * @return void
+     */
+    private function duplicateSubAssemblies($oldProductId, $newProductId)
+    {
+        $SubAssemblyLine = SubAssembly::where('products_id', $oldProductId)->get();
+        foreach ($SubAssemblyLine as $SubAssembly) {
             $newSubAssembly = $SubAssembly->replicate();
-            $newSubAssembly->products_id = $newProduct->id;
+            $newSubAssembly->products_id = $newProductId;
             $newSubAssembly->save();
         }
-        
-        return redirect()->route('products.show', ['id' =>  $newProduct->id])->with('success', 'Successfully duplicate product');
     }
 
 }

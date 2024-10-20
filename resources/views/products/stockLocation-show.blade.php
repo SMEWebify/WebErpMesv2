@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.stock_trans_key')) 
+@section('title',  $StockLocation->label .' '. __('general_content.stock_location_trans_key')) 
 
 @section('content_header')
     <div class="row mb-2">

@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Products;
 
-use App\Models\User;
-use Illuminate\Http\Request;
+
 use App\Models\Products\Stocks;
-use App\Models\Products\Products;
 use Illuminate\Support\Facades\DB;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;

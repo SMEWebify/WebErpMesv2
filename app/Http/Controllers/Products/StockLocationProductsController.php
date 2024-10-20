@@ -12,6 +12,7 @@ use App\Models\Products\StockMove;
 use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
+use App\Services\StockCalculationService;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Http\Requests\Products\StoreStockMoveRequest;
@@ -20,6 +21,14 @@ use App\Http\Requests\Products\UpdateStockLocationProductsRequest;
 
 class StockLocationProductsController extends Controller
 {
+
+    protected $stockCalculationService;
+
+    public function __construct(StockCalculationService $stockCalculationService)
+    {
+        $this->stockCalculationService = $stockCalculationService;
+    }
+    
     /**
      * @param $id
      * @return \Illuminate\Contracts\View\View
@@ -36,7 +45,8 @@ class StockLocationProductsController extends Controller
                         ->orderby('created_at', 'desc')->get();
         $OrderLineList = OrderLines::where('product_id', $id)
                         ->orderby('created_at', 'desc')->get();
-        
+
+        $averageCost = $this->stockCalculationService->calculateWeightedAverageCost($id);
         return view('products/StockLocationProduct-show', [
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,
@@ -44,6 +54,7 @@ class StockLocationProductsController extends Controller
             'StockMoves' => $StockMoves,
             'TaskList' => $TaskList,
             'OrderLineList' => $OrderLineList,
+            'averageCost' => $averageCost,
         ]);
     }
 
