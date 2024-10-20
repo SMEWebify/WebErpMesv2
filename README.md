@@ -1,54 +1,34 @@
-![Firefly brand logo for digitalisation web application title -WEM -around workshop sheetmetal, bendin](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/2e877aae-4f66-4347-9cf5-38a85fbf57d5)
-
-
+# ΣEM - Boost Your Manufacturing Efficiency 🚀
 
 <p align="center">
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/docs/README.fr.md">Français</a>
 </p>
 
+![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
 
+## Why ΣEM ?
 
-# Why ΣEM ? :monocle_face:
+Manufacturing often faces a gap between quoting and production. ΣEM bridges that gap, providing an all-in-one solution for:
 
-Often, management systems offer comprehensive customer relationship management (CRM) and invoicing capabilities. However, in manufacturing and machining businesses, there is sometimes a critical gap between what is quoted and what needs to be manufactured. This is where ΣEM comes in.
+- 🔄 Real-Time Production Tracking: From quote to delivery, track orders and production progress seamlessly.
+- 🤝 CRM & Order Management: Integrated tools to streamline business processes and customer relationships.
+- 📦 Stock & Resource Management: Optimize inventory, raw materials, and resources with ease.
+- 🌐 Community-Driven: Open-source with ongoing improvements from a passionate developer community.
 
-ΣEM provides an integrated solution that bridges the gap between sales and manufacturing processes. Here are some reasons why ΣEM might be your ideal solution:
-
-- Real-time Production Tracking: ΣEM allows for real-time tracking of each order, from the quoting phase to final delivery, providing complete visibility into the production process.
-
-- Seamless CRM and Order Management Integration: With its seamless integration with CRM and order management, ΣEM simplifies and streamlines business processes, ensuring smooth customer relationship management.
-
-- Efficient Inventory and Resource Management: ΣEM offers advanced inventory and resource management features, enabling businesses to efficiently manage raw materials, work-in-progress, and human resources required for order fulfillment.
-
-- Community Support and Collaborative Development: ΣEM is an open-source project supported by an active community of developers and users. This ensures ongoing, collaborative development, with the opportunity for users to contribute to the enhancement and extension of the solution.
-
-ΣEM provides a holistic approach to business management for manufacturing and machining businesses, helping them optimize processes, improve operational efficiency, and drive growth.
-
-- Technology Stack: ΣEM is built using modern technologies such as Laravel 10, Livewire, and Bootstrap 4.6, ensuring scalability, performance, and a user-friendly interface.
-
-Any discussion of improvement or contribution is welcome. :hugs:
-
-
-
-# Demo :eyes:
-
+### Try the Demo 👀  
 [Demo page](http://demo.wem-project.org) 
 
 login : contact@wem-project.org 
 
 Password : password
 
-# Install :construction_worker:
+### Install :construction_worker:
 for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 
 for run to production, follow this link :  [wiki page (install to run)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
------------------
-
-
-![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
-
+![image](https://github.com/user-attachments/assets/f527881c-a7c4-460a-9b06-f647c91402d8)
 
 
 
