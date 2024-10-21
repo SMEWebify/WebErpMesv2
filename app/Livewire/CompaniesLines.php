@@ -27,12 +27,7 @@ class CompaniesLines extends Component
 
     public $userSelect = [];
     public $code, $label;
-    public $website, $fbsite, $twittersite, $lkdsite;
-    public $siren, $naf_code, $intra_community_vat;
     public $user_id;
-    public $discount;
-    public $account_general_customer, $account_auxiliary_customer, $account_general_supplier, $account_auxiliary_supplier, $recept_controle, $comment;
-
     public $client_type = 1;
     public $civility, $last_name; 
 
@@ -42,18 +37,13 @@ class CompaniesLines extends Component
         'client_type' => 'required',
         'label'=>'required',
         'user_id'=>'required',
-        'recept_controle'=>'required',
         'civility' => 'nullable|required_if:client_type,2',
         'last_name' => 'nullable|required_if:client_type,2',
     ];
 
     public function sortBy($field)
     {
-        if ($this->sortField === $field) {
-            $this->sortAsc = !$this->sortAsc; 
-        } else {
-            $this->sortAsc = true; 
-        }
+        $this->sortAsc = $this->sortField === $field ? !$this->sortAsc : true;
         $this->sortField = $field;
     }
 
@@ -62,19 +52,23 @@ class CompaniesLines extends Component
         $this->resetPage();
     }
 
-    public function mount() 
+    public function mount()
     {
         $this->user_id = Auth::id();
         $this->userSelect = User::select('id', 'name')->get();
+        $this->LastCompanie = Companies::orderBy('id', 'desc')->first();
+        $this->code = $this->generateCompanyCode($this->LastCompanie);
+    }
 
-        $this->LastCompanie =  Companies::orderBy('id', 'desc')->first();
-
-        if($this->LastCompanie == Null){
-            $this->code = "COMP-0";
-        }
-        else{
-            $this->code = "COMP-". $this->LastCompanie->id;
-        }
+    /**
+     * Generate company code based on the last company.
+     *
+     * @param \App\Models\Companies\Companies|null $lastCompany
+     * @return string
+     */
+    private function generateCompanyCode($lastCompany)
+    {
+        return $lastCompany === null ? "COMP-0" : "COMP-" . $lastCompany->id;
     }
 
     public function render()
@@ -87,48 +81,32 @@ class CompaniesLines extends Component
 
     public function toggleClientType()
     {
-        if($this->client_type == 1){
-            $this->client_type = 1;
+        if ($this->client_type == 1) {
             $this->civility = null;
             $this->last_name = null;
         }
-        else{
-            $this->client_type = 2;
-        }
+        $this->client_type = $this->client_type == 1 ? 1 : 2;
     }
 
     public function storeCompany(){
 
         $this->validate();
             // Create Line
-            $CompaniesCreated = Companies::create([
-                'uuid'=> Str::uuid(),
-                'code'=>$this->code, 
-                'client_type' => $this->client_type,
-                'civility' => $this->civility,
-                'label'=>$this->label,
-                'last_name' => $this->last_name,
-                'website'=>$this->website,
-                'fbsite'=>$this->fbsite,
-                'twittersite'=>$this->twittersite, 
-                'lkdsite'=>$this->lkdsite, 
-                'siren'=>$this->siren, 
-                'naf_code'=>$this->naf_code, 
-                'intra_community_vat'=>$this->intra_community_vat, 
-                'discount'=>$this->discount,
-                'user_id'=>$this->user_id,
-                'account_general_customer'=>$this->account_general_customer,
-                'account_auxiliary_customer'=>$this->account_auxiliary_customer,
-                'account_general_supplier'=>$this->account_general_supplier,
-                'account_auxiliary_supplier'=>$this->account_auxiliary_supplier,
-                'recept_controle'=>$this->recept_controle,
-                'comment'=>$this->comment,
-            ]);
+        $CompaniesCreated = Companies::create([
+            'uuid'=> Str::uuid(),
+            'code'=>$this->code, 
+            'client_type' => $this->client_type,
+            'civility' => $this->civility,
+            'label'=>$this->label,
+            'last_name' => $this->last_name,
+            'user_id'=>$this->user_id,
+            'comment'=>$this->comment,
+        ]);
 
-            // notification for all user in database
-            $users = User::where('companies_notification', 1)->get();
-            Notification::send($users, new CompanieNotification($CompaniesCreated));
+        // notification for all user in database
+        $users = User::where('companies_notification', 1)->get();
+        Notification::send($users, new CompanieNotification($CompaniesCreated));
 
-            return redirect()->route('companies.show', ['id' => $CompaniesCreated->id])->with('success', 'Successfully created new company');
+        return redirect()->route('companies.show', ['id' => $CompaniesCreated->id])->with('success', 'Successfully created new company');
     }
 }

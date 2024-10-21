@@ -12,6 +12,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Events\OrderLineUpdated;
+use App\Services\InvoiceService;
 use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
 use App\Models\Products\StockMove;
@@ -68,12 +69,14 @@ class OrderLine extends Component
     private $invoiceOrdre = 10;
 
     protected $deliveryLineService;
+    protected $invoiceService;
     protected $invoiceLineService;
 
     public function __construct()
     {
         // Résoudre le service via le container Laravel
         $this->deliveryLineService = App::make(DeliveryLineService::class);
+        $this->invoiceService = App::make(InvoiceService::class);
         $this->invoiceLineService = App::make(InvoiceLineService::class);
     }
 
@@ -629,16 +632,8 @@ class OrderLine extends Component
         $LastInvoice = Invoices::orderBy('id', 'desc')->first();
         $invoiceCode = $LastInvoice ? "IN-" . $LastInvoice->id : "IN-0";
 
-        $InvoiceCreated = Invoices::create([
-            'uuid' => Str::uuid(),
-            'code' => $invoiceCode,
-            'label' => $invoiceCode,
-            'companies_id' => $OrderData->companies_id,
-            'companies_addresses_id' => $OrderData->companies_addresses_id,
-            'companies_contacts_id' => $OrderData->companies_contacts_id,
-            'user_id' => Auth::id(),
-            'due_date' => Carbon::now()->addDays(30),
-        ]);
+        $user = Auth::user();
+        $InvoiceCreated = $this->invoiceService->createInvoice($invoiceCode, $invoiceCode, $OrderData->companies_id, $OrderData->companies_addresses_id, $OrderData->companies_contacts_id, $user->id);
 
         if ($InvoiceCreated) {
             foreach ($this->data as $key => $item) {

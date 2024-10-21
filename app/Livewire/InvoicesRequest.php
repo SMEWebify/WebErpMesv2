@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use App\Services\InvoiceService;
 use App\Models\Workflow\Invoices;
 use App\Events\DeliveryLineUpdated;
 use App\Models\Companies\Companies;
@@ -34,11 +35,13 @@ class InvoicesRequest extends Component
     private $ordre = 10;
 
     protected $invoiceLineService;
+    protected $invoiceService;
 
     public function __construct()
     {
         // Résoudre le service via le container Laravel
         $this->invoiceLineService = App::make(InvoiceLineService::class);
+        $this->invoiceService = App::make(InvoiceService::class);
     }
 
     // Validation Rules
@@ -145,16 +148,7 @@ class InvoicesRequest extends Component
 
     private function createInvoice()
     {
-        return Invoices::create([
-            'uuid' => Str::uuid(),
-            'code' => $this->code,
-            'label' => $this->label,
-            'companies_id' => $this->companies_id,
-            'companies_addresses_id' => $this->companies_addresses_id,
-            'companies_contacts_id' => $this->companies_contacts_id,
-            'user_id' => $this->user_id,
-            'due_date' => Carbon::now()->addDays(30),
-        ]);
+        return $this->invoiceService->createInvoice($this->code, $this->label, $this->companies_id, $this->companies_addresses_id, $this->companies_contacts_id, $this->user_id);
     }
 
     private function createInvoiceNoteLines($invoiceCreated)

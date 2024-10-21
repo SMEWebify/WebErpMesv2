@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
+use App\Services\InvoiceService;
 use App\Models\Workflow\Invoices;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
@@ -21,24 +21,27 @@ use App\Http\Requests\Workflow\UpdateInvoiceRequest;
 class InvoicesController extends Controller
 {
     use NextPreviousTrait;
-    /**
-     * @return \Illuminate\Contracts\View\View
-     */
 
     protected $invoiceKPIService;
     protected $customFieldService;
+    protected $invoiceService;
     protected $invoiceLineService;
 
     public function __construct(
                     InvoiceKPIService $invoiceKPIService,
                     CustomFieldService $customFieldService,
+                    InvoiceService $invoiceService,
                     InvoiceLineService $invoiceLineService,
             ){
                 $this->invoiceKPIService = $invoiceKPIService;
                 $this->customFieldService = $customFieldService;
+                $this->invoiceService = $invoiceService;
                 $this->invoiceLineService = $invoiceLineService;
             }
     
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {    
         $CurentYear = Carbon::now()->format('Y');
@@ -77,56 +80,65 @@ class InvoicesController extends Controller
         return view('workflow/invoices-request');
     }
 
-    
+    /**
+     * Update the delivery line.
+     *
+     * @param $DeliveryLine
+     * @return void
+     */
+    private function updateDeliveryLine($DeliveryLine)
+    {
+        $DeliveryLine->invoice_status = 4;
+        $DeliveryLine->save();
+        event(new DeliveryLineUpdated($DeliveryLine->id));
+    }
+
+    /**
+     * Update the order line.
+     *
+     * @param $OrderLine
+     * @param $DeliveryLine
+     * @return void
+     */
+    private function updateOrderLine($OrderLine, $DeliveryLine)
+    {
+        $OrderLine->invoiced_qty += $DeliveryLine->qty;
+        $OrderLine->invoiced_remaining_qty -= $DeliveryLine->qty;
+
+        $OrderLine->invoice_status = $OrderLine->invoiced_remaining_qty == 0 ? 3 : 2;
+        $OrderLine->save();
+    }
+
+    /**
+     * Store a new invoice from delivery.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function storeFromDelevery($id)
     {
-        $LastInvoice =  Invoices::latest()->first();
-        if($LastInvoice == Null){
-            $code = "IN-0";
-            $label = "IN-0";
-        }
-        else{
-            $code = "IN-". $LastInvoice->id;
-            $label = "IN-". $LastInvoice->id;
-        }
+        $LastInvoice = Invoices::latest()->first();
+        $nextInvoiceId = $LastInvoice ? $LastInvoice->id + 1 : 0;
+        $code = "IN-" . $nextInvoiceId;
+        $label = "IN-" . $nextInvoiceId;
 
         $DeliveryData = Deliverys::find($id);
 
-        // Create invoice
-        $InvoiceCreated = Invoices::create([
-            'uuid'=> Str::uuid(),
-            'code'=>$code,  
-            'label'=>$label, 
-            'companies_id'=>$DeliveryData->companies_id,   
-            'companies_addresses_id'=>$DeliveryData->companies_addresses_id,  
-            'companies_contacts_id'=>$DeliveryData->companies_contacts_id,  
-            'user_id'=>Auth::id(),
-            'due_date' => Carbon::now()->addDays(30),
-        ]);
+        $user = Auth::user();
+        $InvoiceCreated = $this->invoiceService->createInvoice($code, $label, $DeliveryData->companies_id, $DeliveryData->companies_addresses_id, $DeliveryData->companies_contacts_id, $user->id);
 
         $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
         foreach ($DeliveryLines as $DeliveryLine) {
-            if($DeliveryLine->invoice_status != 4){
+            if ($DeliveryLine->invoice_status != 4) {
                 // Create invoice line
                 $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $DeliveryLine->ordre, $DeliveryLine->qty);
 
-                $DeliveryLine->invoice_status = 4; 
-                $DeliveryLine->save();
-                
-                event(new DeliveryLineUpdated($DeliveryLine->id));
+                // Update delivery line
+                $this->updateDeliveryLine($DeliveryLine);
 
-                // update order line info
+                // Update order line info
                 $OrderLine = OrderLines::find($DeliveryLine->order_line_id);
-                $OrderLine->invoiced_qty =  $OrderLine->invoiced_qty + $DeliveryLine->qty;
-                $OrderLine->invoiced_remaining_qty = $OrderLine->invoiced_remaining_qty - $DeliveryLine->qty;
-                //if we are invoiced all part
-                if($OrderLine->invoiced_remaining_qty == 0){
-                    $OrderLine->invoice_status = 3;
-                }
-                else{
-                    $OrderLine->invoice_status = 2;
-                }
-                $OrderLine->save();
+                $this->updateOrderLine($OrderLine, $DeliveryLine);
             }
         }
 

@@ -11,7 +11,6 @@ use App\Traits\NextPreviousTrait;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
-use App\Models\Methods\MethodsServices;
 use App\Models\Purchases\PurchaseLines;
 use App\Services\StockCalculationService;
 use App\Services\ABC_MFR_CalculatorService;
