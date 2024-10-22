@@ -76,7 +76,7 @@ class AppServiceProvider extends ServiceProvider
                                                                             })->get();*/
 
             $PurchasesWaintingReceiptCount = PurchaseLines::where('receipt_qty','<=', 'qty')->count();
-            $PurchasesWaintingInvoiceCount = PurchaseReceiptLines::whereHas('purchaseReceipt', function($q){$q->where('statu',1);})->count();
+            $PurchasesWaintingInvoiceCount = PurchaseLines::where('invoiced_qty','<=', 'qty')->count();
 
             $event->menu->addBefore('orders_lines_list', [
                 'text' => 'orders_list_trans_key',

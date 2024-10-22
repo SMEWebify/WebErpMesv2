@@ -4,10 +4,10 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseLines;
-use Illuminate\Support\Facades\Redirect;
 use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseInvoiceLines;
 use App\Models\Purchases\PurchaseReceiptLines;
@@ -20,7 +20,7 @@ class PurchasesWaintingInvoice extends Component
     public $sortAsc = true; // default sort direction
     
     public $label;
-    public $LastInvoice= '0';
+    public $LastInvoice;
     public $document_type = 'PU-IN';
 
     public $PurchasesWaintingInvoiceLineslist;
@@ -49,23 +49,29 @@ class PurchasesWaintingInvoice extends Component
         $this->sortField = $field;
     }
 
+    /**
+     * Generate invoice code and label.
+     *
+     * @return void
+     */
+    private function generateInvoiceCodeAndLabel()
+    {
+        if ($this->LastInvoice === null) {
+            $this->LastInvoice = 0;
+            $this->code = $this->document_type . "-0";
+            $this->label = $this->document_type . "-0";
+        } else {
+            $this->LastInvoice = $this->LastInvoice->id;
+            $this->code = $this->document_type . "-" . $this->LastInvoice;
+            $this->label = $this->document_type . "-" . $this->LastInvoice;
+        }
+    }
+
     public function mount() 
     {
         $this->user_id = Auth::id();
-        // get last id
-        $this->LastInvoice =  PurchaseInvoice::latest()->first();
-        //if we have no id, define 0 
-        if($this->LastInvoice == Null){
-            $this->LastInvoice = 0;
-            $this->code = $this->document_type ."-0";
-            $this->label = $this->document_type ."-0";
-        }
-        // else we use is from db
-        else{
-            $this->LastInvoice = $this->LastInvoice->id;
-            $this->code = $this->document_type ."-". $this->LastInvoice;
-            $this->label = $this->document_type ."-". $this->LastInvoice;
-        }
+        $this->LastInvoice = PurchaseInvoice::latest()->first();
+        $this->generateInvoiceCodeAndLabel();
 
         $this->CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('statu_supplier', '=', 2)->orderBy('code')->get();
     }
@@ -76,11 +82,10 @@ class PurchasesWaintingInvoice extends Component
         $userSelect = User::select('id', 'name')->get();
         //Select task where statu is open and only purchase type
         $PurchasesWaintingInvoiceLineslist = $this->PurchasesWaintingInvoiceLineslist = PurchaseReceiptLines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                                                                                        ->whereHas('purchaseReceipt', function($q){
-                                                                                            $q->where('companies_id','like', '%'.$this->companies_id.'%');
-                                                                                            $q->where('statu',1);
-                                                                                        })
-                                                                                        ->get();
+                                                        ->whereHas('purchaseLines', function($query) {
+                                                            $query->whereColumn('invoiced_qty', '<', 'qty'); // Comparer receipt_qty avec qty
+                                                        })
+                                                        ->get();
 
         return view('livewire.purchases-wainting-invoice', [
             'PurchasesWaintingInvoiceLineslist' => $PurchasesWaintingInvoiceLineslist,
@@ -88,51 +93,86 @@ class PurchasesWaintingInvoice extends Component
         ]);
     }
 
-    public function storeInvoice(){
-        //check rules
-        $this->validate(); 
+    public function storeInvoice()
+    {
+        // Check rules
+        $this->validate();
 
-         //check if line exist
-        $i = 0;
-        foreach ($this->data as $key => $item) {
-            if(array_key_exists("purchase_receipt_line_id",$this->data[$key])){
-                if($this->data[$key]['purchase_receipt_line_id'] != false ){
-                    $i++;
-                }
-            }
-        }
-        
+        // Check if any delivery line exists
+        if ($this->linesExist()) {
+            
+            // Create purchase invoice
+            $InvoiceCreated = $this->createInvoice();
 
-        if($i>0){
-
-            // Create puchase order
-            $InvoiceCreated = PurchaseInvoice::create([
-                'code'=>$this->code,  
-                'label'=>$this->label, 
-                'companies_id'=>$this->companies_id,
-                'user_id'=>$this->user_id,
-            ]);
-
-            // Create lines
-            foreach ($this->data as $key => $item) {
-                //check if add line to new receipt line is aviable
-                $PurchaseReceiptLines = PurchaseReceiptLines::find($key);
-                
-                // Create invoice line
-                $PurchaseInvoiceLines = PurchaseInvoiceLines::create([
-                    'purchase_invoice_id' => $InvoiceCreated->id, 
-                    'purchase_receipt_line_id' => $PurchaseReceiptLines->id, 
-                    'purchase_line_id' => $PurchaseReceiptLines->purchase_line_id, 
-                ]); 
-                /* // update statu line of purchase order line*/
-                PurchaseLines::where('id',$PurchaseInvoiceLines->purchase_line_id)->update(['invoiced_qty'=>$PurchaseReceiptLines->receipt_qty]);
-            }
+            // Create invoice lines
+            $this->createInvoiceLines($InvoiceCreated);
 
             return redirect()->route('purchase.invoices.show', ['id' => $InvoiceCreated->id])->with('success', 'Successfully created new purchase invoice');
+        
         }
-        else{
-            $errors = $this->getErrorBag();
-            $errors->add('errors', 'no lines selected');
+        else {
+            return redirect()->route('invoices-request')->with('error', 'No lines selected');
         }
+    }
+
+    /**
+     * Check if lines exist.
+     *
+     * @return bool
+     */
+    private function linesExist()
+    {
+        foreach ($this->data as $key => $item) {
+            if (array_key_exists("purchase_receipt_line_id", $item) && $item['purchase_receipt_line_id'] != false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create a new purchase invoice.
+     *
+     * @return \App\Models\Purchases\PurchaseInvoice
+     */
+    private function createInvoice()
+    {
+        return PurchaseInvoice::create([
+            'code' => $this->code,
+            'label' => $this->label,
+            'companies_id' => $this->companies_id,
+            'user_id' => $this->user_id,
+        ]);
+    }
+
+    /**
+     * Create invoice lines.
+     *
+     * @param \App\Models\Purchases\PurchaseInvoice $InvoiceCreated
+     * @return void
+     */
+    private function createInvoiceLines($InvoiceCreated)
+    {
+        foreach ($this->data as $key => $item) {
+            $PurchaseReceiptLine = PurchaseReceiptLines::find($key);
+
+            // Create invoice line
+            $PurchaseInvoiceLines = PurchaseInvoiceLines::create([
+                'purchase_invoice_id' => $InvoiceCreated->id,
+                'purchase_receipt_line_id' => $PurchaseReceiptLine->id,
+                'purchase_line_id' => $PurchaseReceiptLine->purchase_line_id,
+            ]);
+
+            // Update delivery line status
+            $this->updatePurchaseLineStatus($PurchaseReceiptLine);
+
+        }
+    }
+
+    private function updatePurchaseLineStatus($PurchaseReceiptLine)
+    {
+        // Update status line of purchase order line
+        PurchaseLines::where('id', $PurchaseReceiptLine->purchase_line_id)->update(['invoiced_qty' => $PurchaseReceiptLine->receipt_qty]);
+        
     }
 }
