@@ -19,9 +19,9 @@ class CreateOrdersTable extends Migration
             $table->string('code');
 			$table->string('label');
 			$table->string('customer_reference')->nullable();
-			$table->unsignedBigInteger('companies_id');
-			$table->unsignedBigInteger('companies_contacts_id');
-			$table->unsignedBigInteger('companies_addresses_id');
+			$table->unsignedBigInteger('companies_id')->nullable();
+			$table->unsignedBigInteger('companies_contacts_id')->nullable();
+			$table->unsignedBigInteger('companies_addresses_id')->nullable();
 			$table->date('validity_date')->nullable();
 			$table->integer('statu')->default(1);
             #1 = Open
@@ -31,9 +31,9 @@ class CreateOrdersTable extends Migration
             #5 =  Stopped
             #6 = canceled
 			$table->unsignedBigInteger('user_id');
-			$table->integer('accounting_payment_conditions_id');
-			$table->integer('accounting_payment_methods_id');
-			$table->integer('accounting_deliveries_id');
+			$table->integer('accounting_payment_conditions_id')->nullable();
+			$table->integer('accounting_payment_methods_id')->nullable();
+			$table->integer('accounting_deliveries_id')->nullable();
 			$table->text('comment')->nullable();
             $table->integer('quotes_id')->nullable();
             $table->integer('type')->default(1);

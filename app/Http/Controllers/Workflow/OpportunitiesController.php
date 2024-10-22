@@ -16,6 +16,7 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\Opportunities;
 use App\Notifications\QuoteNotification;
@@ -31,12 +32,13 @@ use App\Http\Requests\Workflow\UpdateOpportunityRequest;
 class OpportunitiesController extends Controller
 { 
     use NextPreviousTrait;
-
+    protected $notificationService ;
     protected $SelectDataService;
     protected $opportunitiesKPIService;
     protected $customFieldService;
 
     public function __construct(
+            NotificationService $notificationService,
             SelectDataService $SelectDataService, 
             OpportunitiesKPIService $opportunitiesKPIService,
             CustomFieldService $customFieldService
@@ -44,6 +46,7 @@ class OpportunitiesController extends Controller
         $this->SelectDataService = $SelectDataService;
         $this->opportunitiesKPIService = $opportunitiesKPIService;
         $this->customFieldService = $customFieldService;
+        $this->notificationService  = $notificationService ;
     }
 
     /**
@@ -284,8 +287,7 @@ class OpportunitiesController extends Controller
             'accounting_deliveries_id' => $defaultSettings['deliveries']->id,
         ]);
 
-        $users = User::where('quotes_notification', 1)->get();
-        Notification::send($users, new QuoteNotification($quotesCreated));
+        $this->notificationService->sendNotification(QuoteNotification::class, $quotesCreated, 'quotes_notification');
 
         $id->update(['statu' => 2]);
 

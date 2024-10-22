@@ -3,26 +3,31 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
-use App\Models\User;
 use Livewire\Component;
-use Illuminate\Support\Str;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
-use App\Models\Workflow\Orders;
+use App\Services\OrderService;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\App;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Accounting\AccountingVat;
-use App\Notifications\OrderNotification;
 use App\Models\Workflow\OrderLineDetails;
-use Illuminate\Support\Facades\Notification;
 
 class StockCurrent extends Component
 {
 
     public $produitsAvecStock = [];
     public $Factory = null;
+    
+    protected $orderService;
+
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->orderService = App::make(OrderService::class);
+    }
     
     public function mount()
     {
@@ -59,21 +64,27 @@ class StockCurrent extends Component
         //Get Product info for put in new order
         $ProductDetail = Products::findOrFail($productId);
         $sellingPrice = ($ProductDetail->selling_price ?? 0); 
-        // Create Line
-        $OrdersCreated = Orders::create([
-                                        'uuid'=> Str::uuid(),
-                                        'code'=> 'INT-STOCK-' . $dateFormatted,  
-                                        'label'=>'INT-STOCK-' . $dateFormatted,  
-                                        'companies_id'=>0,  
-                                        'companies_contacts_id'=> 0,    
-                                        'companies_addresses_id'=> 0,   
-                                        'validity_date'=>$validity_date,  
-                                        'user_id'=> Auth::id(),   
-                                        'accounting_payment_conditions_id'=> 0,   
-                                        'accounting_payment_methods_id'=> 0,   
-                                        'accounting_deliveries_id'=> 0,   
-                                        'type'=>2, 
-        ]);
+
+        // Create order
+        $user = Auth::user();
+        $OrdersCreated = $this->orderService->createOrder(
+                    'INT-STOCK-' . $dateFormatted,
+                    'INT-STOCK-' . $dateFormatted,
+                    '',
+                    null,
+                    null,
+                    null,
+                    $validity_date,
+                    1,
+                    $user->id,
+                    null,
+                    null,
+                    null,
+                    '',
+                    2,
+                    null,
+                    null
+                );
 
         $date = date_create($validity_date);
         $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
@@ -131,10 +142,6 @@ class StockCurrent extends Component
             $newSubAssembly->products_id = null;
             $newSubAssembly->save();
         }
-
-        // notification for all user in database
-        $users = User::where('orders_notification', 1)->get();
-        Notification::send($users, new OrderNotification($OrdersCreated));
 
         return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new internal order');
     }

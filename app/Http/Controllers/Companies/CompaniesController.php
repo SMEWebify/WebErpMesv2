@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Companies;
 
-use App\Models\User;
 use Illuminate\Support\Str;
 use App\Events\QuoteCreated;
 use App\Models\Workflow\Quotes;
@@ -14,11 +13,11 @@ use App\Models\Companies\Companies;
 use App\Services\InvoiceKPIService;
 use App\Services\SelectDataService;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Session;
 use App\Notifications\QuoteNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
-use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
@@ -27,6 +26,7 @@ use App\Models\Accounting\AccountingPaymentConditions;
 class CompaniesController extends Controller
 {
     use NextPreviousTrait;
+    protected $notificationService ;
     protected $SelectDataService;
     protected $orderKPIService;
     protected $quoteKPIService;
@@ -34,6 +34,7 @@ class CompaniesController extends Controller
     protected $companyService;
 
     public function __construct(
+        NotificationService $notificationService,
         InvoiceKPIService $invoiceKPIService,
         SelectDataService $SelectDataService, 
         OrderKPIService $orderKPIService,
@@ -41,6 +42,7 @@ class CompaniesController extends Controller
         CompanyService $companyService,
     )
     {
+        $this->notificationService = $notificationService;
         $this->SelectDataService = $SelectDataService;
         $this->orderKPIService = $orderKPIService;
         $this->quoteKPIService = $quoteKPIService;
@@ -171,8 +173,7 @@ class CompaniesController extends Controller
         ]);
 
         // Notification for all users in the database
-        $users = User::where('quotes_notification', 1)->get();
-        Notification::send($users, new QuoteNotification($quotesCreated));
+        $this->notificationService->sendNotification(QuoteNotification::class, $quotesCreated, 'quotes_notification');
 
         // Trigger the event
         event(new QuoteCreated($quotesCreated));

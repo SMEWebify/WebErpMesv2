@@ -9,11 +9,12 @@ use App\Events\QuoteCreated;
 use Livewire\WithPagination;
 use App\Models\Workflow\Quotes;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 use App\Notifications\QuoteNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
-use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
@@ -53,7 +54,13 @@ class QuotesIndex extends Component
     
 
     public $idCompanie = '';
+    protected $notificationService;
 
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->notificationService = App::make(NotificationService::class);
+    }
     // Validation Rules
     protected $rules = [
         'code' =>'required|unique:quotes',
@@ -164,9 +171,8 @@ class QuotesIndex extends Component
                                             'comment'=>$this->comment, 
             ]);
 
-            // notification for all user in database
-            $users = User::where('quotes_notification', 1)->get();
-            Notification::send($users, new QuoteNotification($QuotesCreated));
+            // notification
+            $this->notificationService->sendNotification(QuoteNotification::class, $QuotesCreated, 'quotes_notification');
 
             // Trigger the event
             event(new QuoteCreated($QuotesCreated));

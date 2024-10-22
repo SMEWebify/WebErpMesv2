@@ -4,16 +4,15 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
-use Illuminate\Support\Str;
 use App\Events\OrderCreated;
 use Livewire\WithPagination;
+use App\Services\OrderService;
 use App\Models\Workflow\Orders;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\OrderNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
-use Illuminate\Support\Facades\Notification;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
@@ -47,6 +46,14 @@ class OrdersIndex extends Component
     public $type = '1';
     
     public $idCompanie = '';
+
+    protected $orderService;
+
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->orderService = App::make(OrderService::class);
+    }
 
     // Validation Rules
     protected function rules()
@@ -108,7 +115,6 @@ class OrdersIndex extends Component
     {
         $this->userSelect = User::select('id', 'name')->get();
         $this->LastOrder = Orders::orderBy('id', 'desc')->first();
-    
         $this->setOrderCodeAndLabel();
     }
     
@@ -123,6 +129,7 @@ class OrdersIndex extends Component
         $prefix = $this->getPrefix($this->type);
         $orderId = $this->LastOrder ? $this->LastOrder->id : 0;
     
+        $orderId +=1;
         $this->code = "{$prefix}-{$orderId}";
         $this->label = "{$prefix}-{$orderId}";
     }
@@ -181,36 +188,33 @@ class OrdersIndex extends Component
         $this->validate();
 
         if($this->type == 2){
-            $this->companies_id = 0;
-            $this->companies_contacts_id = 0;
-            $this->companies_addresses_id = 0;
-            $this->accounting_payment_conditions_id = 0;
-            $this->accounting_payment_methods_id = 0;
-            $this->accounting_deliveries_id = 0;
+            $this->companies_id = null;
+            $this->companies_contacts_id = null;
+            $this->companies_addresses_id = null;
+            $this->accounting_payment_conditions_id = null;
+            $this->accounting_payment_methods_id = null;
+            $this->accounting_deliveries_id = null;
         }
 
-        // Create Line
-        $OrdersCreated = Orders::create([
-                                        'uuid'=> Str::uuid(),
-                                        'code'=>$this->code,  
-                                        'label'=>$this->label,  
-                                        'customer_reference'=>$this->customer_reference, 
-                                        'companies_id'=>$this->companies_id,  
-                                        'companies_contacts_id'=>$this->companies_contacts_id,    
-                                        'companies_addresses_id'=>$this->companies_addresses_id,   
-                                        'validity_date'=>$this->validity_date,   
-                                        'statu'=>$this->statu,   
-                                        'user_id'=>$this->user_id,   
-                                        'accounting_payment_conditions_id'=>$this->accounting_payment_conditions_id,   
-                                        'accounting_payment_methods_id'=>$this->accounting_payment_methods_id,   
-                                        'accounting_deliveries_id'=>$this->accounting_deliveries_id,   
-                                        'comment'=>$this->comment, 
-                                        'type'=>$this->type, 
-        ]);
-
-        // notification for all user in database
-        $users = User::where('orders_notification', 1)->get();
-        Notification::send($users, new OrderNotification($OrdersCreated));
+        // Create order
+        $OrdersCreated = $this->orderService->createOrder(
+            $this->code,
+            $this->label,
+            $this->customer_reference,
+            $this->companies_id,
+            $this->companies_contacts_id,
+            $this->companies_addresses_id,
+            $this->validity_date,
+            $this->statu,
+            $this->user_id,
+            $this->accounting_payment_conditions_id,
+            $this->accounting_payment_methods_id,
+            $this->accounting_deliveries_id,
+            $this->comment,
+            $this->type,
+            null,
+            null
+        );
 
         if($this->type == false){
             // Trigger the event

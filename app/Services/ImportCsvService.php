@@ -4,13 +4,11 @@ namespace App\Services;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
-use Illuminate\Support\Facades\Log;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Accounting\AccountingVat;
@@ -26,7 +24,13 @@ class ImportCsvService
 {
     private $numberOfLinesImported = 0;
     private $header = false;
+    protected $orderService;
 
+    public function __construct(
+        OrderService $orderService, 
+                    ){
+        $this->orderService = $orderService;
+    }
     private function validateFile($file)
     {
         // Implement file size, type, and extension validations
@@ -196,22 +200,27 @@ class ImportCsvService
      */
     private function createOrder($data, $request, $company, $defaultSettings, $filename, $defaultAddress, $defaultContact)
     {
-        Orders::create([
-            'uuid' => Str::uuid(),
-            'code' => utf8_encode($data[$request->code]),
-            'label' => $data[$request->label] ?? null,
-            'customer_reference' => $data[$request->customer_reference] ?? null,
-            'companies_id' => $company->id,
-            'companies_contacts_id' => $defaultAddress->id,
-            'companies_addresses_id' => $defaultContact->id,
-            'validity_date' => $data[$request->validity_date] ?? null,
-            'user_id' => Auth::id(),
-            'accounting_payment_conditions_id' => $defaultSettings['payment_conditions']->id,
-            'accounting_payment_methods_id' => $defaultSettings['payment_methods']->id,
-            'accounting_deliveries_id' => $defaultSettings['deliveries']->id,
-            'comment' => $data[$request->comment] ?? null,
-            'csv_file_name' => $filename,
-        ]);
+
+        // Create order
+        $user = Auth::user();
+        $this->orderService->createOrder(
+            utf8_encode($data[$request->code]),
+            $data[$request->label] ?? null,
+            $data[$request->customer_reference] ?? null,
+            $company->id,
+            $defaultAddress->id,
+            $defaultContact->id,
+            $data[$request->validity_date] ?? null,
+            null,
+            $user->id,
+            $defaultSettings['payment_conditions']->id,
+            $defaultSettings['payment_methods']->id,
+            $defaultSettings['deliveries']->id,
+            $data[$request->comment] ?? null,
+            1,
+            null,
+            $filename
+        );
     }
 
     /**

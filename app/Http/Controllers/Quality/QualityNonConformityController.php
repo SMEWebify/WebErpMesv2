@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers\Quality;
 
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
-use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;
-use App\Models\Workflow\DeliveryLines;
 use App\Models\Quality\QualityNonConformity;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\NonConformityNotification;
+use App\Services\QualityNonConformityService;
 use App\Http\Requests\Quality\StoreQualityNonConformityRequest;
 use App\Http\Requests\Quality\UpdateQualityNonConformityRequest;
 
 class QualityNonConformityController extends Controller
 {
     protected $SelectDataService;
-    public function __construct(SelectDataService $SelectDataService)
+    public $qualityNonConformityService;
+
+    public function __construct(SelectDataService $SelectDataService, QualityNonConformityService $qualityNonConformityService)
     {
         $this->SelectDataService = $SelectDataService;
+        $this->qualityNonConformityService = $qualityNonConformityService;
     }
-    
     
     /**
      * @return \Illuminate\Contracts\View\View
@@ -37,7 +35,7 @@ class QualityNonConformityController extends Controller
         $CorrectionsSelect = $this->SelectDataService->getQualityCorrection();
         
         $NonConformitysSelect = $this->SelectDataService->getQualityNonConformity();
-        $QualityNonConformitys = QualityNonConformity::orderBy('id')->paginate(10);
+        $QualityNonConformitys = QualityNonConformity::orderBy('id', 'desc')->paginate(10);
         $LastNonConformity =  DB::table('quality_non_conformities')->orderBy('id', 'desc')->first();
         
         return view('quality/quality-non-conformities', [
@@ -59,46 +57,16 @@ class QualityNonConformityController extends Controller
      */
     public function store(StoreQualityNonConformityRequest $request)
     {
-        $NonConformity =  QualityNonConformity::create($request->only('code',
-                                                                'label', 
-                                                                'statu',
-                                                                'user_id',
-                                                                'service_id',  
-                                                                'failure_id',  
-                                                                'failure_comment', 
-                                                                'causes_id', 
-                                                                'causes_comment',  
-                                                                'correction_id',  
-                                                                'correction_comment',   
-                                                                'companie_id'));
-
-        if($request->type) $NonConformity->type=1;
-        else $NonConformity->type = 2;
-        $NonConformity->save(); 
-                                                                
-        // notification for all user in database
-        $users = User::where('non_conformity_notification', 1)->get();
-        Notification::send($users, new NonConformityNotification($NonConformity));
+        // Create non-conformity via service
+        $this->qualityNonConformityService->createNonConformity($request->validated());
+        
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
 
     public function createNCFromDelivery($id){
-        $DeliveryLine = DeliveryLines::find($id);
-        $NewNonConformity = QualityNonConformity::create([
-            'code'=> "NC-OR-#". $DeliveryLine->OrderLine->orders_id,
-            'label'=>"NC-L-#". $DeliveryLine->OrderLine->id,
-            'statu'=>1,
-            'type'=>2,
-            'user_id'=>$DeliveryLine->delivery->user_id,
-            'companie_id'=>$DeliveryLine->delivery->companies_id,
-            'order_lines_id'=>$DeliveryLine->OrderLine->id,
-            'deliverys_id'=>$DeliveryLine->deliverys_id,
-            'delivery_line_id'=>$id,
-        ]);
-
-        // notification for all user in database
-        $users = User::where('non_conformity_notification', 1)->get();
-        Notification::send($users, new NonConformityNotification($NewNonConformity));
+        // Create non-conformity via service
+        $this->qualityNonConformityService->createNCFromDelivery($id);
+        
         return redirect()->back()->with('success', 'Successfully created non conformitie.');
     }
 

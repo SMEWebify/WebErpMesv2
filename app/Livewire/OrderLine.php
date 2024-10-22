@@ -2,8 +2,6 @@
 
 namespace App\Livewire;
 
-use Carbon\Carbon;
-use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
@@ -15,6 +13,7 @@ use App\Events\OrderLineUpdated;
 use App\Services\InvoiceService;
 use App\Models\Products\Products;
 use App\Models\Workflow\Invoices;
+use App\Services\DeliveryService;
 use App\Models\Products\StockMove;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\OrderLines;
@@ -24,15 +23,14 @@ use App\Models\Planning\SubAssembly;
 use App\Services\InvoiceLineService;
 use Illuminate\Support\Facades\Auth;
 use App\Services\DeliveryLineService;
+use App\Services\NotificationService;
 use App\Models\Products\SerialNumbers;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
-use App\Models\Quality\QualityNonConformity;
-use Illuminate\Support\Facades\Notification;
+use App\Services\QualityNonConformityService;
 use App\Models\Products\StockLocationProducts;
-use App\Notifications\NonConformityNotification;
 
 class OrderLine extends Component
 {
@@ -67,17 +65,22 @@ class OrderLine extends Component
     
     private $deleveryOrdre = 10;
     private $invoiceOrdre = 10;
-
+    protected $deliveryService;
     protected $deliveryLineService;
     protected $invoiceService;
     protected $invoiceLineService;
+    protected $notificationService;
+    protected $qualityNonConformityService;
 
     public function __construct()
     {
         // Résoudre le service via le container Laravel
+        $this->notificationService = App::make(NotificationService::class);
+        $this->deliveryService = App::make(DeliveryService::class);
         $this->deliveryLineService = App::make(DeliveryLineService::class);
         $this->invoiceService = App::make(InvoiceService::class);
         $this->invoiceLineService = App::make(InvoiceLineService::class);
+        $this->qualityNonConformityService = App::make(QualityNonConformityService::class);
     }
 
     // Validation Rules
@@ -491,17 +494,9 @@ class OrderLine extends Component
     }
 
     public function createNC($id, $companie_id){
-        $NewNonConformity = QualityNonConformity::create([
-            'code'=> "NC-OR-#". $this->orders_id,
-            'label'=>"NC-L-#". $id,
-            'statu'=>1,
-            'type'=>1,
-            'user_id'=>Auth::id(),
-            'companie_id'=>$companie_id,
-            'order_lines_id'=>$id,
-        ]);
-        $users = User::where('non_conformity_notification', 1)->get();
-        Notification::send($users, new NonConformityNotification($NewNonConformity));
+        // Create non-conformity via service
+        $this->qualityNonConformityService->createNC($id, $companie_id);
+        
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
     
@@ -587,15 +582,8 @@ class OrderLine extends Component
         $LastDelivery = Deliverys::orderBy('id', 'desc')->first();
         $deliveryCode = $LastDelivery ? "DN-" . $LastDelivery->id : "DN-0";
 
-        $DeliveryCreated = Deliverys::create([
-            'uuid' => Str::uuid(),
-            'code' => $deliveryCode,
-            'label' => $deliveryCode,
-            'companies_id' => $OrderData->companies_id,
-            'companies_addresses_id' => $OrderData->companies_addresses_id,
-            'companies_contacts_id' => $OrderData->companies_contacts_id,
-            'user_id' => Auth::id(),
-        ]);
+        $user = Auth::user();
+        $DeliveryCreated = $this->deliveryService->createDelivery($deliveryCode, $deliveryCode, $OrderData->companies_id, $OrderData->companies_addresses_id, $OrderData->companies_contacts_id, $user->id);
 
         if ($DeliveryCreated) {
             foreach ($this->data as $key => $item) {

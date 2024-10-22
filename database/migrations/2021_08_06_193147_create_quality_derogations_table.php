@@ -17,7 +17,7 @@ class CreateQualityDerogationsTable extends Migration
             $table->id();
             $table->string('code');
 			$table->string('label');
-            $table->integer('statu');
+            $table->integer('statu')->default(1);
 			$table->integer('type');
 			$table->integer('user_id');
 			$table->text('pb_descp');

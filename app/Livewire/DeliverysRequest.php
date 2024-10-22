@@ -6,6 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use App\Events\OrderLineUpdated;
+use App\Services\DeliveryService;
 use App\Models\Products\StockMove;
 use App\Models\Workflow\Deliverys;
 use App\Models\Companies\Companies;
@@ -20,11 +21,13 @@ use App\Models\Products\StockLocationProducts;
 
 class DeliverysRequest extends Component
 {
+    protected $deliveryService;
     protected $deliveryLineService;
     
     public function __construct()
     {
         // Résoudre le service via le container Laravel
+        $this->deliveryService = App::make(DeliveryService::class);
         $this->deliveryLineService = App::make(DeliveryLineService::class);
     }
 
@@ -158,15 +161,7 @@ class DeliverysRequest extends Component
     
     private function createDeliveryNote()
     {
-        return Deliverys::create([
-            'uuid' => Str::uuid(),
-            'code' => $this->code,
-            'label' => $this->label,
-            'companies_id' => $this->companies_id,
-            'companies_addresses_id' => $this->companies_addresses_id,
-            'companies_contacts_id' => $this->companies_contacts_id,
-            'user_id' => $this->user_id,
-        ]);
+        return $this->deliveryService->createDelivery($this->code, $this->label, $this->companies_id, $this->companies_addresses_id, $this->companies_contacts_id, $this->user_id);
     }
     
     private function createDeliveryNoteLines($deliveryCreated)

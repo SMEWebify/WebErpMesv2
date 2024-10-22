@@ -7,9 +7,10 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 use App\Notifications\CompanieNotification;
-use Illuminate\Support\Facades\Notification;
 
 class CompaniesLines extends Component
 {
@@ -28,8 +29,17 @@ class CompaniesLines extends Component
     public $userSelect = [];
     public $code, $label;
     public $user_id;
+    public $comment;
     public $client_type = 1;
     public $civility, $last_name; 
+
+    protected $notificationService;
+
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->notificationService = App::make(NotificationService::class);
+    }
 
     // Validation Rules
     protected $rules = [
@@ -103,9 +113,9 @@ class CompaniesLines extends Component
             'comment'=>$this->comment,
         ]);
 
-        // notification for all user in database
-        $users = User::where('companies_notification', 1)->get();
-        Notification::send($users, new CompanieNotification($CompaniesCreated));
+        // notification
+        $this->notificationService->sendNotification(CompanieNotification::class, $CompaniesCreated, 'companies_notification');
+
 
         return redirect()->route('companies.show', ['id' => $CompaniesCreated->id])->with('success', 'Successfully created new company');
     }

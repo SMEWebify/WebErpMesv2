@@ -17,7 +17,7 @@ class CreateQualityNonConformitiesTable extends Migration
             $table->id();
             $table->string('code');
 			$table->string('label');
-			$table->integer('statu');
+			$table->integer('statu')->default(1);
             #1 => In Progress
             #2 => Wainting customer data
             #3 => Solved

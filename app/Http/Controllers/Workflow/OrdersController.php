@@ -132,7 +132,7 @@ class OrdersController extends Controller
     }
     
     /**
-     * @param \App\Http\Requests\UpdateOrderRequest $request
+     * @param \App\Http\Requests\Workflow\UpdateOrderRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateOrderRequest $request)

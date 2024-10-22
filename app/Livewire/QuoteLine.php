@@ -2,30 +2,27 @@
 
 namespace App\Livewire;
 
-use App\Models\User;
 use Livewire\Component;
-use Illuminate\Support\Str;
 use App\Events\OrderCreated;
 use Livewire\WithPagination;
 use App\Models\Admin\Factory;
 use App\Models\Planning\Task;
+use App\Services\OrderService;
 use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
+use Illuminate\Support\Facades\App;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
-use App\Notifications\OrderNotification;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
-use Illuminate\Support\Facades\Notification;
-use League\CommonMark\Extension\SmartPunct\Quote;
 
 class QuoteLine extends Component
 {
@@ -55,6 +52,14 @@ class QuoteLine extends Component
     public $ProductSelect  = [];
 
     public $data = [];
+
+    protected $orderService;
+
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->orderService = App::make(OrderService::class);
+    }
 
     // Validation Rules
     protected $rules = [
@@ -418,36 +423,31 @@ class QuoteLine extends Component
             //get data to dulicate for new order
             $QuoteData = Quotes::find($quoteId);
 
-            //get last order id for create new Code id
-            $LastOrder =  Orders::orderBy('id', 'desc')->first();
-            if($LastOrder == Null){
-                $orderCode = "OR-0";
-            }
-            else{
-                $orderCode = "OR-". $LastOrder->id;
-            }
+            // Generate new order code
+            $lastOrder = Orders::latest('id')->first();
+            $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
+            
 
              // Create order
-            $OrdersCreated = Orders::create([
-                'uuid'=> Str::uuid(),
-                'code'=>$orderCode,  
-                'label'=>$QuoteData->label,  
-                'customer_reference'=>$QuoteData->customer_reference, 
-                'companies_id'=>$QuoteData->companies_id,  
-                'companies_contacts_id'=>$QuoteData->companies_contacts_id,    
-                'companies_addresses_id'=>$QuoteData->companies_addresses_id,   
-                'validity_date'=>$QuoteData->validity_date,  
-                'user_id'=>Auth::id(),   
-                'accounting_payment_conditions_id'=>$QuoteData->accounting_payment_conditions_id,   
-                'accounting_payment_methods_id'=>$QuoteData->accounting_payment_methods_id,   
-                'accounting_deliveries_id'=>$QuoteData->accounting_deliveries_id,   
-                'comment'=>$QuoteData->comment,
-                'quotes_id'=>$QuoteData->id, 
-            ]);
-
-            // notification for all user in database
-            $users = User::where('orders_notification', 1)->get();
-            Notification::send($users, new OrderNotification($OrdersCreated));
+            $user = Auth::user();
+            $OrdersCreated = $this->orderService->createOrder(
+                $orderCode,
+                $QuoteData->label,
+                $QuoteData->customer_reference,
+                $QuoteData->companies_id,
+                $QuoteData->companies_contacts_id,
+                $QuoteData->companies_addresses_id,
+                $QuoteData->validity_date,
+                1,
+                $user->id,
+                $QuoteData->accounting_payment_conditions_id,
+                $QuoteData->accounting_payment_methods_id,
+                $QuoteData->accounting_deliveries_id,
+                $QuoteData->comment,
+                1,
+                $QuoteData->id,
+                null
+            );
 
            // Trigger the event
             event(new OrderCreated($OrdersCreated));

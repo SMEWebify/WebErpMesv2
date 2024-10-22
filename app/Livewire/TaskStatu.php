@@ -10,10 +10,13 @@ use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Products\StockMove;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 use App\Models\Planning\TaskActivities;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Support\Facades\Notification;
+use App\Services\QualityNonConformityService;
 use App\Models\Products\StockLocationProducts;
 use App\Notifications\NonConformityNotification;
 
@@ -46,7 +49,16 @@ class TaskStatu extends Component
     public $StockLocationsProducts = null; 
 
     public $userSelect;
+    protected $notificationService;
+    protected $qualityNonConformityService;
 
+    public function __construct()
+    {
+        // Résoudre le service via le container Laravel
+        $this->notificationService = App::make(NotificationService::class);
+        $this->qualityNonConformityService = App::make(QualityNonConformityService::class);
+    }
+    
     // Validation Rules
     protected $rules = [
         'addGoodQt' =>'required|numeric|min:0',
@@ -422,19 +434,9 @@ class TaskStatu extends Component
     }
 
     public function createNC($id, $companie_id, $id_service){
-        $NewNonConformity = QualityNonConformity::create([
-            'code'=> "NC-TASK-#". $id,
-            'label'=>"NC-TASK-#". $id,
-            'statu'=>1,
-            'type'=>1,
-            'user_id'=>Auth::id(),
-            'methods_services_id' =>$id_service,
-            'companie_id'=>$companie_id,
-            'task_id'=>$id,
-        ]);
-        // notification for all user in database
-        $users = User::where('non_conformity_notification', 1)->get();
-        Notification::send($users, new NonConformityNotification($NewNonConformity));
+
+        $this->qualityNonConformityService->createNC($id, $companie_id, $id_service, 'task');
+
         return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
     }
 
