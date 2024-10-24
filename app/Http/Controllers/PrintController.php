@@ -22,7 +22,6 @@ use App\Services\CreditNoteCalculatorService;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
 use horstoeko\zugferd\codelists\ZugferdPaymentMeans;
-use Webklex\PDFMerger\Facades\PDFMerger;
 
 class PrintController extends Controller
 {

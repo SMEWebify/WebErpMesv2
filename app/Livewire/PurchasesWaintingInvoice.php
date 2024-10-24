@@ -120,7 +120,7 @@ class PurchasesWaintingInvoice extends Component
         
         }
         else {
-            return redirect()->route('invoices-request')->with('error', 'No lines selected');
+            return redirect()->route('purchases.wainting.invoice')->with('error', 'No lines selected');
         }
     }
 
@@ -164,8 +164,15 @@ class PurchasesWaintingInvoice extends Component
     {
         foreach ($this->data as $key => $item) {
             $PurchaseReceiptLine = PurchaseReceiptLines::find($key);
+            $accountingType = 2;
+            if($PurchaseReceiptLine-> purchaseLines->tasks_id == 0){
+                $accountingType = 5;
+            }
+            elseif($PurchaseReceiptLine-> purchaseLines->tasks->OrderLines->order->type == 2){
+                $accountingType = 5;
+            }
 
-            $allocationId = $this->accountingEntryService->getAllocationId(2, $PurchaseReceiptLine->purchaseLines->accounting_vats_id);
+            $allocationId = $this->accountingEntryService->getAllocationId($accountingType, $PurchaseReceiptLine->purchaseLines->accounting_vats_id);
 
             // Create invoice line
             $PurchaseInvoiceLines = PurchaseInvoiceLines::create([
