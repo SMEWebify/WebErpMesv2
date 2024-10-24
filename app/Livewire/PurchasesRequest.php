@@ -6,7 +6,6 @@ use App\Models\User;
 use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
-use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use Illuminate\Support\Facades\Auth;
@@ -197,7 +196,8 @@ class PurchasesRequest extends Component
                         //if not best to find request value, but we cant send hidden data with livewire
                         //How pass all information from task information ?
                         $Task = Task::find($key);
-
+                        //we must multiply by qty to get from order line
+                        $TotalQtyTobuy = $Task->qty* $Task->OrderLines->qty;
                         // Create delivery line
                         $PurchaseLines = PurchaseLines::create([
                                 'purchases_id' => $PurchaseOrderCreated->id,
@@ -207,7 +207,7 @@ class PurchasesRequest extends Component
                                 'product_id' =>$Task->component_id,
                                 'label' => $Task->label,
                                 //'supplier_ref' => , can be null
-                                'qty' => $Task->qty,
+                                'qty' => $TotalQtyTobuy,
                                 'selling_price' => $Task->unit_cost,
                                 'discount' => 0,
                                 'unit_price_after_discount' => $Task->unit_cost,
