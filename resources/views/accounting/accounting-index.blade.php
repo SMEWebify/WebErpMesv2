@@ -3,6 +3,7 @@
 @section('title', __('general_content.accounting_trans_key'))
 
 @section('content_header')
+    <script rel="stylesheet" src="{{ asset('js/switchtabNav.js') }}"></script>
     <h1>{{ __('general_content.accounting_trans_key') }}</h1>
 @stop
 
@@ -13,8 +14,8 @@
 <div class="card">
   @include('include.alert-result')
   <div class="card-header p-2">
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#PaymentCondition" data-toggle="tab">{{ __('general_content.payment_conditions_trans_key') }}</a></li>
+    <ul class="nav nav-pills" id="DocumentTabs">
+      <li class="nav-item"><a class="nav-link" href="#PaymentCondition" data-toggle="tab">{{ __('general_content.payment_conditions_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#PaymentChoice" data-toggle="tab">{{ __('general_content.payment_methods_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#VAT" data-toggle="tab">{{ __('general_content.vat_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#AccountingAllocations" data-toggle="tab">{{ __('general_content.accounting_allocations_trans_key') }}</a></li>
@@ -23,7 +24,7 @@
   </div>
   <!-- /.card-header -->
   <div class="tab-content p-3">
-    <div class="tab-pane active" id="PaymentCondition">
+    <div class="tab-pane" id="PaymentCondition">
       <div class="row">
         <div class="col-md-6">
           <x-adminlte-card title="{{ __('general_content.payment_conditions_trans_key') }}" theme="primary" maximizable>
@@ -459,12 +460,12 @@
                     <td>{{ $Allocation->vat_account }}</td>
                     <td>{{ $Allocation->code_account }}</td>
                     <td>
-                      @if($Allocation->type_imputation  == 1) {{__('general_content.purchase_trans_key') }} @endif 
-                      @if($Allocation->type_imputation  == 2) {{__('general_content.purchase_stock_trans_key') }} @endif
+                      @if($Allocation->type_imputation  == 1) {{__('general_content.sale_trans_key') }} @endif 
+                      @if($Allocation->type_imputation  == 2) {{__('general_content.purchase_trans_key') }} @endif
                       @if($Allocation->type_imputation  == 3) {{__('general_content.advance_payment_trans_key') }} @endif
-                      @if($Allocation->type_imputation  == 4) {{__('general_content.advance_payment_vat_trans_key') }} @endif
-                      @if($Allocation->type_imputation  == 5) {{__('general_content.other_trans_key') }} @endif
-                      @if($Allocation->type_imputation  == 6) VAT @endif
+                      @if($Allocation->type_imputation  == 4) {{__('general_content.tax_trans_key') }} @endif
+                      @if($Allocation->type_imputation  == 5) {{__('general_content.purchase_stock_trans_key') }} @endif
+                      @if($Allocation->type_imputation  == 6) {{__('general_content.other_trans_key') }} @endif
                     </td>
                     <td class=" py-0 align-middle">
                       <!-- Button Modal {{ $Allocation->id }} -->
@@ -511,12 +512,12 @@
                             <div class="form-group">
                               <label for="type_imputation">{{__('general_content.type_trans_key') }}</label>
                               <select class="form-control" name="type_imputation" id="type_imputation">
-                                  <option value="1" @if($Allocation->type_imputation == 1 ) Selected @endif>{{__('general_content.purchase_trans_key') }}</option>
-                                  <option value="2" @if($Allocation->type_imputation == 2 ) Selected @endif>{{__('general_content.purchase_stock_trans_key') }}</option>
+                                  <option value="1" @if($Allocation->type_imputation == 1 ) Selected @endif>{{__('general_content.sale_trans_key') }}</option>
+                                  <option value="2" @if($Allocation->type_imputation == 2 ) Selected @endif>{{__('general_content.purchase_trans_key') }}</option>
                                   <option value="3" @if($Allocation->type_imputation == 3 ) Selected @endif>{{__('general_content.advance_payment_trans_key') }}</option>
-                                  <option value="4" @if($Allocation->type_imputation == 4 ) Selected @endif>{{__('general_content.advance_payment_vat_trans_key') }}</option>
-                                  <option value="5" @if($Allocation->type_imputation == 5 ) Selected @endif>{{__('general_content.other_trans_key') }}</option>
-                                  <option value="6" @if($Allocation->type_imputation == 6 ) Selected @endif>{{__('general_content.vat_trans_key') }}</option>
+                                  <option value="4" @if($Allocation->type_imputation == 4 ) Selected @endif>{{__('general_content.tax_trans_key') }}</option>
+                                  <option value="5" @if($Allocation->type_imputation == 5 ) Selected @endif>{{__('general_content.purchase_stock_trans_key') }}</option>
+                                  <option value="6" @if($Allocation->type_imputation == 6 ) Selected @endif>{{__('general_content.other_trans_key') }}</option>
                               </select>
                             </div>
                           </div>
@@ -591,12 +592,12 @@
               <div class="form-group">
                 <label for="type_imputation">{{__('general_content.type_trans_key') }}</label>
                 <select class="form-control" name="type_imputation" id="type_imputation">
-                    <option value="1">{{__('general_content.purchase_trans_key') }}</option>
-                    <option value="2">{{__('general_content.purchase_stock_trans_key') }}</option>
+                    <option value="1">{{__('general_content.sale_trans_key') }}</option>
+                    <option value="2">{{__('general_content.purchase_trans_key') }}</option>
                     <option value="3">{{__('general_content.advance_payment_trans_key') }}</option>
-                    <option value="4">{{__('general_content.advance_payment_vat_trans_key') }}</option>
-                    <option value="5">{{__('general_content.other_trans_key') }}</option>
-                    <option value="6">{{__('general_content.vat_trans_key') }}</option>
+                    <option value="4">{{__('general_content.tax_trans_key') }}</option>
+                    <option value="5">{{__('general_content.purchase_stock_trans_key') }}</option>
+                    <option value="6">{{__('general_content.other_trans_key') }}</option>
                 </select>
               </div>
               <x-slot name="footerSlot">

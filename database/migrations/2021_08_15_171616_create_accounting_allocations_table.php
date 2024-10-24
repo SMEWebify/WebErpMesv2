@@ -21,6 +21,13 @@ class CreateAccountingAllocationsTable extends Migration
 			$table->integer('vat_account');
 			$table->integer('code_account');
 			$table->integer('type_imputation');
+            #1 = Sale
+            #2 = Purchase
+            #3 = Down payment (acount)
+            #4 = Tax
+            #5 = Purchase (stock)
+            #6 = Other
+
             $table->timestamps();
         });
     }

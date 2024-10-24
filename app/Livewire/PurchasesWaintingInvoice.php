@@ -6,8 +6,10 @@ use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Purchases\PurchaseLines;
+use App\Services\AccountingEntryService;
 use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseInvoiceLines;
 use App\Models\Purchases\PurchaseReceiptLines;
@@ -28,6 +30,13 @@ class PurchasesWaintingInvoice extends Component
     public $updateLines = false;
     public $CompanieSelect = [];
     public $data = [];
+
+    protected $accountingEntryService;
+
+    public function __construct()
+    {
+        $this->accountingEntryService = App::make(AccountingEntryService::class);
+    }
 
     // Validation Rules
     protected function rules()
@@ -156,12 +165,20 @@ class PurchasesWaintingInvoice extends Component
         foreach ($this->data as $key => $item) {
             $PurchaseReceiptLine = PurchaseReceiptLines::find($key);
 
+            $allocationId = $this->accountingEntryService->getAllocationId(2, $PurchaseReceiptLine->purchaseLines->accounting_vats_id);
+
             // Create invoice line
             $PurchaseInvoiceLines = PurchaseInvoiceLines::create([
                 'purchase_invoice_id' => $InvoiceCreated->id,
                 'purchase_receipt_line_id' => $PurchaseReceiptLine->id,
                 'purchase_line_id' => $PurchaseReceiptLine->purchase_line_id,
+                'accounting_allocation_id' => $allocationId,
             ]);
+
+            if($allocationId != null){
+                // Créer une entrée comptable pour cette ligne de facture
+                $this->accountingEntryService->createPurchaseEntry($PurchaseInvoiceLines);
+            }
 
             // Update delivery line status
             $this->updatePurchaseLineStatus($PurchaseReceiptLine);

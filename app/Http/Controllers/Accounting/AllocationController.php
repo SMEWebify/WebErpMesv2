@@ -19,7 +19,8 @@ class AllocationController extends Controller
     public function store(StoreAllocationRequest $request)
     {
         $allocation = AccountingAllocation::create($request->validated());
-        return redirect()->route('accounting')->with('success', 'Successfully created allocation.');
+        return redirect()->to(route('accounting') . '#AccountingAllocations')
+                        ->with('success', 'Successfully created allocation.');
     }
 
     /**
@@ -32,6 +33,7 @@ class AllocationController extends Controller
     {
         $allocation = AccountingAllocation::findOrFail($request->id);
         $allocation->update($request->validated());
-        return redirect()->route('accounting')->with('success', 'Successfully updated allocation.');
+        return redirect()->to(route('accounting') . '#AccountingAllocations')
+                        ->with('success', 'Successfully updated allocation.');
     }
 }

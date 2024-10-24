@@ -131,7 +131,7 @@ class InvoicesController extends Controller
         foreach ($DeliveryLines as $DeliveryLine) {
             if ($DeliveryLine->invoice_status != 4) {
                 // Create invoice line
-                $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $DeliveryLine->ordre, $DeliveryLine->qty);
+                $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $DeliveryLine->order_line_id, $DeliveryLine->id, $DeliveryLine->ordre, $DeliveryLine->qty, $DeliveryLine->OrderLine->accounting_vats_id);
 
                 // Update delivery line
                 $this->updateDeliveryLine($DeliveryLine);

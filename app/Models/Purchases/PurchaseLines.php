@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Purchases\PurchaseReceiptLines;
-use App\Models\Accounting\AccountingAllocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseLines extends Model
@@ -63,11 +62,6 @@ class PurchaseLines extends Model
         return $this->belongsTo(MethodsUnits::class, 'methods_units_id');
     }
 
-    public function allocation()
-    {
-        return $this->belongsTo(AccountingAllocation::class, 'accounting_allocation_id');
-    }
-
     public function VAT()
     {
         return $this->belongsTo(AccountingVat::class, 'accounting_vats_id');
@@ -76,6 +70,19 @@ class PurchaseLines extends Model
     public function stockLocation()
     {
         return $this->belongsTo(StockLocation::class, 'stock_locations_id');
+    }
+
+    public function getTotalAttribute()
+    {
+        
+        $price = $this->selling_price;
+        $qty = $this->qty;
+        $discount = $this->discount ?? 0;
+        
+        $total = $price * $qty;
+        $discountedTotal = $total - ($total * ($discount / 100));
+
+        return round($discountedTotal, 2);
     }
 
     public function GetPrettyCreatedAttribute()

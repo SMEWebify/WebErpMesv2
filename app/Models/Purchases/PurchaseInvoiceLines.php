@@ -5,8 +5,8 @@ namespace App\Models\Purchases;
 use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseInvoice;
+use App\Models\Accounting\AccountingEntry;
 use App\Models\Purchases\PurchaseReceiptLines;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseInvoiceLines extends Model
 {
@@ -15,6 +15,7 @@ class PurchaseInvoiceLines extends Model
         'purchase_invoice_id',
         'purchase_receipt_line_id',
         'purchase_line_id',
+        'accounting_allocation_id',
     ];
 
     public function purchaseInvoice()
@@ -30,6 +31,12 @@ class PurchaseInvoiceLines extends Model
     public function purchaseReceiptLines()
     {
         return $this->belongsTo(PurchaseReceiptLines::class, 'purchase_receipt_line_id');
+    }
+
+    // Relation avec AccountingEntry pour l'entrée comptable liée à cette ligne de facture
+    public function accountingEntry()
+    {
+        return $this->hasOne(AccountingEntry::class, 'invoice_line_id');
     }
 
     public function GetPrettyCreatedAttribute()

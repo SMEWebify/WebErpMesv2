@@ -6,11 +6,12 @@ use App\Models\User;
 
 use Illuminate\Database\Seeder;
 use App\Models\Companies\Companies;
+use Database\Seeders\AllocationSeeder;
 use Database\Seeders\CreateTaskSeeder;
 use Database\Seeders\OrderTableSeeder;
 use Database\Seeders\QuotesTableSeeder;
-use App\Models\Accounting\AccountingVat;
 
+use App\Models\Accounting\AccountingVat;
 use App\Models\Companies\CompaniesContacts;
 use Database\Seeders\CreateAdminUserSeeder;
 use Database\Seeders\OrderLinesTableSeeder;
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
             MethodsSectionTableSeeder::class,
             PermissionTableSeeder::class,
             CreateAdminUserSeeder::class,
+            AllocationSeeder::class,
         ]);
 
         //factory
@@ -54,7 +56,8 @@ class DatabaseSeeder extends Seeder
         CompaniesContacts::factory()->count(200)->create();
         CompaniesAddresses::factory()->count(200)->create();
         //Accounting informations 
-        AccountingVat::factory()->count(4)->create();
+        //AccountingVat::factory()->count(4)->create();
+        
         AccountingPaymentConditions::factory()->count(5)->create();
         AccountingPaymentMethod::factory()->count(3)->create();
         AccountingDelivery::factory()->count(3)->create();

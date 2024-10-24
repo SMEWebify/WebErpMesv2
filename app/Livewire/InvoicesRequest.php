@@ -67,6 +67,7 @@ class InvoicesRequest extends Component
         $this->LastInvoice = Invoices::latest()->first();
     
         $invoiceId = $this->LastInvoice ? $this->LastInvoice->id : 0;
+        $invoiceId +=1;
         $this->code = "IN-" . $invoiceId;
         $this->label = $this->code;
     }
@@ -156,7 +157,7 @@ class InvoicesRequest extends Component
                 $deliveryLine = DeliveryLines::find($key);
 
                 // Create invoice line
-                $this->invoiceLineService->createInvoiceLine($invoiceCreated, $deliveryLine->order_line_id, $deliveryLine->id, $this->ordre, $deliveryLine->qty);
+                $this->invoiceLineService->createInvoiceLine($invoiceCreated, $deliveryLine->order_line_id, $deliveryLine->id, $this->ordre, $deliveryLine->qty, $deliveryLine->OrderLine->accounting_vats_id);
 
                 // Update delivery line status
                 $this->updateDeliveryLineStatus($deliveryLine);

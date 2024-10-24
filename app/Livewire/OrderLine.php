@@ -626,7 +626,7 @@ class OrderLine extends Component
         if ($InvoiceCreated) {
             foreach ($this->data as $key => $item) {
                 $OrderLineData = OrderLines::find($key);
-                $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $key, null, $this->invoiceOrdre, $OrderLineData->invoiced_remaining_qty);
+                $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $key, null, $this->invoiceOrdre, $OrderLineData->invoiced_remaining_qty, $OrderLineData->accounting_vats_id);
 
                 if ($this->CreateSerialNumber) {
                     $this->createSerialNumbers($OrderLineData, $OrderLineData->invoiced_remaining_qty);

@@ -267,6 +267,19 @@ class OrderLines extends Model
         return round($availability * $performance * $quality * 100, 2);
     }
 
+    public function getTotalAttribute()
+    {
+        
+        $price = $this->selling_price;
+        $qty = $this->qty;
+        $discount = $this->discount ?? 0;
+        
+        $total = $price * $qty;
+        $discountedTotal = $total - ($total * ($discount / 100));
+
+        return round($discountedTotal, 2);
+    }
+
     public function GetPrettyCreatedAttribute()
     {
         return date('d F Y', strtotime($this->created_at));

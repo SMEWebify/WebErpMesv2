@@ -7,6 +7,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Accounting\AccountingEntry;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -36,6 +37,12 @@ class InvoiceLines extends Model
     public function deliveryLine()
     {
         return $this->belongsTo(DeliveryLines::class, 'delivery_line_id');
+    }
+
+    // Relation avec AccountingEntry pour l'entrée comptable liée à cette ligne de facture
+    public function accountingEntry()
+    {
+        return $this->hasOne(AccountingEntry::class, 'invoice_line_id');
     }
 
     public function GetPrettyCreatedAttribute()

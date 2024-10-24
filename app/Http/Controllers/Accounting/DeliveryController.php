@@ -19,7 +19,8 @@ class DeliveryController extends Controller
     public function store(StoreDeliveryRequest $request)
     {
         $delivery = AccountingDelivery::create($request->validated());
-        return redirect()->route('accounting')->with('success', 'Successfully created delevery mode.');
+        return redirect()->to(route('accounting') . '#Delevery')
+                        ->with('success', 'Successfully created delevery mode.');
     }
 
     /**
@@ -38,6 +39,7 @@ class DeliveryController extends Controller
             AccountingDelivery::where('id', '!=', $delivery->id)->update(['default' => 0]);
         }
 
-        return redirect()->route('accounting')->with('success', 'Successfully updated delevery mode.');
+        return redirect()->to(route('accounting') . '#Delevery')
+                        ->with('success', 'Successfully updated delevery mode.');
     }
 }
