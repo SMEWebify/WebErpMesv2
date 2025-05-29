@@ -104,10 +104,21 @@ class FactoryController extends Controller
             $Factory->picture = $filename;
         }
 
-        // Management of the CGV file (PDF only)
+        // CGV file (PDF only) with magic number verification
         if ($request->hasFile('cgv_file')) {
             $file = $request->file('cgv_file');
-            $filename = 'cgv_' . time() . '_' . uniqid() . '.pdf'; // Extension imposée
+
+            // 🧪 Vérification du contenu (magic bytes : %PDF)
+            $handle = fopen($file->getRealPath(), 'rb');
+            $magic = fread($handle, 4);
+            fclose($handle);
+
+            if ($magic !== '%PDF') {
+                return back()->withErrors(['cgv_file' => 'The uploaded file is not a valid PDF (invalid header).']);
+            }
+
+            // 🔐 Stockage sécurisé
+            $filename = 'cgv_' . time() . '_' . uniqid() . '.pdf';
             $file->move(public_path('cgv/factory'), $filename);
             $Factory->cgv_file = $filename;
         }
