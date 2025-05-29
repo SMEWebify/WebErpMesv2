@@ -89,26 +89,27 @@ class FactoryController extends Controller
         $Factory->public_link_cgv =  $request->public_link_cgv;
         $Factory->add_cgv_to_pdf =  $request->add_cgv_to_pdf;
 
+        // Secure file validation https://github.com/SMEWebify/WebErpMesv2/issues/654
         $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'cgv_file' => 'nullable|file|mimes:pdf|max:10240',
         ]);
-        
-        if($request->hasFile('picture')){
-            $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/factory'), $filename);
-            $Factory->picture =  $filename;
+
+        // Logo (image) management
+        if ($request->hasFile('picture')) {
+            $file = $request->file('picture');
+            $extension = $file->getClientOriginalExtension(); // Sécurisé par validation
+            $filename = 'logo_' . time() . '_' . uniqid() . '.' . $extension;
+            $file->move(public_path('images/factory'), $filename);
+            $Factory->picture = $filename;
         }
 
-        $request->validate([
-            'file' => "mimes:pdf|max:10240"
-        ]);
-        
-        if($request->hasFile('cgv_file')){
-            $file =  $request->file('cgv_file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->cgv_file->move(public_path('cgv/factory'), $filename);
-            $Factory->cgv_file =  $filename;
+        // Management of the CGV file (PDF only)
+        if ($request->hasFile('cgv_file')) {
+            $file = $request->file('cgv_file');
+            $filename = 'cgv_' . time() . '_' . uniqid() . '.pdf'; // Extension imposée
+            $file->move(public_path('cgv/factory'), $filename);
+            $Factory->cgv_file = $filename;
         }
 
         $Factory->save();
