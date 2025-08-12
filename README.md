@@ -16,6 +16,9 @@ Manufacturing often faces a gap between quoting and production. ΣEM bridges tha
 - 📦 Stock & Resource Management: Optimize inventory, raw materials, and resources with ease.
 - 🌐 Community-Driven: Open-source with ongoing improvements from a passionate developer community.
 
+<img width="1877" height="831" alt="image" src="https://github.com/user-attachments/assets/21b92345-46ad-4af2-9f3a-b38d601eb091" />
+
+
 ### Try the Demo 👀  
 [Demo page](http://demo.wem-project.org) 
 
