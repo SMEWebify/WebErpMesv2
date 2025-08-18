@@ -8,10 +8,11 @@ use App\Notifications\OrderNotification;
 
 class OrderService
 {
-    protected $notificationService ;
+    protected $notificationService;
 
-    public function __construct(NotificationService $notificationService , ){
-        $this->notificationService  = $notificationService ;
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
     }
 
     /**
