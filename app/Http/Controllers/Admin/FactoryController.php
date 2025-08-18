@@ -61,7 +61,7 @@ class FactoryController extends Controller
     /**
      * Update the specified factory in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\Admin\UpdateFactoryRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateFactoryRequest $request)
@@ -131,7 +131,7 @@ class FactoryController extends Controller
     /**
      * Store a newly created announcement in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\Admin\StoreAnnouncementRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeAnnouncement(StoreAnnouncementRequest $request)
@@ -162,7 +162,7 @@ class FactoryController extends Controller
     /**
     * Store a newly created custom field in storage.
     *
-    * @param  \Illuminate\Http\Request  $request
+     * @param \App\Http\Requests\Admin\StoreCustomFieldRequest $request
      * @return \Illuminate\Http\RedirectResponse
     */
     public function storeCustomField(StoreCustomFieldRequest $request)
