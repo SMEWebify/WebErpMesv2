@@ -662,7 +662,7 @@ class ImportCsvService
                     return redirect()->back()->withErrors($errors);
                 }
             
-                return redirect()->back()->withErrors('success', $importedLines . ' lines imported successfully.');
+                return redirect()->back()->with('success', $importedLines . ' lines imported successfully.');
             }
             else{
                 return redirect()->back()->withErrors('imports failed, unit or accounting vat default');
@@ -740,7 +740,7 @@ class ImportCsvService
                     return redirect()->back()->withErrors($errors);
                 }
             
-                return redirect()->back()->withErrors('success', $importedLines . ' lines imported successfully.');
+                return redirect()->back()->with('success', $importedLines . ' lines imported successfully.');
             }
             else{
                 return redirect()->back()->withErrors('imports failed, unit or accounting vat default');
