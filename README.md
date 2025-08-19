@@ -30,8 +30,18 @@ Password : password
 for test or help to develop follow this link : [wiki page (install to dev)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 
 for run to production, follow this link :  [wiki page (install to run)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
-
 ![image](https://github.com/user-attachments/assets/f527881c-a7c4-460a-9b06-f647c91402d8)
+
+### Docker setup
+
+A docker-compose configuration is provided for local development. Start the stack with:
+
+```bash
+docker compose up --build
+```
+
+The application will be available at http://localhost:45060.
+
 
 
 
