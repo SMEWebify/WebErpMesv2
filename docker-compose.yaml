@@ -6,8 +6,6 @@ services:
     depends_on:
       - db-dev
       - redis-dev
-    ports:
-      - "45060:8000"
     env_file: .env
     environment:
       DB_CONNECTION: mysql
@@ -21,7 +19,21 @@ services:
       - .:/app
       - /app/vendor
       - /app/node_modules
+    expose:
+      - "9000"
     command: ["/entrypoint.sh"]
+
+  nginx:
+    container_name: wem-nginx
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      - wem-dev
+    ports:
+      - "45060:80"
+    volumes:
+      - .:/app
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
 
   db-dev:
     container_name: db-dev

@@ -37,6 +37,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 WORKDIR /app
 COPY . .
 
+# Expose the PHP-FPM port for upstream web servers
+EXPOSE 9000
+
 # Copier et rendre exécutable le script de démarrage
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
