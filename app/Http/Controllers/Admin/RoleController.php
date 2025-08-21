@@ -85,10 +85,17 @@ class RoleController extends Controller
      */
     public function RolePemissionStore(Request $request){
 
-        $role= Role::findById($request->role_id);
-        $role->syncPermissions($request->permission);
+        $validated = $request->validate([
+            'role_id' => ['required', 'integer', 'exists:roles,id'],
+            'permission' => ['required', 'array'],
+            'permission.*' => ['integer', 'exists:permissions,id'],
+        ]);
 
-        
+        $role = Role::findById($validated['role_id']);
+
+        $permissions = Permission::whereIn('id', $validated['permission'])->pluck('name');
+        $role->syncPermissions($permissions);
+
         return to_route('admin.roles.permissions')->with('success', 'Permissions added in Role successfully.');
         /*$data = array();
         $permissions = ;
