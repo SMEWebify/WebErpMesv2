@@ -26,10 +26,9 @@ class TaskCalculationDate extends Component
     public $countTaskCalculateDate = 0;
     public $progressRessourceMessages  = [];
     public $countTaskCalculateRessource = 0;
-
-    public function __construct(TaskDateCalculator $taskDateCalculator)
+    
+    public function boot(TaskDateCalculator $taskDateCalculator): void
     {
-        parent::__construct();
         $this->taskDateCalculator = $taskDateCalculator;
     }
 
