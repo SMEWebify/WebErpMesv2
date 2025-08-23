@@ -29,3 +29,12 @@ jobs:
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit --colors=always
+
+      - name: Install PHP QA tools
+        run: composer global require phpstan/phpstan friendsofphp/php-cs-fixer
+
+      - name: Run PHPStan
+        run: $(composer global config bin-dir --absolute)/phpstan analyse
+
+      - name: Run PHP-CS-Fixer (dry run)
+        run: $(composer global config bin-dir --absolute)/php-cs-fixer fix --dry-run
