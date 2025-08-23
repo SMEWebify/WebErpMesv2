@@ -846,7 +846,8 @@ return [
     'new_vat_trans_key'                     => 'ضريبة القيمة المضافة الجديدة',
     'accounting_allocations_trans_key'      => 'تخصيصات المحاسبة',
     'new_accounting_allocations_trans_key'  => 'تخصيصات محاسبية جديدة',
-    
+    'assets_trans_key'                      => 'الأصول',
+
     //TIME
     'times_setting_trans_key'               => 'إعدادات الأوقات',
     'new_machine_event_trans_key'           => 'نوع حدث جديد للآلة',

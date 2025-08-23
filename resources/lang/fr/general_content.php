@@ -984,6 +984,7 @@ return [
     'new_vat_trans_key'                        => 'Nouvelle TVA',
     'accounting_allocations_trans_key'         => 'Allocation comptable',
     'new_accounting_allocations_trans_key'     => 'Nouvelle allocation comptable',
+    'assets_trans_key'                         => 'Immobilisations',
 
     //TIME
     'times_setting_trans_key'                  => 'Réglage temps',  

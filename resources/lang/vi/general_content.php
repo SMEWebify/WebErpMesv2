@@ -109,6 +109,7 @@ return [
     'settings_trans_key'                       => 'Thiết lập',
     'methods_trans_key'                        => 'Phương thức',
     'accounting_trans_key'                      => 'Kế toán',
+    'assets_trans_key'                          => 'Tài sản',
 
     'users_trans_key'                          => 'Người dùng',
     'your_company_trans_key'                   => 'Công ty',
