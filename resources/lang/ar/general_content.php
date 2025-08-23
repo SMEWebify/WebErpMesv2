@@ -446,7 +446,8 @@ return [
     'payment_conditions_trans_key'  => 'شروط الدفع',
     'delevery_method_trans_key'     => 'طريقة التسليم',
     'validity_date_trans_key'       => 'تاريخ الصلاحية',
-    
+    'customer_processing_cost_trans_key' => 'تكلفة معالجة العميل',
+
     'material_trans_key'                    => 'المادة',
     'finishing_trans_key'                   => 'التشطيب',
     'thickness_trans_key'                   => 'السمك',

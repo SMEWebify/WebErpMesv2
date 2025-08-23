@@ -500,6 +500,7 @@ return [
     'tolerance_days_trans_key'                 => 'Tolerance days',
     'quoted_delivery_note_trans_key'           => 'Quoted delivery note',
     'order_average_note_trans_key'             => 'Average order',
+    'customer_processing_cost_trans_key'       => 'Customer processing cost',
 
     'material_trans_key'                       => 'Material',
     'finishing_trans_key'                      => 'Finishing',
