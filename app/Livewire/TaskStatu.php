@@ -16,6 +16,8 @@ use App\Services\NotificationService;
 use App\Models\Planning\TaskActivities;
 use App\Services\QualityNonConformityService;
 use App\Models\Products\StockLocationProducts;
+use App\Services\SerialNumberComponentService;
+use App\Models\Products\SerialNumbers;
 
 class TaskStatu extends Component
 {
@@ -53,6 +55,9 @@ class TaskStatu extends Component
     protected $notificationService;
     protected $qualityNonConformityService;
     protected $taskService;
+    protected $serialNumberComponentService;
+
+    public $consumedSerials = [];
     
     public function __construct()
     {
@@ -60,6 +65,7 @@ class TaskStatu extends Component
         $this->notificationService = App::make(NotificationService::class);
         $this->qualityNonConformityService = App::make(QualityNonConformityService::class);
         $this->taskService = App::make(TaskService::class);
+        $this->serialNumberComponentService = App::make(SerialNumberComponentService::class);
     }
     
     // Validation Rules
@@ -336,27 +342,18 @@ class TaskStatu extends Component
 
         $StockLocationProduct = StockLocationProducts::where('products_id', $composantId)->get();
         foreach ($StockLocationProduct as $stock) {
-            
-            // Calculate the quantity to exit from this stock
             $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
-
-            if($quantityToWithdraw != 0){
-                // Create a negative stock movement to record the stock issue
+            if ($quantityToWithdraw != 0) {
                 $data = [
                     'user_id' => Auth::id(),
-                    'qty' => $this->quantityToWithdraw,
-                    'stock_location_products_id' => $this->stock->id,
-                    'task_id' => $this->taskId,
-                    'typ_move' => 2, // Negative stock movement type
+                    'qty' => $quantityToWithdraw,
+                    'stock_location_products_id' => $stock->id,
+                    'task_id' => $taskId,
+                    'typ_move' => 2,
                 ];
-    
-                $this->stockService->createStockMove($data);
+                StockMove::create($data);
             }
-
-            // Update remaining quantity
             $quantityRemaining -= $quantityToWithdraw;
-
-            // Exit the loop if the requested quantity has been satisfied
             if ($quantityRemaining <= 0) {
                 break;
             }
@@ -367,8 +364,17 @@ class TaskStatu extends Component
         //create entry qty int task
         $this->taskService->recordTaskActivity( $this->search, 4, $this->addGoodQt, 0);
 
+        if (!empty($this->consumedSerials)) {
+            $parentSerial = SerialNumbers::where('task_id', $taskId)->first();
+            if ($parentSerial) {
+                foreach ($this->consumedSerials as $componentSerialId) {
+                    $this->serialNumberComponentService->linkComponent($parentSerial->id, $componentSerialId, $taskId);
+                }
+            }
+        }
+
         $this->render();
-        
+
         // If the quantity requested is greater than the total quantity available
         if ($quantityRemaining < 0) {
             session()->flash('success','Outing stock successfully with negative stock');

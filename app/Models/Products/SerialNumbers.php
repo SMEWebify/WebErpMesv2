@@ -6,6 +6,7 @@ use App\Models\Planning\Task;
 use App\Models\Products\Products;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
+use App\Models\Products\SerialNumberComponent;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseReceiptLines;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,6 +50,16 @@ class SerialNumbers extends Model
     public function purchaseReceiptLines()
     {
         return $this->belongsTo(PurchaseReceiptLines::class, 'purchase_receipt_line_id');
+    }
+
+    public function components()
+    {
+        return $this->hasMany(SerialNumberComponent::class, 'parent_serial_id');
+    }
+
+    public function parentComponent()
+    {
+        return $this->hasOne(SerialNumberComponent::class, 'component_serial_id');
     }
 
     /**

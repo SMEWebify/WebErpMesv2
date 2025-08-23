@@ -3,6 +3,7 @@
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use App\Http\Controllers\ProductionTraceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -618,6 +619,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         'App\Http\Controllers\SearchController@showNavbarSearchResults'
         
     );
+    Route::get('/production-trace/{serialNumber}', [ProductionTraceController::class, 'show'])->name('production.trace.show');
 
     require __DIR__.'/auth.php';
 
