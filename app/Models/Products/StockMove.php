@@ -10,6 +10,7 @@ use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Purchases\PurchaseReceiptLines;
+use App\Models\Products\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class StockMove extends Model
@@ -25,6 +26,7 @@ class StockMove extends Model
                             'order_line_id',
                             'task_id',
                             'purchase_receipt_line_id',
+                            'batch_id',
                             'typ_move',
                             'component_price',
                             'company_id',
@@ -62,6 +64,11 @@ class StockMove extends Model
     public function purchaseReceiptLines()
     {
         return $this->belongsTo(PurchaseReceiptLines::class, 'purchase_receipt_line_id');
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(Batch::class, 'batch_id');
     }
 
     // Relationship with the files associated with the delevery

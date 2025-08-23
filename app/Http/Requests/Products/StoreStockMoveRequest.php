@@ -28,6 +28,7 @@ class StoreStockMoveRequest extends FormRequest
             'user_id' =>'required',
             'qty'=>'required|numeric',
             'typ_move'=>'required',
+            'batch_id'=>'nullable|numeric|exists:batches,id',
         ];
     }
 }

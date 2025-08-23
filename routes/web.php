@@ -300,6 +300,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/', 'App\Http\Controllers\Products\SerialNumbersController@index')->name('products.serialNumbers');
         });
 
+        Route::group(['prefix' => 'batches'], function () {
+            Route::get('/', 'App\Http\Controllers\Products\BatchesController@index')->name('products.batches');
+        });
+
         // Stock routes
         Route::group(['prefix' => 'Stock'], function () {
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');

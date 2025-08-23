@@ -190,10 +190,10 @@ class DeliverysRequest extends Component
         event(new OrderLineUpdated($orderLine->id));
     }
     
-    private function generateSerialNumbers($productId, $orderLineId, $scumQty)
+    private function generateSerialNumbers($productId, $orderLineId, $scumQty, $batchId = null)
     {
         for ($i = 0; $i < $scumQty; $i++) {
-            $this->serialNumberService->createSerialNumber($productId, $orderLineId, 2);
+            $this->serialNumberService->createSerialNumber($productId, $orderLineId, 2, $batchId);
         }
     }
     
