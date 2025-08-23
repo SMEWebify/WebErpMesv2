@@ -847,6 +847,7 @@ return [
     'new_vat_trans_key'                        => 'Nuevo modo de IVA',
     'accounting_allocations_trans_key'         => 'Asignaciones contables',
     'new_accounting_allocations_trans_key'     => 'Nueva asignación contable',
+    'assets_trans_key'                         => 'Activos',
 
     //TIEMPO
     'times_setting_trans_key'                  => 'Configuración de tiempos',

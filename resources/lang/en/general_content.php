@@ -984,7 +984,8 @@ return [
     'new_vat_trans_key'                        => 'New VAT mode',
     'accounting_allocations_trans_key'         => 'Accounting allocations',
     'new_accounting_allocations_trans_key'     => 'New accounting allocation',
-    
+    'assets_trans_key'                         => 'Assets',
+
     //TIME
     'times_setting_trans_key'                  => 'Times setting',  
     'new_machine_event_trans_key'              => 'New machine event type',
