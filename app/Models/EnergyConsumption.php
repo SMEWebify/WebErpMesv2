@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Methods\MethodsRessources;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Methods\MethodsRessources;
 
 class EnergyConsumption extends Model
 {
@@ -16,6 +16,7 @@ class EnergyConsumption extends Model
         'kwh_consumed',
         'cost',
         'recorded_at',
+        'amount',
     ];
 
     /**
