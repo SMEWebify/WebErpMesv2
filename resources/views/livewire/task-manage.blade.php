@@ -1,6 +1,5 @@
 <div>
     @if($statu == 1 || $idType == "nomenclature_lines_id")
-    <div class="card-body">
         @include('include.alert-result')
         @if($updateLines)
         <form wire:submit.prevent="updateTask">
@@ -170,11 +169,9 @@
             </form>
         </div>
         @endif
-    </div>
     @endif
 
     @if($Line->id ?? null)
-    <div class="card-body">
         <x-adminlte-card title="{{ __('general_content.technical_cut_trans_key') }}" theme="primary" maximizable>
             <div class="table-responsive p-0">
                 <table class="table table-hover">
@@ -547,5 +544,4 @@
             </div>
         </x-adminlte-card>
     @endif
-</div>
 </div>

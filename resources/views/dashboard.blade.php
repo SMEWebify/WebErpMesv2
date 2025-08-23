@@ -380,82 +380,6 @@
       </x-adminlte-card>
     </div>
     <!-- /.col -->
-
-    <!-- PRODUCT LIST -->
-    <div class="col-lg-12 col-md-12">
-      
-      <x-adminlte-card title="{{ __('general_content.latest_products_trans_key') }}" theme="dark" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-        <div class="row">  
-          @forelse ($LastProducts as $LastProduct)
-          @php
-            if($LastProduct->picture)
-              $picture = asset('/images/products/'. $LastProduct->picture);
-            else {
-              $picture = Avatar::create($LastProduct->code)->toBase64();
-            }
-          @endphp
-          <div class="col-md-2">
-            <x-adminlte-profile-widget name="{{ $LastProduct->label }} {{ $LastProduct->ind }}" desc="{{ $LastProduct->family->label }}" theme="lightblue"
-                img="{{ $picture }}"
-                layout-type="classic"> 
-
-                <x-adminlte-profile-row-item icon="fas fa-cash-register " title="{{ __('general_content.purchased_price_trans_key') }}" text=" {{ $LastProduct->purchased_price }}  {{ $Factory->curency }}"
-                    url="#" badge="teal"/>
-                <x-adminlte-profile-row-item icon="fas fa-shopping-cart" title="{{ __('general_content.price_trans_key') }}"
-                    text="{{ $LastProduct->selling_price }}  {{ $Factory->curency }}" url="#" badge="lightblue"/>
-            </x-adminlte-profile-widget>
-          </div>
-          <!-- /.item -->
-          @empty
-            <li class="item">{{ __('general_content.no_product_trans_key') }}</li>
-          @endforelse
-        </div>
-        <x-slot name="footerSlot">
-          <a href="{{ route('products') }}" class="btn btn-sm btn-secondary">{{ __('general_content.view_all_trans_key') }}</a>
-        </x-slot>
-      </x-adminlte-card>
-    </div>
-
-    <!-- SERVICE GOAL -->
-    <div class="col-lg-12 col-md-12">
-      <x-adminlte-card title="{{ __('general_content.goal_task_trans_key') }}" theme="primary" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-          <div class="row">
-            <div class="col-md-12">
-              @forelse ($ServiceGoals as $ServiceGoal)
-              <div class="progress-group">
-                {{ $ServiceGoal->label }}
-                <span class="float-right">{{ $ServiceGoal->tasks_count }}</span>
-                <div class="progress">
-                  @php
-                  foreach($Tasks as $Task){
-                  if($Task->methods_id == $ServiceGoal->id){
-                    $width = 100/($ServiceGoal->tasks_count/ $Task->total_task);
-                    
-                    if($Task->title ==  __('general_content.open_trans_key') ){ $class = 'bg-danger'; $title = __('general_content.open_trans_key');}
-                    elseif($Task->title ==  __('general_content.started_trans_key') ){ $class = 'bg-warning';$title = __('general_content.started_trans_key');}
-                    elseif($Task->title ==  __('general_content.in_progress_trans_key') ){ $class = 'bg-primary';$title = __('general_content.in_progress_trans_key');}
-                    elseif($Task->title ==  __('general_content.finished_trans_key') ){ $class = 'bg-success';$title = __('general_content.finished_trans_key');}
-                    else{ $class = 'bg-info';$title = $Task->title;}
-                    echo '<div class="progress-bar  progress-bar-striped '.   $class  .'" style="width: '.  $width  .'%">'. $title .' - '. $Task->total_task .'</div>' ;
-                  }
-                }
-                @endphp
-                </div>
-              </div>
-              <!-- /.progress-group -->
-              @empty
-              <div class="progress-group">
-                {{ __('general_content.no_dash_task_trans_key') }}
-              </div>
-              <!-- /.progress-group -->
-              @endforelse
-            </div>
-            <!-- /.col -->
-          </div>
-          <!-- /.row -->
-      </x-adminlte-card>
-  </div>
-  <!-- /.row -->
 @stop
 
 @section('css')
@@ -598,6 +522,31 @@
                                 @php ($j = 1)
                                   @if($iM  == $item->month) 
                                   "{{ $item->orderSum }}",
+                                    @php ($j = 2)
+                                    @break
+                                  @endif
+                                @endforeach
+                                @if($j == 1) 
+                                  0,
+                                  @php ($j = 1)
+                                @endif
+                              @endfor ]
+        },
+        {
+          label               : 'Purchase revenues',
+          borderColor         : 'rgba(21, 83, 79,0.5)',
+          pointRadius          : 5,
+          pointColor          : '#d9534f',
+          pointStrokeColor    : 'rgba(21, 83, 79,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(21, 83, 79,1)',
+          data                : [
+                              @php ($j = 1)
+                              @for($iM =1;$iM<=12;$iM++)
+                                @foreach ($data['purchaseMonthlyRecap'] as $key => $item)
+                                @php ($j = 1)
+                                  @if($iM  == $item->month) 
+                                  "-{{ $item->purchaseSum }}",
                                     @php ($j = 2)
                                     @break
                                   @endif
