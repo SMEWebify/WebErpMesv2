@@ -922,4 +922,7 @@ return [
     'note_1_trans_key'                    => 'استشارة وتخطيط المهام التي يجب إنجازها.',
     'note_2_trans_key'                    => 'إجراء إعلانات الإنتاج.',
     'average_supply_delay_trans_key'      => 'متوسط مهلة التوريد',
+    'order_site_trans_key'                => 'موقع العمل',
+    'characteristics_trans_key'           => 'الخصائص',
+    'contact_info_trans_key'              => 'معلومات الاتصال',
 ];

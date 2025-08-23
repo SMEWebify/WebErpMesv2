@@ -9,8 +9,21 @@ class OrderSite extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'order_id',
+        'location',
+        'characteristics',
+        'contact_info',
+    ];
+
     public function implantations()
     {
         return $this->hasMany(OrderSiteImplantation::class);
+
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Orders::class);
     }
 }
