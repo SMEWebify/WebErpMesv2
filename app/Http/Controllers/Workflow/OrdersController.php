@@ -84,7 +84,9 @@ class OrdersController extends Controller
      */
     public function show(Orders $id)
     {
-        $factory = app('Factory'); 
+        $factory = app('Factory');
+
+        $id->load(['OrderSite.OrderSiteImplantations']);
 
         // Retrieve necessary data for dropdowns
         $CompanieSelect = $this->SelectDataService->getCompanies();
@@ -173,6 +175,8 @@ class OrdersController extends Controller
             'forecastMarginPercentageFormatted' => $forecastMarginPercentageFormatted,
             'currentMarginPercentageFormatted' => $currentMarginPercentageFormatted,
             'leadTime' => $leadTime,
+            'OrderSite' => $id->OrderSite,
+            'OrderSiteImplantations' => $id->OrderSite ? $id->OrderSite->OrderSiteImplantations : collect(),
         ]);
     }
     

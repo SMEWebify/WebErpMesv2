@@ -134,6 +134,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{idOrder}/lines/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.lines.import');
         //import
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importOrders')->name('orders.import');
+        //construction site
+        Route::post('/{id}/site', 'App\Http\Controllers\Workflow\OrderSiteController@store')->name('orders.site.store');
+        Route::put('/{order}/site/{site}', 'App\Http\Controllers\Workflow\OrderSiteController@update')->name('orders.site.update');
+        Route::delete('/{order}/site/{site}', 'App\Http\Controllers\Workflow\OrderSiteController@destroy')->name('orders.site.destroy');
+        Route::post('/{order}/site/{site}/implantation', 'App\Http\Controllers\Workflow\OrderSiteController@storeImplantation')->name('orders.site.implantation.store');
+        Route::put('/{order}/site/{site}/implantation/{implantation}', 'App\Http\Controllers\Workflow\OrderSiteController@updateImplantation')->name('orders.site.implantation.update');
+        Route::delete('/{order}/site/{site}/implantation/{implantation}', 'App\Http\Controllers\Workflow\OrderSiteController@destroyImplantation')->name('orders.site.implantation.destroy');
     });
 
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
