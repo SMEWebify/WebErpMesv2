@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Purchases;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Number;
 use App\Events\PurchaseCreated;
@@ -56,9 +57,10 @@ class PurchasesController extends Controller
      */
     public function purchase()
     {   
+        $currentYear = Carbon::now()->format('Y');
         $factory = app('Factory');
         $data['purchasesDataRate'] = $this->purchaseKPIService->getPurchasesDataRate();
-        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap();
+        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap($currentYear);
 
         $topRatedSuppliers = $this->purchaseKPIService->getTopRatedSuppliers();
         $sortedByAvgReceptionDelay = $this->purchaseKPIService->getAverageReceptionDelayBySupplier();

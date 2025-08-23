@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Products\StockMove;
 use App\Models\Products\StockLocationProducts;
 
 class StockCalculationService
@@ -46,4 +47,21 @@ class StockCalculationService
 
         return 0; // If no quantity, return zero or other default behavior
     }
+
+    public function canDispatch($tracabilityId, $quantityRequested, $stockLocationProductId)
+    {
+        // Récupérer l'objet StockLocationProducts correspondant
+        $stockLocationProduct = StockLocationProducts::find($stockLocationProductId);
+    
+        // Utiliser la méthode getCurrentStockMove avec la traçabilité pour obtenir le stock disponible
+        $stockAvailable = $stockLocationProduct->getCurrentStockMove($tracabilityId);
+    
+        // Vérifier si la quantité demandée est disponible
+        if ($stockAvailable >= $quantityRequested) {
+            return true;
+        }
+    
+        return false;
+    }
+    
 }

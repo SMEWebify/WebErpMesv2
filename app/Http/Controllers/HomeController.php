@@ -15,6 +15,7 @@ use App\Models\Admin\Announcements;
 use App\Services\InvoiceKPIService;
 use App\Services\OrderLinesService;
 use App\Services\DeliveryKPIService;
+use App\Services\PurchaseKPIService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin\EstimatedBudgets;
 use App\Models\Methods\MethodsServices;
@@ -27,6 +28,7 @@ class HomeController extends Controller
     protected $quoteKPIService;
     protected $invoiceKPIService;
     protected $orderLinesService;
+    protected $purchaseKPIService;
 
     public function __construct(
                                 OrderKPIService $orderKPIService, 
@@ -34,12 +36,14 @@ class HomeController extends Controller
                                 QuoteKPIService $quoteKPIService,
                                 InvoiceKPIService $invoiceKPIService,
                                 OrderLinesService $orderLinesService,
+                                PurchaseKPIService $purchaseKPIService,
                         ){
                             $this->orderKPIService = $orderKPIService;
                             $this->deliveryKPIService = $deliveryKPIService;
                             $this->quoteKPIService = $quoteKPIService;
                             $this->invoiceKPIService = $invoiceKPIService;
                             $this->orderLinesService = $orderLinesService;
+                            $this->purchaseKPIService = $purchaseKPIService;
                         }
 
     /**
@@ -99,6 +103,9 @@ class HomeController extends Controller
         //Invoices data for chart
         $data['invoiceMonthlyRecap'] = $this->invoiceKPIService->getInvoiceMonthlyRecap($CurentYear);
 
+        //Total Purchase data for chart
+        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap($CurentYear);
+        
         //Total ForCast
         $orderTotalForCast = $this->orderKPIService->getOrderTotalForCast($CurentYear);
 
@@ -133,18 +140,6 @@ class HomeController extends Controller
                                             $query->whereNotNull('order_lines_id');
                                         }])
                                         ->orderBy('ordre')->get();
-        $Tasks = DB::table('tasks')
-                    ->select('tasks.id','statuses.title', 'methods_services.id as methods_id', 'methods_services.label', DB::raw('count(*) as total_task'))
-                    ->join('statuses', 'tasks.status_id', '=', 'statuses.id')
-                    ->join('methods_services', 'tasks.methods_services_id', '=', 'methods_services.id')
-                    ->whereNotNull('tasks.order_lines_id')
-                    ->groupBy('methods_services_id')
-                    ->groupBy('status_id')
-                    ->orderBy('statuses.order', 'asc')
-                    ->get();
-
-        //5 last product add 
-        $LastProducts = Products::orderBy('id', 'desc')->take(6)->get();
 
         //total price
         $deliveredMonthInProgress = $this->deliveryKPIService->getDeliveryMonthlyProgress($CurentMonth, $CurentYear);
@@ -160,7 +155,6 @@ class HomeController extends Controller
         return view('dashboard', [
             'userRoleCount' => $userRoleCount,
             'Announcement' => $Announcement,
-            'LastProducts' => $LastProducts,
             'LastQuotes' => $LastQuotes,
             'LastOrders' =>  $LastOrders,
             'OrderTotalForCast' =>  $orderTotalForCast,
@@ -173,7 +167,6 @@ class HomeController extends Controller
             'incomingOrdersCount' => $incomingOrdersCount,
             'lateOrders' =>  $lateOrders,
             'ServiceGoals' => $ServiceGoals,
-            'Tasks' => $Tasks,
             'EstimatedBudgets' => $EstimatedBudgets,
             'FormattedEstimatedBudgets' => $FormattedEstimatedBudgets,
             'deliveredMonthInProgress' => $deliveredMonthInProgress,

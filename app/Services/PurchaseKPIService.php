@@ -55,22 +55,19 @@ class PurchaseKPIService
      *
      * @return \Illuminate\Support\Collection The monthly recap of purchases, including the month and the total purchase sum.
      */
-    public function getPurchaseMonthlyRecap()
+    public function getPurchaseMonthlyRecap($Year)
     {
-        $currentYear = Carbon::now()->format('Y');
-        $cacheKey = 'purchase_monthly_recap_' . $currentYear;
-        return Cache::remember($cacheKey, now()->addHours(1), function () use ($currentYear) {
+        $cacheKey = 'purchase_monthly_recap_11' . $Year;
+        //return Cache::remember($cacheKey, now()->addHours(1), function () use ($Year) {
             return DB::table('purchase_lines')
-                ->join('tasks', 'purchase_lines.tasks_id', '=', 'tasks.id')
-                ->join('order_lines', 'tasks.order_lines_id', '=', 'order_lines.id')
-                ->selectRaw('
+                ->selectRaw(expression: '
                     MONTH(purchase_lines.created_at) AS month,
-                    SUM((order_lines.selling_price * order_lines.qty)-(order_lines.selling_price * order_lines.qty)*(order_lines.discount/100)) AS purchaseSum
+                    SUM((purchase_lines.selling_price * purchase_lines.qty)-(purchase_lines.selling_price * purchase_lines.qty)*(purchase_lines.discount/100)) AS purchaseSum
                 ')
-                ->whereYear('purchase_lines.created_at', $currentYear)
+                ->whereYear('purchase_lines.created_at', $Year)
                 ->groupByRaw('MONTH(purchase_lines.created_at)')
                 ->get();
-        });
+        //});
     }
 
     /**

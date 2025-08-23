@@ -9,6 +9,7 @@ class OrderCalculatorService
     public $TotalPrice;
     public $SubTotal;
     public $VatTotal;
+    
     public function __construct(Orders $order)
     {
         $this->order = $order;

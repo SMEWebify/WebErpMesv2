@@ -49,34 +49,44 @@ class StockLocationProducts extends Model
         return $this->hasMany(StockMove::class);
     }
 
-    public function getTotalEntryStockMove()
+    public function getTotalEntryStockMove($traceability = null)
     {
-        return StockMove::where('stock_location_products_id', $this->id)
-                        ->where(function (Builder $query) {
-                            return $query->where('typ_move', '1')
-                                        ->orwhere('typ_move', '3')
-                                        ->orwhere('typ_move', '5')
-                                        ->orwhere('typ_move', '12');
-                        })
-                        ->get()
-                        ->sum('qty');
+        $query = StockMove::where('stock_location_products_id', $this->id)
+                            ->where(function (Builder $query) {
+                                return $query->where('typ_move', '1')
+                                            ->orwhere('typ_move', '3')
+                                            ->orwhere('typ_move', '5')
+                                            ->orwhere('typ_move', '12');
+                            });
+
+        // Filtre par traçabilité si fourni
+        if ($traceability) {
+            $query->where('tracability', $traceability);
+        }
+
+        return $query->get()->sum('qty');
     }
 
-    public function getTotalSortingStockMove()
+    public function getTotalSortingStockMove($traceability = null)
     {
-        return StockMove::where('stock_location_products_id', $this->id)
-                        ->where(function (Builder $query) {
-                            return $query->where('typ_move', '2')
-                                        ->orwhere('typ_move', '6')
-                                        ->orwhere('typ_move', '9');
-                        })
-                        ->get()
-                        ->sum('qty');
+        $query = StockMove::where('stock_location_products_id', $this->id)
+                            ->where(function (Builder $query) {
+                                                                                return $query->where('typ_move', '2')
+                                                                            ->orwhere('typ_move', '6')
+                                                                            ->orwhere('typ_move', '9');
+                                                            });
+
+        // Filtre par traçabilité si fourni
+        if ($traceability) {
+        $query->where('tracability', $traceability);
+        }
+
+        return $query->get()->sum('qty');
     }
 
-    public function getCurrentStockMove()
+    public function getCurrentStockMove($traceability = null)
     {
-        return $this->getTotalEntryStockMove() - $this->getTotalSortingStockMove();
+        return $this->getTotalEntryStockMove($traceability) - $this->getTotalSortingStockMove($traceability);
     }
 
     /**
