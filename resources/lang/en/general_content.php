@@ -984,7 +984,8 @@ return [
     'new_vat_trans_key'                        => 'New VAT mode',
     'accounting_allocations_trans_key'         => 'Accounting allocations',
     'new_accounting_allocations_trans_key'     => 'New accounting allocation',
-    
+    'assets_trans_key'                         => 'Assets',
+
     //TIME
     'times_setting_trans_key'                  => 'Times setting',  
     'new_machine_event_trans_key'              => 'New machine event type',
@@ -1089,6 +1090,8 @@ return [
     'production_declaration_trans_key'         => 'Production Declaration',
     'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
     'note_2_trans_key'                         => 'Make production declarations.',
+
+    'energy_consumption_trans_key'             => 'Energy consumption',
 
     'order_created_log_trans_key'              => 'Order created',
     'order_creation_failed_log_trans_key'      => 'Order creation failed',

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Energy Consumptions</title>
+    <title>{{ __('general_content.energy_consumption_trans_key') }}</title>
 </head>
 <body>
-    <h1>Energy Consumptions</h1>
+    <h1>{{ __('general_content.energy_consumption_trans_key') }}</h1>
     <form method="POST" action="{{ route('energy-consumptions.store') }}">
         @csrf
         <div>

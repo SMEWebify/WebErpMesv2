@@ -81,6 +81,7 @@ return [
     'workflow_settings_trans_key'              => 'Task Workflow',
     'estimated_budget_trans_key'               => 'Estimated budget',
     'template_mail_trans_key'                  => 'Template mail',
+    'energy_consumption_trans_key'             => 'Energy consumption',
     'logs_view_trans_key'                      => 'Logs view',
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',
