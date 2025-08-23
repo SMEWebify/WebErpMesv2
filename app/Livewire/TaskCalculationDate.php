@@ -8,6 +8,8 @@ use App\Support\WorkingTime;
 use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Services\TaskDateCalculator;
+use App\Models\Workflow\OrderLines;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class TaskCalculationDate extends Component
@@ -71,7 +73,12 @@ class TaskCalculationDate extends Component
             } else {
                 $this->progressRessourceLog .= '<li> No ressource available for task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
                 throw new \RuntimeException('No resource has remaining capacity for task #' . $task->id);
+            }
 
+
+            $this->countTaskCalculateRessource += 1;
+            $this->progressRessource += (1 / $countLines) * 100;
+        }
 
         $this->toBeCalculateRessource = false;
     }

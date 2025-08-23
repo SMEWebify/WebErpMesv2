@@ -94,9 +94,20 @@ class CompaniesController extends Controller
         $remainingInvoiceOrder = Number::currency($remainingInvoiceOrder->orderSum ?? 0, $factory->curency, config('app.locale'));
 
         $customerServiceId = MethodsServices::where('label', 'Customer Service')->value('id');
-        $startOfYear = Carbon::now()->startOfYear();
-        $endOfYear = Carbon::now()->endOfYear();
-        $customerProcessingCost = $this->orderKPIService->getCustomerProcessingCost($id->id, $startOfYear, $endOfYear, $customerServiceId);
+
+        if ($customerServiceId === null || filter_var($customerServiceId, FILTER_VALIDATE_INT) === false) {
+            $customerProcessingCost = 0;
+        } else {
+            $startOfYear = Carbon::now()->startOfYear();
+            $endOfYear = Carbon::now()->endOfYear();
+            $customerProcessingCost = $this->orderKPIService->getCustomerProcessingCost(
+                $id->id,
+                $startOfYear,
+                $endOfYear,
+                (int) $customerServiceId
+            );
+        }
+
         $customerProcessingCost = Number::currency($customerProcessingCost, $factory->curency, config('app.locale'));
 
         $Companie = $id;
