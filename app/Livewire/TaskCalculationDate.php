@@ -71,7 +71,8 @@ class TaskCalculationDate extends Component
             } else {
                 $this->progressRessourceLog .= '<li> No ressource available for task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
                 throw new \RuntimeException('No resource has remaining capacity for task #' . $task->id);
-
+            }
+        }
 
         $this->toBeCalculateRessource = false;
     }
