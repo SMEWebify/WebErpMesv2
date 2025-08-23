@@ -9,6 +9,7 @@ use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingAllocation;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+use App\Models\Assets\Asset;
 
 class AccountingController extends Controller
 {
@@ -30,6 +31,7 @@ class AccountingController extends Controller
         $PaymentMethods = AccountingPaymentMethod::All();
         $VATs = AccountingVat::All();
         $VATSelect = $this->SelectDataService->getVATSelect();
+        $Assets = Asset::paginate(10);
 
         return view('accounting/accounting-index', [
             'Allocations' => $Allocations,
@@ -38,6 +40,7 @@ class AccountingController extends Controller
             'PaymentMethods' => $PaymentMethods,
             'VATs' => $VATs,
             'VATSelect' => $VATSelect,
+            'Assets' => $Assets,
         ]);
     }
 }

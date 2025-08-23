@@ -984,6 +984,7 @@ return [
     'new_vat_trans_key'                        => 'Nouvelle TVA',
     'accounting_allocations_trans_key'         => 'Allocation comptable',
     'new_accounting_allocations_trans_key'     => 'Nouvelle allocation comptable',
+    'assets_trans_key'                         => 'Immobilisations',
 
     //TIME
     'times_setting_trans_key'                  => 'Réglage temps',  
@@ -1089,6 +1090,8 @@ return [
     'production_declaration_trans_key'         => 'Déclaration de Production',
     'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
     'note_2_trans_key'                         => 'Faites des déclarations de production',
+
+    'energy_consumption_trans_key'             => "Consommation d'énergie",
 
     'order_created_log_trans_key'              => 'Commande créée',
     'order_creation_failed_log_trans_key'      => 'Échec de création de la commande',

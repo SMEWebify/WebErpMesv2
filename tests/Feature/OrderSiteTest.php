@@ -31,7 +31,7 @@ class OrderSiteTest extends TestCase
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('order_sites', [
-            'orders_id' => $order->id,
+            'order_id' => $order->id,
             'label' => 'Main site',
         ]);
     }
@@ -46,7 +46,7 @@ class OrderSiteTest extends TestCase
             'end_date' => now()->addDays(5)->toDateString(),
         ]);
 
-        $siteId = DB::table('order_sites')->where('orders_id', $order->id)->value('id');
+        $siteId = DB::table('order_sites')->where('order_id', $order->id)->value('id');
 
         $response = $this->post(route('orders.sites.implantations.store', [$order->id, $siteId]), [
             'label' => 'Implantation A',

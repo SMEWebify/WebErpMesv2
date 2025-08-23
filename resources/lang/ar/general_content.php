@@ -846,7 +846,8 @@ return [
     'new_vat_trans_key'                     => 'ضريبة القيمة المضافة الجديدة',
     'accounting_allocations_trans_key'      => 'تخصيصات المحاسبة',
     'new_accounting_allocations_trans_key'  => 'تخصيصات محاسبية جديدة',
-    
+    'assets_trans_key'                      => 'الأصول',
+
     //TIME
     'times_setting_trans_key'               => 'إعدادات الأوقات',
     'new_machine_event_trans_key'           => 'نوع حدث جديد للآلة',
@@ -922,6 +923,7 @@ return [
     'production_declaration_trans_key'    => 'إعلان الإنتاج',
     'note_1_trans_key'                    => 'استشارة وتخطيط المهام التي يجب إنجازها.',
     'note_2_trans_key'                    => 'إجراء إعلانات الإنتاج.',
+    'energy_consumption_trans_key'        => 'استهلاك الطاقة',
     'average_supply_delay_trans_key'      => 'متوسط مهلة التوريد',
     'order_site_trans_key'                => 'موقع العمل',
     'characteristics_trans_key'           => 'الخصائص',

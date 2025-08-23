@@ -847,6 +847,7 @@ return [
     'new_vat_trans_key'                        => 'Nuevo modo de IVA',
     'accounting_allocations_trans_key'         => 'Asignaciones contables',
     'new_accounting_allocations_trans_key'     => 'Nueva asignación contable',
+    'assets_trans_key'                         => 'Activos',
 
     //TIEMPO
     'times_setting_trans_key'                  => 'Configuración de tiempos',
@@ -923,6 +924,7 @@ return [
     'production_declaration_trans_key'     => 'Declaración de producción',
     'note_1_trans_key'                     => 'Consultar y planificar las tareas a realizar.',
     'note_2_trans_key'                     => 'Realizar declaraciones de producción.',
+    'energy_consumption_trans_key'         => 'Consumo de energía',
     'average_supply_delay_trans_key'       => 'Plazo medio de aprovisionamiento',
     'order_site_trans_key'                 => 'Sitio de obra',
     'characteristics_trans_key'            => 'Características',

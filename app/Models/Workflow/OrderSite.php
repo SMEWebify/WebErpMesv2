@@ -10,7 +10,7 @@ class OrderSite extends Model
     use HasFactory;
 
     protected $fillable = [
-        'orders_id',
+        'order_id',
         'name',
         'adress',
         'city',
@@ -23,7 +23,7 @@ class OrderSite extends Model
 
     public function Order()
     {
-        return $this->belongsTo(Orders::class, 'orders_id');
+        return $this->belongsTo(Orders::class, 'order_id');
     }
 
     public function OrderSiteImplantations()
