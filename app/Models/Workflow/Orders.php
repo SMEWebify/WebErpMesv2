@@ -114,7 +114,7 @@ class Orders extends Model
 
     public function OrderSite()
     {
-        return $this->hasOne(OrderSite::class, 'orders_id');
+        return $this->hasOne(OrderSite::class, 'order_id');
 
     }
     
