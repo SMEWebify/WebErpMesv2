@@ -12,6 +12,7 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Purchases\PurchaseLines;
 use App\Services\StockCalculationService;
 use App\Services\ABC_MFR_CalculatorService;
@@ -101,6 +102,20 @@ class ProductsController extends Controller
     }
 
     /**
+     * Calculate the average supply delay for a product.
+     *
+     * @param int $productId
+     * @return float|null
+     */
+    private function calculateAverageSupplyDelay($productId)
+    {
+        return DB::table('purchase_receipt_lines')
+            ->join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
+            ->where('purchase_lines.product_id', $productId)
+            ->avg(DB::raw('DATEDIFF(purchase_receipt_lines.created_at, purchase_lines.created_at)'));
+    }
+
+    /**
      * @param $id
      * @return \Illuminate\Contracts\View\View
      */
@@ -114,6 +129,10 @@ class ProductsController extends Controller
         $finalAnalysis = $this->abcFMRService->calculateABC_FMR($Product->id);
         $lastPurchasePrice = $this->calculateLastPurchasePrice($id);
         $averageCost = $this->calculateAverageCost($id);
+        $averageSupplyDelay = null;
+        if ($Product->purchased == 1) {
+            $averageSupplyDelay = $this->calculateAverageSupplyDelay($id);
+        }
 
         return view('products/products-show', array_merge($selectData, [
             'Product' => $Product,
@@ -124,6 +143,7 @@ class ProductsController extends Controller
             'finalAnalysis' => $finalAnalysis,
             'lastPurchasePrice' => $lastPurchasePrice,
             'averageCost' => $averageCost,
+            'averageSupplyDelay' => $averageSupplyDelay,
         ]));
     }
 

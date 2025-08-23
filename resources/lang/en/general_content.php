@@ -1095,4 +1095,5 @@ return [
     'quote_updated_log_trans_key'              => 'Quote updated',
     'quote_update_failed_log_trans_key'        => 'Quote update failed',
     'quote_update_success_trans_key'           => 'Successfully updated quote',
+    'average_supply_delay_trans_key'           => 'Average supply delay',
 ];
