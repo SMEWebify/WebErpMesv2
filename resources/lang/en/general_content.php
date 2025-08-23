@@ -1091,6 +1091,8 @@ return [
     'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
     'note_2_trans_key'                         => 'Make production declarations.',
 
+    'energy_consumption_trans_key'             => 'Energy consumption',
+
     'order_created_log_trans_key'              => 'Order created',
     'order_creation_failed_log_trans_key'      => 'Order creation failed',
     'quote_updated_log_trans_key'              => 'Quote updated',

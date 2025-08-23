@@ -675,6 +675,11 @@ return [
                     'icon_color' => 'secondary',
                 ],
                 [
+                    'text' => 'energy_consumption_trans_key',
+                    'url'  => 'energy-consumptions',
+                    'icon_color' => 'success',
+                ],
+                [
                     'text' => 'logs_view_trans_key',
                     'url'  => 'admin/logs-view',
                     'icon_color' => 'success',
