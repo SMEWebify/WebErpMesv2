@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="service_id">{{ __('general_content.service_trans_key') }}</label>
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="searchIdService">{{ __('general_content.status_trans_key') }}</label>
@@ -52,7 +52,26 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="searchIdRessource">{{ __('general_content.ressource_trans_key') }}</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                </div>
+                                <select class="form-control" name="searchIdRessource" id="searchIdRessource" wire:model.live="searchIdRessource">
+                                    <option value="">{{ __('general_content.select_ressource_trans_key') }}</option>
+                                    @forelse ($RessourceSelect as $item)
+                                    <option value="{{ $item->id }}">{{ $item->label }}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="ShowGenericTask">{{ __('general_content.show_generic_task_trans_key') }}</label>
