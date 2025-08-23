@@ -30,7 +30,6 @@ class OrderSiteTest extends TestCase
         $response->assertStatus(302);
         $this->assertDatabaseHas('order_sites', [
             'order_id' => $order->id,
-
             'label' => 'Main site',
         ]);
     }
