@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Services\TaskDateCalculator;
 
+
 class TaskCalculationDate extends Component
 {
     protected TaskDateCalculator $taskDateCalculator;
@@ -18,7 +19,7 @@ class TaskCalculationDate extends Component
 
     public $progressDateLog  = '';
     public $countTaskCalculateDate = 0;
-    public $progressRessourceLog  = '';
+    public $progressRessourceMessages  = [];
     public $countTaskCalculateRessource = 0;
 
     public function __construct(TaskDateCalculator $taskDateCalculator)
@@ -33,8 +34,8 @@ class TaskCalculationDate extends Component
             'Tasklists' =>  $this->Tasklists,
             'countTaskCalculateDate' =>  $this->countTaskCalculateDate,
             'countTaskCalculateRessource' =>  $this->countTaskCalculateRessource,
-            'progressDateLog' =>  $this->progressDateLog,
-            'progressRessourceLog' =>  $this->progressRessourceLog,
+            'progressDateMessages' =>  $this->progressDateMessages,
+            'progressRessourceMessages' =>  $this->progressRessourceMessages,
         ]);
     }
 
@@ -59,16 +60,28 @@ class TaskCalculationDate extends Component
                     'userforced_ressource' => 0,
                 ]);
 
-                $this->progressRessourceLog .= '<li>'. $resource->label. ' affected to task #'. $task->id  .' for '.  $task->service['label']  .' service </li>';
+                $message = $resource->label. ' affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
+                $this->progressRessourceMessages[] = $message;
+                TaskCalculationLog::create([
+                    'task_id' => $task->id,
+                    'type'    => 'resource',
+                    'message' => $message,
+                ]);
             } else {
                 // Aucune ressource trouvée pour ce service, gestion des erreurs ou autre action nécessaire
                 // Par exemple, vous pouvez journaliser un avertissement ou effectuer une autre logique
                 // en fonction des besoins de votre application.
-                $this->progressRessourceLog .= '<li> No ressource affected to task #'. $task->id  .' for '.  $task->service['label']  .' service </li>';
+                $message = 'No ressource affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
+                $this->progressRessourceMessages[] = $message;
+                TaskCalculationLog::create([
+                    'task_id' => $task->id,
+                    'type'    => 'resource',
+                    'message' => $message,
+                ]);
             }
             $this->countTaskCalculateRessource += 1;
-            $this->progressRessource  += (1/$countLines)*100; 
-        }     
+            $this->progressRessource  += (1/$countLines)*100;
+        }
 
         $this->toBeCalculateRessource = false;
     }
