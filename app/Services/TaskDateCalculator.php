@@ -3,129 +3,56 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use App\Models\Workflow\OrderLines;
+use App\Models\Planning\Task;
+use App\Models\Methods\MethodsRessources;
 use App\Models\Times\TimesBanckHoliday;
-use Illuminate\Database\Eloquent\Builder;
-use Exception;
+use Illuminate\Support\Collection;
 
 class TaskDateCalculator
 {
-    public function calculateDate(): array
+    /**
+     * Adjust date to previous working day if it falls on weekend or bank holiday.
+     */
+    public function adjustForWeekendsAndHolidays(Carbon $date): Carbon
     {
-        $progressDateLog = '';
-        $progressDate = 0;
-        $countTaskCalculateDate = 0;
-
-        $OrderLines = OrderLines::with(['order', 'Task' => function ($query) {
-            $query->where('not_recalculate', 0)
-                ->where(function (Builder $query) {
-                    return $query->where('tasks.type', 1)
-                                 ->orWhere('tasks.type', 7);
-                })
-                ->orderBy('ordre');
-        }])
-        ->join('orders', 'order_lines.orders_id', '=', 'orders.id')
-        ->where('order_lines.tasks_status', '!=', 4)
-        ->orderBy('order_lines.internal_delay')
-        ->select('order_lines.*')
-        ->get();
-
-        $countLines = $OrderLines->count();
-
-        if ($countLines === 0) {
-            return [
-                'progressDate' => $progressDate,
-                'progressDateLog' => $progressDateLog,
-                'countTaskCalculateDate' => $countTaskCalculateDate,
-                'toBeCalculateDate' => false,
-            ];
-        }
-
-        foreach ($OrderLines as $line) {
-            $taskEndDate = Carbon::parse($line->internal_delay);
-            $taskEndDate = $this->adjustForWeekends($taskEndDate);
-
-            $elapsedTimeInSeconds = 0;
-
-            $tasks = $line->Task->sortByDesc('ordre');
-
-            foreach ($tasks as $task) {
-                $endDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
-                $task->end_date = $endDate;
-
-                $progressDateLog .= '<li>End date : '. $endDate .' updated for task #'. $task->id .' ordre '. $task->ordre .'</li>';
-
-                $totalTaskHours = $task->TotalTime();
-                $adjustedTaskHours = $this->calculateWorkingHours($totalTaskHours);
-
-                $elapsedTimeInSeconds += ($adjustedTaskHours * 3600);
-                $startDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
-                $task->start_date = $startDate;
-                $task->save();
-
-                $taskEndDate = $startDate;
-                $countTaskCalculateDate += 1;
-            }
-
-            $progressDate += (1 / $countLines) * 100;
-        }
-
-        return [
-            'progressDate' => $progressDate,
-            'progressDateLog' => $progressDateLog,
-            'countTaskCalculateDate' => $countTaskCalculateDate,
-            'toBeCalculateDate' => false,
-        ];
-    }
-
-    private function adjustForWeekends(Carbon $date): Carbon
-    {
-        if ($date->isSunday()) {
-            return $date->subDay();
-        } elseif ($date->isMonday()) {
-            return $date->subDays(2);
-        }
-        return $date;
-    }
-
-    private function adjustForWorkingHours(Carbon $date, int $subtractSeconds): Carbon
-    {
-        $date->subSeconds($subtractSeconds);
-
-        $maxIterations = 100;
-        $iterations = 0;
-
-        while ($iterations < $maxIterations) {
+        do {
             if ($date->isSaturday()) {
-                $date->subDay()->hour(18)->minute(0);
+                $date->subDay();
             } elseif ($date->isSunday()) {
-                $date->subDays(2)->hour(18)->minute(0);
-            } elseif (TimesBanckHoliday::isBankHoliday($date)) {
-                $date->subDay()->hour(18)->minute(0);
+                $date->subDays(2);
             }
-
-            if ($date->hour < 8) {
-                $date->subHours($date->hour + 10);
-            } elseif ($date->hour >= 18) {
-                $date->hour(18)->minute(0)->subSecond();
-            } else {
-                break;
+            if (TimesBanckHoliday::isBankHoliday($date)) {
+                $date->subDay();
             }
-
-            $iterations++;
-        }
-
-        if ($iterations >= $maxIterations) {
-            throw new Exception("Loop limit exceeded in adjustForWorkingHours()! Date: " . $date->toDateTimeString());
-        }
+        } while ($date->isWeekend() || TimesBanckHoliday::isBankHoliday($date));
 
         return $date;
     }
 
-    private function calculateWorkingHours(int $totalTaskHours): int
+    /**
+     * Calculate start and end dates for the given task.
+     *
+     * @return array{0: Carbon,1: Carbon}
+     */
+    public function calculateTaskDates(Task $task, Carbon $end): array
     {
-        $workingDays = floor($totalTaskHours / 8);
-        $weekends = floor($workingDays / 5);
-        return $totalTaskHours + ($workingDays * 16) + ($weekends * 48);
+        $end = $this->adjustForWeekendsAndHolidays($end);
+        $duration = ($task->seting_time ?? 0) + (($task->unit_time ?? 0) * ($task->qty ?? 0));
+        $start = (clone $end)->subHours($duration);
+        $start = $this->adjustForWeekendsAndHolidays($start);
+        return [$start, $end];
+    }
+
+    /**
+     * Select a resource that still has capacity.
+     */
+    public function selectResourceForTask(Task $task, Collection|array $resources): ?MethodsRessources
+    {
+        foreach ($resources as $resource) {
+            if ($resource->capacity >= 1) {
+                return $resource;
+            }
+        }
+        return null;
     }
 }

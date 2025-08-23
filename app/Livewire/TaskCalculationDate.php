@@ -2,6 +2,9 @@
 
 namespace App\Livewire;
 
+
+use Carbon\Carbon;
+use App\Support\WorkingTime;
 use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Services\TaskDateCalculator;
@@ -41,58 +44,109 @@ class TaskCalculationDate extends Component
 
     public function calculateRessource()
     {
-        // Dans votre contrôleur ou ailleurs où vous avez besoin de cette information
-        $countLines = Task::whereNotNull('order_lines_id')->whereDoesntHave('resources')->count();
+        $countLines = Task::whereNotNull('order_lines_id')
+            ->whereDoesntHave('resources')
+            ->count();
 
-        $taskWithoutRessources = Task::whereNotNull('order_lines_id')->whereDoesntHave('resources')->get();
+        $taskWithoutRessources = Task::whereNotNull('order_lines_id')
+            ->whereDoesntHave('resources')
+            ->get();
 
         foreach ($taskWithoutRessources as $task) {
-            // Obtenez le service associé à la tâche
             $service = $task->service;
-        
-            // Obtenez la première ressource associée à ce service (ajustez selon vos besoins)
-            $resource = $service->Ressources()->first();
+            $taskDate = $task->start_date ? Carbon::parse($task->start_date) : Carbon::today();
+
+            $resource = $service->Ressources
+                ->first(function ($res) use ($taskDate, $task) {
+                    return $res->remainingCapacity($taskDate) >= $task->TotalTime();
+                });
 
             if ($resource) {
-                // Attachez la ressource à la tâche
                 $task->resources()->attach($resource->id, [
                     'autoselected_ressource' => 0,
                     'userforced_ressource' => 0,
                 ]);
 
-                $message = $resource->label. ' affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
-                $this->progressRessourceMessages[] = $message;
-                TaskCalculationLog::create([
-                    'task_id' => $task->id,
-                    'type'    => 'resource',
-                    'message' => $message,
-                ]);
+                $this->progressRessourceLog .= '<li>' . $resource->label . ' affected to task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
             } else {
-                // Aucune ressource trouvée pour ce service, gestion des erreurs ou autre action nécessaire
-                // Par exemple, vous pouvez journaliser un avertissement ou effectuer une autre logique
-                // en fonction des besoins de votre application.
-                $message = 'No ressource affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
-                $this->progressRessourceMessages[] = $message;
-                TaskCalculationLog::create([
-                    'task_id' => $task->id,
-                    'type'    => 'resource',
-                    'message' => $message,
-                ]);
-            }
-            $this->countTaskCalculateRessource += 1;
-            $this->progressRessource  += (1/$countLines)*100;
-        }
+                $this->progressRessourceLog .= '<li> No ressource available for task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
+                throw new \RuntimeException('No resource has remaining capacity for task #' . $task->id);
+
 
         $this->toBeCalculateRessource = false;
     }
 
     public function calculateDate()
     {
-        $result = $this->taskDateCalculator->calculateDate();
-        $this->progressDate = $result['progressDate'];
-        $this->progressDateLog = $result['progressDateLog'];
-        $this->countTaskCalculateDate = $result['countTaskCalculateDate'];
-        $this->toBeCalculateDate = $result['toBeCalculateDate'];
+        $OrderLines = OrderLines::with(['order', 'Task' => function ($query) {
+                                $query->where('not_recalculate', 0)
+                                        ->where(function (Builder $query) {
+                                            return $query->where('tasks.type', 1)
+                                                        ->orWhere('tasks.type', 7);
+                                        })
+                                        ->orderBy('ordre');
+                                }])
+                                ->join('orders', 'order_lines.orders_id', '=', 'orders.id')
+                                ->where('order_lines.tasks_status', '!=', 4)
+                                ->orderBy('order_lines.internal_delay')
+                                ->select('order_lines.*')
+                                ->get();
+
+        $countLines = $OrderLines->count();
+
+        if ($countLines === 0) {
+            $this->toBeCalculateDate = false;
+            return;
+        }
+
+        foreach ($OrderLines as $line) {
+            $taskEndDate = Carbon::parse($line->internal_delay);
+            $taskEndDate = $this->adjustForWeekends($taskEndDate);
+
+            $elapsedTimeInSeconds = 0;
+
+            // Trier correctement les tâches en ordre croissant
+            $tasks = $line->Task->sortByDesc('ordre'); // Correction du tri
+
+            foreach ($tasks as $task) {
+                // Date de fin de la tâche actuelle
+                $endDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
+                $task->end_date = $endDate;
+        
+                $this->progressDateLog .= '<li>End date : '. $endDate .' updated for task #'. $task->id .' ordre '. $task->ordre .'</li>';
+        
+                // Calcul du temps à retrancher en tenant compte des jours ouvrés
+                $totalTaskHours = $task->TotalTime();
+                $secondsToSubtract = $this->calculateWorkingHours($endDate, $totalTaskHours);
+
+                // Calcul de la date de début
+                $elapsedTimeInSeconds += $secondsToSubtract;
+                $startDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
+                $task->start_date = $startDate;
+                $task->save();
+        
+                // Mise à jour de taskEndDate pour la prochaine tâche
+                $taskEndDate = $startDate;
+            }
+
+            $this->countTaskCalculateRessource += 1;
+            $this->progressRessource += (1 / $countLines) * 100;
+
+        }
+
+        $this->toBeCalculateRessource = false;
+    }
+
+
+    /**
+     * Calcule précisément le temps à retrancher en tenant compte des
+     * horaires de travail, des week-ends et des jours fériés.
+     */
+    private function calculateWorkingHours(Carbon $fromDate, int $totalTaskHours): int
+    {
+        $startDate = WorkingTime::subtractWorkingHours($fromDate, $totalTaskHours);
+        return $fromDate->diffInSeconds($startDate);
+
     }
     
 }

@@ -6,6 +6,7 @@ use Illuminate\Support\Number;
 use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingAllocation;
+use App\Models\Assets\Asset;
 
 /**
  * Class AccountingEntry
@@ -41,6 +42,7 @@ class AccountingEntry extends Model
         'currency_code',
         'invoice_line_id',
         'purchase_invoice_line_id',
+        'asset_id',
         'exported'
     ];
 
@@ -73,6 +75,16 @@ class AccountingEntry extends Model
     public function accountingAllocation()
     {
         return $this->belongsTo(AccountingAllocation::class);
+    }
+
+    /**
+     * Get the asset associated with the accounting entry.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function asset()
+    {
+        return $this->belongsTo(Asset::class);
     }
 
     /**
