@@ -16,6 +16,12 @@ class OrderSite extends Model
         'contact_info',
     ];
 
+    public function implantations()
+    {
+        return $this->hasMany(OrderSiteImplantation::class);
+
+    }
+
     public function order()
     {
         return $this->belongsTo(Orders::class);
