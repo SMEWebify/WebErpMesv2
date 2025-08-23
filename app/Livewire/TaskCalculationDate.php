@@ -8,6 +8,8 @@ use App\Support\WorkingTime;
 use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Services\TaskDateCalculator;
+use App\Models\Workflow\OrderLines;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class TaskCalculationDate extends Component
@@ -72,6 +74,7 @@ class TaskCalculationDate extends Component
                 $this->progressRessourceMessages[] = 'No ressource available for task #' . $task->id . ' for ' . $task->service['label'] . ' service';
                 throw new \RuntimeException('No resource has remaining capacity for task #' . $task->id);
             }
+
         }
 
         $this->toBeCalculateRessource = false;
@@ -102,7 +105,7 @@ class TaskCalculationDate extends Component
 
         foreach ($OrderLines as $line) {
             $taskEndDate = Carbon::parse($line->internal_delay);
-            $taskEndDate = $this->adjustForWeekends($taskEndDate);
+            $taskEndDate = $this->taskDateCalculator->adjustForWeekendsAndHolidays($taskEndDate);
 
             $elapsedTimeInSeconds = 0;
 
@@ -111,7 +114,7 @@ class TaskCalculationDate extends Component
 
             foreach ($tasks as $task) {
                 // Date de fin de la tâche actuelle
-                $endDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
+                $endDate = $this->taskDateCalculator->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
                 $task->end_date = $endDate;
         
                 $this->progressDateMessages[] = 'End date : ' . $endDate . ' updated for task #' . $task->id . ' ordre ' . $task->ordre;
@@ -122,7 +125,7 @@ class TaskCalculationDate extends Component
 
                 // Calcul de la date de début
                 $elapsedTimeInSeconds += $secondsToSubtract;
-                $startDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
+                $startDate = $this->taskDateCalculator->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
                 $task->start_date = $startDate;
                 $task->save();
         

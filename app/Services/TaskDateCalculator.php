@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Planning\Task;
 use App\Models\Methods\MethodsRessources;
 use App\Models\Times\TimesBanckHoliday;
+use App\Support\WorkingTime;
 use Illuminate\Support\Collection;
 
 class TaskDateCalculator
@@ -27,6 +28,16 @@ class TaskDateCalculator
         } while ($date->isWeekend() || TimesBanckHoliday::isBankHoliday($date));
 
         return $date;
+    }
+
+    /**
+     * Adjust a date by subtracting the given number of seconds while
+     * respecting working hours, weekends and bank holidays.
+     */
+    public function adjustForWorkingHours(Carbon $date, int $secondsToSubtract): Carbon
+    {
+        $hours = $secondsToSubtract / 3600;
+        return WorkingTime::subtractWorkingHours($date, $hours);
     }
 
     /**
