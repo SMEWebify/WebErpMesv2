@@ -14,6 +14,7 @@
                         <th>{{__('general_content.po_receipt_trans_key') }}</th>
                         <th>{{ __('general_content.statu_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{ __('Trace') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,10 +61,13 @@
                             @if(5 == $SerialNumbers->status )<span class="badge badge-primary">{{__('general_content.in_stock_trans_key') }}</span>@endif
                         </td>
                         <td>{{ $SerialNumbers->GetPrettyCreatedAttribute() }}</td>
-                        
+                        <td>
+                            <a href="{{ route('production.trace', ['serial' => $SerialNumbers->serial_number]) }}" class="btn btn-sm btn-primary">{{ __('Trace') }}</a>
+                        </td>
+
                     </tr>
                     @empty
-                    <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                     <tfoot>
                     <tr>
@@ -74,6 +78,7 @@
                         <th>{{ __('general_content.po_receipt_trans_key') }}</th>
                         <th>{{ __('general_content.statu_trans_key') }}</th>
                         <th>{{__('general_content.created_at_trans_key') }}</th>
+                        <th>{{ __('Trace') }}</th>
                     </tr>
                     </tfoot>
                 </tbody>

@@ -301,6 +301,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/', 'App\Http\Controllers\Products\SerialNumbersController@index')->name('products.serialNumbers');
         });
 
+        Route::group(['prefix' => 'batches'], function () {
+            Route::get('/', 'App\Http\Controllers\Products\BatchesController@index')->name('products.batches');
+        });
+
         // Stock routes
         Route::group(['prefix' => 'Stock'], function () {
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');
@@ -617,9 +621,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         ['get', 'post'],
         '/navbar/search',
         'App\Http\Controllers\SearchController@showNavbarSearchResults'
-        
+
     );
     Route::get('/production-trace/{serialNumber}', [ProductionTraceController::class, 'show'])->name('production.trace.show');
+
+    Route::get('/production-trace/{serial}', 'App\Http\Controllers\ProductionTraceController@show')
+        ->middleware(['auth', 'check.factory'])
+        ->name('production.trace');
 
     require __DIR__.'/auth.php';
 

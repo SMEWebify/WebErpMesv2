@@ -523,11 +523,11 @@ class OrderLine extends Component
     }
 
     // Helper method to create serial numbers
-    private function createSerialNumbers($OrderLineData, $quantity)
+    private function createSerialNumbers($OrderLineData, $quantity, $batchId = null)
     {
         $productId = $OrderLineData->product_id ?? null;
         for ($i = 0; $i < $quantity; $i++) {
-            $this->serialNumberService->createSerialNumber($productId, $OrderLineData->id, 2);
+            $this->serialNumberService->createSerialNumber($productId, $OrderLineData->id, 2, $batchId);
         }
     }
 

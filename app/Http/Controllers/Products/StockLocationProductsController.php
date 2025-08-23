@@ -209,11 +209,12 @@ class StockLocationProductsController extends Controller
      */
     public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
     {
-        $stockMove = StockMove::create(['user_id' => $request->user_id, 
+        $stockMove = StockMove::create(['user_id' => $request->user_id,
                                         'qty' => $request->qty,
-                                        'stock_location_products_id' =>  $request->stock_location_products_id, 
+                                        'stock_location_products_id' =>  $request->stock_location_products_id,
                                         'task_id' =>$request->task_id,
                                         'purchase_receipt_line_id' =>$request->purchase_receipt_line_id,
+                                        'batch_id' => $request->batch_id,
                                         'typ_move' => $request->typ_move,
                                         'component_price' => $request->component_price,
                                     ]);
@@ -230,10 +231,11 @@ class StockLocationProductsController extends Controller
      */
     public function entry(StoreStockMoveRequest $request)
     {
-        $stockMove = StockMove::create($request->only('user_id', 
+        $stockMove = StockMove::create($request->only('user_id',
                                                         'qty',
-                                                        'stock_location_products_id', 
+                                                        'stock_location_products_id',
                                                         'typ_move',
+                                                        'batch_id',
                                                         'x_size',
                                                         'y_size',
                                                         'z_size',
@@ -249,12 +251,13 @@ class StockLocationProductsController extends Controller
      */
     public function sorting(StoreStockMoveRequest $request)
     {
-        $stockMove = StockMove::create($request->only('user_id', 
+        $stockMove = StockMove::create($request->only('user_id',
                                                         'qty',
-                                                        'stock_location_products_id', 
+                                                        'stock_location_products_id',
                                                         'typ_move',
                                                         'order_line_id',
                                                         'task_id',
+                                                        'batch_id',
                                                         'tracability',
                                                     ));
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');

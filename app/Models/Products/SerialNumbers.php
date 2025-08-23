@@ -9,11 +9,14 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Products\SerialNumberComponent;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseReceiptLines;
+use App\Models\Products\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class SerialNumbers extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= [
@@ -22,10 +25,25 @@ class SerialNumbers extends Model
         'order_line_id',
         'task_id',
         'purchase_receipt_line_id',
+        'batch_id',
         'serial_number',
         'status',
         'additional_information',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly([
+            'products_id',
+            'companies_id',
+            'order_line_id',
+            'task_id',
+            'purchase_receipt_line_id',
+            'serial_number',
+            'status',
+            'additional_information',
+        ]);
+    }
 
     public function Product()
     {
@@ -60,6 +78,12 @@ class SerialNumbers extends Model
     public function parentComponent()
     {
         return $this->hasOne(SerialNumberComponent::class, 'component_serial_id');
+    }
+  
+    public function batch()
+    {
+        return $this->belongsTo(Batch::class, 'batch_id');
+
     }
 
     /**
