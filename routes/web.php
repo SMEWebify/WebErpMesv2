@@ -4,6 +4,7 @@ use Livewire\Livewire;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\ProductionTraceController;
+use App\Http\Controllers\EnergyConsumptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -628,6 +629,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/production-trace/{serial}', 'App\Http\Controllers\ProductionTraceController@show')
         ->middleware(['auth', 'check.factory'])
         ->name('production.trace');
+
+    Route::group(['prefix' => 'energy-consumptions', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', [EnergyConsumptionController::class, 'index'])->name('energy-consumptions.index');
+        Route::post('/', [EnergyConsumptionController::class, 'store'])->name('energy-consumptions.store');
+        Route::get('/{id}', [EnergyConsumptionController::class, 'show'])->name('energy-consumptions.show');
+    });
+
 
     require __DIR__.'/auth.php';
 

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Methods\MethodsRessources;
 
 class EnergyConsumption extends Model
 {
@@ -12,6 +14,11 @@ class EnergyConsumption extends Model
     protected $fillable = [
         'kwh_consumed',
         'cost',
+        'machine_id',
+        'kwh',
+        'cost_per_kwh',
+        'total_cost',
+        'amount',
     ];
 
     protected static function booted()
@@ -26,3 +33,4 @@ class EnergyConsumption extends Model
         return $value ?? $this->kwh_consumed * config('energy.price_per_kwh');
     }
 }
+
