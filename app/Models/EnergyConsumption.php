@@ -2,28 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\Methods\MethodsRessources;
 
 class EnergyConsumption extends Model
 {
     use HasFactory;
 
-    // Fillable attributes for mass assignment
     protected $fillable = [
         'machine_id',
-        'kwh_consumed',
-        'cost',
-        'recorded_at',
+        'kwh',
+        'cost_per_kwh',
+        'total_cost',
         'amount',
     ];
 
-    /**
-     * Get the machine or resource associated with this energy consumption record.
-     */
+    protected static function booted()
+    {
+        static::saving(function ($model) {
+            $model->total_cost = $model->kwh * $model->cost_per_kwh;
+        });
+    }
+
     public function machine()
     {
-        return $this->belongsTo(MethodsRessources::class, 'machine_id');
+        return $this->belongsTo(Machine::class);
     }
 }
+
+
