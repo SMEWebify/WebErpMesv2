@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
 use Illuminate\Support\Number;
+use Illuminate\Support\Facades\Log;
 use App\Models\Workflow\Quotes;
 use App\Services\QuoteKPIService;
 use App\Traits\NextPreviousTrait;
@@ -114,11 +115,27 @@ class QuotesController extends Controller
     {
         $validated = $request->validated();
 
-        $Quote = Quotes::findOrFail($request->id);
-        $Quote->fill($validated);
-        $Quote->save();
-        
-        return redirect()->route('quotes.show', ['id' => $Quote->id])->with('success', 'Successfully updated quote');
+        try {
+            $Quote = Quotes::findOrFail($request->id);
+            $Quote->fill($validated);
+            $Quote->save();
+
+            Log::channel('quotes')->info(__('general_content.quote_updated_log_trans_key'), [
+                'user_id' => $request->user()?->id,
+                'quote_id' => $Quote->id,
+                'parameters' => $validated,
+            ]);
+
+            return redirect()->route('quotes.show', ['id' => $Quote->id])->with('success', __('general_content.quote_update_success_trans_key'));
+        } catch (\Exception $e) {
+            Log::channel('quotes')->error(__('general_content.quote_update_failed_log_trans_key'), [
+                'user_id' => $request->user()?->id,
+                'quote_id' => $request->id,
+                'parameters' => $validated,
+                'exception' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
     }
 
     public function saveProjectEstimate(ProjectEstimateRequest $request, $quoteId)
