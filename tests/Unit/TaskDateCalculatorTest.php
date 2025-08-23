@@ -91,6 +91,14 @@ class TaskDateCalculatorTest extends TestCase
         $this->assertSame('2024-05-07', $calculator->adjustForWeekendsAndHolidays(Carbon::create(2024, 5, 8))->toDateString());
     }
 
+    public function test_adjustment_of_working_hours(): void
+    {
+        $calculator = new TaskDateCalculator();
+        $date = Carbon::create(2024, 5, 6, 10, 0, 0); // Monday 10:00
+        $adjusted = $calculator->adjustForWorkingHours($date, 6 * 3600);
+        $this->assertEquals('2024-05-03 14:00:00', $adjusted->format('Y-m-d H:i:s'));
+    }
+
     public function test_calculates_start_and_end_for_simple_task(): void
     {
         $service = MethodsServicesFactory::new()->create();
