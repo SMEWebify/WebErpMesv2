@@ -108,7 +108,7 @@ class TaskCalculationDate extends Component
 
         foreach ($OrderLines as $line) {
             $taskEndDate = Carbon::parse($line->internal_delay);
-            $taskEndDate = $this->adjustForWeekends($taskEndDate);
+            $taskEndDate = $this->taskDateCalculator->adjustForWeekendsAndHolidays($taskEndDate);
 
             $elapsedTimeInSeconds = 0;
 
@@ -117,7 +117,7 @@ class TaskCalculationDate extends Component
 
             foreach ($tasks as $task) {
                 // Date de fin de la tâche actuelle
-                $endDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
+                $endDate = $this->taskDateCalculator->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
                 $task->end_date = $endDate;
         
                 $this->progressDateLog .= '<li>End date : '. $endDate .' updated for task #'. $task->id .' ordre '. $task->ordre .'</li>';
@@ -128,7 +128,7 @@ class TaskCalculationDate extends Component
 
                 // Calcul de la date de début
                 $elapsedTimeInSeconds += $secondsToSubtract;
-                $startDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
+                $startDate = $this->taskDateCalculator->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
                 $task->start_date = $startDate;
                 $task->save();
         
