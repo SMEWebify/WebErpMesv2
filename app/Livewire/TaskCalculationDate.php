@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
+use App\Support\WorkingTime;
 use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Models\Workflow\OrderLines;
@@ -107,12 +108,12 @@ class TaskCalculationDate extends Component
         
                 $this->progressDateLog .= '<li>End date : '. $endDate .' updated for task #'. $task->id .' ordre '. $task->ordre .'</li>';
         
-                // Calcul de la durée ajustée de la tâche
+                // Calcul du temps à retrancher en tenant compte des jours ouvrés
                 $totalTaskHours = $task->TotalTime();
-                $adjustedTaskHours = $this->calculateWorkingHours($totalTaskHours);
-        
+                $secondsToSubtract = $this->calculateWorkingHours($endDate, $totalTaskHours);
+
                 // Calcul de la date de début
-                $elapsedTimeInSeconds += ($adjustedTaskHours * 3600);
+                $elapsedTimeInSeconds += $secondsToSubtract;
                 $startDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
                 $task->start_date = $startDate;
                 $task->save();
@@ -184,13 +185,13 @@ class TaskCalculationDate extends Component
     }
 
     /**
-     * Calcule le temps ajusté en tenant compte des week-ends et des horaires
+     * Calcule précisément le temps à retrancher en tenant compte des
+     * horaires de travail, des week-ends et des jours fériés.
      */
-    private function calculateWorkingHours(int $totalTaskHours): int
+    private function calculateWorkingHours(Carbon $fromDate, int $totalTaskHours): int
     {
-        $workingDays = floor($totalTaskHours / 8);
-        $weekends = floor($workingDays / 5);
-        return $totalTaskHours + ($workingDays * 16) + ($weekends * 48);
+        $startDate = WorkingTime::subtractWorkingHours($fromDate, $totalTaskHours);
+        return $fromDate->diffInSeconds($startDate);
     }
     
 }
