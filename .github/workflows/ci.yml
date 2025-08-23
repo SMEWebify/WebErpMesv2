@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
   pull_request:
-    branches: ["main"]
 
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env:
+      COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
     steps:
       - uses: actions/checkout@v4
 
@@ -18,11 +18,6 @@ jobs:
           php-version: '8.2'
           extensions: ldap, zip, pdo_mysql, pdo_pgsql, sqlite3, bcmath, gd, intl, pcntl
           coverage: none
-
-      - name: Configure Composer authentication
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: composer config --global github-oauth.github.com "$GITHUB_TOKEN"
 
       - name: Install dependencies
         run: composer install --no-progress --no-interaction --prefer-dist
