@@ -11,13 +11,22 @@ class OrderSiteImplantation extends Model
 
     protected $fillable = [
         'order_site_id',
-        'workforce',
+        'name',
+        'description',
+      'workforce',
         'equipment',
         'step',
         'start_date',
         'end_date',
         'notes',
     ];
+
+    public function OrderSite()
+    {
+        return $this->belongsTo(OrderSite::class, 'order_site_id');
+    }
+
+
 
     public function orderSite()
     {
