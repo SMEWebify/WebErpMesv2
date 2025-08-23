@@ -555,6 +555,15 @@
           <p class="text-sm">{{ __('general_content.last_purchase_price_price_trans_key') }}
             <b class="d-block">{{ number_format($lastPurchasePrice, 2) }} {{ $Factory->curency }}</b>
           </p>
+          <p class="text-sm">{{ __('general_content.average_supply_delay_trans_key') }}
+            <b class="d-block">
+              @if(!is_null($averageSupplyDelay))
+                {{ number_format($averageSupplyDelay, 0) }} {{ __('general_content.day_trans_key') }}
+              @else
+                N/A
+              @endif
+            </b>
+          </p>
           </div>
         </div>
       <!-- /.div row -->

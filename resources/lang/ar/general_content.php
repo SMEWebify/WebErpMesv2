@@ -921,4 +921,5 @@ return [
     'production_declaration_trans_key'    => 'إعلان الإنتاج',
     'note_1_trans_key'                    => 'استشارة وتخطيط المهام التي يجب إنجازها.',
     'note_2_trans_key'                    => 'إجراء إعلانات الإنتاج.',
+    'average_supply_delay_trans_key'      => 'متوسط مهلة التوريد',
 ];

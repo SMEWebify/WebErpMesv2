@@ -1095,4 +1095,5 @@ return [
     'quote_updated_log_trans_key'              => 'Devis mis à jour',
     'quote_update_failed_log_trans_key'        => 'Échec de mise à jour du devis',
     'quote_update_success_trans_key'           => 'Devis mis à jour avec succès',
+    'average_supply_delay_trans_key'           => "Délai moyen d'approvisionnement",
 ];
