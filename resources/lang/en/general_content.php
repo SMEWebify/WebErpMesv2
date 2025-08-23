@@ -1088,4 +1088,10 @@ return [
     'production_declaration_trans_key'         => 'Production Declaration',
     'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
     'note_2_trans_key'                         => 'Make production declarations.',
+
+    'order_created_log_trans_key'              => 'Order created',
+    'order_creation_failed_log_trans_key'      => 'Order creation failed',
+    'quote_updated_log_trans_key'              => 'Quote updated',
+    'quote_update_failed_log_trans_key'        => 'Quote update failed',
+    'quote_update_success_trans_key'           => 'Successfully updated quote',
 ];
