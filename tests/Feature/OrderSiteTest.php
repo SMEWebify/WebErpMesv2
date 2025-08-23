@@ -23,10 +23,8 @@ class OrderSiteTest extends TestCase
     {
         $order = Orders::factory()->create();
 
-        $response = $this->post(route('orders.sites.store', $order->id), [
-            'label' => 'Main site',
-            'start_date' => now()->toDateString(),
-            'end_date' => now()->addDays(5)->toDateString(),
+        $response = $this->post(route('orders.site.store', $order->id), [
+            'name' => 'Main site',
         ]);
 
         $response->assertStatus(302);
@@ -40,24 +38,21 @@ class OrderSiteTest extends TestCase
     {
         $order = Orders::factory()->create();
 
-        $this->post(route('orders.sites.store', $order->id), [
-            'label' => 'Main site',
-            'start_date' => now()->toDateString(),
-            'end_date' => now()->addDays(5)->toDateString(),
+        $this->post(route('orders.site.store', $order->id), [
+            'name' => 'Main site',
         ]);
 
         $siteId = DB::table('order_sites')->where('order_id', $order->id)->value('id');
 
-        $response = $this->post(route('orders.sites.implantations.store', [$order->id, $siteId]), [
-            'label' => 'Implantation A',
-            'start_date' => now()->toDateString(),
-            'end_date' => now()->addDays(1)->toDateString(),
+        $response = $this->post(route('orders.site.implantation.store', [$order->id, $siteId]), [
+            'name' => 'Implantation A',
+            'description' => 'Test',
         ]);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('order_site_implantations', [
             'order_sites_id' => $siteId,
-            'label' => 'Implantation A',
+            'name' => 'Implantation A',
         ]);
     }
 
@@ -75,9 +70,10 @@ class OrderSiteTest extends TestCase
     {
         $order = Orders::factory()->create();
 
-        $response = $this->post(route('orders.sites.store', $order->id), []);
+        $response = $this->post(route('orders.site.store', $order->id), []);
 
-        $response->assertSessionHasErrors(['label', 'start_date', 'end_date']);
+        $response->assertStatus(302);
+        $response->assertSessionHasNoErrors();
     }
 }
 
