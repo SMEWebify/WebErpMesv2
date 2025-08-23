@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3']
+        laravel: ['12.*']
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip
+          tools: phpstan, php-cs-fixer
+          coverage: none
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit
+      - name: Run PHPStan
+        run: phpstan analyse --no-progress --level=0 app
+      - name: Run PHP CS Fixer
+        run: php-cs-fixer fix app --dry-run --diff --using-cache=no --rules=@PSR12
