@@ -114,6 +114,7 @@ return [
     'your_company_trans_key'                   => 'Công ty',
     'licence_trans_key'                        => 'Giấy phép',
     'release_note_trans_key'                   => 'Nhật ký phát hành',
-    
+
     'search_results_trans_key'                 => 'Kết quả tìm kiếm',
+    'customer_processing_cost_trans_key'       => 'Chi phí xử lý khách hàng',
 ];

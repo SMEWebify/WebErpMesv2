@@ -500,6 +500,7 @@ return [
     'tolerance_days_trans_key'                 => 'Nombre de jours de tolérance',
     'quoted_delivery_note_trans_key'           => 'Note de livraison chiffré',
     'order_average_note_trans_key'             => 'Commande moyenne',
+    'customer_processing_cost_trans_key'       => 'Coût de traitement client',
 
     'material_trans_key'                       => 'Matière',
     'thickness_trans_key'                      => 'Epaisseur',

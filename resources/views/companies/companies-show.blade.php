@@ -36,12 +36,19 @@
           </div>
 
           <div class="col-lg-3 col-md-3">
-            <x-adminlte-small-box title="{{ $remainingInvoiceOrder }}" 
-              text="{{ __('general_content.remaining_invoice_month_trans_key') }}" 
+            <x-adminlte-small-box title="{{ $remainingInvoiceOrder }}"
+              text="{{ __('general_content.remaining_invoice_month_trans_key') }}"
               icon="icon fas fa-info"
               theme="info" />
           </div>
-          
+
+          <div class="col-lg-3 col-md-3">
+            <x-adminlte-small-box title="{{ $customerProcessingCost }}"
+              text="{{ __('general_content.customer_processing_cost_trans_key') }}"
+              icon="icon fas fa-info"
+              theme="teal" />
+          </div>
+
           <div class="col-lg-3 col-md-3">
             <x-adminlte-card  theme="primary" theme-mode="outline">
               <p class="card-text">{{ __('general_content.bills_paid_trans_key') }} : {{ $paidInvoices }}</p>

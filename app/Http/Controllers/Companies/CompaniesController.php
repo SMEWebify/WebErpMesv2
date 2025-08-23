@@ -23,6 +23,8 @@ use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
 use App\Models\Accounting\AccountingPaymentConditions;
+use Carbon\Carbon;
+use App\Models\Methods\MethodsServices;
 
 class CompaniesController extends Controller
 {
@@ -90,13 +92,20 @@ class CompaniesController extends Controller
         $data['orderAverage'] = $this->orderKPIService->getAverageOrderPriceAttribute($id->id);
         $data['orderAverage'] = Number::currency($data['orderAverage'], $factory->curency, config('app.locale'));
         $remainingInvoiceOrder = Number::currency($remainingInvoiceOrder->orderSum ?? 0, $factory->curency, config('app.locale'));
-        
+
+        $customerServiceId = MethodsServices::where('label', 'Customer Service')->value('id');
+        $startOfYear = Carbon::now()->startOfYear();
+        $endOfYear = Carbon::now()->endOfYear();
+        $customerProcessingCost = $this->orderKPIService->getCustomerProcessingCost($id->id, $startOfYear, $endOfYear, $customerServiceId);
+        $customerProcessingCost = Number::currency($customerProcessingCost, $factory->curency, config('app.locale'));
+
         $Companie = $id;
-        return view('companies/companies-show', compact('Companie', 
-                                                        'userSelect', 
-                                                        'previousUrl', 
+        return view('companies/companies-show', compact('Companie',
+                                                        'userSelect',
+                                                        'previousUrl',
                                                         'nextUrl',
                                                         'remainingInvoiceOrder',
+                                                        'customerProcessingCost',
                                                         'paidInvoices',
                                                         'unpaidInvoices',
                                                         'data',));

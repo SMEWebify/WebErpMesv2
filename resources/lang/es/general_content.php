@@ -446,7 +446,8 @@ return [
     'payment_conditions_trans_key'             => 'Condiciones de pago',
     'delevery_method_trans_key'                => 'Método de entrega',
     'validity_date_trans_key'                  => 'Fecha de validez',
-    
+    'customer_processing_cost_trans_key'       => 'Costo de procesamiento del cliente',
+
     'material_trans_key'                       => 'Material',
     'finishing_trans_key'                      => 'Acabado',
     'thickness_trans_key'                      => 'Espesor',
