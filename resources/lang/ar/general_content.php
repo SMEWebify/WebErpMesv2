@@ -361,6 +361,7 @@ return [
     'select_payement_methods_trans_key'     => 'اختر طريقة الدفع',
     'select_delivery_trans_key'             => 'اختر التسليم',
     'select_service_trans_key'              => 'اختر الخدمة',
+    'select_ressource_trans_key'            => 'اختر المورد',
     'select_family_trans_key'               => 'اختر الفئة',
     'select_unit_trans_key'                 => 'اختر الوحدة',
     'select_statu_trans_key'                => 'اختر الحالة',
@@ -446,7 +447,8 @@ return [
     'payment_conditions_trans_key'  => 'شروط الدفع',
     'delevery_method_trans_key'     => 'طريقة التسليم',
     'validity_date_trans_key'       => 'تاريخ الصلاحية',
-    
+    'customer_processing_cost_trans_key' => 'تكلفة معالجة العميل',
+
     'material_trans_key'                    => 'المادة',
     'finishing_trans_key'                   => 'التشطيب',
     'thickness_trans_key'                   => 'السمك',
@@ -920,4 +922,8 @@ return [
     'production_declaration_trans_key'    => 'إعلان الإنتاج',
     'note_1_trans_key'                    => 'استشارة وتخطيط المهام التي يجب إنجازها.',
     'note_2_trans_key'                    => 'إجراء إعلانات الإنتاج.',
+    'average_supply_delay_trans_key'      => 'متوسط مهلة التوريد',
+    'order_site_trans_key'                => 'موقع العمل',
+    'characteristics_trans_key'           => 'الخصائص',
+    'contact_info_trans_key'              => 'معلومات الاتصال',
 ];

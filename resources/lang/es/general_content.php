@@ -359,6 +359,7 @@ return [
     'select_payement_methods_trans_key'        => 'Seleccionar método de pago',
     'select_delivery_trans_key'                => 'Seleccionar entrega',
     'select_service_trans_key'                 => 'Seleccionar servicio',
+    'select_ressource_trans_key'               => 'Seleccionar recurso',
     'select_family_trans_key'                  => 'Seleccionar familia',
     'select_unit_trans_key'                    => 'Seleccionar unidad',
     'select_statu_trans_key'                   => 'Seleccionar estado',
@@ -446,7 +447,8 @@ return [
     'payment_conditions_trans_key'             => 'Condiciones de pago',
     'delevery_method_trans_key'                => 'Método de entrega',
     'validity_date_trans_key'                  => 'Fecha de validez',
-    
+    'customer_processing_cost_trans_key'       => 'Costo de procesamiento del cliente',
+
     'material_trans_key'                       => 'Material',
     'finishing_trans_key'                      => 'Acabado',
     'thickness_trans_key'                      => 'Espesor',
@@ -921,5 +923,8 @@ return [
     'production_declaration_trans_key'     => 'Declaración de producción',
     'note_1_trans_key'                     => 'Consultar y planificar las tareas a realizar.',
     'note_2_trans_key'                     => 'Realizar declaraciones de producción.',
-
+    'average_supply_delay_trans_key'       => 'Plazo medio de aprovisionamiento',
+    'order_site_trans_key'                 => 'Sitio de obra',
+    'characteristics_trans_key'            => 'Características',
+    'contact_info_trans_key'               => 'Información de contacto',
 ];

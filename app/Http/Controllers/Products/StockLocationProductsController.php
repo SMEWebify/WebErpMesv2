@@ -195,8 +195,23 @@ class StockLocationProductsController extends Controller
      */
     public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
     {
+<<<<<<< HEAD
         $data = $request->only('user_id', 'qty', 'stock_location_products_id', 'task_id', 'purchase_receipt_line_id', 'typ_move', 'component_price');
         $this->stockService->createStockMove($data);
+=======
+        $stockMove = StockMove::create(['user_id' => $request->user_id,
+                                        'qty' => $request->qty,
+                                        'stock_location_products_id' =>  $request->stock_location_products_id,
+                                        'task_id' =>$request->task_id,
+                                        'purchase_receipt_line_id' =>$request->purchase_receipt_line_id,
+                                        'batch_id' => $request->batch_id,
+                                        'typ_move' => $request->typ_move,
+                                        'component_price' => $request->component_price,
+                                    ]);
+
+        /* // update stock if line of purchase order line*/
+        PurchaseReceiptLines::where('id',$request->purchase_receipt_line_id,)->update(['stock_location_products_id'=>$request->stock_location_products_id]);
+>>>>>>> a68246f896a6884f3b81536843e632b07bd549cd
 
         // Mise à jour de la ligne de réception de l'achat
         $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $request->stock_location_products_id);
@@ -210,6 +225,7 @@ class StockLocationProductsController extends Controller
      */
     public function entry(StoreStockMoveRequest $request)
     {
+<<<<<<< HEAD
         $data = [
             'user_id' => $request->user_id,
             'qty' => $request->qty,
@@ -224,6 +240,19 @@ class StockLocationProductsController extends Controller
 
         $stockMove = $this->stockService->createStockMove($data);
 
+=======
+        $stockMove = StockMove::create($request->only('user_id',
+                                                        'qty',
+                                                        'stock_location_products_id',
+                                                        'typ_move',
+                                                        'batch_id',
+                                                        'x_size',
+                                                        'y_size',
+                                                        'z_size',
+                                                        'surface_perc',
+                                                        'tracability',
+                                                    ));
+>>>>>>> a68246f896a6884f3b81536843e632b07bd549cd
         return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
     }
 
@@ -233,6 +262,7 @@ class StockLocationProductsController extends Controller
      */
     public function sorting(StoreStockMoveRequest $request)
     {
+<<<<<<< HEAD
         $stockLocationProduct = StockLocationProducts::find($request->stock_location_products_id);
 
         // Vérifie si la quantité demandée est disponible avec la traçabilité
@@ -254,5 +284,17 @@ class StockLocationProductsController extends Controller
         else{
             return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('error', 'Not enough stock available for this tracability');
         }
+=======
+        $stockMove = StockMove::create($request->only('user_id',
+                                                        'qty',
+                                                        'stock_location_products_id',
+                                                        'typ_move',
+                                                        'order_line_id',
+                                                        'task_id',
+                                                        'batch_id',
+                                                        'tracability',
+                                                    ));
+        return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+>>>>>>> a68246f896a6884f3b81536843e632b07bd549cd
     }
 }

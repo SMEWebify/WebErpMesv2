@@ -1,0 +1,25 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\EnergyConsumption;
+use App\Models\Machine;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class EnergyConsumptionFactory extends Factory
+{
+    protected $model = EnergyConsumption::class;
+
+    public function definition(): array
+    {
+        $kwh = $this->faker->numberBetween(10, 100);
+        $cost = $this->faker->randomFloat(2, 0.1, 1);
+
+        return [
+            'machine_id' => Machine::factory(),
+            'kwh' => $kwh,
+            'cost_per_kwh' => $cost,
+        ];
+    }
+}
+

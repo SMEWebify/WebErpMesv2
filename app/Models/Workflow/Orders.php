@@ -13,6 +13,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\OrderRating;
+use App\Models\Workflow\OrderSite;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\OrderCalculatorService;
 use App\Models\Companies\CompaniesContacts;
@@ -109,6 +110,12 @@ class Orders extends Model
     public function OrderLines()
     {
         return $this->hasMany(OrderLines::class)->orderBy('ordre');
+    }
+
+    public function OrderSite()
+    {
+        return $this->hasOne(OrderSite::class, 'orders_id');
+
     }
     
     public function getPurchaseLinesCountAttribute()

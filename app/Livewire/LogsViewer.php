@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Spatie\Activitylog\Models\Activity;
 use Carbon\Carbon;
+use App\Models\User;
 
 class LogsViewer extends Component
 {
@@ -15,29 +16,38 @@ class LogsViewer extends Component
     public $availableModels;
     public $subjectType;  // Variable for the model type (quote, order, etc.)
     public $subjectId;    // Variable for the model ID
+    public $userId;
+    public $availableUsers;
 
     public function mount($subjectType = null, $subjectId = null)  // Pass the model type and ID
     {
         $this->startDate = Carbon::now()->toDateString();
         $this->endDate = Carbon::now()->toDateString();
         $this->availableModels = Activity::select('subject_type')->distinct()->pluck('subject_type');
+        $this->availableUsers = User::select('id', 'name')->get();
         $this->subjectType = $subjectType;  // Initialize the model type
         $this->subjectId = $subjectId;      // Initialize the model ID
     }
 
     public function filterLogs()
     {
-        $this->validate([
-            'model' => 'required|string',
+        $rules = [
             'startDate' => 'required|date',
             'endDate' => 'required|date|after_or_equal:startDate',
-        ]);
+            'userId' => 'nullable|integer',
+        ];
+
+        if (!$this->subjectType) {
+            $rules['model'] = 'required|string';
+        }
+
+        $this->validate($rules);
     }
 
     public function render()
     {
         // If filters are submitted or a specific topic is set
-        if ($this->model || $this->startDate || $this->endDate || $this->subjectType || $this->subjectId) {
+        if ($this->model || $this->startDate || $this->endDate || $this->subjectType || $this->subjectId || $this->userId) {
             $query = Activity::query();
 
             if ($this->model) {
@@ -56,6 +66,10 @@ class LogsViewer extends Component
 
             if ($this->endDate) {
                 $query->whereDate('created_at', '<=', $this->endDate);
+            }
+
+            if ($this->userId) {
+                $query->where('causer_id', $this->userId);
             }
     
             $this->logs = $query->latest()->get();

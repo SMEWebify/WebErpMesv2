@@ -7,6 +7,7 @@ use App\Models\Workflow\Orders;
 use App\Models\Workflow\Deliverys;
 use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\OrderLines;
+use App\Models\Planning\Task;
 use Illuminate\Support\Facades\Cache;
 
 class OrderKPIService
@@ -356,6 +357,47 @@ class OrderKPIService
             $serviceRate = round(($onTimeDeliveries / $totalOrderLines) * 100,2);
 
             return $serviceRate;
+        });
+    }
+
+    /**
+     * Calculate the average processing cost of a customer's orders for a given period and service.
+     *
+     * This method filters orders by company and date range, retrieves the related tasks for the
+     * specified service, sums their realized costs, then divides by the number of orders.
+     * The result is cached like other KPIs.
+     *
+     * @param int $companyId   The ID of the customer company.
+     * @param Carbon $start    The start date of the period.
+     * @param Carbon $end      The end date of the period.
+     * @param int $serviceId   The ID of the service.
+     * @return float           The average processing cost per order, or 0 if no orders are found.
+     */
+    public function getCustomerProcessingCost(int $companyId, Carbon $start, Carbon $end, int $serviceId)
+    {
+        $cacheKey = 'customer_processing_cost_' . $companyId . '_' . $start->toDateString() . '_' . $end->toDateString() . '_' . $serviceId;
+
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($companyId, $start, $end, $serviceId) {
+            $orderCount = Orders::where('companies_id', $companyId)
+                                ->whereBetween('created_at', [$start, $end])
+                                ->count();
+
+            if ($orderCount === 0) {
+                return 0;
+            }
+
+            $tasks = Task::where('methods_services_id', $serviceId)
+                        ->whereHas('OrderLines.order', function ($query) use ($companyId, $start, $end) {
+                            $query->where('companies_id', $companyId)
+                                  ->whereBetween('created_at', [$start, $end]);
+                        })
+                        ->get();
+
+            $totalCost = $tasks->sum(function (Task $task) {
+                return $task->getTotalRealizedCost();
+            });
+
+            return $totalCost / $orderCount;
         });
     }
 

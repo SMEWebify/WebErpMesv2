@@ -114,6 +114,12 @@ return [
     'your_company_trans_key'                   => 'Công ty',
     'licence_trans_key'                        => 'Giấy phép',
     'release_note_trans_key'                   => 'Nhật ký phát hành',
-    
+
     'search_results_trans_key'                 => 'Kết quả tìm kiếm',
+    'customer_processing_cost_trans_key'       => 'Chi phí xử lý khách hàng',
+    'average_supply_delay_trans_key'           => 'Thời gian cung ứng trung bình',
+    'order_site_trans_key'                     => 'Công trường',
+    'characteristics_trans_key'                => 'Đặc điểm',
+    'select_ressource_trans_key'               => 'Chọn nguồn lực',
+    'contact_info_trans_key'                   => 'Thông tin liên hệ',
 ];

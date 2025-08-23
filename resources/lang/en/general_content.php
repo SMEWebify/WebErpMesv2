@@ -500,6 +500,7 @@ return [
     'tolerance_days_trans_key'                 => 'Tolerance days',
     'quoted_delivery_note_trans_key'           => 'Quoted delivery note',
     'order_average_note_trans_key'             => 'Average order',
+    'customer_processing_cost_trans_key'       => 'Customer processing cost',
 
     'material_trans_key'                       => 'Material',
     'finishing_trans_key'                      => 'Finishing',
@@ -1088,4 +1089,14 @@ return [
     'production_declaration_trans_key'         => 'Production Declaration',
     'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
     'note_2_trans_key'                         => 'Make production declarations.',
+
+    'order_created_log_trans_key'              => 'Order created',
+    'order_creation_failed_log_trans_key'      => 'Order creation failed',
+    'quote_updated_log_trans_key'              => 'Quote updated',
+    'quote_update_failed_log_trans_key'        => 'Quote update failed',
+    'quote_update_success_trans_key'           => 'Successfully updated quote',
+    'average_supply_delay_trans_key'           => 'Average supply delay',
+    'order_site_trans_key'                     => 'Job site',
+    'characteristics_trans_key'                => 'Characteristics',
+    'contact_info_trans_key'                   => 'Contact info',
 ];

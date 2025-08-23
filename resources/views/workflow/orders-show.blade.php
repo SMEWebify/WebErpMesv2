@@ -19,6 +19,7 @@
     <ul class="nav nav-pills" id="DocumentTabs">
       <li class="nav-item"><a class="nav-link" href="#Order" data-toggle="tab">{{ __('general_content.order_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.order_line_trans_key') }}  ({{ count($Order->OrderLines) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Site" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
@@ -220,7 +221,11 @@
       </div>   
       <div class="tab-pane " id="Lines">
         @livewire('order-line', ['OrderId' => $Order->id, 'OrderStatu' => $Order->statu, 'OrderDelay' => $Order->validity_date, 'OrderType' => $Order->type])
-      </div> 
+      </div>
+      <div class="tab-pane" id="Site">
+        @include('workflow.order-site-form', ['Order' => $Order, 'OrderSite' => $OrderSite])
+        @include('workflow.order-site-implantations', ['Order' => $Order, 'OrderSite' => $OrderSite, 'OrderSiteImplantations' => $OrderSiteImplantations])
+      </div>
       <div class="tab-pane" id="Charts">
         <div class="row">
           <div class="col-md-6">

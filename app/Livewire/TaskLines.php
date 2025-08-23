@@ -8,6 +8,7 @@ use Livewire\WithPagination;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Methods\MethodsServices;
+use App\Models\Methods\MethodsRessources;
 
 class TaskLines extends Component
 {
@@ -17,6 +18,7 @@ class TaskLines extends Component
     public $search = '';
     public $searchIdService = '';
     public $searchIdStatus = '';
+    public $searchIdRessource = '';
     public $sortField = 'end_date'; // default sorting field
     public $sortAsc = true; // default sort direction
     public $ShowGenericTask = false;
@@ -62,6 +64,7 @@ class TaskLines extends Component
         
         $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
         $StatusSelect = Status::orderBy('order', 'ASC')->get();
+        $RessourceSelect = MethodsRessources::select('id', 'label')->orderBy('label')->get();
 
         if($this->ShowGenericTask){
             $Tasklist = $this->Tasklist = Task::with('OrderLines.order')
@@ -77,6 +80,9 @@ class TaskLines extends Component
                                         ->where('methods_services_id', 'like', '%'.$this->searchIdService.'%')
                                         ->where('status_id', 'like', '%'.$this->searchIdStatus.'%')
                                         ->where('label','like', '%'.$this->search.'%')
+                                        ->when($this->searchIdRessource, function($query){
+                                            $query->whereHas('resources', fn($q) => $q->where('methods_ressources.id', $this->searchIdRessource));
+                                        })
                                         ->get();
         }
         else{
@@ -94,14 +100,18 @@ class TaskLines extends Component
             ->where('status_id', 'like', '%'.$this->searchIdStatus.'%')
             ->where('label', 'like', '%'.$this->search.'%')
             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+            ->when($this->searchIdRessource, function($query){
+                $query->whereHas('resources', fn($q) => $q->where('methods_ressources.id', $this->searchIdRessource));
+            })
             ->get();
-                            
+
         }
 
         return view('livewire.task-lines', [
             'Tasklist' => $Tasklist,
             'ServicesSelect' => $ServicesSelect,
             'StatusSelect' => $StatusSelect,
+            'RessourceSelect' => $RessourceSelect,
         ]);
     }
 }

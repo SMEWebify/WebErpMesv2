@@ -3,6 +3,8 @@
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use App\Http\Controllers\ProductionTraceController;
+use App\Http\Controllers\EnergyConsumptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +134,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{idOrder}/lines/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.lines.import');
         //import
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importOrders')->name('orders.import');
+        //construction site
+        Route::post('/{id}/site', 'App\Http\Controllers\Workflow\OrderSiteController@store')->name('orders.site.store');
+        Route::put('/{order}/site/{site}', 'App\Http\Controllers\Workflow\OrderSiteController@update')->name('orders.site.update');
+        Route::delete('/{order}/site/{site}', 'App\Http\Controllers\Workflow\OrderSiteController@destroy')->name('orders.site.destroy');
+        Route::post('/{order}/site/{site}/implantation', 'App\Http\Controllers\Workflow\OrderSiteController@storeImplantation')->name('orders.site.implantation.store');
+        Route::put('/{order}/site/{site}/implantation/{implantation}', 'App\Http\Controllers\Workflow\OrderSiteController@updateImplantation')->name('orders.site.implantation.update');
+        Route::delete('/{order}/site/{site}/implantation/{implantation}', 'App\Http\Controllers\Workflow\OrderSiteController@destroyImplantation')->name('orders.site.implantation.destroy');
     });
 
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
@@ -237,6 +246,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\VatController@update')->name('accounting.vat.update');
         }); });
 
+    Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\\Http\\Controllers\\AssetController@index')->name('assets');
+        Route::get('/create', 'App\\Http\\Controllers\\AssetController@create')->name('assets.create');
+        Route::post('/create', 'App\\Http\\Controllers\\AssetController@store')->name('assets.store');
+        Route::get('/{id}', 'App\\Http\\Controllers\\AssetController@show')->name('assets.show');
+        Route::get('/edit/{id}', 'App\\Http\\Controllers\\AssetController@edit')->name('assets.edit');
+        Route::post('/edit/{id}', 'App\\Http\\Controllers\\AssetController@update')->name('assets.update');
+        Route::delete('/{id}', 'App\\Http\\Controllers\\AssetController@destroy')->name('assets.destroy');
+    });
+
     Route::group(['prefix' => 'times', 'middleware' => ['auth', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->name('times');
@@ -288,6 +307,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Serial numbers routes
         Route::group(['prefix' => 'serial-numbers'], function () {
             Route::get('/', 'App\Http\Controllers\Products\SerialNumbersController@index')->name('products.serialNumbers');
+        });
+
+        Route::group(['prefix' => 'batches'], function () {
+            Route::get('/', 'App\Http\Controllers\Products\BatchesController@index')->name('products.batches');
         });
 
         // Stock routes
@@ -606,8 +629,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         ['get', 'post'],
         '/navbar/search',
         'App\Http\Controllers\SearchController@showNavbarSearchResults'
-        
+
     );
+    Route::get('/production-trace/{serialNumber}', [ProductionTraceController::class, 'show'])->name('production.trace.show');
+
+    Route::get('/production-trace/{serial}', 'App\Http\Controllers\ProductionTraceController@show')
+        ->middleware(['auth', 'check.factory'])
+        ->name('production.trace');
+
+    Route::group(['prefix' => 'energy-consumptions', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', [EnergyConsumptionController::class, 'index'])->name('energy-consumptions.index');
+        Route::post('/', [EnergyConsumptionController::class, 'store'])->name('energy-consumptions.store');
+        Route::get('/{id}', [EnergyConsumptionController::class, 'show'])->name('energy-consumptions.show');
+    });
+
 
     require __DIR__.'/auth.php';
 

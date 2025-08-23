@@ -500,6 +500,7 @@ return [
     'tolerance_days_trans_key'                 => 'Nombre de jours de tolérance',
     'quoted_delivery_note_trans_key'           => 'Note de livraison chiffré',
     'order_average_note_trans_key'             => 'Commande moyenne',
+    'customer_processing_cost_trans_key'       => 'Coût de traitement client',
 
     'material_trans_key'                       => 'Matière',
     'thickness_trans_key'                      => 'Epaisseur',
@@ -1088,4 +1089,14 @@ return [
     'production_declaration_trans_key'         => 'Déclaration de Production',
     'note_1_trans_key'                         => 'Consult and plan the tasks to be carried out.',
     'note_2_trans_key'                         => 'Faites des déclarations de production',
+
+    'order_created_log_trans_key'              => 'Commande créée',
+    'order_creation_failed_log_trans_key'      => 'Échec de création de la commande',
+    'quote_updated_log_trans_key'              => 'Devis mis à jour',
+    'quote_update_failed_log_trans_key'        => 'Échec de mise à jour du devis',
+    'quote_update_success_trans_key'           => 'Devis mis à jour avec succès',
+    'average_supply_delay_trans_key'           => "Délai moyen d'approvisionnement",
+    'order_site_trans_key'                     => 'Chantier',
+    'characteristics_trans_key'                => 'Caractéristiques',
+    'contact_info_trans_key'                   => 'Informations de contact',
 ];
