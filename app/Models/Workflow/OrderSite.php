@@ -16,6 +16,9 @@ class OrderSite extends Model
         'city',
         'postal_code',
         'description',
+        'location',
+        'characteristics',
+        'contact_info',
     ];
 
     public function Order()
@@ -27,5 +30,15 @@ class OrderSite extends Model
     {
         return $this->hasMany(OrderSiteImplantation::class, 'order_site_id');
     }
-}
+  
+    public function implantations()
+    {
+        return $this->hasMany(OrderSiteImplantation::class);
 
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Orders::class);
+    }
+}

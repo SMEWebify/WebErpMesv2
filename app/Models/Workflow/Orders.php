@@ -115,6 +115,7 @@ class Orders extends Model
     public function OrderSite()
     {
         return $this->hasOne(OrderSite::class, 'orders_id');
+
     }
     
     public function getPurchaseLinesCountAttribute()
