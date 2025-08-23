@@ -8,6 +8,7 @@ use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseReceiptLines;
+use App\Models\Products\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SerialNumbers extends Model
@@ -21,6 +22,7 @@ class SerialNumbers extends Model
         'order_line_id',
         'task_id',
         'purchase_receipt_line_id',
+        'batch_id',
         'serial_number',
         'status',
         'additional_information',
@@ -49,6 +51,11 @@ class SerialNumbers extends Model
     public function purchaseReceiptLines()
     {
         return $this->belongsTo(PurchaseReceiptLines::class, 'purchase_receipt_line_id');
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(Batch::class, 'batch_id');
     }
 
     /**
