@@ -11,7 +11,9 @@
         <div class="card-body">
             <x-adminlte-progress theme="success" value="{{ $progressRessource }}"/> {{ $progressRessource }} % ({{ $countTaskCalculateRessource  }})
             <ul>
-                {!! $progressRessourceLog!!}
+                @foreach($progressRessourceMessages as $message)
+                    <li>{{ $message }}</li>
+                @endforeach
             </ul>
         </div>
     </x-adminlte-modal>
@@ -29,7 +31,9 @@
             <x-adminlte-progress theme="success" value="{{ $progressDate }}"/> {{ $progressDate }} % ({{ $countTaskCalculateDate }})
         </div>
         <ul>
-            {!! $progressDateLog !!}
+            @foreach($progressDateMessages as $message)
+                <li>{{ $message }}</li>
+            @endforeach
         </ul>
         
     </x-adminlte-modal>
