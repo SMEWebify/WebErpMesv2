@@ -41,46 +41,39 @@ class TaskCalculationDate extends Component
 
     public function calculateRessource()
     {
-        // Dans votre contrôleur ou ailleurs où vous avez besoin de cette information
-        $countLines = Task::whereNotNull('order_lines_id')->whereDoesntHave('resources')->count();
+        $countLines = Task::whereNotNull('order_lines_id')
+            ->whereDoesntHave('resources')
+            ->count();
 
-        $taskWithoutRessources = Task::whereNotNull('order_lines_id')->whereDoesntHave('resources')->get();
+        $taskWithoutRessources = Task::whereNotNull('order_lines_id')
+            ->whereDoesntHave('resources')
+            ->get();
 
         foreach ($taskWithoutRessources as $task) {
-            // Obtenez le service associé à la tâche
             $service = $task->service;
-        
-            // Obtenez la première ressource associée à ce service (ajustez selon vos besoins)
-            $resource = $service->Ressources()->first();
+            $taskDate = $task->start_date ? Carbon::parse($task->start_date) : Carbon::today();
+
+            $resource = $service->Ressources
+                ->first(function ($res) use ($taskDate, $task) {
+                    return $res->remainingCapacity($taskDate) >= $task->TotalTime();
+                });
 
             if ($resource) {
-                // Attachez la ressource à la tâche
                 $task->resources()->attach($resource->id, [
                     'autoselected_ressource' => 0,
                     'userforced_ressource' => 0,
                 ]);
 
-                $message = $resource->label. ' affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
-                $this->progressRessourceMessages[] = $message;
-                TaskCalculationLog::create([
-                    'task_id' => $task->id,
-                    'type'    => 'resource',
-                    'message' => $message,
-                ]);
+                $this->progressRessourceLog .= '<li>' . $resource->label . ' affected to task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
             } else {
-                // Aucune ressource trouvée pour ce service, gestion des erreurs ou autre action nécessaire
-                // Par exemple, vous pouvez journaliser un avertissement ou effectuer une autre logique
-                // en fonction des besoins de votre application.
-                $message = 'No ressource affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
-                $this->progressRessourceMessages[] = $message;
-                TaskCalculationLog::create([
-                    'task_id' => $task->id,
-                    'type'    => 'resource',
-                    'message' => $message,
-                ]);
+                $this->progressRessourceLog .= '<li> No ressource available for task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
+                throw new \RuntimeException('No resource has remaining capacity for task #' . $task->id);
+
             }
+
             $this->countTaskCalculateRessource += 1;
-            $this->progressRessource  += (1/$countLines)*100;
+            $this->progressRessource += (1 / $countLines) * 100;
+
         }
 
         $this->toBeCalculateRessource = false;
