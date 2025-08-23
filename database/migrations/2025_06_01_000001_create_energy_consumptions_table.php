@@ -14,6 +14,7 @@ return new class extends Migration
             $table->float('kwh_consumed');
             $table->decimal('cost', 10, 2);
             $table->timestamp('recorded_at');
+            $table->float('amount');
             $table->timestamps();
         });
     }

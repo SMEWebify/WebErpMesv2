@@ -13,7 +13,7 @@ class OrderSiteImplantation extends Model
         'order_site_id',
         'name',
         'description',
-      'workforce',
+        'workforce',
         'equipment',
         'step',
         'start_date',
@@ -26,10 +26,4 @@ class OrderSiteImplantation extends Model
         return $this->belongsTo(OrderSite::class, 'order_site_id');
     }
 
-
-
-    public function orderSite()
-    {
-        return $this->belongsTo(OrderSite::class);
-    }
 }

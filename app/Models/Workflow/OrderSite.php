@@ -28,17 +28,12 @@ class OrderSite extends Model
 
     public function OrderSiteImplantations()
     {
-        return $this->hasMany(OrderSiteImplantation::class, 'order_site_id');
+        return $this->hasMany(OrderSiteImplantation::class);
     }
   
     public function implantations()
     {
         return $this->hasMany(OrderSiteImplantation::class);
 
-    }
-
-    public function order()
-    {
-        return $this->belongsTo(Orders::class);
     }
 }
