@@ -237,6 +237,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\VatController@update')->name('accounting.vat.update');
         }); });
 
+    Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\\Http\\Controllers\\AssetController@index')->name('assets');
+        Route::get('/create', 'App\\Http\\Controllers\\AssetController@create')->name('assets.create');
+        Route::post('/create', 'App\\Http\\Controllers\\AssetController@store')->name('assets.store');
+        Route::get('/{id}', 'App\\Http\\Controllers\\AssetController@show')->name('assets.show');
+        Route::get('/edit/{id}', 'App\\Http\\Controllers\\AssetController@edit')->name('assets.edit');
+        Route::post('/edit/{id}', 'App\\Http\\Controllers\\AssetController@update')->name('assets.update');
+        Route::delete('/{id}', 'App\\Http\\Controllers\\AssetController@destroy')->name('assets.destroy');
+    });
+
     Route::group(['prefix' => 'times', 'middleware' => ['auth', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->name('times');
