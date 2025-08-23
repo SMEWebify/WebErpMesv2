@@ -8,6 +8,7 @@ use App\Models\Planning\Task;
 use App\Models\Workflow\OrderLines;
 use App\Models\Times\TimesBanckHoliday;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\TaskCalculationLog;
 
 class TaskCalculationDate extends Component
 {
@@ -17,9 +18,9 @@ class TaskCalculationDate extends Component
     public $toBeCalculateDate = true;
     public $toBeCalculateRessource = true;
     
-    public $progressDateLog  = '';
+    public $progressDateMessages  = [];
     public $countTaskCalculateDate = 0;
-    public $progressRessourceLog  = '';
+    public $progressRessourceMessages  = [];
     public $countTaskCalculateRessource = 0;
 
     public function render()
@@ -28,8 +29,8 @@ class TaskCalculationDate extends Component
             'Tasklists' =>  $this->Tasklists,
             'countTaskCalculateDate' =>  $this->countTaskCalculateDate,
             'countTaskCalculateRessource' =>  $this->countTaskCalculateRessource,
-            'progressDateLog' =>  $this->progressDateLog,
-            'progressRessourceLog' =>  $this->progressRessourceLog,
+            'progressDateMessages' =>  $this->progressDateMessages,
+            'progressRessourceMessages' =>  $this->progressRessourceMessages,
         ]);
     }
 
@@ -54,16 +55,28 @@ class TaskCalculationDate extends Component
                     'userforced_ressource' => 0,
                 ]);
 
-                $this->progressRessourceLog .= '<li>'. $resource->label. ' affected to task #'. $task->id  .' for '.  $task->service['label']  .' service </li>';
+                $message = $resource->label. ' affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
+                $this->progressRessourceMessages[] = $message;
+                TaskCalculationLog::create([
+                    'task_id' => $task->id,
+                    'type'    => 'resource',
+                    'message' => $message,
+                ]);
             } else {
                 // Aucune ressource trouvée pour ce service, gestion des erreurs ou autre action nécessaire
                 // Par exemple, vous pouvez journaliser un avertissement ou effectuer une autre logique
                 // en fonction des besoins de votre application.
-                $this->progressRessourceLog .= '<li> No ressource affected to task #'. $task->id  .' for '.  $task->service['label']  .' service </li>';
+                $message = 'No ressource affected to task #'. $task->id  .' for '.  $task->service['label']  .' service';
+                $this->progressRessourceMessages[] = $message;
+                TaskCalculationLog::create([
+                    'task_id' => $task->id,
+                    'type'    => 'resource',
+                    'message' => $message,
+                ]);
             }
             $this->countTaskCalculateRessource += 1;
-            $this->progressRessource  += (1/$countLines)*100; 
-        }     
+            $this->progressRessource  += (1/$countLines)*100;
+        }
 
         $this->toBeCalculateRessource = false;
     }
@@ -104,8 +117,14 @@ class TaskCalculationDate extends Component
                 // Date de fin de la tâche actuelle
                 $endDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
                 $task->end_date = $endDate;
-        
-                $this->progressDateLog .= '<li>End date : '. $endDate .' updated for task #'. $task->id .' ordre '. $task->ordre .'</li>';
+
+                $message = 'End date : '. $endDate .' updated for task #'. $task->id .' ordre '. $task->ordre;
+                $this->progressDateMessages[] = $message;
+                TaskCalculationLog::create([
+                    'task_id' => $task->id,
+                    'type'    => 'date',
+                    'message' => $message,
+                ]);
         
                 // Calcul de la durée ajustée de la tâche
                 $totalTaskHours = $task->TotalTime();
