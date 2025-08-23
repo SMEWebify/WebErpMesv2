@@ -1096,4 +1096,7 @@ return [
     'quote_update_failed_log_trans_key'        => 'Échec de mise à jour du devis',
     'quote_update_success_trans_key'           => 'Devis mis à jour avec succès',
     'average_supply_delay_trans_key'           => "Délai moyen d'approvisionnement",
+    'order_site_trans_key'                     => 'Chantier',
+    'characteristics_trans_key'                => 'Caractéristiques',
+    'contact_info_trans_key'                   => 'Informations de contact',
 ];
