@@ -20,9 +20,9 @@ class TaskCalculationDate extends Component
     public $toBeCalculateDate = true;
     public $toBeCalculateRessource = true;
 
-    public $progressDateLog  = '';
+    public $progressDateMessages = [];
     public $countTaskCalculateDate = 0;
-    public $progressRessourceMessages  = [];
+    public $progressRessourceMessages = [];
     public $countTaskCalculateRessource = 0;
 
     public function __construct(TaskDateCalculator $taskDateCalculator)
@@ -67,11 +67,12 @@ class TaskCalculationDate extends Component
                     'userforced_ressource' => 0,
                 ]);
 
-                $this->progressRessourceLog .= '<li>' . $resource->label . ' affected to task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
+                $this->progressRessourceMessages[] = $resource->label . ' affected to task #' . $task->id . ' for ' . $task->service['label'] . ' service';
             } else {
-                $this->progressRessourceLog .= '<li> No ressource available for task #' . $task->id . ' for ' . $task->service['label'] . ' service </li>';
+                $this->progressRessourceMessages[] = 'No ressource available for task #' . $task->id . ' for ' . $task->service['label'] . ' service';
                 throw new \RuntimeException('No resource has remaining capacity for task #' . $task->id);
-
+            }
+        }
 
         $this->toBeCalculateRessource = false;
     }
@@ -113,7 +114,7 @@ class TaskCalculationDate extends Component
                 $endDate = $this->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
                 $task->end_date = $endDate;
         
-                $this->progressDateLog .= '<li>End date : '. $endDate .' updated for task #'. $task->id .' ordre '. $task->ordre .'</li>';
+                $this->progressDateMessages[] = 'End date : ' . $endDate . ' updated for task #' . $task->id . ' ordre ' . $task->ordre;
         
                 // Calcul du temps à retrancher en tenant compte des jours ouvrés
                 $totalTaskHours = $task->TotalTime();
