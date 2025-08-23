@@ -1,12 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ __('general_content.energy_consumption_trans_key') }}</title>
-</head>
-<body>
+@extends('adminlte::page')
+
+@section('title', __('general_content.energy_consumption_trans_key'))
+
+@section('content_header')
     <h1>{{ __('general_content.energy_consumption_trans_key') }}</h1>
-    <p>Date: {{ $energyConsumption->recorded_at }}</p>
-    <p>Amount: {{ $energyConsumption->amount }} kWh</p>
-    <a href="{{ route('energy-consumptions.index') }}">Back to list</a>
-</body>
-</html>
+@stop
+
+@section('content')
+    <x-adminlte-card theme="primary" icon="fas fa-bolt">
+        <dl class="row">
+            <dt class="col-sm-3">{{ __('general_content.date_trans_key') }}</dt>
+            <dd class="col-sm-9">{{ $energyConsumption->recorded_at }}</dd>
+            <dt class="col-sm-3">{{ __('general_content.amount_trans_key') }}</dt>
+            <dd class="col-sm-9">{{ $energyConsumption->amount }} kWh</dd>
+        </dl>
+        <x-adminlte-button class="btn-flat" theme="secondary" icon="fas fa-arrow-left" label="{{ __('general_content.back_to_list_trans_key') }}" onclick="window.location='{{ route('energy-consumptions.index') }}'"/>
+    </x-adminlte-card>
+@stop
