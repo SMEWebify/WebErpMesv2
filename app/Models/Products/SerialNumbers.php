@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Products\Batch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class SerialNumbers extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= [
@@ -27,6 +29,20 @@ class SerialNumbers extends Model
         'status',
         'additional_information',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly([
+            'products_id',
+            'companies_id',
+            'order_line_id',
+            'task_id',
+            'purchase_receipt_line_id',
+            'serial_number',
+            'status',
+            'additional_information',
+        ]);
+    }
 
     public function Product()
     {
