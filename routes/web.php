@@ -620,8 +620,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         ['get', 'post'],
         '/navbar/search',
         'App\Http\Controllers\SearchController@showNavbarSearchResults'
-        
+
     );
+
+    Route::get('/production-trace/{serial}', 'App\Http\Controllers\ProductionTraceController@show')
+        ->middleware(['auth', 'check.factory'])
+        ->name('production.trace');
 
     require __DIR__.'/auth.php';
 

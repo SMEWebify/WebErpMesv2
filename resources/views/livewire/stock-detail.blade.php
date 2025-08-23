@@ -10,8 +10,12 @@
     
     @include('include.alert-result')
 
+    @if($StockDetails && $StockDetails->tracability)
+        <a href="{{ route('production.trace', ['serial' => $StockDetails->tracability]) }}" class="btn btn-primary mb-3">{{ __('Trace') }}</a>
+    @endif
+
     @empty($StockDetails)
-    <h1>No Stock</h1> 
+    <h1>No Stock</h1>
     @else
     <x-adminlte-card title="Stock - {{ $StockDetails->StockLocationProducts->product->code }}" theme="primary" maximizable>
         <table class="table table-hover">
