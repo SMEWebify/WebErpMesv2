@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products\SerialNumbers;
+
 use App\Models\Products\StockMove;
 use App\Models\Planning\Task;
 use App\Models\Quality\QualityNonConformity;
