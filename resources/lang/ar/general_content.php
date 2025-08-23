@@ -922,6 +922,7 @@ return [
     'production_declaration_trans_key'    => 'إعلان الإنتاج',
     'note_1_trans_key'                    => 'استشارة وتخطيط المهام التي يجب إنجازها.',
     'note_2_trans_key'                    => 'إجراء إعلانات الإنتاج.',
+    'energy_consumption_trans_key'        => 'استهلاك الطاقة',
     'average_supply_delay_trans_key'      => 'متوسط مهلة التوريد',
     'order_site_trans_key'                => 'موقع العمل',
     'characteristics_trans_key'           => 'الخصائص',

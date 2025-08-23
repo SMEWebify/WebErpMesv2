@@ -51,6 +51,7 @@ return [
     'human_resources_trans_key'                => 'Nguồn nhân lực',
     'users_trans_key'                          => 'Người dùng',
     'your_company_trans_key'                   => 'Công ty của bạn',
+    'energy_consumption_trans_key'             => 'Mức tiêu thụ năng lượng',
     'licence_trans_key'                        => 'Bản quyền',
     'release_note_trans_key'                   => 'Ghi chú phát hành',
 ];

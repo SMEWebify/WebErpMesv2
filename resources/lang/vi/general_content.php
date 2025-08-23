@@ -115,6 +115,8 @@ return [
     'licence_trans_key'                        => 'Giấy phép',
     'release_note_trans_key'                   => 'Nhật ký phát hành',
 
+    'energy_consumption_trans_key'             => 'Mức tiêu thụ năng lượng',
+
     'search_results_trans_key'                 => 'Kết quả tìm kiếm',
     'customer_processing_cost_trans_key'       => 'Chi phí xử lý khách hàng',
     'average_supply_delay_trans_key'           => 'Thời gian cung ứng trung bình',
