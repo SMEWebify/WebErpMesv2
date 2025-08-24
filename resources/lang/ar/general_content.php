@@ -296,7 +296,8 @@ return [
     'units_trans_key'                          => 'الوحدات',
     'families_trans_key'                       => 'الأسر',
     'tools_trans_key'                          => 'الأدوات',
-    
+    'batches_trans_key'                        => 'الدفعات',
+
     'absence_trans_key'                        => 'الغياب',
     'banck_holiday_trans_key'                  => 'إجازة بنكية',
     'improduct_time_trans_key'                 => 'الوقت غير الإنتاجي',
