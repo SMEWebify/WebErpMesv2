@@ -21,25 +21,24 @@ class EnergyConsumption extends Model
     protected static function booted()
     {
         static::saving(function (EnergyConsumption $consumption) {
-            $consumption->cost = $consumption->kwh_consumed * config('energy.price_per_kwh');
-
-            if (! is_null($consumption->kwh) && ! is_null($consumption->cost_per_kwh)) {
+            if ($consumption->kwh !== null && $consumption->cost_per_kwh !== null) {
                 $consumption->total_cost = $consumption->kwh * $consumption->cost_per_kwh;
             }
-
-            $consumption->total_cost = $consumption->kwh * $consumption->cost_per_kwh;
-
         });
     }
 
-    public function machine()
+    public function getTotalCostAttribute($value)
     {
-        return $this->belongsTo(Machine::class);
-    }
+        if ($value !== null) {
+            return $value;
+        }
 
-    public function machine()
-    {
-        return $this->belongsTo(Machine::class);
+        if ($this->kwh !== null && $this->cost_per_kwh !== null) {
+            return $this->kwh * $this->cost_per_kwh;
+        }
+
+        return null;
+
     }
 }
 
