@@ -459,6 +459,11 @@ return [
                     'icon_color' => 'info',
                 ],
                 [
+                    'text' => 'batches_trans_key',
+                    'url'  => 'products/batches',
+                    'icon_color' => 'info', // choose color consistent with design
+                ],
+                [
                     'text' => 'stock_trans_key',
                     'url'  => 'products/Stock',
                     'icon_color' => 'primary',
