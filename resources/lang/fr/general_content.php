@@ -328,6 +328,7 @@ return [
     'units_trans_key'                          => 'Unités',
     'families_trans_key'                       => 'Famille',
     'tools_trans_key'                          => 'Outils',
+    'batches_trans_key'                        => 'Lots',
 
     'absence_trans_key'                        => 'Absence',
     'banck_holiday_trans_key'                  => 'jour férié',
@@ -1092,6 +1093,10 @@ return [
     'note_2_trans_key'                         => 'Faites des déclarations de production',
 
     'energy_consumption_trans_key'             => "Consommation d'énergie",
+    'machine_trans_key'                        => 'Machine',
+    'kwh_trans_key'                            => 'kWh',
+    'cost_per_kwh_trans_key'                   => 'Coût par kWh',
+    'total_cost_trans_key'                     => 'Coût total',
 
     'order_created_log_trans_key'              => 'Commande créée',
     'order_creation_failed_log_trans_key'      => 'Échec de création de la commande',

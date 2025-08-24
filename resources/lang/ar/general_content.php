@@ -296,7 +296,8 @@ return [
     'units_trans_key'                          => 'الوحدات',
     'families_trans_key'                       => 'الأسر',
     'tools_trans_key'                          => 'الأدوات',
-    
+    'batches_trans_key'                        => 'الدفعات',
+
     'absence_trans_key'                        => 'الغياب',
     'banck_holiday_trans_key'                  => 'إجازة بنكية',
     'improduct_time_trans_key'                 => 'الوقت غير الإنتاجي',
@@ -924,6 +925,10 @@ return [
     'note_1_trans_key'                    => 'استشارة وتخطيط المهام التي يجب إنجازها.',
     'note_2_trans_key'                    => 'إجراء إعلانات الإنتاج.',
     'energy_consumption_trans_key'        => 'استهلاك الطاقة',
+    'machine_trans_key'                   => 'آلة',
+    'kwh_trans_key'                       => 'كيلو واط ساعة',
+    'cost_per_kwh_trans_key'              => 'التكلفة لكل كيلو واط ساعة',
+    'total_cost_trans_key'                => 'التكلفة الإجمالية',
     'average_supply_delay_trans_key'      => 'متوسط مهلة التوريد',
     'order_site_trans_key'                => 'موقع العمل',
     'characteristics_trans_key'           => 'الخصائص',

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Methods\MethodsRessources;
+use App\Models\Machine;
+use Illuminate\Database\Eloquent\Model;
 
 class EnergyConsumption extends Model
 {
@@ -16,7 +16,6 @@ class EnergyConsumption extends Model
         'kwh',
         'cost_per_kwh',
         'total_cost',
-        'amount',
     ];
 
     protected static function booted()
@@ -39,6 +38,7 @@ class EnergyConsumption extends Model
         }
 
         return null;
+
     }
 }
 
