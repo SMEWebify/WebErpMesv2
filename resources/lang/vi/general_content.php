@@ -117,6 +117,10 @@ return [
     'release_note_trans_key'                   => 'Nhật ký phát hành',
 
     'energy_consumption_trans_key'             => 'Mức tiêu thụ năng lượng',
+    'machine_trans_key'                        => 'Máy',
+    'kwh_trans_key'                            => 'kWh',
+    'cost_per_kwh_trans_key'                   => 'Chi phí mỗi kWh',
+    'total_cost_trans_key'                     => 'Tổng chi phí',
 
     'search_results_trans_key'                 => 'Kết quả tìm kiếm',
     'customer_processing_cost_trans_key'       => 'Chi phí xử lý khách hàng',
