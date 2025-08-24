@@ -10,7 +10,7 @@ class BatchesController extends Controller
     public function index()
     {
         $batches = Batch::with('product')->paginate(50);
-        return view('batches-index', [
+        return view('products.batches-index', [
             'batcheslist' => $batches,
         ]);
     }
