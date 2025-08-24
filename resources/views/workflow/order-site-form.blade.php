@@ -11,24 +11,20 @@
                     <input type="text" class="form-control" name="name" value="{{ old('name', $OrderSite->name ?? '') }}">
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="adress">{{ __('general_content.adress_trans_key') }}</label>
-                    <input type="text" class="form-control" name="adress" value="{{ old('adress', $OrderSite->adress ?? '') }}">
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label for="city">{{ __('general_content.city_trans_key') }}</label>
-                    <input type="text" class="form-control" name="city" value="{{ old('city', $OrderSite->city ?? '') }}">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="postal_code">{{ __('general_content.postal_code_trans_key') }}</label>
-                    <input type="text" class="form-control" name="postal_code" value="{{ old('postal_code', $OrderSite->postal_code ?? '') }}">
+                    <label for="location">{{ __('general_content.location_trans_key') }}</label>
+                    <input type="text" class="form-control" name="location" value="{{ old('location', $OrderSite->location ?? '') }}">
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-md-12">
-                    <label for="description">{{ __('general_content.description_trans_key') }}</label>
-                    <textarea class="form-control" name="description">{{ old('description', $OrderSite->description ?? '') }}</textarea>
+                    <label for="characteristics">{{ __('general_content.characteristics_trans_key') }}</label>
+                    <textarea class="form-control" name="characteristics">{{ old('characteristics', $OrderSite->characteristics ?? '') }}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label for="contact_info">{{ __('general_content.contact_info_trans_key') }}</label>
+                    <textarea class="form-control" name="contact_info">{{ old('contact_info', $OrderSite->contact_info ?? '') }}</textarea>
                 </div>
             </div>
             <x-slot name="footerSlot">

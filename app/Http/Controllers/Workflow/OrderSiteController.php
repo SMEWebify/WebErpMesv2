@@ -18,10 +18,9 @@ class OrderSiteController extends Controller
         $order = Orders::findOrFail($id);
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
-            'adress' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'postal_code' => 'nullable|string|max:25',
-            'description' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+            'characteristics' => 'nullable|string',
+            'contact_info' => 'nullable|string',
         ]);
 
         $order->OrderSite()->create($data);
@@ -36,10 +35,9 @@ class OrderSiteController extends Controller
     {
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
-            'adress' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'postal_code' => 'nullable|string|max:25',
-            'description' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+            'characteristics' => 'nullable|string',
+            'contact_info' => 'nullable|string',
         ]);
 
         $site->update($data);
