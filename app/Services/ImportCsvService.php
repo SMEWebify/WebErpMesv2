@@ -4,6 +4,8 @@ namespace App\Services;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
 use App\Models\Companies\Companies;
@@ -339,6 +341,7 @@ class ImportCsvService
         if($this->validateFile($file)){
             $user_id = Auth::id();
             $importedLines = 0;
+            $errors = [];
             // Read and process the file
             
             $filename = $file->getClientOriginalName();
@@ -360,22 +363,28 @@ class ImportCsvService
                 }
 
                 // Create the company record
-                Companies::create([
-                        'uuid'=> Str::uuid(),
-                        'code'=>utf8_encode($data[$request->code]),
-                        'client_type'=> 1,
-                        'label'=> array_key_exists($request->label,  $importData) ? $data[$request->label] : null,
-                        'website'=> array_key_exists($request->website,  $importData) ? $data[$request->website] : null,
-                        'fbsite'=> array_key_exists($request->fbsite,  $importData) ? $data[$request->fbsite] : null,
-                        'twittersite'=> array_key_exists($request->twittersite,  $data) ? $data[$request->twittersite] : null,
-                        'lkdsite'=> array_key_exists($request->lkdsite,  $importData) ? $data[$request->lkdsite] : null,
-                        'siren'=> array_key_exists($request->siren,  $importData) ? $data[$request->siren] : null,
-                        'naf_code'=> array_key_exists($request->naf_code,  $importData) ? $data[$request->naf_code] : null,
-                        'intra_community_vat'=> array_key_exists($request->intra_community_vat,  $importData) ? $data[$request->intra_community_vat] : null,
-                        'discount'=> array_key_exists($request->discount,  $importData) ? $data[$request->discount] : null,
-                        'user_id'=>$user_id,
-                        'csv_file_name'=>$filename,
-                    ]);
+                try {
+                    Companies::create([
+                            'uuid'=> Str::uuid(),
+                            'code'=>utf8_encode($data[$request->code]),
+                            'client_type'=> 1,
+                            'label'=> array_key_exists($request->label,  $importData) ? $data[$request->label] : null,
+                            'website'=> array_key_exists($request->website,  $importData) ? $data[$request->website] : null,
+                            'fbsite'=> array_key_exists($request->fbsite,  $importData) ? $data[$request->fbsite] : null,
+                            'twittersite'=> array_key_exists($request->twittersite,  $data) ? $data[$request->twittersite] : null,
+                            'lkdsite'=> array_key_exists($request->lkdsite,  $importData) ? $data[$request->lkdsite] : null,
+                            'siren'=> array_key_exists($request->siren,  $importData) ? $data[$request->siren] : null,
+                            'naf_code'=> array_key_exists($request->naf_code,  $importData) ? $data[$request->naf_code] : null,
+                            'intra_community_vat'=> array_key_exists($request->intra_community_vat,  $importData) ? $data[$request->intra_community_vat] : null,
+                            'discount'=> array_key_exists($request->discount,  $importData) ? $data[$request->discount] : null,
+                            'user_id'=>$user_id,
+                            'csv_file_name'=>$filename,
+                        ]);
+                } catch (QueryException $e) {
+                    Log::error($e->getMessage());
+                    $errors[] = sprintf('Erreur à la ligne %d : UUID déjà utilisé.', $importedLines);
+                    continue;
+                }
             }
 
             // Si des erreurs ont été rencontrées, les retourner à l'utilisateur
@@ -458,7 +467,13 @@ class ImportCsvService
                 // Si tout est correct, continuez avec la déstructuration
                 list($defaultAddress, $defaultContact) = $defaultAddressAndContact;
 
-                $this->createQuote($data, $request, $company, $defaultSettings, $filename, $defaultAddress, $defaultContact);
+                try {
+                    $this->createQuote($data, $request, $company, $defaultSettings, $filename, $defaultAddress, $defaultContact);
+                } catch (QueryException $e) {
+                    Log::error($e->getMessage());
+                    $errors[] = sprintf('Erreur à la ligne %d : UUID déjà utilisé.', $importedLines);
+                    continue;
+                }
             }
     
             // Si des erreurs ont été rencontrées, les retourner à l'utilisateur
@@ -582,7 +597,13 @@ class ImportCsvService
                     continue;
                 }
 
-                $this->createProduct($data, $request, $filename);
+                try {
+                    $this->createProduct($data, $request, $filename);
+                } catch (QueryException $e) {
+                    Log::error($e->getMessage());
+                    $errors[] = sprintf('Erreur à la ligne %d : UUID déjà utilisé.', $importedLines);
+                    continue;
+                }
             }
     
             // Si des erreurs ont été rencontrées, les retourner à l'utilisateur
@@ -622,6 +643,7 @@ class ImportCsvService
             if(!empty($idDefautUnitMethode->id) && !empty($idDefautAccountingVat->id)){
 
                 $importedLines = 0;
+                $errors = [];
                 // Read and process the file
                 $filepath = $this->storeUploadedFile($file);
                 $importData = $this->readImportData($filepath);
@@ -640,21 +662,27 @@ class ImportCsvService
                     }
 
                     // Create the company record
-                    $NewQuoteLine = Quotelines::create([
-                        'quotes_id'=>$idQuote,
-                        //'ordre'=> array_key_exists($request->ordre,  $importData) ? $importData[$request->ordre] : null,
-                        'code'=>utf8_encode($data[$request->code]),
-                        'label'=>array_key_exists($request->label,  $importData) ? $data[$request->label] : null,
-                        'qty'=>array_key_exists($request->qty,  $importData) ? $data[$request->qty] : null,
-                        'methods_units_id'=>$idDefautUnitMethode->id,
-                        'selling_price'=>array_key_exists($request->selling_price,  $importData) ? $data[$request->selling_price] : null,
-                        'discount'=>array_key_exists($request->discount,  $importData) ? $data[$request->discount] : null,
-                        'accounting_vats_id'=>$idDefautAccountingVat->id,
-                        'delivery_date'=>array_key_exists($request->delivery_date,  $importData) ? $data[$request->delivery_date] : null,
-                    ]);
-                    
-                    //add line detail
-                    QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
+                    try {
+                        $NewQuoteLine = Quotelines::create([
+                            'quotes_id'=>$idQuote,
+                            //'ordre'=> array_key_exists($request->ordre,  $importData) ? $importData[$request->ordre] : null,
+                            'code'=>utf8_encode($data[$request->code]),
+                            'label'=>array_key_exists($request->label,  $importData) ? $data[$request->label] : null,
+                            'qty'=>array_key_exists($request->qty,  $importData) ? $data[$request->qty] : null,
+                            'methods_units_id'=>$idDefautUnitMethode->id,
+                            'selling_price'=>array_key_exists($request->selling_price,  $importData) ? $data[$request->selling_price] : null,
+                            'discount'=>array_key_exists($request->discount,  $importData) ? $data[$request->discount] : null,
+                            'accounting_vats_id'=>$idDefautAccountingVat->id,
+                            'delivery_date'=>array_key_exists($request->delivery_date,  $importData) ? $data[$request->delivery_date] : null,
+                        ]);
+
+                        //add line detail
+                        QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
+                    } catch (QueryException $e) {
+                        Log::error($e->getMessage());
+                        $errors[] = sprintf('Erreur à la ligne %d : UUID déjà utilisé.', $importedLines);
+                        continue;
+                    }
                 }
 
                 // Si des erreurs ont été rencontrées, les retourner à l'utilisateur
