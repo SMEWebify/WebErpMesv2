@@ -11,11 +11,18 @@
         <form method="POST" action="{{ route('energy-consumptions.store') }}" class="mb-4">
             @csrf
             <div class="row">
-                <div class="col-md-5">
-                    <x-adminlte-input name="recorded_at" type="date" label="{{ __('general_content.date_trans_key') }}" required />
+                <div class="col-md-4">
+                    <x-adminlte-select name="machine_id" label="{{ __('general_content.machine_trans_key') }}" required>
+                        @foreach ($machines as $machine)
+                            <option value="{{ $machine->id }}">{{ $machine->id }} - {{ $machine->name }}</option>
+                        @endforeach
+                    </x-adminlte-select>
                 </div>
-                <div class="col-md-5">
-                    <x-adminlte-input name="amount" type="number" step="0.01" label="{{ __('general_content.amount_trans_key') }} (kWh)" required />
+                <div class="col-md-3">
+                    <x-adminlte-input name="kwh" type="number" step="0.01" label="{{ __('general_content.kwh_trans_key') }}" required />
+                </div>
+                <div class="col-md-3">
+                    <x-adminlte-input name="cost_per_kwh" type="number" step="0.01" label="{{ __('general_content.cost_per_kwh_trans_key') }}" required />
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.add_trans_key') }}" theme="success" icon="fas fa-plus"/>
@@ -27,7 +34,7 @@
             @foreach ($energyConsumptions as $energyConsumption)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <a href="{{ route('energy-consumptions.show', $energyConsumption->id) }}">
-                        {{ $energyConsumption->recorded_at }} - {{ $energyConsumption->amount }} kWh
+                        {{ $energyConsumption->machine_id }} - {{ $energyConsumption->kwh }} kWh @ {{ $energyConsumption->cost_per_kwh }} = {{ $energyConsumption->total_cost }}
                     </a>
                 </li>
             @endforeach

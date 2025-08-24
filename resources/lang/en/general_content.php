@@ -1093,6 +1093,10 @@ return [
     'note_2_trans_key'                         => 'Make production declarations.',
 
     'energy_consumption_trans_key'             => 'Energy consumption',
+    'machine_trans_key'                        => 'Machine',
+    'kwh_trans_key'                            => 'kWh',
+    'cost_per_kwh_trans_key'                   => 'Cost per kWh',
+    'total_cost_trans_key'                     => 'Total cost',
 
     'order_created_log_trans_key'              => 'Order created',
     'order_creation_failed_log_trans_key'      => 'Order creation failed',
