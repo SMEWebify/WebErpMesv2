@@ -328,7 +328,8 @@ return [
     'units_trans_key'                          => 'Units',
     'families_trans_key'                       => 'Families',
     'tools_trans_key'                          => 'Tools',
-    
+    'batches_trans_key'                        => 'Batches',
+
     'absence_trans_key'                        => 'Absence',
     'banck_holiday_trans_key'                  => 'Bank holiday',
     'improduct_time_trans_key'                 => 'Non-productive time',
