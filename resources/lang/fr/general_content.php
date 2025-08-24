@@ -328,6 +328,7 @@ return [
     'units_trans_key'                          => 'Unités',
     'families_trans_key'                       => 'Famille',
     'tools_trans_key'                          => 'Outils',
+    'batches_trans_key'                        => 'Lots',
 
     'absence_trans_key'                        => 'Absence',
     'banck_holiday_trans_key'                  => 'jour férié',
