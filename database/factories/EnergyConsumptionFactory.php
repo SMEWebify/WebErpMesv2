@@ -12,13 +12,14 @@ class EnergyConsumptionFactory extends Factory
 
     public function definition(): array
     {
-        $kwh = $this->faker->numberBetween(10, 100);
+        $kwh = $this->faker->randomFloat(2, 10, 100);
         $cost = $this->faker->randomFloat(2, 0.1, 1);
 
         return [
             'machine_id' => Machine::factory(),
             'kwh' => $kwh,
             'cost_per_kwh' => $cost,
+            'total_cost' => $kwh * $cost,
         ];
     }
 }
