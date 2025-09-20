@@ -2,35 +2,43 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Methods\MethodsRessources;
+use App\Models\Machine;
+use Illuminate\Database\Eloquent\Model;
 
 class EnergyConsumption extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'kwh_consumed',
-        'cost',
         'machine_id',
         'kwh',
         'cost_per_kwh',
         'total_cost',
-        'amount',
     ];
 
     protected static function booted()
     {
         static::saving(function (EnergyConsumption $consumption) {
-            $consumption->cost = $consumption->kwh_consumed * config('energy.price_per_kwh');
+            if ($consumption->kwh !== null && $consumption->cost_per_kwh !== null) {
+                $consumption->total_cost = $consumption->kwh * $consumption->cost_per_kwh;
+            }
         });
     }
 
-    public function getCostAttribute($value)
+    public function getTotalCostAttribute($value)
     {
-        return $value ?? $this->kwh_consumed * config('energy.price_per_kwh');
+        if ($value !== null) {
+            return $value;
+        }
+
+        if ($this->kwh !== null && $this->cost_per_kwh !== null) {
+            return $this->kwh * $this->cost_per_kwh;
+        }
+
+        return null;
+
     }
 }
 
