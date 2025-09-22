@@ -85,7 +85,7 @@
                                             <i class="fas fa-info-circle"></i>
                                         </button>
                                         <!-- Modal {{ $QuoteLine->id }} -->
-                                        <x-adminlte-modal id="QuoteLine{{ $QuoteLine->id }}" title="Update detail information for {{ $QuoteLine->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                                        <x-adminlte-modal wire:ignore.self id="QuoteLine{{ $QuoteLine->id }}" title="Update detail information for {{ $QuoteLine->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                                             <form method="POST" action="{{ route('quotes.update.detail.line', ['idQuote'=>  $QuoteLine->quotes_id, 'id' => $QuoteLine->QuoteLineDetails->id]) }}" enctype="multipart/form-data">
                                             @csrf
                                             <div class="card-body">
