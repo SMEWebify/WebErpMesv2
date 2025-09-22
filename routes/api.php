@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\QuoteController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
+use App\Http\Controllers\Api\ExportSalesOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +36,4 @@ Route::apiResource('quote',QuoteController::class);
 Route::apiResource('order',OrderController::class);
 Route::apiResource('tasks', TaskController::class);
 Route::apiResource('energy-consumptions', EnergyConsumptionController::class)->only(['index','store']);
+Route::get('/exports/sales-orders', ExportSalesOrderController::class);
