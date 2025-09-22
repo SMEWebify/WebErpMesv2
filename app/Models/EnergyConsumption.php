@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Machine;
+use App\Models\Methods\MethodsRessources;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,11 +13,16 @@ class EnergyConsumption extends Model
     use HasFactory;
 
     protected $fillable = [
-        'machine_id',
+        'methods_ressource_id',
         'kwh',
         'cost_per_kwh',
         'total_cost',
     ];
+
+    public function methodsRessource()
+    {
+        return $this->belongsTo(MethodsRessources::class, 'methods_ressource_id');
+    }
 
     protected static function booted()
     {

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('energy_consumptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('machine_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('methods_ressource_id')->constrained('methods_ressources')->cascadeOnDelete();
             $table->decimal('kwh', 10, 2);
             $table->decimal('cost_per_kwh', 10, 2);
             $table->decimal('total_cost', 10, 2);
