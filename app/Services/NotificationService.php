@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Planning\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
@@ -21,5 +22,18 @@ class NotificationService
 
         // Envoyer la notification correspondante
         Notification::send($users, new $notificationType($entityCreated));
+    }
+
+    public function sendTaskAlert(string $notificationType, Task $task, iterable $users, string $alertType): void
+    {
+        $recipients = collect($users)
+            ->filter()
+            ->unique('id');
+
+        if ($recipients->isEmpty()) {
+            return;
+        }
+
+        Notification::send($recipients, new $notificationType($task, $alertType));
     }
 }

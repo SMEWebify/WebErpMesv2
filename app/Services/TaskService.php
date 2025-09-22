@@ -10,6 +10,7 @@ use App\Models\Planning\Status;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use App\Models\Planning\TaskActivities;
+use App\Models\User;
 
 class TaskService
 {
@@ -37,7 +38,7 @@ class TaskService
                 $task->update(['status_id' => $statusUpdate->id]);
 
                 // Enregistrer une activité de fermeture
-                $this->recordTaskActivity($task->id, 3, 0, 0);
+                $this->recordTaskActivity($task->id, TaskActivities::TYPE_FINISH, 0, 0);
 
                 // Déclencher un événement pour notifier le changement de statut
                 Event::dispatch(new TaskChangeStatu($task->id));
@@ -54,16 +55,30 @@ class TaskService
      * @param int $addBadQt The quantity of bad items.
      * @return void
      */
-    public function recordTaskActivity($taskId, $type, $goodQty, $addBadQt)
+    public function recordTaskActivity($taskId, $type, $goodQty = 0, $addBadQt = 0, string $comment = '')
     {
+        $userId = Auth::id();
+
+        if (!$userId) {
+            $userId = Task::find($taskId)?->user_id;
+        }
+
+        if (!$userId) {
+            $userId = User::query()->value('id');
+        }
+
+        if (!$userId) {
+            return;
+        }
+
         $taskActivity = TaskActivities::create([
             'task_id' => $taskId,
-            'user_id'=> Auth::user()->id,
+            'user_id'=> $userId,
             'type' => $type,
             'timestamp' => Carbon::now(),
             'good_qt'=> $goodQty,
             'bad_qt'=> $addBadQt,
-            'comment' => '',
+            'comment' => $comment,
         ]);
 
         broadcast(new TaskActivityTriggered($taskActivity));

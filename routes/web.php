@@ -361,6 +361,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu');
         Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->name('production.task');
+        Route::get('/Task/gtd', 'App\Http\Controllers\Planning\TaskController@gtd')->name('production.task.gtd');
         Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->name('production.kanban');
         Route::get('/calendar/orders', 'App\Http\Controllers\Planning\CalendarController@calendarOders')->name('production.calendar.orders');
         Route::get('/calendar/tasks', 'App\Http\Controllers\Planning\CalendarController@calendarTasks')->name('production.calendar.tasks');
