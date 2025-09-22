@@ -165,7 +165,7 @@
                                             <i class="fas fa-info-circle"></i>
                                         </button>
                                         <!-- Modal {{ $OrderLine->id }} -->
-                                        <x-adminlte-modal id="OrderLine{{ $OrderLine->id }}" title="Update detail information for {{ $OrderLine->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                                        <x-adminlte-modal wire:ignore.self id="OrderLine{{ $OrderLine->id }}" title="Update detail information for {{ $OrderLine->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                                             <form method="POST" action="{{ route('orders.update.detail.line', ['idOrder'=>  $OrderLine->orders_id, 'id' => $OrderLine->OrderLineDetails->id]) }}" enctype="multipart/form-data">
                                             @csrf
                                             <div class="card-body">
