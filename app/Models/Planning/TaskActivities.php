@@ -11,6 +11,13 @@ class TaskActivities extends Model
 {
     use HasFactory;
 
+    public const TYPE_START = 1;
+    public const TYPE_END = 2;
+    public const TYPE_FINISH = 3;
+    public const TYPE_DECLARE_GOOD = 4;
+    public const TYPE_DECLARE_BAD = 5;
+    public const TYPE_COMMENT = 6;
+
     // Fillable attributes for mass assignment
     protected $fillable= ['task_id', 
                             'user_id',

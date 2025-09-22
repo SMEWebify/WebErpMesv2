@@ -6,6 +6,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsServices;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -44,6 +45,11 @@ class TaskFactory extends Factory
         
         $this->qty = $this->faker->biasedNumberBetween($min = 1, $max = 2990);
 
+        $primaryUser = User::inRandomOrder()->first();
+        $secondaryUser = User::inRandomOrder()
+            ->when($primaryUser, fn ($query) => $query->where('id', '!=', $primaryUser->id))
+            ->first();
+
         return [
             'label' => $methodsService->label,
             'ordre' => $ordre,
@@ -60,6 +66,14 @@ class TaskFactory extends Factory
             'unit_cost' => $this->faker->randomFloat(2, 1, 5),
             'unit_price' => $this->faker->randomFloat(2, 1, 10),
             'methods_units_id' => $methodsUnit->id,
+            'priority' => $this->faker->randomElement([
+                Task::PRIORITY_HIGH,
+                Task::PRIORITY_MEDIUM,
+                Task::PRIORITY_LOW,
+            ]),
+            'due_date' => $this->faker->optional(0.7)->dateTimeBetween('now', '+2 months'),
+            'user_id' => $primaryUser?->id,
+            'secondary_user_id' => $secondaryUser?->id,
         ];
     }
 

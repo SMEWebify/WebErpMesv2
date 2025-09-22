@@ -138,25 +138,29 @@ class TaskStatu extends Component
             if ($taskActivitie->user && $taskActivitie->user->name) { $userName = $taskActivitie->user->name; }
             else{$userName = 'System'; }
 
-            if($taskActivitie->type == 1){
+            if($taskActivitie->type == TaskActivities::TYPE_START){
                 $icon = 'fas fa-play-circle bg-primary';
                 $content =  $userName .' - '. __('general_content.set_to_start_trans_key');
             }
-            elseif ($taskActivitie->type == 2){
+            elseif ($taskActivitie->type == TaskActivities::TYPE_END){
                 $icon = 'fas fa-stop-circle bg-warning';
                 $content =  $userName .' - '. __('general_content.set_to_end_trans_key');
             }
-            elseif ($taskActivitie->type == 3){
+            elseif ($taskActivitie->type == TaskActivities::TYPE_FINISH){
                 $icon = 'fas fa-check-circle bg-info';
                 $content =  $userName .' - '. __('general_content.set_to_finish_trans_key');
             }
-            elseif ($taskActivitie->type == 4){
+            elseif ($taskActivitie->type == TaskActivities::TYPE_DECLARE_GOOD){
                 $icon = 'fas fa-thumbs-up bg-success';
                 $content =  $userName .' - '. __('general_content.declare_finish_trans_key') .' '. $taskActivitie->good_qt .' '.  __('general_content.part_trans_key');
             }
-            elseif ($taskActivitie->type == 5){
+            elseif ($taskActivitie->type == TaskActivities::TYPE_DECLARE_BAD){
                 $icon = 'fas fa-thumbs-down bg-danger';
                 $content =  $userName .' - '. __('general_content.declare_rejected_trans_key') .' '. $taskActivitie->bad_qt .' '. __('general_content.part_trans_key');
+            }
+            elseif ($taskActivitie->type == TaskActivities::TYPE_COMMENT){
+                $icon = 'fas fa-comment-dots bg-secondary';
+                $content = $userName .' - '. $taskActivitie->comment;
             }
 
             $this->timelineData[] = [
