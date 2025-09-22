@@ -10,20 +10,20 @@ class EnergyConsumptionController extends Controller
 {
     public function index()
     {
-        return response()->json(EnergyConsumption::with('machine')->get());
+        return response()->json(EnergyConsumption::with('methodsRessource')->get());
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'machine_id' => 'required|exists:machines,id',
+            'methods_ressource_id' => 'required|exists:methods_ressources,id',
             'kwh' => 'required|numeric',
             'cost_per_kwh' => 'required|numeric',
         ]);
 
         $consumption = EnergyConsumption::create($data);
 
-        return response()->json($consumption->load('machine'), 201);
+        return response()->json($consumption->load('methodsRessource'), 201);
     }
 }
 

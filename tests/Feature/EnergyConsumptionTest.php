@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\EnergyConsumption;
-use App\Models\Machine;
+use App\Models\Methods\MethodsRessources;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,10 +13,10 @@ class EnergyConsumptionTest extends TestCase
 
     public function test_total_cost_is_calculated()
     {
-        $machine = Machine::factory()->create();
+        $resource = MethodsRessources::factory()->create();
 
         $consumption = EnergyConsumption::create([
-            'machine_id' => $machine->id,
+            'methods_ressource_id' => $resource->id,
             'kwh' => 20,
             'cost_per_kwh' => 0.5,
         ]);
@@ -26,10 +26,10 @@ class EnergyConsumptionTest extends TestCase
 
     public function test_can_create_energy_consumption_record()
     {
-        $machine = Machine::factory()->create();
+        $resource = MethodsRessources::factory()->create();
 
         $response = $this->postJson('/api/energy-consumptions', [
-            'machine_id' => $machine->id,
+            'methods_ressource_id' => $resource->id,
             'kwh' => 10,
             'cost_per_kwh' => 0.5,
         ]);
@@ -38,7 +38,7 @@ class EnergyConsumptionTest extends TestCase
                  ->assertJsonFragment(['total_cost' => 5.0]);
 
         $this->assertDatabaseHas('energy_consumptions', [
-            'machine_id' => $machine->id,
+            'methods_ressource_id' => $resource->id,
             'total_cost' => 5.0,
         ]);
     }

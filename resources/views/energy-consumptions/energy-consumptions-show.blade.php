@@ -10,7 +10,7 @@
     <x-adminlte-card theme="primary" icon="fas fa-bolt">
         <dl class="row">
             <dt class="col-sm-3">{{ __('general_content.machine_trans_key') }}</dt>
-            <dd class="col-sm-9">{{ $energyConsumption->machine_id }}</dd>
+            <dd class="col-sm-9">{{ optional($energyConsumption->methodsRessource)->label ?? '-' }}</dd>
             <dt class="col-sm-3">{{ __('general_content.kwh_trans_key') }}</dt>
             <dd class="col-sm-9">{{ $energyConsumption->kwh }}</dd>
             <dt class="col-sm-3">{{ __('general_content.cost_per_kwh_trans_key') }}</dt>

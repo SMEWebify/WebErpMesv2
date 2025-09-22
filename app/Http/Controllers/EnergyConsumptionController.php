@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EnergyConsumption;
-use App\Models\Machine;
+use App\Models\Methods\MethodsRessources;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -11,15 +11,16 @@ class EnergyConsumptionController extends Controller
 {
     public function index()
     {
-        $energyConsumptions = EnergyConsumption::all();
-        $machines = Machine::all();
-        return view('energy-consumptions.energy-consumptions-index', compact('energyConsumptions', 'machines'));
+        $energyConsumptions = EnergyConsumption::with('methodsRessource')->get();
+        $methodsRessources = MethodsRessources::orderBy('label')->get();
+
+        return view('energy-consumptions.energy-consumptions-index', compact('energyConsumptions', 'methodsRessources'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'machine_id' => 'required|exists:machines,id',
+            'methods_ressource_id' => 'required|exists:methods_ressources,id',
             'kwh' => 'required|numeric',
             'cost_per_kwh' => 'required|numeric',
         ]);
@@ -32,7 +33,7 @@ class EnergyConsumptionController extends Controller
 
     public function show($id)
     {
-        $energyConsumption = EnergyConsumption::findOrFail($id);
+        $energyConsumption = EnergyConsumption::with('methodsRessource')->findOrFail($id);
         return view('energy-consumptions.energy-consumptions-show', compact('energyConsumption'));
     }
 }

@@ -12,9 +12,9 @@
             @csrf
             <div class="row">
                 <div class="col-md-4">
-                    <x-adminlte-select name="machine_id" label="{{ __('general_content.machine_trans_key') }}" required>
-                        @foreach ($machines as $machine)
-                            <option value="{{ $machine->id }}">{{ $machine->id }} - {{ $machine->name }}</option>
+                    <x-adminlte-select name="methods_ressource_id" label="{{ __('general_content.machine_trans_key') }}" required>
+                        @foreach ($methodsRessources as $resource)
+                            <option value="{{ $resource->id }}">{{ $resource->id }} - {{ $resource->label }}</option>
                         @endforeach
                     </x-adminlte-select>
                 </div>
@@ -34,7 +34,7 @@
             @foreach ($energyConsumptions as $energyConsumption)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <a href="{{ route('energy-consumptions.show', $energyConsumption->id) }}">
-                        {{ $energyConsumption->machine_id }} - {{ $energyConsumption->kwh }} kWh @ {{ $energyConsumption->cost_per_kwh }} = {{ $energyConsumption->total_cost }}
+                        {{ optional($energyConsumption->methodsRessource)->label ?? '-' }} - {{ $energyConsumption->kwh }} kWh @ {{ $energyConsumption->cost_per_kwh }} = {{ $energyConsumption->total_cost }}
                     </a>
                 </li>
             @endforeach

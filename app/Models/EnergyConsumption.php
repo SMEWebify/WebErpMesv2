@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Methods\MethodsRessources;
-use App\Models\Machine;
 use Illuminate\Database\Eloquent\Model;
 
 class EnergyConsumption extends Model
@@ -12,11 +11,16 @@ class EnergyConsumption extends Model
     use HasFactory;
 
     protected $fillable = [
-        'machine_id',
+        'methods_ressource_id',
         'kwh',
         'cost_per_kwh',
         'total_cost',
     ];
+
+    public function methodsRessource()
+    {
+        return $this->belongsTo(MethodsRessources::class, 'methods_ressource_id');
+    }
 
     protected static function booted()
     {
