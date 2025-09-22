@@ -88,7 +88,12 @@ return [
     'product_trans_key'                        => 'Sản phẩm',
     'purchased_price_trans_key'                => 'Giá mua',
     'selling_price_trans_key'                  => 'Giá bán',
-    
+    'customer_price_grid_trans_key'            => 'Bảng giá khách hàng',
+    'automatic_pricing_trans_key'              => 'Định giá tự động',
+    'price_source_trans_key'                   => 'Nguồn giá',
+    'use_price_trans_key'                      => 'Sử dụng giá',
+    'no_price_defined_trans_key'               => 'Không có giá khách hàng cho sản phẩm này.',
+
     'product_list_trans_key'                   => 'Danh sách sản phẩm',
     'stock_trans_key'                          => 'Kho hàng',
     'inventory_trans_key'                      => 'Tồn kho',

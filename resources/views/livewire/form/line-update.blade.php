@@ -16,7 +16,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                 </div>
-                <select class="form-control" name="product_id" id="product_id"  wire:model.live="product_id" >
+                <select class="form-control" name="product_id" id="product_id"  wire:model.live="product_id" wire:change="ChangeCodelabel">
                     <option value="" >{{ __('general_content.select_product_trans_key') }}</option>
                     @foreach ($ProductsSelect as $item)
                     <option value="{{ $item->id }}" data-txt="{{ $item->code }}" >{{ $item->code }} - {{ $item->label }}</option>

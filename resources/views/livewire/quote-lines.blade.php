@@ -12,6 +12,7 @@
                             <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model.live="quotes_id" >
                             @include('livewire.form.line-create')
                 @endif
+                @include('livewire.form.customer-price-grid')
             @else
             <x-adminlte-alert theme="info" title="Info">
                 {{ __('general_content.info_statu_trans_key') }}
