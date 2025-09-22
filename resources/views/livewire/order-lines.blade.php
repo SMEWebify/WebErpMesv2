@@ -277,6 +277,34 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @php $orderDetailId = $OrderLine->OrderLineDetails->id; @endphp
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <label class="text-info">{{ __('Custom requirements') }}</label>
+                                                        </div>
+                                                        @forelse($customRequirements[$orderDetailId] ?? [] as $index => $requirement)
+                                                            <div class="form-row align-items-end w-100" wire:key="order-custom-{{ $orderDetailId }}-{{ $index }}">
+                                                                <div class="form-group col-md-5">
+                                                                    <label for="order_custom_requirement_label_{{ $orderDetailId }}_{{ $index }}">{{ __('Label') }}</label>
+                                                                    <input type="text" class="form-control" id="order_custom_requirement_label_{{ $orderDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][label]" wire:model="customRequirements.{{ $orderDetailId }}.{{ $index }}.label" placeholder="{{ __('Label') }}">
+                                                                </div>
+                                                                <div class="form-group col-md-5">
+                                                                    <label for="order_custom_requirement_value_{{ $orderDetailId }}_{{ $index }}">{{ __('Value') }}</label>
+                                                                    <input type="text" class="form-control" id="order_custom_requirement_value_{{ $orderDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][value]" wire:model="customRequirements.{{ $orderDetailId }}.{{ $index }}.value" placeholder="{{ __('Value') }}">
+                                                                </div>
+                                                                <div class="form-group col-md-2">
+                                                                    <button type="button" class="btn btn-outline-danger mt-4" wire:click="removeCustomRequirement({{ $orderDetailId }}, {{ $index }})"><i class="fas fa-trash"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        @empty
+                                                            <div class="col-12">
+                                                                <p class="text-muted">{{ __('No custom requirement added yet.') }}</p>
+                                                            </div>
+                                                        @endforelse
+                                                        <div class="col-12 mb-3">
+                                                            <button type="button" class="btn btn-outline-primary" wire:click="addCustomRequirement({{ $orderDetailId }})"><i class="fas fa-plus"></i> {{ __('Add requirement') }}</button>
+                                                        </div>
+                                                    </div>
                                                     <div class="row">
                                                         <div class="form-group col-md-4">
                                                             <div class="input-group">

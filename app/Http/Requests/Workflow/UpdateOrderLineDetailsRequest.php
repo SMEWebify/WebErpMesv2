@@ -39,6 +39,9 @@ class UpdateOrderLineDetailsRequest extends FormRequest
             'material_loss_rate' => 'nullable|numeric|min:0|max:100',
             'internal_comment' => 'nullable|string|max:255',
             'external_comment' => 'nullable|string|max:255',
+            'custom_requirements' => 'nullable|array',
+            'custom_requirements.*.label' => 'nullable|string|max:255',
+            'custom_requirements.*.value' => 'nullable|string|max:255',
         ];
     }
 }

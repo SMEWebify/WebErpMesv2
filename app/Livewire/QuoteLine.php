@@ -52,6 +52,7 @@ class QuoteLine extends Component
     public $ProductSelect  = [];
 
     public $data = [];
+    public $customRequirements = [];
 
     protected $orderService;
 
@@ -112,17 +113,75 @@ class QuoteLine extends Component
         $this->VATSelect = AccountingVat::select('id', 'label', 'default')->orderBy('rate')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
+        $this->initializeCustomRequirements();
     }
 
     public function render()
     {
-        $QuoteLineslist = $this->QuoteLineslist = Quotelines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+        $QuoteLineslist = $this->QuoteLineslist = Quotelines::with('QuoteLineDetails')
+                                                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                                             ->where('quotes_id', '=', $this->quotes_id)
                                                             ->where('label','like', '%'.$this->search.'%')->get();
-        
+
+        foreach ($QuoteLineslist as $line) {
+            $detail = $line->QuoteLineDetails;
+            if ($detail && !array_key_exists($detail->id, $this->customRequirements)) {
+                $this->customRequirements[$detail->id] = $this->normalizeCustomRequirements($detail->custom_requirements);
+            }
+        }
+
         return view('livewire.quote-lines', [
             'QuoteLineslist' => $QuoteLineslist,
         ]);
+    }
+
+    private function initializeCustomRequirements(): void
+    {
+        $lineIds = QuoteLines::where('quotes_id', $this->quotes_id)->pluck('id');
+
+        if ($lineIds->isEmpty()) {
+            $this->customRequirements = [];
+            return;
+        }
+
+        QuoteLineDetails::whereIn('quote_lines_id', $lineIds)
+            ->get()
+            ->each(function ($detail) {
+                $this->customRequirements[$detail->id] = $this->normalizeCustomRequirements($detail->custom_requirements);
+            });
+    }
+
+    private function normalizeCustomRequirements($requirements): array
+    {
+        if (!is_array($requirements)) {
+            return [];
+        }
+
+        return array_values(array_map(function ($requirement) {
+            return [
+                'label' => $requirement['label'] ?? '',
+                'value' => $requirement['value'] ?? '',
+            ];
+        }, $requirements));
+    }
+
+    public function addCustomRequirement($detailId): void
+    {
+        if (!isset($this->customRequirements[$detailId])) {
+            $this->customRequirements[$detailId] = [];
+        }
+
+        $this->customRequirements[$detailId][] = ['label' => '', 'value' => ''];
+    }
+
+    public function removeCustomRequirement($detailId, $index): void
+    {
+        if (!isset($this->customRequirements[$detailId][$index])) {
+            return;
+        }
+
+        unset($this->customRequirements[$detailId][$index]);
+        $this->customRequirements[$detailId] = array_values($this->customRequirements[$detailId]);
     }
 
     public function resetFields(){
@@ -160,7 +219,8 @@ class QuoteLine extends Component
         ]);
         
         //add line detail
-        QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
+        $quoteLineDetails = QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
+        $this->customRequirements[$quoteLineDetails->id] = [];
         
         // Set Flash Message
         session()->flash('success','Line added Successfully');
@@ -247,9 +307,17 @@ class QuoteLine extends Component
     private function duplicateQuoteLineDetails($oldQuoteLineId, $newQuoteLineId)
     {
         $quoteLineDetails = QuoteLineDetails::where('quote_lines_id', $oldQuoteLineId)->first();
-        $newQuoteLineDetails = $quoteLineDetails->replicate();
-        $newQuoteLineDetails->quote_lines_id = $newQuoteLineId;
-        $newQuoteLineDetails->save();
+        if (!$quoteLineDetails) {
+            $newQuoteLineDetails = QuoteLineDetails::create([
+                'quote_lines_id' => $newQuoteLineId,
+            ]);
+        } else {
+            $newQuoteLineDetails = $quoteLineDetails->replicate();
+            $newQuoteLineDetails->quote_lines_id = $newQuoteLineId;
+            $newQuoteLineDetails->save();
+        }
+
+        $this->customRequirements[$newQuoteLineDetails->id] = $this->normalizeCustomRequirements($newQuoteLineDetails->custom_requirements);
     }
     
     private function duplicateTasks($oldQuoteLineId, $newQuoteLineId)
