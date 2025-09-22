@@ -294,7 +294,14 @@ return [
                     'text'=>'Arabic',
                     'icon' => 'flag-icon flag-icon-ar',
                     'url'=> 'ar',
+                ],
+                [
+                    'text' =>'Chinese',
+                    'icon' => 'flag-icon flag-icon-zh',
+                    'url'=> 'zh',
                 ]
+
+                
             ]
         ],
         // Sidebar items:

@@ -1,4 +1,28 @@
 <div>
+    @php
+        $detail = $Line->OrderLineDetails ?? $Line->QuoteLineDetails ?? null;
+        $customRequirementsForDisplay = $detail ? collect($detail->custom_requirements ?? [])->filter(function ($requirement) {
+            return !empty($requirement['label'] ?? null) || !empty($requirement['value'] ?? null);
+        }) : collect();
+    @endphp
+
+    @if($detail)
+        <x-adminlte-card title="{{ __('Custom requirements') }}" theme="secondary" icon="fas fa-swatchbook" class="mb-3">
+            @if($customRequirementsForDisplay->isNotEmpty())
+                <ul class="list-unstyled mb-0">
+                    @foreach($customRequirementsForDisplay as $requirement)
+                        <li>
+                            <strong>{{ $requirement['label'] ?? __('Requirement') }}:</strong>
+                            <span>{{ $requirement['value'] ?? '' }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <span class="text-muted">{{ __('No custom requirement added yet.') }}</span>
+            @endif
+        </x-adminlte-card>
+    @endif
+
     @if($statu == 1 || $idType == "nomenclature_lines_id")
         @include('include.alert-result')
         @if($updateLines)

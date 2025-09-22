@@ -28,6 +28,10 @@ class Task extends Model
 {
     use HasFactory, LogsActivity;
 
+    public const PRIORITY_HIGH = 1;
+    public const PRIORITY_MEDIUM = 2;
+    public const PRIORITY_LOW = 3;
+
     // Fillable attributes for mass assignment
     protected $fillable= ['code',
                             'label', 
@@ -41,9 +45,12 @@ class Task extends Model
                             'seting_time', 
                             'unit_time', 
                             'remaining_time', 
-                            'status_id', 
+                            'status_id',
+                            'user_id',
+                            'priority',
                             'type',
                             'delay',
+                            'due_date',
                             'qty',
                             'qty_init',
                             'qty_aviable',
@@ -64,11 +71,37 @@ class Task extends Model
                             'not_recalculate',
                             'material', 
                             'thickness', 
-                            'weight', 
+                            'weight',
                             'methods_tools_id',
+                            'secondary_user_id',
                             'origin'];
 
     protected $appends = ["open"];
+
+    protected $attributes = [
+        'priority' => self::PRIORITY_MEDIUM,
+    ];
+
+    protected $casts = [
+        'due_date' => 'date',
+        'priority' => 'integer',
+    ];
+
+    public static function priorityLabels(): array
+    {
+        return [
+            self::PRIORITY_HIGH => __('High'),
+            self::PRIORITY_MEDIUM => __('Medium'),
+            self::PRIORITY_LOW => __('Low'),
+        ];
+    }
+
+    public function getPriorityLabelAttribute(): string
+    {
+        $labels = self::priorityLabels();
+
+        return $labels[$this->priority] ?? $labels[self::PRIORITY_MEDIUM];
+    }
 
     public function service()
     {
@@ -209,6 +242,11 @@ class Task extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function secondaryAssignee()
+    {
+        return $this->belongsTo(User::class, 'secondary_user_id');
     }
 
     /**

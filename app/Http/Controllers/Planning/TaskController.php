@@ -39,6 +39,11 @@ class TaskController extends Controller
         return view('workflow/task-index');
     }
 
+    public function gtd()
+    {
+        return view('workflow/task-gtd');
+    }
+
     /**
      * @param  $id_type, $id_page, $id_line
      * @return \Illuminate\Contracts\View\View

@@ -26,9 +26,28 @@ class OrderLinesController extends Controller
     public function update($idOrder, UpdateOrderLineDetailsRequest $request)
     {
         $OrderLineDetails = OrderLineDetails::findOrFail($request->id);
-        $OrderLineDetails->update($request->validated());
+        $validated = $request->validated();
+        $validated['custom_requirements'] = $this->sanitizeCustomRequirements($request->input('custom_requirements', []));
+
+        $OrderLineDetails->update($validated);
 
         return redirect()->route('orders.show', ['id' => $idOrder])->with('success', 'Successfully updated order detail line');
+    }
+
+    private function sanitizeCustomRequirements(array $requirements): array
+    {
+        return collect($requirements)
+            ->map(function ($requirement) {
+                return [
+                    'label' => isset($requirement['label']) ? trim($requirement['label']) : '',
+                    'value' => isset($requirement['value']) ? trim($requirement['value']) : '',
+                ];
+            })
+            ->filter(function ($requirement) {
+                return $requirement['label'] !== '' || $requirement['value'] !== '';
+            })
+            ->values()
+            ->all();
     }
 
     /**

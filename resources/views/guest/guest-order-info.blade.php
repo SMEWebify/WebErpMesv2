@@ -140,6 +140,19 @@
                                                     <div class="flex-lg-grow-1 ms-3">
                                                         <h6 class="small mb-0">{{ $DocumentLine->label }}</h6>
                                                         <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
+                                                        @php
+                                                            $guestDetail = $DocumentLine->OrderLineDetails ?? null;
+                                                            $guestCustomRequirements = $guestDetail ? collect($guestDetail->custom_requirements ?? [])->filter(function ($requirement) {
+                                                                return !empty($requirement['label'] ?? null) || !empty($requirement['value'] ?? null);
+                                                            }) : collect();
+                                                        @endphp
+                                                        @if($guestCustomRequirements->isNotEmpty())
+                                                            <ul class="list-unstyled mb-0 small text-muted">
+                                                                @foreach($guestCustomRequirements as $requirement)
+                                                                    <li><strong>{{ $requirement['label'] ?? __('Requirement') }}:</strong> {{ $requirement['value'] ?? '' }}</li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </td>

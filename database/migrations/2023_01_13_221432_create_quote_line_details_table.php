@@ -30,8 +30,9 @@ return new class extends Migration
 			$table->decimal('material_loss_rate', 10, 3)->nullable();
             $table->string('cad_file')->nullable();
             $table->string('picture')->nullable();
-			$table->text('internal_comment')->nullable();
-			$table->text('external_comment')->nullable();
+                        $table->text('internal_comment')->nullable();
+                        $table->text('external_comment')->nullable();
+            $table->json('custom_requirements')->nullable();
             $table->timestamps();
         });
     }

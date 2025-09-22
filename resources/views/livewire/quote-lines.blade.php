@@ -198,6 +198,34 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @php $quoteDetailId = $QuoteLine->QuoteLineDetails->id; @endphp
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <label class="text-info">{{ __('Custom requirements') }}</label>
+                                                        </div>
+                                                        @forelse($customRequirements[$quoteDetailId] ?? [] as $index => $requirement)
+                                                            <div class="form-row align-items-end w-100" wire:key="quote-custom-{{ $quoteDetailId }}-{{ $index }}">
+                                                                <div class="form-group col-md-5">
+                                                                    <label for="custom_requirement_label_{{ $quoteDetailId }}_{{ $index }}">{{ __('Label') }}</label>
+                                                                    <input type="text" class="form-control" id="custom_requirement_label_{{ $quoteDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][label]" wire:model="customRequirements.{{ $quoteDetailId }}.{{ $index }}.label" placeholder="{{ __('Label') }}">
+                                                                </div>
+                                                                <div class="form-group col-md-5">
+                                                                    <label for="custom_requirement_value_{{ $quoteDetailId }}_{{ $index }}">{{ __('Value') }}</label>
+                                                                    <input type="text" class="form-control" id="custom_requirement_value_{{ $quoteDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][value]" wire:model="customRequirements.{{ $quoteDetailId }}.{{ $index }}.value" placeholder="{{ __('Value') }}">
+                                                                </div>
+                                                                <div class="form-group col-md-2">
+                                                                    <button type="button" class="btn btn-outline-danger mt-4" wire:click="removeCustomRequirement({{ $quoteDetailId }}, {{ $index }})"><i class="fas fa-trash"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        @empty
+                                                            <div class="col-12">
+                                                                <p class="text-muted">{{ __('No custom requirement added yet.') }}</p>
+                                                            </div>
+                                                        @endforelse
+                                                        <div class="col-12 mb-3">
+                                                            <button type="button" class="btn btn-outline-primary" wire:click="addCustomRequirement({{ $quoteDetailId }})"><i class="fas fa-plus"></i> {{ __('Add requirement') }}</button>
+                                                        </div>
+                                                    </div>
                                                     <div class="row">
                                                         <div class="form-group col-md-4">
                                                             <div class="input-group">
