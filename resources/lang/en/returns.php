@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'status' => [
+        'received' => 'Received',
+        'diagnosed' => 'Diagnosed',
+        'in_rework' => 'In rework',
+        'closed' => 'Closed',
+    ],
+    'messages' => [
+        'created' => 'Return created successfully.',
+        'diagnosed' => 'Return diagnosed successfully.',
+        'tasks_reopened' => 'Rework tasks have been generated successfully.',
+        'no_task' => 'No tasks were available to reopen for this return.',
+        'closed' => 'Return closed successfully.',
+        'no_line' => 'Add at least one line with information to register the return.',
+    ],
+    'fields' => [
+        'add_return' => 'New return',
+        'list' => 'Return list',
+        'code' => 'Code',
+        'label' => 'Label',
+        'delivery' => 'Delivery',
+        'non_conformity' => 'Non-conformity',
+        'customer_report' => 'Customer feedback',
+        'lines' => 'Lines',
+        'delivery_line' => 'Delivery line',
+        'task' => 'Task',
+        'issue' => 'Issue description',
+        'action' => 'Rework instructions',
+        'diagnosis' => 'Diagnosis',
+        'closure_comment' => 'Closure comment',
+        'status' => 'Status',
+        'created_at' => 'Created at',
+        'actions' => 'Actions',
+        'view' => 'View',
+        'add_line' => 'Add line',
+        'save' => 'Save',
+        'choose' => 'Choose',
+        'reopen_tasks' => 'Generate rework tasks',
+        'close_return' => 'Close return',
+    ],
+];

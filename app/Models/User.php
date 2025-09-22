@@ -83,6 +83,7 @@ class User extends Authenticatable
         'quotes_notification',
         'orders_notification',
         'non_conformity_notification',
+        'return_notification',
         'banned_until',
     ];
 

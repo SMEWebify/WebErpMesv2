@@ -18,17 +18,35 @@ class NotificationLine extends Component
         $notifications = [];
         $user = User::find(Auth::id());
         foreach ($user->unreadNotifications   as $notification) {
-            if($notification->type == 'App\Notifications\QuoteNotification') $type = 'fas fa-calculator';
-            if($notification->type == 'App\Notifications\OrderNotification') $type = 'fas fa-shopping-cart';
-            if($notification->type == 'App\Notifications\CompanieNotification') $type = 'far fa-building';
-            if($notification->type == 'App\Notifications\NonConformityNotification') $type = 'fas fa-exclamation';
-            
             $NotificaitonId = $notification->id;
             $id = $notification->data['id'];
             $code = $notification->data['code'];
             $notificationOriginUser = User::find($notification->data['user_id']);
-            $text = ''.$code .' created by '. $notificationOriginUser['name'] .'';
+            $text = '' . $code .' created by '. $notificationOriginUser['name'] .'';
+
+            $type = 'fas fa-bell';
             $route = route('quotes.show', ['id' => $id]);
+
+            if($notification->type == 'App\Notifications\QuoteNotification'){
+                $type = 'fas fa-calculator';
+                $route = route('quotes.show', ['id' => $id]);
+            }
+            if($notification->type == 'App\Notifications\OrderNotification'){
+                $type = 'fas fa-shopping-cart';
+                $route = route('orders.show', ['id' => $id]);
+            }
+            if($notification->type == 'App\Notifications\CompanieNotification'){
+                $type = 'far fa-building';
+                $route = route('companies.show', ['id' => $id]);
+            }
+            if($notification->type == 'App\Notifications\NonConformityNotification'){
+                $type = 'fas fa-exclamation';
+                $route = route('quality.nonConformitie');
+            }
+            if($notification->type == 'App\Notifications\ReturnNotification'){
+                $type = 'fas fa-undo';
+                $route = route('returns.show', ['id' => $id]);
+            }
 
             array_push($notifications,[
                             'id' => $NotificaitonId,

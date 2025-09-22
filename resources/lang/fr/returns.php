@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'status' => [
+        'received' => 'Réceptionné',
+        'diagnosed' => 'Diagnostiqué',
+        'in_rework' => 'En reprise',
+        'closed' => 'Clôturé',
+    ],
+    'messages' => [
+        'created' => 'Retour enregistré avec succès.',
+        'diagnosed' => 'Retour diagnostiqué avec succès.',
+        'tasks_reopened' => 'Les tâches de retouche ont été générées avec succès.',
+        'no_task' => 'Aucune tâche à rouvrir pour ce retour.',
+        'closed' => 'Retour clôturé avec succès.',
+        'no_line' => 'Ajoutez au moins une ligne renseignée pour enregistrer le retour.',
+    ],
+    'fields' => [
+        'add_return' => 'Nouveau retour',
+        'list' => 'Liste des retours',
+        'code' => 'Code',
+        'label' => 'Libellé',
+        'delivery' => 'Livraison',
+        'non_conformity' => 'Non-conformité',
+        'customer_report' => 'Retour client',
+        'lines' => 'Lignes',
+        'delivery_line' => 'Ligne de livraison',
+        'task' => 'Tâche',
+        'issue' => 'Description du problème',
+        'action' => 'Instructions de retouche',
+        'diagnosis' => 'Diagnostic',
+        'closure_comment' => 'Commentaire de clôture',
+        'status' => 'Statut',
+        'created_at' => 'Créé le',
+        'actions' => 'Actions',
+        'view' => 'Voir',
+        'add_line' => 'Ajouter une ligne',
+        'save' => 'Enregistrer',
+        'choose' => 'Choisir',
+        'reopen_tasks' => 'Générer les tâches de reprise',
+        'close_return' => 'Clôturer le retour',
+    ],
+];

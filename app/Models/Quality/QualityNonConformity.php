@@ -6,6 +6,7 @@ use App\Models\File;
 use App\Models\User;
 use App\Models\Planning\Task;
 use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\Returns;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
 use App\Models\Quality\QualityCause;
@@ -102,6 +103,11 @@ class QualityNonConformity extends Model
     public function task()
     {
         return $this->belongsTo(Task::class, 'task_id');
+    }
+
+    public function returns()
+    {
+        return $this->hasMany(Returns::class, 'quality_non_conformity_id');
     }
 
     // Relationship with the files associated with the non-conformity

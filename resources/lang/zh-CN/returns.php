@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'status' => [
+        'received' => '已接收',
+        'diagnosed' => '已诊断',
+        'in_rework' => '返修中',
+        'closed' => '已关闭',
+    ],
+    'messages' => [
+        'created' => '退货记录创建成功。',
+        'diagnosed' => '退货诊断完成。',
+        'tasks_reopened' => '返修任务已成功生成。',
+        'no_task' => '此退货没有可重新打开的任务。',
+        'closed' => '退货已成功关闭。',
+        'no_line' => '请至少填写一条明细后再创建退货。',
+    ],
+    'fields' => [
+        'add_return' => '新增退货',
+        'list' => '退货列表',
+        'code' => '编号',
+        'label' => '标题',
+        'delivery' => '送货单',
+        'non_conformity' => '不合格项',
+        'customer_report' => '客户反馈',
+        'lines' => '明细',
+        'delivery_line' => '送货行',
+        'task' => '任务',
+        'issue' => '问题描述',
+        'action' => '返修说明',
+        'diagnosis' => '诊断',
+        'closure_comment' => '结案备注',
+        'status' => '状态',
+        'created_at' => '创建时间',
+        'actions' => '操作',
+        'view' => '查看',
+        'add_line' => '添加明细',
+        'save' => '保存',
+        'choose' => '请选择',
+        'reopen_tasks' => '生成返修任务',
+        'close_return' => '关闭退货',
+    ],
+];
