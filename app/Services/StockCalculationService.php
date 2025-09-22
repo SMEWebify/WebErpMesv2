@@ -24,9 +24,14 @@ class StockCalculationService
      * @param int $stockLocationProductId The ID of the stock location product.
      * @return float The weighted average cost of the product. Returns 0 if there is no quantity.
      */
-    public function calculateWeightedAverageCost($stockLocationProductId)
+    public function calculateWeightedAverageCost(int $stockLocationProductId): float
     {
         $stockLocationProduct = StockLocationProducts::find($stockLocationProductId);
+
+        if (! $stockLocationProduct) {
+            return 0.0;
+        }
+
         $stockMoves = $stockLocationProduct->StockMove;
 
         $totalQuantity = 0;
@@ -45,7 +50,7 @@ class StockCalculationService
             return $totalValue / $totalQuantity;
         }
 
-        return 0; // If no quantity, return zero or other default behavior
+        return 0.0; // If no quantity, return zero or other default behavior
     }
 
     public function canDispatch($tracabilityId, $quantityRequested, $stockLocationProductId)
