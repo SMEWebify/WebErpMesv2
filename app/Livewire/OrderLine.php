@@ -60,6 +60,7 @@ class OrderLine extends Component
     public $ProductSelect  = [];
 
     public $data = [];
+    public $customRequirements = [];
     public $RemoveFromStock = false;
     public $CreateSerialNumber = false;
     
@@ -142,14 +143,72 @@ class OrderLine extends Component
         $this->VATSelect = AccountingVat::select('id', 'label')->orderBy('rate')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
+        $this->initializeCustomRequirements();
 }
 
     public function render()
     {
-        $OrderLineslist = $this->OrderLineslist = Orderlines::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('orders_id', '=', $this->orders_id)->where('label','like', '%'.$this->search.'%')->get();
+        $OrderLineslist = $this->OrderLineslist = Orderlines::with('OrderLineDetails')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('orders_id', '=', $this->orders_id)->where('label','like', '%'.$this->search.'%')->get();
+
+        foreach ($OrderLineslist as $line) {
+            $detail = $line->OrderLineDetails;
+            if ($detail && !array_key_exists($detail->id, $this->customRequirements)) {
+                $this->customRequirements[$detail->id] = $this->normalizeCustomRequirements($detail->custom_requirements);
+            }
+        }
+
         return view('livewire.order-lines', [
             'OrderLineslist' => $OrderLineslist,
         ]);
+    }
+
+    private function initializeCustomRequirements(): void
+    {
+        $lineIds = OrderLines::where('orders_id', $this->orders_id)->pluck('id');
+
+        if ($lineIds->isEmpty()) {
+            $this->customRequirements = [];
+            return;
+        }
+
+        OrderLineDetails::whereIn('order_lines_id', $lineIds)
+            ->get()
+            ->each(function ($detail) {
+                $this->customRequirements[$detail->id] = $this->normalizeCustomRequirements($detail->custom_requirements);
+            });
+    }
+
+    private function normalizeCustomRequirements($requirements): array
+    {
+        if (!is_array($requirements)) {
+            return [];
+        }
+
+        return array_values(array_map(function ($requirement) {
+            return [
+                'label' => $requirement['label'] ?? '',
+                'value' => $requirement['value'] ?? '',
+            ];
+        }, $requirements));
+    }
+
+    public function addCustomRequirement($detailId): void
+    {
+        if (!isset($this->customRequirements[$detailId])) {
+            $this->customRequirements[$detailId] = [];
+        }
+
+        $this->customRequirements[$detailId][] = ['label' => '', 'value' => ''];
+    }
+
+    public function removeCustomRequirement($detailId, $index): void
+    {
+        if (!isset($this->customRequirements[$detailId][$index])) {
+            return;
+        }
+
+        unset($this->customRequirements[$detailId][$index]);
+        $this->customRequirements[$detailId] = array_values($this->customRequirements[$detailId]);
     }
 
     public function resetFields(){
@@ -206,7 +265,8 @@ class OrderLine extends Component
         ]);
 
         //add line detail
-        OrderLineDetails::create(['order_lines_id'=>$NewOrderLine->id]);
+        $orderLineDetails = OrderLineDetails::create(['order_lines_id'=>$NewOrderLine->id]);
+        $this->customRequirements[$orderLineDetails->id] = [];
 
         // Set Flash Message
         session()->flash('success','Line added Successfully');
@@ -274,9 +334,17 @@ class OrderLine extends Component
     private function duplicateOrderLineDetails($oldOrderLineId, $newOrderLineId)
     {
         $orderLineDetails = OrderLineDetails::where('order_lines_id', $oldOrderLineId)->first();
-        $newOrderLineDetails = $orderLineDetails->replicate();
-        $newOrderLineDetails->order_lines_id = $newOrderLineId;
-        $newOrderLineDetails->save();
+        if (!$orderLineDetails) {
+            $newOrderLineDetails = OrderLineDetails::create([
+                'order_lines_id' => $newOrderLineId,
+            ]);
+        } else {
+            $newOrderLineDetails = $orderLineDetails->replicate();
+            $newOrderLineDetails->order_lines_id = $newOrderLineId;
+            $newOrderLineDetails->save();
+        }
+
+        $this->customRequirements[$newOrderLineDetails->id] = $this->normalizeCustomRequirements($newOrderLineDetails->custom_requirements);
     }
     
     private function duplicateTasks($oldOrderLineId, $newOrderLineId)

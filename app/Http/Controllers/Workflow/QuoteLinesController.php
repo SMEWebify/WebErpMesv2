@@ -26,9 +26,28 @@ class QuoteLinesController extends Controller
     public function update($idQuote, UpdateQuoteLineDetailsRequest $request)
     {
         $QuoteLineDetails = QuoteLineDetails::findOrFail($request->id);
-        $QuoteLineDetails->update($request->validated());
+        $validated = $request->validated();
+        $validated['custom_requirements'] = $this->sanitizeCustomRequirements($request->input('custom_requirements', []));
+
+        $QuoteLineDetails->update($validated);
 
         return redirect()->route('quotes.show', ['id' => $idQuote])->with('success', 'Successfully updated quote detail line');
+    }
+
+    private function sanitizeCustomRequirements(array $requirements): array
+    {
+        return collect($requirements)
+            ->map(function ($requirement) {
+                return [
+                    'label' => isset($requirement['label']) ? trim($requirement['label']) : '',
+                    'value' => isset($requirement['value']) ? trim($requirement['value']) : '',
+                ];
+            })
+            ->filter(function ($requirement) {
+                return $requirement['label'] !== '' || $requirement['value'] !== '';
+            })
+            ->values()
+            ->all();
     }
     
     /**

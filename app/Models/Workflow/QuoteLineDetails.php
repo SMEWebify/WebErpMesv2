@@ -28,9 +28,14 @@ class QuoteLineDetails extends Model
                             'material_loss_rate', 
                             'cad_file',  
                             'picture', 
-                            'internal_comment', 
-                            'external_comment', 
+                            'internal_comment',
+                            'external_comment',
+                            'custom_requirements',
                         ];
+
+    protected $casts = [
+        'custom_requirements' => 'array',
+    ];
 
     public function QuoteLines()
     {
