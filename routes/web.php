@@ -152,6 +152,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->name('deliverys.show');
     });
 
+    Route::group(['prefix' => 'returns', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\\Http\\Controllers\\Workflow\\ReturnsController@index')->name('returns');
+        Route::get('/{return}', 'App\\Http\\Controllers\\Workflow\\ReturnsController@show')->name('returns.show');
+    });
+
     Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices'); 
         Route::get('/store/delevery/{id}', 'App\Http\Controllers\Workflow\InvoicesController@storeFromDelevery')->name('invoices.store.from.delivery'); 

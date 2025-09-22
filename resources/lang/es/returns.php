@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'status' => [
+        'received' => 'Recibido',
+        'diagnosed' => 'Diagnosticado',
+        'in_rework' => 'En retrabajo',
+        'closed' => 'Cerrado',
+    ],
+    'messages' => [
+        'created' => 'Retorno registrado correctamente.',
+        'diagnosed' => 'Retorno diagnosticado correctamente.',
+        'tasks_reopened' => 'Las tareas de retrabajo se generaron correctamente.',
+        'no_task' => 'No hay tareas para reabrir en este retorno.',
+        'closed' => 'Retorno cerrado correctamente.',
+        'no_line' => 'Añada al menos una línea con información para registrar el retorno.',
+    ],
+    'fields' => [
+        'add_return' => 'Nuevo retorno',
+        'list' => 'Listado de retornos',
+        'code' => 'Código',
+        'label' => 'Etiqueta',
+        'delivery' => 'Entrega',
+        'non_conformity' => 'No conformidad',
+        'customer_report' => 'Comentario del cliente',
+        'lines' => 'Líneas',
+        'delivery_line' => 'Línea de entrega',
+        'task' => 'Tarea',
+        'issue' => 'Descripción del problema',
+        'action' => 'Instrucciones de retrabajo',
+        'diagnosis' => 'Diagnóstico',
+        'closure_comment' => 'Comentario de cierre',
+        'status' => 'Estado',
+        'created_at' => 'Creado el',
+        'actions' => 'Acciones',
+        'view' => 'Ver',
+        'add_line' => 'Añadir línea',
+        'save' => 'Guardar',
+        'choose' => 'Seleccionar',
+        'reopen_tasks' => 'Generar tareas de retrabajo',
+        'close_return' => 'Cerrar retorno',
+    ],
+];

@@ -11,6 +11,7 @@ use App\Models\Products\StockMove;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\ReturnLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsTools;
 use App\Models\Methods\MethodsUnits;
@@ -132,6 +133,16 @@ class Task extends Model
     public function StockMove()
     {
         return $this->hasMany(StockMove::class);
+    }
+
+    public function returnLines()
+    {
+        return $this->hasMany(ReturnLines::class, 'original_task_id');
+    }
+
+    public function reworkReturnLines()
+    {
+        return $this->hasMany(ReturnLines::class, 'rework_task_id');
     }
 
     /**

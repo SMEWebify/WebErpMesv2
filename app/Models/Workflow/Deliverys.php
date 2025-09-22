@@ -12,6 +12,7 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Purchases\Purchases;
 use App\Models\Workflow\DeliveryLines;
+use App\Models\Workflow\Returns;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -123,6 +124,11 @@ class Deliverys extends Model
     public function QualityNonConformity()
     {
         return $this->hasMany(QualityNonConformity::class);
+    }
+
+    public function returns()
+    {
+        return $this->hasMany(Returns::class, 'deliverys_id');
     }
 
     public function GetshortCreatedAttribute()

@@ -22,11 +22,29 @@ class NotificationsController extends Controller
         foreach ($user->unreadNotifications  as $notification) {
             $id = $notification->data['id'];
 
-            if($notification->type == 'App\Notifications\QuoteNotification') {$type = 'fas fa-calculator'; $route = route('quotes.show', ['id' => $id]);}
-            if($notification->type == 'App\Notifications\OrderNotification') {$type = 'fas fa-shopping-cart'; $route = route('orders.show', ['id' => $id]);}
-            if($notification->type == 'App\Notifications\CompanieNotification') {$type = 'far fa-building'; $route = route('companies.show', ['id' => $id]);}
-            if($notification->type == 'App\Notifications\NonConformityNotification') {$type = 'fas fa-exclamation'; $route = route('quality.nonConformitie');}
-            
+            $type = 'fas fa-bell';
+            $route = route('quotes.show', ['id' => $id]);
+
+            if($notification->type == 'App\Notifications\QuoteNotification') {
+                $type = 'fas fa-calculator';
+                $route = route('quotes.show', ['id' => $id]);
+            }
+            if($notification->type == 'App\Notifications\OrderNotification') {
+                $type = 'fas fa-shopping-cart';
+                $route = route('orders.show', ['id' => $id]);
+            }
+            if($notification->type == 'App\Notifications\CompanieNotification') {
+                $type = 'far fa-building';
+                $route = route('companies.show', ['id' => $id]);
+            }
+            if($notification->type == 'App\Notifications\NonConformityNotification') {
+                $type = 'fas fa-exclamation';
+                $route = route('quality.nonConformitie');
+            }
+            if($notification->type == 'App\Notifications\ReturnNotification') {
+                $type = 'fas fa-undo';
+                $route = route('returns.show', ['id' => $id]);
+            }
 
             $code = $notification->data['code'];
             $notificationOriginUser = User::find($notification->data['user_id']);
