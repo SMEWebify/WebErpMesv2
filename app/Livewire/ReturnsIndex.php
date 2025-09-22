@@ -127,9 +127,19 @@ class ReturnsIndex extends Component
 
     public function updatedDeliverysId($value): void
     {
-        $this->deliveryLinesOptions = DeliveryLines::where('deliverys_id', $value)
+        $this->deliveryLinesOptions = DeliveryLines::with('OrderLine')
+            ->where('deliverys_id', $value)
             ->orderBy('ordre')
-            ->get(['id', 'label', 'ordre'])
+            ->get(['id', 'ordre', 'order_line_id'])
+            ->map(function ($line) {
+                $orderLine = $line->OrderLine;
+
+                return [
+                    'id' => $line->id,
+                    'ordre' => $line->ordre,
+                    'label' => $orderLine?->label ?? '',
+                ];
+            })
             ->toArray();
     }
 

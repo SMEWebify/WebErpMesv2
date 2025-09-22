@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Methods\MethodsRessources;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EnergyConsumption extends Model
 {
@@ -29,6 +31,11 @@ class EnergyConsumption extends Model
                 $consumption->total_cost = $consumption->kwh * $consumption->cost_per_kwh;
             }
         });
+    }
+
+    public function machine(): BelongsTo
+    {
+        return $this->belongsTo(Machine::class);
     }
 
     public function getTotalCostAttribute($value)
