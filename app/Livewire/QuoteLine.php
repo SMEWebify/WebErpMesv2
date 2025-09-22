@@ -12,6 +12,7 @@ use App\Models\Planning\Status;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Products\Products;
+use App\Models\Products\CustomerPriceList;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use Illuminate\Support\Facades\App;
@@ -23,6 +24,7 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
+use Illuminate\Support\Number;
 
 class QuoteLine extends Component
 {
@@ -50,6 +52,17 @@ class QuoteLine extends Component
     public $VATSelect = [];
     public $Factory;
     public $ProductSelect  = [];
+
+    public $customerId;
+    public $customerType;
+    public $customerDiscount = 0;
+    public $customerPriceList = [];
+    public $usePriceList = true;
+    public $appliedPriceListId = null;
+    public $priceSource = null;
+    public $priceListToggleKey;
+
+    protected $updatingPriceFromList = false;
 
     public $data = [];
     public $customRequirements = [];
@@ -88,27 +101,39 @@ class QuoteLine extends Component
     
     public function ChangeCodelabel()
     {
-        $product = Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price')->where('id', $this->product_id)->get();
-        if(count($product) > 0){
-            $this->code = $product[0]->code ;
-            $this->label =  $product[0]->label;
-            $this->methods_units_id =  $product[0]->methods_units_id;
-            $this->selling_price =  $product[0]->selling_price;
-        }else{
-            $this->code ='';
-            $this->label ='';
-            $this->methods_units_id ='';
-            $this->selling_price ='';
+        $product = Products::select('id', 'label', 'code', 'methods_units_id', 'selling_price')
+            ->find($this->product_id);
+
+        if ($product) {
+            $this->code = $product->code;
+            $this->label = $product->label;
+            $this->methods_units_id = $product->methods_units_id;
+            $this->selling_price = $product->selling_price;
+            $this->resetPricingState();
+            $this->loadCustomerPriceList();
+            $this->applyCustomerPriceIfEnabled($product);
+        } else {
+            $this->resetProductSelection();
         }
     }
 
-    public function mount($QuoteId, $QuoteStatu, $QuoteDelay) 
+    public function mount($QuoteId, $QuoteStatu, $QuoteDelay)
     {
-        $this->quotes_id = $QuoteId;
+        $quote = Quotes::with('companie')->findOrFail($QuoteId);
+
+        $this->quotes_id = $quote->id;
         $this->quote_Statu = $QuoteStatu;
         $this->delivery_date = $QuoteDelay;
         $this->status_id = Status::select('id')->orderBy('order')->first();
         $this->Factory = Factory::first();
+        $this->priceListToggleKey = 'quote-' . $quote->id;
+
+        if ($quote->companie) {
+            $this->customerId = $quote->companie->id;
+            $this->customerType = $quote->companie->client_type !== null ? (int) $quote->companie->client_type : null;
+            $this->customerDiscount = $quote->companie->discount ?? 0;
+            $this->discount = $this->customerDiscount;
+        }
         $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
         $this->VATSelect = AccountingVat::select('id', 'label', 'default')->orderBy('rate')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code', 'default')->orderBy('label')->get();
@@ -186,9 +211,10 @@ class QuoteLine extends Component
 
     public function resetFields(){
         $this->ordre = $this->ordre+1;
-        $this->code = '';
         $this->product_id = '';
-        $this->label = '';
+        $this->qty = 0;
+        $this->discount = $this->customerDiscount;
+        $this->resetProductSelection();
     }
 
     public function storeQuoteLine(){
@@ -240,9 +266,14 @@ class QuoteLine extends Component
         $this->selling_price = $Line->selling_price;
         $this->discount = $Line->discount;
         $this->accounting_vats_id = $Line->accounting_vats_id;
-        $this->delivery_date = $Line->delivery_date;     
+        $this->delivery_date = $Line->delivery_date;
         $this->statu = $Line->statu;
         $this->updateLines = true;
+        $this->usePriceList = false;
+        $this->priceSource = __('general_content.custom_trans_key');
+        $this->loadCustomerPriceList(false);
+        $this->appliedPriceListId = $this->detectPriceListEntryForCurrentPrice();
+        $this->refreshCustomerPriceListState();
     }
 
     public function updateQuoteLine(){
@@ -276,7 +307,49 @@ class QuoteLine extends Component
         Quotelines::find($idline)->update(['use_calculated_price' => 0]);
         session()->flash('success','Line Updated Successfully');
     }
-    
+
+    public function updatedQty($value)
+    {
+        $this->refreshCustomerPriceListState();
+        if ($this->usePriceList) {
+            $this->applyCustomerPriceIfEnabled();
+        }
+    }
+
+    public function updatedUsePriceList($value)
+    {
+        if ($value) {
+            $this->applyCustomerPriceIfEnabled();
+        } else {
+            $this->priceSource = __('general_content.custom_trans_key');
+            $this->refreshCustomerPriceListState();
+        }
+    }
+
+    public function updatedSellingPrice($value)
+    {
+        if ($this->updatingPriceFromList) {
+            return;
+        }
+
+        $this->usePriceList = false;
+        $this->appliedPriceListId = null;
+        $this->priceSource = __('general_content.custom_trans_key');
+        $this->refreshCustomerPriceListState();
+    }
+
+    public function applyPriceFromList(int $priceListId)
+    {
+        $entry = $this->getPriceListEntry($priceListId);
+
+        if (!$entry) {
+            return;
+        }
+
+        $this->usePriceList = false;
+        $this->setSellingPrice((float) $entry['price'], __('general_content.custom_trans_key') . ' - ' . $entry['scope_label'], $priceListId);
+    }
+
     public function duplicateLine($id)
     {
         // Duplicate the quote line
@@ -427,6 +500,268 @@ class QuoteLine extends Component
             $newSubAssembly->quote_lines_id = null;
             $newSubAssembly->save();
         }
+    }
+
+    protected function resetProductSelection(): void
+    {
+        $this->resetPricingState();
+        $this->code = '';
+        $this->label = '';
+        $this->methods_units_id = '';
+        $this->selling_price = 0;
+    }
+
+    protected function resetPricingState(bool $keepToggle = false): void
+    {
+        if (!$keepToggle) {
+            $this->usePriceList = true;
+        }
+
+        $this->customerPriceList = [];
+        $this->appliedPriceListId = null;
+        $this->priceSource = null;
+    }
+
+    protected function loadCustomerPriceList(bool $resetSelection = true): void
+    {
+        if ($resetSelection) {
+            $this->appliedPriceListId = null;
+            $this->priceSource = null;
+        }
+
+        if (!$this->product_id) {
+            $this->customerPriceList = [];
+            return;
+        }
+
+        $currency = $this->Factory->curency ?? 'EUR';
+
+        $priceList = CustomerPriceList::with('company')
+            ->where('products_id', $this->product_id)
+            ->get()
+            ->filter(function (CustomerPriceList $price) {
+                if ($price->companies_id && $this->customerId && (int) $price->companies_id === (int) $this->customerId) {
+                    return true;
+                }
+
+                if ($price->companies_id) {
+                    return false;
+                }
+
+                if ($price->customer_type !== null && $this->customerType !== null) {
+                    return (int) $price->customer_type === (int) $this->customerType;
+                }
+
+                return $price->companies_id === null && $price->customer_type === null;
+            })
+            ->values();
+
+        $this->customerPriceList = $priceList->map(function (CustomerPriceList $price) use ($currency) {
+            $minQty = (int) $price->min_qty;
+            $maxQty = $price->max_qty !== null ? (int) $price->max_qty : null;
+            $priority = $price->companies_id ? 1 : ($price->customer_type !== null ? 2 : 3);
+
+            return [
+                'id' => $price->id,
+                'min_qty' => $minQty,
+                'max_qty' => $maxQty,
+                'price' => (float) $price->price,
+                'formatted_price' => Number::currency($price->price, $currency, config('app.locale')),
+                'scope' => $price->companies_id ? 'company' : ($price->customer_type !== null ? 'segment' : 'general'),
+                'scope_label' => $this->getScopeLabel($price),
+                'customer_type' => $price->customer_type !== null ? (int) $price->customer_type : null,
+                'priority' => $priority,
+                'matches' => false,
+                'selected' => false,
+            ];
+        })->sort(function ($a, $b) {
+            $priorityCompare = $a['priority'] <=> $b['priority'];
+            if ($priorityCompare !== 0) {
+                return $priorityCompare;
+            }
+
+            $minCompare = $a['min_qty'] <=> $b['min_qty'];
+            if ($minCompare !== 0) {
+                return $minCompare;
+            }
+
+            return $a['id'] <=> $b['id'];
+        })->values()->toArray();
+
+        $this->refreshCustomerPriceListState();
+    }
+
+    protected function applyCustomerPriceIfEnabled($product = null): void
+    {
+        if (!$this->product_id) {
+            return;
+        }
+
+        if (empty($this->customerPriceList)) {
+            $this->loadCustomerPriceList(false);
+        }
+
+        if (!$this->usePriceList) {
+            $this->refreshCustomerPriceListState();
+            return;
+        }
+
+        $qty = $this->getEffectiveQty();
+        $bestPrice = $this->findBestPriceEntry($qty);
+
+        if ($bestPrice) {
+            $this->setSellingPriceFromList($bestPrice, true);
+        } else {
+            $this->applyDefaultProductPrice($product);
+        }
+    }
+
+    protected function setSellingPriceFromList(array $entry, bool $automatic = false): void
+    {
+        $label = $entry['scope_label'];
+        $source = $automatic
+            ? __('general_content.customer_trans_key') . ' - ' . $label
+            : __('general_content.custom_trans_key') . ' - ' . $label;
+
+        $this->setSellingPrice((float) $entry['price'], $source, $entry['id']);
+    }
+
+    protected function setSellingPrice(float $price, string $source, ?int $priceListId = null): void
+    {
+        $this->updatingPriceFromList = true;
+        $this->selling_price = $price;
+        $this->updatingPriceFromList = false;
+        $this->appliedPriceListId = $priceListId;
+        $this->priceSource = $source;
+        $this->refreshCustomerPriceListState($priceListId);
+    }
+
+    protected function applyDefaultProductPrice($product = null): void
+    {
+        if (!$product && $this->product_id) {
+            $product = Products::select('selling_price')->find($this->product_id);
+        }
+
+        $price = $product->selling_price ?? 0;
+        $this->setSellingPrice((float) $price, __('general_content.product_trans_key'));
+    }
+
+    protected function refreshCustomerPriceListState(?int $selectedId = null): void
+    {
+        if (empty($this->customerPriceList)) {
+            return;
+        }
+
+        $qty = $this->getEffectiveQty();
+        $selectedId = $selectedId ?? $this->appliedPriceListId;
+
+        $this->customerPriceList = collect($this->customerPriceList)->map(function ($item) use ($qty, $selectedId) {
+            $maxQty = $item['max_qty'] !== null ? (int) $item['max_qty'] : null;
+            $item['matches'] = $this->quantityMatches($qty, (int) $item['min_qty'], $maxQty);
+            $item['selected'] = $selectedId !== null && (int) $item['id'] === (int) $selectedId;
+            return $item;
+        })->values()->toArray();
+    }
+
+    protected function findBestPriceEntry(int $qty): ?array
+    {
+        if (empty($this->customerPriceList)) {
+            return null;
+        }
+
+        $matches = collect($this->customerPriceList)
+            ->filter(function ($entry) use ($qty) {
+                $maxQty = $entry['max_qty'] !== null ? (int) $entry['max_qty'] : null;
+                return $this->quantityMatches($qty, (int) $entry['min_qty'], $maxQty);
+            })
+            ->sort(function ($a, $b) {
+                $priorityCompare = $a['priority'] <=> $b['priority'];
+                if ($priorityCompare !== 0) {
+                    return $priorityCompare;
+                }
+
+                $minCompare = $b['min_qty'] <=> $a['min_qty'];
+                if ($minCompare !== 0) {
+                    return $minCompare;
+                }
+
+                return $a['id'] <=> $b['id'];
+            })
+            ->values();
+
+        return $matches->first();
+    }
+
+    protected function quantityMatches(int $qty, int $minQty, ?int $maxQty): bool
+    {
+        if ($qty < $minQty) {
+            return false;
+        }
+
+        if ($maxQty !== null && $qty > $maxQty) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getEffectiveQty(): int
+    {
+        $qty = (int) $this->qty;
+        return $qty > 0 ? $qty : 1;
+    }
+
+    protected function getClientTypeLabel(?int $type): string
+    {
+        return match ((int) $type) {
+            1 => __('general_content.legal_entity_trans_key'),
+            2 => __('general_content.individual_trans_key'),
+            default => __('general_content.customer_type_trans_key'),
+        };
+    }
+
+    protected function getScopeLabel(CustomerPriceList $price): string
+    {
+        if ($price->companies_id) {
+            $companyName = $price->company->label ?? ('#' . $price->companies_id);
+            return __('general_content.companie_trans_key') . ' - ' . $companyName;
+        }
+
+        if ($price->customer_type !== null) {
+            return __('general_content.customer_type_trans_key') . ' - ' . $this->getClientTypeLabel((int) $price->customer_type);
+        }
+
+        return __('general_content.customer_trans_key');
+    }
+
+    protected function getPriceListEntry(int $priceListId): ?array
+    {
+        foreach ($this->customerPriceList as $entry) {
+            if ((int) $entry['id'] === (int) $priceListId) {
+                return $entry;
+            }
+        }
+
+        return null;
+    }
+
+    protected function detectPriceListEntryForCurrentPrice(): ?int
+    {
+        if (empty($this->customerPriceList)) {
+            return null;
+        }
+
+        $qty = $this->getEffectiveQty();
+        $currentPrice = (float) $this->selling_price;
+
+        foreach ($this->customerPriceList as $entry) {
+            $maxQty = $entry['max_qty'] !== null ? (int) $entry['max_qty'] : null;
+            if ($this->quantityMatches($qty, (int) $entry['min_qty'], $maxQty) && (float) $entry['price'] === $currentPrice) {
+                return (int) $entry['id'];
+            }
+        }
+
+        return null;
     }
     
     public function breakDown($id){

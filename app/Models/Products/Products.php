@@ -16,6 +16,7 @@ use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Products\CustomerPriceList;
 use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -141,6 +142,11 @@ class Products extends Model
     //https://github.com/SMEWebify/WebErpMesv2/issues/313
     public function preferredSuppliers() {
         return $this->belongsToMany(Companies::class, 'products_preferred_suppliers', 'product_id', 'companies_id')->withTimestamps();
+    }
+
+    public function customerPriceLists()
+    {
+        return $this->hasMany(CustomerPriceList::class, 'products_id');
     }
 
     public function getAllTaskCountAttribute()
