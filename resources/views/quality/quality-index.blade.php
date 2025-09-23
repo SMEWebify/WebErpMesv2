@@ -70,6 +70,39 @@
     <div class="tab-pane" id="MeasuringDevices">
       <x-InfocalloutComponent note="{{ __('general_content.measuring_devices_note_trans_key') }}"  />
       @include('include.alert-result')
+      @if($calibrationOverdueDevices->isNotEmpty())
+        <div class="alert alert-danger">
+          <strong>{{ __('general_content.calibration_overdue_trans_key') }}</strong>
+          <ul class="mb-0">
+            @foreach ($calibrationOverdueDevices as $device)
+              <li>
+                {{ $device->label }} ({{ $device->code }})
+                - {{ optional($device->calibration_due_at)->format('d/m/Y') }}
+                @if($device->UserManagement)
+                  — {{ $device->UserManagement->name }}
+                @endif
+              </li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
+      @if($calibrationDueSoonDevices->isNotEmpty())
+        <div class="alert alert-warning">
+          <strong>{{ __('general_content.calibration_due_soon_trans_key') }}</strong>
+          <p class="mb-1">{{ __('general_content.calibration_due_soon_description_trans_key', ['days' => $calibrationAlertThresholdDays]) }}</p>
+          <ul class="mb-0">
+            @foreach ($calibrationDueSoonDevices as $device)
+              <li>
+                {{ $device->label }} ({{ $device->code }})
+                - {{ optional($device->calibration_due_at)->format('d/m/Y') }}
+                @if($device->UserManagement)
+                  — {{ $device->UserManagement->name }}
+                @endif
+              </li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
       <div class="row">
         <div class="col-md-7">
           <x-adminlte-card title="{{ __('general_content.measuring_devices_trans_key') }}" theme="primary" maximizable>
@@ -82,6 +115,12 @@
                   <th>{{ __('general_content.ressource_trans_key') }}</th>
                   <th>{{ __('general_content.user_trans_key') }}</th>
                   <th>{{ __('general_content.serial_number_trans_key') }}</th>
+                  <th>{{ __('general_content.calibrated_at_trans_key') }}</th>
+                  <th>{{ __('general_content.calibration_due_at_trans_key') }}</th>
+                  <th>{{ __('general_content.calibration_status_trans_key') }}</th>
+                  <th>{{ __('general_content.calibration_provider_trans_key') }}</th>
+                  <th>{{ __('general_content.location_trans_key') }}</th>
+                  <th>{{ __('general_content.capability_index_trans_key') }}</th>
                   <th>{{__('general_content.created_at_trans_key') }}</th>
                   <th></th>
                 </tr>
@@ -94,6 +133,27 @@
                     <td>{{ $QualityControlDevice->service['label'] }}</td>
                     <td><img src="{{ Avatar::create($QualityControlDevice->UserManagement['name'])->toBase64() }}" /></td>
                     <td>{{ $QualityControlDevice->serial_number }}</td>
+                    <td>{{ optional($QualityControlDevice->calibrated_at)->format('d/m/Y') ?? __('general_content.not_available_trans_key') }}</td>
+                    <td>
+                      @if($QualityControlDevice->calibration_due_at)
+                        @php
+                          $badgeClass = $QualityControlDevice->calibration_alert_class ? 'badge-' . $QualityControlDevice->calibration_alert_class : 'badge-success';
+                        @endphp
+                        <span class="badge {{ $badgeClass }}">{{ $QualityControlDevice->calibration_due_at->format('d/m/Y') }}</span>
+                      @else
+                        {{ __('general_content.not_available_trans_key') }}
+                      @endif
+                    </td>
+                    <td>{{ $QualityControlDevice->calibration_status ?? __('general_content.not_available_trans_key') }}</td>
+                    <td>{{ $QualityControlDevice->calibration_provider ?? __('general_content.not_available_trans_key') }}</td>
+                    <td>{{ $QualityControlDevice->location ?? __('general_content.not_available_trans_key') }}</td>
+                    <td>
+                      @if(! is_null($QualityControlDevice->capability_index))
+                        {{ number_format($QualityControlDevice->capability_index, 3) }}
+                      @else
+                        {{ __('general_content.not_available_trans_key') }}
+                      @endif
+                    </td>
                     <td>{{ $QualityControlDevice->GetPrettyCreatedAttribute() }}</td>
                     <td>
                       <!-- Button Modal -->
@@ -146,6 +206,36 @@
                             </div>
                           <!-- /.row -->
                           </div>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label for="calibrated_at_{{ $QualityControlDevice->id }}">{{ __('general_content.calibrated_at_trans_key') }}</label>
+                              <input type="date" class="form-control" name="calibrated_at" id="calibrated_at_{{ $QualityControlDevice->id }}" value="{{ optional($QualityControlDevice->calibrated_at)->format('Y-m-d') }}">
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="calibration_due_at_{{ $QualityControlDevice->id }}">{{ __('general_content.calibration_due_at_trans_key') }}</label>
+                              <input type="date" class="form-control" name="calibration_due_at" id="calibration_due_at_{{ $QualityControlDevice->id }}" value="{{ optional($QualityControlDevice->calibration_due_at)->format('Y-m-d') }}">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label for="calibration_status_{{ $QualityControlDevice->id }}">{{ __('general_content.calibration_status_trans_key') }}</label>
+                              <input type="text" class="form-control" name="calibration_status" id="calibration_status_{{ $QualityControlDevice->id }}" value="{{ $QualityControlDevice->calibration_status }}">
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="calibration_provider_{{ $QualityControlDevice->id }}">{{ __('general_content.calibration_provider_trans_key') }}</label>
+                              <input type="text" class="form-control" name="calibration_provider" id="calibration_provider_{{ $QualityControlDevice->id }}" value="{{ $QualityControlDevice->calibration_provider }}">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label for="location_{{ $QualityControlDevice->id }}">{{ __('general_content.location_trans_key') }}</label>
+                              <input type="text" class="form-control" name="location" id="location_{{ $QualityControlDevice->id }}" value="{{ $QualityControlDevice->location }}">
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="capability_index_{{ $QualityControlDevice->id }}">{{ __('general_content.capability_index_trans_key') }}</label>
+                              <input type="number" step="0.001" min="0" class="form-control" name="capability_index" id="capability_index_{{ $QualityControlDevice->id }}" value="{{ $QualityControlDevice->capability_index }}">
+                            </div>
+                          </div>
                           <div class="form-group">
                             <div class="col-md-12">
                               <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)
@@ -169,19 +259,25 @@
                     </td>
                   </tr>
                   @empty
-                    <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
+                    <x-EmptyDataLine col="13" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
                 </tbody>
                 <tfoot>
                   <tr>
                     <th>{{ __('general_content.external_id_trans_key') }}</th>
                     <th>{{__('general_content.label_trans_key') }}</th>
-                    <th>{{ __('general_content.ressource_trans_key') }}</th>
-                    <th>{{ __('general_content.user_trans_key') }}</th>
-                    <th>{{ __('general_content.serial_number_trans_key') }}</th>
-                    <th>{{__('general_content.created_at_trans_key') }}</th>
-                    <th></th>
-                  </tr>
+                  <th>{{ __('general_content.ressource_trans_key') }}</th>
+                  <th>{{ __('general_content.user_trans_key') }}</th>
+                  <th>{{ __('general_content.serial_number_trans_key') }}</th>
+                  <th>{{ __('general_content.calibrated_at_trans_key') }}</th>
+                  <th>{{ __('general_content.calibration_due_at_trans_key') }}</th>
+                  <th>{{ __('general_content.calibration_status_trans_key') }}</th>
+                  <th>{{ __('general_content.calibration_provider_trans_key') }}</th>
+                  <th>{{ __('general_content.location_trans_key') }}</th>
+                  <th>{{ __('general_content.capability_index_trans_key') }}</th>
+                  <th>{{__('general_content.created_at_trans_key') }}</th>
+                  <th></th>
+                </tr>
                 </tfoot>
               </table>
             </div>
@@ -230,6 +326,34 @@
                   <input type="text" class="form-control"  name="serial_number" id="serial_number" placeholder="{{ __('general_content.serial_number_trans_key') }}">
                 </div>
               <!-- /.row -->
+              </div>
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label for="calibrated_at">{{ __('general_content.calibrated_at_trans_key') }}</label>
+                  <input type="date" class="form-control" name="calibrated_at" id="calibrated_at">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="calibration_due_at">{{ __('general_content.calibration_due_at_trans_key') }}</label>
+                  <input type="date" class="form-control" name="calibration_due_at" id="calibration_due_at">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="calibration_status">{{ __('general_content.calibration_status_trans_key') }}</label>
+                  <input type="text" class="form-control" name="calibration_status" id="calibration_status" placeholder="{{ __('general_content.calibration_status_trans_key') }}">
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label for="calibration_provider">{{ __('general_content.calibration_provider_trans_key') }}</label>
+                  <input type="text" class="form-control" name="calibration_provider" id="calibration_provider" placeholder="{{ __('general_content.calibration_provider_trans_key') }}">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="location">{{ __('general_content.location_trans_key') }}</label>
+                  <input type="text" class="form-control" name="location" id="location" placeholder="{{ __('general_content.location_trans_key') }}">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="capability_index">{{ __('general_content.capability_index_trans_key') }}</label>
+                  <input type="number" step="0.001" min="0" class="form-control" name="capability_index" id="capability_index" placeholder="{{ __('general_content.capability_index_trans_key') }}">
+                </div>
               </div>
               <div class="form-group">
                 <div class="col-md-8">

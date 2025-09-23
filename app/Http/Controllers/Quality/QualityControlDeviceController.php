@@ -14,15 +14,27 @@ class QualityControlDeviceController extends Controller
      */
     public function store(StoreQualityControlDeviceRequest $request)
     {
-        $ControlDevice =  QualityControlDevice::create($request->only('code', 'label','service_id', 'user_id','serial_number'));
+        $controlDevice = QualityControlDevice::create($this->prepareDeviceData($request, [
+            'code',
+            'label',
+            'service_id',
+            'user_id',
+            'serial_number',
+            'calibrated_at',
+            'calibration_due_at',
+            'calibration_status',
+            'calibration_provider',
+            'location',
+            'capability_index',
+        ]));
 
         if($request->hasFile('picture')){
-            $ControlDevice = QualityControlDevice::findOrFail($ControlDevice->id);
+            $controlDevice = QualityControlDevice::findOrFail($controlDevice->id);
             $file =  $request->file('picture');
             $filename = time() . '_' . $file->getClientOriginalName();
             $request->picture->move(public_path('images/quality'), $filename);
-            $ControlDevice->update(['picture' => $filename]);
-            $ControlDevice->save();
+            $controlDevice->update(['picture' => $filename]);
+            $controlDevice->save();
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
@@ -34,28 +46,58 @@ class QualityControlDeviceController extends Controller
     /**
     * @param \Illuminate\Http\Request $request
     * @return \Illuminate\Http\RedirectResponse
-     */
+    */
     public function update(UpdateQualityControlDeviceRequest $request)
     {
-        
-        $ControlDevice = QualityControlDevice::find($request->id);
-        $ControlDevice->label=$request->label;
-        $ControlDevice->service_id=$request->service_id;
-        $ControlDevice->user_id=$request->user_id;
-        $ControlDevice->serial_number=$request->serial_number;
-        $ControlDevice->save();
+
+        $controlDevice = QualityControlDevice::findOrFail($request->id);
+        $controlDevice->update($this->prepareDeviceData($request, [
+            'label',
+            'service_id',
+            'user_id',
+            'serial_number',
+            'calibrated_at',
+            'calibration_due_at',
+            'calibration_status',
+            'calibration_provider',
+            'location',
+            'capability_index',
+        ]));
 
     /* if($request->hasFile('picture')){
             $file =  $request->file('picture');
             $filename = time() . '_' . $file->getClientOriginalName();
             $request->picture->move(public_path('images/methods'), $filename);
-            $ControlDevice->update(['picture' => $filename]);
-            $ControlDevice->save();
+            $controlDevice->update(['picture' => $filename]);
+            $controlDevice->save();
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
         }*/
 
         return redirect()->route('quality')->with('success', 'Successfully updated device.');
+    }
+
+    protected function prepareDeviceData($request, array $fields): array
+    {
+        $data = $request->only($fields);
+
+        foreach (['calibrated_at', 'calibration_due_at'] as $field) {
+            if (array_key_exists($field, $data) && empty($data[$field])) {
+                $data[$field] = null;
+            }
+        }
+
+        foreach (['calibration_status', 'calibration_provider', 'location'] as $field) {
+            if (array_key_exists($field, $data) && $data[$field] === '') {
+                $data[$field] = null;
+            }
+        }
+
+        if (array_key_exists('capability_index', $data) && $data['capability_index'] === '') {
+            $data['capability_index'] = null;
+        }
+
+        return $data;
     }
 }

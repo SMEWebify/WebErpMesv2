@@ -34,6 +34,14 @@ class QualityController extends Controller
         $QualityCorrections = QualityCorrection::All();
         $QualityControlDevices = QualityControlDevice::orderBy('id')->paginate(10);
 
+        $calibrationDueSoonDevices = QualityControlDevice::with('UserManagement')
+            ->calibrationDueSoon()
+            ->get();
+
+        $calibrationOverdueDevices = QualityControlDevice::with('UserManagement')
+            ->calibrationOverdue()
+            ->get();
+
         // Using the QualityKPIService to retrieve KPI data
         $generalStats = $this->qualityKPIService->getGeneralStatistics();
         $rates = $this->qualityKPIService->getInternalExternalRates();
@@ -50,6 +58,9 @@ class QualityController extends Controller
                                                         'QualityControlDevices' => $QualityControlDevices,
                                                         'userSelect' => $userSelect,
                                                         'ServicesSelect' =>  $ServicesSelect,
+                                                        'calibrationDueSoonDevices' => $calibrationDueSoonDevices,
+                                                        'calibrationOverdueDevices' => $calibrationOverdueDevices,
+                                                        'calibrationAlertThresholdDays' => QualityControlDevice::CALIBRATION_ALERT_THRESHOLD_DAYS,
                                                         'chartData'=> $chartData,
                                                         'litigationRate'=> $litigationRate,
                                                         'resolutionTimes'=> $resolutionTimes,

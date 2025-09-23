@@ -344,6 +344,15 @@ return [
 
     'derogations_trans_key'                    => '特批',
     'measuring_devices_trans_key'              => '测量设备',
+    'calibrated_at_trans_key'                  => '校准日期',
+    'calibration_due_at_trans_key'             => '校准到期日',
+    'calibration_status_trans_key'             => '校准状态',
+    'calibration_provider_trans_key'           => '校准服务商',
+    'calibration_overdue_trans_key'            => '校准已逾期',
+    'calibration_due_soon_trans_key'           => '校准即将到期',
+    'calibration_due_soon_description_trans_key' => '以下设备需要在 :days 天内进行校准。',
+    'capability_index_trans_key'               => '能力指数',
+    'not_available_trans_key'                  => 'N/A',
 
     'factory_settings_trans_key'               => '工厂设置',
     'announcements_trans_key'                  => '公告',

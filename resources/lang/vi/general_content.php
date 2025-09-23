@@ -108,6 +108,16 @@ return [
 
     //QUALITY
     'quality_trans_key'                        => 'Chất lượng',
+    'measuring_devices_trans_key'              => 'Thiết bị đo lường',
+    'calibrated_at_trans_key'                  => 'Ngày hiệu chuẩn',
+    'calibration_due_at_trans_key'             => 'Hạn hiệu chuẩn',
+    'calibration_status_trans_key'             => 'Trạng thái hiệu chuẩn',
+    'calibration_provider_trans_key'           => 'Nhà cung cấp hiệu chuẩn',
+    'calibration_overdue_trans_key'            => 'Hiệu chuẩn trễ hạn',
+    'calibration_due_soon_trans_key'           => 'Hiệu chuẩn sắp đến hạn',
+    'calibration_due_soon_description_trans_key' => 'Các thiết bị sau cần được hiệu chuẩn trong vòng :days ngày.',
+    'capability_index_trans_key'               => 'Chỉ số khả năng',
+    'not_available_trans_key'                  => 'N/A',
     'non_conformities_trans_key'               => 'Sai hỏng',
     
 

@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->job(new DispatchGtdTaskReminders())->dailyAt('08:00')->withoutOverlapping();
+        $schedule->command('quality:dispatch-calibration-alerts')->dailyAt('07:30')->withoutOverlapping();
     }
 
     /**

@@ -349,6 +349,15 @@ return [
 
     'derogations_trans_key'                    => 'Dérogations',
     'measuring_devices_trans_key'              => 'Appareil de mesure',
+    'calibrated_at_trans_key'                  => 'Calibré le',
+    'calibration_due_at_trans_key'             => 'Échéance d\'étalonnage',
+    'calibration_status_trans_key'             => 'Statut d\'étalonnage',
+    'calibration_provider_trans_key'           => 'Prestataire d\'étalonnage',
+    'calibration_overdue_trans_key'            => 'Étalonnage en retard',
+    'calibration_due_soon_trans_key'           => 'Étalonnage imminent',
+    'calibration_due_soon_description_trans_key' => 'Les appareils suivants doivent être étalonnés dans :days jours.',
+    'capability_index_trans_key'               => 'Indice de capabilité',
+    'not_available_trans_key'                  => 'N/D',
 
     'factory_settings_trans_key'               => 'Réglage usine',
     'announcements_trans_key'                  => 'Annonces',
