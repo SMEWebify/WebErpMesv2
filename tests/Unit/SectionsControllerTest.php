@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Admin\Factory;
 use App\Models\Methods\MethodsSection;
 use App\Services\SelectDataService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,10 +15,18 @@ class SectionsControllerTest extends TestCase
     use RefreshDatabase;
 
     protected $selectDataServiceMock;
+    protected $user;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        Factory::create([
+            'name' => 'Test Factory',
+        ]);
+
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
 
         // Mocking the SelectDataService for the dependency injection
         $this->selectDataServiceMock = Mockery::mock(SelectDataService::class);
