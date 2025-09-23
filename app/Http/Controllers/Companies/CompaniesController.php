@@ -111,6 +111,33 @@ class CompaniesController extends Controller
         $customerProcessingCost = Number::currency($customerProcessingCost, $factory->curency, config('app.locale'));
 
         $Companie = $id;
+
+        $evaluationHistory = $Companie->rating()->orderByDesc('created_at')->get();
+        $latestEvaluation = $evaluationHistory->first();
+        $compositeScores = $evaluationHistory
+            ->pluck('composite_score')
+            ->filter();
+
+        $averageCompositeScore = $compositeScores->isNotEmpty()
+            ? round($compositeScores->avg(), 1)
+            : null;
+
+        $daysUntilNextReview = null;
+        $needsRequalification = false;
+        $nextReviewSoon = false;
+
+        if ($latestEvaluation && $latestEvaluation->next_review_at) {
+            $daysUntilNextReview = Carbon::now()->startOfDay()->diffInDays($latestEvaluation->next_review_at, false);
+            $needsRequalification = $daysUntilNextReview < 0;
+            $nextReviewSoon = $daysUntilNextReview <= 30;
+        }
+
+        $purchasesForEvaluation = $Companie->Purchases()
+            ->with('Rating')
+            ->orderByDesc('created_at')
+            ->take(20)
+            ->get();
+
         return view('companies/companies-show', compact('Companie',
                                                         'userSelect',
                                                         'previousUrl',
@@ -119,7 +146,14 @@ class CompaniesController extends Controller
                                                         'customerProcessingCost',
                                                         'paidInvoices',
                                                         'unpaidInvoices',
-                                                        'data',));
+                                                        'data',
+                                                        'evaluationHistory',
+                                                        'latestEvaluation',
+                                                        'averageCompositeScore',
+                                                        'needsRequalification',
+                                                        'nextReviewSoon',
+                                                        'daysUntilNextReview',
+                                                        'purchasesForEvaluation',));
     }
 
     /**

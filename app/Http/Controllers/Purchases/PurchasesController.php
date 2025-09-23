@@ -67,6 +67,9 @@ class PurchasesController extends Controller
         $top5FastestSuppliers = $sortedByAvgReceptionDelay->take(5);
         $top5SlowestSuppliers = $sortedByAvgReceptionDelay->reverse()->take(5);
 
+        $compositeIndicators = $this->purchaseKPIService->getSupplierCompositeIndicators();
+        $suppliersToRequalify = $this->purchaseKPIService->getSuppliersToRequalify(30);
+
         $topProducts = $this->purchaseKPIService->getTopProducts();
         $averageAmount = Number::currency($this->purchaseKPIService->getAverageAmount(),$factory->curency, config('app.locale'));
         $totalPurchaseLineCount = $this->purchaseKPIService->getTotalPurchaseCount();
@@ -89,6 +92,8 @@ class PurchasesController extends Controller
                                                     'CompanieSelect' => $CompanieSelect,
                                                     'code' => $LastPurchase,
                                                     'label' => $LastPurchase,
+                                                    'compositeIndicators' => $compositeIndicators,
+                                                    'suppliersToRequalify' => $suppliersToRequalify,
                                                 ])->with('data',$data);
     }
 
