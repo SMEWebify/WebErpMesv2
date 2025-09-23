@@ -63,7 +63,7 @@ class SectionsControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Simuler une requête POST avec des données valides
-        $response = $this->post(route('methods.section.store'), [
+        $response = $this->post(route('methods.section.create'), [
             'ordre' => 1,
             'code' => 'SEC001',
             'label' => 'Section 1',
@@ -100,8 +100,8 @@ class SectionsControllerTest extends TestCase
         // Créer un utilisateur factice
         $user = User::factory()->create();
 
-        // Simuler une requête PUT avec des données mises à jour
-        $response = $this->put(route('methods.section.update', $section->id), [
+        // Simuler une requête POST avec des données mises à jour
+        $response = $this->post(route('methods.section.update', ['id' => $section->id]), [
             'id' => $section->id,
             'ordre' => 2,
             'label' => 'Updated Section',

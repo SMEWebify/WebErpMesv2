@@ -51,7 +51,7 @@ class ToolsControllerTest extends TestCase
     {
         $toolData = MethodsTools::factory()->make()->toArray();
 
-        $response = $this->post(route('methods.tool.store'), array_merge($toolData, [
+        $response = $this->post(route('methods.tool.create'), array_merge($toolData, [
             'picture' => UploadedFile::fake()->image('tool.jpg'),
             'ETAT' => 1
         ]));
@@ -74,7 +74,7 @@ class ToolsControllerTest extends TestCase
     {
         $toolData = MethodsTools::factory()->make()->toArray();
 
-        $response = $this->post(route('methods.tool.store'), array_merge($toolData, ['ETAT' => 1]));
+        $response = $this->post(route('methods.tool.create'), array_merge($toolData, ['ETAT' => 1]));
 
         $response->assertSessionHasErrors('msg', 'Error, no image selected');
     }
@@ -97,7 +97,7 @@ class ToolsControllerTest extends TestCase
             'etat_update' => 1,
         ];
 
-        $response = $this->patch(route('methods.tool.update', $tool->id), $updateData);
+        $response = $this->post(route('methods.tool.update', ['id' => $tool->id]), $updateData);
 
         $this->assertDatabaseHas('methods_tools', [
             'id' => $tool->id,
@@ -121,7 +121,7 @@ class ToolsControllerTest extends TestCase
 
         $tool = MethodsTools::factory()->create();
 
-        $response = $this->post(route('methods.tool.store_image', $tool->id), [
+        $response = $this->post(route('methods.tool.update.picture', ['id' => $tool->id]), [
             'id' => $tool->id,
             'picture' => UploadedFile::fake()->image('tool_image.jpg')
         ]);
@@ -143,7 +143,7 @@ class ToolsControllerTest extends TestCase
     {
         $tool = MethodsTools::factory()->create();
 
-        $response = $this->post(route('methods.tool.store_image', $tool->id), [
+        $response = $this->post(route('methods.tool.update.picture', ['id' => $tool->id]), [
             'id' => $tool->id,
         ]);
 

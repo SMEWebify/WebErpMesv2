@@ -15,7 +15,7 @@ class UnitsControllerTest extends TestCase
     {
         $units = MethodsUnits::factory()->count(3)->create();
 
-        $response = $this->get(route('methods.unit.index'));
+        $response = $this->get(route('methods.unit'));
 
         $response->assertStatus(200);
         $response->assertViewHas('MethodsUnits');
@@ -31,7 +31,7 @@ class UnitsControllerTest extends TestCase
             'type' => 'Unit Type',
         ];
 
-        $response = $this->post(route('methods.unit.store'), $data);
+        $response = $this->post(route('methods.unit.create'), $data);
 
         $response->assertRedirect(route('methods.unit'));
         $this->assertDatabaseHas('methods_units', $data);
@@ -45,12 +45,13 @@ class UnitsControllerTest extends TestCase
         ]);
 
         $data = [
+            'id' => $unit->id,
             'label' => 'Updated Label',
             'type' => 'Updated Type',
             'default' => 1,
         ];
 
-        $response = $this->put(route('methods.unit.update', $unit->id), $data);
+        $response = $this->post(route('methods.unit.update', ['id' => $unit->id]), $data);
 
         $response->assertRedirect(route('methods.unit'));
         $this->assertDatabaseHas('methods_units', [

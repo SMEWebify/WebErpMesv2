@@ -38,7 +38,7 @@ class RessourcesControllerTest extends TestCase
     public function test_store_creates_ressource()
     {
         // Simuler une requête POST avec des données valides
-        $response = $this->post(route('methods.ressource.store'), [
+        $response = $this->post(route('methods.ressource.create'), [
             'ordre' => 1,
             'code' => 'R001',
             'label' => 'Ressource 1',
@@ -68,7 +68,7 @@ class RessourcesControllerTest extends TestCase
     public function test_store_fails_without_image()
     {
         // Simuler une requête POST sans image
-        $response = $this->post(route('methods.ressource.store'), [
+        $response = $this->post(route('methods.ressource.create'), [
             'ordre' => 1,
             'code' => 'R002',
             'label' => 'Ressource 2',
@@ -96,12 +96,12 @@ class RessourcesControllerTest extends TestCase
         ]);
 
         // Simuler une requête POST avec des données mises à jour
-        $response = $this->put(route('methods.ressource.update', $ressource->id), [
+        $response = $this->post(route('methods.ressource.update', ['id' => $ressource->id]), [
             'id' => $ressource->id,
             'ordre' => 2,
             'label' => 'Updated Label',
             'capacity' => 20,
-            'mask_time' => true,
+            'mask_time_update' => true,
             'section_id' => 2,
             'color' => '#FF0000',
             'methods_services_id' => 2,
@@ -132,7 +132,7 @@ class RessourcesControllerTest extends TestCase
         $ressource = MethodsRessources::factory()->create();
 
         // Simuler une requête POST avec une image valide
-        $response = $this->post(route('methods.ressource.store_image', $ressource->id), [
+        $response = $this->post(route('methods.ressource.update.picture', ['id' => $ressource->id]), [
             'id' => $ressource->id,
             'picture' => UploadedFile::fake()->image('ressource.jpg'),
         ]);
