@@ -7,7 +7,7 @@ use App\Models\Methods\MethodsTools;
 use App\Services\SelectDataService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class ToolsControllerTest extends TestCase
 {
@@ -51,6 +51,11 @@ class ToolsControllerTest extends TestCase
     {
         $toolData = MethodsTools::factory()->make()->toArray();
 
+        $toolsDirectory = public_path('images/tools');
+        if (!File::exists($toolsDirectory)) {
+            File::makeDirectory($toolsDirectory, 0755, true);
+        }
+
         $response = $this->post(route('methods.tool.store'), array_merge($toolData, [
             'picture' => UploadedFile::fake()->image('tool.jpg'),
             'ETAT' => 1
@@ -63,6 +68,13 @@ class ToolsControllerTest extends TestCase
 
         $response->assertRedirect(route('methods.tool'))
                  ->assertSessionHas('success', 'Successfully created tool.');
+
+        $savedTool = MethodsTools::firstWhere('code', $toolData['code']);
+        $this->assertNotNull($savedTool);
+
+        $storedPicturePath = $toolsDirectory . '/' . $savedTool->picture;
+        $this->assertTrue(File::exists($storedPicturePath));
+        File::delete($storedPicturePath);
     }
 
     /**
@@ -117,9 +129,12 @@ class ToolsControllerTest extends TestCase
      */
     public function test_it_stores_an_image_for_existing_tool()
     {
-        Storage::fake('public');
-
         $tool = MethodsTools::factory()->create();
+
+        $methodsDirectory = public_path('images/methods');
+        if (!File::exists($methodsDirectory)) {
+            File::makeDirectory($methodsDirectory, 0755, true);
+        }
 
         $response = $this->post(route('methods.tool.store_image', $tool->id), [
             'id' => $tool->id,
@@ -128,7 +143,9 @@ class ToolsControllerTest extends TestCase
 
         $tool = $tool->fresh(); // Refresh to get updated data
 
-        Storage::disk('public')->assertExists('images/methods/' . $tool->picture);
+        $storedPicturePath = $methodsDirectory . '/' . $tool->picture;
+        $this->assertTrue(File::exists($storedPicturePath));
+        File::delete($storedPicturePath);
 
         $response->assertRedirect(route('methods.tool'))
                  ->assertSessionHas('success', 'Successfully updated tool.');
