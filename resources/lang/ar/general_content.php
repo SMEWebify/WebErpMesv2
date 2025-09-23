@@ -317,6 +317,15 @@ return [
 
     'derogations_trans_key'                    => 'التجاوزات',
     'measuring_devices_trans_key'              => 'أجهزة القياس',
+    'calibrated_at_trans_key'                  => 'Calibrated at',
+    'calibration_due_at_trans_key'             => 'Calibration due at',
+    'calibration_status_trans_key'             => 'Calibration status',
+    'calibration_provider_trans_key'           => 'Calibration provider',
+    'calibration_overdue_trans_key'            => 'Calibration overdue',
+    'calibration_due_soon_trans_key'           => 'Calibration due soon',
+    'calibration_due_soon_description_trans_key' => 'The following devices require calibration within :days days.',
+    'capability_index_trans_key'               => 'Capability index',
+    'not_available_trans_key'                  => 'N/A',
 
     'factory_settings_trans_key'               => 'إعدادات المصنع',
     'announcements_trans_key'                  => 'الإعلانات',

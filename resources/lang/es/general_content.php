@@ -314,6 +314,15 @@ return [
 
     'derogations_trans_key'                    => 'Derogaciones',
     'measuring_devices_trans_key'              => 'Dispositivos de medición',
+    'calibrated_at_trans_key'                  => 'Calibrado el',
+    'calibration_due_at_trans_key'             => 'Vencimiento de calibración',
+    'calibration_status_trans_key'             => 'Estado de calibración',
+    'calibration_provider_trans_key'           => 'Proveedor de calibración',
+    'calibration_overdue_trans_key'            => 'Calibración vencida',
+    'calibration_due_soon_trans_key'           => 'Calibración próxima',
+    'calibration_due_soon_description_trans_key' => 'Los siguientes dispositivos requieren calibración en :days días.',
+    'capability_index_trans_key'               => 'Índice de capacidad',
+    'not_available_trans_key'                  => 'N/D',
 
     'factory_settings_trans_key'               => 'Configuraciones de fábrica',
     'announcements_trans_key'                  => 'Anuncios',
