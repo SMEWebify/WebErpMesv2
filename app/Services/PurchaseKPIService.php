@@ -162,6 +162,95 @@ class PurchaseKPIService
     }
 
     /**
+     * Retrieve suppliers ordered by their composite evaluation score.
+     *
+     * @param int $limit
+     * @return \Illuminate\Support\Collection
+     */
+    public function getSupplierCompositeIndicators(int $limit = 5)
+    {
+        return Companies::where('statu_supplier', 2)
+            ->with(['rating' => function ($query) {
+                $query->select([
+                    'id',
+                    'companies_id',
+                    'evaluation_score_quality',
+                    'evaluation_score_logistics',
+                    'evaluation_score_service',
+                    'next_review_at',
+                    'approved_at',
+                    'evaluation_status',
+                    'created_at',
+                ]);
+            }])
+            ->get()
+            ->map(function ($company) {
+                $compositeScores = $company->rating
+                    ->map(fn ($rating) => $rating->composite_score)
+                    ->filter(fn ($score) => $score !== null);
+
+                $company->composite_score = $compositeScores->isEmpty()
+                    ? null
+                    : round($compositeScores->avg(), 1);
+
+                $company->latest_review = $company->rating->sortByDesc(function ($rating) {
+                    return [$rating->next_review_at ?? Carbon::createFromTimestamp(0), $rating->created_at];
+                })->first();
+
+                return $company;
+            })
+            ->filter(fn ($company) => $company->composite_score !== null)
+            ->sortByDesc('composite_score')
+            ->take($limit)
+            ->values();
+    }
+
+    /**
+     * Retrieve suppliers requiring requalification before a given threshold.
+     *
+     * @param int $withinDays
+     * @return \Illuminate\Support\Collection
+     */
+    public function getSuppliersToRequalify(int $withinDays = 0)
+    {
+        $thresholdDate = Carbon::now()->addDays($withinDays)->endOfDay();
+
+        return Companies::where('statu_supplier', 2)
+            ->whereHas('rating', function ($query) use ($thresholdDate) {
+                $query->whereNotNull('next_review_at')
+                    ->whereDate('next_review_at', '<=', $thresholdDate);
+            })
+            ->with(['rating' => function ($query) {
+                $query->select([
+                    'id',
+                    'companies_id',
+                    'next_review_at',
+                    'evaluation_status',
+                    'evaluation_score_quality',
+                    'evaluation_score_logistics',
+                    'evaluation_score_service',
+                    'created_at',
+                ]);
+            }])
+            ->get()
+            ->map(function ($company) {
+                $latestEvaluation = $company->rating->sortByDesc(function ($rating) {
+                    return [$rating->next_review_at ?? Carbon::createFromTimestamp(0), $rating->created_at];
+                })->first();
+
+                $company->next_review_at = $latestEvaluation?->next_review_at;
+                $company->evaluation_status = $latestEvaluation?->evaluation_status;
+                $company->composite_score = $latestEvaluation?->composite_score;
+
+                return $company;
+            })
+            ->sortBy(function ($company) {
+                return optional($company->next_review_at)->timestamp ?? 0;
+            })
+            ->values();
+    }
+
+    /**
      * Calculate the average purchase amount.
      *
      * This method retrieves the total purchase count and the total purchase amount,

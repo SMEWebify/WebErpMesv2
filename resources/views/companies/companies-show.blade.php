@@ -20,6 +20,13 @@
       <li class="nav-item"><a class="nav-link" href="#delivery" data-toggle="tab">{{ __('general_content.deliverys_notes_list_trans_key') }} ({{ $Companie->getDeliverysCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#invoice" data-toggle="tab">{{ __('general_content.invoices_list_trans_key') }} ({{ $Companie->getInvoicesCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Companie->getPurchasesCountAttribute() }})</a></li>
+      @php
+        $evaluationTabLabel = trans('general_content.supplier_evaluations_trans_key');
+        if ($evaluationTabLabel === 'general_content.supplier_evaluations_trans_key') {
+            $evaluationTabLabel = 'Supplier evaluations';
+        }
+      @endphp
+      <li class="nav-item"><a class="nav-link" href="#evaluation" data-toggle="tab">{{ $evaluationTabLabel }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -870,6 +877,209 @@
       </div>
       <div class="tab-pane" id="purchase">
         @livewire('purchases-index' , ['idCompanie' => $Companie->id ])
+      </div>
+      <div class="tab-pane" id="evaluation">
+        @php
+          $newEvaluationLabel = trans('general_content.new_supplier_evaluation_trans_key');
+          if ($newEvaluationLabel === 'general_content.new_supplier_evaluation_trans_key') {
+              $newEvaluationLabel = 'New supplier evaluation';
+          }
+
+          $latestEvaluationLabel = trans('general_content.latest_supplier_evaluation_trans_key');
+          if ($latestEvaluationLabel === 'general_content.latest_supplier_evaluation_trans_key') {
+              $latestEvaluationLabel = 'Latest supplier evaluation';
+          }
+
+          $evaluationHistoryLabel = trans('general_content.supplier_evaluation_history_trans_key');
+          if ($evaluationHistoryLabel === 'general_content.supplier_evaluation_history_trans_key') {
+              $evaluationHistoryLabel = 'Supplier evaluation history';
+          }
+
+          $evaluationScoresLabel = [
+              'quality' => trans('general_content.evaluation_quality_score_trans_key'),
+              'logistics' => trans('general_content.evaluation_logistics_score_trans_key'),
+              'service' => trans('general_content.evaluation_service_score_trans_key'),
+          ];
+
+          foreach ($evaluationScoresLabel as $key => $label) {
+              if ($label === 'general_content.evaluation_' . $key . '_score_trans_key') {
+                  $evaluationScoresLabel[$key] = ucfirst($key) . ' score';
+              }
+          }
+
+          $requalificationAlertLabel = trans('general_content.supplier_requalification_alert_trans_key');
+          if ($requalificationAlertLabel === 'general_content.supplier_requalification_alert_trans_key') {
+              $requalificationAlertLabel = 'Supplier requalification alert';
+          }
+
+          $requalificationSoonLabel = trans('general_content.supplier_requalification_soon_trans_key');
+          if ($requalificationSoonLabel === 'general_content.supplier_requalification_soon_trans_key') {
+              $requalificationSoonLabel = 'Upcoming supplier requalification';
+          }
+        @endphp
+
+        @if($needsRequalification)
+          <x-adminlte-alert theme="danger" title="{{ $requalificationAlertLabel }}">
+            {{ __('The supplier must be requalified since :days day(s).', ['days' => abs($daysUntilNextReview ?? 0)]) }}
+          </x-adminlte-alert>
+        @elseif($nextReviewSoon && !is_null($daysUntilNextReview))
+          <x-adminlte-alert theme="warning" title="{{ $requalificationSoonLabel }}">
+            {{ __('Next review scheduled in :days day(s).', ['days' => $daysUntilNextReview]) }}
+          </x-adminlte-alert>
+        @endif
+
+        <div class="row">
+          <div class="col-md-6">
+            <x-adminlte-card title="{{ $newEvaluationLabel }}" theme="primary" maximizable>
+              @if($purchasesForEvaluation->isEmpty())
+                <p class="text-muted">{{ __('No purchase orders available to evaluate this supplier yet.') }}</p>
+              @else
+                <form method="POST" action="{{ route('companies.ratings.store') }}">
+                  @csrf
+                  <input type="hidden" name="companies_id" value="{{ $Companie->id }}">
+                  <div class="form-group">
+                    <label for="purchases_id">{{ __('Purchase order') }}</label>
+                    <select name="purchases_id" id="purchases_id" class="form-control">
+                      @foreach($purchasesForEvaluation as $purchase)
+                        <option value="{{ $purchase->id }}">
+                          {{ $purchase->code }} - {{ $purchase->label }} ({{ $purchase->GetPrettyCreatedAttribute() }})
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="rating">{{ __('Rating') }}</label>
+                    <select name="rating" id="rating" class="form-control">
+                      @for ($i = 1; $i <= 5; $i++)
+                        <option value="{{ $i }}">{{ $i }}</option>
+                      @endfor
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="evaluation_status">{{ __('Status') }}</label>
+                    <select name="evaluation_status" id="evaluation_status" class="form-control">
+                      @php
+                        $statusOptions = ['pending', 'approved', 'under_review', 'rejected'];
+                      @endphp
+                      @foreach($statusOptions as $statusOption)
+                        <option value="{{ $statusOption }}">{{ ucfirst(str_replace('_', ' ', $statusOption)) }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="approved_at">{{ __('Approved at') }}</label>
+                      <input type="datetime-local" name="approved_at" id="approved_at" class="form-control">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label for="next_review_at">{{ __('Next review at') }}</label>
+                      <input type="date" name="next_review_at" id="next_review_at" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label for="evaluation_score_quality">{{ $evaluationScoresLabel['quality'] }}</label>
+                      <input type="number" class="form-control" name="evaluation_score_quality" id="evaluation_score_quality" min="0" max="100" step="1">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="evaluation_score_logistics">{{ $evaluationScoresLabel['logistics'] }}</label>
+                      <input type="number" class="form-control" name="evaluation_score_logistics" id="evaluation_score_logistics" min="0" max="100" step="1">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="evaluation_score_service">{{ $evaluationScoresLabel['service'] }}</label>
+                      <input type="number" class="form-control" name="evaluation_score_service" id="evaluation_score_service" min="0" max="100" step="1">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="comment">{{ __('Comment') }}</label>
+                    <textarea name="comment" id="comment" rows="3" class="form-control"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="action_plan">{{ __('Action plan') }}</label>
+                    <textarea name="action_plan" id="action_plan" rows="3" class="form-control"></textarea>
+                  </div>
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" />
+                </form>
+              @endif
+            </x-adminlte-card>
+          </div>
+          <div class="col-md-6">
+            <x-adminlte-card title="{{ $latestEvaluationLabel }}" theme="secondary" maximizable>
+              @if($latestEvaluation)
+                <ul class="list-unstyled mb-0">
+                  <li><strong>{{ __('Last updated') }}:</strong> {{ optional($latestEvaluation->created_at)->format('d/m/Y H:i') }}</li>
+                  <li><strong>{{ __('Status') }}:</strong> {{ ucfirst(str_replace('_', ' ', $latestEvaluation->evaluation_status ?? ''))) }}</li>
+                  <li><strong>{{ __('Rating') }}:</strong>
+                    @for ($i = 1; $i <= 5; $i++)
+                      @if ($i <= ($latestEvaluation->rating ?? 0))
+                        <span class="badge badge-warning">&#9733;</span>
+                      @else
+                        <span class="badge badge-info">&#9734;</span>
+                      @endif
+                    @endfor
+                  </li>
+                  <li><strong>{{ __('Composite score') }}:</strong> {{ $latestEvaluation->composite_score ?? __('N/A') }}</li>
+                  <li><strong>{{ $evaluationScoresLabel['quality'] }}:</strong> {{ $latestEvaluation->evaluation_score_quality ?? __('N/A') }}</li>
+                  <li><strong>{{ $evaluationScoresLabel['logistics'] }}:</strong> {{ $latestEvaluation->evaluation_score_logistics ?? __('N/A') }}</li>
+                  <li><strong>{{ $evaluationScoresLabel['service'] }}:</strong> {{ $latestEvaluation->evaluation_score_service ?? __('N/A') }}</li>
+                  <li><strong>{{ __('Next review at') }}:</strong> {{ optional($latestEvaluation->next_review_at)->format('d/m/Y') ?? __('N/A') }}</li>
+                  <li><strong>{{ __('Approved at') }}:</strong> {{ optional($latestEvaluation->approved_at)->format('d/m/Y H:i') ?? __('N/A') }}</li>
+                  <li><strong>{{ __('Action plan') }}:</strong> {{ $latestEvaluation->action_plan ?? __('N/A') }}</li>
+                </ul>
+              @else
+                <p class="text-muted">{{ __('No evaluation has been recorded for this supplier yet.') }}</p>
+              @endif
+              <hr>
+              <ul class="list-unstyled mb-0">
+                <li><strong>{{ __('Average composite score') }}:</strong> {{ $averageCompositeScore ?? __('N/A') }}</li>
+                <li><strong>{{ __('Average rating') }}:</strong> {{ $Companie->averageRating() ? number_format($Companie->averageRating(), 2) : __('N/A') }}</li>
+              </ul>
+            </x-adminlte-card>
+          </div>
+        </div>
+
+        <x-adminlte-card title="{{ $evaluationHistoryLabel }}" theme="info" maximizable>
+          @if($evaluationHistory->isEmpty())
+            <p class="text-muted">{{ __('No supplier evaluation history available yet.') }}</p>
+          @else
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>{{ __('Date') }}</th>
+                    <th>{{ __('Purchase order') }}</th>
+                    <th>{{ __('Rating') }}</th>
+                    <th>{{ __('Composite score') }}</th>
+                    <th>{{ __('Status') }}</th>
+                    <th>{{ $evaluationScoresLabel['quality'] }}</th>
+                    <th>{{ $evaluationScoresLabel['logistics'] }}</th>
+                    <th>{{ $evaluationScoresLabel['service'] }}</th>
+                    <th>{{ __('Next review at') }}</th>
+                    <th>{{ __('Approved at') }}</th>
+                    <th>{{ __('Action plan') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($evaluationHistory as $evaluation)
+                    <tr>
+                      <td>{{ optional($evaluation->created_at)->format('d/m/Y') }}</td>
+                      <td>{{ optional($evaluation->purchaseOrder)->code }}</td>
+                      <td>{{ $evaluation->rating }}</td>
+                      <td>{{ $evaluation->composite_score ?? __('N/A') }}</td>
+                      <td>{{ ucfirst(str_replace('_', ' ', $evaluation->evaluation_status ?? '')) }}</td>
+                      <td>{{ $evaluation->evaluation_score_quality ?? '-' }}</td>
+                      <td>{{ $evaluation->evaluation_score_logistics ?? '-' }}</td>
+                      <td>{{ $evaluation->evaluation_score_service ?? '-' }}</td>
+                      <td>{{ optional($evaluation->next_review_at)->format('d/m/Y') ?? '-' }}</td>
+                      <td>{{ optional($evaluation->approved_at)->format('d/m/Y H:i') ?? '-' }}</td>
+                      <td>{{ $evaluation->action_plan ? \Illuminate\Support\Str::limit($evaluation->action_plan, 60) : '-' }}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          @endif
+        </x-adminlte-card>
       </div>
     </div>
   </div>
