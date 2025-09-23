@@ -446,6 +446,7 @@ return [
     'email_trans_key'               => 'البريد الإلكتروني',
     'date_trans_key'                => 'التاريخ',
     'comment_trans_key'             => 'التعليق',
+    'hashtags_trans_key'            => 'الوسوم',
     'internal_comment_trans_key'    => 'التعليق الداخلي',
     'external_comment_trans_key'    => 'التعليق الخارجي',
     'identifier_trans_key'          => 'المعرف',

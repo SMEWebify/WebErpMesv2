@@ -445,6 +445,7 @@ return [
     'email_trans_key'                          => 'Correo electrónico',
     'date_trans_key'                           => 'Fecha',
     'comment_trans_key'                        => 'Comentario',
+    'hashtags_trans_key'                       => 'Hashtags',
 
         'internal_comment_trans_key'               => 'Comentario interno',
         'external_comment_trans_key'               => 'Comentario externo',

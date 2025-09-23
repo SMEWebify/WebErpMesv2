@@ -22,13 +22,24 @@ class File extends Model
     use HasFactory;
 
     // Fillable attributes for mass assignment
-    protected $fillable= [
+    protected $fillable = [
         'user_id',
         'name',
         'original_file_name',
         'type',
         'size',
+        'comment',
+        'hashtags',
         'as_photo',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'hashtags' => 'array',
     ];
 
     /**

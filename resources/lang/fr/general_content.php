@@ -490,6 +490,7 @@ return [
     'message_trans_key'                        => 'Message',
     'object_trans_key'                         => 'Objet',
     'comment_trans_key'                        => 'Commentaire',
+    'hashtags_trans_key'                       => 'Hashtags',
     'internal_comment_trans_key'               => 'Commentaire interne',
     'external_comment_trans_key'               => 'Commentaire externe',
     'identifier_trans_key'                     => 'Référence',
