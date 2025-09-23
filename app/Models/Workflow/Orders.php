@@ -30,23 +30,34 @@ class Orders extends Model
 
     // Fillable attributes for mass assignment
     protected $fillable= ['uuid',
-                            'code', 
-                            'label', 
+                            'code',
+                            'label',
                             'customer_reference',
-                            'companies_id', 
-                            'companies_contacts_id',   
-                            'companies_addresses_id',  
-                            'validity_date',  
-                            'statu',  
-                            'user_id',  
-                            'accounting_payment_conditions_id',  
-                            'accounting_payment_methods_id',  
-                            'accounting_deliveries_id',  
+                            'companies_id',
+                            'companies_contacts_id',
+                            'companies_addresses_id',
+                            'validity_date',
+                            'statu',
+                            'user_id',
+                            'accounting_payment_conditions_id',
+                            'accounting_payment_methods_id',
+                            'accounting_deliveries_id',
                             'comment',
                             'quotes_id',
                             'type',
                             'csv_file_name',
+                            'reviewed_by',
+                            'reviewed_at',
+                            'review_decision',
+                            'change_requested_by',
+                            'change_reason',
+                            'change_approved_at',
                         ];
+
+    protected $casts = [
+        'reviewed_at' => 'datetime',
+        'change_approved_at' => 'datetime',
+    ];
 
     // Only log changes
     protected static $logOnlyDirty = true;
@@ -110,6 +121,16 @@ class Orders extends Model
     public function OrderLines()
     {
         return $this->hasMany(OrderLines::class)->orderBy('ordre');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function changeRequester()
+    {
+        return $this->belongsTo(User::class, 'change_requested_by');
     }
 
     public function OrderSite()
@@ -249,22 +270,28 @@ class Orders extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logOnly([
-                                                'code', 
-                                                'label', 
+                                                'code',
+                                                'label',
                                                 'customer_reference',
-                                                'companies_id', 
-                                                'companies_contacts_id',   
-                                                'companies_addresses_id',  
-                                                'validity_date',  
-                                                'statu',  
-                                                'user_id',  
-                                                'accounting_payment_conditions_id',  
-                                                'accounting_payment_methods_id',  
-                                                'accounting_deliveries_id',  
+                                                'companies_id',
+                                                'companies_contacts_id',
+                                                'companies_addresses_id',
+                                                'validity_date',
+                                                'statu',
+                                                'user_id',
+                                                'accounting_payment_conditions_id',
+                                                'accounting_payment_methods_id',
+                                                'accounting_deliveries_id',
                                                 'comment',
                                                 'quotes_id',
                                                 'type',
-                                                'csv_file_name']);
+                                                'csv_file_name',
+                                                'reviewed_by',
+                                                'reviewed_at',
+                                                'review_decision',
+                                                'change_requested_by',
+                                                'change_reason',
+                                                'change_approved_at']);
         // Chain fluent methods for configuration options
     }
 }

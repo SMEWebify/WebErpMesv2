@@ -15,6 +15,7 @@ use App\Services\QuoteCalculatorService;
 use App\Models\Workflow\QuoteProjectEstimate;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 use App\Http\Requests\Workflow\ProjectEstimateRequest;
+use Spatie\Activitylog\Models\Activity;
 
 class QuotesController extends Controller
 {
@@ -74,6 +75,7 @@ class QuotesController extends Controller
         $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
         $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
         $AccountingDeleveriesSelect =  $this->SelectDataService->getAccountingDelivery();
+        $Reviewers = $this->SelectDataService->getUsers();
         $QuoteCalculatorService = new QuoteCalculatorService($id);
         $totalPrice =  Number::currency($QuoteCalculatorService->getTotalPrice(), $factory->curency, config('app.locale'));
         $subPrice = Number::currency($QuoteCalculatorService->getSubTotal(), $factory->curency, config('app.locale'));
@@ -85,6 +87,34 @@ class QuotesController extends Controller
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Quotes(), $id->id);
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('quote', $id->id);
         $projectEstimate = QuoteProjectEstimate::where('quotes_id', $id->id)->first();
+        $reviewFields = ['reviewed_by', 'reviewed_at', 'review_decision', 'change_requested_by', 'change_reason', 'change_approved_at'];
+        $ReviewTimeline = Activity::query()
+            ->where('subject_type', Quotes::class)
+            ->where('subject_id', $id->id)
+            ->with('causer')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function (Activity $activity) use ($reviewFields) {
+                $properties = $activity->properties?->toArray() ?? [];
+                $attributes = array_intersect_key(data_get($properties, 'attributes', []), array_flip($reviewFields));
+                $old = array_intersect_key(data_get($properties, 'old', []), array_flip($reviewFields));
+
+                return [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'causer' => $activity->causer?->name,
+                    'created_at' => $activity->created_at,
+                    'changes' => collect($attributes)->map(function ($newValue, $field) use ($old) {
+                        return [
+                            'field' => $field,
+                            'old' => $old[$field] ?? null,
+                            'new' => $newValue,
+                        ];
+                    })->values()->all(),
+                ];
+            })
+            ->filter(fn ($entry) => !empty($entry['changes']))
+            ->values();
         return view('workflow/quotes-show', [
             'Quote' => $id,
             'CompanieSelect' => $CompanieSelect,
@@ -93,8 +123,10 @@ class QuotesController extends Controller
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
+            'Reviewers' => $Reviewers,
+            'ReviewTimeline' => $ReviewTimeline,
             'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice, 
+            'subPrice' => $subPrice,
             'vatPrice' => $vatPrice,
             'TotalServiceProductTime'=> $TotalServiceProductTime,
             'TotalServiceSettingTime'=> $TotalServiceSettingTime,
