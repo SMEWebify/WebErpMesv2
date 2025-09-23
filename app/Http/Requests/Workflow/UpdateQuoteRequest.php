@@ -34,6 +34,12 @@ class UpdateQuoteRequest extends FormRequest
             'accounting_payment_methods_id' => 'required|exists:accounting_payment_methods,id',
             'accounting_deliveries_id' => 'required|exists:accounting_deliveries,id',
             'comment' => 'nullable|string',
+            'reviewed_by' => 'nullable|exists:users,id',
+            'reviewed_at' => 'nullable|date',
+            'review_decision' => 'nullable|in:pending,approved,rejected',
+            'change_requested_by' => 'nullable|exists:users,id',
+            'change_reason' => 'nullable|string',
+            'change_approved_at' => 'nullable|date',
         ];
     }
 }

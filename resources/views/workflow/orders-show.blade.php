@@ -131,6 +131,76 @@
                 <div class="row">
                   <x-FormTextareaComment  comment="{{ $Order->comment }}" />
                 </div>
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <h5 class="text-info">{{ __('Review & change tracking') }}</h5>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="reviewed_by">{{ __('Reviewed by') }}</label>
+                    <select class="form-control" name="reviewed_by" id="reviewed_by">
+                      <option value="">{{ __('Select user') }}</option>
+                      @foreach($Reviewers as $user)
+                        <option value="{{ $user->id }}" @selected(old('reviewed_by', $Order->reviewed_by) == $user->id)>{{ $user->name }}</option>
+                      @endforeach
+                    </select>
+                    @error('reviewed_by')
+                      <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="reviewed_at">{{ __('Review date') }}</label>
+                    <input type="datetime-local" class="form-control" name="reviewed_at" id="reviewed_at" value="{{ old('reviewed_at', optional($Order->reviewed_at)->format('Y-m-d\\TH:i')) }}">
+                    @error('reviewed_at')
+                      <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="review_decision">{{ __('Decision') }}</label>
+                    <select class="form-control" name="review_decision" id="review_decision">
+                      <option value="">{{ __('general_content.undefined_trans_key') }}</option>
+                      <option value="pending" @selected(old('review_decision', $Order->review_decision) === 'pending')>{{ __('general_content.pending_trans_key') }}</option>
+                      <option value="approved" @selected(old('review_decision', $Order->review_decision) === 'approved')>{{ __('general_content.approved_trans_key') }}</option>
+                      <option value="rejected" @selected(old('review_decision', $Order->review_decision) === 'rejected')>{{ __('general_content.rejected_trans_key') }}</option>
+                    </select>
+                    @error('review_decision')
+                      <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="change_requested_by">{{ __('Change requested by') }}</label>
+                    <select class="form-control" name="change_requested_by" id="change_requested_by">
+                      <option value="">{{ __('Select user') }}</option>
+                      @foreach($Reviewers as $user)
+                        <option value="{{ $user->id }}" @selected(old('change_requested_by', $Order->change_requested_by) == $user->id)>{{ $user->name }}</option>
+                      @endforeach
+                    </select>
+                    @error('change_requested_by')
+                      <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="change_reason">{{ __('Change reason') }}</label>
+                    <textarea class="form-control" name="change_reason" id="change_reason" rows="3">{{ old('change_reason', $Order->change_reason) }}</textarea>
+                    @error('change_reason')
+                      <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label for="change_approved_at">{{ __('Change approved at') }}</label>
+                    <input type="datetime-local" class="form-control" name="change_approved_at" id="change_approved_at" value="{{ old('change_approved_at', optional($Order->change_approved_at)->format('Y-m-d\\TH:i')) }}">
+                    @error('change_approved_at')
+                      <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                  </div>
+                </div>
                 <x-slot name="footerSlot">
                   <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                 </x-slot>
@@ -497,9 +567,97 @@
         </x-adminlte-alert>
         @endif
       </div>
+
       <div class="tab-pane " id="Logs">
+        <x-adminlte-card title="{{ __('Review timeline') }}" theme="info" icon="fas fa-history" class="mb-4">
+          @php
+            $reviewersById = $Reviewers->keyBy('id');
+            $fieldLabels = [
+              'reviewed_by' => __('Reviewed by'),
+              'reviewed_at' => __('Review date'),
+              'review_decision' => __('Decision'),
+              'change_requested_by' => __('Change requested by'),
+              'change_reason' => __('Change reason'),
+              'change_approved_at' => __('Change approved at'),
+            ];
+            $formatReviewValue = function ($field, $value) use ($reviewersById) {
+                if (is_null($value) || $value === '') {
+                    return __('general_content.undefined_trans_key');
+                }
+
+                if (in_array($field, ['reviewed_by', 'change_requested_by'], true)) {
+                    return optional($reviewersById->get((int) $value))->name ?? __('general_content.undefined_trans_key');
+                }
+
+                if (in_array($field, ['reviewed_at', 'change_approved_at'], true)) {
+                    try {
+                        return \Carbon\Carbon::parse($value)->format('d/m/Y H:i');
+                    } catch (\Exception $e) {
+                        return $value;
+                    }
+                }
+
+                if ($field === 'review_decision') {
+                    return match ($value) {
+                        'approved' => __('general_content.approved_trans_key'),
+                        'rejected' => __('general_content.rejected_trans_key'),
+                        'pending' => __('general_content.pending_trans_key'),
+                        default => $value,
+                    };
+                }
+
+                return $value;
+            };
+          @endphp
+          @if($ReviewTimeline->isEmpty())
+            <p class="mb-0 text-muted">{{ __('general_content.no_data_trans_key') }}</p>
+          @else
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>{{ __('general_content.created_trans_key') }}</th>
+                    <th>{{ __('general_content.user_trans_key') }}</th>
+                    <th>{{ __('general_content.description_trans_key') }}</th>
+                    <th>{{ __('Changes') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($ReviewTimeline as $entry)
+                    <tr>
+                      <td>{{ optional($entry['created_at'])->format('d/m/Y H:i') }}</td>
+                      <td>{{ $entry['causer'] ?? __('general_content.undefined_trans_key') }}</td>
+                      <td>{{ $entry['description'] }}</td>
+                      <td>
+                        <table class="table table-sm mb-0">
+                          <thead>
+                            <tr>
+                              <th>{{ __('general_content.label_trans_key') }}</th>
+                              <th>{{ __('general_content.previous_trans_key') }}</th>
+                              <th>{{ __('general_content.new_trans_key') }}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @foreach($entry['changes'] as $change)
+                              <tr>
+                                <td>{{ $fieldLabels[$change['field']] ?? \Illuminate\Support\Str::headline($change['field']) }}</td>
+                                <td>{{ $formatReviewValue($change['field'], $change['old']) }}</td>
+                                <td>{{ $formatReviewValue($change['field'], $change['new']) }}</td>
+                              </tr>
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          @endif
+        </x-adminlte-card>
         @livewire('logs-viewer', ['subjectType' => 'App\Models\Workflow\Orders', 'subjectId' => $Order->id])
       </div>
+
   </div>
   <!-- /.card-body -->
 </div>

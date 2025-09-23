@@ -29,21 +29,32 @@ class Quotes extends Model
 
     // Fillable attributes for mass assignment
     protected $fillable= ['uuid',
-                            'code', 
-                            'label', 
+                            'code',
+                            'label',
                             'customer_reference',
-                            'companies_id', 
-                            'companies_contacts_id',   
-                            'companies_addresses_id',  
-                            'validity_date',  
-                            'statu',  
-                            'user_id',  
-                            'opportunities_id',  
-                            'accounting_payment_conditions_id',  
-                            'accounting_payment_methods_id',  
-                            'accounting_deliveries_id',  
-                            'comment', 
-                            'csv_file_name',];
+                            'companies_id',
+                            'companies_contacts_id',
+                            'companies_addresses_id',
+                            'validity_date',
+                            'statu',
+                            'user_id',
+                            'opportunities_id',
+                            'accounting_payment_conditions_id',
+                            'accounting_payment_methods_id',
+                            'accounting_deliveries_id',
+                            'comment',
+                            'csv_file_name',
+                            'reviewed_by',
+                            'reviewed_at',
+                            'review_decision',
+                            'change_requested_by',
+                            'change_reason',
+                            'change_approved_at',];
+
+    protected $casts = [
+        'reviewed_at' => 'datetime',
+        'change_approved_at' => 'datetime',
+    ];
 
     // Only log changes
     protected static $logOnlyDirty = true;
@@ -102,6 +113,16 @@ class Quotes extends Model
     public function QuoteLines()
     {
         return $this->hasMany(QuoteLines::class)->orderBy('ordre');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function changeRequester()
+    {
+        return $this->belongsTo(User::class, 'change_requested_by');
     }
 
     // Relationship with the files associated with the Quote
@@ -187,20 +208,26 @@ class Quotes extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly(['code', 
-                                                'label', 
+        return LogOptions::defaults()->logOnly(['code',
+                                                'label',
                                                 'customer_reference',
-                                                'companies_id', 
-                                                'companies_contacts_id',   
-                                                'companies_addresses_id',  
-                                                'validity_date',  
-                                                'statu',  
-                                                'user_id',  
-                                                'opportunities_id',  
-                                                'accounting_payment_conditions_id',  
-                                                'accounting_payment_methods_id',  
-                                                'accounting_deliveries_id',  
-                                                'comment', ]);
+                                                'companies_id',
+                                                'companies_contacts_id',
+                                                'companies_addresses_id',
+                                                'validity_date',
+                                                'statu',
+                                                'user_id',
+                                                'opportunities_id',
+                                                'accounting_payment_conditions_id',
+                                                'accounting_payment_methods_id',
+                                                'accounting_deliveries_id',
+                                                'comment',
+                                                'reviewed_by',
+                                                'reviewed_at',
+                                                'review_decision',
+                                                'change_requested_by',
+                                                'change_reason',
+                                                'change_approved_at', ]);
         // Chain fluent methods for configuration options
     }
 }

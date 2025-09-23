@@ -13,6 +13,7 @@ use App\Services\OrderCalculatorService;
 use App\Services\OrderInvoiceDataService;
 use App\Services\OrderBusinessBalanceService;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
+use Spatie\Activitylog\Models\Activity;
 
 class OrdersController extends Controller
 {
@@ -95,6 +96,7 @@ class OrdersController extends Controller
         $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
         $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
         $AccountingDeleveriesSelect = $this->SelectDataService->getAccountingDelivery();
+        $Reviewers = $this->SelectDataService->getUsers();
 
         // Initialize OrderCalculatorService with the order ID
         $OrderCalculatorService = new OrderCalculatorService($id);
@@ -145,6 +147,34 @@ class OrdersController extends Controller
         $currentMarginPercentageFormatted = number_format($currentMarginPercentage, 2, '.', ',') . ' %';
 
         $leadTime = $this->orderKPIService->getLeadTime($id);
+        $reviewFields = ['reviewed_by', 'reviewed_at', 'review_decision', 'change_requested_by', 'change_reason', 'change_approved_at'];
+        $ReviewTimeline = Activity::query()
+            ->where('subject_type', Orders::class)
+            ->where('subject_id', $id->id)
+            ->with('causer')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function (Activity $activity) use ($reviewFields) {
+                $properties = $activity->properties?->toArray() ?? [];
+                $attributes = array_intersect_key(data_get($properties, 'attributes', []), array_flip($reviewFields));
+                $old = array_intersect_key(data_get($properties, 'old', []), array_flip($reviewFields));
+
+                return [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'causer' => $activity->causer?->name,
+                    'created_at' => $activity->created_at,
+                    'changes' => collect($attributes)->map(function ($newValue, $field) use ($old) {
+                        return [
+                            'field' => $field,
+                            'old' => $old[$field] ?? null,
+                            'new' => $newValue,
+                        ];
+                    })->values()->all(),
+                ];
+            })
+            ->filter(fn ($entry) => !empty($entry['changes']))
+            ->values();
 
         return view('workflow/orders-show', data: [
             'Order' => $id,
@@ -154,6 +184,8 @@ class OrdersController extends Controller
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
+            'Reviewers' => $Reviewers,
+            'ReviewTimeline' => $ReviewTimeline,
             'totalPrices' => $totalPrice,
             'subPrice' => $subPrice, 
             'vatPrice' => $vatPrice,
