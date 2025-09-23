@@ -24,7 +24,9 @@ class StoreFileRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required|file|mimes:jpg,jpeg,bmp,png,doc,docx,csv,rtf,xlsx,xls,txt,pdf,zip|max:10240'
+            'file' => 'required|file|mimes:jpg,jpeg,bmp,png,doc,docx,csv,rtf,xlsx,xls,txt,pdf,zip|max:10240',
+            'comment' => 'nullable|string|max:65535',
+            'hashtags' => 'nullable|string|max:1024',
         ];
     }
 }

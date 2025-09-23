@@ -485,6 +485,7 @@ return [
     'message_trans_key'                        => '消息',
     'object_trans_key'                         => '主题',
     'comment_trans_key'                        => '评论',
+    'hashtags_trans_key'                       => '话题标签',
     'internal_comment_trans_key'               => '内部备注',
     'external_comment_trans_key'               => '外部备注',
     'identifier_trans_key'                     => '参考号',

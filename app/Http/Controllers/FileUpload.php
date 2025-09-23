@@ -51,6 +51,8 @@ class FileUpload extends Controller
         $originalFileName = $request->file->getClientOriginalName();
         $type = $request->file->getClientMimeType();
         $size = $request->file->getSize();
+        $comment = $request->input('comment');
+        $hashtags = $this->normalizeHashtags($request->input('hashtags'));
 
         $request->file->move(public_path($directory), $fileName);
 
@@ -61,6 +63,15 @@ class FileUpload extends Controller
             'type' => $type,
             'size' => $size,
         ];
+
+        if ($comment !== null) {
+            $trimmedComment = trim($comment);
+            $fileData['comment'] = $trimmedComment === '' ? null : $trimmedComment;
+        }
+
+        if (!empty($hashtags)) {
+            $fileData['hashtags'] = $hashtags;
+        }
 
         if ($asPhoto) {
             $fileData['as_photo'] = 1;
@@ -92,5 +103,49 @@ class FileUpload extends Controller
         }
 
         return back()->with('success', 'File has been uploaded.')->with('file', $fileName);
+    }
+
+    /**
+     * Normalize a raw hashtags string into an array of unique tags.
+     *
+     * @param string|null $rawHashtags
+     * @return array<int, string>
+     */
+    private function normalizeHashtags(?string $rawHashtags): array
+    {
+        if ($rawHashtags === null) {
+            return [];
+        }
+
+        $parts = preg_split('/[\s,]+/u', $rawHashtags);
+
+        if ($parts === false) {
+            return [];
+        }
+
+        $hashtags = [];
+
+        foreach ($parts as $part) {
+            $tag = trim($part);
+
+            if ($tag === '') {
+                continue;
+            }
+
+            $tag = trim(ltrim($tag, "#＃"));
+
+            if ($tag === '') {
+                continue;
+            }
+
+            $tag = mb_substr($tag, 0, 50);
+            $normalizedKey = mb_strtolower($tag);
+
+            if (!array_key_exists($normalizedKey, $hashtags)) {
+                $hashtags[$normalizedKey] = $tag;
+            }
+        }
+
+        return array_values($hashtags);
     }
 }

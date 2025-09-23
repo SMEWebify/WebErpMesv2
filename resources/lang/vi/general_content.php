@@ -128,6 +128,7 @@ return [
     'total_cost_trans_key'                     => 'Tổng chi phí',
 
     'search_results_trans_key'                 => 'Kết quả tìm kiếm',
+    'hashtags_trans_key'                       => 'Hashtags',
     'customer_processing_cost_trans_key'       => 'Chi phí xử lý khách hàng',
     'average_supply_delay_trans_key'           => 'Thời gian cung ứng trung bình',
     'order_site_trans_key'                     => 'Công trường',
