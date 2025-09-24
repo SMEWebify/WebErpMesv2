@@ -171,11 +171,26 @@ class FactoryController extends Controller
     public function storeCustomField(StoreCustomFieldRequest $request)
     {
         // Create a new custom field
+        $options = null;
+
+        if ($request->type === 'select') {
+            $options = collect(preg_split('/\r\n|\r|\n/', (string) $request->input('options', '')))
+                ->map(fn ($option) => trim($option))
+                ->filter(fn ($option) => $option !== '')
+                ->values()
+                ->all();
+
+            if (empty($options)) {
+                $options = null;
+            }
+        }
+
         $customField = CustomField::create([
             'name' => $request->name,
             'type' => $request->type,
             'related_type' => $request->related_type,
             'category' => $request->category,
+            'options' => $options,
         ]);
 
         // Redirect to a confirmation page or other action
