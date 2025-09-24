@@ -378,6 +378,11 @@ return [
     'custom_fields_category_placeholder_trans_key' => 'ex. Technique',
     'custom_fields_placeholder_trans_key'      => 'Saisissez une valeur...',
     'custom_fields_default_category_trans_key' => 'Général',
+    'custom_fields_type_select_trans_key'      => 'Liste',
+    'custom_fields_options_trans_key'          => 'Options',
+    'custom_fields_options_placeholder_trans_key' => 'Une option par ligne',
+    'custom_fields_options_help_trans_key'     => 'Affichées comme valeurs sélectionnables dans la liste.',
+    'custom_fields_select_placeholder_trans_key' => 'Sélectionnez une option',
     'document_code_templates_trans_key'        => 'Document code templates',
     'new_document_code_template_trans_key'     => 'Nouveau templates',
     'template_trans_key'                       => 'Templates',
@@ -1045,6 +1050,7 @@ return [
     'corrective_actions_class_trans_key'       => 'Actions Correctives',
 
     //USER
+    'whiteboard_trans_key'                     => 'Tableau blanc',
     'users_trans_key'                          => 'Utilisateur',
     'users_list_trans_key'                     => 'Liste des utilisateurs',
     'about_trans_key'                          => 'A propos',

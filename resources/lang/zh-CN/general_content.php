@@ -373,6 +373,11 @@ return [
     'custom_fields_category_placeholder_trans_key' => '例如：技术',
     'custom_fields_placeholder_trans_key'      => '输入一个值...',
     'custom_fields_default_category_trans_key' => '通用',
+    'custom_fields_type_select_trans_key'      => '列表',
+    'custom_fields_options_trans_key'          => '选项',
+    'custom_fields_options_placeholder_trans_key' => '每行一个选项',
+    'custom_fields_options_help_trans_key'     => '将在列表中显示为可选择的值。',
+    'custom_fields_select_placeholder_trans_key' => '请选择一个选项',
     'document_code_templates_trans_key'        => '单据编号模板',
     'new_document_code_template_trans_key'     => '新模板',
     'template_trans_key'                       => '模板',
@@ -1040,6 +1045,7 @@ return [
     'corrective_actions_class_trans_key'       => '纠正措施',
 
     //USER
+    'whiteboard_trans_key'                     => '白板',
     'users_trans_key'                          => '用户',
     'users_list_trans_key'                     => '用户列表',
     'about_trans_key'                          => '关于',

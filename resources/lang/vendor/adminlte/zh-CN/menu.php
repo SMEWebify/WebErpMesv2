@@ -73,6 +73,7 @@ return [
     'risques_trans_key'                        => '风险',
     'formations_trans_key'                     => '培训',
     'conformites_trans_key'                    => '合规',
+    'whiteboard_trans_key'                     => '白板',
     'users_trans_key'                          => '用户',
     'your_company_trans_key'                   => '您的公司',
     'factory_settings_trans_key'               => '公司设置',

@@ -342,6 +342,11 @@ return [
     'custom_fields_category_placeholder_trans_key' => 'مثال: تقني',
     'custom_fields_placeholder_trans_key'      => 'أدخل قيمة...',
     'custom_fields_default_category_trans_key' => 'عام',
+    'custom_fields_type_select_trans_key'      => 'قائمة',
+    'custom_fields_options_trans_key'          => 'الخيارات',
+    'custom_fields_options_placeholder_trans_key' => 'خيار واحد في كل سطر',
+    'custom_fields_options_help_trans_key'     => 'تُعرض كقيم قابلة للاختيار في القائمة.',
+    'custom_fields_select_placeholder_trans_key' => 'اختر خيارًا',
     
     // CARD HEADER
     'statistiques_trans_key'   => 'الإحصائيات',
@@ -887,6 +892,7 @@ return [
     'new_expense_categories_trans_key'       => 'فئات مصاريف جديدة',
     
     //USER
+    'whiteboard_trans_key'               => 'لوحة بيضاء',
     'users_trans_key'                    => 'المستخدمين',
     'users_list_trans_key'               => 'قائمة المستخدمين',
     'about_trans_key'                    => 'حول',

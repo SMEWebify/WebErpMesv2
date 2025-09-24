@@ -603,6 +603,7 @@
                                         <tr>
                                             <th>{{ __('general_content.name_field_trans_key') }}</th>
                                             <th>{{ __('general_content.type_field_trans_key') }} </th>
+                                            <th>{{ __('general_content.custom_fields_options_trans_key') }}</th>
                                             <th>{{ __('general_content.custom_fields_category_trans_key') }}</th>
                                             <th>{{ __('general_content.entity_type_trans_key') }}</th>
                                             <th></th>
@@ -613,18 +614,20 @@
                                             <tr>
                                                 <td>{{ $CustomField->name }}</td>
                                                 <td>{{ $CustomField->type }}</td>
+                                                <td>{{ collect($CustomField->options ?? [])->implode(', ') }}</td>
                                                 <td>{{ $CustomField->category ?? __('general_content.custom_fields_default_category_trans_key') }}</td>
                                                 <td>{{ $CustomField->related_type }}</td>
                                                 <td></td>
                                             </tr>
                                         @empty
-                                            <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
+                                            <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
                                         @endforelse
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th>{{ __('general_content.name_field_trans_key') }}</th>
                                             <th>{{ __('general_content.type_field_trans_key') }} </th>
+                                            <th>{{ __('general_content.custom_fields_options_trans_key') }}</th>
                                             <th>{{ __('general_content.custom_fields_category_trans_key') }}</th>
                                             <th>{{ __('general_content.entity_type_trans_key') }}</th>
                                             <th></th>
@@ -648,18 +651,24 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="label">{{ __('general_content.type_field_trans_key') }}  :</label>
+                                    <label for="custom_field_type">{{ __('general_content.type_field_trans_key') }}  :</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <select class="form-control" id="type" name="type" required>
+                                        <select class="form-control" id="custom_field_type" name="type" required>
                                             <option value="text">Text</option>
                                             <option value="number">Number</option>
                                             <option value="checkbox">Checkbox</option>
                                             <option value="date">Date</option>
+                                            <option value="select">{{ __('general_content.custom_fields_type_select_trans_key') }}</option>
                                         </select>
                                     </div>
+                                </div>
+                                <div class="form-group" id="custom-field-options-group" style="display: none;">
+                                    <label for="options">{{ __('general_content.custom_fields_options_trans_key') }} :</label>
+                                    <textarea class="form-control" id="options" name="options" rows="3" placeholder="{{ __('general_content.custom_fields_options_placeholder_trans_key') }}"></textarea>
+                                    <small class="form-text text-muted">{{ __('general_content.custom_fields_options_help_trans_key') }}</small>
                                 </div>
                                 <div class="form-group">
                                     <label for="related_type">{{ __('general_content.entity_type_trans_key') }}  :</label>
@@ -814,4 +823,24 @@
 @stop
 
 @section('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeSelect = document.getElementById('custom_field_type');
+        const optionsGroup = document.getElementById('custom-field-options-group');
+        const optionsInput = document.getElementById('options');
+
+        if (!typeSelect || !optionsGroup || !optionsInput) {
+            return;
+        }
+
+        const toggleOptionsVisibility = () => {
+            const shouldShowOptions = typeSelect.value === 'select';
+            optionsGroup.style.display = shouldShowOptions ? 'block' : 'none';
+            optionsInput.required = shouldShowOptions;
+        };
+
+        typeSelect.addEventListener('change', toggleOptionsVisibility);
+        toggleOptionsVisibility();
+    });
+</script>
 @stop
