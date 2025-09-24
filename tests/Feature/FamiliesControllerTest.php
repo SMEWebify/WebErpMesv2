@@ -61,7 +61,7 @@ class FamiliesControllerTest extends TestCase
             'methods_services_id' => 1,
         ];
 
-        $response = $this->actingAs($user)->post(route('methods.family.store'), $data);
+        $response = $this->actingAs($user)->post(route('methods.family.create'), $data);
 
         // Vérifier que la redirection fonctionne
         $response->assertRedirect(route('methods.family'));
@@ -87,14 +87,14 @@ class FamiliesControllerTest extends TestCase
             'methods_services_id' => 1,
         ]);
 
-        // Simuler une requête PUT avec des données mises à jour
+        // Simuler une requête POST avec des données mises à jour
         $data = [
             'id' => $family->id,
             'label' => 'Updated Family',
             'methods_services_id' => 2,
         ];
 
-        $response = $this->actingAs($user)->put(route('methods.family.update', $family->id), $data);
+        $response = $this->actingAs($user)->post(route('methods.family.update', ['id' => $family->id]), $data);
 
         // Vérifier que la redirection fonctionne
         $response->assertRedirect(route('methods.family'));

@@ -3,6 +3,8 @@
 namespace Tests\Feature\Controllers\Methods;
 
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Admin\Factory;
 use App\Models\Methods\MethodsTools;
 use App\Services\SelectDataService;
 use Illuminate\Http\UploadedFile;
@@ -14,10 +16,18 @@ class ToolsControllerTest extends TestCase
     use RefreshDatabase;
 
     protected $selectDataService;
+    protected $user;
 
     public function setUp(): void
     {
         parent::setUp();
+
+        Factory::create([
+            'name' => 'Test Factory',
+        ]);
+
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
 
         // Mock du service SelectDataService
         $this->selectDataService = $this->createMock(SelectDataService::class);
@@ -51,12 +61,14 @@ class ToolsControllerTest extends TestCase
     {
         $toolData = MethodsTools::factory()->make()->toArray();
 
+
         $toolsDirectory = public_path('images/tools');
         if (!File::exists($toolsDirectory)) {
             File::makeDirectory($toolsDirectory, 0755, true);
         }
 
         $response = $this->post(route('methods.tool.store'), array_merge($toolData, [
+
             'picture' => UploadedFile::fake()->image('tool.jpg'),
             'ETAT' => 1
         ]));
@@ -86,7 +98,7 @@ class ToolsControllerTest extends TestCase
     {
         $toolData = MethodsTools::factory()->make()->toArray();
 
-        $response = $this->post(route('methods.tool.store'), array_merge($toolData, ['ETAT' => 1]));
+        $response = $this->post(route('methods.tool.create'), array_merge($toolData, ['ETAT' => 1]));
 
         $response->assertSessionHasErrors('msg', 'Error, no image selected');
     }
@@ -109,7 +121,7 @@ class ToolsControllerTest extends TestCase
             'etat_update' => 1,
         ];
 
-        $response = $this->patch(route('methods.tool.update', $tool->id), $updateData);
+        $response = $this->post(route('methods.tool.update', ['id' => $tool->id]), $updateData);
 
         $this->assertDatabaseHas('methods_tools', [
             'id' => $tool->id,
@@ -131,12 +143,14 @@ class ToolsControllerTest extends TestCase
     {
         $tool = MethodsTools::factory()->create();
 
+
         $methodsDirectory = public_path('images/methods');
         if (!File::exists($methodsDirectory)) {
             File::makeDirectory($methodsDirectory, 0755, true);
         }
 
         $response = $this->post(route('methods.tool.store_image', $tool->id), [
+
             'id' => $tool->id,
             'picture' => UploadedFile::fake()->image('tool_image.jpg')
         ]);
@@ -160,7 +174,7 @@ class ToolsControllerTest extends TestCase
     {
         $tool = MethodsTools::factory()->create();
 
-        $response = $this->post(route('methods.tool.store_image', $tool->id), [
+        $response = $this->post(route('methods.tool.update.picture', ['id' => $tool->id]), [
             'id' => $tool->id,
         ]);
 

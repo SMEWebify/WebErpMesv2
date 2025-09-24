@@ -59,7 +59,7 @@ class LocationsControllerTest extends TestCase
             'color' => '#FFFFFF',
         ];
 
-        $response = $this->actingAs($user)->post(route('methods.location.store'), $data);
+        $response = $this->actingAs($user)->post(route('methods.location.create'), $data);
 
         // Vérifier que la redirection fonctionne
         $response->assertRedirect(route('methods.location'));
@@ -87,7 +87,7 @@ class LocationsControllerTest extends TestCase
             'color' => '#000000',
         ]);
 
-        // Simuler une requête PUT avec des données mises à jour
+        // Simuler une requête POST avec des données mises à jour
         $data = [
             'id' => $location->id,
             'label' => 'Updated Location',
@@ -95,7 +95,7 @@ class LocationsControllerTest extends TestCase
             'color' => '#FFFFFF',
         ];
 
-        $response = $this->actingAs($user)->put(route('methods.location.update', $location->id), $data);
+        $response = $this->actingAs($user)->post(route('methods.location.update', ['id' => $location->id]), $data);
 
         // Vérifier que la redirection fonctionne
         $response->assertRedirect(route('methods.location'));

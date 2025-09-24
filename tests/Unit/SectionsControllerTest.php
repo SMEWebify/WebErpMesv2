@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Admin\Factory;
 use App\Models\Methods\MethodsSection;
 use App\Services\SelectDataService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,10 +15,18 @@ class SectionsControllerTest extends TestCase
     use RefreshDatabase;
 
     protected $selectDataServiceMock;
+    protected $user;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        Factory::create([
+            'name' => 'Test Factory',
+        ]);
+
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
 
         // Mocking the SelectDataService for the dependency injection
         $this->selectDataServiceMock = Mockery::mock(SelectDataService::class);
@@ -63,7 +72,7 @@ class SectionsControllerTest extends TestCase
         $user = User::factory()->create();
 
         // Simuler une requête POST avec des données valides
-        $response = $this->post(route('methods.section.store'), [
+        $response = $this->post(route('methods.section.create'), [
             'ordre' => 1,
             'code' => 'SEC001',
             'label' => 'Section 1',
@@ -100,8 +109,8 @@ class SectionsControllerTest extends TestCase
         // Créer un utilisateur factice
         $user = User::factory()->create();
 
-        // Simuler une requête PUT avec des données mises à jour
-        $response = $this->put(route('methods.section.update', $section->id), [
+        // Simuler une requête POST avec des données mises à jour
+        $response = $this->post(route('methods.section.update', ['id' => $section->id]), [
             'id' => $section->id,
             'ordre' => 2,
             'label' => 'Updated Section',
