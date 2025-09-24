@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\ProductionTraceController;
 use App\Http\Controllers\EnergyConsumptionController;
+use App\Http\Controllers\DocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/reports', 'App\\Http\\Controllers\\ReportsController@index')->middleware(['auth', 'check.factory'])->name('reports');
     Route::get('/reports/accounting', 'App\\Http\\Controllers\\ReportsController@accounting')->middleware(['auth', 'check.factory'])->name('reports.accounting');
+
+    Route::get('/documents', [DocumentController::class, 'index'])
+        ->middleware(['auth', 'check.factory'])
+        ->name('documents.index');
 
     Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'check.factory'])->name('workshop');

@@ -3,11 +3,35 @@ import './bootstrap';
 
 import { createApp, h } from 'vue';
 import KanbanBoard from './components/KanbanBoard.vue';
+import DocumentTable from './components/DocumentTable.vue';
 import Whiteboard from './components/Whiteboard.vue';
 import 'livewire-sortable';
 
 function mountKanbanBoard() {
     const element = document.getElementById('card');
+
+
+const kanbanMountPoint = document.getElementById('card');
+if (kanbanMountPoint) {
+    const kanbanApp = createApp({});
+    kanbanApp.component('kanban-board', KanbanBoard);
+    kanbanApp.mount(kanbanMountPoint);
+}
+
+const documentTableMountPoint = document.getElementById('document-table-app');
+if (documentTableMountPoint) {
+    const initialDocuments = documentTableMountPoint.dataset.documents
+        ? JSON.parse(documentTableMountPoint.dataset.documents)
+        : [];
+    const translations = documentTableMountPoint.dataset.translations
+        ? JSON.parse(documentTableMountPoint.dataset.translations)
+        : {};
+
+    createApp(DocumentTable, {
+        initialDocuments,
+        translations,
+    }).mount(documentTableMountPoint);
+}
 
     if (!element) {
         return;
@@ -84,3 +108,4 @@ function mountWhiteboard() {
 
 mountKanbanBoard();
 mountWhiteboard();
+
