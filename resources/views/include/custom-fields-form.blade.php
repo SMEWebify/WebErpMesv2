@@ -25,6 +25,17 @@
                                     <input class="form-check-input" type="checkbox" id="{{ $fieldInputId }}" name="custom_fields[{{ $customField->id }}]" value="1" {{ $fieldValue ? 'checked' : '' }}>
                                     <label class="form-check-label" for="{{ $fieldInputId }}">{{ $customField->name }}</label>
                                 </div>
+                            @elseif ($customField->type === 'select')
+                                <label for="{{ $fieldInputId }}">{{ $customField->name }}</label>
+                                @php
+                                    $fieldOptions = is_array($customField->options) ? $customField->options : [];
+                                @endphp
+                                <select class="form-control" id="{{ $fieldInputId }}" name="custom_fields[{{ $customField->id }}]">
+                                    <option value="">{{ __('general_content.custom_fields_select_placeholder_trans_key') }}</option>
+                                    @foreach ($fieldOptions as $option)
+                                        <option value="{{ $option }}" {{ $fieldValue === $option ? 'selected' : '' }}>{{ $option }}</option>
+                                    @endforeach
+                                </select>
                             @else
                                 <label for="{{ $fieldInputId }}">{{ $customField->name }}</label>
                                 <div class="input-group">

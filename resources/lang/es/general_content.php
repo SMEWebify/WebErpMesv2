@@ -339,6 +339,11 @@ return [
     'custom_fields_category_placeholder_trans_key' => 'ej. Técnico',
     'custom_fields_placeholder_trans_key'      => 'Introduzca un valor...',
     'custom_fields_default_category_trans_key' => 'General',
+    'custom_fields_type_select_trans_key'      => 'Lista',
+    'custom_fields_options_trans_key'          => 'Opciones',
+    'custom_fields_options_placeholder_trans_key' => 'Una opción por línea',
+    'custom_fields_options_help_trans_key'     => 'Se mostrarán como valores seleccionables en la lista.',
+    'custom_fields_select_placeholder_trans_key' => 'Seleccione una opción',
 
     // CABECERA DE TARJETA
     'statistiques_trans_key'                   => 'Estadísticas',
