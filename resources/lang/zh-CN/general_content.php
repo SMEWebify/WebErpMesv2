@@ -617,6 +617,7 @@ return [
     'client_trans_key'                         => '客户',
     'new_client_trans_key'                     => '新增客户',
     'suppliers_trans_key'                      => '供应商',
+    'supplier_evaluations_trans_key'           => '供应商评估',
     'suppliers_client_trans_key'               => '客户/供应商',
     'view_details_trans_key'                   => '查看详情',
     'monthly_recap_report_trans_key'           => '月度汇总报告',

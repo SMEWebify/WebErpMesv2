@@ -563,6 +563,7 @@ return [
     'dashboard_trans_key'                      => 'لوحة القيادة',
     'client_trans_key'                         => 'العملاء',
     'suppliers_trans_key'                      => 'الموردين',
+    'supplier_evaluations_trans_key'           => 'تقييمات الموردين',
     'view_details_trans_key'                   => 'عرض التفاصيل',
     'monthly_recap_report_trans_key'           => 'تقرير شهري ملخص',
     'monthly_recap_task_trans_key'             => 'مهمة ملخص شهري',

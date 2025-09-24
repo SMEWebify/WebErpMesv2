@@ -622,6 +622,7 @@ return [
     'client_trans_key'                         => 'Clients',
     'new_client_trans_key'                     => 'Nouveaux client',
     'suppliers_trans_key'                      => 'Fournisseurs',
+    'supplier_evaluations_trans_key'           => 'Évaluations fournisseurs',
     'suppliers_client_trans_key'               => 'Client / Fournisseurs',
     'view_details_trans_key'                   => 'Voir détail',
     'monthly_recap_report_trans_key'           => 'Rapport récapitulatif mensuel',
