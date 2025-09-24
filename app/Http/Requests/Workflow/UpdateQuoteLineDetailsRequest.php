@@ -24,9 +24,9 @@ class UpdateQuoteLineDetailsRequest extends FormRequest
     public function rules()
     {
         return [
-            'x_size' => 'required|numeric|min:0',
-            'y_size' => 'required|numeric|min:0',
-            'z_size' => 'required|numeric|min:0',
+            'x_size' => 'nullable|numeric|min:0',
+            'y_size' => 'nullable|numeric|min:0',
+            'z_size' => 'nullable|numeric|min:0',
             'x_oversize' => 'nullable|numeric|min:0',
             'y_oversize' => 'nullable|numeric|min:0',
             'z_oversize' => 'nullable|numeric|min:0',

@@ -20,13 +20,10 @@
       <li class="nav-item"><a class="nav-link" href="#delivery" data-toggle="tab">{{ __('general_content.deliverys_notes_list_trans_key') }} ({{ $Companie->getDeliverysCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#invoice" data-toggle="tab">{{ __('general_content.invoices_list_trans_key') }} ({{ $Companie->getInvoicesCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Companie->getPurchasesCountAttribute() }})</a></li>
-      @php
-        $evaluationTabLabel = trans('general_content.supplier_evaluations_trans_key');
-        if ($evaluationTabLabel === 'general_content.supplier_evaluations_trans_key') {
-            $evaluationTabLabel = 'Supplier evaluations';
-        }
-      @endphp
-      <li class="nav-item"><a class="nav-link" href="#evaluation" data-toggle="tab">{{ $evaluationTabLabel }}</a></li>
+      
+      @if($Companie->statu_supplier == 2 )
+      <li class="nav-item"><a class="nav-link" href="#evaluation" data-toggle="tab">{{ __('general_content.supplier_evaluations_trans_key') }}</a></li>
+      @endif
     </ul>
   </div>
   <!-- /.card-header -->
@@ -1008,7 +1005,7 @@
               @if($latestEvaluation)
                 <ul class="list-unstyled mb-0">
                   <li><strong>{{ __('Last updated') }}:</strong> {{ optional($latestEvaluation->created_at)->format('d/m/Y H:i') }}</li>
-                  <li><strong>{{ __('Status') }}:</strong> {{ ucfirst(str_replace('_', ' ', $latestEvaluation->evaluation_status ?? ''))) }}</li>
+                  <li><strong>{{ __('Status') }}:</strong> {{ ucfirst(str_replace('_', ' ', $latestEvaluation->evaluation_status ?? '')) }}</li>
                   <li><strong>{{ __('Rating') }}:</strong>
                     @for ($i = 1; $i <= 5; $i++)
                       @if ($i <= ($latestEvaluation->rating ?? 0))

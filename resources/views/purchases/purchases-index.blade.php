@@ -23,18 +23,17 @@
     <div class="tab-pane active" id="Dashboard">
       
       @include('include.alert-result')
-      <div class="row">
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-            <canvas id="donutChart" width="400" height="400"></canvas>
-          </x-adminlte-card>
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="warning" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-          </x-adminlte-card>
-      </div>
+        <div class="row">
+          <div class="col-md-3">
+            <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+              <canvas id="donutChart" width="400" height="400"></canvas>
+            </x-adminlte-card>
+            <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="warning" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
+              <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </x-adminlte-card>
+        </div>
 
-      <div class="row mt-3">
-        <div class="col-md-6">
+        <div class="col-md-3">
           @php
             $compositeIndicatorsLabel = trans('general_content.supplier_composite_indicator_trans_key');
             if ($compositeIndicatorsLabel === 'general_content.supplier_composite_indicator_trans_key') {
@@ -67,8 +66,7 @@
               </div>
             @endif
           </x-adminlte-card>
-        </div>
-        <div class="col-md-6">
+
           @php
             $suppliersToRequalifyLabel = trans('general_content.suppliers_to_requalify_trans_key');
             if ($suppliersToRequalifyLabel === 'general_content.suppliers_to_requalify_trans_key') {
@@ -103,77 +101,9 @@
               </div>
             @endif
           </x-adminlte-card>
-        </div>
 
-      </div>
-
-        <div class="col-md-3">
           <x-adminlte-small-box title=" {{ __('general_content.lines_count_trans_key') }}" text="{{ $totalPurchaseLineCount }}" icon="fas fa-shopping-cart text-white"
-            theme="purple"/>
-
-            
-          <x-adminlte-card title="{{ __('general_content.top_rated_supplier_trans_key') }}" theme="primary" maximizable>
-            @foreach ($topRatedSuppliers as $supplier)
-              <div class="row ">
-                <div class="card-body">
-                  <div class="text-center">
-                      <h5>{{ $supplier->label }}</h5>
-                      <p>
-                      @for ($i = 1; $i <= 5; $i++)
-                          @if ($i <= $supplier->averageRating())
-                              <span class="badge badge-warning">&#9733;</span>
-                          @else
-                              <span class="badge badge-info">&#9734;</span>
-                          @endif
-                      @endfor
-                    </p>
-                  </div>
-                </div>
-              </div>
-            @endforeach
-          </x-adminlte-card>
-        </div>
-
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.suppliers_shortest_times_trans_key') }}" theme="secondary" maximizable>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>{{ __('general_content.supplier_trans_key') }}</th>
-                        <th>{{ __('general_content.delevery_time_trans_key') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($top5FastestSuppliers as $supplier)
-                    <tr>
-                        <td>{{ $supplier->supplier_name }}</td>
-                        <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-          </x-adminlte-card>
-          <x-adminlte-small-box title=" {{ __('general_content.total_price_trans_key') }}" text="{{ $totalPurchasesAmount }}" icon="fas fa-shopping-cart text-white"
-          theme="danger"/>
-          
-          <x-adminlte-card title="{{ __('general_content.suppliers_longest_times_trans_key') }}" theme="dark" maximizable>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>{{ __('general_content.supplier_trans_key') }}</th>
-                        <th>{{ __('general_content.delevery_time_trans_key') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($top5SlowestSuppliers as $supplier)
-                    <tr>
-                        <td>{{ $supplier->supplier_name }}</td>
-                        <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-          </x-adminlte-card>
+          theme="purple"/>
         </div>
 
         <div class="col-md-3">
@@ -240,6 +170,30 @@
             </div>
           </x-adminlte-card>
 
+          <x-adminlte-card title="{{ __('general_content.top_rated_supplier_trans_key') }}" theme="primary" maximizable>
+            @foreach ($topRatedSuppliers as $supplier)
+              <div class="row ">
+                <div class="card-body">
+                  <div class="text-center">
+                      <h5>{{ $supplier->label }}</h5>
+                      <p>
+                      @for ($i = 1; $i <= 5; $i++)
+                          @if ($i <= $supplier->averageRating())
+                              <span class="badge badge-warning">&#9733;</span>
+                          @else
+                              <span class="badge badge-info">&#9734;</span>
+                          @endif
+                      @endfor
+                    </p>
+                  </div>
+                </div>
+              </div>
+            @endforeach
+          </x-adminlte-card>
+
+          
+
+
           <x-adminlte-small-box title=" {{ __('general_content.average_purchase_price_trans_key') }}" text="{{ $averageAmount }}" icon="fas fa-chart-bar text-white" theme="teal"/>
           
           <x-adminlte-card title="{{ __('general_content.most_purchased_products_trans_key') }}" theme="success" maximizable>
@@ -262,81 +216,48 @@
           </x-adminlte-card>
         </div>
 
-      </div>
-
-      <div class="row mt-3">
-        <div class="col-md-6">
-          @php
-            $compositeIndicatorsLabel = trans('general_content.supplier_composite_indicator_trans_key');
-            if ($compositeIndicatorsLabel === 'general_content.supplier_composite_indicator_trans_key') {
-                $compositeIndicatorsLabel = 'Top supplier composite indicators';
-            }
-          @endphp
-          <x-adminlte-card title="{{ $compositeIndicatorsLabel }}" theme="info" maximizable>
-            @if($compositeIndicators->isEmpty())
-              <p class="text-muted">{{ __('No supplier evaluations have been recorded yet.') }}</p>
-            @else
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
+        <div class="col-md-3">
+          <x-adminlte-card title="{{ __('general_content.suppliers_shortest_times_trans_key') }}" theme="secondary" maximizable>
+            <table class="table">
+                <thead>
                     <tr>
-                      <th>{{ __('general_content.supplier_trans_key') }}</th>
-                      <th>{{ __('Composite score') }}</th>
-                      <th>{{ __('Next review at') }}</th>
+                        <th>{{ __('general_content.supplier_trans_key') }}</th>
+                        <th>{{ __('general_content.delevery_time_trans_key') }}</th>
                     </tr>
-                  </thead>
-                  <tbody>
-                    @foreach($compositeIndicators as $supplier)
-                      <tr>
-                        <td>{{ $supplier->label }}</td>
-                        <td>{{ $supplier->composite_score }}</td>
-                        <td>{{ optional(optional($supplier->latest_review)->next_review_at)->format('d/m/Y') ?? '-' }}</td>
-                      </tr>
+                </thead>
+                <tbody>
+                    @foreach ($top5FastestSuppliers as $supplier)
+                    <tr>
+                        <td>{{ $supplier->supplier_name }}</td>
+                        <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
+                    </tr>
                     @endforeach
-                  </tbody>
-                </table>
-              </div>
-            @endif
+                </tbody>
+            </table>
           </x-adminlte-card>
-        </div>
-        <div class="col-md-6">
-          @php
-            $suppliersToRequalifyLabel = trans('general_content.suppliers_to_requalify_trans_key');
-            if ($suppliersToRequalifyLabel === 'general_content.suppliers_to_requalify_trans_key') {
-                $suppliersToRequalifyLabel = 'Suppliers to requalify soon';
-            }
-          @endphp
-          <x-adminlte-card title="{{ $suppliersToRequalifyLabel }}" theme="danger" maximizable>
-            @if($suppliersToRequalify->isEmpty())
-              <p class="text-muted">{{ __('No suppliers require requalification within the next 30 days.') }}</p>
-            @else
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
+          <x-adminlte-small-box title=" {{ __('general_content.total_price_trans_key') }}" text="{{ $totalPurchasesAmount }}" icon="fas fa-shopping-cart text-white"
+          theme="danger"/>
+          
+          <x-adminlte-card title="{{ __('general_content.suppliers_longest_times_trans_key') }}" theme="dark" maximizable>
+            <table class="table">
+                <thead>
                     <tr>
-                      <th>{{ __('general_content.supplier_trans_key') }}</th>
-                      <th>{{ __('Status') }}</th>
-                      <th>{{ __('Composite score') }}</th>
-                      <th>{{ __('Next review at') }}</th>
+                        <th>{{ __('general_content.supplier_trans_key') }}</th>
+                        <th>{{ __('general_content.delevery_time_trans_key') }}</th>
                     </tr>
-                  </thead>
-                  <tbody>
-                    @foreach($suppliersToRequalify as $supplier)
-                      <tr>
-                        <td>{{ $supplier->label }}</td>
-                        <td>{{ ucfirst(str_replace('_', ' ', $supplier->evaluation_status ?? '')) }}</td>
-                        <td>{{ $supplier->composite_score ?? __('N/A') }}</td>
-                        <td>{{ optional($supplier->next_review_at)->format('d/m/Y') ?? '-' }}</td>
-                      </tr>
+                </thead>
+                <tbody>
+                    @foreach ($top5SlowestSuppliers as $supplier)
+                    <tr>
+                        <td>{{ $supplier->supplier_name }}</td>
+                        <td>{{ round($supplier->avg_reception_delay, 2) }}</td>
+                    </tr>
                     @endforeach
-                  </tbody>
-                </table>
-              </div>
-            @endif
+                </tbody>
+            </table>
           </x-adminlte-card>
         </div>
       </div>
-
     </div>
     <div class="tab-pane" id="List">
       @livewire('purchases-index')

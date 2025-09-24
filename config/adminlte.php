@@ -228,11 +228,16 @@ return [
         // Navbar items:
         [
             'type'          => 'navbar-search',
-            'text'          => 'search_trans_key',        
+            'text'          => 'search_trans_key',
             'topnav'        => true,
             'url'           => 'navbar/search',
-            'method'        => 'post', 
+            'method'        => 'post',
             'input_name'    => 'searchVal' ,
+        ],
+        [
+            'text'            => 'whiteboard_trans_key',
+            'url'             => 'collaboration/whiteboards',
+            'topnav_right'    => true,
         ],
         [
             'text'            => 'Iframe mode',

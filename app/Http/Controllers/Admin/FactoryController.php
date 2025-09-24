@@ -32,7 +32,10 @@ class FactoryController extends Controller
         $AnnouncementLines = Announcements::get()->All();
         $VATSelect = $this->SelectDataService->getVATSelect();
         $Factory = Factory::first();
-        $CustomFields = CustomField::all();
+        $CustomFields = CustomField::orderBy('related_type')
+            ->orderBy('category')
+            ->orderBy('name')
+            ->get();
         $DocumentCodeTemplates = DocumentCodeTemplate::all();
 
         if (!$Factory) {
@@ -168,10 +171,26 @@ class FactoryController extends Controller
     public function storeCustomField(StoreCustomFieldRequest $request)
     {
         // Create a new custom field
+        $options = null;
+
+        if ($request->type === 'select') {
+            $options = collect(preg_split('/\r\n|\r|\n/', (string) $request->input('options', '')))
+                ->map(fn ($option) => trim($option))
+                ->filter(fn ($option) => $option !== '')
+                ->values()
+                ->all();
+
+            if (empty($options)) {
+                $options = null;
+            }
+        }
+
         $customField = CustomField::create([
             'name' => $request->name,
             'type' => $request->type,
             'related_type' => $request->related_type,
+            'category' => $request->category,
+            'options' => $options,
         ]);
 
         // Redirect to a confirmation page or other action
@@ -188,11 +207,13 @@ class FactoryController extends Controller
     {
         // Validate the form data
         $validatedData = $request->validate([
-            'custom_fields' => 'array', // You can add additional validation rules here
+            'custom_fields' => 'nullable|array', // You can add additional validation rules here
         ]);
 
         // Loop through the data submitted by the form and create or update custom field values
-        foreach ($validatedData['custom_fields'] as $fieldId => $fieldValue) {
+        $submittedFields = $validatedData['custom_fields'] ?? [];
+
+        foreach ($submittedFields as $fieldId => $fieldValue) {
             // Check if the custom field value already exists in the database
             $customFieldValue = CustomFieldValue::where('custom_field_id', $fieldId)
                                                 ->where('entity_id', $id)
@@ -225,6 +246,8 @@ class FactoryController extends Controller
                 return redirect()->route('invoices.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
             case 'purchase':
                 return redirect()->route('purchases.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
+            case 'product':
+                return redirect()->route('products.show', ['id' => $id])->with('success', 'Successfully updated custom fields');
             default:
                 return redirect()->back()->withErrors(['msg' => 'Something went wrong']);
         }

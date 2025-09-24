@@ -338,6 +338,15 @@ return [
     'kanban_setting_note_trans_key'            => 'ستُستخدم السطر الأول للحالة الافتراضية للمهام الجديدة. وسيتم استخدام السطر الأخير للمهام المنتهية والجاهزة لمذكرة التسليم',
     'make_new_role_trans_key'                  => 'إنشاء دور جديد',
     'custom_fields_trans_key'                  => 'الحقول المخصصة',
+    'custom_fields_category_trans_key'         => 'الفئة',
+    'custom_fields_category_placeholder_trans_key' => 'مثال: تقني',
+    'custom_fields_placeholder_trans_key'      => 'أدخل قيمة...',
+    'custom_fields_default_category_trans_key' => 'عام',
+    'custom_fields_type_select_trans_key'      => 'قائمة',
+    'custom_fields_options_trans_key'          => 'الخيارات',
+    'custom_fields_options_placeholder_trans_key' => 'خيار واحد في كل سطر',
+    'custom_fields_options_help_trans_key'     => 'تُعرض كقيم قابلة للاختيار في القائمة.',
+    'custom_fields_select_placeholder_trans_key' => 'اختر خيارًا',
     
     // CARD HEADER
     'statistiques_trans_key'   => 'الإحصائيات',
@@ -572,6 +581,7 @@ return [
     'dashboard_trans_key'                      => 'لوحة القيادة',
     'client_trans_key'                         => 'العملاء',
     'suppliers_trans_key'                      => 'الموردين',
+    'supplier_evaluations_trans_key'           => 'تقييمات الموردين',
     'view_details_trans_key'                   => 'عرض التفاصيل',
     'monthly_recap_report_trans_key'           => 'تقرير شهري ملخص',
     'monthly_recap_task_trans_key'             => 'مهمة ملخص شهري',
@@ -891,6 +901,7 @@ return [
     'new_expense_categories_trans_key'       => 'فئات مصاريف جديدة',
     
     //USER
+    'whiteboard_trans_key'               => 'لوحة بيضاء',
     'users_trans_key'                    => 'المستخدمين',
     'users_list_trans_key'               => 'قائمة المستخدمين',
     'about_trans_key'                    => 'حول',

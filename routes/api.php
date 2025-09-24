@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\QuoteController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\EnergyConsumptionController;
 use App\Http\Controllers\Api\ExportSalesOrderController;
+use App\Http\Controllers\Api\Collaboration\WhiteboardController as ApiWhiteboardController;
+use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
+use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,3 +40,17 @@ Route::apiResource('order',OrderController::class);
 Route::apiResource('tasks', TaskController::class);
 Route::apiResource('energy-consumptions', EnergyConsumptionController::class)->only(['index','store']);
 Route::get('/exports/sales-orders', ExportSalesOrderController::class);
+
+Route::prefix('collaboration/whiteboards')->name('api.collaboration.whiteboards.')->group(function () {
+    Route::get('/', [ApiWhiteboardController::class, 'index'])->name('index');
+    Route::post('/', [ApiWhiteboardController::class, 'store'])->name('store');
+    Route::get('/{whiteboard}', [ApiWhiteboardController::class, 'show'])->name('show');
+    Route::put('/{whiteboard}', [ApiWhiteboardController::class, 'update'])->name('update');
+
+    Route::get('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'index'])->name('snapshots.index');
+    Route::post('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'store'])->name('snapshots.store');
+
+    Route::get('/{whiteboard}/files', [WhiteboardFileController::class, 'index'])->name('files.index');
+    Route::post('/{whiteboard}/files', [WhiteboardFileController::class, 'store'])->name('files.store');
+});
+

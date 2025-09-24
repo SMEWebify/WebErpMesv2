@@ -22,6 +22,8 @@ class CustomFieldService
                         ->where('cfv.entity_id', '=', $entityId);
             })
             ->select('custom_fields.*', 'cfv.value as field_value')
+            ->orderBy('custom_fields.category')
+            ->orderBy('custom_fields.name')
             ->get();
     }
 }
