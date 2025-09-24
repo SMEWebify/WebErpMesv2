@@ -887,6 +887,7 @@ return [
     'new_expense_categories_trans_key'       => 'فئات مصاريف جديدة',
     
     //USER
+    'whiteboard_trans_key'               => 'لوحة بيضاء',
     'users_trans_key'                    => 'المستخدمين',
     'users_list_trans_key'               => 'قائمة المستخدمين',
     'about_trans_key'                    => 'حول',

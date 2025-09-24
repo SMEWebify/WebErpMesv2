@@ -73,6 +73,7 @@ return [
     'risques_trans_key'                        => 'Risque',
     'formations_trans_key'                     => 'Formations',
     'conformites_trans_key'                    => 'Conformités',
+    'whiteboard_trans_key'                     => 'Tableau blanc',
     'users_trans_key'                          => 'Utilisateurs',
     'your_company_trans_key'                   => 'Votre entreprise',
     'factory_settings_trans_key'               => 'Réglage société',
