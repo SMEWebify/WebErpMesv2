@@ -563,6 +563,7 @@ return [
     'dashboard_trans_key'                      => 'Panel de control',
     'client_trans_key'                         => 'Clientes',
     'suppliers_trans_key'                      => 'Proveedores',
+    'supplier_evaluations_trans_key'           => 'Evaluaciones de proveedores',
     'view_details_trans_key'                   => 'Ver detalles',
     'monthly_recap_report_trans_key'           => 'Informe mensual de resumen',
     'monthly_recap_task_trans_key'             => 'Tarea mensual de resumen',

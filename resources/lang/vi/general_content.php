@@ -27,6 +27,7 @@ return [
     'dashboard_trans_key'                      => 'Bảng điều khiển',
     'client_trans_key'                         => 'Khách hàng',
     'suppliers_trans_key'                      => 'Nhà cung cấp',
+    'supplier_evaluations_trans_key'           => 'Đánh giá nhà cung cấp',
     'view_details_trans_key'                   => 'Xem chi tiết',
     'monthly_recap_report_trans_key'           => 'Monthly Recap Report',
     'monthly_recap_task_trans_key'             => 'Monthly Recap Task',
