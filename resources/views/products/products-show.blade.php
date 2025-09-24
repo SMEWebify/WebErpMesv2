@@ -18,6 +18,9 @@
           <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab"><i class="fas fa-info-circle"></i> {{ __('general_content.product_info_trans_key') }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab"><i class="fas fa-cogs"></i> {{ __('general_content.tech_bom_trans_key') }} {{ $Product->getAllTaskCountAttribute() }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#Stock" data-toggle="tab"><i class="fas fa-boxes"></i> {{ __('general_content.stock_trans_key') }} ({{ $Product->StockLocationProductCount() }})</a></li>
+          @if($CustomFields->count() > 0)
+          <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab"><i class="fas fa-list"></i> {{ __('general_content.custom_fields_trans_key') }}</a></li>
+          @endif
           @if($Product->purchased == 1 )
           <li class="nav-item"><a class="nav-link" href="#PreferredSupplier" data-toggle="tab"> <i class="fas fa-truck"></i>{{ __('general_content.preferred_supplier_trans_key') }}</a></li>
           @endif
@@ -322,6 +325,11 @@
             @include('include.table-stock-locations-products')
           </x-adminlte-card>
         </div>
+        @if($CustomFields->count() > 0)
+        <div class="tab-pane" id="CustomFields">
+          @include('include.custom-fields-form', ['id' => $Product->id, 'type' => 'product'])
+        </div>
+        @endif
         @if($Product->purchased == 1 )
         <div class="tab-pane" id="PreferredSupplier">
           <div class="row">

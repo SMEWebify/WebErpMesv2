@@ -335,6 +335,10 @@ return [
     'kanban_setting_note_trans_key'            => 'La primera línea se utilizará para el estado predeterminado de las nuevas tareas. La última línea se utiliza para las tareas finalizadas, listas para la nota de entrega',
     'make_new_role_trans_key'                  => 'Crear un nuevo rol',
     'custom_fields_trans_key'                  => 'Campos personalizados',
+    'custom_fields_category_trans_key'         => 'Categoría',
+    'custom_fields_category_placeholder_trans_key' => 'ej. Técnico',
+    'custom_fields_placeholder_trans_key'      => 'Introduzca un valor...',
+    'custom_fields_default_category_trans_key' => 'General',
 
     // CABECERA DE TARJETA
     'statistiques_trans_key'                   => 'Estadísticas',

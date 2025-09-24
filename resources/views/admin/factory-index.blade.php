@@ -603,6 +603,7 @@
                                         <tr>
                                             <th>{{ __('general_content.name_field_trans_key') }}</th>
                                             <th>{{ __('general_content.type_field_trans_key') }} </th>
+                                            <th>{{ __('general_content.custom_fields_category_trans_key') }}</th>
                                             <th>{{ __('general_content.entity_type_trans_key') }}</th>
                                             <th></th>
                                         </tr>
@@ -612,6 +613,7 @@
                                             <tr>
                                                 <td>{{ $CustomField->name }}</td>
                                                 <td>{{ $CustomField->type }}</td>
+                                                <td>{{ $CustomField->category ?? __('general_content.custom_fields_default_category_trans_key') }}</td>
                                                 <td>{{ $CustomField->related_type }}</td>
                                                 <td></td>
                                             </tr>
@@ -623,6 +625,7 @@
                                         <tr>
                                             <th>{{ __('general_content.name_field_trans_key') }}</th>
                                             <th>{{ __('general_content.type_field_trans_key') }} </th>
+                                            <th>{{ __('general_content.custom_fields_category_trans_key') }}</th>
                                             <th>{{ __('general_content.entity_type_trans_key') }}</th>
                                             <th></th>
                                         </tr>
@@ -670,7 +673,17 @@
                                             <option value="delivery">{{ __('general_content.delivery_notes_trans_key') }}</option>
                                             <option value="invoice">{{ __('general_content.invoice_trans_key') }}</option>
                                             <option value="purchase">{{ __('general_content.purchase_order_trans_key') }}</option>
+                                            <option value="product">{{ __('general_content.products_trans_key') }}</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="category">{{ __('general_content.custom_fields_category_trans_key') }} :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="category" name="category" placeholder="{{ __('general_content.custom_fields_category_placeholder_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="card-footer">
