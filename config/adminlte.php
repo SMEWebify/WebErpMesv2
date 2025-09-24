@@ -625,6 +625,12 @@ return [
             ],
         ],
         [
+            'text' => 'documents_trans_key',
+            'icon' => 'fas fa-folder-open',
+            'icon_color' => 'cyan',
+            'url'  => 'documents',
+        ],
+        [
             'text' => 'osh_trans_key',
             'icon'    => 'fas fa-hard-hat',
             'can'  => ['osh-menu'],

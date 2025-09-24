@@ -3,6 +3,7 @@ import './bootstrap';
 
 import { createApp } from 'vue';
 import KanbanBoard from './components/KanbanBoard.vue';
+import DocumentTable from './components/DocumentTable.vue';
 import 'livewire-sortable';
 
 /**
@@ -11,10 +12,24 @@ import 'livewire-sortable';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = createApp({});
+const kanbanMountPoint = document.getElementById('card');
+if (kanbanMountPoint) {
+    const kanbanApp = createApp({});
+    kanbanApp.component('kanban-board', KanbanBoard);
+    kanbanApp.mount(kanbanMountPoint);
+}
 
-// Enregistrez le composant KanbanBoard globalement
-app.component('kanban-board', KanbanBoard);
+const documentTableMountPoint = document.getElementById('document-table-app');
+if (documentTableMountPoint) {
+    const initialDocuments = documentTableMountPoint.dataset.documents
+        ? JSON.parse(documentTableMountPoint.dataset.documents)
+        : [];
+    const translations = documentTableMountPoint.dataset.translations
+        ? JSON.parse(documentTableMountPoint.dataset.translations)
+        : {};
 
-// Montez l'application sur l'élément avec l'ID #card
-app.mount('#card');
+    createApp(DocumentTable, {
+        initialDocuments,
+        translations,
+    }).mount(documentTableMountPoint);
+}
