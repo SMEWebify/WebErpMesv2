@@ -888,6 +888,7 @@ return [
     'new_expense_categories_trans_key'         => 'Nueva categoría de gastos',
 
     //USUARIO
+    'whiteboard_trans_key'                     => 'Pizarra',
     'users_trans_key'                          => 'Usuarios',
     'users_list_trans_key'                     => 'Lista de usuarios',
     'about_trans_key'                          => 'Acerca de',

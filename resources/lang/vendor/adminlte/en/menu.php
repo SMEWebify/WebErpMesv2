@@ -73,6 +73,7 @@ return [
     'risques_trans_key'                        => 'Risks',
     'formations_trans_key'                     => 'Trainings',
     'conformites_trans_key'                    => 'Conformities',
+    'whiteboard_trans_key'                     => 'Whiteboard',
     'users_trans_key'                          => 'Users',
     'your_company_trans_key'                   => 'Your company',
     'factory_settings_trans_key'               => 'Factory settings',

@@ -1040,6 +1040,7 @@ return [
     'corrective_actions_class_trans_key'       => '纠正措施',
 
     //USER
+    'whiteboard_trans_key'                     => '白板',
     'users_trans_key'                          => '用户',
     'users_list_trans_key'                     => '用户列表',
     'about_trans_key'                          => '关于',

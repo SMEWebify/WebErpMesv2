@@ -1045,6 +1045,7 @@ return [
     'corrective_actions_class_trans_key'       => 'Corrective Actions',
     
     //USER
+    'whiteboard_trans_key'                     => 'Whiteboard',
     'users_trans_key'                          => 'Users',
     'users_list_trans_key'                     => 'Users list',
     'about_trans_key'                          => 'About',
