@@ -75,7 +75,7 @@ class ServicesControllerTest extends TestCase
         ];
 
         // Exécute la requête POST
-        $response = $this->post(route('methods.service.store'), $data);
+        $response = $this->post(route('methods.service.create'), $data);
 
         // Vérifie que le service a bien été créé
         $this->assertDatabaseHas('methods_services', ['code' => 'SRV001', 'label' => 'Test Service']);
@@ -104,7 +104,7 @@ class ServicesControllerTest extends TestCase
         ];
 
         // Exécute la requête POST
-        $response = $this->post(route('methods.service.store'), $data);
+        $response = $this->post(route('methods.service.create'), $data);
 
         // Vérifie que l'erreur est retournée
         $response->assertSessionHasErrors(['msg' => 'Error, no image selected']);
@@ -128,8 +128,8 @@ class ServicesControllerTest extends TestCase
             'companies_id' => 2
         ];
 
-        // Exécute la requête PUT
-        $response = $this->put(route('methods.service.update'), $data);
+        // Exécute la requête POST
+        $response = $this->post(route('methods.service.update', ['id' => $service->id]), $data);
 
         // Vérifie que le service a été mis à jour
         $this->assertDatabaseHas('methods_services', ['id' => $service->id, 'label' => 'Updated Service']);
@@ -155,7 +155,7 @@ class ServicesControllerTest extends TestCase
         ];
 
         // Exécute la requête POST pour la mise à jour de l'image
-        $response = $this->post(route('methods.service.storeImage'), $data);
+        $response = $this->post(route('methods.service.update.picture', ['id' => $service->id]), $data);
 
         // Vérifie que l'image a bien été mise à jour
         $this->assertDatabaseHas('methods_services', ['id' => $service->id, 'picture' => $data['picture']->hashName()]);
@@ -180,7 +180,7 @@ class ServicesControllerTest extends TestCase
         ];
 
         // Exécute la requête POST pour la mise à jour de l'image sans image
-        $response = $this->post(route('methods.service.storeImage'), $data);
+        $response = $this->post(route('methods.service.update.picture', ['id' => $service->id]), $data);
 
         // Vérifie que l'erreur est retournée
         $response->assertSessionHasErrors(['msg' => 'Error, no image selected']);

@@ -60,7 +60,7 @@ class StandardNomenclatureControllerTest extends TestCase
         ];
 
         // Act
-        $response = $this->post(route('methods.standard.nomenclature.store'), $data);
+        $response = $this->post(route('methods.standard.nomenclature.create'), $data);
 
         // Assert
         $response->assertRedirect(route('methods.standard.nomenclature'));
@@ -79,7 +79,7 @@ class StandardNomenclatureControllerTest extends TestCase
         ];
 
         // Act
-        $response = $this->post(route('methods.standard.nomenclature.store'), $data);
+        $response = $this->post(route('methods.standard.nomenclature.create'), $data);
 
         // Assert
         $response->assertSessionHasErrors(['code']);
@@ -102,7 +102,7 @@ class StandardNomenclatureControllerTest extends TestCase
         ];
 
         // Act
-        $response = $this->put(route('methods.standard.nomenclature.update', $nomenclature->id), $updateData);
+        $response = $this->post(route('methods.standard.nomenclature.update', ['id' => $nomenclature->id]), $updateData);
 
         // Assert
         $response->assertRedirect(route('methods.standard.nomenclature'));
@@ -121,7 +121,7 @@ class StandardNomenclatureControllerTest extends TestCase
         $nomenclature = MethodsStandardNomenclature::factory()->create();
 
         // Act: Sending invalid update (empty label)
-        $response = $this->put(route('methods.standard.nomenclature.update', $nomenclature->id), [
+        $response = $this->post(route('methods.standard.nomenclature.update', ['id' => $nomenclature->id]), [
             'id' => $nomenclature->id,
             'label' => '',
         ]);
