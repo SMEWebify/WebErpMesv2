@@ -335,6 +335,10 @@ return [
     'kanban_setting_note_trans_key'            => 'La primera línea se utilizará para el estado predeterminado de las nuevas tareas. La última línea se utiliza para las tareas finalizadas, listas para la nota de entrega',
     'make_new_role_trans_key'                  => 'Crear un nuevo rol',
     'custom_fields_trans_key'                  => 'Campos personalizados',
+    'custom_fields_category_trans_key'         => 'Categoría',
+    'custom_fields_category_placeholder_trans_key' => 'ej. Técnico',
+    'custom_fields_placeholder_trans_key'      => 'Introduzca un valor...',
+    'custom_fields_default_category_trans_key' => 'General',
 
     // CABECERA DE TARJETA
     'statistiques_trans_key'                   => 'Estadísticas',
@@ -563,6 +567,7 @@ return [
     'dashboard_trans_key'                      => 'Panel de control',
     'client_trans_key'                         => 'Clientes',
     'suppliers_trans_key'                      => 'Proveedores',
+    'supplier_evaluations_trans_key'           => 'Evaluaciones de proveedores',
     'view_details_trans_key'                   => 'Ver detalles',
     'monthly_recap_report_trans_key'           => 'Informe mensual de resumen',
     'monthly_recap_task_trans_key'             => 'Tarea mensual de resumen',

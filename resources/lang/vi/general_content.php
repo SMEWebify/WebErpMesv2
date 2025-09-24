@@ -27,6 +27,7 @@ return [
     'dashboard_trans_key'                      => 'Bảng điều khiển',
     'client_trans_key'                         => 'Khách hàng',
     'suppliers_trans_key'                      => 'Nhà cung cấp',
+    'supplier_evaluations_trans_key'           => 'Đánh giá nhà cung cấp',
     'view_details_trans_key'                   => 'Xem chi tiết',
     'monthly_recap_report_trans_key'           => 'Monthly Recap Report',
     'monthly_recap_task_trans_key'             => 'Monthly Recap Task',
@@ -145,4 +146,9 @@ return [
     'characteristics_trans_key'                => 'Đặc điểm',
     'select_ressource_trans_key'               => 'Chọn nguồn lực',
     'contact_info_trans_key'                   => 'Thông tin liên hệ',
+    'custom_fields_trans_key'                  => 'Trường tùy chỉnh',
+    'custom_fields_category_trans_key'         => 'Danh mục',
+    'custom_fields_category_placeholder_trans_key' => 'ví dụ: Kỹ thuật',
+    'custom_fields_placeholder_trans_key'      => 'Nhập một giá trị...',
+    'custom_fields_default_category_trans_key' => 'Chung',
 ];

@@ -9,6 +9,7 @@ use App\Models\Planning\Status;
 use App\Models\Products\Products;
 use App\Traits\NextPreviousTrait;
 use App\Services\SelectDataService;
+use App\Services\CustomFieldService;
 use App\Http\Controllers\Controller;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
@@ -27,14 +28,17 @@ class ProductsController extends Controller
     protected $SelectDataService;
     protected $abcFMRService;
     protected $stockCalculationService;
+    protected $customFieldService;
 
-    public function __construct(SelectDataService $SelectDataService, 
+    public function __construct(SelectDataService $SelectDataService,
                                 ABC_MFR_CalculatorService $abcFMRService,
-                                StockCalculationService $stockCalculationService)
+                                StockCalculationService $stockCalculationService,
+                                CustomFieldService $customFieldService)
     {
         $this->SelectDataService = $SelectDataService;
         $this->abcFMRService = $abcFMRService;
         $this->stockCalculationService = $stockCalculationService;
+        $this->customFieldService = $customFieldService;
     }
 
     /**
@@ -133,6 +137,7 @@ class ProductsController extends Controller
         if ($Product->purchased == 1) {
             $averageSupplyDelay = $this->calculateAverageSupplyDelay($id);
         }
+        $CustomFields = $this->customFieldService->getCustomFieldsWithValues('product', $Product->id);
 
         return view('products/products-show', array_merge($selectData, [
             'Product' => $Product,
@@ -144,6 +149,7 @@ class ProductsController extends Controller
             'lastPurchasePrice' => $lastPurchasePrice,
             'averageCost' => $averageCost,
             'averageSupplyDelay' => $averageSupplyDelay,
+            'CustomFields' => $CustomFields,
         ]));
     }
 

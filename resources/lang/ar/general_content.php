@@ -338,6 +338,10 @@ return [
     'kanban_setting_note_trans_key'            => 'ستُستخدم السطر الأول للحالة الافتراضية للمهام الجديدة. وسيتم استخدام السطر الأخير للمهام المنتهية والجاهزة لمذكرة التسليم',
     'make_new_role_trans_key'                  => 'إنشاء دور جديد',
     'custom_fields_trans_key'                  => 'الحقول المخصصة',
+    'custom_fields_category_trans_key'         => 'الفئة',
+    'custom_fields_category_placeholder_trans_key' => 'مثال: تقني',
+    'custom_fields_placeholder_trans_key'      => 'أدخل قيمة...',
+    'custom_fields_default_category_trans_key' => 'عام',
     
     // CARD HEADER
     'statistiques_trans_key'   => 'الإحصائيات',
@@ -563,6 +567,7 @@ return [
     'dashboard_trans_key'                      => 'لوحة القيادة',
     'client_trans_key'                         => 'العملاء',
     'suppliers_trans_key'                      => 'الموردين',
+    'supplier_evaluations_trans_key'           => 'تقييمات الموردين',
     'view_details_trans_key'                   => 'عرض التفاصيل',
     'monthly_recap_report_trans_key'           => 'تقرير شهري ملخص',
     'monthly_recap_task_trans_key'             => 'مهمة ملخص شهري',
