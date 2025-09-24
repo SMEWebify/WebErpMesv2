@@ -14,7 +14,6 @@
     cursor: default;
     margin: 0 1px 20px 0;
     padding: 10px 0px 7px 0px;
-    width: 15%;
     float: left;
     position: relative;
     background-color: #6c757d;
@@ -132,4 +131,19 @@
 }
 .place-3 {
     background-color: bronze;
+}
+
+/** TABLE PLANNING **/
+
+#tblDemo {
+    table-layout: fixed;  
+    width: 100%; 
+}
+
+#tblDemo th,
+#tblDemo td {
+    width: 100px;
+    text-align: center; 
+    white-space: nowrap; 
+    overflow: hidden; 
 }
