@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Livewire;
+use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\ProductionTraceController;
@@ -29,6 +30,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::post('/order/ratings', 'App\Http\Controllers\Workflow\OrdersRatingController@store')->name('order.ratings.store');
 
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'check.factory'])->name('dashboard');
+    Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');
+        Route::get('/whiteboards/{whiteboard}', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.show');
+    });
+
 
     Route::get('/reports', 'App\\Http\\Controllers\\ReportsController@index')->middleware(['auth', 'check.factory'])->name('reports');
     Route::get('/reports/accounting', 'App\\Http\\Controllers\\ReportsController@accounting')->middleware(['auth', 'check.factory'])->name('reports.accounting');

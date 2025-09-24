@@ -147,3 +147,35 @@
     white-space: nowrap; 
     overflow: hidden; 
 }
+
+#my-notification .dropdown-menu {
+    width: 22rem;
+    max-width: calc(100vw - 2rem);
+}
+
+#my-notification .dropdown-menu .notification-item {
+    white-space: normal;
+    gap: 0.75rem;
+}
+
+#my-notification .dropdown-menu .notification-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    margin-top: 0.15rem;
+}
+
+#my-notification .dropdown-menu .notification-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+#my-notification .dropdown-menu .notification-text {
+    font-weight: 500;
+    word-break: break-word;
+}
+
+#my-notification .dropdown-menu .notification-time {
+    font-size: 0.75rem;
+}
