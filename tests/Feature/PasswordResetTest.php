@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
 
 class PasswordResetTest extends TestCase
 {
@@ -64,6 +65,9 @@ class PasswordResetTest extends TestCase
             ]);
 
             $response->assertSessionHasNoErrors();
+            
+            $user->refresh();
+            $this->assertTrue(Hash::check('password', $user->password));
 
             return true;
         });

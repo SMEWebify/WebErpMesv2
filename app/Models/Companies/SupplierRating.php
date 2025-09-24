@@ -37,7 +37,7 @@ class SupplierRating extends Model
 
     public function purchaseOrder()
     {
-        return $this->belongsTo(Purchases::class);
+        return $this->belongsTo(Purchases::class, 'purchases_id');
     }
 
     public function supplier()
