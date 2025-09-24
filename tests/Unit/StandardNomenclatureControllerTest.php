@@ -3,6 +3,8 @@
 namespace Tests\Feature\Http\Controllers\Methods;
 
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Admin\Factory;
 use App\Models\Methods\MethodsStandardNomenclature;
 use App\Services\SelectDataService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,10 +18,17 @@ class StandardNomenclatureControllerTest extends TestCase
     use RefreshDatabase;
 
     protected $selectDataService;
+    protected $user;
 
     public function setUp(): void
     {
         parent::setUp();
+        Factory::create([
+            'name' => 'Test Factory',
+        ]);
+
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
         $this->selectDataService = $this->createMock(SelectDataService::class);
         $this->app->instance(SelectDataService::class, $this->selectDataService);
     }

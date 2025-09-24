@@ -3,6 +3,8 @@
 namespace Tests\Feature\Http\Controllers\Methods;
 
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Admin\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -14,10 +16,18 @@ class ServicesControllerTest extends TestCase
     use RefreshDatabase;
 
     protected $mockSelectDataService;
+    protected $user;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        Factory::create([
+            'name' => 'Test Factory',
+        ]);
+
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
 
         // Mock le service SelectDataService
         $this->mockSelectDataService = $this->createMock(SelectDataService::class);
