@@ -37,6 +37,8 @@ class FactoryController extends Controller
             ->orderBy('name')
             ->get();
         $DocumentCodeTemplates = DocumentCodeTemplate::all();
+        $pdfThemes = array_keys(config('pdf.themes', []));
+        $pdfFallbackTheme = config('pdf.fallback_theme');
 
         if (!$Factory) {
             $Factory = Factory::create([
@@ -47,6 +49,8 @@ class FactoryController extends Controller
                 'mail' => 'your @',
                 'web_site' => 'Your web site',
                 'pdf_header_font_color' => '#60A7A6',
+                'pdf_theme' => $pdfFallbackTheme,
+                'pdf_custom_css' => null,
                 'add_day_validity_quote' => '0',
                 'add_delivery_delay_order' => '0',
             ]);
@@ -58,6 +62,8 @@ class FactoryController extends Controller
             'Factory' => $Factory,
             'CustomFields' => $CustomFields,
             'DocumentCodeTemplates' => $DocumentCodeTemplates,
+            'pdfThemes' => $pdfThemes,
+            'pdfFallbackTheme' => $pdfFallbackTheme,
         ]);
     }
 
@@ -86,6 +92,8 @@ class FactoryController extends Controller
         $Factory->share_capital = $request->share_capital; 
         $Factory->curency = $request->curency;
         $Factory->pdf_header_font_color = $request->pdf_header_font_color;
+        $Factory->pdf_theme = $request->pdf_theme;
+        $Factory->pdf_custom_css = $request->pdf_custom_css;
         $Factory->add_day_validity_quote = $request->add_day_validity_quote;
         $Factory->add_delivery_delay_order =  $request->add_delivery_delay_order;
         $Factory->task_barre_code =  $request->task_barre_code;

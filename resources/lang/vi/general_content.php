@@ -133,6 +133,13 @@ return [
 
     'users_trans_key'                          => 'Người dùng',
     'your_company_trans_key'                   => 'Công ty',
+    'header_font_color_trans_key'              => 'Màu chữ tiêu đề',
+    'pdf_theme_trans_key'                      => 'Giao diện PDF',
+    'pdf_theme_fallback_trans_key'             => 'Mặc định',
+    'pdf_theme_help_trans_key'                 => 'Chọn giao diện được dùng để tạo PDF.',
+    'pdf_custom_css_trans_key'                 => 'CSS tùy chỉnh cho PDF',
+    'pdf_custom_css_placeholder_trans_key'     => 'Nhập các quy tắc CSS bổ sung áp dụng cho giao diện PDF đã chọn',
+    'pdf_custom_css_help_trans_key'            => 'Để trống để dùng nguyên giao diện.',
     'licence_trans_key'                        => 'Giấy phép',
     'release_note_trans_key'                   => 'Nhật ký phát hành',
 

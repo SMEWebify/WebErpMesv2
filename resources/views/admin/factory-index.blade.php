@@ -436,12 +436,29 @@
                     </x-adminlte-card>
 
                     <x-adminlte-card title="{{ __('general_content.repots_setting_trans_key') }}" theme="teal" collapsible maximizable>
+                        @php($selectedPdfTheme = old('pdf_theme', $Factory->pdf_theme ?? $pdfFallbackTheme))
                         <div class="row">
                             <div class="form-group col-md-3">
                                 <div class="form-group">
                                     <label for="pdf_header_font_color">{{ __('general_content.header_font_color_trans_key') }}</label>
                                     <input type="color" class="form-control"  name="pdf_header_font_color" id="pdf_header_font_color" value="{{ $Factory->pdf_header_font_color }}">
                                 </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="pdf_theme">{{ __('general_content.pdf_theme_trans_key') }}</label>
+                                <select class="form-control" name="pdf_theme" id="pdf_theme" required>
+                                    @foreach ($pdfThemes as $theme)
+                                        <option value="{{ $theme }}" @selected($selectedPdfTheme === $theme)>
+                                            {{ $theme }}@if ($theme === $pdfFallbackTheme) ({{ __('general_content.pdf_theme_fallback_trans_key') }})@endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-muted">{{ __('general_content.pdf_theme_help_trans_key') }}</small>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="pdf_custom_css">{{ __('general_content.pdf_custom_css_trans_key') }}</label>
+                                <textarea class="form-control" name="pdf_custom_css" id="pdf_custom_css" rows="6" placeholder="{{ __('general_content.pdf_custom_css_placeholder_trans_key') }}">{{ old('pdf_custom_css', $Factory->pdf_custom_css) }}</textarea>
+                                <small class="form-text text-muted">{{ __('general_content.pdf_custom_css_help_trans_key') }}</small>
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="public_link_cgv">{{ __('general_content.public_link_cgv_trans_key') }}</label>
