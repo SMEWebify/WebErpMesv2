@@ -959,6 +959,14 @@ return [
     'name_purchase_reciept_trans_key'          => 'Nom du reçu',
     'po_receipt_note_trans_key'                => 'Reception en attente de controle',
     'validate_control_trans_key'               => 'Valider le contrôle',
+    'inspection_details_trans_key'             => "Détails d'inspection",
+    'inspection_result_trans_key'              => "Résultat d'inspection",
+    'inspection_date_trans_key'                => "Date d'inspection",
+    'inspected_by_trans_key'                   => 'Inspecté par',
+    'select_option_trans_key'                  => 'Sélectionner une option',
+    'quick_nc_creation_trans_key'              => "Création rapide d'une NC",
+    'inspection_qty_error_trans_key'           => 'Les quantités acceptées et rejetées ne peuvent pas dépasser la quantité reçue (:receipt).',
+    'inspection_update_success_trans_key'      => "Les données d'inspection ont été mises à jour avec succès.",
 
     'waiting_to_invoice_trans_key'             => 'Attente de facturation',
 

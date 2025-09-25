@@ -8,10 +8,13 @@ use App\Models\Purchases\Purchases;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
+use App\Services\DocumentCodeGenerator;
 use App\Services\PurchaseKPIService;
+use App\Services\QualityNonConformityService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\StockLocation;
 use App\Models\Purchases\PurchaseReceipt;
+use App\Models\Quality\QualityNonConformity;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
@@ -25,6 +28,8 @@ class PurchasesReceiptController extends Controller
     protected $purchaseKPIService;
     protected $customFieldService;
     protected $purchaseOrderService;
+    protected $qualityNonConformityService;
+    protected $documentCodeGenerator;
 
     /**
      * Constructor to initialize services.
@@ -34,13 +39,17 @@ class PurchasesReceiptController extends Controller
      * @param CustomFieldService $customFieldService
      */
     public function __construct(
-            SelectDataService $SelectDataService, 
+            SelectDataService $SelectDataService,
             PurchaseKPIService $purchaseKPIService,
             CustomFieldService $customFieldService,
+            QualityNonConformityService $qualityNonConformityService,
+            DocumentCodeGenerator $documentCodeGenerator,
         ){
         $this->SelectDataService = $SelectDataService;
         $this->purchaseKPIService = $purchaseKPIService;
         $this->customFieldService = $customFieldService;
+        $this->qualityNonConformityService = $qualityNonConformityService;
+        $this->documentCodeGenerator = $documentCodeGenerator;
     }
     
     
@@ -65,6 +74,8 @@ class PurchasesReceiptController extends Controller
         
         $StockLocationList = StockLocation::all();
         $StockLocationProductList = StockLocationProducts::all();
+        $userSelect = $this->SelectDataService->getUsers();
+        $nonConformities = $this->SelectDataService->getQualityNonConformity();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchaseReceipt(), $id->id);
 
         $averageReceptionDelay = PurchaseReceiptLines::join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
@@ -78,7 +89,9 @@ class PurchasesReceiptController extends Controller
             'nextUrl' =>  $nextUrl,
             'StockLocationList' =>  $StockLocationList,
             'StockLocationProductList' =>  $StockLocationProductList,
-            'averageReceptionDelay' => $averageReceptionDelay->avg_reception_delay
+            'averageReceptionDelay' => $averageReceptionDelay->avg_reception_delay,
+            'userSelect' => $userSelect,
+            'nonConformities' => $nonConformities,
         ]);
     }
 
@@ -144,8 +157,99 @@ class PurchasesReceiptController extends Controller
      * @return \Illuminate\Contracts\View\View
      */
     public function receipt()
-    {    
+    {
         $data['PurchaseReciepCountDataRate'] = $this->purchaseKPIService->getPurchaseReciepCountDataRate();
         return view('purchases/purchases-receipt')->with('data',$data);
+    }
+
+    /**
+     * Update inspection related data for a purchase receipt line.
+     */
+    public function updateLineInspection(Request $request, PurchaseReceiptLines $purchaseReceiptLine)
+    {
+        $validated = $request->validate([
+            'inspected_by' => 'nullable|exists:users,id',
+            'inspection_date' => 'nullable|date',
+            'accepted_qty' => 'nullable|integer|min:0',
+            'rejected_qty' => 'nullable|integer|min:0',
+            'inspection_result' => 'nullable|string|max:255',
+            'quality_non_conformity_id' => 'nullable|exists:quality_non_conformities,id',
+            'create_non_conformity' => 'nullable|boolean',
+            'new_nc_label' => 'nullable|string|max:255',
+            'new_nc_comment' => 'nullable|string|max:1000',
+        ]);
+
+        $purchaseReceiptLine->loadMissing('purchaseLines.purchase', 'purchaseLines.tasks.OrderLines');
+
+        $acceptedQty = array_key_exists('accepted_qty', $validated)
+            ? (int) ($validated['accepted_qty'] ?? 0)
+            : ($purchaseReceiptLine->accepted_qty ?? 0);
+
+        $rejectedQty = array_key_exists('rejected_qty', $validated)
+            ? (int) ($validated['rejected_qty'] ?? 0)
+            : ($purchaseReceiptLine->rejected_qty ?? 0);
+
+        $totalInspected = $acceptedQty + $rejectedQty;
+
+        if ($totalInspected > $purchaseReceiptLine->receipt_qty) {
+            return redirect()->back()->withErrors([
+                'accepted_qty' => __('general_content.inspection_qty_error_trans_key', [
+                    'receipt' => $purchaseReceiptLine->receipt_qty,
+                ]),
+            ])->withInput();
+        }
+
+        if ($request->boolean('create_non_conformity') && empty($validated['quality_non_conformity_id'])) {
+            $qualityNonConformity = $this->createQuickNonConformity(
+                $purchaseReceiptLine,
+                $validated['new_nc_label'] ?? null,
+                $validated['new_nc_comment'] ?? null,
+                $rejectedQty
+            );
+
+            $validated['quality_non_conformity_id'] = $qualityNonConformity->id;
+        }
+
+        $purchaseReceiptLine->update([
+            'inspected_by' => $validated['inspected_by'] ?? null,
+            'inspection_date' => $validated['inspection_date'] ?? null,
+            'accepted_qty' => $acceptedQty,
+            'rejected_qty' => $rejectedQty,
+            'inspection_result' => $validated['inspection_result'] ?? null,
+            'quality_non_conformity_id' => $validated['quality_non_conformity_id'] ?? null,
+        ]);
+
+        return redirect()->back()->with('success', __('general_content.inspection_update_success_trans_key'));
+    }
+
+    protected function createQuickNonConformity(
+        PurchaseReceiptLines $purchaseReceiptLine,
+        ?string $label,
+        ?string $comment,
+        ?int $rejectedQty
+    ): QualityNonConformity {
+        $lastNonConformity = QualityNonConformity::latest('id')->first();
+        $code = $this->documentCodeGenerator->generateDocumentCode('non-conformities', $lastNonConformity?->id ?? 0);
+        $label = $label ?: $code;
+
+        $data = [
+            'code' => $code,
+            'label' => $label,
+            'statu' => 1,
+            'user_id' => Auth::id(),
+            'companie_id' => optional($purchaseReceiptLine->purchaseLines->purchase)->companies_id,
+            'qty' => $rejectedQty ?? $purchaseReceiptLine->receipt_qty,
+        ];
+
+        if ($comment) {
+            $data['failure_comment'] = $comment;
+        }
+
+        $orderLine = optional($purchaseReceiptLine->purchaseLines->tasks)->OrderLines;
+        if ($orderLine) {
+            $data['order_lines_id'] = $orderLine->id;
+        }
+
+        return $this->qualityNonConformityService->createNonConformity($data);
     }
 }

@@ -959,6 +959,14 @@ return [
     'name_purchase_reciept_trans_key'          => 'Name of receipt',
     'po_receipt_note_trans_key'                => 'Reception awaiting inspection',
     'validate_control_trans_key'               => 'Validate inspection',
+    'inspection_details_trans_key'             => 'Inspection details',
+    'inspection_result_trans_key'              => 'Inspection result',
+    'inspection_date_trans_key'                => 'Inspection date',
+    'inspected_by_trans_key'                   => 'Inspected by',
+    'select_option_trans_key'                  => 'Select an option',
+    'quick_nc_creation_trans_key'              => 'Quick NC creation',
+    'inspection_qty_error_trans_key'           => 'Accepted and rejected quantities cannot exceed the received quantity (:receipt).',
+    'inspection_update_success_trans_key'      => 'Inspection data updated successfully.',
 
     'waiting_to_invoice_trans_key'             => 'Waiting to invoice',
 

@@ -49,6 +49,12 @@ class PurchasesWaintingReceipt extends Component
             'label' =>'required',
             'companies_id'=>'required',
             'user_id'=>'required',
+            'data.*.accepted_qty' => 'nullable|integer|min:0',
+            'data.*.rejected_qty' => 'nullable|integer|min:0',
+            'data.*.inspection_result' => 'nullable|string|max:255',
+            'data.*.inspection_date' => 'nullable|date',
+            'data.*.inspected_by' => 'nullable|exists:users,id',
+            'data.*.quality_non_conformity_id' => 'nullable|exists:quality_non_conformities,id',
         ];
     }
     

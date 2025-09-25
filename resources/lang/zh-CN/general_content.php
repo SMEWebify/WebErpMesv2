@@ -951,9 +951,17 @@ return [
 
     //PURCHASE RECIEPT
     'po_receipt_trans_key'                     => '采购收货',
-    'name_purchase_reciept_trans_key'          => '收据名称',
-    'po_receipt_note_trans_key'                => '收货等待检验',
-    'validate_control_trans_key'               => '确认检验',
+   'name_purchase_reciept_trans_key'          => '收据名称',
+   'po_receipt_note_trans_key'                => '收货等待检验',
+   'validate_control_trans_key'               => '确认检验',
+    'inspection_details_trans_key'             => '检验详情',
+    'inspection_result_trans_key'              => '检验结果',
+    'inspection_date_trans_key'                => '检验日期',
+    'inspected_by_trans_key'                   => '检验人',
+    'select_option_trans_key'                  => '请选择一个选项',
+    'quick_nc_creation_trans_key'              => '快速创建不合格项',
+    'inspection_qty_error_trans_key'           => '合格与拒收数量之和不能超过收货数量(:receipt)。',
+    'inspection_update_success_trans_key'      => '检验数据已成功更新。',
 
     'waiting_to_invoice_trans_key'             => '待开票',
 
