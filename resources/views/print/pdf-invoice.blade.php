@@ -68,7 +68,7 @@
                             <pre>
 {{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
 {{ $Document->adresse['adress'] }}
-{{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }}
+{{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }} {{ $Document->adresse['province'] ?? '' }}
 {{ $Document->adresse['country'] }}
 {{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
 {{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}

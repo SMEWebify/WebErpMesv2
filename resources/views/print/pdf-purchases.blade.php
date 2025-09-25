@@ -44,6 +44,9 @@
             <table width="100%; border: none; ">
                 <tr>
                     <td align="left" style="width: 50%; background-color: {{ $Factory->pdf_header_font_color }}">
+                        @if($image)
+                            <img src="data:image/png;base64,{{ $image }}" alt="Logo" style="height: 120px;"/>
+                        @endif
                     </td>
                     <td colspan="2" align="center" style="width: 400%; background-color: {{ $Factory->pdf_header_font_color }}">
                         <h2>{{ $typeDocumentName }}</h2>
@@ -69,7 +72,7 @@
                             <pre>
 {{ $Document->contact['civility'] }} {{ $Document->contact['first_name'] }} {{ $Document->contact['name'] }}
 {{ $Document->adresse['adress'] }}
-{{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }}
+{{ $Document->adresse['zipcode'] }} {{ $Document->adresse['city'] }} {{ $Document->adresse['province'] ?? '' }}
 {{ $Document->adresse['country'] }}
 {{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
 {{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
