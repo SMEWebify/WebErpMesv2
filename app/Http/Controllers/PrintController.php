@@ -20,6 +20,7 @@ use App\Services\PurchaseCalculatorService;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Quality\QualityNonConformity;
 use App\Services\CreditNoteCalculatorService;
+use App\Services\PdfThemeResolver;
 use horstoeko\zugferd\ZugferdDocumentBuilder;
 use horstoeko\zugferd\ZugferdDocumentPdfBuilder;
 use horstoeko\zugferd\codelists\ZugferdPaymentMeans;
@@ -111,7 +112,10 @@ class PrintController extends Controller
 
         $this->getDocumentLines($Document, 'invoiceLines');
         $image = $Factory->getImageFactoryPath();
-        $dompdf = PDF::loadView('print/pdf-invoice', compact('typeDocumentName', 'Document', 'Factory', 'image', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image'));
+        $resolver = app(PdfThemeResolver::class);
+        $view = $resolver->resolveForDocument($Document, 'print/pdf-invoice', $Factory);
+        $customCss = $Factory->pdf_custom_css;
+        $dompdf = PDF::loadView($view, compact('typeDocumentName', 'Document', 'Factory', 'image', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'customCss'));
 
         // Récupération des informations client depuis le modèle associé
         $client = $Document->companie;
@@ -243,9 +247,9 @@ class PrintController extends Controller
      * @param string $view
      * @return \Illuminate\Http\Response
      */
-    private function generatePdf($Document, $typeDocumentName, $calculatorService, $view)
+    private function generatePdf($Document, $typeDocumentName, $calculatorService, $viewKey)
     {
-        $factory = app('Factory'); 
+        $factory = app('Factory');
         $Factory = $this->getFactory();
         $totalPrice = $calculatorService ? $calculatorService->getTotalPrice() : 0;
         $subPrice = $calculatorService ? $calculatorService->getSubTotal() : 0;
@@ -253,10 +257,13 @@ class PrintController extends Controller
 
         $formattedTotalPrice = Number::currency($totalPrice, $factory->curency, config('app.locale'));
         $formattedSubPrice = Number::currency($subPrice, $factory->curency, config('app.locale'));
-        
+
         $this->getDocumentLines($Document, $this->getDocumentLinesKey($Document));
         $image = $Factory->getImageFactoryPath();
-        $pdf = PDF::loadView($view, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image'));
+        $resolver = app(PdfThemeResolver::class);
+        $resolvedView = $resolver->resolveForDocument($Document, $viewKey, $Factory);
+        $customCss = $Factory->pdf_custom_css;
+        $pdf = PDF::loadView($resolvedView, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss'));
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
