@@ -108,9 +108,28 @@ class PurchaseKPIService
         $averageReceptionDelayBySupplier = PurchaseReceiptLines::join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
             ->join('purchases', 'purchase_lines.purchases_id', '=', 'purchases.id')
             ->join('companies', 'purchases.companies_id', '=', 'companies.id')
-            ->selectRaw('companies.label AS supplier_name, AVG(DATEDIFF(purchase_receipt_lines.created_at, purchase_lines.created_at)) AS avg_reception_delay')
+            ->selectRaw('
+                companies.label AS supplier_name,
+                AVG(DATEDIFF(purchase_receipt_lines.created_at, purchase_lines.created_at)) AS avg_reception_delay,
+                SUM(COALESCE(purchase_receipt_lines.accepted_qty, purchase_receipt_lines.receipt_qty, 0)) AS total_accepted_qty,
+                SUM(COALESCE(purchase_receipt_lines.rejected_qty, 0)) AS total_rejected_qty,
+                SUM(COALESCE(purchase_receipt_lines.accepted_qty, purchase_receipt_lines.receipt_qty, 0) + COALESCE(purchase_receipt_lines.rejected_qty, 0)) AS total_inspected_qty,
+                CASE
+                    WHEN SUM(COALESCE(purchase_receipt_lines.accepted_qty, purchase_receipt_lines.receipt_qty, 0) + COALESCE(purchase_receipt_lines.rejected_qty, 0)) > 0
+                        THEN SUM(COALESCE(purchase_receipt_lines.accepted_qty, purchase_receipt_lines.receipt_qty, 0)) /
+                             SUM(COALESCE(purchase_receipt_lines.accepted_qty, purchase_receipt_lines.receipt_qty, 0) + COALESCE(purchase_receipt_lines.rejected_qty, 0))
+                    ELSE NULL
+                END AS compliance_rate'
+            )
             ->groupBy('companies.label')
-            ->get();
+            ->get()
+            ->map(function ($supplier) {
+                $supplier->compliance_rate = is_null($supplier->compliance_rate)
+                    ? null
+                    : (float) $supplier->compliance_rate;
+
+                return $supplier;
+            });
 
         return $averageReceptionDelayBySupplier->sortBy('avg_reception_delay');
     }

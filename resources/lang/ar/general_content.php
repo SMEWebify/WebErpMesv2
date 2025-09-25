@@ -179,6 +179,10 @@ return [
     'price_source_trans_key'                   => 'مصدر السعر',
     'use_price_trans_key'                      => 'استخدام السعر',
     'no_price_defined_trans_key'               => 'لا يوجد سعر عميل محدد لهذا المنتج.',
+    'all_customers_trans_key'                  => 'جميع العملاء',
+    'all_customer_types_trans_key'             => 'جميع أنواع العملاء',
+    'customer_price_list_create_help_trans_key' => 'اترك العميل والنوع فارغين لتحديد سعر عام.',
+    'customer_price_list_unique_error_trans_key' => 'يوجد سعر بالفعل لهذا النطاق وهذا المجال من الكميات.',
     'type_trans_key'                           => 'النوع',
     'qty_trans_key'                            => 'الكمية',
     'unit_trans_key'                           => 'الوحدة',
@@ -825,6 +829,16 @@ return [
     //PURCHASE RECIEPT
     'po_receipt_trans_key'                => 'استلام أمر الشراء',
     'name_purchase_reciept_trans_key'     => 'اسم الاستلام',
+    'po_receipt_note_trans_key'           => 'استلام بانتظار الفحص',
+    'validate_control_trans_key'          => 'تأكيد الفحص',
+    'inspection_details_trans_key'        => 'تفاصيل الفحص',
+    'inspection_result_trans_key'         => 'نتيجة الفحص',
+    'inspection_date_trans_key'           => 'تاريخ الفحص',
+    'inspected_by_trans_key'              => 'تم الفحص بواسطة',
+    'select_option_trans_key'             => 'اختر خياراً',
+    'quick_nc_creation_trans_key'         => 'إنشاء سريع لعدم المطابقة',
+    'inspection_qty_error_trans_key'      => 'لا يمكن أن تتجاوز الكميات المقبولة والمرفوضة الكمية المستلمة (:receipt).',
+    'inspection_update_success_trans_key' => 'تم تحديث بيانات الفحص بنجاح.',
 
     'waiting_to_invoice_trans_key'        => 'في انتظار الفاتورة',
 

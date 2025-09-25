@@ -7,7 +7,7 @@
         <title>{{ $typeDocumentName}} - #{{ $Document->code }}</title>
         <style type="text/css">
             @page {
-                margin: 350px 25px 50px 25px; 
+                margin: 350px 25px 50px 25px;
             }
             body {
                 margin: 0px; 
@@ -39,6 +39,7 @@
                 content: counter(page);
             }
         </style>
+        @include('print.partials.custom-styles')
     </head>
     <body>
         <header>

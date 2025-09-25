@@ -312,13 +312,197 @@
                   </div>
                 </div>
               </div>
-              <div class="card-footer">
-                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+            <div class="card-footer">
+              <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+            </div>
+          </form>
+          @php
+            $customerTypeOptions = [
+                ['value' => '', 'label' => __('general_content.all_customer_types_trans_key')],
+                ['value' => '1', 'label' => __('general_content.legal_entity_trans_key')],
+                ['value' => '2', 'label' => __('general_content.individual_trans_key')],
+            ];
+            $customerTypeLabels = collect($customerTypeOptions)->pluck('label', 'value');
+          @endphp
+          <x-adminlte-card title="{{ __('general_content.customer_price_grid_trans_key') }}" theme="info" maximizable>
+            <form method="POST" action="{{ route('products.customer-price-list.store', ['product' => $Product->id]) }}">
+              @csrf
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label for="price_list_companies_id">{{ __('general_content.customer_trans_key') }}</label>
+                  <select class="form-control" name="companies_id" id="price_list_companies_id">
+                    <option value="">{{ __('general_content.all_customers_trans_key') }}</option>
+                    @foreach($CustomerSelect as $customer)
+                    <option value="{{ $customer->id }}" @if((string) old('companies_id', '') === (string) $customer->id) selected @endif>{{ $customer->code }} - {{ $customer->label }}</option>
+                    @endforeach
+                  </select>
+                  @error('companies_id', 'customerPriceList')
+                  <small class="text-danger d-block">{{ $message }}</small>
+                  @enderror
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="price_list_customer_type">{{ __('general_content.customer_type_trans_key') }}</label>
+                  <select class="form-control" name="customer_type" id="price_list_customer_type">
+                    @foreach($customerTypeOptions as $option)
+                    <option value="{{ $option['value'] }}" @if((string) old('customer_type', '') === (string) $option['value']) selected @endif>{{ $option['label'] }}</option>
+                    @endforeach
+                  </select>
+                  @error('customer_type', 'customerPriceList')
+                  <small class="text-danger d-block">{{ $message }}</small>
+                  @enderror
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="price_list_min_qty">{{ __('general_content.quantite_min_trans_key') }}</label>
+                  <input type="number" class="form-control" name="min_qty" id="price_list_min_qty" value="{{ old('min_qty') }}" min="1">
+                  @error('min_qty', 'customerPriceList')
+                  <small class="text-danger d-block">{{ $message }}</small>
+                  @enderror
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="price_list_max_qty">{{ __('general_content.quantite_max_trans_key') }}</label>
+                  <input type="number" class="form-control" name="max_qty" id="price_list_max_qty" value="{{ old('max_qty') }}" min="1">
+                  @error('max_qty', 'customerPriceList')
+                  <small class="text-danger d-block">{{ $message }}</small>
+                  @enderror
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="price_list_price">{{ __('general_content.price_trans_key') }}</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">{{ $Factory->curency }}</span>
+                    </div>
+                    <input type="number" step="0.01" class="form-control" name="price" id="price_list_price" value="{{ old('price') }}" min="0">
+                  </div>
+                  @error('price', 'customerPriceList')
+                  <small class="text-danger d-block">{{ $message }}</small>
+                  @enderror
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 d-flex justify-content-between align-items-center">
+                  <small class="text-muted">{{ __('general_content.customer_price_list_create_help_trans_key') }}</small>
+                  <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.add_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
+                </div>
               </div>
             </form>
+            @php $customerPriceListErrors = $errors->getBag('customerPriceList'); @endphp
+            @if($customerPriceListErrors->has('customer_price_list'))
+            <div class="alert alert-warning mt-3 mb-0">
+              {{ $customerPriceListErrors->first('customer_price_list') }}
+            </div>
+            @endif
+            <div class="table-responsive mt-3">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>{{ __('general_content.source_trans_key') }}</th>
+                    <th>{{ __('general_content.quantite_min_trans_key') }}</th>
+                    <th>{{ __('general_content.quantite_max_trans_key') }}</th>
+                    <th>{{ __('general_content.price_trans_key') }}</th>
+                    <th class="text-right">{{ __('general_content.action_trans_key') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse($CustomerPriceLists as $priceList)
+                  @php
+                    $scopeLabel = __('general_content.customer_trans_key');
+                    if($priceList->companies_id){
+                      $scopeLabel = __('general_content.companie_trans_key') . ' - ' . ($priceList->company->label ?? ('#' . $priceList->companies_id));
+                    }elseif(!is_null($priceList->customer_type)){
+                      $typeLabel = $customerTypeLabels[(string) $priceList->customer_type] ?? __('general_content.customer_type_trans_key');
+                      $scopeLabel = __('general_content.customer_type_trans_key') . ' - ' . $typeLabel;
+                    }
+                  @endphp
+                  <tr>
+                    <td>{{ $scopeLabel }}</td>
+                    <td>{{ $priceList->min_qty }}</td>
+                    <td>
+                      @if(is_null($priceList->max_qty))
+                        &infin;
+                      @else
+                        {{ $priceList->max_qty }}
+                      @endif
+                    </td>
+                    <td>{{ number_format($priceList->price, 2) }} {{ $Factory->curency }}</td>
+                    <td class="text-right">
+                      <button type="button" class="btn btn-xs btn-outline-primary" data-toggle="modal" data-target="#customerPriceListEdit{{ $priceList->id }}">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <form method="POST" action="{{ route('products.customer-price-list.destroy', ['product' => $Product->id, 'priceList' => $priceList->id]) }}" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-xs btn-outline-danger" onclick="return confirm('{{ __('general_content.delete_trans_key') }} ?');">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                      <x-adminlte-modal id="customerPriceListEdit{{ $priceList->id }}" title="{{ __('general_content.update_trans_key') }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                        <form method="POST" action="{{ route('products.customer-price-list.update', ['product' => $Product->id, 'priceList' => $priceList->id]) }}">
+                          @csrf
+                          @method('PUT')
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label for="price_list_companies_id_{{ $priceList->id }}">{{ __('general_content.customer_trans_key') }}</label>
+                              <select class="form-control" name="companies_id" id="price_list_companies_id_{{ $priceList->id }}">
+                                <option value="">{{ __('general_content.all_customers_trans_key') }}</option>
+                                @foreach($CustomerSelect as $customer)
+                                <option value="{{ $customer->id }}" @if($priceList->companies_id === $customer->id) selected @endif>{{ $customer->code }} - {{ $customer->label }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="price_list_customer_type_{{ $priceList->id }}">{{ __('general_content.customer_type_trans_key') }}</label>
+                              <select class="form-control" name="customer_type" id="price_list_customer_type_{{ $priceList->id }}">
+                                @foreach($customerTypeOptions as $option)
+                                <option value="{{ $option['value'] }}" @if((string) $priceList->customer_type === (string) $option['value']) selected @endif>{{ $option['label'] }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label for="price_list_min_qty_{{ $priceList->id }}">{{ __('general_content.quantite_min_trans_key') }}</label>
+                              <input type="number" class="form-control" name="min_qty" id="price_list_min_qty_{{ $priceList->id }}" value="{{ $priceList->min_qty }}" min="1">
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="price_list_max_qty_{{ $priceList->id }}">{{ __('general_content.quantite_max_trans_key') }}</label>
+                              <input type="number" class="form-control" name="max_qty" id="price_list_max_qty_{{ $priceList->id }}" value="{{ $priceList->max_qty }}" min="1">
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="price_list_price_{{ $priceList->id }}">{{ __('general_content.price_trans_key') }}</label>
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">{{ $Factory->curency }}</span>
+                                </div>
+                                <input type="number" step="0.01" class="form-control" name="price" id="price_list_price_{{ $priceList->id }}" value="{{ $priceList->price }}" min="0">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="text-right">
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
+                          </div>
+                        </form>
+                      </x-adminlte-modal>
+                    </td>
+                  </tr>
+                  @empty
+                  <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}" />
+                  @endforelse
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>{{ __('general_content.source_trans_key') }}</th>
+                    <th>{{ __('general_content.quantite_min_trans_key') }}</th>
+                    <th>{{ __('general_content.quantite_max_trans_key') }}</th>
+                    <th>{{ __('general_content.price_trans_key') }}</th>
+                    <th></th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </x-adminlte-card>
         </div>
         <div class="tab-pane " id="TechnicalInfo">
-          @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id, 'statu' => 1]) 
+          @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id, 'statu' => 1])
         </div>
         <div class="tab-pane " id="Stock">
           <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>

@@ -42,6 +42,7 @@
             padding: 10px;
         }
     </style>
+    @include('print.partials.custom-styles')
 </head>
 <body>
 

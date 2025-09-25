@@ -179,6 +179,10 @@ return [
     'price_source_trans_key'                   => 'Origen del precio',
     'use_price_trans_key'                      => 'Usar precio',
     'no_price_defined_trans_key'               => 'No hay precio de cliente definido para este producto.',
+    'all_customers_trans_key'                  => 'Todos los clientes',
+    'all_customer_types_trans_key'             => 'Todos los tipos de clientes',
+    'customer_price_list_create_help_trans_key' => 'Deje cliente y tipo vacíos para definir un precio general.',
+    'customer_price_list_unique_error_trans_key' => 'Ya existe un precio para este alcance y rango de cantidades.',
     'type_trans_key'                           => 'Tipo',
     'qty_trans_key'                            => 'Cantidad',
     'unit_trans_key'                           => 'Unidad',
@@ -826,6 +830,16 @@ return [
     //PURCHASE RECEIPT
     'po_receipt_trans_key'                     => 'Recibo de la orden de compra',
     'name_purchase_reciept_trans_key'          => 'Nombre del recibo',
+    'po_receipt_note_trans_key'                => 'Recepción en espera de control',
+    'validate_control_trans_key'               => 'Validar control',
+    'inspection_details_trans_key'             => 'Detalles de inspección',
+    'inspection_result_trans_key'              => 'Resultado de la inspección',
+    'inspection_date_trans_key'                => 'Fecha de inspección',
+    'inspected_by_trans_key'                   => 'Inspeccionado por',
+    'select_option_trans_key'                  => 'Seleccione una opción',
+    'quick_nc_creation_trans_key'              => 'Creación rápida de NC',
+    'inspection_qty_error_trans_key'           => 'Las cantidades aceptadas y rechazadas no pueden superar la cantidad recibida (:receipt).',
+    'inspection_update_success_trans_key'      => 'Datos de inspección actualizados correctamente.',
 
     'waiting_to_invoice_trans_key'             => 'Esperando factura',
 

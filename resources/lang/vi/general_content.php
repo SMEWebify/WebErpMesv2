@@ -94,6 +94,10 @@ return [
     'price_source_trans_key'                   => 'Nguồn giá',
     'use_price_trans_key'                      => 'Sử dụng giá',
     'no_price_defined_trans_key'               => 'Không có giá khách hàng cho sản phẩm này.',
+    'all_customers_trans_key'                  => 'Tất cả khách hàng',
+    'all_customer_types_trans_key'             => 'Tất cả loại khách hàng',
+    'customer_price_list_create_help_trans_key' => 'Để trống khách hàng và loại để đặt giá chung.',
+    'customer_price_list_unique_error_trans_key' => 'Đã tồn tại một mức giá cho phạm vi và khoảng số lượng này.',
 
     'product_list_trans_key'                   => 'Danh sách sản phẩm',
     'stock_trans_key'                          => 'Kho hàng',
