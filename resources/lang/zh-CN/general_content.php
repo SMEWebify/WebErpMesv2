@@ -156,6 +156,14 @@ return [
     'major_trans_key'                          => '重大',
     'critical_trans_key'                       => '关键',
     'expired_trans_key'                        => '已过期',
+    'reports_trans_key'                        => '报告',
+    'accounting_reports_trans_key'             => '会计报告',
+    'total_revenue_trans_key'                  => '总收入',
+    'total_expense_trans_key'                  => '总支出',
+    'total_profit_trans_key'                   => '利润',
+    'coming_soon_trans_key'                    => '即将推出',
+    'processing_location_trans_key'            => '处理位置',
+    'select_location_trans_key'                => '选择位置',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => '排序',

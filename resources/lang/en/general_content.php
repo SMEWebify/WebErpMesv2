@@ -156,7 +156,15 @@ return [
     'major_trans_key'                          => 'Major',
     'critical_trans_key'                       => 'Critical',
     'expired_trans_key'                        => 'Expired',
-    
+    'reports_trans_key'                        => 'Reports',
+    'accounting_reports_trans_key'             => 'Accounting reports',
+    'total_revenue_trans_key'                  => 'Total revenue',
+    'total_expense_trans_key'                  => 'Total expense',
+    'total_profit_trans_key'                   => 'Profit',
+    'coming_soon_trans_key'                    => 'Coming soon',
+    'processing_location_trans_key'            => 'Processing location',
+    'select_location_trans_key'                => 'Select location',
+
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Sort',
     'id_trans_key'                             => 'ID',
