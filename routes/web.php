@@ -320,6 +320,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
         Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
 
+        Route::group(['prefix' => '{product}/customer-price-list'], function () {
+            Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
+            Route::put('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@update')->name('products.customer-price-list.update');
+            Route::delete('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@destroy')->name('products.customer-price-list.destroy');
+        });
+
         //import
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importProducts')->name('products.import');
 

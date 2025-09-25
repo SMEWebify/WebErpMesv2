@@ -63,6 +63,7 @@ class ProductsController extends Controller
             'UnitsSelect' => $this->SelectDataService->getUnitsSelect(),
             'FamiliesSelect' => $this->SelectDataService->getFamilies(),
             'CompanieSelect' => $this->SelectDataService->getSupplier(),
+            'CustomerSelect' => $this->SelectDataService->getCompanies(),
             'TechServicesSelect' => $this->SelectDataService->getTechServices(),
             'BOMServicesSelect' => $this->SelectDataService->getBOMServices(),
         ];
@@ -139,6 +140,14 @@ class ProductsController extends Controller
         }
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('product', $Product->id);
 
+        $customerPriceLists = $Product->customerPriceLists()
+            ->with('company')
+            ->orderByRaw('companies_id IS NOT NULL DESC')
+            ->orderByRaw('customer_type IS NOT NULL DESC')
+            ->orderBy('min_qty')
+            ->orderBy('max_qty')
+            ->get();
+
         return view('products/products-show', array_merge($selectData, [
             'Product' => $Product,
             'status_id' => $status_id,
@@ -150,6 +159,7 @@ class ProductsController extends Controller
             'averageCost' => $averageCost,
             'averageSupplyDelay' => $averageSupplyDelay,
             'CustomFields' => $CustomFields,
+            'CustomerPriceLists' => $customerPriceLists,
         ]));
     }
 
