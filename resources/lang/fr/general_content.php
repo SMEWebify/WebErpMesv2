@@ -156,6 +156,14 @@ return [
     'major_trans_key'                          => 'Majeur',
     'critical_trans_key'                       => 'Critique',
     'expired_trans_key'                        => 'Expiré',
+    'reports_trans_key'                        => 'Rapports',
+    'accounting_reports_trans_key'             => 'Rapports comptables',
+    'total_revenue_trans_key'                  => 'Revenus totaux',
+    'total_expense_trans_key'                  => 'Dépenses totales',
+    'total_profit_trans_key'                   => 'Bénéfice',
+    'coming_soon_trans_key'                    => 'Bientôt disponible',
+    'processing_location_trans_key'            => 'Emplacement de traitement',
+    'select_location_trans_key'                => 'Selectionner emplacement',
 
     //GENERAL HEADER AND FOOTER TABLE
     'sort_trans_key'                           => 'Tri',
