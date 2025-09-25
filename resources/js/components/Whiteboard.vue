@@ -779,17 +779,35 @@ export default {
       this.whiteboardTitle = 'Nouveau tableau';
     },
     serializeState() {
+      const notes = this.notes.map(note => ({
+        id: note.id,
+        text: note.text,
+        x: note.x,
+        y: note.y,
+        color: note.color
+      }));
+      const images = this.images.map(image => ({
+        id: image.id,
+        src: image.src,
+        name: image.name,
+        x: image.x,
+        y: image.y,
+        width: image.width,
+        height: image.height
+      }));
+
       return {
-        id: this.selectedWhiteboardId,
         title: this.whiteboardTitle,
         canvas: this.canvasElement ? this.canvasElement.toDataURL('image/png') : null,
-        notes: this.notes,
-        images: this.images
+        notes,
+        images
       };
     },
     async saveWhiteboard() {
-      const payload = this.serializeState();
-      payload.title = this.whiteboardTitle;
+      const payload = {
+        title: this.whiteboardTitle,
+        state: this.serializeState()
+      };
 
       let request;
       let url;
