@@ -446,6 +446,7 @@
                       <th>{{ __('general_content.adress_trans_key') }}</th>
                       <th>{{ __('general_content.postal_code_trans_key') }}</th>
                       <th>{{ __('general_content.city_trans_key') }}</th>
+                      <th>{{ __('general_content.province_trans_key') }}</th>
                       <th>{{ __('general_content.country_trans_key') }}</th>
                       <th>{{ __('general_content.phone_trans_key') }}</th>
                       <th>{{ __('general_content.email_trans_key') }}</th>
@@ -460,7 +461,8 @@
                       <td>{{ $Address->label }}</td>
                       <td>{{ $Address->adress }}</td>
                       <td>{{ $Address->zipcode }}</td>
-                      <td>{{ $Address->city }}</td>
+                      <td>{{ $Address->city }}</td>                      
+                      <td>{{ $Address->province }}</td>
                       <td>{{ $Address->country }}</td>
                       <td>{{ $Address->number }}</td>
                       <td>{{ $Address->mail }}</td>
@@ -521,6 +523,12 @@
                               </div>
                               <div class="row">
                                 <div class="form-group col-md-12">
+                                  <label for="province">{{ __('general_content.province_trans_key') }}</label>
+                                  <input type="text" class="form-control" name="province"  id="province" placeholder="{{ __('general_content.province_trans_key') }}" value="{{ $Address->province }}">
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="form-group col-md-12">
                                   <label for="country">{{ __('general_content.country_trans_key') }}</label>
                                   <input type="text" class="form-control" name="country"  id="country" placeholder="{{ __('general_content.country_trans_key') }}" value="{{ $Address->country }}">
                                 </div>
@@ -564,10 +572,11 @@
                   <tfoot>
                     <tr>
                       <th>#</th>
-                      <th>{{ __('general_content.postal_code_trans_key') }}</th>
+                      <th>{{ __('general_content.label_trans_key') }}</th>
                       <th>{{ __('general_content.adress_trans_key') }}</th>
                       <th>{{ __('general_content.postal_code_trans_key') }}</th>
                       <th>{{ __('general_content.city_trans_key') }}</th>
+                      <th>{{ __('general_content.province_trans_key') }}</th>
                       <th>{{ __('general_content.country_trans_key') }}</th>
                       <th>{{ __('general_content.phone_trans_key') }}</th>
                       <th>{{ __('general_content.email_trans_key') }}</th>
@@ -612,6 +621,12 @@
                   <div class="form-group col-md-12">
                     <label for="adress">{{ __('general_content.adress_name_trans_key') }}</label>
                     <input type="text" class="form-control" name="adress"  id="adress" placeholder="{{ __('general_content.adress_name_trans_key') }}">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-12">
+                    <label for="province">{{ __('general_content.province_trans_key') }}</label>
+                    <input type="text" class="form-control" name="province"  id="province" placeholder="{{ __('general_content.province_trans_key') }}">
                   </div>
                 </div>
                 <div class="row">

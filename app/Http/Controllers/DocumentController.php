@@ -22,7 +22,7 @@ class DocumentController extends Controller
             'invoices:id,code',
             'products:id,label',
             'purchaseReceipt:id,code',
-            'stockMove:id,code',
+            'stockMove:id',
             'qualityNonConformity:id,code',
         ])->latest()->get();
 

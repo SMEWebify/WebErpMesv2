@@ -290,7 +290,7 @@
                                     <strong>{{ $Order->companie['label'] }}</strong><br>
                                     {{ $Order->contact['civility'] }} {{ $Order->contact['first_name'] }} {{ $Order->contact['name'] }}<br>
                                     {{ $Order->adresse['adress'] }}<br>
-                                    {{ $Order->adresse['zipcode'] }} {{ $Order->adresse['city'] }}<br>
+                                    {{ $Order->adresse['zipcode'] }} {{ $Order->adresse['city'] }} {{ $Order->adresse['province'] ?? '' }}<br>
                                     {{ $Order->adresse['country'] }}<br>
                                 </address>
                             </div>

@@ -167,15 +167,21 @@ class OrderKPIService
     public function getOrderMonthlyRemainingToDelivery($month ,$year)
     {
         $cacheKey = 'order_remaining_delivery_' . $month .'_'.  $year;
-        return Cache::remember($cacheKey, now()->addMinutes(10), function ()use ($year, $month) {
-            return DB::table('order_lines')
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($year, $month) {
+            $result = DB::table('order_lines')
                         ->selectRaw('
                             FLOOR(SUM((selling_price * delivered_remaining_qty)-(selling_price * delivered_remaining_qty)*(discount/100))) AS orderSum
                         ')
                         ->whereYear('delivery_date', '=', $year)
                         ->whereMonth('delivery_date', $month)
                         ->groupByRaw('MONTH(delivery_date) ')
-                        ->first() ?? (object) ['orderSum' => 0]; 
+                        ->first();
+
+            if (!$result || $result->orderSum === null) {
+                return (object) ['orderSum' => 0];
+            }
+
+            return $result;
         });
     }
 
@@ -198,13 +204,19 @@ class OrderKPIService
                         $query->where(function ($subQuery) {
                             $subQuery->where('order_lines.invoice_status', 1)
                                         ->orWhere('order_lines.invoice_status', 2);
-                            });
-
+                        });
+            
                         if ($companyId) {
                             $query->where('orders.companies_id', $companyId);
                         }
-                        
-            return  $query->first() ?? (object) ['orderSum' => 0];
+            
+                        $result = $query->first();
+            
+                        if (!$result || $result->orderSum === null) {
+                            return (object) ['orderSum' => 0];
+                        }
+            
+                        return $result;
         });
     }
 

@@ -20,7 +20,7 @@
   <!-- /.card-header -->
   <div class="tab-content p-3">
     <div class="tab-pane active" id="Dashboard">
-      <div class="row">
+      <div class="row" id="dashboard-row">
         <div class="col-lg-4">
             <x-adminlte-small-box title="{{ $deliveredOrdersPercentage }}%" text="{{ __('general_content.order_delivered_trans_key') }}" icon="fas fa-shipping-fast" theme="success"/>
         </div>
@@ -229,4 +229,38 @@
       options: lineChartOptions
     })
 </script>
+
+
+<!-- Drag and drop dashboard tiles -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const container = document.getElementById('dashboard-row');
+      if (!container) return;
+      // Ensure each child tile has an id
+      Array.from(container.children).forEach((el, idx) => {
+          if (!el.id) {
+              el.id = 'tile-' + idx;
+          }
+      });
+      // Apply saved order
+      const saved = localStorage.getItem('dashboard-order');
+      if (saved) {
+          saved.split(',').forEach(id => {
+              const el = document.getElementById(id);
+              if (el) container.appendChild(el);
+          });
+      }
+      // Init Sortable
+      Sortable.create(container, {
+          animation: 150,
+          handle: '.card, .small-box',
+          onEnd: () => {
+              const order = Array.from(container.children).map(el => el.id);
+              localStorage.setItem('dashboard-order', order.join(','));
+          }
+      });
+  });
+</script>
+
 @stop

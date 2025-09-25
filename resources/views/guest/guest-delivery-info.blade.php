@@ -211,7 +211,7 @@
                                     <strong>{{ $Delivery->companie['label'] }}</strong><br>
                                     {{ $Delivery->contact['civility'] }} {{ $Delivery->contact['first_name'] }} {{ $Delivery->contact['name'] }}<br>
                                     {{ $Delivery->adresse['adress'] }}<br>
-                                    {{ $Delivery->adresse['zipcode'] }} {{ $Delivery->adresse['city'] }}<br>
+                                    {{ $Delivery->adresse['zipcode'] }} {{ $Delivery->adresse['city'] }} {{ $Delivery->adresse['province'] ?? '' }}<br>
                                     {{ $Delivery->adresse['country'] }}<br>
                                 </address>
                             </div>

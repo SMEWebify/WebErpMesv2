@@ -20,10 +20,10 @@
   </div>
   <!-- /.card-header -->
   <div class="tab-content p-3">
-    <div class="tab-pane active" id="Dashboard">
+    <div class="tab-pane active" id="Dashboard" >
       
       @include('include.alert-result')
-        <div class="row">
+        <div class="row" id="dashboard-row">
           <div class="col-md-3">
             <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
               <canvas id="donutChart" width="400" height="400"></canvas>
@@ -362,4 +362,74 @@
         options: barChartOptions
       })
     </script>
+
+    <script>
+
+  $(document).ready(function() {
+
+      let sBox = new _AdminLTE_SmallBox('sbUpdatable');
+
+      let updateBox = () =>
+      {
+          // Stop loading animation.
+          sBox.toggleLoading();
+
+          // Update data.
+          let rep = Math.floor(1000 * Math.random());
+          let idx = rep < 100 ? 0 : (rep > 500 ? 2 : 1);
+          let text = 'Reputation - ' + ['Basic', 'Silver', 'Gold'][idx];
+          let icon = 'fas fa-medal ' + ['text-primary', 'text-light', 'text-warning'][idx];
+          let url = ['url1', 'url2', 'url3'][idx];
+
+          let data = {text, title: rep, icon, url};
+          sBox.update(data);
+      };
+
+      let startUpdateProcedure = () =>
+      {
+          // Simulate loading procedure.
+          sBox.toggleLoading();
+
+          // Wait and update the data.
+          setTimeout(updateBox, 2000);
+      };
+
+      setInterval(startUpdateProcedure, 10000);
+  })
+
+</script>
+
+
+<!-- Drag and drop dashboard tiles -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const container = document.getElementById('dashboard-row');
+      if (!container) return;
+      // Ensure each child tile has an id
+      Array.from(container.children).forEach((el, idx) => {
+          if (!el.id) {
+              el.id = 'tile-' + idx;
+          }
+      });
+      // Apply saved order
+      const saved = localStorage.getItem('dashboard-purchase');
+      if (saved) {
+          saved.split(',').forEach(id => {
+              const el = document.getElementById(id);
+              if (el) container.appendChild(el);
+          });
+      }
+      // Init Sortable
+      Sortable.create(container, {
+          animation: 150,
+          handle: '.card, .small-box',
+          onEnd: () => {
+              const order = Array.from(container.children).map(el => el.id);
+              localStorage.setItem('dashboard-order', order.join(','));
+          }
+      });
+  });
+</script>
+
 @stop

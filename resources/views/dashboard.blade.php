@@ -38,7 +38,7 @@
   </div>
   @endif
 
-  <div class="row ">
+  <div class="row" id="dashboard-row">
     <div class="col-lg-2">
       <x-adminlte-small-box title="{{$data['customers_count']}}"
                             text="{{ __('general_content.new_client_trans_key') }}" 
@@ -387,6 +387,38 @@
 @stop
 
 @section('js')
+<!-- Drag and drop dashboard tiles -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const container = document.getElementById('dashboard-row');
+      if (!container) return;
+      // Ensure each child tile has an id
+      Array.from(container.children).forEach((el, idx) => {
+          if (!el.id) {
+              el.id = 'tile-' + idx;
+          }
+      });
+      // Apply saved order
+      const saved = localStorage.getItem('dashboard-home');
+      if (saved) {
+          saved.split(',').forEach(id => {
+              const el = document.getElementById(id);
+              if (el) container.appendChild(el);
+          });
+      }
+      // Init Sortable
+      Sortable.create(container, {
+          animation: 150,
+          handle: '.card, .small-box',
+          onEnd: () => {
+              const order = Array.from(container.children).map(el => el.id);
+              localStorage.setItem('dashboard-order', order.join(','));
+          }
+      });
+  });
+</script>
+
 <script>
   //-------------
   //- BAR CHART -

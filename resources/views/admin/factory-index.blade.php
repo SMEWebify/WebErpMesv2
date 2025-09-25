@@ -427,6 +427,7 @@
                                     <select class="form-control"  name="curency" id="curency" >
                                         <option value="USD" @if('USD' == $Factory->curency ) Selected @endif>United States Dollars</option>
                                         <option value="EUR" @if('EUR' == $Factory->curency ) Selected @endif>Euro</option>
+                                        <option value="CAN" @if('CAN' == $Factory->curency ) Selected @endif>Canadian</option>
                                         <option value="GBP" @if('GBP' == $Factory->curency ) Selected @endif>United Kingdom Pounds</option>
                                     </select>
                                 </div>

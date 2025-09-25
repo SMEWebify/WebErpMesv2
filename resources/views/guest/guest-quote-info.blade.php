@@ -245,7 +245,7 @@
                                     <strong>{{ $Quote->companie['label'] }}</strong><br>
                                     {{ $Quote->contact['civility'] }} {{ $Quote->contact['first_name'] }} {{ $Quote->contact['name'] }}<br>
                                     {{ $Quote->adresse['adress'] }}<br>
-                                    {{ $Quote->adresse['zipcode'] }} {{ $Quote->adresse['city'] }}<br>
+                                    {{ $Quote->adresse['zipcode'] }} {{ $Quote->adresse['city'] }} {{ $Quote->adresse['province'] ?? '' }}<br>
                                     {{ $Quote->adresse['country'] }}<br>
                                 </address>
                             </div>

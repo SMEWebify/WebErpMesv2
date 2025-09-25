@@ -218,7 +218,7 @@
                         <td>#{{ $Lead->id }}</td>
                         <td><x-CompanieButton id="{{ $Lead->companies_id }}" label="{{ $Lead->companie['label'] }}"  /></td>
                         <td>{{ $Lead->companie['first_name'] }} {{ $Lead->contact['name'] }}</td>
-                        <td>{{ $Lead->adresse['adress'] }} {{ $Lead->adresse['zipcode'] }}  {{ $Lead->adresse['city'] }}</td>
+                        <td>{{ $Lead->adresse['adress'] }} {{ $Lead->adresse['zipcode'] }}  {{ $Lead->adresse['city'] }} {{ $Lead->adresse['province'] ?? '' }}</td>
                         <td><img src="{{ Avatar::create($Lead->UserManagement['name'])->toBase64() }}" /></td>
                         <td>{{ $Lead->source }}</td>
                         <td>
@@ -294,7 +294,7 @@
                         </div>
                         <div class="card-body">
                             <p class="card-text">{{ $Lead->companie['first_name'] }} {{ $Lead->contact['name'] }}</p>
-                            <p class="card-text">{{ $Lead->adresse['adress'] }} {{ $Lead->adresse['zipcode'] }}  {{ $Lead->adresse['city'] }}</p>
+                            <p class="card-text">{{ $Lead->adresse['adress'] }} {{ $Lead->adresse['zipcode'] }}  {{ $Lead->adresse['city'] }} {{ $Lead->adresse['province'] ?? '' }}</p>
                             <p class="card-text"><strong>{{ __('general_content.source_trans_key') }}</strong> : {{ $Lead->source }}</p>
                             <p class="card-text"><strong>{{ __('general_content.campaign_trans_key') }}</strong> : {{ $Lead->campaign }}</p>
                             <p class="card-text"><strong>{{ __('general_content.status_trans_key') }}</strong>

@@ -104,7 +104,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}/h</span>
                             </div>
-                            <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001" value="{{ $MethodsService->hourly_rate }}">
+                            <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 {{ $Factory->curency }}/H" step=".001" value="{{ $MethodsService->hourly_rate }}">
                           </div>
                         </div>
                         <div class="form-group">
@@ -236,7 +236,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">{{ $Factory->curency }}/h</span>
                 </div>
-                <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 €/H" step=".001">
+                <input type="number" class="form-control" name="hourly_rate" id="hourly_rate" placeholder="110 {{ $Factory->curency }}/H" step=".001">
               </div>
             </div>
             <div class="form-group">

@@ -13,6 +13,7 @@ use App\Models\Quality\QualityCause;
 use App\Models\Methods\MethodsSection;
 use App\Models\Quality\QualityFailure;
 use App\Models\Methods\MethodsFamilies;
+use App\Models\Methods\MethodsLocation;
 use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Methods\MethodsRessources;
@@ -206,6 +207,16 @@ class SelectDataService
     public function getServices()
     {
         return MethodsServices::select('id', 'label')->orderBy('ordre')->get();
+    }
+
+    /**
+     * Retrieve workshop locations list.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getMethodsLocations()
+    {
+        return MethodsLocation::select('id', 'label')->orderBy('label')->get();
     }
 
     /**

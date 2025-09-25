@@ -32,6 +32,13 @@ for test or help to develop follow this link : [wiki page (install to dev)](http
 for run to production, follow this link :  [wiki page (install to run)](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
 ![image](https://github.com/user-attachments/assets/f527881c-a7c4-460a-9b06-f647c91402d8)
 
+
+### Post-installation configuration
+Before adding lines to a quote, set a **Default VAT** and a **Default Unit**.
+In the application, go to **Accounting → VAT**, then to **Methods → Units**
+and mark an item as the default value. Without these settings, it is impossible
+to add lines to a quote.
+
 ### Docker setup
 
 A docker-compose configuration is provided for local development. Start the stack with:

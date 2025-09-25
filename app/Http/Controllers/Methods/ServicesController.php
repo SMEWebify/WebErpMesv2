@@ -67,8 +67,12 @@ class ServicesController extends Controller
      */
     public function show($id)
     {
+        $factory = app('Factory');  
         $service = MethodsServices::findOrFail($id);
-        return view('methods/methods-services-show', compact('service'));
+        return view('methods/methods-services-show', [
+            'service' => $service,
+            'factory' => $factory,
+        ]);
     }
 
     /**

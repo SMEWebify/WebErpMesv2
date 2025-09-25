@@ -40,6 +40,7 @@ class CompanieResource extends JsonResource
                     'adress' => $address->adress,
                     'zipcode' => $address->zipcode,
                     'city' => $address->city,
+                    'province' => $address->province,
                     'country' => $address->country,
                 ];
             }),

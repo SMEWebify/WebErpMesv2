@@ -22,6 +22,15 @@
                             XLS
                         </button> 
                     </div>
+                    <div class="btn-group">
+                        <button
+                                class="btn btn-primary float-sm-right"
+                                type="button"
+                                wire:click="export('pdf')"
+                                wire:loading.attr="disabled"  >
+                            PDF
+                        </button>
+                    </div>
                 </div>
             </div>
 
