@@ -6,6 +6,7 @@ Please use the following versions of WEM as they are currently being supported w
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.18    | :white_check_mark: |
 | 1.17    | :white_check_mark: |
 | < 1.17  | :x:                |
 

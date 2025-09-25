@@ -93,6 +93,7 @@ Dim MyCon As New Odbc.OdbcConnection
 'MyCon.ConnectionString = "Driver={PostgreSQL ANSI};database=" & DatabaseName & ";server=" & ServerIp & ";port=" & ServerPort & ";uid=" & DatabaseUser & ";pwd=" & DatabasePassword & ";"
 MyCon.ConnectionString = "Driver={MySQL ODBC 8.4 ANSI Driver};DATABASE=" & DatabaseName & ";SERVER=" & ServerIp & ";PORT=" & ServerPort & ";UID=" & DatabaseUser & ";PASSWORD=" & DatabasePassword & ";"
 
+
 Dim ToSqlString As Func(of String, String) = _
 	Function(s As String) As String
 		If Not String.IsNullOrWhiteSpace(s) Then
@@ -315,7 +316,6 @@ If MyCon.State = ConnectionState.Open Then
     End While
     AccountingVatReader.Close()
 
-
 	'READ CUSTOMER INFORMATION FROM WEM TABLE
 	Dim customerSiteQueryString As String = "SELECT * FROM " & CompaniesTable & " WHERE " & "code" & "='" & QUOTE.Site.ExternalId & "'" 
     Dim customerSiteCommand As New Odbc.OdbcCommand(customerSiteQueryString, MyCon)
@@ -341,7 +341,7 @@ If MyCon.State = ConnectionState.Open Then
     Dim contactCommand As New Odbc.OdbcCommand(contactQueryString, MyCon)
     Dim contactReader As Odbc.OdbcDataReader = contactCommand.ExecuteReader()
     While contactReader.Read()
-        If contactReader("first_name").ToString().Trim() = QUOTE.Contact.Surname AndAlso contactReader("name").ToString().Trim() = QUOTE.Contact.Forename Then
+        If contactReader("name").ToString().Trim() = QUOTE.Contact.Surname AndAlso contactReader("first_name").ToString().Trim() = QUOTE.Contact.Forename Then
 			customerContactId = contactReader("id")
 		End If
     End While
