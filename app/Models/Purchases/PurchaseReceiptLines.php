@@ -5,8 +5,10 @@ namespace App\Models\Purchases;
 use App\Models\Products\StockMove;
 use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Quality\QualityNonConformity;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 
 class PurchaseReceiptLines extends Model
 {
@@ -19,6 +21,21 @@ class PurchaseReceiptLines extends Model
         'ordre',
         'receipt_qty',
         'stock_location_products_id',
+        'inspected_by',
+        'inspection_date',
+        'accepted_qty',
+        'rejected_qty',
+        'inspection_result',
+        'quality_non_conformity_id',
+    ];
+
+    /**
+     * Cast attributes to common representations.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'inspection_date' => 'date',
     ];
 
     public function purchaseReceipt()
@@ -39,6 +56,16 @@ class PurchaseReceiptLines extends Model
     public function StockMove()
     {
         return $this->hasMany(StockMove::class);
+    }
+
+    public function inspector()
+    {
+        return $this->belongsTo(User::class, 'inspected_by');
+    }
+
+    public function qualityNonConformity()
+    {
+        return $this->belongsTo(QualityNonConformity::class, 'quality_non_conformity_id');
     }
 
     /**

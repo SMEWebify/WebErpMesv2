@@ -132,6 +132,12 @@
                   <th>{{ __('general_content.qty_trans_key') }}</th>
                   <th>{{ __('general_content.qty_purchase_trans_key') }}</th>
                   <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_accepted_trans_key') }}</th>
+                  <th>{{ __('general_content.quantity_rejected_trans_key') }}</th>
+                  <th>{{ __('general_content.inspection_result_trans_key') }}</th>
+                  <th>{{ __('general_content.inspection_date_trans_key') }}</th>
+                  <th>{{ __('general_content.inspected_by_trans_key') }}</th>
+                  <th>{{ __('general_content.non_conformitie_trans_key') }}</th>
                   <th>{{__('general_content.action_trans_key') }}</th>
                 </tr>
               </thead>
@@ -196,8 +202,101 @@
                     </td>
                     <td>{{ number_format($PurchaseReceiptLine->purchaseLines->qty, 0, '', ' ') }}</td>
                     <td>{{ number_format($PurchaseReceiptLine->receipt_qty, 0, '', ' ') }}</td>
-                    
+                    <td>{{ number_format($PurchaseReceiptLine->accepted_qty ?? 0, 0, '', ' ') }}</td>
+                    <td>{{ number_format($PurchaseReceiptLine->rejected_qty ?? 0, 0, '', ' ') }}</td>
+                    <td>{{ $PurchaseReceiptLine->inspection_result ?? __('general_content.no_data_trans_key') }}</td>
                     <td>
+                      @if($PurchaseReceiptLine->inspection_date)
+                        {{ $PurchaseReceiptLine->inspection_date->format('d/m/Y') }}
+                      @else
+                        {{ __('general_content.no_data_trans_key') }}
+                      @endif
+                    </td>
+                    <td>{{ optional($PurchaseReceiptLine->inspector)->name ?? __('general_content.no_data_trans_key') }}</td>
+                    <td>
+                      @if($PurchaseReceiptLine->qualityNonConformity)
+                        {{ $PurchaseReceiptLine->qualityNonConformity->code }}
+                      @else
+                        {{ __('general_content.no_data_trans_key') }}
+                      @endif
+                    </td>
+
+                    <td>
+                      <div class="mb-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#purchaseReceiptLineInspection{{ $PurchaseReceiptLine->id }}">
+                          <i class="fas fa-clipboard-check"></i> {{ __('general_content.inspection_details_trans_key') }}
+                        </button>
+                      </div>
+                      <x-adminlte-modal id="purchaseReceiptLineInspection{{ $PurchaseReceiptLine->id }}" title="{{ __('general_content.inspection_details_trans_key') }}" theme="teal" icon="fas fa-clipboard-check" size='lg' disable-animations>
+                        <form method="POST" action="{{ route('purchase.receipts.lines.update', $PurchaseReceiptLine->id) }}">
+                          @csrf
+                          <div class="form-row">
+                            <div class="form-group col-md-6">
+                              <label for="inspected_by_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.inspected_by_trans_key') }}</label>
+                              <select class="form-control" name="inspected_by" id="inspected_by_{{ $PurchaseReceiptLine->id }}">
+                                <option value="">{{ __('general_content.select_option_trans_key') }}</option>
+                                @foreach ($userSelect as $user)
+                                  <option value="{{ $user->id }}" @if($PurchaseReceiptLine->inspected_by == $user->id) selected @endif>{{ $user->name }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="inspection_date_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.inspection_date_trans_key') }}</label>
+                              <input type="date" class="form-control" name="inspection_date" id="inspection_date_{{ $PurchaseReceiptLine->id }}" value="{{ optional($PurchaseReceiptLine->inspection_date)->format('Y-m-d') }}">
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <div class="form-group col-md-4">
+                              <label for="accepted_qty_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.qty_accepted_trans_key') }}</label>
+                              <input type="number" min="0" class="form-control" name="accepted_qty" id="accepted_qty_{{ $PurchaseReceiptLine->id }}" value="{{ $PurchaseReceiptLine->accepted_qty }}">
+                              @error('accepted_qty') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="rejected_qty_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.quantity_rejected_trans_key') }}</label>
+                              <input type="number" min="0" class="form-control" name="rejected_qty" id="rejected_qty_{{ $PurchaseReceiptLine->id }}" value="{{ $PurchaseReceiptLine->rejected_qty }}">
+                              @error('rejected_qty') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="quality_non_conformity_id_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.non_conformitie_trans_key') }}</label>
+                              <select class="form-control" name="quality_non_conformity_id" id="quality_non_conformity_id_{{ $PurchaseReceiptLine->id }}">
+                                <option value="">{{ __('general_content.select_option_trans_key') }}</option>
+                                @foreach ($nonConformities as $nonConformity)
+                                  <option value="{{ $nonConformity->id }}" @if($PurchaseReceiptLine->quality_non_conformity_id == $nonConformity->id) selected @endif>{{ $nonConformity->code }}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <div class="form-group col-md-12">
+                              <label for="inspection_result_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.inspection_result_trans_key') }}</label>
+                              <input type="text" class="form-control" name="inspection_result" id="inspection_result_{{ $PurchaseReceiptLine->id }}" value="{{ $PurchaseReceiptLine->inspection_result }}">
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <div class="col-md-12">
+                              <div class="border rounded p-3">
+                                <div class="custom-control custom-switch mb-3">
+                                  <input type="checkbox" class="custom-control-input" id="create_nc_{{ $PurchaseReceiptLine->id }}" name="create_non_conformity" value="1">
+                                  <label class="custom-control-label" for="create_nc_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.quick_nc_creation_trans_key') }}</label>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col-md-6">
+                                    <label for="new_nc_label_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.label_trans_key') }}</label>
+                                    <input type="text" class="form-control" name="new_nc_label" id="new_nc_label_{{ $PurchaseReceiptLine->id }}" placeholder="{{ __('general_content.label_trans_key') }}">
+                                  </div>
+                                  <div class="form-group col-md-6">
+                                    <label for="new_nc_comment_{{ $PurchaseReceiptLine->id }}">{{ __('general_content.comment_trans_key') }}</label>
+                                    <textarea class="form-control" rows="2" name="new_nc_comment" id="new_nc_comment_{{ $PurchaseReceiptLine->id }}" placeholder="{{ __('general_content.comment_trans_key') }}"></textarea>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">{{ __('general_content.update_trans_key') }}</button>
+                          </div>
+                        </form>
+                      </x-adminlte-modal>
                         @if($PurchaseReceiptLine->purchaseLines->tasks->component_id ?? null || $PurchaseReceiptLine->purchaseLines->product_id ?? null)
                           @if(empty($PurchaseReceiptLine->stock_location_products_id))
                             @php
@@ -292,6 +391,12 @@
                     <th>{{ __('general_content.qty_trans_key') }}</th>
                     <th>{{ __('general_content.qty_purchase_trans_key') }}</th>
                     <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
+                    <th>{{ __('general_content.qty_accepted_trans_key') }}</th>
+                    <th>{{ __('general_content.quantity_rejected_trans_key') }}</th>
+                    <th>{{ __('general_content.inspection_result_trans_key') }}</th>
+                    <th>{{ __('general_content.inspection_date_trans_key') }}</th>
+                    <th>{{ __('general_content.inspected_by_trans_key') }}</th>
+                    <th>{{ __('general_content.non_conformitie_trans_key') }}</th>
                     <th>{{__('general_content.action_trans_key') }}</th>
                   </tr>
                 </tfoot>

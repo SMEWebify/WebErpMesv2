@@ -191,6 +191,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesRFQController@updatePurchaseQuotation')->middleware(['auth'])->name('quotation.update');
         Route::post('/receipt/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updatePurchaseReceipt')->middleware(['auth'])->name('receipt.update');
         Route::post('/receipt/control/{id}', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateReceiptControl')->middleware(['auth'])->name('purchase.receipts.reception_control');
+        Route::post('/receipt/line/{purchaseReceiptLine}/inspection', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateLineInspection')->middleware(['auth'])->name('purchase.receipts.lines.update');
         Route::post('/invoice/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@updatePurchaseInvoice')->middleware(['auth'])->name('invoice.update');
 
         Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchases.show');

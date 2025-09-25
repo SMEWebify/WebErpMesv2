@@ -797,6 +797,16 @@ return [
     //PURCHASE RECEIPT
     'po_receipt_trans_key'                     => 'Recibo de la orden de compra',
     'name_purchase_reciept_trans_key'          => 'Nombre del recibo',
+    'po_receipt_note_trans_key'                => 'Recepción en espera de control',
+    'validate_control_trans_key'               => 'Validar control',
+    'inspection_details_trans_key'             => 'Detalles de inspección',
+    'inspection_result_trans_key'              => 'Resultado de la inspección',
+    'inspection_date_trans_key'                => 'Fecha de inspección',
+    'inspected_by_trans_key'                   => 'Inspeccionado por',
+    'select_option_trans_key'                  => 'Seleccione una opción',
+    'quick_nc_creation_trans_key'              => 'Creación rápida de NC',
+    'inspection_qty_error_trans_key'           => 'Las cantidades aceptadas y rechazadas no pueden superar la cantidad recibida (:receipt).',
+    'inspection_update_success_trans_key'      => 'Datos de inspección actualizados correctamente.',
 
     'waiting_to_invoice_trans_key'             => 'Esperando factura',
 

@@ -796,6 +796,16 @@ return [
     //PURCHASE RECIEPT
     'po_receipt_trans_key'                => 'استلام أمر الشراء',
     'name_purchase_reciept_trans_key'     => 'اسم الاستلام',
+    'po_receipt_note_trans_key'           => 'استلام بانتظار الفحص',
+    'validate_control_trans_key'          => 'تأكيد الفحص',
+    'inspection_details_trans_key'        => 'تفاصيل الفحص',
+    'inspection_result_trans_key'         => 'نتيجة الفحص',
+    'inspection_date_trans_key'           => 'تاريخ الفحص',
+    'inspected_by_trans_key'              => 'تم الفحص بواسطة',
+    'select_option_trans_key'             => 'اختر خياراً',
+    'quick_nc_creation_trans_key'         => 'إنشاء سريع لعدم المطابقة',
+    'inspection_qty_error_trans_key'      => 'لا يمكن أن تتجاوز الكميات المقبولة والمرفوضة الكمية المستلمة (:receipt).',
+    'inspection_update_success_trans_key' => 'تم تحديث بيانات الفحص بنجاح.',
 
     'waiting_to_invoice_trans_key'        => 'في انتظار الفاتورة',
 
