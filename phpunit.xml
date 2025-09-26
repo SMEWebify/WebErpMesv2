@@ -9,7 +9,6 @@
         </testsuite>
     </testsuites>
     <php>
-        <env name="APP_KEY" value="base64:qRJDlvJWD+XjAG10qaLWo68qC42vtkXaZSRkXA7ekdo="/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
     </php>
