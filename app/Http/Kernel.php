@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class,
         'check.factory'           => \App\Http\Middleware\CheckFactory::class,
         'check.task.status'       => \App\Http\Middleware\CheckTaskStatus::class,
+        'customer'                => \App\Http\Middleware\EnsureCustomerIsAuthenticated::class,
     ];
 }

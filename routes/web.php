@@ -28,6 +28,22 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     //Rating
     Route::post('/order/ratings', 'App\Http\Controllers\Workflow\OrdersRatingController@store')->name('order.ratings.store');
 
+    Route::prefix('customer')->name('customer.')->group(function () {
+        Route::middleware('guest:customer')->group(function () {
+            Route::get('login', 'App\Http\Controllers\Customer\Auth\AuthenticatedSessionController@create')->name('login');
+            Route::post('login', 'App\Http\Controllers\Customer\Auth\AuthenticatedSessionController@store')->name('login.store');
+        });
+
+        Route::middleware('customer')->group(function () {
+            Route::post('logout', 'App\Http\Controllers\Customer\Auth\AuthenticatedSessionController@destroy')->name('logout');
+            Route::get('/', 'App\Http\Controllers\Customer\PortalController@index')->name('dashboard');
+            Route::get('/orders/{order}', 'App\Http\Controllers\Customer\PortalController@showOrder')->name('orders.show');
+            Route::get('/deliveries/{delivery}', 'App\Http\Controllers\Customer\PortalController@showDelivery')->name('deliveries.show');
+            Route::get('/invoices/{invoice}', 'App\Http\Controllers\Customer\PortalController@showInvoice')->name('invoices.show');
+        });
+    });
+
+
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'check.factory'])->name('dashboard');
 
     Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'check.factory']], function () {

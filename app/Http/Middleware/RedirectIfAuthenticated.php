@@ -15,7 +15,7 @@ class RedirectIfAuthenticated
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @param  string|null  ...$guards
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next, ...$guards)
     {
@@ -23,6 +23,10 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                if ($guard === 'customer') {
+                    return redirect(RouteServiceProvider::CUSTOMER_HOME);
+                }
+
                 return redirect(RouteServiceProvider::HOME);
             }
         }
