@@ -130,7 +130,7 @@
                 @endif
                 <div class="row">
                   <div class="form-group col-md-6">
-                    @include('include.form.form-select-methods-location',[
+                    @include('include.form-select-methods-location',[
                         'methodsLocationId' => $Order->methods_locations_id,
                         'MethodsLocationsSelect' => $MethodsLocationsSelect])
                   </div>
