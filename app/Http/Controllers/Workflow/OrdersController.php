@@ -96,6 +96,7 @@ class OrdersController extends Controller
         $AccountingConditionSelect = $this->SelectDataService->getAccountingPaymentConditions();
         $AccountingMethodsSelect = $this->SelectDataService->getAccountingPaymentMethod();
         $AccountingDeleveriesSelect = $this->SelectDataService->getAccountingDelivery();
+        $MethodsLocationsSelect = $this->SelectDataService->getMethodsLocations();
         $Reviewers = $this->SelectDataService->getUsers();
 
         // Initialize OrderCalculatorService with the order ID
@@ -184,6 +185,7 @@ class OrdersController extends Controller
             'AccountingConditionSelect' => $AccountingConditionSelect,
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
+            'MethodsLocationsSelect' => $MethodsLocationsSelect,
             'Reviewers' => $Reviewers,
             'ReviewTimeline' => $ReviewTimeline,
             'totalPrices' => $totalPrice,
