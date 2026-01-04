@@ -177,4 +177,16 @@ return [
     'custom_fields_options_placeholder_trans_key' => 'Mỗi dòng một tùy chọn',
     'custom_fields_options_help_trans_key'     => 'Được hiển thị như các giá trị có thể chọn trong danh sách.',
     'custom_fields_select_placeholder_trans_key' => 'Chọn một tùy chọn',
+    'select_user_trans_key'                    => 'Chọn người dùng',
+
+    //REVIEW & CHANGE
+    'review_change_tracking_trans_key'         => 'Theo dõi xem xét và thay đổi',
+    'review_timeline_trans_key'                => 'Dòng thời gian xem xét',
+    'reviewed_by_trans_key'                    => 'Người duyệt',
+    'review_date_trans_key'                    => 'Ngày duyệt',
+    'decision_trans_key'                       => 'Quyết định',
+    'change_requested_by_trans_key'            => 'Người yêu cầu thay đổi',
+    'change_reason_trans_key'                  => 'Lý do thay đổi',
+    'change_approved_at_trans_key'             => 'Thời gian phê duyệt thay đổi',
+    'changes_trans_key'                        => 'Thay đổi',
 ];

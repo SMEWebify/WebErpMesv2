@@ -429,6 +429,7 @@ return [
     'select_vat_trans_key'                     => '选择增值税',
     'select_product_trans_key'                 => '选择产品',
     'user_management_trans_key'                => '负责人',
+    'select_user_trans_key'                    => '选择用户',
     'select_user_management_trans_key'         => '选择用户',
     'select_company_trans_key'                 => '选择第三方',
     'select_address_trans_key'                 => '选择地址',
@@ -472,6 +473,17 @@ return [
     'no_role_trans_key'                        => '暂无角色，请添加角色。',
     'no_permissions_trans_key'                 => '暂无权限，请添加权限。',
     'no_stock_location_trans_key'              => '暂无库存地点',
+
+    //REVIEW & CHANGE
+    'review_change_tracking_trans_key'         => '审核与变更跟踪',
+    'review_timeline_trans_key'                => '审核时间线',
+    'reviewed_by_trans_key'                    => '审核人',
+    'review_date_trans_key'                    => '审核日期',
+    'decision_trans_key'                       => '决策',
+    'change_requested_by_trans_key'            => '变更请求人',
+    'change_reason_trans_key'                  => '变更原因',
+    'change_approved_at_trans_key'             => '变更批准时间',
+    'changes_trans_key'                        => '变更',
 
     //LINK
     'back_trans_key'                           => '返回',

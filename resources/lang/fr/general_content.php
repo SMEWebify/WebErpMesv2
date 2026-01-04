@@ -429,6 +429,7 @@ return [
     'select_vat_trans_key'                     => 'Selectionner TVA',
     'select_product_trans_key'                 => 'Selectionner produit',
     'user_management_trans_key'                => 'Utilisateur responsable',
+    'select_user_trans_key'                    => 'Sélectionner un utilisateur',
     'select_user_management_trans_key'         => 'Selectionner l\'utilisateur',
     'select_company_trans_key'                 => 'Selectionner tiers',
     'select_address_trans_key'                 => 'Selectionner adresse',
@@ -472,6 +473,17 @@ return [
     'no_role_trans_key'                        => 'Aucun role, veuillez ajouter un role',
     'no_permissions_trans_key'                 => 'Aucune permission, veuillez ajouter une permission',
     'no_stock_location_trans_key'              => 'Aucune location de stock',
+
+    //REVIEW & CHANGE
+    'review_change_tracking_trans_key'         => 'Suivi des revues et changements',
+    'review_timeline_trans_key'                => 'Historique de revue',
+    'reviewed_by_trans_key'                    => 'Revu par',
+    'review_date_trans_key'                    => 'Date de revue',
+    'decision_trans_key'                       => 'Décision',
+    'change_requested_by_trans_key'            => 'Changement demandé par',
+    'change_reason_trans_key'                  => 'Motif du changement',
+    'change_approved_at_trans_key'             => 'Changement approuvé le',
+    'changes_trans_key'                        => 'Modifications',
 
     //LINK
     'back_trans_key'                           => 'Retour',

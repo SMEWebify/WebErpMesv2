@@ -113,14 +113,14 @@
                 </div>
                 <div class="row mt-3">
                   <div class="col-12">
-                    <h5 class="text-info">{{ __('Review & change tracking') }}</h5>
+                    <h5 class="text-info">{{ __('general_content.review_change_tracking_trans_key') }}</h5>
                   </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="reviewed_by">{{ __('Reviewed by') }}</label>
+                    <label for="reviewed_by">{{ __('general_content.reviewed_by_trans_key') }}</label>
                     <select class="form-control" name="reviewed_by" id="reviewed_by">
-                      <option value="">{{ __('Select user') }}</option>
+                      <option value="">{{ __('general_content.select_user_trans_key') }}</option>
                       @foreach($Reviewers as $user)
                         <option value="{{ $user->id }}" @selected(old('reviewed_by', $Quote->reviewed_by) == $user->id)>{{ $user->name }}</option>
                       @endforeach
@@ -130,7 +130,7 @@
                     @enderror
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="reviewed_at">{{ __('Review date') }}</label>
+                    <label for="reviewed_at">{{ __('general_content.review_date_trans_key') }}</label>
                     <input type="datetime-local" class="form-control" name="reviewed_at" id="reviewed_at" value="{{ old('reviewed_at', optional($Quote->reviewed_at)->format('Y-m-d\\TH:i')) }}">
                     @error('reviewed_at')
                       <span class="text-danger">{{ $message }}</span>
@@ -139,7 +139,7 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="review_decision">{{ __('Decision') }}</label>
+                    <label for="review_decision">{{ __('general_content.decision_trans_key') }}</label>
                     <select class="form-control" name="review_decision" id="review_decision">
                       <option value="">{{ __('general_content.undefined_trans_key') }}</option>
                       <option value="pending" @selected(old('review_decision', $Quote->review_decision) === 'pending')>{{ __('general_content.pending_trans_key') }}</option>
@@ -151,9 +151,9 @@
                     @enderror
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="change_requested_by">{{ __('Change requested by') }}</label>
+                    <label for="change_requested_by">{{ __('general_content.change_requested_by_trans_key') }}</label>
                     <select class="form-control" name="change_requested_by" id="change_requested_by">
-                      <option value="">{{ __('Select user') }}</option>
+                      <option value="">{{ __('general_content.select_user_trans_key') }}</option>
                       @foreach($Reviewers as $user)
                         <option value="{{ $user->id }}" @selected(old('change_requested_by', $Quote->change_requested_by) == $user->id)>{{ $user->name }}</option>
                       @endforeach
@@ -165,7 +165,7 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-12">
-                    <label for="change_reason">{{ __('Change reason') }}</label>
+                    <label for="change_reason">{{ __('general_content.change_reason_trans_key') }}</label>
                     <textarea class="form-control" name="change_reason" id="change_reason" rows="3">{{ old('change_reason', $Quote->change_reason) }}</textarea>
                     @error('change_reason')
                       <span class="text-danger">{{ $message }}</span>
@@ -174,7 +174,7 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label for="change_approved_at">{{ __('Change approved at') }}</label>
+                    <label for="change_approved_at">{{ __('general_content.change_approved_at_trans_key') }}</label>
                     <input type="datetime-local" class="form-control" name="change_approved_at" id="change_approved_at" value="{{ old('change_approved_at', optional($Quote->change_approved_at)->format('Y-m-d\\TH:i')) }}">
                     @error('change_approved_at')
                       <span class="text-danger">{{ $message }}</span>
@@ -535,16 +535,16 @@
         @endif
       </div>
       <div class="tab-pane " id="Logs">
-        <x-adminlte-card title="{{ __('Review timeline') }}" theme="info" icon="fas fa-history" class="mb-4">
+        <x-adminlte-card title="{{ __('general_content.review_timeline_trans_key') }}" theme="info" icon="fas fa-history" class="mb-4">
           @php
             $reviewersById = $Reviewers->keyBy('id');
             $fieldLabels = [
-              'reviewed_by' => __('Reviewed by'),
-              'reviewed_at' => __('Review date'),
-              'review_decision' => __('Decision'),
-              'change_requested_by' => __('Change requested by'),
-              'change_reason' => __('Change reason'),
-              'change_approved_at' => __('Change approved at'),
+              'reviewed_by' => __('general_content.reviewed_by_trans_key'),
+              'reviewed_at' => __('general_content.review_date_trans_key'),
+              'review_decision' => __('general_content.decision_trans_key'),
+              'change_requested_by' => __('general_content.change_requested_by_trans_key'),
+              'change_reason' => __('general_content.change_reason_trans_key'),
+              'change_approved_at' => __('general_content.change_approved_at_trans_key'),
             ];
             $formatReviewValue = function ($field, $value) use ($reviewersById) {
                 if (is_null($value) || $value === '') {
@@ -585,7 +585,7 @@
                     <th>{{ __('general_content.created_trans_key') }}</th>
                     <th>{{ __('general_content.user_trans_key') }}</th>
                     <th>{{ __('general_content.description_trans_key') }}</th>
-                    <th>{{ __('Changes') }}</th>
+                    <th>{{ __('general_content.changes_trans_key') }}</th>
                   </tr>
                 </thead>
                 <tbody>
