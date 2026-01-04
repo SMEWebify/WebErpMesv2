@@ -39,15 +39,20 @@
                             <label for="searchIdService">{{ __('general_content.status_trans_key') }}</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                    <span class="input-group-text"><i class="fas fa-filter"></i></span>
                                 </div>
-                                <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
-                                    <option value="" selected>{{ __('general_content.select_statu_trans_key') }}</option>
+                                <div class="form-control overflow-auto" style="max-height: 200px;">
                                     @forelse ($StatusSelect as $item)
-                                    <option value="{{ $item->id }}">{{ $item->title }}</option>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="{{ $item->id }}" id="status-{{ $item->id }}" wire:model.live="selectedStatuses">
+                                            <label class="form-check-label" for="status-{{ $item->id }}">
+                                                {{ $item->title }}
+                                            </label>
+                                        </div>
                                     @empty
+                                        <p class="text-muted mb-0">{{ __('general_content.no_data_trans_key') }}</p>
                                     @endforelse
-                                </select>
+                                </div>
                             </div>
                         </div>
                     </div>

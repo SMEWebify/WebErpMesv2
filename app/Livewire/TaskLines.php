@@ -17,11 +17,11 @@ class TaskLines extends Component
 
     public $search = '';
     public $searchIdService = '';
-    public $searchIdStatus = '';
     public $searchIdRessource = '';
     public $sortField = 'end_date'; // default sorting field
     public $sortAsc = true; // default sort direction
     public $ShowGenericTask = false;
+    public $selectedStatuses = [];
 
     public $Tasklist;
     public $Factory = [];
@@ -57,6 +57,14 @@ class TaskLines extends Component
                                 $query->whereNotNull('order_lines_id');
                             })
                             ->get();
+
+        $this->selectedStatuses = Status::where('title', '!=', 'Finished')
+                                        ->pluck('id')
+                                        ->toArray();
+
+        if(empty($this->selectedStatuses)){
+            $this->selectedStatuses = Status::pluck('id')->toArray();
+        }
     }
 
     public function render()
@@ -78,32 +86,36 @@ class TaskLines extends Component
                                                         ->whereNull('sub_assembly_id');
                                         })
                                         ->where('methods_services_id', 'like', '%'.$this->searchIdService.'%')
-                                        ->where('status_id', 'like', '%'.$this->searchIdStatus.'%')
                                         ->where('label','like', '%'.$this->search.'%')
                                         ->when($this->searchIdRessource, function($query){
                                             $query->whereHas('resources', fn($q) => $q->where('methods_ressources.id', $this->searchIdRessource));
+                                        })
+                                        ->when($this->selectedStatuses, function($query){
+                                            $query->whereIn('status_id', $this->selectedStatuses);
                                         })
                                         ->get();
         }
         else{
             $Tasklist = $this->Tasklist = Task::with('OrderLines.order')
-            ->where(function ($query) {
-                $query->where(function ($query) {
-                    $query->whereNotNull('sub_assembly_id')
-                            ->whereHas('SubAssembly', function ($query) {
-                                $query->whereNotNull('order_lines_id');
-                            });
-                })
-                ->orWhereNotNull('order_lines_id'); // Combine 'or' within the first 'where'
-            })
-            ->where('methods_services_id', 'like', '%'.$this->searchIdService.'%')
-            ->where('status_id', 'like', '%'.$this->searchIdStatus.'%')
-            ->where('label', 'like', '%'.$this->search.'%')
-            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-            ->when($this->searchIdRessource, function($query){
-                $query->whereHas('resources', fn($q) => $q->where('methods_ressources.id', $this->searchIdRessource));
-            })
-            ->get();
+                            ->where(function ($query) {
+                                $query->where(function ($query) {
+                                    $query->whereNotNull('sub_assembly_id')
+                                            ->whereHas('SubAssembly', function ($query) {
+                                                $query->whereNotNull('order_lines_id');
+                                            });
+                                })
+                                ->orWhereNotNull('order_lines_id'); // Combine 'or' within the first 'where'
+                            })
+                            ->where('methods_services_id', 'like', '%'.$this->searchIdService.'%')
+                            ->where('label', 'like', '%'.$this->search.'%')
+                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->when($this->searchIdRessource, function($query){
+                                $query->whereHas('resources', fn($q) => $q->where('methods_ressources.id', $this->searchIdRessource));
+                            })
+                            ->when($this->selectedStatuses, function($query){
+                                $query->whereIn('status_id', $this->selectedStatuses);
+                            })
+                            ->get();
 
         }
 
