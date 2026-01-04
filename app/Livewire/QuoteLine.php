@@ -16,6 +16,7 @@ use App\Models\Products\CustomerPriceList;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use Illuminate\Support\Facades\App;
+use App\Services\CustomFieldService;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,7 @@ class QuoteLine extends Component
     public $search = '';
     public $sortField = 'ordre'; // default sorting field
     public $sortAsc = true; // default sort direction
+    protected $customFieldService;
     
     public $QuoteId;
     public $QuoteStatu;
@@ -61,6 +63,7 @@ class QuoteLine extends Component
     public $appliedPriceListId = null;
     public $priceSource = null;
     public $priceListToggleKey;
+    public $productCustomFields = [];
 
     protected $updatingPriceFromList = false;
 
@@ -73,6 +76,7 @@ class QuoteLine extends Component
     {
         // Resolve the service via the Laravel container
         $this->orderService = App::make(OrderService::class);
+        $this->customFieldService = App::make(CustomFieldService::class);
     }
 
     // Validation Rules
@@ -148,6 +152,8 @@ class QuoteLine extends Component
                                                             ->where('quotes_id', '=', $this->quotes_id)
                                                             ->where('label','like', '%'.$this->search.'%')->get();
 
+        $this->loadProductCustomFields($QuoteLineslist);
+
         foreach ($QuoteLineslist as $line) {
             $detail = $line->QuoteLineDetails;
             if ($detail && !array_key_exists($detail->id, $this->customRequirements)) {
@@ -197,6 +203,14 @@ class QuoteLine extends Component
         }
 
         $this->customRequirements[$detailId][] = ['label' => '', 'value' => ''];
+    }
+
+    private function loadProductCustomFields($quoteLines): void
+    {
+        foreach ($quoteLines as $line) {
+            $this->productCustomFields[$line->id] = $this->customFieldService
+                ->getProductCustomFieldsForQuoteLine($line->product_id, $line->id);
+        }
     }
 
     public function removeCustomRequirement($detailId, $index): void

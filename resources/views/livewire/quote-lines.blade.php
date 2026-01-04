@@ -226,6 +226,60 @@
                                                             <button type="button" class="btn btn-outline-primary" wire:click="addCustomRequirement({{ $quoteDetailId }})"><i class="fas fa-plus"></i> {{ __('Add requirement') }}</button>
                                                         </div>
                                                     </div>
+                                                    @php
+                                                        $lineProductCustomFields = $productCustomFields[$QuoteLine->id] ?? collect();
+                                                        $defaultCategoryLabel = __('general_content.custom_fields_default_category_trans_key');
+                                                        $groupedProductFields = $lineProductCustomFields->groupBy(function ($field) use ($defaultCategoryLabel) {
+                                                            return $field->category ?? $defaultCategoryLabel;
+                                                        });
+                                                    @endphp
+                                                    @if($lineProductCustomFields->isNotEmpty())
+                                                        <hr>
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <label class="text-info">{{ __('general_content.custom_fields_trans_key') }} - {{ __('general_content.product_trans_key') }}</label>
+                                                            </div>
+                                                        </div>
+                                                        @foreach($groupedProductFields as $categoryLabel => $fields)
+                                                            <div class="row">
+                                                                <div class="col-12 mb-2">
+                                                                    <strong>{{ $categoryLabel }}</strong>
+                                                                </div>
+                                                                @foreach($fields as $customField)
+                                                                    @php
+                                                                        $fieldInputId = 'quote-line-'.$QuoteLine->id.'-custom-field-'.$customField->id;
+                                                                        $fieldValue = old("product_custom_fields.{$customField->id}", $customField->line_value ?? $customField->product_value);
+                                                                        $fieldOptions = is_array($customField->options) ? $customField->options : [];
+                                                                    @endphp
+                                                                    <div class="form-group col-md-6">
+                                                                        @if ($customField->type === 'checkbox')
+                                                                            <input type="hidden" name="product_custom_fields[{{ $customField->id }}]" value="0">
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input" type="checkbox" id="{{ $fieldInputId }}" name="product_custom_fields[{{ $customField->id }}]" value="1" {{ $fieldValue ? 'checked' : '' }}>
+                                                                                <label class="form-check-label" for="{{ $fieldInputId }}">{{ $customField->name }}</label>
+                                                                            </div>
+                                                                        @elseif ($customField->type === 'select')
+                                                                            <label for="{{ $fieldInputId }}">{{ $customField->name }}</label>
+                                                                            <select class="form-control" id="{{ $fieldInputId }}" name="product_custom_fields[{{ $customField->id }}]">
+                                                                                <option value="">{{ __('general_content.custom_fields_select_placeholder_trans_key') }}</option>
+                                                                                @foreach ($fieldOptions as $option)
+                                                                                    <option value="{{ $option }}" {{ $fieldValue === $option ? 'selected' : '' }}>{{ $option }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        @else
+                                                                            <label for="{{ $fieldInputId }}">{{ $customField->name }}</label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-prepend">
+                                                                                    <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                                                                </div>
+                                                                                <input class="form-control" type="{{ $customField->type }}" id="{{ $fieldInputId }}" name="product_custom_fields[{{ $customField->id }}]" value="{{ $fieldValue }}" placeholder="{{ __('general_content.custom_fields_placeholder_trans_key') }}">
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
                                                     <div class="row">
                                                         <div class="form-group col-md-4">
                                                             <div class="input-group">
