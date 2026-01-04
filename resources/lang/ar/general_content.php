@@ -381,6 +381,7 @@ return [
     'select_vat_trans_key'                  => 'اختر الضريبة المضافة',
     'select_product_trans_key'              => 'اختر المنتج',
     'user_management_trans_key'             => 'إدارة المستخدمين',
+    'select_user_trans_key'                 => 'اختر مستخدم',
     'select_user_management_trans_key'      => 'اختر إدارة المستخدمين',
     'select_company_trans_key'              => 'اختر جهة ثالثة',
     'select_address_trans_key'              => 'اختر العنوان',
@@ -423,6 +424,17 @@ return [
     'no_role_trans_key'                     => 'لا توجد دور، يرجى إضافته قبل ذلك',
     'no_permissions_trans_key'              => 'لا توجد أذونات، يرجى إضافتها قبل ذلك',
     'no_stock_location_trans_key'           => 'لا توجد موقع مخزني، يرجى إضافته قبل ذلك',
+
+    //REVIEW & CHANGE
+    'review_change_tracking_trans_key'      => 'تتبع المراجعات والتغييرات',
+    'review_timeline_trans_key'             => 'سجل المراجعة',
+    'reviewed_by_trans_key'                 => 'تمت المراجعة بواسطة',
+    'review_date_trans_key'                 => 'تاريخ المراجعة',
+    'decision_trans_key'                    => 'القرار',
+    'change_requested_by_trans_key'         => 'التغيير المطلوب من قبل',
+    'change_reason_trans_key'               => 'سبب التغيير',
+    'change_approved_at_trans_key'          => 'تمت الموافقة على التغيير في',
+    'changes_trans_key'                     => 'التغييرات',
 
     //LINK
     'back_trans_key'                    => 'الرجوع',

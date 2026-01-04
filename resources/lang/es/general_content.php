@@ -379,6 +379,7 @@ return [
     'select_vat_trans_key'                     => 'Seleccionar IVA',
     'select_product_trans_key'                 => 'Seleccionar Producto',
     'user_management_trans_key'                => 'Gestión de usuarios',
+    'select_user_trans_key'                    => 'Seleccionar usuario',
     'select_user_management_trans_key'         => 'Seleccionar gestión de usuarios',
     'select_company_trans_key'                 => 'Seleccionar tercero',
     'select_address_trans_key'                 => 'Seleccionar dirección',
@@ -421,6 +422,17 @@ return [
     'no_role_trans_key'                        => 'Ningún rol, por favor añadir antes',
     'no_permissions_trans_key'                 => 'Ningunos permisos, por favor añadir antes',
     'no_stock_location_trans_key'              => 'Ninguna ubicación de stock, por favor añadir antes',
+
+    //REVIEW & CHANGE
+    'review_change_tracking_trans_key'         => 'Seguimiento de revisiones y cambios',
+    'review_timeline_trans_key'                => 'Historial de revisión',
+    'reviewed_by_trans_key'                    => 'Revisado por',
+    'review_date_trans_key'                    => 'Fecha de revisión',
+    'decision_trans_key'                       => 'Decisión',
+    'change_requested_by_trans_key'            => 'Cambio solicitado por',
+    'change_reason_trans_key'                  => 'Motivo del cambio',
+    'change_approved_at_trans_key'             => 'Cambio aprobado en',
+    'changes_trans_key'                        => 'Cambios',
 
 
     //LINK

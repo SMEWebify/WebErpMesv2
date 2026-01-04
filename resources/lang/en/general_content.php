@@ -429,6 +429,7 @@ return [
     'select_vat_trans_key'                     => 'Select VAT',
     'select_product_trans_key'                 => 'Select Product',
     'user_management_trans_key'                => 'User management',
+    'select_user_trans_key'                    => 'Select user',
     'select_user_management_trans_key'         => 'Select user management',
     'select_company_trans_key'                 => 'Select third party',
     'select_address_trans_key'                 => 'Select address',
@@ -472,6 +473,17 @@ return [
     'no_role_trans_key'                        => 'No role, please add before',
     'no_permissions_trans_key'                 => 'No permissions, please add before',
     'no_stock_location_trans_key'              => 'No stock location, please add before',
+
+    //REVIEW & CHANGE
+    'review_change_tracking_trans_key'         => 'Review & change tracking',
+    'review_timeline_trans_key'                => 'Review timeline',
+    'reviewed_by_trans_key'                    => 'Reviewed by',
+    'review_date_trans_key'                    => 'Review date',
+    'decision_trans_key'                       => 'Decision',
+    'change_requested_by_trans_key'            => 'Change requested by',
+    'change_reason_trans_key'                  => 'Change reason',
+    'change_approved_at_trans_key'             => 'Change approved at',
+    'changes_trans_key'                        => 'Changes',
 
     //LINK
     'back_trans_key'                           => 'Back',
