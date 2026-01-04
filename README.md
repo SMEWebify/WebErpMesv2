@@ -39,6 +39,39 @@ In the application, go to **Accounting → VAT**, then to **Methods → Units**
 and mark an item as the default value. Without these settings, it is impossible
 to add lines to a quote.
 
+### Project structure at a glance
+
+- `app/Http/Controllers` — API and web controllers for quotes, production, inventory, and CRM modules.
+- `app/Models` — Eloquent models representing core business entities (orders, products, stocks, etc.).
+- `database/migrations` — Schema definitions for ERP and MES tables, including BOMs, routings, and stock movements.
+- `resources/js` — Vue.js front-end code compiled via Laravel Mix (see `webpack.mix.js`).
+- `resources/views` — Blade templates for server-rendered pages and layouts.
+- `docker/` and `docker-compose.yaml` — Development stack definitions (PHP-FPM, Nginx, database, Redis).
+
+### Local development (without Docker)
+
+Use this workflow if you prefer running the stack natively:
+
+```bash
+cp .env.example .env             # Configure your environment variables
+composer install                 # Install PHP dependencies
+php artisan key:generate         # Generate the application key
+php artisan migrate --seed       # Create and seed the database
+npm install                      # Install JS dependencies
+npm run dev                      # Build front-end assets (use npm run watch for active dev)
+php artisan serve                # Start the application at http://localhost:8000
+```
+
+### Running the test suite
+
+Execute the backend tests with:
+
+```bash
+php artisan test
+```
+
+You can also target a subset of tests by appending the `--filter` option.
+
 ### Docker setup
 
 A docker-compose configuration is provided for local development. Start the stack with:
@@ -53,7 +86,6 @@ The application will be available at http://localhost:45060.
 
 
 https://github.com/user-attachments/assets/200e1322-ae60-4270-aa9c-0a28e5ca737a
-
 
 
 
