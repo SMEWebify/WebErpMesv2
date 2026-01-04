@@ -42,6 +42,8 @@ class UpdateQuoteLineDetailsRequest extends FormRequest
             'custom_requirements' => 'nullable|array',
             'custom_requirements.*.label' => 'nullable|string|max:255',
             'custom_requirements.*.value' => 'nullable|string|max:255',
+            'product_custom_fields' => 'nullable|array',
+            'product_custom_fields.*' => 'nullable|string|max:255',
         ];
     }
 }
