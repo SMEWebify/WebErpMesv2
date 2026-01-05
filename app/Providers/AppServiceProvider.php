@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Planning\Task;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\OrderLines;
+use Illuminate\Console\Command;
 use App\Services\SelectDataService;
 use Illuminate\Pagination\Paginator;
 use App\Models\Workflow\DeliveryLines;
@@ -27,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SelectDataService::class, function ($app) {
             return new SelectDataService();
+        });
+
+        $this->app->resolving(Command::class, function (Command $command, $app) {
+            $command->setLaravel($app);
         });
     }
 
