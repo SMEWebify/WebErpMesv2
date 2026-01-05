@@ -169,163 +169,231 @@
                                             <form method="POST" action="{{ route('orders.update.detail.line', ['idOrder'=>  $OrderLine->orders_id, 'id' => $OrderLine->OrderLineDetails->id]) }}" enctype="multipart/form-data">
                                             @csrf
                                             <div class="card-body">
-                                                <div class="row">
-                                                    <div class="form-group col-md-4">
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fab fa-mdb"></i></span>
-                                                            </div>
-                                                            <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->material }}" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
+                                                <div class="accordion" id="orderLineDetailAccordion{{ $OrderLine->id }}">
+                                                    <div class="card card-outline card-success mb-2">
+                                                        <div class="card-header">
+                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineMainFeatures{{ $OrderLine->id }}" aria-expanded="true" aria-controls="orderLineMainFeatures{{ $OrderLine->id }}">
+                                                                <span class="d-flex align-items-center">
+                                                                    <i class="fas fa-stream text-success mr-2"></i> {{ __('Caractéristiques principales') }}
+                                                                </span>
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </button>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
-                                                            </div>
-                                                            <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->thickness }}" name="thickness" id="thickness"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
-                                                            </div>
-                                                            <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->weight }}" name="weight" id="weight"  placeholder="{{ __('general_content.weight_trans_key') }}" step=".001">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <hr>
-                                                <div class="row">
-                                                    <div class="form-group col-md-4">
-                                                        <label for="x_size">X</label>
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                                                            </div>
-                                                            <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->x_size }}" name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <label for="y_size">Y</label>
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                                                            </div>
-                                                            <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->y_size }}"  name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <label for="z_size">Z</label>
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                                                            </div>
-                                                            <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->z_size }}" name="z_size" id="z_size"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                        <div class="form-group col-md-4">
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                        <div id="orderLineMainFeatures{{ $OrderLine->id }}" class="collapse show" aria-labelledby="orderLineMainFeatures{{ $OrderLine->id }}" data-parent="#orderLineDetailAccordion{{ $OrderLine->id }}">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-4">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fab fa-mdb"></i></span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->material }}" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-4">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->thickness }}" name="thickness" id="thickness"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-4">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->weight }}" name="weight" id="weight"  placeholder="{{ __('general_content.weight_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <input type="number" class="form-control"  value="{{ $OrderLine->OrderLineDetails->x_oversize }}" name="x_oversize" id="x_oversize"  placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group col-md-4">
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                                                                </div>
-                                                                <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->y_oversize }}" name="y_oversize" id="y_oversize"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group col-md-4">
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                                                                </div>
-                                                                <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->z_oversize }}" name="z_oversize" id="z_oversize"  placeholder="{{ __('general_content.z_oversize_trans_key') }}" step=".001">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <hr>
-                                                    <div class="row">
-                                                        <div class="form-group col-md-4">
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
-                                                                </div>
-                                                                <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->diameter }}" name="diameter" id="diameter"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
-                                                            </div>
+
+                                                    <div class="card card-outline card-primary mb-2">
+                                                        <div class="card-header">
+                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineDimensions{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineDimensions{{ $OrderLine->id }}">
+                                                                <span class="d-flex align-items-center">
+                                                                    <i class="fas fa-ruler-combined text-primary mr-2"></i> {{ __('Dimensions (X, Y, Z)') }}
+                                                                </span>
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </button>
                                                         </div>
-                                                        <div class="form-group col-md-4">
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                        <div id="orderLineDimensions{{ $OrderLine->id }}" class="collapse" aria-labelledby="orderLineDimensions{{ $OrderLine->id }}" data-parent="#orderLineDetailAccordion{{ $OrderLine->id }}">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-4">
+                                                                        <label for="x_size">X</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->x_size }}" name="x_size" id="x_size"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-4">
+                                                                        <label for="y_size">Y</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->y_size }}"  name="y_size" id="y_size"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-4">
+                                                                        <label for="z_size">Z</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{  $OrderLine->OrderLineDetails->z_size }}" name="z_size" id="z_size"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group col-md-4">
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                                                                </div>
-                                                                <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->material_loss_rate }}" name="material_loss_rate" id="material_loss_rate"  placeholder="{{ __('general_content.material_loss_rate_trans_key') }}" step=".001">
+                                                                <div class="row">
+                                                                        <div class="form-group col-md-4">
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-prepend">
+                                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                                </div>
+                                                                                <input type="number" class="form-control"  value="{{ $OrderLine->OrderLineDetails->x_oversize }}" name="x_oversize" id="x_oversize"  placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group col-md-4">
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-prepend">
+                                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                                </div>
+                                                                                <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->y_oversize }}" name="y_oversize" id="y_oversize"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group col-md-4">
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-prepend">
+                                                                                    <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                                </div>
+                                                                                <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->z_oversize }}" name="z_oversize" id="z_oversize"  placeholder="{{ __('general_content.z_oversize_trans_key') }}" step=".001">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                             </div>
                                                         </div>
                                                     </div>
+
+                                                    <div class="card card-outline card-warning mb-2">
+                                                        <div class="card-header">
+                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineCircularSpecs{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineCircularSpecs{{ $OrderLine->id }}">
+                                                                <span class="d-flex align-items-center">
+                                                                    <i class="fas fa-circle-notch text-warning mr-2"></i> {{ __('Spécifications circulaires') }}
+                                                                </span>
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="orderLineCircularSpecs{{ $OrderLine->id }}" class="collapse" aria-labelledby="orderLineCircularSpecs{{ $OrderLine->id }}" data-parent="#orderLineDetailAccordion{{ $OrderLine->id }}">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-4">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->diameter }}" name="diameter" id="diameter"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-4">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-4">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{ $OrderLine->OrderLineDetails->material_loss_rate }}" name="material_loss_rate" id="material_loss_rate"  placeholder="{{ __('general_content.material_loss_rate_trans_key') }}" step=".001">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                     @php $orderDetailId = $OrderLine->OrderLineDetails->id; @endphp
-                                                    <div class="row">
-                                                        <div class="col-12">
-                                                            <label class="text-info">{{ __('Custom requirements') }}</label>
+                                                    <div class="card card-outline card-danger mb-2">
+                                                        <div class="card-header">
+                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineCustomReq{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineCustomReq{{ $OrderLine->id }}">
+                                                                <span class="d-flex align-items-center">
+                                                                    <i class="fas fa-tasks text-danger mr-2"></i> {{ __('Exigences personnalisées') }}
+                                                                </span>
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </button>
                                                         </div>
-                                                        @forelse($customRequirements[$orderDetailId] ?? [] as $index => $requirement)
-                                                            <div class="form-row align-items-end w-100" wire:key="order-custom-{{ $orderDetailId }}-{{ $index }}">
-                                                                <div class="form-group col-md-5">
-                                                                    <label for="order_custom_requirement_label_{{ $orderDetailId }}_{{ $index }}">{{ __('Label') }}</label>
-                                                                    <input type="text" class="form-control" id="order_custom_requirement_label_{{ $orderDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][label]" wire:model="customRequirements.{{ $orderDetailId }}.{{ $index }}.label" placeholder="{{ __('Label') }}">
+                                                        <div id="orderLineCustomReq{{ $OrderLine->id }}" class="collapse" aria-labelledby="orderLineCustomReq{{ $OrderLine->id }}" data-parent="#orderLineDetailAccordion{{ $OrderLine->id }}">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="col-12">
+                                                                        <label class="text-info">{{ __('Custom requirements') }}</label>
+                                                                    </div>
+                                                                    @forelse($customRequirements[$orderDetailId] ?? [] as $index => $requirement)
+                                                                        <div class="form-row align-items-end w-100" wire:key="order-custom-{{ $orderDetailId }}-{{ $index }}">
+                                                                            <div class="form-group col-md-5">
+                                                                                <label for="order_custom_requirement_label_{{ $orderDetailId }}_{{ $index }}">{{ __('Label') }}</label>
+                                                                                <input type="text" class="form-control" id="order_custom_requirement_label_{{ $orderDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][label]" wire:model="customRequirements.{{ $orderDetailId }}.{{ $index }}.label" placeholder="{{ __('Label') }}">
+                                                                            </div>
+                                                                            <div class="form-group col-md-5">
+                                                                                <label for="order_custom_requirement_value_{{ $orderDetailId }}_{{ $index }}">{{ __('Value') }}</label>
+                                                                                <input type="text" class="form-control" id="order_custom_requirement_value_{{ $orderDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][value]" wire:model="customRequirements.{{ $orderDetailId }}.{{ $index }}.value" placeholder="{{ __('Value') }}">
+                                                                            </div>
+                                                                            <div class="form-group col-md-2">
+                                                                                <button type="button" class="btn btn-outline-danger mt-4" wire:click="removeCustomRequirement({{ $orderDetailId }}, {{ $index }})"><i class="fas fa-trash"></i></button>
+                                                                            </div>
+                                                                        </div>
+                                                                    @empty
+                                                                        <div class="col-12">
+                                                                            <p class="text-muted">{{ __('No custom requirement added yet.') }}</p>
+                                                                        </div>
+                                                                    @endforelse
+                                                                    <div class="col-12 mb-3">
+                                                                        <button type="button" class="btn btn-outline-primary" wire:click="addCustomRequirement({{ $orderDetailId }})"><i class="fas fa-plus"></i> {{ __('Add requirement') }}</button>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="form-group col-md-5">
-                                                                    <label for="order_custom_requirement_value_{{ $orderDetailId }}_{{ $index }}">{{ __('Value') }}</label>
-                                                                    <input type="text" class="form-control" id="order_custom_requirement_value_{{ $orderDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][value]" wire:model="customRequirements.{{ $orderDetailId }}.{{ $index }}.value" placeholder="{{ __('Value') }}">
-                                                                </div>
-                                                                <div class="form-group col-md-2">
-                                                                    <button type="button" class="btn btn-outline-danger mt-4" wire:click="removeCustomRequirement({{ $orderDetailId }}, {{ $index }})"><i class="fas fa-trash"></i></button>
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-6">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fab fa-mdb"></i></span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->finishing }}" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        @empty
-                                                            <div class="col-12">
-                                                                <p class="text-muted">{{ __('No custom requirement added yet.') }}</p>
-                                                            </div>
-                                                        @endforelse
-                                                        <div class="col-12 mb-3">
-                                                            <button type="button" class="btn btn-outline-primary" wire:click="addCustomRequirement({{ $orderDetailId }})"><i class="fas fa-plus"></i> {{ __('Add requirement') }}</button>
                                                         </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="form-group col-md-4">
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fab fa-mdb"></i></span>
+
+                                                    <div class="card card-outline card-secondary mb-0">
+                                                        <div class="card-header">
+                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineComments{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineComments{{ $OrderLine->id }}">
+                                                                <span class="d-flex align-items-center">
+                                                                    <i class="fas fa-comments text-secondary mr-2"></i> {{ __('Commentaires') }}
+                                                                </span>
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="orderLineComments{{ $OrderLine->id }}" class="collapse" aria-labelledby="orderLineComments{{ $OrderLine->id }}" data-parent="#orderLineDetailAccordion{{ $OrderLine->id }}">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <x-FormTextareaComment  label="Internal comment" name="internal_comment" comment="{{ $OrderLine->OrderLineDetails->internal_comment }}" />
                                                                 </div>
-                                                                <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->finishing }}" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
+                                                                <div class="row mt-3">
+                                                                    <x-FormTextareaComment  label="External comment" name="external_comment" comment="{{ $OrderLine->OrderLineDetails->external_comment }}" />
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group col-md-4">
-                                                        </div>
-                                                        <div class="form-group col-md-4">
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="row">
-                                                        <x-FormTextareaComment  label="Internal comment" name="internal_comment" comment="{{ $OrderLine->OrderLineDetails->internal_comment }}" />
-                                                    </div>
-                                                    <div class="row">
-                                                        <x-FormTextareaComment  label="External comment" name="external_comment" comment="{{ $OrderLine->OrderLineDetails->external_comment }}" />
                                                     </div>
                                                 </div>
                                                 <div class="card-footer">
@@ -333,23 +401,39 @@
                                                 </div>
                                             </form>
                                             <div class="card-body">
-                                                <form action="{{ route('orders.update.detail.picture', ['idOrder'=>  $OrderLine->orders_id, 'id' => $OrderLine->OrderLineDetails->id]) }}" method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <label for="picture">{{ __('general_content.picture_file_trans_key') }}</label>(peg,png,jpg,gif,svg | max: 10 240 Ko)
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text"><i class="far fa-image"></i></span>
+                                                <div class="accordion" id="orderLineAttachmentAccordion{{ $OrderLine->id }}">
+                                                    <div class="card card-outline card-success mb-0">
+                                                        <div class="card-header">
+                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineAttachments{{ $OrderLine->id }}" aria-expanded="true" aria-controls="orderLineAttachments{{ $OrderLine->id }}">
+                                                                <span class="d-flex align-items-center">
+                                                                    <i class="fas fa-paperclip text-success mr-2"></i> {{ __('Fichiers attachés') }}
+                                                                </span>
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </button>
                                                         </div>
-                                                        <div class="custom-file">
-                                                            <input type="hidden" name="id" value="{{ $OrderLine->id }}">
-                                                            <input type="file" class="custom-file-input" name="picture" id="picture">
-                                                            <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
-                                                        </div>
-                                                        <div class="input-group-append">
-                                                            <button type="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                                                        <div id="orderLineAttachments{{ $OrderLine->id }}" class="collapse show" aria-labelledby="orderLineAttachments{{ $OrderLine->id }}" data-parent="#orderLineAttachmentAccordion{{ $OrderLine->id }}">
+                                                            <div class="card-body">
+                                                                <form action="{{ route('orders.update.detail.picture', ['idOrder'=>  $OrderLine->orders_id, 'id' => $OrderLine->OrderLineDetails->id]) }}" method="POST" enctype="multipart/form-data">
+                                                                    @csrf
+                                                                    <label for="picture">{{ __('general_content.picture_file_trans_key') }}</label>(peg,png,jpg,gif,svg | max: 10 240 Ko)
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text"><i class="far fa-image"></i></span>
+                                                                        </div>
+                                                                        <div class="custom-file">
+                                                                            <input type="hidden" name="id" value="{{ $OrderLine->id }}">
+                                                                            <input type="file" class="custom-file-input" name="picture" id="picture">
+                                                                            <label class="custom-file-label" for="picture">{{ __('general_content.choose_file_trans_key') }}</label>
+                                                                        </div>
+                                                                        <div class="input-group-append">
+                                                                            <button type="submit" class="btn btn-success">{{ __('general_content.upload_trans_key') }}</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </form>
+                                                </div>
                                             </div>
                                         </x-adminlte-modal>
                                     </div>
