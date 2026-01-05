@@ -123,7 +123,25 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-10">
-                                @include('include.search-card')
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @include('include.search-card')
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-filter fa-fw"></i></span>
+                                            </div>
+                                            <select class="form-control" wire:model.live="statusFilter">
+                                                <option value="all">{{ __('general_content.view_all_trans_key') }}</option>
+                                                <option value="client">{{ __('general_content.client_trans_key') }}</option>
+                                                <option value="prospect">{{ __('general_content.prospect_trans_key') }}</option>
+                                                <option value="supplier">{{ __('general_content.suppliers_trans_key') }}</option>
+                                                <option value="client_supplier">{{ __('general_content.suppliers_client_trans_key') }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-2">
                                 <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalCompanie">

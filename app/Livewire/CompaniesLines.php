@@ -22,6 +22,7 @@ class CompaniesLines extends Component
     public $search = '';
     public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
+    public $statusFilter = 'all';
 
     public $Companies;
 
@@ -36,6 +37,13 @@ class CompaniesLines extends Component
 
     protected $notificationService;
     protected $documentCodeGenerator;
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'sortField' => ['except' => 'label'],
+        'sortAsc' => ['except' => true],
+        'statusFilter' => ['as' => 'type', 'except' => 'all'],
+    ];
 
     public function __construct()
     {
@@ -65,6 +73,11 @@ class CompaniesLines extends Component
         $this->resetPage();
     }
 
+    public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->user_id = Auth::id();
@@ -72,13 +85,36 @@ class CompaniesLines extends Component
         $this->LastCompanie = Companies::orderBy('id', 'desc')->first();
         $companieId = $this->LastCompanie ? $this->LastCompanie->id : 0;
         $this->code = $this->documentCodeGenerator->generateDocumentCode('company', $companieId);
+
+        $availableFilters = ['all', 'client', 'prospect', 'supplier', 'client_supplier'];
+        $requestedFilter = request()->query('type');
+
+        if (in_array($requestedFilter, $availableFilters, true)) {
+            $this->statusFilter = $requestedFilter;
+        }
     }
 
     public function render()
     {
-        
+        $companiesQuery = Companies::where('label', 'like', '%' . $this->search . '%');
+
+        switch ($this->statusFilter) {
+            case 'client':
+                $companiesQuery->where('statu_customer', 2)->where('statu_supplier', '!=', 2);
+                break;
+            case 'prospect':
+                $companiesQuery->where('statu_customer', 3);
+                break;
+            case 'supplier':
+                $companiesQuery->where('statu_supplier', 2)->where('statu_customer', '!=', 2);
+                break;
+            case 'client_supplier':
+                $companiesQuery->where('statu_customer', 2)->where('statu_supplier', 2);
+                break;
+        }
+
         return view('livewire.companies-lines', [
-            'Companieslist' => Companies::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(10),
+            'Companieslist' => $companiesQuery->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(10),
         ]);
     }
 
