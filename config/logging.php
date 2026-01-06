@@ -109,6 +109,12 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        'n2p' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/n2p.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

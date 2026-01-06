@@ -10,6 +10,7 @@ use App\Models\Workflow\OrderLines;
 use Illuminate\Console\Command;
 use App\Services\SelectDataService;
 use Illuminate\Pagination\Paginator;
+use App\Observers\OrdersObserver;
 use App\Models\Workflow\DeliveryLines;
 use App\Models\Purchases\PurchaseLines;
 use Illuminate\Support\ServiceProvider;
@@ -43,6 +44,8 @@ class AppServiceProvider extends ServiceProvider
     public function  boot(Dispatcher $events)
     {
         Paginator::useBootstrap();
+
+        Orders::observe(OrdersObserver::class);
 
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
 
