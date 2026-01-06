@@ -24,4 +24,17 @@ class N2PSettingsRequest extends FormRequest
             'n2p_send_tasks' => ['required', 'boolean'],
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'n2p_enabled' => $this->toBoolean($this->input('n2p_enabled')),
+            'n2p_send_tasks' => $this->toBoolean($this->input('n2p_send_tasks')),
+        ]);
+    }
+
+    private function toBoolean(mixed $value): bool
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
+    }
 }
