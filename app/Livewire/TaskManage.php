@@ -12,6 +12,7 @@ use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Methods\MethodsTools;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsServices;
 use Illuminate\Support\Facades\Validator;
@@ -52,6 +53,9 @@ class TaskManage extends Component
     public $unit_price = 0.00;
     public $subAssemblyUnit_price = 0;
     public $methods_units_id = 0;
+    public $methods_tools_id;
+    public $start_date;
+    public $end_date;
 
     Private $quote_lines_id;
     Private $order_lines_id;
@@ -66,6 +70,7 @@ class TaskManage extends Component
     public $UnitsSelect = [];
     public $ProductSelect  = [];
     public $ComponentSelect  = [];
+    public $ToolsSelect = [];
     public $todayDate = '';
 
     public $csvFile;
@@ -77,6 +82,9 @@ class TaskManage extends Component
         'methods_services_id' =>'required',
         'unit_cost'=>'required|numeric|gt:0',
         'unit_price'=>'required|numeric|gt:0',
+        'methods_tools_id' =>'nullable|exists:methods_tools,id',
+        'start_date' => 'nullable|date',
+        'end_date' => 'nullable|date|after_or_equal:start_date',
     ];
 
     public function ChangeTaskType() 
@@ -144,6 +152,29 @@ class TaskManage extends Component
         $this->unit_price = round((float)$this->unit_cost * (1+((float)$this->methods_services_margin/100)),2);
     }
 
+    protected function toolIsAlreadyBooked($existingTask = null): bool
+    {
+        if (!$this->methods_tools_id || !$this->start_date || !$this->end_date) {
+            return false;
+        }
+
+        $query = Task::where('methods_tools_id', $this->methods_tools_id)
+                        ->where(function ($query) {
+                            $query->whereBetween('start_date', [$this->start_date, $this->end_date])
+                                    ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
+                                    ->orWhere(function ($query) {
+                                        $query->where('start_date', '<=', $this->start_date)
+                                                ->where('end_date', '>=', $this->end_date);
+                                    });
+                        });
+
+        if ($existingTask) {
+            $query->where('id', '!=', $existingTask->id);
+        }
+
+        return $query->exists();
+    }
+
     public function mount($idType, $idPage, $idLine) 
     {
         $this->idLine = $idLine;
@@ -165,8 +196,11 @@ class TaskManage extends Component
 
         $this->todayDate = Carbon::today();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
+        $this->ToolsSelect = MethodsTools::available()->orderBy('code')->get();
         $status =  Status::select('id')->orderBy('order')->first();
         $this->status_id = $status->id;
+        $this->start_date = null;
+        $this->end_date = null;
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->with('service')->whereRelation('service', 'type', 2)
                                                                                                             ->OrwhereRelation('service', 'type', 3)
                                                                                                             ->OrwhereRelation('service', 'type', 4)
@@ -232,6 +266,9 @@ class TaskManage extends Component
         $this->unit_cost  = '';
         $this->unit_price  = '';    
         $this->methods_units_id  = '';
+        $this->methods_tools_id = null;
+        $this->start_date = null;
+        $this->end_date = null;
     }
 
     public function storeTask($idLine  = null){
@@ -244,6 +281,9 @@ class TaskManage extends Component
         elseif($this->methods_services_id == __('general_content.select_service_trans_key') || is_null($this->methods_services_id)){
             // Set Flash Message
             session()->flash('error', 'Please select service.');
+        }
+        elseif($this->toolIsAlreadyBooked()){
+            session()->flash('error', __('general_content.tool_already_booked_trans_key'));
         }
         else{
 
@@ -294,6 +334,8 @@ class TaskManage extends Component
                         'unit_cost' => $this->unit_cost,  
                         'unit_price' => $this->unit_price,  
                         'methods_units_id' => $this->methods_units_id,  
+                        'start_date' => $this->start_date,
+                        'end_date' => $this->end_date,
                         'x_size', 
                         'y_size', 
                         'z_size', 
@@ -306,7 +348,7 @@ class TaskManage extends Component
                         'material', 
                         'thickness', 
                         'weight', 
-                        'methods_tools_id',
+                        'methods_tools_id' => $this->methods_tools_id,
                         'origin' => "0"];
 
             if ($this->idType == 'nomenclature_lines_id') {
@@ -418,6 +460,9 @@ class TaskManage extends Component
         $this->unit_cost = $Line->unit_cost;
         $this->unit_price = $Line->unit_price;     
         $this->methods_units_id = $Line->methods_units_id;
+        $this->start_date = $Line->start_date;
+        $this->end_date = $Line->end_date;
+        $this->methods_tools_id = $Line->methods_tools_id;
 
                 
         $this->TaskType = in_array($Line->type, [1, 2]) ? 'TechCut' : 'BOM';
@@ -432,8 +477,14 @@ class TaskManage extends Component
         $this->methods_services_id =  $splitMethod[0]; 
         $this->type =  $splitMethod[1]; 
 
+        $task = Task::find($this->taskId);
+        if ($this->toolIsAlreadyBooked($task)) {
+            session()->flash('error', __('general_content.tool_already_booked_trans_key'));
+            return;
+        }
+
         // Update line
-        Task::find($this->taskId)->fill([
+        $task->fill([
             'ordre' => $this->ordre, 
             'label' => $this->label,
             'methods_services_id' => $this->methods_services_id,  
@@ -446,6 +497,9 @@ class TaskManage extends Component
             'unit_cost' => $this->unit_cost,  
             'unit_price' => $this->unit_price,  
             'methods_units_id' => $this->methods_units_id, 
+            'methods_tools_id' => $this->methods_tools_id,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
         ])->save();
 
         $this->updateLines = false;
