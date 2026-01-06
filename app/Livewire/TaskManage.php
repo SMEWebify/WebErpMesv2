@@ -15,6 +15,7 @@ use App\Models\Methods\MethodsUnits;
 use App\Models\Methods\MethodsTools;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsServices;
+use App\Models\Methods\MethodsTools;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Methods\MethodsStandardTask;
 use App\Models\Methods\MethodsStandardNomenclature;
@@ -53,7 +54,7 @@ class TaskManage extends Component
     public $unit_price = 0.00;
     public $subAssemblyUnit_price = 0;
     public $methods_units_id = 0;
-    public $methods_tools_id;
+    public $methods_tools_id = null;
     public $start_date;
     public $end_date;
 
@@ -62,6 +63,7 @@ class TaskManage extends Component
     Private $products_id;
     Private $sub_assembly_id;
     Private $nomenclature_lines_id;
+    private $contextProductId = null;
     
 
     public $updateLines = false;
@@ -193,9 +195,14 @@ class TaskManage extends Component
         elseif($this->idType == 'nomenclature_lines_id'){
             $this->nomenclature_lines_id = $idLine;
         }
+        elseif($this->idType == 'sub_assembly_id'){
+            $this->sub_assembly_id = $idLine;
+        }
 
         $this->todayDate = Carbon::today();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
+        $this->contextProductId = $this->determineContextProductId();
+        $this->loadToolsForProduct($this->contextProductId);
         $this->ToolsSelect = MethodsTools::available()->orderBy('code')->get();
         $status =  Status::select('id')->orderBy('order')->first();
         $this->status_id = $status->id;
@@ -250,7 +257,11 @@ class TaskManage extends Component
             $Line->id = null;
             $Line->qty = 1;
         }
-        
+
+        if (!$this->ToolsSelect && $this->contextProductId) {
+            $this->loadToolsForProduct($this->contextProductId);
+        }
+
         return view('livewire.task-manage',[
             'Line' => $Line,
         ]);
@@ -467,6 +478,7 @@ class TaskManage extends Component
                 
         $this->TaskType = in_array($Line->type, [1, 2]) ? 'TechCut' : 'BOM';
         $this->ChangeTaskType();
+        $this->loadToolsForProduct($this->contextProductId ?? $Line->products_id);
     }
 
     public function updateTask(){
@@ -500,6 +512,7 @@ class TaskManage extends Component
             'methods_tools_id' => $this->methods_tools_id,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
+
         ])->save();
 
         $this->updateLines = false;
@@ -663,5 +676,44 @@ class TaskManage extends Component
         }
     
         session()->flash('success', 'Nomenclature added Successfully');
+    }
+
+    private function determineContextProductId(): ?int
+    {
+        return match ($this->idType) {
+            'products_id' => $this->idLine,
+            'quote_lines_id' => QuoteLines::whereKey($this->idLine)->value('product_id'),
+            'order_lines_id' => OrderLines::whereKey($this->idLine)->value('product_id'),
+            'sub_assembly_id' => SubAssembly::whereKey($this->idLine)->value('products_id'),
+            default => null,
+        };
+    }
+
+    private function loadToolsForProduct(?int $productId): void
+    {
+        $this->ToolsSelect = [];
+
+        if (!$productId) {
+            return;
+        }
+
+        $product = Products::with('tools')->find($productId);
+
+        if ($product) {
+            $tools = $product->tools;
+
+            if ($this->methods_tools_id && $tools->doesntContain('id', $this->methods_tools_id)) {
+                $existingTool = MethodsTools::find($this->methods_tools_id);
+                if ($existingTool) {
+                    $tools->push($existingTool);
+                }
+            }
+
+            $this->ToolsSelect = $tools;
+
+            if (!$this->methods_tools_id && $tools->isNotEmpty()) {
+                $this->methods_tools_id = $tools->first()->id;
+            }
+        }
     }
 }

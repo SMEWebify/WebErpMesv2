@@ -118,6 +118,20 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-2">
+                        @if(count($ToolsSelect) > 0)
+                        <label for="methods_tools_id">{{ __('general_content.tools_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-tools"></i></span>
+                            </div>
+                            <select class="form-control" name="methods_tools_id" id="methods_tools_id" wire:model.live="methods_tools_id">
+                                <option value="">{{ __('general_content.select_tool_trans_key') }}</option>
+                                @foreach ($ToolsSelect as $tool)
+                                <option value="{{ $tool->id }}">{{ $tool->code }} - {{ $tool->label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
                     </div>
                     <div class="form-group col-md-2">
                         @if($TaskType == 'TechCut')

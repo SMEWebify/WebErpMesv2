@@ -439,6 +439,7 @@ return [
     'select_payement_methods_trans_key'        => 'Selectionner méthode de paiement',
     'select_delivery_trans_key'                => 'Selectionner mode de livraison',
     'select_service_trans_key'                 => 'Selectionner service',
+    'select_tool_trans_key'                    => 'Sélectionner outil',
     'select_ressource_trans_key'               => 'Selectionner ressource',
     'select_family_trans_key'                  => 'Selectionner famille',
     'select_unit_trans_key'                    => 'Selectionner unité',
