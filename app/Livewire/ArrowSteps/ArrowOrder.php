@@ -28,8 +28,10 @@ class ArrowOrder extends Component
     public function changeStatu($statuNumber){
         try {
             // Changer le statut de la commande
-            Orders::where('id', $this->OrderId)->update(['statu' => $statuNumber]);
-    
+            $order = Orders::findOrFail($this->OrderId);
+            $order->statu = $statuNumber;
+            $order->save();
+
             // Récupérer les tâches associées à cette commande
             $tasks = Task::whereHas('OrderLines', function ($query) {
                 $query->where('orders_id', $this->OrderId);
