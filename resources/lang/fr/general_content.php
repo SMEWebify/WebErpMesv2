@@ -427,6 +427,7 @@ return [
     'new_purchase_document_trans_key'          => 'Nouvelle commande d\'achat',
 
     //SELECT
+    'select_trans_key'                         => 'Selectionner',
     'select_vat_trans_key'                     => 'Selectionner TVA',
     'select_product_trans_key'                 => 'Selectionner produit',
     'user_management_trans_key'                => 'Utilisateur responsable',

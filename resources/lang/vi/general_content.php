@@ -165,6 +165,7 @@ return [
     'average_supply_delay_trans_key'           => 'Thời gian cung ứng trung bình',
     'order_site_trans_key'                     => 'Công trường',
     'characteristics_trans_key'                => 'Đặc điểm',
+    'select_trans_key'                         => 'Chọn',
     'select_ressource_trans_key'               => 'Chọn nguồn lực',
     'contact_info_trans_key'                   => 'Thông tin liên hệ',
     'custom_fields_trans_key'                  => 'Trường tùy chỉnh',
