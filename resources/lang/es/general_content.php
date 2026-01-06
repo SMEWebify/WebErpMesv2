@@ -376,6 +376,7 @@ return [
     'new_purchase_document_trans_key'          => 'Nuevo documento de compra',
 
     // SELECT
+    'select_trans_key'                         => 'Seleccionar',
     'select_vat_trans_key'                     => 'Seleccionar IVA',
     'select_product_trans_key'                 => 'Seleccionar Producto',
     'user_management_trans_key'                => 'Gestión de usuarios',

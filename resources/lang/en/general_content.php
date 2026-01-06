@@ -427,6 +427,7 @@ return [
     'new_purchase_document_trans_key'          => 'New purchase document',
     
     //SELECT
+    'select_trans_key'                         => 'Select',
     'select_vat_trans_key'                     => 'Select VAT',
     'select_product_trans_key'                 => 'Select Product',
     'user_management_trans_key'                => 'User management',

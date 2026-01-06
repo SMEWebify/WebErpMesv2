@@ -426,6 +426,7 @@ return [
     'new_purchase_document_trans_key'          => '新建采购单',
 
     //SELECT
+    'select_trans_key'                         => '选择',
     'select_vat_trans_key'                     => '选择增值税',
     'select_product_trans_key'                 => '选择产品',
     'user_management_trans_key'                => '负责人',

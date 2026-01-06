@@ -378,6 +378,7 @@ return [
     'new_invoice_document_trans_key'    => 'مستند فاتورة جديد',
     'new_purchase_document_trans_key'   => 'مستند شراء جديد',
     
+    'select_trans_key'                      => 'اختر',
     'select_vat_trans_key'                  => 'اختر الضريبة المضافة',
     'select_product_trans_key'              => 'اختر المنتج',
     'user_management_trans_key'             => 'إدارة المستخدمين',
