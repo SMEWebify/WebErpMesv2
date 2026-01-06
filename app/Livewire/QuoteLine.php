@@ -916,6 +916,7 @@ class QuoteLine extends Component
                         'thickness'=>$QuoteLineDetailData->thickness,
                         'finishing'=>$QuoteLineDetailData->finishing,
                         'weight'=>$QuoteLineDetailData->weight,
+                        'bend_count'=>$QuoteLineDetailData->bend_count,
                         'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
                         'cad_file'=>$QuoteLineDetailData->cad_file,
                         'cam_file'=>$QuoteLineDetailData->cam_file,

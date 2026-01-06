@@ -505,6 +505,7 @@ return [
     'finishing_trans_key'                   => 'التشطيب',
     'thickness_trans_key'                   => 'السمك',
     'weight_trans_key'                      => 'الوزن',
+    'bend_count_trans_key'                  => 'عدد الثنيات',
     'x_size_trans_key'                      => 'الحجم X',
     'y_size_trans_key'                      => 'الحجم Y',
     'z_size_trans_key'                      => 'الحجم Z',

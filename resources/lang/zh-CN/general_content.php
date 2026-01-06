@@ -567,6 +567,7 @@ return [
     'finishing_trans_key'                      => '表面处理',
     'weight_trans_key'                         => '净重',
     'gross_weight_trans_key'                   => '毛重',
+    'bend_count_trans_key'                     => '折弯次数',
     'x_size_trans_key'                         => 'X 尺寸',
     'y_size_trans_key'                         => 'Y 尺寸',
     'z_size_trans_key'                         => 'Z 尺寸',

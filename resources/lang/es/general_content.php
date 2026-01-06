@@ -505,6 +505,7 @@ return [
     'finishing_trans_key'                      => 'Acabado',
     'thickness_trans_key'                      => 'Espesor',
     'weight_trans_key'                         => 'Peso',
+    'bend_count_trans_key'                     => 'Cantidad de dobleces',
     'x_size_trans_key'                         => 'Tamaño X',
     'y_size_trans_key'                         => 'Tamaño Y',
     'z_size_trans_key'                         => 'Tamaño Z',

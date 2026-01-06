@@ -36,6 +36,7 @@ class UpdateOrderLineDetailsRequest extends FormRequest
             'thickness' => 'nullable|numeric|min:0',
             'finishing' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
+            'bend_count' => 'nullable|integer|min:0',
             'material_loss_rate' => 'nullable|numeric|min:0|max:100',
             'cad_file' => 'nullable|string|max:255',
             'cam_file' => 'nullable|string|max:255',
