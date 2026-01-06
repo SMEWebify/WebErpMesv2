@@ -58,8 +58,17 @@
     </x-adminlte-card>
 @stop
 
+@section('plugins.BootstrapSwitch', true)
+
 @section('css')
 @stop
 
 @section('js')
+<script>
+    $(function () {
+        $("input[data-bootstrap-switch]").each(function () {
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        });
+    });
+</script>
 @stop
