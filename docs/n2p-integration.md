@@ -9,6 +9,7 @@
 - `n2p_job_status_on_send` : statut job envoyé (par défaut `released`).
 - `n2p_priority_default` : priorité par défaut 1..5 (par défaut `3`).
 - `n2p_send_tasks` : envoyer les tâches liées aux lignes (bool).
+- `n2p_verify_ssl` : vérifier le certificat SSL lors des appels API (bool, par défaut `true`).
 
 ## Happy path (envoi automatique)
 1. Activer `n2p_enabled`, renseigner `n2p_base_url` et `n2p_api_token`.
