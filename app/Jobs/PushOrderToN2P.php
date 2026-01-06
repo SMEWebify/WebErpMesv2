@@ -37,9 +37,16 @@ class PushOrderToN2P implements ShouldQueue
             'n2p_job_status_on_send',
             'n2p_priority_default',
             'n2p_send_tasks',
+            'n2p_verify_ssl',
+        ], [
+            'n2p_verify_ssl' => true,
         ]);
 
-        $client = new N2PClient($config['n2p_base_url'], $config['n2p_api_token'] ?? null);
+        $client = new N2PClient(
+            $config['n2p_base_url'],
+            $config['n2p_api_token'] ?? null,
+            $config['n2p_verify_ssl'] ?? true
+        );
         $payload = $payloadBuilder->build($order, $config);
 
         $response = $client->pushJobs($payload);

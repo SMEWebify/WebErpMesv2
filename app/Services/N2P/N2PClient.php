@@ -10,7 +10,11 @@ class N2PClient
 {
     private const TIMEOUT = 15;
 
-    public function __construct(private readonly string $baseUrl, private readonly ?string $token = null)
+    public function __construct(
+        private readonly string $baseUrl,
+        private readonly ?string $token = null,
+        private readonly bool $verifySsl = true
+    )
     {
     }
 
@@ -22,6 +26,7 @@ class N2PClient
             ->contentType('application/json')
             ->timeout(self::TIMEOUT)
             ->withHeaders($this->authorizationHeader())
+            ->withOptions(['verify' => $this->verifySsl])
             ->post($url, $payload);
 
         Log::channel('n2p')->info('N2P push request', [

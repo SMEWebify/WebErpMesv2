@@ -22,6 +22,7 @@ class N2PSettingsRequest extends FormRequest
             'n2p_job_status_on_send' => ['required', 'string', 'max:191'],
             'n2p_priority_default' => ['required', 'integer', 'between:1,5'],
             'n2p_send_tasks' => ['required', 'boolean'],
+            'n2p_verify_ssl' => ['required', 'boolean'],
         ];
     }
 
@@ -30,6 +31,7 @@ class N2PSettingsRequest extends FormRequest
         $this->merge([
             'n2p_enabled' => $this->toBoolean($this->input('n2p_enabled')),
             'n2p_send_tasks' => $this->toBoolean($this->input('n2p_send_tasks')),
+            'n2p_verify_ssl' => $this->toBoolean($this->input('n2p_verify_ssl')),
         ]);
     }
 
