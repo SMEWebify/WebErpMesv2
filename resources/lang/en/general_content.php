@@ -345,6 +345,7 @@ return [
     'units_trans_key'                          => 'Units',
     'families_trans_key'                       => 'Families',
     'tools_trans_key'                          => 'Tools',
+    'tool_already_booked_trans_key'            => 'The selected tool is already booked for this time slot.',
     'batches_trans_key'                        => 'Batches',
 
     'absence_trans_key'                        => 'Absence',

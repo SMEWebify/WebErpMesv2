@@ -345,6 +345,7 @@ return [
     'units_trans_key'                          => 'Unités',
     'families_trans_key'                       => 'Famille',
     'tools_trans_key'                          => 'Outils',
+    'tool_already_booked_trans_key'            => "L'outil sélectionné est déjà réservé sur ce créneau.",
     'batches_trans_key'                        => 'Lots',
 
     'absence_trans_key'                        => 'Absence',

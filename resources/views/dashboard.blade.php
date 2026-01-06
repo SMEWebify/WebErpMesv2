@@ -44,7 +44,7 @@
                             text="{{ __('general_content.new_client_trans_key') }}" 
                             icon="far fa-building"
                             theme="info" 
-                            url="{{ route('companies') }}" 
+                            url="{{ route('companies', ['type' => 'client']) }}" 
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
@@ -53,7 +53,7 @@
                             text="{{ __('general_content.suppliers_trans_key') }}" 
                             icon="far fa-building"
                             theme="success" 
-                            url="{{ route('companies') }}" 
+                            url="{{ route('companies', ['type' => 'supplier']) }}" 
                             url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
     <!-- ./col -->
