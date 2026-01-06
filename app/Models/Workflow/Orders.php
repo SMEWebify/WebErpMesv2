@@ -52,11 +52,15 @@ class Orders extends Model
                             'change_requested_by',
                             'change_reason',
                             'change_approved_at',
+                            'n2p_last_push_at',
+                            'n2p_last_push_status',
+                            'n2p_last_push_error',
                         ];
 
     protected $casts = [
         'reviewed_at' => 'datetime',
         'change_approved_at' => 'datetime',
+        'n2p_last_push_at' => 'datetime',
     ];
 
     // Only log changes

@@ -426,7 +426,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/factory/permissions/store', 'App\Http\Controllers\Admin\PermissionController@store')->middleware(['auth'])->name('admin.factory.permissions.store');
         Route::get('/factory/permissions/delete/{permission}', 'App\Http\Controllers\Admin\PermissionController@destroy')->middleware(['auth'])->name('admin.factory.permissions.destroy');
         Route::post('/factory/role/permissions/store', 'App\Http\Controllers\Admin\RoleController@RolePemissionStore')->middleware(['auth'])->name('admin.factory.rolepermissions.store');
-    
+        Route::get('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'edit'])->middleware(['auth'])->name('admin.integrations.n2p');
+        Route::put('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'update'])->middleware(['auth'])->name('admin.integrations.n2p.update');
+
         Route::post('/factory/custom-field/store', 'App\Http\Controllers\Admin\FactoryController@storeCustomField')->middleware(['auth'])->name('admin.factory.custom.field.store');
         Route::post('/factory/custom-field-value/storeOrUpdate/{id}/{type}', 'App\Http\Controllers\Admin\FactoryController@storeOrUpdateCustomField')->middleware(['auth'])->name('admin.factory.custom.field.value.store.update');
         
