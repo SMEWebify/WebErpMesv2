@@ -19,6 +19,7 @@ return [
     'created_at_trans_key'                     => 'Tạo lúc',
     'assigned_trans_key'                       => 'Đã phân công',
     'action_trans_key'                         => 'Chức năng',
+    'save_trans_key'                           => 'Lưu',
 
     // BUTTON
     'view_all_trans_key'                       => 'Xem toàn bộ',

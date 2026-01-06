@@ -179,6 +179,7 @@ return [
     'created_at_trans_key'                     => '创建于',
     'assigned_trans_key'                       => '指派给',
     'action_trans_key'                         => '操作',
+    'save_trans_key'                           => '保存',
     'user_trans_key'                           => '用户',
     'status_client_trans_key'                  => '客户状态',
     'status_supplier_trans_key'                => '供应商状态',

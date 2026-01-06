@@ -179,6 +179,7 @@ return [
     'created_at_trans_key'                     => 'Created at',
     'assigned_trans_key'                       => 'Assigned',
     'action_trans_key'                         => 'Actions',
+    'save_trans_key'                           => 'Save',
     'user_trans_key'                           => 'User',
     'status_client_trans_key'                  => 'Status client',
     'status_supplier_trans_key'                => 'Status supplier',
