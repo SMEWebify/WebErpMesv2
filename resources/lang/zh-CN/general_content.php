@@ -438,6 +438,7 @@ return [
     'select_payement_methods_trans_key'        => '选择支付方式',
     'select_delivery_trans_key'                => '选择配送方式',
     'select_service_trans_key'                 => '选择服务',
+    'select_tool_trans_key'                    => '选择工具',
     'select_ressource_trans_key'               => '选择资源',
     'select_family_trans_key'                  => '选择系列',
     'select_unit_trans_key'                    => '选择单位',

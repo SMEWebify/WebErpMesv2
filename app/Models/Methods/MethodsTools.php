@@ -3,6 +3,7 @@
 namespace App\Models\Methods;
 
 use App\Models\Planning\Task;
+use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,5 +17,15 @@ class MethodsTools extends Model
     public function Task()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(
+            Products::class,
+            'product_tool',
+            'methods_tools_id',
+            'product_id'
+        )->withTimestamps();
     }
 }

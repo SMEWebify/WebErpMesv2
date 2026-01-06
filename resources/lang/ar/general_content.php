@@ -390,6 +390,7 @@ return [
     'select_payement_methods_trans_key'     => 'اختر طريقة الدفع',
     'select_delivery_trans_key'             => 'اختر التسليم',
     'select_service_trans_key'              => 'اختر الخدمة',
+    'select_tool_trans_key'                 => 'اختر الأداة',
     'select_ressource_trans_key'            => 'اختر المورد',
     'select_family_trans_key'               => 'اختر الفئة',
     'select_unit_trans_key'                 => 'اختر الوحدة',

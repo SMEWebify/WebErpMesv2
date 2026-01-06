@@ -13,6 +13,7 @@ use App\Models\Methods\MethodsUnits;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsFamilies;
 use App\Models\Methods\MethodsServices;
+use App\Models\Methods\MethodsTools;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -315,6 +316,16 @@ class Products extends Model
     public function QuantityPrice()
     {
         return $this->hasMany(ProductsQuantityPrice::class);
+    }
+
+    public function tools()
+    {
+        return $this->belongsToMany(
+            MethodsTools::class,
+            'product_tool',
+            'product_id',
+            'methods_tools_id'
+        )->withTimestamps();
     }
 
     public function getQuantityPricesForSupplier($supplierId)
