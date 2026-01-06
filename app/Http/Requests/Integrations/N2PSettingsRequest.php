@@ -8,7 +8,7 @@ class N2PSettingsRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('admin') ?? true;
+        return $this->user() !== null;
     }
 
     public function rules(): array
