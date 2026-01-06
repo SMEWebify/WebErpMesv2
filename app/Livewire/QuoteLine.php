@@ -918,6 +918,9 @@ class QuoteLine extends Component
                         'weight'=>$QuoteLineDetailData->weight,
                         'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
                         'cad_file'=>$QuoteLineDetailData->cad_file,
+                        'cam_file'=>$QuoteLineDetailData->cam_file,
+                        'cad_file_path'=>$QuoteLineDetailData->cad_file_path,
+                        'cam_file_path'=>$QuoteLineDetailData->cam_file_path,
                         'internal_comment'=>$QuoteLineDetailData->internal_comment,
                         'external_comment'=>$QuoteLineDetailData->external_comment,
                     ]);
