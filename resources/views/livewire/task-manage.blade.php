@@ -84,6 +84,21 @@
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="form-group col-md-2">
+                        <label for="methods_tools_id">{{ __('general_content.tools_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-tools"></i></span>
+                            </div>
+                            <select class="form-control @error('methods_tools_id') is-invalid @enderror" name="methods_tools_id" id="methods_tools_id" wire:model.live="methods_tools_id">
+                                <option value="">{{ __('general_content.select_trans_key') }}</option>
+                                @foreach ($ToolsSelect as $tool)
+                                <option value="{{ $tool->id }}">{{ $tool->code }} - {{ $tool->label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('methods_tools_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="form-group col-md-2">
                         @if($TaskType == 'BOM') 
                         <label for="component_id">{{__('general_content.component_trans_key') }}</label>
                         <div class="input-group">
@@ -136,6 +151,26 @@
                         </div>
                         @error('unit_time') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         @endif
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="start_date">{{ __('general_content.start_date_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                            <input type="datetime-local" class="form-control @error('start_date') is-invalid @enderror" name="start_date" id="start_date" wire:model.live="start_date">
+                        </div>
+                        @error('start_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="end_date">{{ __('general_content.end_date_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
+                            </div>
+                            <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" name="end_date" id="end_date" wire:model.live="end_date">
+                        </div>
+                        @error('end_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="form-group col-md-2">
                         <label for="unit_cost">{{ __('general_content.cost_trans_key') }}</label>
@@ -205,8 +240,11 @@
                             <th>{{ __('general_content.sort_trans_key') }}</th>
                             <th>{{__('general_content.label_trans_key') }}</th>
                             <th>{{ __('general_content.service_trans_key') }}</th>
+                            <th>{{ __('general_content.tools_trans_key') }}</th>
                             <th>{{ __('general_content.setting_time_trans_key') }}</th>
                             <th>{{ __('general_content.unit_time_trans_key') }}</th>
+                            <th>{{ __('general_content.start_date_trans_key') }}</th>
+                            <th>{{ __('general_content.end_date_trans_key') }}</th>
                             <th>{{ __('general_content.total_time_trans_key') }}</th>
                             <th>{{ __('general_content.progress_trans_key') }}</th>
                             <th>{{ __('general_content.cost_trans_key') }}</th>
@@ -240,8 +278,17 @@
                                     @endif
                                 @endif
                             </td>
+                            <td>
+                                @if($TechLine->MethodsTools)
+                                    {{ $TechLine->MethodsTools->code }} - {{ $TechLine->MethodsTools->label }}
+                                @else
+                                    {{ __('general_content.not_available_trans_key') }}
+                                @endif
+                            </td>
                             <td>{{ $TechLine->seting_time }} h</td>
                             <td>{{ $TechLine->unit_time }} h</td>
+                            <td>{{ $TechLine->start_date }}</td>
+                            <td>{{ $TechLine->end_date }}</td>
                             <td>{{ $TechLine->TotalTime() }} h</td>
                             <td><x-adminlte-progress theme="teal" value="{{ $TechLine->progress() }}" with-label animated/></td>
                             <td>{{ $TechLine->formatted_unit_cost }}</td>
@@ -275,7 +322,7 @@
                             @endif 
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="16" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
@@ -284,8 +331,11 @@
                             <th>{{ __('general_content.total_trans_key') }} :</th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th>{{ $Line->getTechnicalCutTotalSettingTimeAttribute() }} h</th>
                             <th>{{ $Line->getTechnicalCutTotalUnitTimeAttribute() }} h</th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th>{{ number_format( $Line->getTechnicalCutTotalUnitCostAttribute(), 2, '.', ',') }} {{ $Factory->curency }}</th>
@@ -309,6 +359,7 @@
                             <th>{{ __('general_content.sort_trans_key') }}</th>
                             <th>{{ __('general_content.label_trans_key') }}</th>
                             <th>{{ __('general_content.service_trans_key') }}</th>
+                            <th>{{ __('general_content.tools_trans_key') }}</th>
                             <th>{{ __('general_content.component_trans_key') }}</th>
                             <th></th>
                             <th>{{ __('general_content.qty_trans_key') }}</th>
@@ -350,6 +401,13 @@
                                 <td><span>N/A</span></td>
                                 <td></td>
                             @endif
+                            <td>
+                                @if($BOMline->MethodsTools)
+                                    {{ $BOMline->MethodsTools->code }} - {{ $BOMline->MethodsTools->label }}
+                                @else
+                                    {{ __('general_content.not_available_trans_key') }}
+                                @endif
+                            </td>
                             <td>{{ $BOMline->qty }}</td>
                             <td>{{ $BOMline->formatted_unit_cost }}</td>
                             <td>{{ $BOMline->Margin() }} %</td>
@@ -373,13 +431,14 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="12" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="13" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
                             <th></th>
                             <th>{{ __('general_content.total_trans_key') }} :</th>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>

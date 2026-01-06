@@ -244,6 +244,31 @@ class Task extends Model
         return $this->belongsTo(MethodsTools::class, 'methods_tools_id');
     }
 
+    public function overlapsWithExistingToolBooking(): bool
+    {
+        if (!$this->methods_tools_id || !$this->start_date || !$this->end_date) {
+            return false;
+        }
+
+        return self::where('methods_tools_id', $this->methods_tools_id)
+                    ->where('id', '!=', $this->id ?? 0)
+                    ->where(function (Builder $query) {
+                        $query->where(function (Builder $query) {
+                                    $query->where('start_date', '<=', $this->start_date)
+                                            ->where('end_date', '>=', $this->start_date);
+                                })
+                                ->orWhere(function (Builder $query) {
+                                    $query->where('start_date', '<=', $this->end_date)
+                                            ->where('end_date', '>=', $this->end_date);
+                                })
+                                ->orWhere(function (Builder $query) {
+                                    $query->where('start_date', '>=', $this->start_date)
+                                            ->where('end_date', '<=', $this->end_date);
+                                });
+                    })
+                    ->exists();
+    }
+
     /**
      * Define a belongs-to relationship with the User model.
      * This indicates that each task belongs to a single user.
