@@ -153,6 +153,7 @@ return [
     'created_at_trans_key'                     => 'Creado en',
     'assigned_trans_key'                       => 'Asignado',
     'action_trans_key'                         => 'Acciones',
+    'save_trans_key'                           => 'Guardar',
     'user_trans_key'                           => 'Usuario',
     'status_client_trans_key'                  => 'Estado del cliente',
     'status_supplier_trans_key'                => 'Estado del proveedor',

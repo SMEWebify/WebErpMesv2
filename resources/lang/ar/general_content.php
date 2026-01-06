@@ -153,6 +153,7 @@ return [
     'created_at_trans_key'                     => 'تاريخ الإنشاء',
     'assigned_trans_key'                       => 'مخصص',
     'action_trans_key'                         => 'الإجراءات',
+    'save_trans_key'                           => 'حفظ',
     'user_trans_key'                           => 'المستخدم',
     'status_client_trans_key'                  => 'حالة العميل',
     'status_supplier_trans_key'                => 'حالة المورد',
