@@ -124,6 +124,9 @@ class StockCurrent extends Component
             'weight'=>$ProductDetail->weight,
             'material_loss_rate'=>0,
             'cad_file'=>$ProductDetail->drawing_file,
+            'cam_file'=>null,
+            'cad_file_path'=>null,
+            'cam_file_path'=>null,
         ]);
 
         $TaskLine = Task::where('products_id', $productId)->get();

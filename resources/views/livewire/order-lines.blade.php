@@ -322,6 +322,61 @@
                                                         </div>
                                                     </div>
 
+                                                    <div class="card card-outline card-success mb-2">
+                                                        <div class="card-header">
+                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineFiles{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineFiles{{ $OrderLine->id }}">
+                                                                <span class="d-flex align-items-center">
+                                                                    <i class="fas fa-paperclip text-success mr-2"></i> {{ __('Fichiers') }}
+                                                                </span>
+                                                                <i class="fas fa-chevron-down"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="orderLineFiles{{ $OrderLine->id }}" class="collapse" aria-labelledby="orderLineFiles{{ $OrderLine->id }}" data-parent="#orderLineDetailAccordion{{ $OrderLine->id }}">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-6">
+                                                                        <label for="cad_file">{{ __('CAD file') }}</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-drafting-compass"></i></span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->cad_file }}" name="cad_file" id="cad_file" placeholder="{{ __('CAD file name') }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-6">
+                                                                        <label for="cam_file">{{ __('CAM file') }}</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-cogs"></i></span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->cam_file }}" name="cam_file" id="cam_file" placeholder="{{ __('CAM file name') }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-6">
+                                                                        <label for="cad_file_path">{{ __('CAD file path') }}</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-folder-open"></i></span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->cad_file_path }}" name="cad_file_path" id="cad_file_path" placeholder="{{ __('CAD file path') }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-6">
+                                                                        <label for="cam_file_path">{{ __('CAM file path') }}</label>
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-folder-open"></i></span>
+                                                                            </div>
+                                                                            <input type="text" class="form-control" value="{{ $OrderLine->OrderLineDetails->cam_file_path }}" name="cam_file_path" id="cam_file_path" placeholder="{{ __('CAM file path') }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                     @php $orderDetailId = $OrderLine->OrderLineDetails->id; @endphp
                                                     <div class="card card-outline card-danger mb-2">
                                                         <div class="card-header">
