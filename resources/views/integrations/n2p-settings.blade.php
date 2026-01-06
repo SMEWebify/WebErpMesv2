@@ -49,6 +49,9 @@
                 <div class="col-md-4">
                     <x-adminlte-input-switch name="n2p_send_tasks" label="Inclure les tâches" data-on-text="Oui" data-off-text="Non" :checked="old('n2p_send_tasks', $settings['n2p_send_tasks'])"/>
                 </div>
+                <div class="col-md-4">
+                    <x-adminlte-input-switch name="n2p_verify_ssl" label="Vérifier le certificat SSL" data-on-text="Oui" data-off-text="Non" :checked="old('n2p_verify_ssl', $settings['n2p_verify_ssl'])"/>
+                </div>
             </div>
 
             <div class="mt-3">

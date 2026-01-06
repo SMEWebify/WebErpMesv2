@@ -29,7 +29,7 @@ class N2PSettingsController extends Controller
         $validated = $request->validated();
         $defaults = $this->defaults();
 
-        foreach (['n2p_enabled', 'n2p_send_tasks'] as $booleanKey) {
+        foreach (['n2p_enabled', 'n2p_send_tasks', 'n2p_verify_ssl'] as $booleanKey) {
             $validated[$booleanKey] = (bool) ($validated[$booleanKey] ?? false);
         }
 
@@ -53,6 +53,7 @@ class N2PSettingsController extends Controller
             'n2p_job_status_on_send' => 'released',
             'n2p_priority_default' => 3,
             'n2p_send_tasks' => true,
+            'n2p_verify_ssl' => true,
         ];
     }
 }
