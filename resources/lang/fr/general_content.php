@@ -568,6 +568,7 @@ return [
     'finishing_trans_key'                      => 'Finition',
     'weight_trans_key'                         => 'Poids net',
     'gross_weight_trans_key'                   => 'Poids brut',
+    'bend_count_trans_key'                     => 'Nombre de plis',
     'x_size_trans_key'                         => 'Taille X',
     'y_size_trans_key'                         => 'Taille Y',
     'z_size_trans_key'                         => 'Taille Z',

@@ -122,6 +122,7 @@ class StockCurrent extends Component
             'thickness'=>$ProductDetail->thickness,
             'finishing'=>$ProductDetail->finishing,
             'weight'=>$ProductDetail->weight,
+            'bend_count'=>0,
             'material_loss_rate'=>0,
             'cad_file'=>$ProductDetail->drawing_file,
             'cam_file'=>null,

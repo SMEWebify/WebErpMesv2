@@ -213,7 +213,7 @@
                                                         <div id="quoteLineCircularSpecs{{ $QuoteLine->id }}" class="collapse" aria-labelledby="quoteLineCircularSpecs{{ $QuoteLine->id }}" data-parent="#quoteLineDetailAccordion{{ $QuoteLine->id }}">
                                                             <div class="card-body">
                                                                 <div class="row">
-                                                                    <div class="form-group col-md-4">
+                                                                    <div class="form-group col-md-3">
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -221,7 +221,7 @@
                                                                             <input type="number" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->diameter }}" name="diameter" id="diameter"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="form-group col-md-4">
+                                                                    <div class="form-group col-md-3">
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
@@ -229,7 +229,15 @@
                                                                             <input type="number" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->diameter_oversize }}" name="diameter_oversize" id="diameter_oversize"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
                                                                         </div>
                                                                     </div>
-                                                                    <div class="form-group col-md-4">
+                                                                    <div class="form-group col-md-3">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                                            </div>
+                                                                            <input type="number" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->bend_count }}" name="bend_count" id="bend_count"  placeholder="{{ __('general_content.bend_count_trans_key') }}" step="1" min="0">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-3">
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text"><i class="fas fa-percentage"></i></span>
