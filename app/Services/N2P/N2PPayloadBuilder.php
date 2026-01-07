@@ -51,13 +51,11 @@ class N2PPayloadBuilder
         $company = $order->companie;
 
         $job = [
-            'of_code' => $order->code ?? $order->uuid,
+            'of_code' => "OF". $orderLine->id,
             'line_ref' => (string) $orderLine->getKey(),
             'status' => $jobStatus,
             'priority' => $priority,
             'due_date' => $this->nullableDate($dueDate),
-            "planned_start_at"=> null,
-            "planned_end_at" => null,
             "alias_erp" => $product?->code ?? $orderLine->code,
             'customer_code' => $company?->code,
             'customer_name' => $company?->label,
@@ -115,10 +113,8 @@ class N2PPayloadBuilder
             return array_filter([
                 'operation_code' => $operationCode,
                 'workcenter_code' => $workcenterCode,
-                'required_qty' => $this->nullableNumber($task->qty ?? $task->qty_init),
                 'planned_start_at' => $this->nullableDateTime($task->start_date),
                 'planned_end_at' => $this->nullableDateTime($task->end_date),
-                
                 'status' => "planned",
                 'planned_time_min' => $plannedTimeMinutes,
                 'required_qty' => (float) $orderLine->qty,
