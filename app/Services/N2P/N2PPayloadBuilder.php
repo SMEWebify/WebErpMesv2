@@ -89,7 +89,7 @@ class N2PPayloadBuilder
 
 
         if ($sendTasks) {
-            $tasksPayload = $this->mapTasks($orderLine->Task);
+            $tasksPayload = $this->mapTasks($orderLine, $orderLine->Task);
         
             $job['tasks'] = $tasksPayload;
         }
@@ -97,9 +97,9 @@ class N2PPayloadBuilder
         return array_filter($job, fn ($value) => !is_null($value) && $value !== '');
     }
 
-    private function mapTasks($tasks): array
+    private function mapTasks(OrderLines $orderLine, $tasks): array
     {
-        return $tasks->map(function (Task $task) {
+        return $tasks->map(function (Task $task) use ($orderLine) {
             $operationCode = $task->label ?: ($task->service->code ?? null);
             if (!$operationCode) {
                 $operationCode = Str::slug($task->label ?? 'task-' . $task->getKey());
@@ -115,11 +115,13 @@ class N2PPayloadBuilder
             return array_filter([
                 'operation_code' => $operationCode,
                 'workcenter_code' => $workcenterCode,
+                'required_qty' => $this->nullableNumber($task->qty ?? $task->qty_init),
                 'planned_start_at' => $this->nullableDateTime($task->start_date),
                 'planned_end_at' => $this->nullableDateTime($task->end_date),
                 
                 'status' => "planned",
                 'planned_time_min' => $plannedTimeMinutes,
+                'required_qty' => (float) $orderLine->qty,
                 'notes' => $task->comment ?? null,
             ], fn ($value) => !is_null($value) && $value !== '');
         })->values()->all();
