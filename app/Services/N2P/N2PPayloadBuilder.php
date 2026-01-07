@@ -45,7 +45,7 @@ class N2PPayloadBuilder
             'due_date' => $this->nullableDate($dueDate),
             "planned_start_at"=> null,
             "planned_end_at" => null,
-            "alias_erp" => null,
+            "alias_erp" => $product?->code ?? $orderLine->code,
             'customer_code' => $company?->code,
             'customer_name' => $company?->label,
             'order_ref' => $order->code ?? null,
