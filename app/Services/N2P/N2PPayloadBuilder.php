@@ -32,6 +32,19 @@ class N2PPayloadBuilder
         $priority = $this->clampPriority($order->priority ?? $defaultPriority);
 
         $dueDate = $orderLine->delivery_date ?? $order->validity_date ?? null;
+        $tasks = $orderLine->Task ?? collect();
+        $plannedStartAt = optional(
+            $tasks
+                ->filter(fn (Task $task) => (bool) $task->start_date)
+                ->sortBy('start_date')
+                ->first()
+        )->start_date;
+        $plannedEndAt = optional(
+            $tasks
+                ->filter(fn (Task $task) => (bool) $task->end_date)
+                ->sortByDesc('end_date')
+                ->first()
+        )->end_date;
 
         $product = $orderLine->Product;
         $details = $orderLine->OrderLineDetails;
@@ -58,6 +71,8 @@ class N2PPayloadBuilder
             'thickness' => $this->nullableNumber($details?->thickness ?? $product?->thickness),
             'bend_count' => $details?->bend_count ?? $product?->bend_count,
             'notes' => $orderLine->comment ?? $order->comment,
+            'planned_start_at' => $this->nullableDateTime($plannedStartAt),
+            'planned_end_at' => $this->nullableDateTime($plannedEndAt),
         ];
 
         if (!$job['due_date']) {
