@@ -2,11 +2,12 @@
 
 namespace App\Services\N2P;
 
-use App\Models\Planning\Task;
-use App\Models\Workflow\OrderLines;
-use App\Models\Workflow\Orders;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Models\Planning\Task;
+use App\Models\Workflow\Orders;
+use App\Models\Workflow\OrderLines;
+use Illuminate\Support\Facades\Log;
 
 class N2PPayloadBuilder
 {
@@ -39,16 +40,23 @@ class N2PPayloadBuilder
         $job = [
             'of_code' => $order->code ?? $order->uuid,
             'line_ref' => (string) $orderLine->getKey(),
-            'required_qty' => (float) $orderLine->qty,
             'status' => $jobStatus,
             'priority' => $priority,
             'due_date' => $this->nullableDate($dueDate),
-            'order_ref' => $order->code ?? null,
+            "planned_start_at"=> null,
+            "planned_end_at" => null,
+            "alias_erp" => null,
             'customer_code' => $company?->code,
             'customer_name' => $company?->label,
+            'order_ref' => $order->code ?? null,
+            "label"=> $orderLine->label,
+            "cad_file_path"=> $details?->cad_file_path ?? $product?->cad_file_path,
+            "cam_file_path"=> $details?->cam_file_path ?? $product?->cam_file_path,
+            'required_qty' => (float) $orderLine->qty,
             'product_ref' => $product?->code ?? $orderLine->code,
             'material' => $details?->material ?? $product?->material,
             'thickness' => $this->nullableNumber($details?->thickness ?? $product?->thickness),
+            'bend_count' => $details?->bend_count ?? $product?->bend_count,
             'notes' => $orderLine->comment ?? $order->comment,
         ];
 
@@ -64,8 +72,11 @@ class N2PPayloadBuilder
             unset($job['notes']);
         }
 
+
         if ($sendTasks) {
-            $job['tasks'] = $this->mapTasks($orderLine->Task);
+            $tasksPayload = $this->mapTasks($orderLine->Task);
+        
+            $job['tasks'] = $tasksPayload;
         }
 
         return array_filter($job, fn ($value) => !is_null($value) && $value !== '');
@@ -74,7 +85,7 @@ class N2PPayloadBuilder
     private function mapTasks($tasks): array
     {
         return $tasks->map(function (Task $task) {
-            $operationCode = $task->code ?: ($task->operation_code ?? null);
+            $operationCode = $task->label ?: ($task->service->code ?? null);
             if (!$operationCode) {
                 $operationCode = Str::slug($task->label ?? 'task-' . $task->getKey());
             }
@@ -84,7 +95,7 @@ class N2PPayloadBuilder
                 $plannedTimeMinutes = (int) max(0, round($task->TotalTime() * 60));
             }
 
-            $workcenterCode = $task->MethodsTools->code ?? null;
+            $workcenterCode = $task->service->code ?? null;
 
             return array_filter([
                 'operation_code' => $operationCode,
