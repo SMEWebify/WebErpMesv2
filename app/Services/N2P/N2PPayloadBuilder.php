@@ -117,6 +117,8 @@ class N2PPayloadBuilder
                 'workcenter_code' => $workcenterCode,
                 'planned_start_at' => $this->nullableDateTime($task->start_date),
                 'planned_end_at' => $this->nullableDateTime($task->end_date),
+                
+                'status' => "planned",
                 'planned_time_min' => $plannedTimeMinutes,
                 'notes' => $task->comment ?? null,
             ], fn ($value) => !is_null($value) && $value !== '');
