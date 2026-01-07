@@ -192,6 +192,16 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="form-group col-md-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
+                            </div>
+                            <input type="number" class="form-control" value="{{ $Product->bend_count }}" name="bend_count" id="bend_count" placeholder="{{ __('general_content.bend_count_trans_key') }}" step="1" min="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                   <div class="form-group col-md-4">
                       <div class="input-group">
                           <div class="input-group-prepend">
@@ -201,8 +211,20 @@
                       </div>
                   </div>
                   <div class="form-group col-md-4">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-folder-open"></i></span>
+                      </div>
+                      <input type="text" class="form-control" value="{{ $Product->cad_file_path }}" name="cad_file_path" id="cad_file_path" placeholder="{{ __('CAD file path') }}">
+                    </div>
                   </div>
                   <div class="form-group col-md-4">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-folder-open"></i></span>
+                      </div>
+                      <input type="text" class="form-control" value="{{ $Product->cam_file_path }}" name="cam_file_path" id="cam_file_path" placeholder="{{ __('CAM file path') }}">
+                    </div>
                   </div>
                 </div>
                 <hr>

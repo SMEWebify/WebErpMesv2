@@ -122,12 +122,12 @@ class StockCurrent extends Component
             'thickness'=>$ProductDetail->thickness,
             'finishing'=>$ProductDetail->finishing,
             'weight'=>$ProductDetail->weight,
-            'bend_count'=>0,
+            'bend_count'=>$ProductDetail->bend_count,
             'material_loss_rate'=>0,
             'cad_file'=>$ProductDetail->drawing_file,
             'cam_file'=>null,
-            'cad_file_path'=>null,
-            'cam_file_path'=>null,
+            'cad_file_path'=>$ProductDetail->cad_file_path,
+            'cam_file_path'=>$ProductDetail->cam_file_path,
         ]);
 
         $TaskLine = Task::where('products_id', $productId)->get();

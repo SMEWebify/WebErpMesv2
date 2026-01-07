@@ -259,7 +259,12 @@ class QuoteLine extends Component
         ]);
         
         //add line detail
-        $quoteLineDetails = QuoteLineDetails::create(['quote_lines_id'=>$NewQuoteLine->id]);
+        $detailData = ['quote_lines_id' => $NewQuoteLine->id];
+        if ($this->product_id) {
+            $product = Products::find($this->product_id);
+            $detailData = array_merge($detailData, $this->buildLineDetailDataFromProduct($product));
+        }
+        $quoteLineDetails = QuoteLineDetails::create($detailData);
         $this->customRequirements[$quoteLineDetails->id] = [];
         
         // Set Flash Message
@@ -482,6 +487,7 @@ class QuoteLine extends Component
         $newProductDetail->thickness = $quoteLineDetailData->thickness;
         $newProductDetail->finishing = $quoteLineDetailData->finishing;
         $newProductDetail->weight = $quoteLineDetailData->weight;
+        $newProductDetail->bend_count = $quoteLineDetailData->bend_count;
         $newProductDetail->x_size = $quoteLineDetailData->x_size;
         $newProductDetail->y_size = $quoteLineDetailData->y_size;
         $newProductDetail->z_size = $quoteLineDetailData->z_size;
@@ -490,6 +496,8 @@ class QuoteLine extends Component
         $newProductDetail->z_oversize = $quoteLineDetailData->z_oversize;
         $newProductDetail->diameter = $quoteLineDetailData->diameter;
         $newProductDetail->diameter_oversize = $quoteLineDetailData->diameter_oversize;
+        $newProductDetail->cad_file_path = $quoteLineDetailData->cad_file_path;
+        $newProductDetail->cam_file_path = $quoteLineDetailData->cam_file_path;
         $newProductDetail->save();
     }
     
@@ -534,6 +542,31 @@ class QuoteLine extends Component
         $this->customerPriceList = [];
         $this->appliedPriceListId = null;
         $this->priceSource = null;
+    }
+
+    private function buildLineDetailDataFromProduct(?Products $product): array
+    {
+        if (!$product) {
+            return [];
+        }
+
+        return [
+            'x_size' => $product->x_size,
+            'y_size' => $product->y_size,
+            'z_size' => $product->z_size,
+            'x_oversize' => $product->x_oversize,
+            'y_oversize' => $product->y_oversize,
+            'z_oversize' => $product->z_oversize,
+            'diameter' => $product->diameter,
+            'diameter_oversize' => $product->diameter_oversize,
+            'material' => $product->material,
+            'thickness' => $product->thickness,
+            'finishing' => $product->finishing,
+            'weight' => $product->weight,
+            'bend_count' => $product->bend_count,
+            'cad_file_path' => $product->cad_file_path,
+            'cam_file_path' => $product->cam_file_path,
+        ];
     }
 
     protected function loadCustomerPriceList(bool $resetSelection = true): void
