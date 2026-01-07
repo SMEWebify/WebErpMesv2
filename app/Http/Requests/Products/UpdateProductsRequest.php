@@ -34,6 +34,7 @@ class UpdateProductsRequest extends FormRequest
             'material' => 'nullable|string|max:255',
             'thickness' => 'nullable|numeric',
             'weight' => 'nullable|numeric',
+            'bend_count' => 'nullable|integer|min:0',
             'x_size' => 'nullable|numeric',
             'y_size' => 'nullable|numeric',
             'z_size' => 'nullable|numeric',
@@ -48,6 +49,8 @@ class UpdateProductsRequest extends FormRequest
             'diameter_oversize' => 'nullable|numeric',
             'section_size' => 'nullable|numeric',
             'finishing' => 'nullable|string|max:255',
+            'cad_file_path' => 'nullable|string|max:255',
+            'cam_file_path' => 'nullable|string|max:255',
             'picture'=> 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }

@@ -291,7 +291,12 @@ class OrderLine extends Component
         ]);
 
         //add line detail
-        $orderLineDetails = OrderLineDetails::create(['order_lines_id'=>$NewOrderLine->id]);
+        $detailData = ['order_lines_id' => $NewOrderLine->id];
+        if ($this->product_id) {
+            $product = Products::find($this->product_id);
+            $detailData = array_merge($detailData, $this->buildLineDetailDataFromProduct($product));
+        }
+        $orderLineDetails = OrderLineDetails::create($detailData);
         $this->customRequirements[$orderLineDetails->id] = [];
 
         // Set Flash Message
@@ -762,6 +767,7 @@ class OrderLine extends Component
         $newProductDetail->thickness = $orderLineDetailData->thickness;
         $newProductDetail->finishing = $orderLineDetailData->finishing;
         $newProductDetail->weight = $orderLineDetailData->weight;
+        $newProductDetail->bend_count = $orderLineDetailData->bend_count;
         $newProductDetail->x_size = $orderLineDetailData->x_size;
         $newProductDetail->y_size = $orderLineDetailData->y_size;
         $newProductDetail->z_size = $orderLineDetailData->z_size;
@@ -770,7 +776,34 @@ class OrderLine extends Component
         $newProductDetail->z_oversize = $orderLineDetailData->z_oversize;
         $newProductDetail->diameter = $orderLineDetailData->diameter;
         $newProductDetail->diameter_oversize = $orderLineDetailData->diameter_oversize;
+        $newProductDetail->cad_file_path = $orderLineDetailData->cad_file_path;
+        $newProductDetail->cam_file_path = $orderLineDetailData->cam_file_path;
         $newProductDetail->save();
+    }
+
+    private function buildLineDetailDataFromProduct(?Products $product): array
+    {
+        if (!$product) {
+            return [];
+        }
+
+        return [
+            'x_size' => $product->x_size,
+            'y_size' => $product->y_size,
+            'z_size' => $product->z_size,
+            'x_oversize' => $product->x_oversize,
+            'y_oversize' => $product->y_oversize,
+            'z_oversize' => $product->z_oversize,
+            'diameter' => $product->diameter,
+            'diameter_oversize' => $product->diameter_oversize,
+            'material' => $product->material,
+            'thickness' => $product->thickness,
+            'finishing' => $product->finishing,
+            'weight' => $product->weight,
+            'bend_count' => $product->bend_count,
+            'cad_file_path' => $product->cad_file_path,
+            'cam_file_path' => $product->cam_file_path,
+        ];
     }
     
     private function duplicateProductTasks($orderLineId, $newProductId)
