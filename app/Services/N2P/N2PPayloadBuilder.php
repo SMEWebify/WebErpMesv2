@@ -115,6 +115,7 @@ class N2PPayloadBuilder
             return array_filter([
                 'operation_code' => $operationCode,
                 'workcenter_code' => $workcenterCode,
+                'required_qty' => $this->nullableNumber($task->qty ?? $task->qty_init),
                 'planned_start_at' => $this->nullableDateTime($task->start_date),
                 'planned_end_at' => $this->nullableDateTime($task->end_date),
                 'planned_time_min' => $plannedTimeMinutes,

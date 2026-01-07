@@ -47,6 +47,7 @@
         {
           "operation_code": "CUT",
           "workcenter_code": "CNC01",
+          "required_qty": 10,
           "planned_start_at": "2026-02-21 08:00:00",
           "planned_end_at": "2026-02-21 10:00:00",
           "planned_time_min": 90
