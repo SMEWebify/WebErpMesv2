@@ -40,6 +40,7 @@ class Products extends Model
                             'material', 
                             'thickness', 
                             'weight', 
+                            'bend_count',
                             'x_size', 
                             'y_size', 
                             'z_size', 
@@ -58,6 +59,8 @@ class Products extends Model
                             'drawing_file',
                             'stl_file',
                             'svg_file',
+                            'cad_file_path',
+                            'cam_file_path',
                             'csv_file_name',];
 
     // Only log changes
