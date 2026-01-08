@@ -69,6 +69,7 @@ return [
     'human_resources_trans_key'                => 'Human resources',
     'expenses_trans_key'                       => 'Expenses',
     'users_list_trans_key'                     => 'Users list',
+    'attendance_report_trans_key'              => 'Attendance report',
     'documents_trans_key'                      => 'Documents',
     'osh_trans_key'                            => 'OSH',
     'incidents_trans_key'                      => 'Incidents',

@@ -69,6 +69,7 @@ return [
     'human_resources_trans_key'                => '人力资源',
     'expenses_trans_key'                       => '费用报销',
     'users_list_trans_key'                     => '用户列表',
+    'attendance_report_trans_key'              => '考勤报表',
     'documents_trans_key'                      => '文档',
     'osh_trans_key'                            => '职业健康与安全',
     'incidents_trans_key'                      => '事件',

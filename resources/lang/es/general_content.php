@@ -984,6 +984,11 @@ return [
     'expense_report_trans_key'             => 'Informe de gastos',
     'new_expense_report_trans_key'         => 'Nuevo informe de gastos',
     'expense_validation_trans_key'         => 'Validación de gastos',
+    'attendance_report_trans_key'          => 'Informe de asistencia',
+    'total_duration_trans_key'             => 'Duración total',
+    'anomalies_trans_key'                  => 'Anomalías',
+    'filter_trans_key'                     => 'Filtrar',
+    'all_trans_key'                        => 'Todos',
 
     'licence_trans_key'                    => 'Licencia',
     'release_note_trans_key'               => 'Notas de la versión',

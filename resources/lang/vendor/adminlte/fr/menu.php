@@ -69,6 +69,7 @@ return [
     'human_resources_trans_key'                => 'Ressources humaine',
     'expenses_trans_key'                       => 'Note de frais',
     'users_list_trans_key'                     => 'Utilisateurs liste',
+    'attendance_report_trans_key'              => 'Rapport de présence',
     'documents_trans_key'                      => 'Documents',
     'osh_trans_key'                            => 'Risque et santé',
     'incidents_trans_key'                      => 'Incidents',

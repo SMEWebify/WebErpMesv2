@@ -627,6 +627,11 @@ return [
                     'url'  => 'human-resources/users',
                     'icon_color' => 'info',
                 ],
+                [
+                    'text' => 'attendance_report_trans_key',
+                    'url'  => 'human-resources/attendance',
+                    'icon_color' => 'primary',
+                ],
             ],
         ],
         [

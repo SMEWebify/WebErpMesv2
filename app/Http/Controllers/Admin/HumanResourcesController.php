@@ -13,7 +13,9 @@ use App\Models\UserExpenseCategory;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 use App\Models\Admin\UserEmploymentContracts;
+use App\Models\Planning\TaskActivities;
 use App\Http\Requests\Admin\StoreUserExpenseRequest;
 use App\Http\Requests\Admin\UpdateUserExpenseRequest;
 use App\Http\Requests\Admin\StoreUserExpenseReportRequest;
@@ -353,5 +355,105 @@ class HumanResourcesController extends Controller
         $UserExpenseReport->save();
 
         return redirect()->route('human.resources')->with('success', 'Successfully valide  expense report');
+    }
+
+    /**
+     * Display the attendance report.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function attendanceReport(Request $request)
+    {
+        $filterUserId = $request->input('user_id');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $userSelect = $this->SelectDataService->getUsers();
+
+        $activities = TaskActivities::with('user')
+            ->when($filterUserId, function ($query, $filterUserId) {
+                return $query->where('user_id', $filterUserId);
+            })
+            ->when($startDate, function ($query, $startDate) {
+                return $query->whereDate('timestamp', '>=', $startDate);
+            })
+            ->when($endDate, function ($query, $endDate) {
+                return $query->whereDate('timestamp', '<=', $endDate);
+            })
+            ->orderBy('user_id')
+            ->orderBy('timestamp')
+            ->get();
+
+        $report = [];
+        $dayBuckets = [];
+        $openSessions = [];
+
+        foreach ($activities as $activity) {
+            $userId = $activity->user_id;
+            if (!isset($report[$userId])) {
+                $report[$userId] = [
+                    'user' => $activity->user,
+                    'total_seconds' => 0,
+                    'anomalies' => 0,
+                ];
+            }
+
+            $timestamp = Carbon::parse($activity->timestamp);
+            $dayBuckets[$userId][$timestamp->toDateString()] = true;
+
+            $taskId = $activity->task_id;
+            if ($activity->type === TaskActivities::TYPE_START) {
+                if (isset($openSessions[$userId][$taskId])) {
+                    $report[$userId]['anomalies']++;
+                }
+                $openSessions[$userId][$taskId] = $timestamp;
+                continue;
+            }
+
+            if (in_array($activity->type, [TaskActivities::TYPE_END, TaskActivities::TYPE_FINISH], true)) {
+                if (isset($openSessions[$userId][$taskId])) {
+                    $startTime = $openSessions[$userId][$taskId];
+                    if ($timestamp->greaterThan($startTime)) {
+                        $report[$userId]['total_seconds'] += $timestamp->diffInSeconds($startTime);
+                    } else {
+                        $report[$userId]['anomalies']++;
+                    }
+                    unset($openSessions[$userId][$taskId]);
+                } else {
+                    $report[$userId]['anomalies']++;
+                }
+            }
+        }
+
+        foreach ($openSessions as $userId => $tasks) {
+            foreach ($tasks as $taskId => $startTime) {
+                if (isset($report[$userId])) {
+                    $report[$userId]['anomalies']++;
+                }
+            }
+        }
+
+        foreach ($report as $userId => $data) {
+            $report[$userId]['days'] = isset($dayBuckets[$userId]) ? count($dayBuckets[$userId]) : 0;
+        }
+
+        if ($filterUserId && !isset($report[$filterUserId])) {
+            $report[$filterUserId] = [
+                'user' => User::find($filterUserId),
+                'total_seconds' => 0,
+                'anomalies' => 0,
+                'days' => 0,
+            ];
+        }
+
+        return view('admin/human-resources-attendance', [
+            'AttendanceReport' => $report,
+            'userSelect' => $userSelect,
+            'filters' => [
+                'user_id' => $filterUserId,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ],
+        ]);
     }
 }

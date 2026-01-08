@@ -1163,6 +1163,11 @@ return [
     'expense_report_trans_key'                 => 'Expense report',
     'new_expense_report_trans_key'             => 'New expense report',
     'expense_validation_trans_key'             => 'Expense validation',
+    'attendance_report_trans_key'              => 'Attendance report',
+    'total_duration_trans_key'                 => 'Total duration',
+    'anomalies_trans_key'                      => 'Anomalies',
+    'filter_trans_key'                         => 'Filter',
+    'all_trans_key'                            => 'All',
 
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',
