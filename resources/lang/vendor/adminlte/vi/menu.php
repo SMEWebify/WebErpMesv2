@@ -49,6 +49,7 @@ return [
     'methods_trans_key'                        => 'Phương thức',
     'accounting_trans_key'                      => 'Kế toán',
     'human_resources_trans_key'                => 'Nguồn nhân lực',
+    'attendance_report_trans_key'              => 'Báo cáo chấm công',
     'users_trans_key'                          => 'Người dùng',
     'your_company_trans_key'                   => 'Công ty của bạn',
     'energy_consumption_trans_key'             => 'Mức tiêu thụ năng lượng',

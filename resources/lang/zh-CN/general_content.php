@@ -1157,6 +1157,11 @@ return [
     'expense_report_trans_key'                 => '费用报表',
     'new_expense_report_trans_key'             => '新建费用报表',
     'expense_validation_trans_key'             => '报销审核',
+    'attendance_report_trans_key'              => '考勤报表',
+    'total_duration_trans_key'                 => '总时长',
+    'anomalies_trans_key'                      => '异常',
+    'filter_trans_key'                         => '筛选',
+    'all_trans_key'                            => '全部',
 
     'licence_trans_key'                        => '许可证',
     'release_note_trans_key'                   => '版本说明',

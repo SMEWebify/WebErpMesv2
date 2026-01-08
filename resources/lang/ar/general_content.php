@@ -983,6 +983,11 @@ return [
     'expense_report_trans_key'              => 'تقرير المصاريف',
     'new_expense_report_trans_key'          => 'تقرير مصاريف جديد',
     'expense_validation_trans_key'          => 'تحقق من المصاريف',
+    'attendance_report_trans_key'           => 'تقرير الحضور',
+    'total_duration_trans_key'              => 'المدة الإجمالية',
+    'anomalies_trans_key'                   => 'الشذوذات',
+    'filter_trans_key'                      => 'تصفية',
+    'all_trans_key'                         => 'الكل',
 
     'licence_trans_key'                     => 'ترخيص',
     'release_note_trans_key'                => 'ملاحظات الإصدار',

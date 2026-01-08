@@ -1158,6 +1158,11 @@ return [
     'expense_report_trans_key'                 => 'Note de frais',
     'new_expense_report_trans_key'             => 'Nouvelle note de frais',
     'expense_validation_trans_key'             => 'Validation des note de frais',
+    'attendance_report_trans_key'              => 'Rapport de présence',
+    'total_duration_trans_key'                 => 'Durée totale',
+    'anomalies_trans_key'                      => 'Anomalies',
+    'filter_trans_key'                         => 'Filtrer',
+    'all_trans_key'                            => 'Tous',
 
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Notes de version',
