@@ -39,13 +39,14 @@ class AttendanceController extends Controller
     {
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'action' => ['required', 'in:entry,exit'],
+            'direction' => ['required', 'in:in,out'],
         ]);
 
         Attendance::create([
             'user_id' => $validated['user_id'],
-            'action' => $validated['action'],
-            'recorded_at' => now(),
+            'punched_at' => now(),
+            'direction' => $validated['direction'],
+            'source' => 'public',
         ]);
 
         return redirect()
