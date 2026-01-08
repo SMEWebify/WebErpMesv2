@@ -668,6 +668,7 @@ return [
     'dashboard_trans_key'                      => 'Dashboard',
     'client_trans_key'                         => 'Clients',
     'new_client_trans_key'                     => 'New names',
+    'since_time_trans_key'                     => 'Since :time',
     'suppliers_trans_key'                      => 'Suppliers',
     'supplier_evaluations_trans_key'           => 'Supplier evaluations',
     'suppliers_client_trans_key'               => 'Clients / Suppliers',
