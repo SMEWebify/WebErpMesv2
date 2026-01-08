@@ -2,6 +2,7 @@
 
 use Livewire\Livewire;
 use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\ProductionTraceController;
@@ -27,6 +28,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/guest/delivery/{uuid}', 'App\Http\Controllers\GuestController@ShowDeliveryDocument')->name('guest.delivery.show');
     Route::get('/guest/nonConformitie/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
     Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
+    Route::get('/pointage', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('/pointage', [AttendanceController::class, 'store'])->name('attendance.store');
     //Rating
     Route::post('/order/ratings', 'App\Http\Controllers\Workflow\OrdersRatingController@store')->name('order.ratings.store');
 
