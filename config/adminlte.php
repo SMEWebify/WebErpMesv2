@@ -783,6 +783,16 @@ return [
     */
 
     'plugins' => [
+        'ThemeNest2Prod' => [
+            'active' => env('WEBERP_COLOR_THEME', 'nest2prod') === 'nest2prod',
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'css/theme-nest2prod.css',
+                ],
+            ],
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [
