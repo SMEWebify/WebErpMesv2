@@ -59,7 +59,7 @@
     <!-- ./col -->
     <div class="col-lg-2 col-md-2">
       <x-adminlte-small-box title="{{ $data['quotes_count'] }}" 
-                            text="{{ __('general_content.quote_trans_key') }}" 
+                            text="{{ __('general_content.quote_trans_key') }} {{ __('general_content.open_trans_key') }}" 
                             icon="fas fa-calculator"
                             theme="primary" 
                             url="{{ route('quotes') }}" 
@@ -68,7 +68,7 @@
     <!-- ./col -->
     <div class="col-lg-2 col-md-2">
       <x-adminlte-small-box title="{{ $data['orders_count'] }}" 
-                            text="{{ __('general_content.orders_trans_key') }}" 
+                            text="{{ __('general_content.orders_trans_key') }} {{ __('general_content.open_trans_key') }}" 
                             icon="fas fa-shopping-cart"
                             theme="yellow" 
                             url="{{ route('orders') }}" 
