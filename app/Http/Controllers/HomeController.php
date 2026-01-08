@@ -71,6 +71,13 @@ class HomeController extends Controller
             $data[$count->type] = $count->count;
             return $data;
         }, []);
+        $latestCustomerCreatedAt = DB::table('companies')
+            ->where('statu_customer', '=', '2')
+            ->orderByDesc('created_at')
+            ->value('created_at');
+        $data['latest_customer_since'] = $latestCustomerCreatedAt
+            ? Carbon::parse($latestCustomerCreatedAt)->diffForHumans()
+            : __('general_content.not_available_trans_key');
 
         $Announcement = Announcements::latest()->first();
 

@@ -667,6 +667,7 @@ return [
     'dashboard_trans_key'                      => '仪表盘',
     'client_trans_key'                         => '客户',
     'new_client_trans_key'                     => '新增客户',
+    'since_time_trans_key'                     => '自 :time',
     'suppliers_trans_key'                      => '供应商',
     'supplier_evaluations_trans_key'           => '供应商评估',
     'suppliers_client_trans_key'               => '客户/供应商',

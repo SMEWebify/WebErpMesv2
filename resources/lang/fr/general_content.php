@@ -668,6 +668,7 @@ return [
     'dashboard_trans_key'                      => 'Tableau de bord',
     'client_trans_key'                         => 'Clients',
     'new_client_trans_key'                     => 'Nouveaux client',
+    'since_time_trans_key'                     => 'Depuis :time',
     'suppliers_trans_key'                      => 'Fournisseurs',
     'supplier_evaluations_trans_key'           => 'Évaluations fournisseurs',
     'suppliers_client_trans_key'               => 'Client / Fournisseurs',
