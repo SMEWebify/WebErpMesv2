@@ -2,6 +2,7 @@
 
 namespace App\Services\N2P;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\Planning\Task;
@@ -49,6 +50,20 @@ class N2PPayloadBuilder
         $product = $orderLine->Product;
         $details = $orderLine->OrderLineDetails;
         $company = $order->companie;
+
+        Log::info('N2P dates debug', [
+            'dueDate_raw' => $dueDate,
+            'plannedStart_raw' => $plannedStartAt,
+            'plannedEnd_raw' => $plannedEndAt,
+            'task_first_start' => optional($tasks->first())->start_date,
+          ]);
+
+          Log::info('N2P dates debug', [
+            'dueDate_raw' => $dueDate,
+            'plannedStart_raw' => $plannedStartAt,
+            'plannedEnd_raw' => $plannedEndAt,
+            'task_first_start' => optional($tasks->first())->start_date,
+          ]);
 
         $job = [
             'of_code' => "OF". $orderLine->id,
@@ -131,20 +146,37 @@ class N2PPayloadBuilder
 
     private function nullableDate($date): ?string
     {
-        if (!$date) {
+        if (!$date || $date === '') {
             return null;
         }
 
-        return optional($date)->toDateString();
+        if ($date instanceof \DateTimeInterface) {
+            return Carbon::instance($date)->toDateString();
+        }
+
+        try {
+            return Carbon::parse($date)->toDateString();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     private function nullableDateTime($date): ?string
     {
-        if (!$date) {
+        if (!$date || $date === '') {
             return null;
         }
 
-        return optional($date)->toDateTimeString();
+        if ($date instanceof \DateTimeInterface) {
+            // ISO 8601 (recommandé)
+            return Carbon::instance($date)->toIso8601String();
+        }
+
+        try {
+            return Carbon::parse($date)->toIso8601String();
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     private function nullableNumber($number): ?float

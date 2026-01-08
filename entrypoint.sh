@@ -75,11 +75,9 @@ php artisan cache:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+echo "⚙️ Optimizing Composer autoload..."
 composer dump-autoload --optimize
-echo "✅ All is ready !!!"
-
-# Start PHP-FPM to serve the application (instead of php artisan serve)
-echo "🚀 Starting PHP-FPM..."
-exec php-fpm
-
-echo "Good Job! WEM is ready to play!"
+echo "📌 All is ready !!!"
+echo "⚡ Launching Laravel server..."
+exec php artisan serve --host=0.0.0.0 --port=8000
+echo "✅ Good Job! WEM is ready to play!"
