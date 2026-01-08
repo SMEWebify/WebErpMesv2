@@ -121,15 +121,15 @@
                             @enderror
                         </div>
         
-                        @error('action')
+                        @error('direction')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
         
                         <div class="flex gap-3">
-                            <x-button type="submit" name="action" value="entry" class="w-full justify-center">
+                            <x-button type="submit" name="direction" value="in" class="w-full justify-center">
                                 {{ __('general_content.attendance_entry_trans_key') }}
                             </x-button>
-                            <x-button type="submit" name="action" value="exit" class="w-full justify-center bg-red-600 hover:bg-red-700">
+                            <x-button type="submit" name="direction" value="out" class="w-full justify-center bg-red-600 hover:bg-red-700">
                                 {{ __('general_content.attendance_exit_trans_key') }}
                             </x-button>
                         </div>
