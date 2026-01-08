@@ -12,12 +12,13 @@ class Attendance extends Model
 
     protected $fillable = [
         'user_id',
-        'action',
-        'recorded_at',
+        'punched_at',
+        'direction',
+        'source',
     ];
 
     protected $casts = [
-        'recorded_at' => 'datetime',
+        'punched_at' => 'datetime',
     ];
 
     public function user()
