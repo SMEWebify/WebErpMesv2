@@ -12,10 +12,6 @@
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-        @if (config('theme.palette') === 'nest2prod')
-            <link rel="stylesheet" href="{{ asset(config('theme.nest2prod_css')) }}">
-        @endif
-
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
     </head>
