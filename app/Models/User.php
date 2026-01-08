@@ -13,6 +13,7 @@ use App\Models\Admin\Announcements;
 use App\Models\Companies\Companies;
 use App\Models\Quality\QualityAction;
 use App\Models\Methods\MethodsSection;
+use App\Models\HumanResources\Attendance;
 use App\Models\Products\StockLocation;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Planning\TaskActivities;
@@ -191,6 +192,16 @@ class User extends Authenticatable
     public function section()
     {
         return $this->hasMany(MethodsSection::class);
+    }
+
+    /**
+     * Define a one-to-many relationship with Attendance records.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
     /**
