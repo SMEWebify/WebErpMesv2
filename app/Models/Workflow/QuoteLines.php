@@ -190,7 +190,8 @@ class QuoteLines extends Model
     public function getFormattedSellingPriceAttribute()
     {
         $factory = app('Factory'); 
-        return Number::currency($this->getSellingPriceAttribute(), $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->getSellingPriceAttribute(), $currency, config('app.locale'));
 
     }
 
