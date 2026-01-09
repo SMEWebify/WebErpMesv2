@@ -335,8 +335,9 @@ class Task extends Model
      */
     public function getFormattedUnitCostAttribute()
     {
-        $factory = app('Factory'); 
-        return Number::currency($this->unit_cost, $factory->curency, config('app.locale'));
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->unit_cost, $currency, config('app.locale'));
 
     }
 
@@ -351,8 +352,9 @@ class Task extends Model
      */
     public function getFormattedUnitPriceAttribute()
     {
-        $factory = app('Factory'); 
-        return Number::currency($this->unit_price, $factory->curency, config('app.locale'));
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->unit_price, $currency, config('app.locale'));
     }
 
     /**
@@ -379,8 +381,9 @@ class Task extends Model
      */
     public function getFormattedTotalCostAttribute()
     {
-        $factory = app('Factory'); 
-        return Number::currency($this->TotalCost(), $factory->curency, config('app.locale'));
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->TotalCost(), $currency, config('app.locale'));
     }
 
     /**
@@ -407,8 +410,9 @@ class Task extends Model
      */
     public function getFormattedTotalPriceAttribute()
     {
-        $factory = app('Factory'); 
-        return Number::currency($this->TotalPrice(), $factory->curency, config('app.locale'));
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->TotalPrice(), $currency, config('app.locale'));
     }
 
     /**
