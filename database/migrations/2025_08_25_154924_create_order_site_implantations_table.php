@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_site_implantations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('order_site_id')->constrained()->onDelete('cascade');
+        Schema::table('order_site_implantations', function (Blueprint $table) {
             $table->integer('workforce')->nullable();
             $table->string('equipment')->nullable();
             $table->string('step')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->text('notes')->nullable();
-            $table->timestamps();
         });
     }
 
@@ -29,6 +26,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_site_implantations');
+        Schema::table('order_site_implantations', function (Blueprint $table) {
+            $table->dropColumn([
+                'workforce',
+                'equipment',
+                'step',
+                'start_date',
+                'end_date',
+                'notes',
+            ]);
+        });
     }
 };
