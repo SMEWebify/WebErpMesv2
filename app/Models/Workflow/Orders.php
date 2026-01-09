@@ -257,7 +257,8 @@ class Orders extends Model
     public function getFormattedTotalPriceAttribute()
     {
         $factory = app('Factory'); 
-        return Number::currency($this->getTotalPriceAttribute(), $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->getTotalPriceAttribute(), $currency, config('app.locale'));
 
     }
 
