@@ -25,8 +25,11 @@ class OpportunitiesActivitiesLogsFactory extends Factory
      */
     public function definition()
     {
+        $opportunity = Opportunities::query()->inRandomOrder()->first()
+            ?? Opportunities::factory()->create();
+
         return [
-            'opportunities_id' =>  Opportunities::all()->random()->id, 
+            'opportunities_id' => $opportunity->id,
             'label' => $this->faker->sentence(3),
             'type' => $this->faker->numberBetween(1, 5), // Random type between 1 and 5
             'statu' => $this->faker->numberBetween(1, 4), // Random status between 1 and 4
