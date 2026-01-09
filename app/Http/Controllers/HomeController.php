@@ -148,16 +148,18 @@ class HomeController extends Controller
                                         }])
                                         ->orderBy('ordre')->get();
 
+        $currency = $factory->curency ?? 'EUR';
+
         //total price
         $deliveredMonthInProgress = $this->deliveryKPIService->getDeliveryMonthlyProgress($CurentMonth, $CurentYear);
-        $deliveredMonthInProgress = Number::currency($deliveredMonthInProgress->orderSum ?? 0,$factory->curency, config('app.locale'));
+        $deliveredMonthInProgress = Number::currency($deliveredMonthInProgress->orderSum ?? 0, $currency, config('app.locale'));
                                                 
         $remainingDeliveryOrder =   $this->orderKPIService->getOrderMonthlyRemainingToDelivery($CurentMonth, $CurentYear);
 
-        $orderTotalFormattedDelivered =   Number::currency($orderTotalDelivered ?? 0,$factory->curency, config('app.locale'));
-        $orderTotalFormattedInvoiced =   Number::currency($orderTotaInvoiced ?? 0,$factory->curency, config('app.locale'));
-        $FormattedEstimatedBudgets =   Number::currency($EstimatedBudgets ?? 0,$factory->curency, config('app.locale'));
-        $remainingDeliveryOrder =   Number::currency($remainingDeliveryOrder->orderSum ?? 0,$factory->curency, config('app.locale'));
+        $orderTotalFormattedDelivered =   Number::currency($orderTotalDelivered ?? 0, $currency, config('app.locale'));
+        $orderTotalFormattedInvoiced =   Number::currency($orderTotaInvoiced ?? 0, $currency, config('app.locale'));
+        $FormattedEstimatedBudgets =   Number::currency($EstimatedBudgets ?? 0, $currency, config('app.locale'));
+        $remainingDeliveryOrder =   Number::currency($remainingDeliveryOrder->orderSum ?? 0, $currency, config('app.locale'));
 
         return view('dashboard', [
             'userRoleCount' => $userRoleCount,
