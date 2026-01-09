@@ -49,7 +49,8 @@ class QuotesController extends Controller
         $data['quoteMonthlyRecapPreviousYear'] = $this->quoteKPIService->getQuoteMonthlyRecapPreviousYear($CurentYear);
         $topCustomers = $this->quoteKPIService->getTopCustomersByQuoteVolume(3);
         $quotesCountByUser = $this->quoteKPIService->getQuotesCountByUser();
-        $averageAmount =  Number::currency($this->quoteKPIService->getAverageQuoteAmount(), $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        $averageAmount =  Number::currency($this->quoteKPIService->getAverageQuoteAmount(), $currency, config('app.locale'));
         $conversionRate =  $this->quoteKPIService->getQuoteConversionRate();
         $responseRate =  $this->quoteKPIService->getQuoteResponseRate();
 
@@ -77,8 +78,9 @@ class QuotesController extends Controller
         $AccountingDeleveriesSelect =  $this->SelectDataService->getAccountingDelivery();
         $Reviewers = $this->SelectDataService->getUsers();
         $QuoteCalculatorService = new QuoteCalculatorService($id);
-        $totalPrice =  Number::currency($QuoteCalculatorService->getTotalPrice(), $factory->curency, config('app.locale'));
-        $subPrice = Number::currency($QuoteCalculatorService->getSubTotal(), $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        $totalPrice =  Number::currency($QuoteCalculatorService->getTotalPrice(), $currency, config('app.locale'));
+        $subPrice = Number::currency($QuoteCalculatorService->getSubTotal(), $currency, config('app.locale'));
         $vatPrice =  $QuoteCalculatorService->getVatTotal();
         $TotalServiceProductTime = $QuoteCalculatorService->getTotalProductTimeByService();
         $TotalServiceSettingTime = $QuoteCalculatorService->getTotalSettingTimeByService();
