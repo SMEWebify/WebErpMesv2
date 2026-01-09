@@ -14,6 +14,7 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use App\Models\Attendance;
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\Planning\TaskActivities;
 use App\Http\Requests\Admin\StoreUserExpenseRequest;
@@ -446,8 +447,82 @@ class HumanResourcesController extends Controller
             ];
         }
 
+        $attendances = Attendance::with('user')
+            ->when($filterUserId, function ($query, $filterUserId) {
+                return $query->where('user_id', $filterUserId);
+            })
+            ->when($startDate, function ($query, $startDate) {
+                return $query->whereDate('punched_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query, $endDate) {
+                return $query->whereDate('punched_at', '<=', $endDate);
+            })
+            ->orderBy('user_id')
+            ->orderBy('punched_at')
+            ->get();
+
+        $attendanceReport = [];
+        $attendanceDayBuckets = [];
+        $openPunches = [];
+
+        foreach ($attendances as $attendance) {
+            $userId = $attendance->user_id;
+            if (!isset($attendanceReport[$userId])) {
+                $attendanceReport[$userId] = [
+                    'user' => $attendance->user,
+                    'total_seconds' => 0,
+                    'anomalies' => 0,
+                ];
+            }
+
+            $timestamp = Carbon::parse($attendance->punched_at);
+            $attendanceDayBuckets[$userId][$timestamp->toDateString()] = true;
+
+            if ($attendance->direction === 'in') {
+                if (isset($openPunches[$userId])) {
+                    $attendanceReport[$userId]['anomalies']++;
+                }
+                $openPunches[$userId] = $timestamp;
+                continue;
+            }
+
+            if ($attendance->direction === 'out') {
+                if (isset($openPunches[$userId])) {
+                    $startTime = $openPunches[$userId];
+                    if ($timestamp->greaterThan($startTime)) {
+                        $attendanceReport[$userId]['total_seconds'] += $timestamp->diffInSeconds($startTime);
+                    } else {
+                        $attendanceReport[$userId]['anomalies']++;
+                    }
+                    unset($openPunches[$userId]);
+                } else {
+                    $attendanceReport[$userId]['anomalies']++;
+                }
+            }
+        }
+
+        foreach ($openPunches as $userId => $startTime) {
+            if (isset($attendanceReport[$userId])) {
+                $attendanceReport[$userId]['anomalies']++;
+            }
+        }
+
+        foreach ($attendanceReport as $userId => $data) {
+            $attendanceReport[$userId]['days'] = isset($attendanceDayBuckets[$userId]) ? count($attendanceDayBuckets[$userId]) : 0;
+        }
+
+        if ($filterUserId && !isset($attendanceReport[$filterUserId])) {
+            $attendanceReport[$filterUserId] = [
+                'user' => User::find($filterUserId),
+                'total_seconds' => 0,
+                'anomalies' => 0,
+                'days' => 0,
+            ];
+        }
+
         return view('admin/human-resources-attendance', [
             'AttendanceReport' => $report,
+            'AttendancePunchReport' => $attendanceReport,
             'userSelect' => $userSelect,
             'filters' => [
                 'user_id' => $filterUserId,
