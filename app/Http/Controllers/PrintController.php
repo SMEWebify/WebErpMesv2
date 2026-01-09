@@ -100,6 +100,7 @@ class PrintController extends Controller
     public function getInvoiceFactureX(Invoices $Document)
     {
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
         $typeDocumentName = __('general_content.invoice_trans_key');
         $calculatorService = new InvoiceCalculatorService($Document);
         $Factory = $this->getFactory();
@@ -107,8 +108,8 @@ class PrintController extends Controller
         $subPrice = $calculatorService->getSubTotal();
         $vatPrice = $calculatorService->getVatTotal();
         
-        $formattedTotalPrice = Number::currency($totalPrice, $factory->curency, config('app.locale'));
-        $formattedSubPrice = Number::currency($subPrice, $factory->curency, config('app.locale'));
+        $formattedTotalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
+        $formattedSubPrice = Number::currency($subPrice, $currency, config('app.locale'));
 
         $this->getDocumentLines($Document, 'invoiceLines');
         $image = $Factory->getImageFactoryPath();
@@ -123,7 +124,7 @@ class PrintController extends Controller
 
         $zugferddatas = ZugferdDocumentBuilder::CreateNew(ZugferdProfiles::PROFILE_EN16931);
         $zugferddatas
-        ->setDocumentInformation($Document->code, "380", \DateTime::createFromFormat("Ymd", "20180305"), $Factory->curency)
+        ->setDocumentInformation($Document->code, "380", \DateTime::createFromFormat("Ymd", "20180305"), $currency)
         ->addDocumentNote('Facture du ' . $Document->GetPrettyCreatedAttribute())
         
         // Ajout des informations du vendeur (Factory)
@@ -250,13 +251,14 @@ class PrintController extends Controller
     private function generatePdf($Document, $typeDocumentName, $calculatorService, $viewKey)
     {
         $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
         $Factory = $this->getFactory();
         $totalPrice = $calculatorService ? $calculatorService->getTotalPrice() : 0;
         $subPrice = $calculatorService ? $calculatorService->getSubTotal() : 0;
         $vatPrice = $calculatorService ? $calculatorService->getVatTotal() : 0;
 
-        $formattedTotalPrice = Number::currency($totalPrice, $factory->curency, config('app.locale'));
-        $formattedSubPrice = Number::currency($subPrice, $factory->curency, config('app.locale'));
+        $formattedTotalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
+        $formattedSubPrice = Number::currency($subPrice, $currency, config('app.locale'));
 
         $this->getDocumentLines($Document, $this->getDocumentLinesKey($Document));
         $image = $Factory->getImageFactoryPath();

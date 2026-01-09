@@ -103,13 +103,14 @@ class CreditNoteController extends Controller
     public function show(CreditNotes $id)
     {
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
         
         $CreditNoteCalculatorService = new CreditNoteCalculatorService($id);
         $totalPrice = $CreditNoteCalculatorService->getTotalPrice();
         $subPrice = $CreditNoteCalculatorService->getSubTotal();
         $vatPrice = $CreditNoteCalculatorService->getVatTotal();
-        $totalPrice = Number::currency($totalPrice, $factory->curency, config('app.locale'));
-        $subPrice = Number::currency($subPrice, $factory->curency, config('app.locale'));
+        $totalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
+        $subPrice = Number::currency($subPrice, $currency, config('app.locale'));
 
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new CreditNotes(), $id->id);
         return view('workflow/credit-notes-show', [
