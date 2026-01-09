@@ -81,6 +81,7 @@ class CompaniesController extends Controller
     public function show(Companies $id)
     {
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
         $CurentYear = now()->year;
         $userSelect = $this->SelectDataService->getUsers();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Companies(), $id->id);
@@ -90,8 +91,8 @@ class CompaniesController extends Controller
         $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear, $id->id);
         $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, $id->id);
         $data['orderAverage'] = $this->orderKPIService->getAverageOrderPriceAttribute($id->id);
-        $data['orderAverage'] = Number::currency($data['orderAverage'], $factory->curency, config('app.locale'));
-        $remainingInvoiceOrder = Number::currency($remainingInvoiceOrder->orderSum ?? 0, $factory->curency, config('app.locale'));
+        $data['orderAverage'] = Number::currency($data['orderAverage'], $currency, config('app.locale'));
+        $remainingInvoiceOrder = Number::currency($remainingInvoiceOrder->orderSum ?? 0, $currency, config('app.locale'));
 
         $customerServiceId = MethodsServices::where('label', 'Customer Service')->value('id');
 
@@ -108,7 +109,7 @@ class CompaniesController extends Controller
             );
         }
 
-        $customerProcessingCost = Number::currency($customerProcessingCost, $factory->curency, config('app.locale'));
+        $customerProcessingCost = Number::currency($customerProcessingCost, $currency, config('app.locale'));
 
         $Companie = $id;
 

@@ -59,6 +59,7 @@ class PurchasesController extends Controller
     {   
         $currentYear = Carbon::now()->format('Y');
         $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
         $data['purchasesDataRate'] = $this->purchaseKPIService->getPurchasesDataRate();
         $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap($currentYear);
 
@@ -71,9 +72,9 @@ class PurchasesController extends Controller
         $suppliersToRequalify = $this->purchaseKPIService->getSuppliersToRequalify(30);
 
         $topProducts = $this->purchaseKPIService->getTopProducts();
-        $averageAmount = Number::currency($this->purchaseKPIService->getAverageAmount(),$factory->curency, config('app.locale'));
+        $averageAmount = Number::currency($this->purchaseKPIService->getAverageAmount(), $currency, config('app.locale'));
         $totalPurchaseLineCount = $this->purchaseKPIService->getTotalPurchaseCount();
-        $totalPurchasesAmount = Number::currency($this->purchaseKPIService->getTotalPurchaseAmount(),$factory->curency, config('app.locale'));
+        $totalPurchasesAmount = Number::currency($this->purchaseKPIService->getTotalPurchaseAmount(), $currency, config('app.locale'));
 
         $userSelect = $this->SelectDataService->getUsers();
         $CompanieSelect = $this->SelectDataService->getSupplier();

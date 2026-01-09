@@ -46,6 +46,7 @@ class InvoicesController extends Controller
     public function index()
     {    
         $factory = app('Factory');  
+        $currency = $factory->curency ?? 'EUR';
         $CurentYear = Carbon::now()->format('Y');
 
         $data['invoicesDataRate'] = $this->invoiceKPIService->getInvoicesDataRate();
@@ -61,9 +62,9 @@ class InvoicesController extends Controller
         $topClients = $this->invoiceKPIService->getTopClients();
         $topProducts = $this->invoiceKPIService->getTopProducts();
 
-        $totalInvoices = Number::currency($totalInvoices , $factory->curency, config('app.locale'));
-        $totalInvoiceAmount = Number::currency($totalInvoiceAmount , $factory->curency, config('app.locale'));
-        $totalPaymentsReceived = Number::currency($totalPaymentsReceived , $factory->curency, config('app.locale'));
+        $totalInvoices = Number::currency($totalInvoices, $currency, config('app.locale'));
+        $totalInvoiceAmount = Number::currency($totalInvoiceAmount, $currency, config('app.locale'));
+        $totalPaymentsReceived = Number::currency($totalPaymentsReceived, $currency, config('app.locale'));
 
         return view('workflow/invoices-index', compact(
                                                         'totalInvoices',
@@ -159,13 +160,14 @@ class InvoicesController extends Controller
     public function show(Invoices $id)
     {
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
         
         $InvoiceCalculatorService = new InvoiceCalculatorService($id);
         $totalPrice = $InvoiceCalculatorService->getTotalPrice();
         $subPrice = $InvoiceCalculatorService->getSubTotal();
         
-        $totalPrice = Number::currency($totalPrice, $factory->curency, config('app.locale'));
-        $subPrice = Number::currency($subPrice, $factory->curency, config('app.locale'));
+        $totalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
+        $subPrice = Number::currency($subPrice, $currency, config('app.locale'));
 
         $vatPrice = $InvoiceCalculatorService->getVatTotal();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Invoices(), $id->id);

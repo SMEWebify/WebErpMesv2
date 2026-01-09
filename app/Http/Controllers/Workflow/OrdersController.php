@@ -46,6 +46,7 @@ class OrdersController extends Controller
     { 
         $factory = app('Factory');   
         $CurentYear = now()->year;
+        $currency = $factory->curency ?? 'EUR';
 
         // Récupérer les KPI
         $deliveredOrdersPercentage = $this->orderKPIService->getDeliveredOrdersPercentage();
@@ -62,8 +63,8 @@ class OrdersController extends Controller
         $data['orderMonthlyRecapPreviousYear'] = $this->orderKPIService->getOrderMonthlyRecapPreviousYear($CurentYear);
 
         
-        $remainingDeliveryOrder = Number::currency($remainingDeliveryOrder->orderSum , $factory->curency, config('app.locale'));
-        $remainingInvoiceOrder = Number::currency($remainingInvoiceOrder->orderSum , $factory->curency, config('app.locale'));
+        $remainingDeliveryOrder = Number::currency($remainingDeliveryOrder->orderSum ?? 0, $currency, config('app.locale'));
+        $remainingInvoiceOrder = Number::currency($remainingInvoiceOrder->orderSum ?? 0, $currency, config('app.locale'));
 
         return view('workflow/orders-index', compact(
             'deliveredOrdersPercentage',
@@ -138,12 +139,13 @@ class OrdersController extends Controller
 
 
         //format variable after calculation for display
-        $stillInvoiced = Number::currency($totalPrice - $invoicedAmount, $factory->curency, config('app.locale'));
-        $totalPrice = Number::currency($totalPrice, $factory->curency, config('app.locale'));
-        $subPrice = Number::currency($subPrice, $factory->curency, config('app.locale'));
-        $invoicedAmount = Number::currency($invoicedAmount, $factory->curency, config('app.locale'));
-        $forecastMarginFormatted = Number::currency($forecastMargin, $factory->curency, config('app.locale'));
-        $currentMarginFormatted = Number::currency($currentMargin, $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        $stillInvoiced = Number::currency($totalPrice - $invoicedAmount, $currency, config('app.locale'));
+        $totalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
+        $subPrice = Number::currency($subPrice, $currency, config('app.locale'));
+        $invoicedAmount = Number::currency($invoicedAmount, $currency, config('app.locale'));
+        $forecastMarginFormatted = Number::currency($forecastMargin, $currency, config('app.locale'));
+        $currentMarginFormatted = Number::currency($currentMargin, $currency, config('app.locale'));
         $forecastMarginPercentageFormatted = number_format($forecastMarginPercentage, 2, '.', ',') . ' %';
         $currentMarginPercentageFormatted = number_format($currentMarginPercentage, 2, '.', ',') . ' %';
 
@@ -230,4 +232,3 @@ class OrdersController extends Controller
         return redirect()->route('orders.show', ['id' => $order->id])->with('success', 'Successfully updated Order');
     }
 }
-
