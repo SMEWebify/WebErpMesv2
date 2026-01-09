@@ -1,30 +1,25 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
-
     {{-- Base Meta Tags --}}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Custom Meta Tags --}}
     @yield('meta_tags')
 
-    {{-- Title --}}
     <title>
         @yield('title_prefix', config('adminlte.title_prefix', ''))
         @yield('title', config('adminlte.title', 'AdminLTE 3'))
         @yield('title_postfix', config('adminlte.title_postfix', ''))
     </title>
 
-    {{-- Base Stylesheets --}}
+    {{-- AdminLTE --}}
     @if(!config('adminlte.enabled_laravel_mix'))
         <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
         <link rel="stylesheet" href="{{ asset('vendor/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
         <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
-
         @if(config('adminlte.google_fonts.allowed', true))
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
         @endif
@@ -32,9 +27,9 @@
         <link rel="stylesheet" href="{{ mix(config('adminlte.laravel_mix_css_path', 'css/app.css')) }}">
     @endif
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
+    {{-- Bootstrap 5 --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))
@@ -59,84 +54,207 @@
         <meta name="msapplication-TileImage" content="{{ asset('favicon/ms-icon-144x144.png') }}">
     @endif
 
-</head>
-    <body>
-        <style>
-            body{
-                background:#eee;
-            }
-            .card {
-                box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
-            }
-            .card {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 0 solid rgba(0,0,0,.125);
-                border-radius: 1rem;
-            }
-            .text-reset {
-                --bs-text-opacity: 1;
-                color: inherit!important;
-            }
-            a {
-                color: #5465ff;
-                text-decoration: none;
-            }
-        </style>
+    <style>
+        /* Page background + centering */
+        body {
+            background: #f1f5f9; /* proche slate-100 */
+        }
+        .attendance-wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1rem;
+        }
 
-        <div class="container-fluid">
-            <div class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4">
-                <div class="w-full max-w-md bg-white shadow-md rounded-lg p-6">
-                    <div class="mb-6 text-center">
-                        <h1 class="text-2xl font-semibold text-gray-800">
-                            {{ __('general_content.attendance_trans_key') }}
-                        </h1>
-                        <p class="text-sm text-gray-500 mt-2">
-                            {{ __('general_content.attendance_select_user_trans_key') }}
-                        </p>
-                    </div>
-        
-                    <x-auth-session-status class="mb-4" :status="session('status')" />
-        
-                    <form method="POST" action="{{ route('attendance.store') }}" class="space-y-4">
-                        @csrf
-        
-                        <div>
-                            <x-label for="user_id" value="{{ __('general_content.user_trans_key') }}" />
-                            <select id="user_id" name="user_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
-                                <option value="">{{ __('general_content.attendance_select_user_trans_key') }}</option>
-                                @foreach($userSelect as $user)
-                                    <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('user_id')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-        
-                        @error('direction')
-                            <p class="text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-        
-                        <div class="flex gap-3">
-                            <x-button type="submit" name="direction" value="in" class="w-full justify-center">
-                                {{ __('general_content.attendance_entry_trans_key') }}
-                            </x-button>
-                            <x-button type="submit" name="direction" value="out" class="w-full justify-center bg-red-600 hover:bg-red-700">
-                                {{ __('general_content.attendance_exit_trans_key') }}
-                            </x-button>
-                        </div>
-                    </form>
-                </div>
+        /* Card */
+        .attendance-card {
+            width: 100%;
+            max-width: 420px;
+            border: 0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 18px 40px rgba(0,0,0,.12);
+            background: #fff;
+        }
+
+        /* Header */
+        .attendance-header {
+            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+            color: #fff;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+        .attendance-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 999px;
+            border: 2px solid rgba(255,255,255,.7);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        .attendance-subtitle {
+            opacity: .85;
+            font-size: .9rem;
+            margin-top: .25rem;
+        }
+
+        /* Clock */
+        .attendance-clock {
+            background: #0f172a; /* slate-900 */
+            color: #fff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: .35em;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,.35);
+        }
+
+        /* Inputs */
+        .attendance-label {
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #64748b; /* slate-500 */
+            margin-bottom: .4rem;
+        }
+        .attendance-select {
+            border-radius: 14px;
+            padding: .7rem .9rem;
+            background: #f8fafc;
+        }
+
+        /* Buttons (big like image) */
+        .attendance-btn {
+            border-radius: 14px;
+            padding: 18px 14px;
+            font-weight: 700;
+            box-shadow: 0 10px 18px rgba(0,0,0,.12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .attendance-btn svg { width: 22px; height: 22px; }
+
+        /* Success message readable */
+        .attendance-status {
+            border-radius: 14px;
+            padding: 10px 12px;
+            background: #ecfdf5; /* emerald-50 */
+            color: #065f46;      /* emerald-800 */
+            font-weight: 600;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="attendance-wrap">
+    <div class="attendance-card">
+        <div class="attendance-header">
+            <div class="attendance-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v6l3 3"></path>
+                </svg>
+            </div>
+
+            <h1 class="mt-3 mb-1" style="font-size: 1.5rem; font-weight: 700;">
+                {{ __('general_content.attendance_trans_key') }}
+            </h1>
+            <div class="attendance-subtitle">
+                {{ now()->translatedFormat('l j F Y') }}
             </div>
         </div>
-    </body>
-</html>
 
+        <div class="p-4 p-md-4" style="display:flex; flex-direction:column; gap: 18px;">
+            {{-- Message success lisible --}}
+            @if (session('status'))
+                <div class="attendance-status">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            {{-- Clock --}}
+            <div class="attendance-clock" data-clock>00:00:00</div>
+
+            <form method="POST" action="{{ route('attendance.store') }}">
+                @csrf
+
+                <div class="mb-3">
+                    <div class="attendance-label">
+                        {{ __('general_content.user_trans_key') }}
+                    </div>
+
+                    <select id="user_id" name="user_id" class="form-select attendance-select" required>
+                        <option value="">{{ __('general_content.attendance_select_user_trans_key') }}</option>
+                        @foreach($userSelect as $user)
+                            <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                {{ $user->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @error('user_id')
+                        <div class="text-danger mt-2" style="font-size:.9rem;">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                @error('direction')
+                    <div class="text-danger mb-2" style="font-size:.9rem;">{{ $message }}</div>
+                @enderror
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <button type="submit" name="direction" value="in" class="btn btn-success w-100 attendance-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 12h12"></path>
+                                <path d="M10 6l6 6-6 6"></path>
+                            </svg>
+                            {{ __('general_content.attendance_entry_trans_key') }}
+                        </button>
+                    </div>
+
+                    <div class="col-6">
+                        <button type="submit" name="direction" value="out" class="btn btn-danger w-100 attendance-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 12H8"></path>
+                                <path d="M14 6l-6 6 6 6"></path>
+                            </svg>
+                            {{ __('general_content.attendance_exit_trans_key') }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const clock = document.querySelector('[data-clock]');
+    if (!clock) return;
+
+    const updateClock = () => {
+        const now = new Date();
+        clock.textContent = now.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+    };
+
+    updateClock();
+    setInterval(updateClock, 1000);
+});
+</script>
+
+</body>
+</html>
