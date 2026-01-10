@@ -118,15 +118,16 @@ class OpportunitiesKPIService
     public function getQuotesSummary()
     {
         $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
         $quotesWon = Quotes::where('statu', 3)->whereNotNull('opportunities_id')->get();
         $totalQuotesWon = Number::currency($quotesWon->sum(function ($quote) {
             return $quote->getTotalPriceAttribute();
-        }),$factory->curency, config('app.locale'));
+        }), $currency, config('app.locale'));
 
         $quotesLost = Quotes::where('statu', 4)->whereNotNull('opportunities_id')->get();
         $totalQuotesLost = Number::currency($quotesLost->sum(function ($quote) {
             return $quote->getTotalPriceAttribute();
-        }),$factory->curency, config('app.locale')); 
+        }), $currency, config('app.locale')); 
 
         return compact('totalQuotesWon', 'totalQuotesLost');
     }

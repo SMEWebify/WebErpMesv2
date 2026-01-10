@@ -52,7 +52,8 @@ class CreditNoteLines extends Model
     public function getFormattedSellingPriceAttribute()
     {
         $factory = app('Factory'); 
-        return Number::currency($this->unit_price, $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->unit_price, $currency, config('app.locale'));
     }
 
     /**

@@ -58,12 +58,13 @@ class OrderBusinessBalanceService
 
         // Ajout des versions formatées AVANT de retourner le tableau
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
         foreach ($businessBalance as $taskName => &$balance) {
             // Valeurs formatées (pour affichage)
-            $balance['total_display_cost'] = Number::currency($balance['total_cost'], $factory->curency, config('app.locale'));
-            $balance['total_display_price'] = Number::currency($balance['total_price'], $factory->curency, config('app.locale'));
-            $balance['realized_display_cost'] = Number::currency($balance['realized_cost'], $factory->curency, config('app.locale'));
-            $balance['difference_display_cost'] = Number::currency($balance['difference_cost'], $factory->curency, config('app.locale'));
+            $balance['total_display_cost'] = Number::currency($balance['total_cost'], $currency, config('app.locale'));
+            $balance['total_display_price'] = Number::currency($balance['total_price'], $currency, config('app.locale'));
+            $balance['realized_display_cost'] = Number::currency($balance['realized_cost'], $currency, config('app.locale'));
+            $balance['difference_display_cost'] = Number::currency($balance['difference_cost'], $currency, config('app.locale'));
         }
 
         return $businessBalance;
@@ -89,6 +90,7 @@ class OrderBusinessBalanceService
     {
         $businessBalance = $this->getBusinessBalance($order);
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
 
         $totals = [
             'total_hours' => 0,
@@ -111,10 +113,10 @@ class OrderBusinessBalanceService
         }
 
         // Ajouter une version formatée des valeurs monétaires
-        $totals['total_display_cost'] = Number::currency($totals['total_cost'], $factory->curency, config('app.locale'));
-        $totals['total_display_price'] = Number::currency($totals['total_price'], $factory->curency, config('app.locale'));
-        $totals['realized_display_cost'] = Number::currency($totals['realized_cost'], $factory->curency, config('app.locale'));
-        $totals['difference_display_cost'] = Number::currency($totals['difference_cost'], $factory->curency, config('app.locale'));
+        $totals['total_display_cost'] = Number::currency($totals['total_cost'], $currency, config('app.locale'));
+        $totals['total_display_price'] = Number::currency($totals['total_price'], $currency, config('app.locale'));
+        $totals['realized_display_cost'] = Number::currency($totals['realized_cost'], $currency, config('app.locale'));
+        $totals['difference_display_cost'] = Number::currency($totals['difference_cost'], $currency, config('app.locale'));
 
         return $totals;
     }

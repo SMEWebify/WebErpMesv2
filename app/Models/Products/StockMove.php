@@ -96,7 +96,8 @@ class StockMove extends Model
     public function getFormattedComponentPriceAttribute()
     {
         $factory = app('Factory'); 
-        return Number::currency($this->component_price, $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->component_price, $currency, config('app.locale'));
     }
     
     /**
