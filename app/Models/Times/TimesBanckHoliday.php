@@ -21,11 +21,18 @@ class TimesBanckHoliday extends Model
      */
     public static function isBankHoliday(Carbon $date): bool
     {
-        return self::where(function ($query) use ($date) {
+        $driver = self::query()->getConnection()->getDriverName();
+
+        return self::where(function ($query) use ($date, $driver) {
                 // 1 Check fixed holidays (base only on day + month)
                 $query->where('fixed', true)
-                    ->whereRaw('MONTH(date) = ?', [$date->month])
-                    ->whereRaw('DAY(date) = ?', [$date->day]);
+                    ->when($driver === 'sqlite', function ($sqliteQuery) use ($date) {
+                        $sqliteQuery->whereRaw("strftime('%m', date) = ?", [sprintf('%02d', $date->month)])
+                            ->whereRaw("strftime('%d', date) = ?", [sprintf('%02d', $date->day)]);
+                    }, function ($defaultQuery) use ($date) {
+                        $defaultQuery->whereRaw('MONTH(date) = ?', [$date->month])
+                            ->whereRaw('DAY(date) = ?', [$date->day]);
+                    });
 
                 // Check for non-fixed holidays (take into account the whole year)
                 $query->orWhere(function ($subQuery) use ($date) {

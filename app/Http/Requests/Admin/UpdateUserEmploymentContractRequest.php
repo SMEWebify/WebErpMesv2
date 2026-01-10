@@ -24,11 +24,21 @@ class UpdateUserEmploymentContractRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'methods_section_id',
-            'signature_date'  =>'required',
-            'type_of_contract'  =>'required',
-            'duration_trial_period' =>'required',
+            'id' => 'required|exists:user_employment_contracts,id',
+            'statu' => 'nullable',
+            'methods_section_id' => 'nullable|exists:methods_sections,id',
+            'signature_date' => 'nullable|date',
+            'type_of_contract' => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'duration_trial_period' => 'nullable|integer',
+            'end_date' => 'nullable|date',
+            'weekly_duration' => 'nullable|integer',
+            'position' => 'nullable|string',
+            'coefficient' => 'nullable|string',
+            'hourly_gross_salary' => 'nullable|numeric',
+            'minimum_monthly_salary' => 'nullable|integer',
+            'annual_gross_salary' => 'nullable|integer',
+            'end_of_contract_reason' => 'nullable|string',
         ];
     }
 }

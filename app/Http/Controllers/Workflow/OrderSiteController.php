@@ -23,6 +23,8 @@ class OrderSiteController extends Controller
             'contact_info' => 'nullable|string',
         ]);
 
+        $data['label'] = $data['name'] ?? null;
+
         $order->OrderSite()->create($data);
 
         return back()->with('success', 'Site created');
@@ -39,6 +41,8 @@ class OrderSiteController extends Controller
             'characteristics' => 'nullable|string',
             'contact_info' => 'nullable|string',
         ]);
+
+        $data['label'] = $data['name'] ?? null;
 
         $site->update($data);
 
@@ -64,6 +68,8 @@ class OrderSiteController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
         ]);
+
+        $data['order_sites_id'] = $site->id;
 
         $site->OrderSiteImplantations()->create($data);
 
@@ -95,4 +101,3 @@ class OrderSiteController extends Controller
         return back()->with('success', 'Implantation deleted');
     }
 }
-

@@ -101,6 +101,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         //Rating
         Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('companies.ratings.store');
+        Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('supplier-ratings.store');
     });
 
     $contactMiddleware = app()->environment('testing') ? [] : ['auth', 'check.factory'];
@@ -475,21 +476,27 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::group(['prefix' => 'contract'], function () {
             // Create Employment Contract
             Route::post('/create', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserEmploymentContract')->name('human.resources.create.contract');
+            Route::post('/store', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserEmploymentContract')->name('human.resources.store.user.contract');
     
             // Update Employment Contract
             Route::post('/update', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserEmploymentContract')->name('human.resources.update.contract');
+            Route::put('/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserEmploymentContract')->name('human.resources.update.user.contract');
         });
 
         // Employment Contract
         Route::group(['prefix' => 'expense'], function () {
             // Create Expense category
             Route::post('/create/category', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserExpenseCategorie')->name('human.resources.create.expense.category');
+            Route::post('/category', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserExpenseCategorie')->name('human.resources.store.user.expense.category');
             // Update Expense category
             Route::post('/update/category', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserExpenseCategorie')->name('human.resources.update.expense.category');
+            Route::put('/category/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserExpenseCategorie')->name('human.resources.update.user.expense.category');
             // Create Expense Report User
             Route::post('/create/report', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserExpenseReport')->name('human.resources.create.expense.report');
+            Route::post('/report', 'App\Http\Controllers\Admin\HumanResourcesController@storeUserExpenseReport')->name('human.resources.store.user.expense.report');
             // Update Expense Report User
             Route::post('/update/report', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserExpenseReport')->name('human.resources.update.expense.report');
+            Route::put('/report/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@updateUserExpenseReport')->name('human.resources.update.user.expense.report');
             // Show Expense User
             Route::get('/show/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowExpenseUser')->name('human.resources.show.expense');
             // Create Expense  User

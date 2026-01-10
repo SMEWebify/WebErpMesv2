@@ -11,6 +11,7 @@ class OrderSite extends Model
 
     protected $fillable = [
         'order_id',
+        'label',
         'location',
         'characteristics',
         'contact_info',
