@@ -46,7 +46,7 @@ to add lines to a quote.
 - `database/migrations` — Schema definitions for ERP and MES tables, including BOMs, routings, and stock movements.
 - `resources/js` — Vue.js front-end code compiled via Laravel Mix (see `webpack.mix.js`).
 - `resources/views` — Blade templates for server-rendered pages and layouts.
-- `docker/` and `docker-compose.yaml` — Development stack definitions (PHP-FPM, Nginx, database, Redis).
+
 
 ### Local development (without Docker)
 
