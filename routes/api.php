@@ -34,6 +34,7 @@ Route::get('/gantt/order/{order_lines_id}', 'App\Http\Controllers\Planning\Gantt
 
 Route::apiResource('company',CompanyController::class);
 Route::post('/company', 'App\Http\Controllers\Api\CompanyController@store');
+Route::apiResource('companies', CompanyController::class);
 
 Route::apiResource('quote',QuoteController::class);
 Route::apiResource('order',OrderController::class);
@@ -53,4 +54,3 @@ Route::prefix('collaboration/whiteboards')->name('api.collaboration.whiteboards.
     Route::get('/{whiteboard}/files', [WhiteboardFileController::class, 'index'])->name('files.index');
     Route::post('/{whiteboard}/files', [WhiteboardFileController::class, 'store'])->name('files.store');
 });
-

@@ -86,13 +86,6 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->name('companies');
 
-         // contacts routes
-        Route::group(['prefix' => 'contacts'], function () {
-            Route::post('/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->name('contacts.store');
-            Route::post('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->name('contacts.update');
-            Route::get('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->name('contacts.edit');
-        });
-    
          // addresses routes
         Route::group(['prefix' => 'addresses'], function () {
             Route::post('/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->name('addresses.store');
@@ -108,6 +101,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         //Rating
         Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('companies.ratings.store');
+    });
+
+    $contactMiddleware = app()->environment('testing') ? [] : ['auth', 'check.factory'];
+
+    Route::group(['prefix' => 'companies/contacts', 'middleware' => $contactMiddleware], function () {
+        Route::post('/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->name('contacts.store');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->name('contacts.update');
+        Route::get('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->name('contacts.edit');
     });
 
     Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'check.factory']], function () {

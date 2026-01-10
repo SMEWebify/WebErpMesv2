@@ -15,8 +15,12 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 Route::middleware('guest')->group(function () {
 
     // Route to display the login form
-    Route::get('/', [AuthenticatedSessionController::class, 'create'])
-                ->name('login');
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+        ->name('login');
+
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
 
     // Route to handle login form submission
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])

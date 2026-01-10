@@ -12,6 +12,12 @@ class EnergyConsumption extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'kwh' => 'decimal:2',
+        'cost_per_kwh' => 'decimal:2',
+        'total_cost' => 'decimal:2',
+    ];
+
     protected $fillable = [
         'methods_ressource_id',
         'kwh',
@@ -52,4 +58,3 @@ class EnergyConsumption extends Model
 
     }
 }
-
