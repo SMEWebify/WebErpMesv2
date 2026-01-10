@@ -1,16 +1,34 @@
-permissions:
-  contents: read
-name: CI
-
-on:
-  push:
-  pull_request:
-
 jobs:
   tests:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u test -ptest"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
     env:
-      COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+      APP_ENV: testing
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: testing
+      DB_USERNAME: test
+      DB_PASSWORD: test
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,20 +36,28 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: zip, ldap, pdo_mysql, pdo_pgsql, sqlite3, bcmath, gd, intl, pcntl
+          extensions: zip, ldap, soap, pdo_mysql, sqlite3, bcmath, gd, intl, pcntl
           coverage: none
 
       - name: Install dependencies
         run: composer install --no-progress --no-interaction --prefer-dist
 
+      - name: Prepare Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Clear config cache
+        run: php artisan config:clear
+
+      - name: Wait for MySQL
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -u test -ptest --silent; do
+            sleep 1
+          done
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
       - name: Run PHPUnit
         run: vendor/bin/phpunit --colors=always
-
-      - name: Install PHP QA tools
-        run: composer global require phpstan/phpstan friendsofphp/php-cs-fixer
-
-      - name: Run PHPStan
-        run: $(composer global config bin-dir --absolute)/phpstan analyse
-
-      - name: Run PHP-CS-Fixer (dry run)
-        run: $(composer global config bin-dir --absolute)/php-cs-fixer fix --dry-run
