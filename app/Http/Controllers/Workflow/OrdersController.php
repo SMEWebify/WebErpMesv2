@@ -6,12 +6,14 @@ use Illuminate\Support\Number;
 use App\Models\Workflow\Orders;
 use App\Services\OrderKPIService;
 use App\Traits\NextPreviousTrait;
+use App\Models\Admin\Factory;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\OrderCalculatorService;
 use App\Services\OrderInvoiceDataService;
 use App\Services\OrderBusinessBalanceService;
+use App\Models\Workflow\OrderLines;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
 use Spatie\Activitylog\Models\Activity;
 
@@ -227,6 +229,22 @@ class OrdersController extends Controller
 
         // Update the order using mass assignment
         $order->update($request->validated());
+
+        if ($request->boolean('apply_delivery_date') && $order->validity_date) {
+            $factory = Factory::first();
+            $updates = ['delivery_date' => $order->validity_date];
+
+            if ($factory) {
+                $date = date_create($order->validity_date);
+                $internalDelay = date_format(
+                    date_sub($date, date_interval_create_from_date_string($factory->add_delivery_delay_order . ' days')),
+                    'Y-m-d'
+                );
+                $updates['internal_delay'] = $internalDelay;
+            }
+
+            OrderLines::where('orders_id', $order->id)->update($updates);
+        }
 
         // Redirect with success message
         return redirect()->route('orders.show', ['id' => $order->id])->with('success', 'Successfully updated Order');

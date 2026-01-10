@@ -112,6 +112,11 @@
                           <i class="fas fa-calendar-day"></i>
                         </div>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-secondary" type="submit" name="apply_delivery_date" value="1" title="Appliquer aux lignes" aria-label="Appliquer aux lignes">
+                            <i class="fas fa-level-down-alt"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -124,6 +129,11 @@
                           <i class="fas fa-calendar-day"></i>
                         </div>
                         <input type="date" class="form-control" name="validity_date"  id="validity_date" value="{{  $Order->validity_date }}">
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-secondary" type="submit" name="apply_delivery_date" value="1" title="Appliquer aux lignes" aria-label="Appliquer aux lignes">
+                            <i class="fas fa-level-down-alt"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
