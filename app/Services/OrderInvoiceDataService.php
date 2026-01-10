@@ -43,6 +43,7 @@ class OrderInvoiceDataService
     {
         
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
         
         $receivedPayment = $order->orderLines->sum(function ($line) {
             return $line->invoiceLines->sum(function ($invoiceLine) use ($line) {
@@ -54,6 +55,6 @@ class OrderInvoiceDataService
             });
         });
         
-        return Number::currency($receivedPayment, $factory->curency, config('app.locale'));;
+        return Number::currency($receivedPayment, $currency, config('app.locale'));;
     }
 }
