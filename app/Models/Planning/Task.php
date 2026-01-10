@@ -79,10 +79,6 @@ class Task extends Model
 
     protected $appends = ["open"];
 
-    protected $attributes = [
-        'priority' => self::PRIORITY_MEDIUM,
-    ];
-
     protected $casts = [
         'due_date' => 'date',
         'priority' => 'integer',

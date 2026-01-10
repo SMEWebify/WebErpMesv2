@@ -63,6 +63,18 @@ class Orders extends Model
         'n2p_last_push_at' => 'datetime',
     ];
 
+    public function setOriginal($key, $value = null): self
+    {
+        if (is_array($key)) {
+            $this->original = $key;
+            return $this;
+        }
+
+        $this->original[$key] = $value;
+
+        return $this;
+    }
+
     // Only log changes
     protected static $logOnlyDirty = true;
 

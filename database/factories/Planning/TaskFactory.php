@@ -33,19 +33,23 @@ class TaskFactory extends Factory
         $productId = null;
 
         if ($associationType === 'quote') {
-            $quoteLineId = QuoteLines::all()->random()->id;
+            $quoteLineId = QuoteLines::query()->inRandomOrder()->value('id')
+                ?? QuoteLines::factory()->create()->id;
             $ordre = $this->getNextOrder('quote_lines_id', $quoteLineId);
         } elseif ($associationType === 'order') {
-            $orderLineId = OrderLines::all()->random()->id;
+            $orderLineId = OrderLines::query()->inRandomOrder()->value('id')
+                ?? OrderLines::factory()->create()->id;
             $ordre = $this->getNextOrder('order_lines_id', $orderLineId);
         } 
 
-        $methodsService = MethodsServices::inRandomOrder()->first();
-        $methodsUnit = MethodsUnits::inRandomOrder()->first();
+        $methodsService = MethodsServices::query()->inRandomOrder()->first()
+            ?? MethodsServices::factory()->create();
+        $methodsUnit = MethodsUnits::query()->inRandomOrder()->first()
+            ?? MethodsUnits::factory()->create();
         
         $this->qty = $this->faker->biasedNumberBetween($min = 1, $max = 2990);
 
-        $primaryUser = User::inRandomOrder()->first();
+        $primaryUser = User::query()->inRandomOrder()->first() ?? User::factory()->create();
         $secondaryUser = User::inRandomOrder()
             ->when($primaryUser, fn ($query) => $query->where('id', '!=', $primaryUser->id))
             ->first();

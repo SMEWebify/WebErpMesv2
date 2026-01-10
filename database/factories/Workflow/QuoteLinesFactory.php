@@ -28,7 +28,7 @@ class QuoteLinesFactory extends Factory
 
     public function definition()
     {
-        $quote = Quotes::all()->random();
+        $quote = Quotes::query()->inRandomOrder()->first() ?? Quotes::factory()->create();
         $this->code = $this->faker->unique()->numerify('PART-####');
         $this->qty = $this->faker->randomFloat(2, 0, 1); // Generates a random number between 0 and 1
 
@@ -61,10 +61,12 @@ class QuoteLinesFactory extends Factory
             'code' => $this->code,
 			'label' => $this->code,
 			'qty' => $this->qty,
-			'methods_units_id' => MethodsUnits::all()->random()->id,
+			'methods_units_id' => MethodsUnits::query()->inRandomOrder()->value('id')
+                ?? MethodsUnits::factory()->create()->id,
 			'selling_price' => $this->selling_price,
 			'discount' => $this->faker->numberBetween($min = 0, $max = 3),
-			'accounting_vats_id' => AccountingVat ::all()->random()->id,
+			'accounting_vats_id' => AccountingVat::query()->inRandomOrder()->value('id')
+                ?? AccountingVat::factory()->create()->id,
             'delivery_date' => $quote->validity_date,
         ];
     }

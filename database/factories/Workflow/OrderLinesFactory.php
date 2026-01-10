@@ -28,7 +28,7 @@ class OrderLinesFactory extends Factory
 
     public function definition()
     {
-        $order = Orders::all()->random();
+        $order = Orders::query()->inRandomOrder()->first() ?? Orders::factory()->create();
         $this->code = $this->faker->unique()->numerify('PART-####');
         $this->qty = $this->faker->randomFloat(2, 0, 1); // Generates a random number between 0 and 1
 
@@ -76,10 +76,12 @@ class OrderLinesFactory extends Factory
                 
                 return $this->qty;
             },
-			'methods_units_id' => MethodsUnits::all()->random()->id,
+			'methods_units_id' => MethodsUnits::query()->inRandomOrder()->value('id')
+                ?? MethodsUnits::factory()->create()->id,
 			'selling_price' => $this->selling_price,
 			'discount' => $this->faker->numberBetween($min = 0, $max = 3),
-			'accounting_vats_id' => AccountingVat ::all()->random()->id,
+			'accounting_vats_id' => AccountingVat::query()->inRandomOrder()->value('id')
+                ?? AccountingVat::factory()->create()->id,
             
             'delivery_status' => $statu,
             'internal_delay' => $order->validity_date,

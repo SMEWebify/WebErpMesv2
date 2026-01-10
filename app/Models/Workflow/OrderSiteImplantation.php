@@ -11,6 +11,7 @@ class OrderSiteImplantation extends Model
 
     protected $fillable = [
         'order_site_id',
+        'order_sites_id',
         'name',
         'description',
         'workforce',

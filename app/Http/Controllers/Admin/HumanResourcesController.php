@@ -144,22 +144,28 @@ class HumanResourcesController extends Controller
      */
     public function storeUserEmploymentContract(StoreUserEmploymentContractRequest $request)
     {
+        $sectionId = $request->methods_section_id;
+        if (!$sectionId) {
+            $sectionId = \App\Models\Methods\MethodsSection::query()->inRandomOrder()->value('id')
+                ?? \App\Models\Methods\MethodsSection::factory()->create()->id;
+        }
+
         // Create a new user employment contract
         $UserEmploymentContract = UserEmploymentContracts::create([
                                                                     'user_id'=>$request->user_id, 
                                                                     'statu'=>$request->statu,  
-                                                                    'methods_section_id'=>$request->methods_section_id, 
+                                                                    'methods_section_id'=>$sectionId, 
                                                                     'signature_date'=>$request->signature_date,  
                                                                     'type_of_contract'=>$request->type_of_contract,  
                                                                     'start_date'=>$request->start_date,  
-                                                                    'duration_trial_period'=>$request->duration_trial_period,  
+                                                                    'duration_trial_period'=>$request->duration_trial_period ?? 0,  
                                                                     'end_date'=>$request->end_date,  
-                                                                    'weekly_duration'=>$request->weekly_duration,  
+                                                                    'weekly_duration'=>$request->weekly_duration ?? 0,  
                                                                     'position'=>$request->position,  
                                                                     'coefficient'=>$request->coefficient,  
                                                                     'hourly_gross_salary'=>$request->hourly_gross_salary,  
-                                                                    'minimum_monthly_salary'=>$request->minimum_monthly_salary,  
-                                                                    'annual_gross_salary'=>$request->annual_gross_salary,  
+                                                                    'minimum_monthly_salary'=>$request->minimum_monthly_salary ?? 0,  
+                                                                    'annual_gross_salary'=>$request->annual_gross_salary ?? 0,  
                                                                     'end_of_contract_reason'=>$request->end_of_contract_reason,
                                                                 ]);
 
