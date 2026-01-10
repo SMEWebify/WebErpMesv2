@@ -8,11 +8,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EmailVerificationTest extends TestCase
 {
-    use DatabaseTransactions;
 
     public function test_email_verification_screen_can_be_rendered()
     {
