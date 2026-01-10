@@ -38,7 +38,9 @@ jobs:
       DB_USERNAME: test
       DB_PASSWORD: test
 
+      # Neutralise Redis en CI (ton .env.example force redis)
       CACHE_STORE: array
+      CACHE_DRIVER: array
       SESSION_DRIVER: array
       QUEUE_CONNECTION: sync
       BROADCAST_DRIVER: log
@@ -56,10 +58,27 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --no-interaction --prefer-dist
 
-      - name: Prepare Laravel
+      - name: Prepare Laravel env
         run: |
           cp .env.example .env
           php artisan key:generate
+
+          # Override Redis-related settings from .env.example
+          php -r "\$c=file_get_contents('.env'); \
+            \$c=preg_replace('/^APP_ENV=.*/m','APP_ENV=testing',\$c); \
+            \$c=preg_replace('/^DB_CONNECTION=.*/m','DB_CONNECTION=mysql',\$c); \
+            \$c=preg_replace('/^DB_HOST=.*/m','DB_HOST=127.0.0.1',\$c); \
+            \$c=preg_replace('/^DB_PORT=.*/m','DB_PORT=3306',\$c); \
+            \$c=preg_replace('/^DB_DATABASE=.*/m','DB_DATABASE=testing',\$c); \
+            \$c=preg_replace('/^DB_USERNAME=.*/m','DB_USERNAME=test',\$c); \
+            \$c=preg_replace('/^DB_PASSWORD=.*/m','DB_PASSWORD=test',\$c); \
+            \$c=preg_replace('/^CACHE_DRIVER=.*/m','CACHE_DRIVER=array',\$c); \
+            \$c=preg_replace('/^CACHE_STORE=.*/m','CACHE_STORE=array',\$c); \
+            \$c=preg_replace('/^QUEUE_CONNECTION=.*/m','QUEUE_CONNECTION=sync',\$c); \
+            \$c=preg_replace('/^SESSION_DRIVER=.*/m','SESSION_DRIVER=array',\$c); \
+            \$c=preg_replace('/^BROADCAST_DRIVER=.*/m','BROADCAST_DRIVER=log',\$c); \
+            file_put_contents('.env',\$c);"
+
           php artisan config:clear
 
       - name: Wait for MySQL
