@@ -25,17 +25,23 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
+
     env:
+      COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"}}'
+
       APP_ENV: testing
+
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DB_DATABASE: testing
       DB_USERNAME: test
       DB_PASSWORD: test
+
       CACHE_STORE: array
       SESSION_DRIVER: array
       QUEUE_CONNECTION: sync
+      BROADCAST_DRIVER: log
 
     steps:
       - uses: actions/checkout@v4
@@ -54,9 +60,7 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-
-      - name: Clear config cache
-        run: php artisan config:clear
+          php artisan config:clear
 
       - name: Wait for MySQL
         run: |

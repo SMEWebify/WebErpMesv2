@@ -8,10 +8,12 @@
             <directory>./tests/Unit</directory>
         </testsuite>
     </testsuites>
+
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="CACHE_STORE" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="BROADCAST_DRIVER" value="log"/>
     </php>
 </phpunit>
