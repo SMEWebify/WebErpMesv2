@@ -86,11 +86,11 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateProductsSeeder::class);
         $this->call(StocksSeeder::class);
         $this->call(StockLocationSeeder::class);
-        $this->call(StockLocationProductsSeeder::class);
+        //$this->call(StockLocationProductsSeeder::class);
         //Leads
-        $this->call(LeadsSeeder::class);
+        //$this->call(LeadsSeeder::class);
         //Oppotunities 
-        $this->call(OpportunitiesSeeder::class);
+        //$this->call(OpportunitiesSeeder::class);
         $this->call(OpportunitiesActivitiesLogsSeeder::class);
         $this->call(OpportunitiesEventsLogsSeeder::class);
         //Quotes
@@ -100,8 +100,8 @@ class DatabaseSeeder extends Seeder
         $this->call(OrderTableSeeder::class);
         $this->call(OrderLinesTableSeeder::class);
         //Task
-        $this->call(CreateTaskSeeder::class);
+        //$this->call(CreateTaskSeeder::class);
         //Guest chat
-        $this->call(ChatSeeder::class);
+        //$this->call(ChatSeeder::class);
     }
 }

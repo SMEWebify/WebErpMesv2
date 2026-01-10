@@ -15,7 +15,7 @@ class EstimatedBudgetsSeeder extends Seeder
     public function run()
     {
         DB::table('estimated_budgets')->insert([
-            'year' => 2025,
+            'year' => 2026,
             'amount1' => 1500.000,
             'amount2' => 1500.000,
             'amount3' => 1500.000,

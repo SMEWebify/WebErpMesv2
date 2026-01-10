@@ -13,6 +13,6 @@ class StockLocationSeeder extends Seeder
      */
     public function run(): void
     {
-        StockLocation::factory()->count(20)->create();
+        StockLocation::factory()->count(10)->create();
     }
 }

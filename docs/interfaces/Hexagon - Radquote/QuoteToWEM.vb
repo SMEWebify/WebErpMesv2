@@ -1,22 +1,46 @@
-﻿
-'Variables from RADQuote Constants
-Dim ServerIp As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_IP","localhost").Value.StringValue
-Dim ServerPort As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_port","3306").Value.StringValue
-Dim DatabaseName As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Nom_base","erp").Value.StringValue
-Dim DatabaseUser As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Utilisateur","").Value.StringValue
-Dim DatabasePassword As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Mot_de_passe","").Value.StringValue
-Dim MethodsUnitCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Methods_Unit_Code","").Value.StringValue
-Dim VATCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_VAT_Code","").Value.StringValue
-Dim DeliveriesCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Deliveries_Code","").Value.StringValue
-Dim PaymentConditionsCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Payment_Conditions_Code","").Value.StringValue
-Dim PaymentMethodsCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Payment_Methods_Code","").Value.StringValue
+﻿'===========================================================
+' RADQuote -> WEM export script (MySQL via ODBC)
+' Refactor of YOUR provided version:
+' - Parameterized SQL (no string concatenation / safer)
+' - Single transaction (atomic export)
+' - Cache methods_services (performance)
+' - Guards for missing reference IDs (unit/vat/payment/etc.)
+' - Keep RADQuote model usage as-is (QUOTE / Quote / PartLine / Operations)
+' - Keep WEM column spelling seting_time
+'===========================================================
 
-'Database table names
+Option Explicit On
+Option Strict On
+
+Imports System
+Imports System.Data
+Imports System.Data.Odbc
+Imports System.Globalization
+Imports System.Collections.Generic
+Imports System.Linq
+
+'-----------------------------------------------------------
+' Variables from RADQuote Constants
+'-----------------------------------------------------------
+Dim ServerIp As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_IP", "localhost").Value.StringValue
+Dim ServerPort As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Serveur_port", "3306").Value.StringValue
+Dim DatabaseName As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Nom_base", "erp").Value.StringValue
+Dim DatabaseUser As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Utilisateur", "").Value.StringValue
+Dim DatabasePassword As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Mot_de_passe", "").Value.StringValue
+Dim MethodsUnitCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Methods_Unit_Code", "").Value.StringValue
+Dim VATCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_VAT_Code", "").Value.StringValue
+Dim DeliveriesCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Deliveries_Code", "").Value.StringValue
+Dim PaymentConditionsCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Payment_Conditions_Code", "").Value.StringValue
+Dim PaymentMethodsCode As String = RadQuote.Business.QuoteConstants.QuoteConstants.Current.GetQuoteConstant("qc_wem_Payment_Methods_Code", "").Value.StringValue
+
+'-----------------------------------------------------------
+' Database table names
+'-----------------------------------------------------------
 Const QuoteTable As String = "quotes"
 Const QuoteLinesTable As String = "quote_lines"
 Const QuoteLinesDetailsTable As String = "quote_line_details"
 Const TasksTable As String = "tasks"
-Const SubAssembliesTable As String = "sub_assemblies"
+Const SubAssembliesTable As String = "sub_assemblies" 'kept for compatibility even if unused
 Const UserTable As String = "users"
 Const CompaniesTable As String = "companies"
 Const CompaniesContactTable As String = "companies_contacts"
@@ -28,8 +52,9 @@ Const MethodsServicesTable As String = "methods_services"
 Const MethodsUnitsTable As String = "methods_units"
 Const AccountingVatsTable As String = "accounting_vats"
 
-
-'Database column names
+'-----------------------------------------------------------
+' Database column names
+'-----------------------------------------------------------
 Const QuoteUUID As String = "uuid"
 Const QuoteCode As String = "code"
 Const QuoteLabel As String = "label"
@@ -49,40 +74,40 @@ Const UpdatedAt As String = "updated_at"
 Const QuoteLineQuoteId As String = "quotes_id"
 Const QuoteLineOrdre As String = "ordre"
 Const QuoteLineCode As String = "code"
-Const QuoteLineProductId As String = "product_id"
+Const QuoteLineProductId As String = "product_id"  'kept (unused here)
 Const QuoteLineLabel As String = "label"
 Const QuoteLineQty As String = "qty"
 Const QuoteLineMethodsUnitsId As String = "methods_units_id"
 Const QuoteLineSellingPrice As String = "selling_price"
-Const QuoteLineDiscount As String = "discount"
+Const QuoteLineDiscount As String = "discount"      'kept (unused here)
 Const QuoteLineAccountingVatsId As String = "accounting_vats_id"
-Const QuoteLineDeliveryDate As String = "delivery_date"
+Const QuoteLineDeliveryDate As String = "delivery_date" 'kept (unused here)
 
 Const QuoteLineDetailsQuoteId As String = "quote_lines_id"
 Const QuoteLineDetailsXsize As String = "x_size"
 Const QuoteLineDetailsYsize As String = "y_size"
 Const QuoteLineDetailsZsize As String = "z_size"
-Const QuoteLineDetailsXoversizesize As String = "x_oversize"
-Const QuoteLineDetailsYoversizesize As String = "y_oversize"
-Const QuoteLineDetailsZoversizesize As String = "z_oversize"
-Const QuoteLineDetailsDiameter As String = "diameter"
+Const QuoteLineDetailsXoversizesize As String = "x_oversize" 'kept (unused here)
+Const QuoteLineDetailsYoversizesize As String = "y_oversize" 'kept (unused here)
+Const QuoteLineDetailsZoversizesize As String = "z_oversize" 'kept (unused here)
+Const QuoteLineDetailsDiameter As String = "diameter"        'kept (unused here)
 Const QuoteLineDetailsMaterial As String = "material"
 Const QuoteLineDetailsThickness As String = "thickness"
 Const QuoteLineDetailsWeight As String = "weight"
-Const QuoteLineDetailsBendCount As String = "bend_count"
-Const QuoteLineDetailsMaterialLossRate As String = "material_loss_rate"
-Const QuoteLineDetailsCadFile As String = "cad_file"
-Const QuoteLineDetailsCamFile As String = "cam_file"
-Const QuoteLineDetailsCadFilePath As String = "cad_file_path"
-Const QuoteLineDetailsCamFilePath As String = "cam_file_path"
-Const QuoteLineDetailsPicture As String = "picture"
+Const QuoteLineDetailsBendCount As String = "bend_count"     'kept (unused here)
+Const QuoteLineDetailsMaterialLossRate As String = "material_loss_rate" 'kept (unused here)
+Const QuoteLineDetailsCadFile As String = "cad_file"         'kept (unused here)
+Const QuoteLineDetailsCamFile As String = "cam_file"         'kept (unused here)
+Const QuoteLineDetailsCadFilePath As String = "cad_file_path" 'kept (unused here)
+Const QuoteLineDetailsCamFilePath As String = "cam_file_path" 'kept (unused here)
+Const QuoteLineDetailsPicture As String = "picture"          'kept (unused here)
 Const QuoteLineDetailsComment As String = "internal_comment"
 
 Const TaskLabel As String = "label"
 Const TaskOrdre As String = "ordre"
 Const TaskQuoteLineId As String = "quote_lines_id"
 Const TaskServiceId As String = "methods_services_id"
-Const TaskSettingTime As String = "seting_time"
+Const TaskSettingTime As String = "seting_time" 'IMPORTANT: keep exact column name
 Const TaskUnitTime As String = "unit_time"
 Const TaskStatuId As String = "status_id"
 Const TaskType As String = "type"
@@ -92,362 +117,511 @@ Const TaskUnitPrice As String = "unit_price"
 Const TaskMethodsUnitsId As String = "methods_units_id"
 Const TaskOrigin As String = "origin"
 
-Dim messages As New Dictionary(Of Integer, String)
-Dim MyCon As New Odbc.OdbcConnection
-'MyCon.ConnectionString = "Driver={PostgreSQL ANSI};database=" & DatabaseName & ";server=" & ServerIp & ";port=" & ServerPort & ";uid=" & DatabaseUser & ";pwd=" & DatabasePassword & ";"
-MyCon.ConnectionString = "Driver={MySQL ODBC 8.4 ANSI Driver};DATABASE=" & DatabaseName & ";SERVER=" & ServerIp & ";PORT=" & ServerPort & ";UID=" & DatabaseUser & ";PASSWORD=" & DatabasePassword & ";"
+'-----------------------------------------------------------
+' Connection + helpers
+'-----------------------------------------------------------
+Dim messages As New List(Of String)()
 
+Dim Normalize As Func(Of String, String) =
+    Function(s As String) As String
+        If s Is Nothing Then Return ""
+        Dim t As String = s.Trim()
+        While t.Contains("  ")
+            t = t.Replace("  ", " ")
+        End While
+        Return t
+    End Function
 
-Dim ToSqlString As Func(of String, String) = _
-	Function(s As String) As String
-		If Not String.IsNullOrWhiteSpace(s) Then
-			s = s.Replace("'","''")
-		End If
-		Return s
-	End Function
+Dim SafeText As Func(Of String, String) =
+    Function(s As String) As String
+        If String.IsNullOrWhiteSpace(s) Then Return ""
+        Return s.Replace(Environment.NewLine, "|")
+    End Function
 
-'GET QUOTE REFERENCE
 Dim GetQuoteReference As Func(Of String) =
     Function() As String
-        Dim detail As RadQuote.Configuration.ServerParameters.Details.Detail = QUOTE.Details.FirstOrDefault(Function(d) String.Equals(d.ExternalId, "REFERENCE"))
-        Dim reference As String
-        If detail Is Nothing Then
-            reference = ""
-        Else
-            reference = detail.Value.Value
-            If detail.IsRichComment Then
-                'On doit remplacer les retours chariots
-                reference = reference.Replace(System.Environment.NewLine, "|")
-            End If
-        End If
+        Dim detail As RadQuote.Configuration.ServerParameters.Details.Detail =
+            QUOTE.Details.FirstOrDefault(Function(d) String.Equals(d.ExternalId, "REFERENCE", StringComparison.OrdinalIgnoreCase))
+        If detail Is Nothing OrElse detail.Value Is Nothing Then Return ""
+        Dim reference As String = detail.Value.Value
+        If detail.IsRichComment Then reference = SafeText(reference)
         Return reference
     End Function
 
-'GET QUOTE COMMENT
 Dim GetQuoteComment As Func(Of String) =
     Function() As String
-        Dim detail As RadQuote.Configuration.ServerParameters.Details.Detail = QUOTE.Details.FirstOrDefault(Function(d) String.Equals(d.ExternalId, "COMMENT"))
-        Dim commment As String
-        If detail Is Nothing Then
-            commment = ""
-        Else
-            commment = detail.Value.Value
-            If detail.IsRichComment Then
-                'On doit remplacer les retours chariots
-                commment = commment.Replace(System.Environment.NewLine, "|")
-            End If
-        End If
+        Dim detail As RadQuote.Configuration.ServerParameters.Details.Detail =
+            QUOTE.Details.FirstOrDefault(Function(d) String.Equals(d.ExternalId, "COMMENT", StringComparison.OrdinalIgnoreCase))
+        If detail Is Nothing OrElse detail.Value Is Nothing Then Return ""
+        Dim commment As String = detail.Value.Value
+        If detail.IsRichComment Then commment = SafeText(commment)
         Return commment
     End Function
 
-'FUNCTION FOR ADD OPERTATION TO QUOTE LINE
-Dim CreatePartOperation As Action(Of RadQuote.Business.Operations.Overview.OperationResultsOnPart, integer, integer) =
-    Sub(op As RadQuote.Business.Operations.Overview.OperationResultsOnPart, QuoteLineId As integer, MethodsUnitId As integer)
-		Dim operationId As Integer
-		Dim operationType As Integer
-		Dim operationGetterQueryString As String = "SELECT * FROM " & MethodsServicesTable
-    	Dim operationGetterCommand As New Odbc.OdbcCommand(operationGetterQueryString, MyCon)
-    	Dim operationGetterReader As Odbc.OdbcDataReader = operationGetterCommand.ExecuteReader()
+Dim GetNumberOfBends As Func(Of RadQuote.Business.Parts.SymbolPart, Integer) =
+    Function(sym As RadQuote.Business.Parts.SymbolPart) As Integer
+        If sym Is Nothing OrElse sym.Sym Is Nothing Then Return 0
 
-    	While operationGetterReader.Read()
-			If operationGetterReader("code").ToString().Trim() = op.OperationDefinition.ExternalId Then
-        		operationId = operationGetterReader("id")
-        		operationType = operationGetterReader("type")
-			End If
-    	End While
-    	operationGetterReader.Close()
+        ' 1) Essai via QuotationInfo (si dispo)
+        Try
+            If sym.Sym.HasQuotationInfo(RADev.Radan.QuotationInfoNum.NumberOfBends) Then
+                Dim q As Integer = sym.Sym.IntQuotationSingleValue(RADev.Radan.QuotationInfoNum.NumberOfBends)
+                If q > 0 Then Return q
+            End If
+        Catch
+            'ignore
+        End Try
 
-		'Type service
-		' 1 = Productive
-		' 2 = Raw material
-		' 3 = Raw material (Sheet)
-		' 4 = Raw material (Profil)
-		' 5 = Raw material (block)
-		' 6 = Supplies
-		' 7 = Sub-contracting
-		' 8 = Composed component
-		If operationId <> 0 AND operationType = 1 Then
-			Dim operationQueryString As String = "INSERT INTO " & TasksTable & "(" & _
-																					TaskLabel & "," & _
-																					TaskOrdre & "," & _
-																					TaskQuoteLineId & "," & _
-																					TaskServiceId & "," & _
-																					TaskStatuId & "," & _
-																					TaskType & "," & _
-																					TaskQty & "," & _
-																					TaskSettingTime & "," & _
-																					TaskUnitTime & "," & _
-																					TaskUnitCost & "," & _
-																					TaskUnitPrice & "," & _
-																					TaskMethodsUnitsId & "," & _
-																					TaskOrigin & ")" & _
-																					" VALUES ('" & _
-																					op.OperationDefinition.Name & "','" & _
-																					op.OperationDefinition.Index & "','" & _
-																					QuoteLineId & "','" & _
-																					operationId & "','1','" & _
-																					operationType & "','1','" & _
-																					Math.Round(op.FullOtherTotalTime/100,2).ToString().Replace(",",".") & "','" & _
-																					Math.Round(op.FullUnitProductTime/100,2).ToString().Replace(",",".") & "','" & _
-																					Math.Round(op.UnitCost,2).ToString().Replace(",",".") & "','" & _
-																					Math.Round(op.UnitPrice,2).ToString().Replace(",",".") & "','" & _
-																					MethodsUnitId & "',
-																					'7')"
-																					
-																					
-    		Dim operationCommand As New Odbc.OdbcCommand(operationQueryString, MyCon)
-			operationCommand.ExecuteNonQuery()
-		End If
-	End Sub
+        ' 2) Sinon via attribut 500
+        Try
+            If sym.Sym.HasAttribute(500) Then
+                Dim v As String = Convert.ToString(sym.Sym.GetAttribute(500).Value)
+                If Not String.IsNullOrWhiteSpace(v) AndAlso v <> "0" Then
+                    Dim n As Integer
+                    If Integer.TryParse(v, n) AndAlso n > 0 Then Return n
+                End If
+            End If
+        Catch
+            'ignore
+        End Try
 
-'FUNCTION OR CREATE QUOTE LINE
-Dim CreateQuotePart As Action(Of RadQuote.Business.Parts.PartLine, integer, integer, integer, integer) =
-    Sub(p As RadQuote.Business.Parts.PartLine, quoteId As integer, partId As integer , MethodsUnitId As integer, VatId As integer)
-		Dim QuoteLineId As Integer
-		Dim thickness As Decimal = 0
-		Dim Material As string = ""
-		
-		If TypeOf(p.Part) Is RadQuote.Business.Parts.SymbolPart Then
-			thickness = RadQuote.Business.Materials.Materials.Current.GetMaterial(CType(p.Part, RadQuote.Business.Parts.SymbolPart).MaterialId).Thicknesses.GetTechnology(CType(p.Part, RadQuote.Business.Parts.SymbolPart).ThicknessId).Description
-			Material = ""
-		Else
-			thickness = 0
-			Material = ""
-		End If
-		
-		Dim partQueryString As String = "INSERT INTO " & QuoteLinesTable & "(" & _
-																				QuoteLineQuoteId & "," & _
-																				QuoteLineOrdre & "," & _
-																				QuoteLineCode & "," & _
-																				QuoteLineLabel & "," & _
-																				QuoteLineQty & "," & _
-																				QuoteLineMethodsUnitsId & "," & _
-																				QuoteLineSellingPrice & "," & _
-																				QuoteLineAccountingVatsId & "," & _
-																				CreatedAt  & "," & _
-																				UpdatedAt &")" & _
-																				" VALUES ('" & _
-																				quoteId & "','" & _
-																				partId & "','" & _
-																				p.Part.ID & "','" & _
-																				p.Part.Names(0).ToString() & "','" & _
-																				p.Part.Quantity & "'," & _
-																				MethodsUnitId & ",'" & _ 
-																				p.Part.SoldUnitPrice.ToString().Replace(",",".") & "'," & _
-																				VatId & ",'" & _
-																				Now().ToString("yyyy-MM-dd HH:mm:ss") & "','" & _
-																				Now().ToString("yyyy-MM-dd HH:mm:ss") & "')"
-    	Dim partCommand As New Odbc.OdbcCommand(partQueryString, MyCon)
-		partCommand.ExecuteNonQuery()
-        
-		'Get last ID
-		Dim scopeIdentityQuery As String = "SELECT LAST_INSERT_ID()"
-		Dim identityCommand As New Odbc.OdbcCommand(scopeIdentityQuery, MyCon)
-		QuoteLineId  = Convert.ToInt32(identityCommand.ExecuteScalar())
-		
-		messages.Add(QuoteLineId ,"Traitement de l'élément " & p.Part.Names(0).ToString() & " réussi.")
-		
-		Dim partDetailQueryString As String = "INSERT INTO " & QuoteLinesDetailsTable & "(" & _
-																				QuoteLineDetailsQuoteId & "," & _
-																				QuoteLineDetailsXsize & "," & _
-																				QuoteLineDetailsYsize & "," & _
-																				QuoteLineDetailsZsize & "," & _
-																				QuoteLineDetailsMaterial & "," & _
-																				QuoteLineDetailsThickness & "," & _
-																				QuoteLineDetailsWeight & "," & _
-																				QuoteLineDetailsComment & "," & _
-																				CreatedAt  & "," & _
-																				UpdatedAt &")" & _
-																				" VALUES ('" & _
-																				QuoteLineId & "'," & _
-																				p.Part.X.ToString().Replace(",",".") & "," & _
-																				p.Part.Y.ToString().Replace(",",".") & "," & _
-																				p.Part.Z.ToString().Replace(",",".") & ",'" & _
-																				Material & "'," & _
-																				thickness.ToString().Replace(",",".") & "," & _
-																				p.Part.Weight.ToString().Replace(",",".") & ",'" & _
-																				ToSqlString(p.Part.Comment) & "','" & _
-																				Now().ToString("yyyy-MM-dd HH:mm:ss") & "','" & _
-																				Now().ToString("yyyy-MM-dd HH:mm:ss") & "')"
-																				
-    	Dim partDetailCommand As New Odbc.OdbcCommand(partDetailQueryString, MyCon)
-		partDetailCommand.ExecuteNonQuery()
-		
-		For Each op As RadQuote.Business.Operations.Result.OperationResult In p.Part.OperationCalculations
-            If op.IsUsedInCalculations _
-                AndAlso TypeOf (op.OperationDefinition) Is RadQuote.Business.Operations.PartOperation Then			
-				Dim OperationResults As RadQuote.Business.Operations.Overview.OperationResultsOnPart =
-            		p.OperationsResults.FirstOrDefault(Function(op2) op2.OperationDefinition.Name = op.OperationDefinition.Name)
-				CreatePartOperation(OperationResults, QuoteLineId, MethodsUnitId)
-			End If
-		Next
-		
-		For Each sp As RadQuote.Business.Parts.PartLine In p.SubParts
-			CreateQuotePart(sp, quoteId, partId, MethodsUnitId, VatId)
-        Next
-	End Sub
+        Return 0
+    End Function
+
+
+Dim ExecuteScalarInt As Func(Of OdbcConnection, OdbcTransaction, String, OdbcParameter(), Integer) =
+    Function(cn As OdbcConnection, tx As OdbcTransaction, sql As String, ps As OdbcParameter()) As Integer
+        Using cmd As New OdbcCommand(sql, cn, tx)
+            If ps IsNot Nothing Then cmd.Parameters.AddRange(ps)
+            Dim obj As Object = cmd.ExecuteScalar()
+            If obj Is Nothing OrElse obj Is DBNull.Value Then Return 0
+            Return Convert.ToInt32(obj)
+        End Using
+    End Function
+
+Dim ExecuteNonQuery As Action(Of OdbcConnection, OdbcTransaction, String, OdbcParameter()) =
+    Sub(cn As OdbcConnection, tx As OdbcTransaction, sql As String, ps As OdbcParameter())
+        Using cmd As New OdbcCommand(sql, cn, tx)
+            If ps IsNot Nothing Then cmd.Parameters.AddRange(ps)
+            cmd.ExecuteNonQuery()
+        End Using
+    End Sub
+
+Dim GetLastInsertId As Func(Of OdbcConnection, OdbcTransaction, Integer) =
+    Function(cn As OdbcConnection, tx As OdbcTransaction) As Integer
+        Return ExecuteScalarInt(cn, tx, "SELECT LAST_INSERT_ID()", Nothing)
+    End Function
+
+Dim GetIdByCode As Func(Of OdbcConnection, OdbcTransaction, String, String, Integer) =
+    Function(cn As OdbcConnection, tx As OdbcTransaction, tableName As String, code As String) As Integer
+        If String.IsNullOrWhiteSpace(code) Then Return 0
+        Dim sql As String = "SELECT id FROM " & tableName & " WHERE code = ? LIMIT 1"
+        Return ExecuteScalarInt(cn, tx, sql, New OdbcParameter() {
+            New OdbcParameter("@p1", OdbcType.VarChar) With {.Value = code.Trim()}
+        })
+    End Function
+
+'-----------------------------------------------------------
+' Open connection
+'-----------------------------------------------------------
+Dim MyCon As New OdbcConnection()
+MyCon.ConnectionString = "Driver={MySQL ODBC 8.4 ANSI Driver};DATABASE=" & DatabaseName & ";SERVER=" & ServerIp & ";PORT=" & ServerPort & ";UID=" & DatabaseUser & ";PASSWORD=" & DatabasePassword & ";"
 
 MyCon.Open()
-Dim ContinueProcess As Boolean = True
+
 If MyCon.State = ConnectionState.Open Then
 
-	Dim quoteId As Integer
-	Dim creationUserId As Integer
-	Dim MethodsUnitId As Integer
-	Dim VatId As Integer
-	Dim customerId As Integer
-	Dim customerAddressId As Integer
-	Dim customerContactId As Integer
-	Dim PaymentConditionsId As Integer
-	Dim PaymentMethodsId As Integer
-	Dim DeliveriesId As Integer
+    Using tx As OdbcTransaction = MyCon.BeginTransaction()
+        Try
+            Dim quoteId As Integer
+            Dim creationUserId As Integer
+            Dim MethodsUnitId As Integer
+            Dim VatId As Integer
+            Dim customerId As Integer
+            Dim customerAddressId As Integer
+            Dim customerContactId As Integer
+            Dim PaymentConditionsId As Integer
+            Dim PaymentMethodsId As Integer
+            Dim DeliveriesId As Integer
 
-	'READ METHODS UNIT INFORMATION FROM WEM TABLE
-	Dim MethodsUnitQueryString As String = "SELECT * FROM " & MethodsUnitsTable & " WHERE " & "code" & "='" & MethodsUnitCode & "'" 
-    Dim MethodsUnitCommand As New Odbc.OdbcCommand(MethodsUnitQueryString, MyCon)
-    Dim MethodsUnitReader As Odbc.OdbcDataReader = MethodsUnitCommand.ExecuteReader()
-    While MethodsUnitReader.Read()
-		MethodsUnitId = MethodsUnitReader(0)
-    End While
-    MethodsUnitReader.Close()
+            '---------------------------------------------
+            ' READ REFERENCE DATA (GUARDED)
+            '---------------------------------------------
+            MethodsUnitId = GetIdByCode(MyCon, tx, MethodsUnitsTable, MethodsUnitCode)
+            If MethodsUnitId <= 0 Then Throw New Exception("WEM: Unité méthodes introuvable (code='" & MethodsUnitCode & "').")
 
-	'READ ACCOUNTING VAT INFORMATION FROM WEM TABLE
-	Dim AccountingVatQueryString As String = "SELECT * FROM " & AccountingVatsTable & " WHERE " & "code" & "='" & VATCode & "'" 
-    Dim AccountingVatCommand As New Odbc.OdbcCommand(AccountingVatQueryString, MyCon)
-    Dim AccountingVatReader As Odbc.OdbcDataReader = AccountingVatCommand.ExecuteReader()
-    While AccountingVatReader.Read()
-		VatId = AccountingVatReader(0)
-    End While
-    AccountingVatReader.Close()
+            VatId = GetIdByCode(MyCon, tx, AccountingVatsTable, VATCode)
+            If VatId <= 0 Then Throw New Exception("WEM: TVA introuvable (code='" & VATCode & "').")
 
-	'READ CUSTOMER INFORMATION FROM WEM TABLE
-	Dim customerSiteQueryString As String = "SELECT * FROM " & CompaniesTable & " WHERE " & "code" & "='" & QUOTE.Site.ExternalId & "'" 
-    Dim customerSiteCommand As New Odbc.OdbcCommand(customerSiteQueryString, MyCon)
-    Dim customerSiteReader As Odbc.OdbcDataReader = customerSiteCommand.ExecuteReader()
-    While customerSiteReader.Read()
-		customerId = customerSiteReader(0)
-    End While
-    customerSiteReader.Close()
+            PaymentConditionsId = GetIdByCode(MyCon, tx, PaymentConditionsTable, PaymentConditionsCode)
+            If PaymentConditionsId <= 0 Then Throw New Exception("WEM: Conditions de paiement introuvables (code='" & PaymentConditionsCode & "').")
 
-	'READ ADDRESS INFORMATION FROM WEM TABLE
-	Dim addressQueryString As String = "SELECT * FROM " & CompanieAddressesTable & " WHERE " & "companies_id" & "='" & customerId & "'" 
-    Dim addressCommand As New Odbc.OdbcCommand(addressQueryString, MyCon)
-    Dim addressReader As Odbc.OdbcDataReader = addressCommand.ExecuteReader()
-    While addressReader.Read()
-        If addressReader("adress").ToString().Trim() = QUOTE.Site.Address AndAlso addressReader("ZipCode").ToString().Trim() = QUOTE.Site.Postcode AndAlso addressReader("city").ToString().Trim() = QUOTE.Site.City Then
-			customerAddressId = addressReader("id")
-		End If
-    End While
-    addressReader.Close()
+            PaymentMethodsId = GetIdByCode(MyCon, tx, PaymentMethodsTable, PaymentMethodsCode)
+            If PaymentMethodsId <= 0 Then Throw New Exception("WEM: Mode de paiement introuvable (code='" & PaymentMethodsCode & "').")
 
-	'READ CONTACT INFORMATION FROM WEM TABLE
-	Dim contactQueryString As String = "SELECT * FROM " & CompaniesContactTable & " WHERE " & "companies_id" & "='" & customerId & "'" 
-    Dim contactCommand As New Odbc.OdbcCommand(contactQueryString, MyCon)
-    Dim contactReader As Odbc.OdbcDataReader = contactCommand.ExecuteReader()
-    While contactReader.Read()
-        If contactReader("name").ToString().Trim() = QUOTE.Contact.Surname AndAlso contactReader("first_name").ToString().Trim() = QUOTE.Contact.Forename Then
-			customerContactId = contactReader("id")
-		End If
-    End While
-    contactReader.Close()
+            DeliveriesId = GetIdByCode(MyCon, tx, DeliveriesTable, DeliveriesCode)
+            If DeliveriesId <= 0 Then Throw New Exception("WEM: Mode de livraison introuvable (code='" & DeliveriesCode & "').")
 
-	'READ USER INFORMATION FROM WEM TABLE
-	Dim userGetterCreatorQueryString As String = "SELECT * FROM " & UserTable & " WHERE " & "name" & "='" & Quote.Creator.OtherInformation & "'" 
-	Dim userCreatorGetterCommand As New Odbc.OdbcCommand(userGetterCreatorQueryString, MyCon)
-	Dim userCreatorGetterReader As Odbc.OdbcDataReader = userCreatorGetterCommand.ExecuteReader()
-	While userCreatorGetterReader.Read()
-		creationUserId = userCreatorGetterReader(0)
-	End While
-	userCreatorGetterReader.Close()
+            '---------------------------------------------
+            ' READ CUSTOMER (company) INFORMATION
+            '---------------------------------------------
+            Using cmd As New OdbcCommand("SELECT id FROM " & CompaniesTable & " WHERE code = ? LIMIT 1", MyCon, tx)
+                cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.VarChar) With {.Value = Convert.ToString(QUOTE.Site.ExternalId)})
+                Dim obj As Object = cmd.ExecuteScalar()
+                If obj IsNot Nothing AndAlso obj IsNot DBNull.Value Then customerId = Convert.ToInt32(obj)
+            End Using
+            If customerId <= 0 Then Throw New Exception("WEM: Société introuvable (companies.code='" & Convert.ToString(QUOTE.Site.ExternalId) & "').")
 
-	'READ PAYMENT CONDITION INFORMATION FROM WEM TABLE
-	
-	Dim paymentConditionQueryString As String = "SELECT * FROM " & PaymentConditionsTable & " WHERE " & "CODE" & "='" & PaymentConditionsCode & "'" 
-	Dim paymentConditionCommand As New Odbc.OdbcCommand(paymentConditionQueryString, MyCon)
-	Dim paymentConditionReader As Odbc.OdbcDataReader = paymentConditionCommand.ExecuteReader()
-	While paymentConditionReader.Read()
-		PaymentConditionsId = paymentConditionReader("id")
-	End While
-	paymentConditionReader.Close()
-	
-	'READ PAYMENT METHODS INFORMATION FROM WEM TABLE
-	Dim paymentMethodsQueryString As String = "SELECT * FROM " & PaymentMethodsTable & " WHERE " & "CODE" & "='" & PaymentMethodsCode & "'" 
-	Dim paymentMethodsCommand As New Odbc.OdbcCommand(paymentMethodsQueryString, MyCon)
-	Dim paymentMethodsReader As Odbc.OdbcDataReader = paymentMethodsCommand.ExecuteReader()
-	While paymentMethodsReader.Read()
-		PaymentMethodsId = paymentMethodsReader("id")
-	End While
-	paymentMethodsReader.Close()
-	
-	'READ PAYMENT DELIVERIES INFORMATION FROM WEM TABLE
-	Dim deliveriesQueryString As String = "SELECT * FROM " & DeliveriesTable & " WHERE " & "CODE" & "='" & DeliveriesCode & "'"  
-	Dim deliveriesCommand As New Odbc.OdbcCommand(deliveriesQueryString, MyCon)
-	Dim deliveriesReader As Odbc.OdbcDataReader = deliveriesCommand.ExecuteReader()
-	While deliveriesReader.Read()
-		DeliveriesId = deliveriesReader("id")
-	End While
-	deliveriesReader.Close()
-	
-	Dim QuoteGuid As Guid = Guid.NewGuid()
-	Dim QuoteGuidAsString As String = QuoteGuid.ToString()
+            '---------------------------------------------
+            ' READ ADDRESS (best-effort)
+            '---------------------------------------------
+            customerAddressId = 0
+            Using cmd As New OdbcCommand("SELECT id, adress, ZipCode, city FROM " & CompanieAddressesTable & " WHERE companies_id = ?", MyCon, tx)
+                cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.Int) With {.Value = customerId})
+                Using r As OdbcDataReader = cmd.ExecuteReader()
+                    While r.Read()
+                        Dim a As String = Normalize(Convert.ToString(r("adress")))
+                        Dim z As String = Normalize(Convert.ToString(r("ZipCode")))
+                        Dim c As String = Normalize(Convert.ToString(r("city")))
 
-	'CREATE QUOTE
-	Dim quoteQueryString As String = "INSERT INTO " & QuoteTable & "(" & _
-																	QuoteUUID & "," & _
-																	QuoteCode & "," & _
-																	QuoteLabel & "," & _
-																	QuoteReference & "," & _
-																	QuoteCustomerId & "," & _
-																	QuoteCustomerContactId & "," & _
-																	QuoteCustomerAddressId & "," & _
-																	QuoteValidityDate & "," & _
-																	QuoteUserId & "," & _
-																	QuotePaymentConditionsId & "," & _
-																	QuotePaymentMethodsId & "," & _
-																	QuoteDeliveriesId & "," & _
-																	QuoteComment  & "," & _
-																	CreatedAt  & "," & _
-																	UpdatedAt &")" & _
-																	" VALUES ('" & _
-																	QuoteGuidAsString & "','" & _
-																	ToSqlString(Quote.Name) & "','" & _
-																	ToSqlString(Quote.Name) & "','" & _
-																	ToSqlString(GetQuoteReference()) & "'," & _
-																	customerId & "," & _
-																	customerContactId & "," & _
-																	customerAddressId & ",'" & _
-																	Now().ToString("yyyy-MM-dd") & "'," & _
-																	creationUserId & "," & _
-																	PaymentConditionsId & "," & _
-																	PaymentMethodsId & "," & _
-																	DeliveriesId & ",'" & _
-																	ToSqlString(GetQuoteComment()) & "','" & _
-																	Now().ToString("yyyy-MM-dd HH:mm:ss") & "','" & _
-																	Now().ToString("yyyy-MM-dd HH:mm:ss") & "')"
-		
-	Dim quoteCommand As New Odbc.OdbcCommand(quoteQueryString, MyCon)
-	quoteCommand.ExecuteNonQuery()
+                        If String.Equals(a, Normalize(QUOTE.Site.Address), StringComparison.OrdinalIgnoreCase) AndAlso
+                           String.Equals(z, Normalize(QUOTE.Site.Postcode), StringComparison.OrdinalIgnoreCase) AndAlso
+                           String.Equals(c, Normalize(QUOTE.Site.City), StringComparison.OrdinalIgnoreCase) Then
+                            customerAddressId = Convert.ToInt32(r("id"))
+                            Exit While
+                        End If
+                    End While
+                End Using
+            End Using
 
-	
-	messages.Add(0,"Traitement du devis " & ToSqlString(Quote.Name) & " réussi.")
-        
-	'Get last ID
-	Dim scopeIdentityQuery As String = "SELECT LAST_INSERT_ID()"
-	Dim identityCommand As New Odbc.OdbcCommand(scopeIdentityQuery, MyCon)
-	quoteId  = Convert.ToInt32(identityCommand.ExecuteScalar())
-	
-	For Each p As RadQuote.Business.Parts.PartLine In QUOTE.Parts.SubParts				
-		CreateQuotePart(p, quoteId, 0, MethodsUnitId, VatId)
-	Next
-	
+            '---------------------------------------------
+            ' READ CONTACT (best-effort)
+            '---------------------------------------------
+            customerContactId = 0
+            Using cmd As New OdbcCommand("SELECT id, name, first_name FROM " & CompaniesContactTable & " WHERE companies_id = ?", MyCon, tx)
+                cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.Int) With {.Value = customerId})
+                Using r As OdbcDataReader = cmd.ExecuteReader()
+                    While r.Read()
+                        Dim n As String = Normalize(Convert.ToString(r("name")))
+                        Dim f As String = Normalize(Convert.ToString(r("first_name")))
+
+                        If String.Equals(n, Normalize(QUOTE.Contact.Surname), StringComparison.OrdinalIgnoreCase) AndAlso
+                           String.Equals(f, Normalize(QUOTE.Contact.Forename), StringComparison.OrdinalIgnoreCase) Then
+                            customerContactId = Convert.ToInt32(r("id"))
+                            Exit While
+                        End If
+                    End While
+                End Using
+            End Using
+
+            '---------------------------------------------
+            ' READ USER INFORMATION (required)
+            '---------------------------------------------
+            creationUserId = 0
+            Using cmd As New OdbcCommand("SELECT id FROM " & UserTable & " WHERE name = ? LIMIT 1", MyCon, tx)
+                cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.VarChar) With {.Value = Normalize(Convert.ToString(Quote.Creator.OtherInformation))})
+                Dim obj As Object = cmd.ExecuteScalar()
+                If obj IsNot Nothing AndAlso obj IsNot DBNull.Value Then creationUserId = Convert.ToInt32(obj)
+            End Using
+            If creationUserId <= 0 Then Throw New Exception("WEM: Utilisateur créateur introuvable (users.name='" & Normalize(Convert.ToString(Quote.Creator.OtherInformation)) & "').")
+
+            '---------------------------------------------
+            ' CACHE METHODS SERVICES (code -> (id,type))
+            '---------------------------------------------
+            Dim serviceMap As New Dictionary(Of String, Tuple(Of Integer, Integer))(StringComparer.OrdinalIgnoreCase)
+            Using cmd As New OdbcCommand("SELECT id, code, type FROM " & MethodsServicesTable, MyCon, tx)
+                Using r As OdbcDataReader = cmd.ExecuteReader()
+                    While r.Read()
+                        Dim code As String = Convert.ToString(r("code")).Trim()
+                        If Not String.IsNullOrWhiteSpace(code) Then
+                            Dim id As Integer = Convert.ToInt32(r("id"))
+                            Dim t As Integer = Convert.ToInt32(r("type"))
+                            If Not serviceMap.ContainsKey(code) Then
+                                serviceMap.Add(code, Tuple.Create(id, t))
+                            End If
+                        End If
+                    End While
+                End Using
+            End Using
+
+            '===========================================================
+            ' FUNCTION FOR ADD OPERATION TO QUOTE LINE (parameterized)
+            '===========================================================
+            Dim CreatePartOperation As Action(Of RadQuote.Business.Operations.Overview.OperationResultsOnPart, Integer, Integer) =
+                Sub(op As RadQuote.Business.Operations.Overview.OperationResultsOnPart, QuoteLineId As Integer, MethodsUnitIdLocal As Integer)
+
+                    If op Is Nothing OrElse op.OperationDefinition Is Nothing Then Exit Sub
+
+                    Dim svcCode As String = Convert.ToString(op.OperationDefinition.ExternalId).Trim()
+                    If String.IsNullOrWhiteSpace(svcCode) Then Exit Sub
+                    If Not serviceMap.ContainsKey(svcCode) Then Exit Sub
+
+                    Dim svc As Tuple(Of Integer, Integer) = serviceMap(svcCode)
+                    Dim operationId As Integer = svc.Item1
+                    Dim operationType As Integer = svc.Item2
+
+                    'Only productive services
+                    If operationId <= 0 OrElse operationType <> 1 Then Exit Sub
+
+                    Dim settingTime As Decimal = Math.Round(CDec(op.FullOtherTotalTime) / 100D, 2)
+                    Dim unitTime As Decimal = Math.Round(CDec(op.FullUnitProductTime) / 100D, 2)
+                    Dim unitCost As Decimal = Math.Round(CDec(op.UnitCost), 2)
+                    Dim unitPrice As Decimal = Math.Round(CDec(op.UnitPrice), 2)
+
+                    Dim sql As String =
+                        "INSERT INTO " & TasksTable & " (" &
+                            TaskLabel & "," &
+                            TaskOrdre & "," &
+                            TaskQuoteLineId & "," &
+                            TaskServiceId & "," &
+                            TaskStatuId & "," &
+                            TaskType & "," &
+                            TaskQty & "," &
+                            TaskSettingTime & "," &
+                            TaskUnitTime & "," &
+                            TaskUnitCost & "," &
+                            TaskUnitPrice & "," &
+                            TaskMethodsUnitsId & "," &
+                            TaskOrigin &
+                        ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+
+                    Using cmd As New OdbcCommand(sql, MyCon, tx)
+                        cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.VarChar) With {.Value = Convert.ToString(op.OperationDefinition.Name)})
+                        cmd.Parameters.Add(New OdbcParameter("@p2", OdbcType.Int) With {.Value = Convert.ToInt32(op.OperationDefinition.Index)})
+                        cmd.Parameters.Add(New OdbcParameter("@p3", OdbcType.Int) With {.Value = QuoteLineId})
+                        cmd.Parameters.Add(New OdbcParameter("@p4", OdbcType.Int) With {.Value = operationId})
+                        cmd.Parameters.Add(New OdbcParameter("@p5", OdbcType.Int) With {.Value = 1}) 'status_id
+                        cmd.Parameters.Add(New OdbcParameter("@p6", OdbcType.Int) With {.Value = operationType})
+                        cmd.Parameters.Add(New OdbcParameter("@p7", OdbcType.Decimal) With {.Value = 1D}) 'qty
+                        cmd.Parameters.Add(New OdbcParameter("@p8", OdbcType.Decimal) With {.Value = settingTime})
+                        cmd.Parameters.Add(New OdbcParameter("@p9", OdbcType.Decimal) With {.Value = unitTime})
+                        cmd.Parameters.Add(New OdbcParameter("@p10", OdbcType.Decimal) With {.Value = unitCost})
+                        cmd.Parameters.Add(New OdbcParameter("@p11", OdbcType.Decimal) With {.Value = unitPrice})
+                        cmd.Parameters.Add(New OdbcParameter("@p12", OdbcType.Int) With {.Value = MethodsUnitIdLocal})
+                        cmd.Parameters.Add(New OdbcParameter("@p13", OdbcType.Int) With {.Value = 7}) 'origin
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End Sub
+
+            '===========================================================
+            ' FUNCTION FOR CREATE QUOTE LINE (parameterized + recursion)
+            '===========================================================
+            Dim CreateQuotePart As Action(Of RadQuote.Business.Parts.PartLine, Integer, Integer, Integer, Integer) = Nothing
+
+            CreateQuotePart =
+                Sub(p As RadQuote.Business.Parts.PartLine, quoteIdLocal As Integer, partIdLocal As Integer, MethodsUnitIdLocal As Integer, VatIdLocal As Integer)
+
+                    If p Is Nothing OrElse p.Part Is Nothing Then Exit Sub
+
+                    Dim QuoteLineId As Integer
+                    Dim thickness As Decimal = 0D
+                    Dim Material As String = ""
+					Dim bendCount As Integer = 0
+					Dim symPath As String = ""
+
+                    'Best-effort material/thickness
+                    If TypeOf (p.Part) Is RadQuote.Business.Parts.SymbolPart Then
+						Dim sp As RadQuote.Business.Parts.SymbolPart = CType(p.Part, RadQuote.Business.Parts.SymbolPart)
+
+						'--- EXISTANT : material / thickness ---
+						Dim mat = RadQuote.Business.Materials.Materials.Current.GetMaterial(sp.MaterialId)
+						If mat IsNot Nothing Then Material = Convert.ToString(mat.Name)
+
+						Dim tech = mat.Thicknesses.GetTechnology(sp.ThicknessId)
+						If tech IsNot Nothing Then
+							Dim raw As String = Convert.ToString(tech.Description)
+							Dim num As Decimal
+							If Decimal.TryParse(raw, NumberStyles.Any, CultureInfo.InvariantCulture, num) Then
+								thickness = num
+							ElseIf Decimal.TryParse(raw, NumberStyles.Any, CultureInfo.CurrentCulture, num) Then
+								thickness = num
+							Else
+								thickness = 0D
+							End If
+						End If
+
+						'--- AJOUT : chemin SYM + nombre de plis ---
+						Try
+							If sp.Sym IsNot Nothing Then
+								symPath = Convert.ToString(sp.Sym.FilePath)
+							End If
+						Catch
+							symPath = ""
+						End Try
+
+						bendCount = GetNumberOfBends(sp)
+					End If
+
+					
+
+                    Dim nowTs As DateTime = DateTime.Now
+
+                    'Insert quote line
+                    Dim sqlLine As String =
+                        "INSERT INTO " & QuoteLinesTable & " (" &
+                            QuoteLineQuoteId & "," &
+                            QuoteLineOrdre & "," &
+                            QuoteLineCode & "," &
+                            QuoteLineLabel & "," &
+                            QuoteLineQty & "," &
+                            QuoteLineMethodsUnitsId & "," &
+                            QuoteLineSellingPrice & "," &
+                            QuoteLineAccountingVatsId & "," &
+                            CreatedAt & "," &
+                            UpdatedAt &
+                        ") VALUES (?,?,?,?,?,?,?,?,?,?)"
+
+                    Using cmd As New OdbcCommand(sqlLine, MyCon, tx)
+                        cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.Int) With {.Value = quoteIdLocal})
+                        cmd.Parameters.Add(New OdbcParameter("@p2", OdbcType.Int) With {.Value = partIdLocal}) 'keep your original behavior
+                        cmd.Parameters.Add(New OdbcParameter("@p3", OdbcType.VarChar) With {.Value = Convert.ToString(p.Part.ID)})
+                        cmd.Parameters.Add(New OdbcParameter("@p4", OdbcType.VarChar) With {.Value = Convert.ToString(p.Part.Names(0))})
+                        cmd.Parameters.Add(New OdbcParameter("@p5", OdbcType.Decimal) With {.Value = CDec(p.Part.Quantity)})
+                        cmd.Parameters.Add(New OdbcParameter("@p6", OdbcType.Int) With {.Value = MethodsUnitIdLocal})
+                        cmd.Parameters.Add(New OdbcParameter("@p7", OdbcType.Decimal) With {.Value = CDec(p.Part.SoldUnitPrice)})
+                        cmd.Parameters.Add(New OdbcParameter("@p8", OdbcType.Int) With {.Value = VatIdLocal})
+                        cmd.Parameters.Add(New OdbcParameter("@p9", OdbcType.DateTime) With {.Value = nowTs})
+                        cmd.Parameters.Add(New OdbcParameter("@p10", OdbcType.DateTime) With {.Value = nowTs})
+                        cmd.ExecuteNonQuery()
+                    End Using
+
+                    QuoteLineId = GetLastInsertId(MyCon, tx)
+
+                    messages.Add("Traitement de l'élément " & Convert.ToString(p.Part.Names(0)) & " réussi. (quote_line_id=" & QuoteLineId & ")")
+
+                    'Insert details
+                    Dim sqlDetails As String =
+						"INSERT INTO " & QuoteLinesDetailsTable & " (" &
+							QuoteLineDetailsQuoteId & "," &
+							QuoteLineDetailsXsize & "," &
+							QuoteLineDetailsYsize & "," &
+							QuoteLineDetailsZsize & "," &
+							QuoteLineDetailsMaterial & "," &
+							QuoteLineDetailsThickness & "," &
+							QuoteLineDetailsWeight & "," &
+							QuoteLineDetailsBendCount & "," &
+							QuoteLineDetailsCadFilePath & "," &
+							QuoteLineDetailsComment & "," &
+							CreatedAt & "," &
+							UpdatedAt &
+						") VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
+
+                    Using cmd As New OdbcCommand(sqlDetails, MyCon, tx)
+						cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.Int) With {.Value = QuoteLineId})
+						cmd.Parameters.Add(New OdbcParameter("@p2", OdbcType.Decimal) With {.Value = CDec(p.Part.X)})
+						cmd.Parameters.Add(New OdbcParameter("@p3", OdbcType.Decimal) With {.Value = CDec(p.Part.Y)})
+						cmd.Parameters.Add(New OdbcParameter("@p4", OdbcType.Decimal) With {.Value = CDec(p.Part.Z)})
+						cmd.Parameters.Add(New OdbcParameter("@p5", OdbcType.VarChar) With {.Value = Material})
+						cmd.Parameters.Add(New OdbcParameter("@p6", OdbcType.Decimal) With {.Value = thickness})
+						cmd.Parameters.Add(New OdbcParameter("@p7", OdbcType.Decimal) With {.Value = CDec(p.Part.Weight)})
+
+						'AJOUTS
+						cmd.Parameters.Add(New OdbcParameter("@p8", OdbcType.Int) With {.Value = bendCount})
+						cmd.Parameters.Add(New OdbcParameter("@p9", OdbcType.VarChar) With {.Value = symPath})
+
+						cmd.Parameters.Add(New OdbcParameter("@p10", OdbcType.VarChar) With {.Value = SafeText(Convert.ToString(p.Part.Comment))})
+						cmd.Parameters.Add(New OdbcParameter("@p11", OdbcType.DateTime) With {.Value = nowTs})
+						cmd.Parameters.Add(New OdbcParameter("@p12", OdbcType.DateTime) With {.Value = nowTs})
+						cmd.ExecuteNonQuery()
+					End Using
+
+                    'Tasks from operations
+                    For Each op As RadQuote.Business.Operations.Result.OperationResult In p.Part.OperationCalculations
+                        If op IsNot Nothing AndAlso op.IsUsedInCalculations AndAlso
+                           TypeOf (op.OperationDefinition) Is RadQuote.Business.Operations.PartOperation Then
+
+                            Dim OperationResults As RadQuote.Business.Operations.Overview.OperationResultsOnPart =
+                                p.OperationsResults.FirstOrDefault(Function(op2) op2.OperationDefinition.Name = op.OperationDefinition.Name)
+
+                            CreatePartOperation(OperationResults, QuoteLineId, MethodsUnitIdLocal)
+                        End If
+                    Next
+
+                    'Recurse
+                    For Each sp As RadQuote.Business.Parts.PartLine In p.SubParts
+                        CreateQuotePart(sp, quoteIdLocal, partIdLocal, MethodsUnitIdLocal, VatIdLocal)
+                    Next
+                End Sub
+
+            '---------------------------------------------
+            ' CREATE QUOTE
+            '---------------------------------------------
+            Dim QuoteGuid As Guid = Guid.NewGuid()
+            Dim QuoteGuidAsString As String = QuoteGuid.ToString()
+            Dim now As DateTime = DateTime.Now
+
+            Dim sqlQuote As String =
+                "INSERT INTO " & QuoteTable & " (" &
+                    QuoteUUID & "," &
+                    QuoteCode & "," &
+                    QuoteLabel & "," &
+                    QuoteReference & "," &
+                    QuoteCustomerId & "," &
+                    QuoteCustomerContactId & "," &
+                    QuoteCustomerAddressId & "," &
+                    QuoteValidityDate & "," &
+                    QuoteUserId & "," &
+                    QuotePaymentConditionsId & "," &
+                    QuotePaymentMethodsId & "," &
+                    QuoteDeliveriesId & "," &
+                    QuoteComment & "," &
+                    CreatedAt & "," &
+                    UpdatedAt &
+                ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+
+            Using cmd As New OdbcCommand(sqlQuote, MyCon, tx)
+                cmd.Parameters.Add(New OdbcParameter("@p1", OdbcType.VarChar) With {.Value = QuoteGuidAsString})
+                cmd.Parameters.Add(New OdbcParameter("@p2", OdbcType.VarChar) With {.Value = Convert.ToString(Quote.Name)})
+                cmd.Parameters.Add(New OdbcParameter("@p3", OdbcType.VarChar) With {.Value = Convert.ToString(Quote.Name)})
+                cmd.Parameters.Add(New OdbcParameter("@p4", OdbcType.VarChar) With {.Value = SafeText(GetQuoteReference())})
+                cmd.Parameters.Add(New OdbcParameter("@p5", OdbcType.Int) With {.Value = customerId})
+
+                'Best-effort: store NULL if not found (avoid inserting 0 when FK expects NULL)
+                cmd.Parameters.Add(New OdbcParameter("@p6", OdbcType.Int) With {.Value = If(customerContactId > 0, CType(customerContactId, Object), DBNull.Value)})
+                cmd.Parameters.Add(New OdbcParameter("@p7", OdbcType.Int) With {.Value = If(customerAddressId > 0, CType(customerAddressId, Object), DBNull.Value)})
+
+                cmd.Parameters.Add(New OdbcParameter("@p8", OdbcType.Date) With {.Value = now.Date})
+                cmd.Parameters.Add(New OdbcParameter("@p9", OdbcType.Int) With {.Value = creationUserId})
+                cmd.Parameters.Add(New OdbcParameter("@p10", OdbcType.Int) With {.Value = PaymentConditionsId})
+                cmd.Parameters.Add(New OdbcParameter("@p11", OdbcType.Int) With {.Value = PaymentMethodsId})
+                cmd.Parameters.Add(New OdbcParameter("@p12", OdbcType.Int) With {.Value = DeliveriesId})
+                cmd.Parameters.Add(New OdbcParameter("@p13", OdbcType.VarChar) With {.Value = SafeText(GetQuoteComment())})
+                cmd.Parameters.Add(New OdbcParameter("@p14", OdbcType.DateTime) With {.Value = now})
+                cmd.Parameters.Add(New OdbcParameter("@p15", OdbcType.DateTime) With {.Value = now})
+                cmd.ExecuteNonQuery()
+            End Using
+
+            messages.Add("Traitement du devis " & Convert.ToString(Quote.Name) & " réussi.")
+
+            quoteId = GetLastInsertId(MyCon, tx)
+
+            '---------------------------------------------
+            ' EXPORT PARTS
+            '---------------------------------------------
+            For Each p As RadQuote.Business.Parts.PartLine In QUOTE.Parts.SubParts
+                CreateQuotePart(p, quoteId, 0, MethodsUnitId, VatId)
+            Next
+
+            '---------------------------------------------
+            ' COMMIT
+            '---------------------------------------------
+            tx.Commit()
+
+        Catch ex As Exception
+            Try
+                tx.Rollback()
+            Catch
+            End Try
+            messages.Add("ERREUR export : " & ex.Message)
+        End Try
+    End Using
 End If
+
 MyCon.Close()
 
-If ContinueProcess Then
-	Dim resultMessage As String = ""
-	For Each kvp As KeyValuePair(Of Integer, String) In messages
-		resultMessage &= kvp.Value & vbCrLf
-	Next
+'---------------------------------------------
+' Result message
+'---------------------------------------------
+Dim resultMessage As String = String.Join(vbCrLf, messages)
+RadWin.ShowMsgBox("Export", "Résultats des traitements :" & vbCrLf & resultMessage)
 
-	RadWin.ShowMsgBox("Export", "Résultats des traitements :" & vbCrLf & resultMessage)
-End If  
