@@ -99,7 +99,8 @@ class AccountingEntry extends Model
     public function getFormattedDebitAmountAttribute()
     {
         $factory = app('Factory'); 
-        return Number::currency($this->debit_amount, $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->debit_amount, $currency, config('app.locale'));
     }
 
     /**
@@ -114,7 +115,8 @@ class AccountingEntry extends Model
     public function getFormattedCreditAmountAttribute()
     {
         $factory = app('Factory'); 
-        return Number::currency($this->credit_amount, $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->credit_amount, $currency, config('app.locale'));
     }
 
 }

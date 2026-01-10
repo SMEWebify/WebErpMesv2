@@ -77,6 +77,7 @@ class PurchaseLines extends Model
     public function getTotalAttribute()
     {
         $factory = app('Factory'); 
+        $currency = $factory->curency ?? 'EUR';
         
         $price = $this->selling_price;
         $qty = $this->qty;
@@ -85,7 +86,7 @@ class PurchaseLines extends Model
         $total = $price * $qty;
         $discountedTotal = $total - ($total * ($discount / 100));
 
-        return Number::currency($discountedTotal, $factory->curency, config('app.locale'));
+        return Number::currency($discountedTotal, $currency, config('app.locale'));
     }
 
     /**
@@ -100,7 +101,8 @@ class PurchaseLines extends Model
     public function getFormattedSellingPriceAttribute()
     {
         $factory = app('Factory'); 
-        return Number::currency($this->selling_price, $factory->curency, config('app.locale'));
+        $currency = $factory->curency ?? 'EUR';
+        return Number::currency($this->selling_price, $currency, config('app.locale'));
     }
 
     /**
