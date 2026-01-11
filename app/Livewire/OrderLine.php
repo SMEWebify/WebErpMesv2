@@ -1022,6 +1022,11 @@ class OrderLine extends Component
         }
 
         $OrderData = Orders::find($orderId);
+        if (! $OrderData || $OrderData->statu == 6) {
+            $errors = $this->getErrorBag();
+            $errors->add('errors', __('general_content.order_canceled_no_document_trans_key'));
+            return;
+        }
         $LastDelivery = Deliverys::orderBy('id', 'desc')->first();
         $deliveryId = $LastDelivery ? $LastDelivery->id : 0;
         $deliveryCode = $this->documentCodeGenerator->generateDocumentCode('delivery', $deliveryId);
@@ -1061,6 +1066,11 @@ class OrderLine extends Component
         }
 
         $OrderData = Orders::find($orderId);
+        if (! $OrderData || $OrderData->statu == 6) {
+            $errors = $this->getErrorBag();
+            $errors->add('errors', __('general_content.order_canceled_no_document_trans_key'));
+            return;
+        }
         $LastInvoice = Invoices::orderBy('id', 'desc')->first();
         $invoiceId = $LastInvoice ? $LastInvoice->id : 0;
         $invoiceCode = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);

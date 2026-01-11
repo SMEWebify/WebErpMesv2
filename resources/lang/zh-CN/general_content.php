@@ -35,6 +35,7 @@ return [
     'po_partly_created_trans_key'              => '采购订单部分创建',
     'po_created_trans_key'                     => '采购订单已创建',
     'canceled_trans_key'                       => '已取消',
+    'order_canceled_no_document_trans_key'     => '订单已取消：已禁用创建送货单和发票。',
     'stopped_trans_key'                        => '已停止',
     'no_task_trans_key'                        => '无任务',
     'created_trans_key'                        => '已创建',

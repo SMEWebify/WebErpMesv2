@@ -35,6 +35,7 @@ return [
     'po_partly_created_trans_key'              => 'CA partiellement créé',
     'po_created_trans_key'                     => 'CA créé',
     'canceled_trans_key'                       => 'Annulé',
+    'order_canceled_no_document_trans_key'     => 'Commande annulée : création de BL et de facture désactivée.',
     'stopped_trans_key'                        => 'Stopé',
     'no_task_trans_key'                        => 'Aucune taches',
     'created_trans_key'                        => 'Créer',
