@@ -66,7 +66,7 @@ class N2PPayloadBuilder
           ]);
 
         $job = [
-            'of_code' => "OF". $orderLine->id,
+            'of_code' => $order->code ?? "OF" . $orderLine->id,
             'line_ref' => (string) $orderLine->getKey(),
             'status' => $jobStatus,
             'priority' => $priority,
@@ -113,7 +113,7 @@ class N2PPayloadBuilder
     private function mapTasks(OrderLines $orderLine, $tasks): array
     {
         return $tasks->map(function (Task $task) use ($orderLine) {
-            $operationCode = $task->label ?: ($task->service->code ?? null);
+            $operationCode = $task->code ?: ($task->label ?: ($task->service->code ?? null));
             if (!$operationCode) {
                 $operationCode = Str::slug($task->label ?? 'task-' . $task->getKey());
             }
@@ -123,7 +123,7 @@ class N2PPayloadBuilder
                 $plannedTimeMinutes = (int) max(0, round($task->TotalTime() * 60));
             }
 
-            $workcenterCode = $task->service->code ?? null;
+            $workcenterCode = $task->MethodsTools?->code ?? $task->service?->code;
 
             return array_filter([
                 'operation_code' => $operationCode,
@@ -168,12 +168,11 @@ class N2PPayloadBuilder
         }
 
         if ($date instanceof \DateTimeInterface) {
-            // ISO 8601 (recommandé)
-            return Carbon::instance($date)->toIso8601String();
+            return Carbon::instance($date)->format('Y-m-d H:i:s');
         }
 
         try {
-            return Carbon::parse($date)->toIso8601String();
+            return Carbon::parse($date)->format('Y-m-d H:i:s');
         } catch (\Throwable) {
             return null;
         }

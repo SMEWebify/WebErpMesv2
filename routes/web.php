@@ -108,7 +108,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'companies/contacts', 'middleware' => $contactMiddleware], function () {
         Route::post('/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->name('contacts.store');
-        Route::post('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->name('contacts.update');
+        Route::match(['post', 'put'], '/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->name('contacts.update');
         Route::get('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->name('contacts.edit');
     });
 
@@ -467,7 +467,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@ShowUser')->name('human.resources.show.user');
     
         // Update User
-        Route::post('/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->name('human.resources.update.user');
+        Route::match(['post', 'put'], '/update/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@UpdateUser')->name('human.resources.update.user');
 
         //lock User
         Route::post('/lock/user/{id}', 'App\Http\Controllers\Admin\HumanResourcesController@LockUser')->name('human.resources.lock.user');

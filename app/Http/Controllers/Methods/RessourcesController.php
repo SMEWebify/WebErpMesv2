@@ -51,10 +51,8 @@ class RessourcesController extends Controller
 
         if($request->hasFile('picture')){
             $Ressource = MethodsRessources::findOrFail($Ressource->id);
-            $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/ressources'), $filename);
-            $Ressource->update(['picture' => $filename]);
+            $path = $request->file('picture')->store('images/ressources', 'public');
+            $Ressource->update(['picture' => basename($path)]);
             $Ressource->save();
         }
         else{
@@ -94,15 +92,13 @@ class RessourcesController extends Controller
     {
         
         $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
         
         if($request->hasFile('picture')){
             $Service = MethodsRessources::findOrFail($request->id);
-            $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/ressources'), $filename);
-            $Service->update(['picture' => $filename]);
+            $path = $request->file('picture')->store('images/ressources', 'public');
+            $Service->update(['picture' => basename($path)]);
             $Service->save();
             return redirect()->route('methods.ressource')->with('success', 'Successfully updated ressource.');
         }

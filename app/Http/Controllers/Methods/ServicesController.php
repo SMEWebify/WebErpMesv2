@@ -44,10 +44,8 @@ class ServicesController extends Controller
         
         if($request->hasFile('picture')){
             $Service = MethodsServices::findOrFail($Service->id);
-            $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/methods'), $filename);
-            $Service->update(['picture' => $filename]);
+            $path = $request->file('picture')->store('images/methods', 'public');
+            $Service->update(['picture' => basename($path)]);
             $Service->save();
         }
         else{
@@ -95,15 +93,13 @@ class ServicesController extends Controller
     public function StoreImage(Request $request)
     {
         $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
         
         if($request->hasFile('picture')){
             $Service = MethodsServices::findOrFail($request->id);
-            $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/methods'), $filename);
-            $Service->update(['picture' => $filename]);
+            $path = $request->file('picture')->store('images/methods', 'public');
+            $Service->update(['picture' => basename($path)]);
             $Service->save();
             return redirect()->route('methods.service')->with('success', 'Successfully updated service.');
         }

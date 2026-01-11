@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\Purchases\Purchases;
+use App\Models\Companies\Companies;
 use App\Models\Companies\SupplierRating;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -17,10 +19,13 @@ class SupplierRatingControllerTest extends TestCase
      */
     public function test_can_store_supplier_rating()
     {
+        $purchase = Purchases::factory()->create();
+        $company = Companies::factory()->create();
+
         // Simulation des données de la requête pour créer une évaluation de fournisseur
         $data = [
-            'purchases_id' => 1, // ID de l'achat associé
-            'companies_id' => 1, // ID de la compagnie associée
+            'purchases_id' => $purchase->id, // ID de l'achat associé
+            'companies_id' => $company->id, // ID de la compagnie associée
             'rating' => 4,       // Note donnée au fournisseur
             'comment' => 'Great supplier, timely delivery.', // Commentaire optionnel
         ];
@@ -30,8 +35,8 @@ class SupplierRatingControllerTest extends TestCase
 
         // Vérifie que l'évaluation du fournisseur est bien créée dans la base de données
         $this->assertDatabaseHas('supplier_ratings', [
-            'purchases_id' => 1,
-            'companies_id' => 1,
+            'purchases_id' => $purchase->id,
+            'companies_id' => $company->id,
             'rating' => 4,
             'comment' => 'Great supplier, timely delivery.',
         ]);
