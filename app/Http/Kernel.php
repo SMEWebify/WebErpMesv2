@@ -71,5 +71,8 @@ class Kernel extends HttpKernel
         'check.factory'           => \App\Http\Middleware\CheckFactory::class,
         'check.task.status'       => \App\Http\Middleware\CheckTaskStatus::class,
         'customer'                => \App\Http\Middleware\EnsureCustomerIsAuthenticated::class,
+        'permission'              => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role'                    => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'role_or_permission'      => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
 }
