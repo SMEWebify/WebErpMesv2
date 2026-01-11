@@ -31,8 +31,11 @@ class OrdersFactory extends Factory
     public function definition()
     {
         $this->code = $this->faker->unique()->numerify('OR-####');
-        $companyId = Companies::query()->inRandomOrder()->value('id')
-            ?? Companies::factory()->create()->id;
+        $companyId = Companies::query()
+            ->where('statu_customer', 2)
+            ->inRandomOrder()
+            ->value('id')
+            ?? Companies::factory()->create(['statu_customer' => 2])->id;
         $contactId = CompaniesContacts::query()->inRandomOrder()->value('id')
             ?? CompaniesContacts::factory()->create(['companies_id' => $companyId])->id;
         $addressId = CompaniesAddresses::query()->inRandomOrder()->value('id')
