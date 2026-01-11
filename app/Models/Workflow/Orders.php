@@ -29,7 +29,8 @@ class Orders extends Model
     use HasFactory, LogsActivity;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['uuid',
+    protected $fillable= ['id',
+                            'uuid',
                             'code',
                             'label',
                             'customer_reference',
