@@ -28,7 +28,7 @@ class StoreToolRequest extends FormRequest
             'code' =>'required|unique:methods_tools',
             'label'=>'required',
             'qty'=>'required',
-            'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ];
     }
 }

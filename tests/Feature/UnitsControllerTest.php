@@ -3,12 +3,23 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\User;
 use App\Models\Methods\MethodsUnits;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UnitsControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
+    }
 
     /** @test */
     public function it_can_display_units_list()

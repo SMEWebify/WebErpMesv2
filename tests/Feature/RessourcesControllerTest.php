@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\User;
 use App\Models\Methods\MethodsRessources;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -11,6 +12,16 @@ use Illuminate\Support\Facades\Storage;
 class RessourcesControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
+    }
 
     /**
      * Test index method to display the list of ressources.
@@ -37,6 +48,8 @@ class RessourcesControllerTest extends TestCase
      */
     public function test_store_creates_ressource()
     {
+        Storage::fake('public');
+
         // Simuler une requête POST avec des données valides
         $response = $this->post(route('methods.ressource.create'), [
             'ordre' => 1,
@@ -47,6 +60,7 @@ class RessourcesControllerTest extends TestCase
             'color' => '#FFFFFF',
             'methods_services_id' => 1,
             'mask_time' => true,
+            'picture' => UploadedFile::fake()->image('ressource.jpg'),
         ]);
 
         // Vérifier que la ressource a été créée dans la base de données
@@ -136,6 +150,8 @@ class RessourcesControllerTest extends TestCase
             'id' => $ressource->id,
             'picture' => UploadedFile::fake()->image('ressource.jpg'),
         ]);
+
+        $ressource = $ressource->fresh();
 
         // Vérifier que l'image a été stockée
         Storage::disk('public')->assertExists('images/ressources/' . $ressource->picture);

@@ -19,8 +19,7 @@ class EnergyConsumptionFactory extends Factory
             'methods_ressource_id' => MethodsRessources::factory(),
             'kwh' => $kwh,
             'cost_per_kwh' => $cost,
-            'total_cost' => $kwh * $cost,
+            'total_cost' => round($kwh * $cost, 2),
         ];
     }
 }
-

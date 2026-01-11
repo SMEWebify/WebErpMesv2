@@ -39,7 +39,7 @@ class SupplierRatingController extends Controller
         $message = trans('general_content.supplier_evaluation_saved_trans_key');
 
         if ($message === 'general_content.supplier_evaluation_saved_trans_key') {
-            $message = 'Supplier evaluation saved successfully';
+            $message = 'Rate saved successfully';
         }
 
         return redirect()->back()->with('success', $message);
