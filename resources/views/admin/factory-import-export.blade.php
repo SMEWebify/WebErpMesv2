@@ -293,6 +293,36 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="purchased">{{ __('general_content.purchased_trans_key') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                    </div>
+                                    <select class="form-control" name="purchased" id="purchased">
+                                        <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
+                                        <option value="2">{{ __('general_content.no_trans_key') }}</option>
+                                        <option value="1">{{ __('general_content.yes_trans_key') }}</option>
+                                    </select>
+                                </div>
+                                @error('purchased') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="sold">{{ __('general_content.sold_trans_key') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
+                                    </div>
+                                    <select class="form-control" name="sold" id="sold">
+                                        <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
+                                        <option value="2">{{ __('general_content.no_trans_key') }}</option>
+                                        <option value="1">{{ __('general_content.yes_trans_key') }}</option>
+                                    </select>
+                                </div>
+                                @error('sold') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-4 text-right">
                                 <label class="col-form-label" for="product_header">{{ __('general_content.header_line_ask_trans_key') }}</label>
                             </div>
