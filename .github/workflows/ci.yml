@@ -91,4 +91,5 @@ jobs:
         run: php artisan migrate --force
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --colors=always --timeout-for-test=60
+        run: vendor/bin/phpunit --colors=always 
+          timeout-minutes: 5

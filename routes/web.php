@@ -101,7 +101,6 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         //Rating
         Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('companies.ratings.store');
-        Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('supplier-ratings.store');
     });
 
     $contactMiddleware = app()->environment('testing') ? [] : ['auth', 'check.factory'];
