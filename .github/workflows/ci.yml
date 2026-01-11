@@ -91,5 +91,5 @@ jobs:
         run: php artisan migrate --force
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --colors=always 
-          timeout-minutes: 5
+        timeout-minutes: 5
+        run: vendor/bin/phpunit --colors=always
