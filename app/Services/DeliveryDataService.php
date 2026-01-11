@@ -16,6 +16,8 @@ class DeliveryDataService
     {
         return OrderLines::whereIn('delivery_status', ['1', '2'])
             ->leftJoin('orders', 'order_lines.orders_id', '=', 'orders.id')
+            ->whereNotIn('orders.statu', [5, 6])
+            ->where('orders.type', '=', '1')
             ->pluck('orders.companies_id')
             ->filter()
             ->unique()
@@ -39,7 +41,8 @@ class DeliveryDataService
                 if (!empty($companyId)) {
                     $q->where('companies_id', '=', (int)$companyId);
                 }
-                $q->where('type', '=', '1');
+                $q->whereNotIn('statu', [5, 6])
+                    ->where('type', '=', '1');
             })->get();
     }
 }
