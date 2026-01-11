@@ -20,6 +20,9 @@
     </div>
     <div class="card-body">
         <div class="tab-content">
+            
+            @include('include.alert-result')
+
             <div class="tab-pane active" id="FECExport">
                 @livewire('fec-export-lines')
             </div>
@@ -27,7 +30,6 @@
                 @livewire('invoice-export-lines')
             </div>
             <div class="tab-pane" id="CustomerImport">
-                @include('include.alert-result')
                 <form method="POST" action="{{ route('companies.import') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
@@ -96,7 +98,6 @@
                 </form>
             </div>
             <div class="tab-pane" id="QuotesImport">
-                @include('include.alert-result')
                 <form method="POST" action="{{ route('quotes.import') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">

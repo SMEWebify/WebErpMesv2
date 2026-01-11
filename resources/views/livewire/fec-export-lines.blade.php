@@ -1,6 +1,5 @@
 <div>
     <div class="card">
-        @include('include.alert-result')
         <div class="card-body">
             <div class="card-body ">
                 <div class="row">
