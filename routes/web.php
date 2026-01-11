@@ -621,10 +621,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::group(['prefix' => 'tool'], function () {
             Route::get('/', 'App\Http\Controllers\Methods\ToolsController@index')->name('methods.tool');
             Route::post('/create', 'App\Http\Controllers\Methods\ToolsController@store')->name('methods.tool.create');
-            Route::post('/create', 'App\Http\Controllers\Methods\ToolsController@store')->name('methods.tool.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\ToolsController@update')->name('methods.tool.update');
             Route::post('/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->name('methods.tool.update.picture');
-            Route::post('/edit/{id}/image', 'App\Http\Controllers\Methods\ToolsController@StoreImage')->name('methods.tool.store_image');
         });
 
         // Routes for Standard Nomenclature
