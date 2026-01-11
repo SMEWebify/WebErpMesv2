@@ -35,6 +35,7 @@ return [
     'po_partly_created_trans_key'              => 'PO partly created',
     'po_created_trans_key'                     => 'PO Created',
     'canceled_trans_key'                       => 'Canceled',
+    'order_canceled_no_document_trans_key'     => 'Order canceled: delivery note and invoice creation are disabled.',
     'stopped_trans_key'                        => 'Stopped',
     'no_task_trans_key'                        => 'No task',
     'created_trans_key'                        => 'Created',

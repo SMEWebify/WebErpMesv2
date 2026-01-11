@@ -33,6 +33,7 @@ return [
     'partly_received_trans_key'                => 'Parcialmente recibido',
     'received_trans_key'                       => 'Recibido',
     'canceled_trans_key'                       => 'Cancelado',
+    'order_canceled_no_document_trans_key'     => 'Pedido cancelado: la creación de albarán y factura está desactivada.',
     'no_task_trans_key'                        => 'Sin tarea',
     'created_trans_key'                        => 'Creado',
     'to_be_posted_trans_key'                   => 'A ser publicado',

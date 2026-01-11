@@ -608,7 +608,7 @@
                                 </div>
                             </td>
                             <td>
-                                @if ((($OrderLine->delivery_status != 3 && $OrderLine->order->type != 2) && ($OrderLine->delivery_status != 4 && $OrderLine->order->type != 2)))
+                                @if($OrderStatu != 6 && (($OrderLine->delivery_status != 3 && $OrderLine->order->type != 2) && ($OrderLine->delivery_status != 4 && $OrderLine->order->type != 2)))
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input" value="{{ $OrderLine->id }}" wire:model.live="data.{{ $OrderLine->id }}.order_line_id" id="data.{{ $OrderLine->id }}.order_line_id"  type="checkbox">
                                     <label for="data.{{ $OrderLine->id }}.order_line_id" class="custom-control-label">+</label>
@@ -650,17 +650,22 @@
                                     <input type="checkbox" id="CreateSerialNumber" wire:model.live="CreateSerialNumber" >
                                 </div>
                                 <div>
-                                    <a class="btn btn-primary btn-sm" wire:click="storeDelevery({{ $OrderId }})" href="#">
-                                        <i class="fas fa-folder"></i>
-                                        {{ __('general_content.new_delivery_note_trans_key') }}
-                                    </a>
-                                    
-                                    or
+                                    @if($OrderStatu != 6)
+                                        <a class="btn btn-primary btn-sm" wire:click="storeDelevery({{ $OrderId }})" href="#">
+                                            <i class="fas fa-folder"></i>
+                                            {{ __('general_content.new_delivery_note_trans_key') }}
+                                        </a>
+                                        
+                                        or
 
-                                    <a class="btn btn-primary btn-sm" wire:click="storeInvoice({{ $OrderId }})" href="#">
-                                        <i class="fas fa-folder"></i>
-                                        {{ __('general_content.new_invoice_trans_key') }}
-                                    </a>
+                                        <a class="btn btn-primary btn-sm" wire:click="storeInvoice({{ $OrderId }})" href="#">
+                                            <i class="fas fa-folder"></i>
+                                            {{ __('general_content.new_invoice_trans_key') }}
+                                        </a>
+                                    @else
+                                        <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span>
+                                        <small class="text-muted ms-2">{{ __('general_content.order_canceled_no_document_trans_key') }}</small>
+                                    @endif
                                 </div>
                             </th>
                         </tr>

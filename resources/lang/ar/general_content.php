@@ -33,6 +33,7 @@ return [
     'partly_received_trans_key'                => 'تم الاستلام جزئيًا',
     'received_trans_key'                       => 'تم الاستلام',
     'canceled_trans_key'                       => 'تم الإلغاء',
+    'order_canceled_no_document_trans_key'     => 'تم إلغاء الطلب: تم تعطيل إنشاء بوليصة التسليم والفاتورة.',
     'no_task_trans_key'                        => 'لا مهمة',
     'created_trans_key'                        => 'تم الإنشاء',
     'to_be_posted_trans_key'                   => 'للنشر',
