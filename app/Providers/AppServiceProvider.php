@@ -58,7 +58,8 @@ class AppServiceProvider extends ServiceProvider
                         ->orWhere('delivery_status', '=', '2');
                 })
                 ->whereHas('order', function($q){
-                    $q->where('type', '=', '1');
+                    $q->whereNotIn('statu', [5, 6])
+                        ->where('type', '=', '1');
                 })->count();
 
             $InvoicesRequestsCount =  DeliveryLines::where(
