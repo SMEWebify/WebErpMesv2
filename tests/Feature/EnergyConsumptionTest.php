@@ -28,6 +28,7 @@ class EnergyConsumptionTest extends TestCase
     {
         $resource = MethodsRessources::factory()->create();
 
+        $this->authenticateApiUser();
         $response = $this->postJson('/api/energy-consumptions', [
             'methods_ressource_id' => $resource->id,
             'kwh' => 10,
@@ -47,6 +48,7 @@ class EnergyConsumptionTest extends TestCase
     {
         $consumption = EnergyConsumption::factory()->create();
 
+        $this->authenticateApiUser();
         $response = $this->getJson('/api/energy-consumptions');
 
         $response->assertOk()
@@ -56,4 +58,3 @@ class EnergyConsumptionTest extends TestCase
                  ]);
     }
 }
-
