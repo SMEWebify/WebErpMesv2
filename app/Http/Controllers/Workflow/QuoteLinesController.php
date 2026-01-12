@@ -103,14 +103,15 @@ class QuoteLinesController extends Controller
     {
         
         $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
         
         if($request->hasFile('picture')){
             $QuoteLineDetails = QuoteLineDetails::findOrFail($request->id);
             $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/quote-lines'), $filename);
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $file->move(public_path('images/quote-lines'), $filename);
             $QuoteLineDetails->update(['picture' => $filename]);
             $QuoteLineDetails->save();
             return redirect()->route('quotes.show', ['id' =>  $idQuote])->with('success', 'Successfully updated image');
