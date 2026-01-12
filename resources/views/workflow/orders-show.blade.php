@@ -264,6 +264,9 @@
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
+                    @php
+                      $nest2prodUrl = rtrim((string) app(\App\Services\Settings\SettingsService::class)->get('n2p_base_url'), '/');
+                    @endphp
                     @if($Order->type == 1)
                     <tr>
                         <td style="width:50%">{{  __('general_content.orders_trans_key') }}</td>
@@ -287,6 +290,16 @@
                         <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-info btn-sm"><i class="fas fa-print"></i>Print</a>
                       </td>
                     </tr>
+                    @if($Order->statu != 1 && $nest2prodUrl !== '')
+                    <tr>
+                      <td style="width:50%">Nest2Prod</td>
+                      <td>
+                        <a href="{{ $nest2prodUrl }}/fr/orders/{{ rawurlencode($Order->code) }}" rel="noopener" target="_blank" class="btn btn-info btn-sm">
+                          <i class="fas fa-external-link-alt"></i> {{ __('general_content.view_trans_key') }}
+                        </a>
+                      </td>
+                    </tr>
+                    @endif
                     
                     @if($Order->type == 1 && $Order->uuid)
                       <tr>
