@@ -39,6 +39,7 @@ class StockLocationProductsController extends Controller
         
         $StockMoves = StockMove::where('stock_location_products_id', $id)->orderby('created_at', 'desc')->get();
         $StockLocationProduct = StockLocationProducts::findOrFail($id);
+        $Product = Products::findOrFail($StockLocationProduct->products_id);
         $StockLocation = StockLocation::findOrFail($StockLocationProduct->stock_locations_id);
         $Stock = Stocks::findOrFail($StockLocation->stocks_id);
         $TaskList = Task::where('component_id', $id)
@@ -53,6 +54,7 @@ class StockLocationProductsController extends Controller
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,
             'StockLocationProduct' => $StockLocationProduct,
+            'Product' => $Product,
             'StockMoves' => $StockMoves,
             'TaskList' => $TaskList,
             'OrderLineList' => $OrderLineList,
