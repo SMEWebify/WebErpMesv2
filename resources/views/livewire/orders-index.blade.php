@@ -238,7 +238,7 @@
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
                             <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
-                                <option value="" selected>{{ __('general_content.select_statu_trans_key') }}</option>
+                                <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
                                 <option value="1">{{ __('general_content.open_trans_key') }}</option>
                                 <option value="2">{{ __('general_content.in_progress_trans_key') }}</option>
                                 <option value="3">{{ __('general_content.delivered_trans_key') }}</option>
