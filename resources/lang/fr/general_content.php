@@ -187,6 +187,7 @@ return [
     'attendance_entry_trans_key'               => 'Entrée',
     'attendance_exit_trans_key'                => 'Sortie',
     'attendance_success_trans_key'             => 'Pointage enregistré.',
+    'success_trans_key'                        => 'Opération réalisée avec succès.',
     'status_client_trans_key'                  => 'Etat client',
     'status_supplier_trans_key'                => 'Etat fournisseur',
     'color_trans_key'                          => 'Couleur',
