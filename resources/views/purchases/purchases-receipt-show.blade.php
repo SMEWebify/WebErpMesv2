@@ -303,11 +303,14 @@
                               if($PurchaseReceiptLine->purchaseLines->tasks->component_id ?? null){
                                 $productId = $PurchaseReceiptLine->purchaseLines->tasks->component_id;
                                 $taskId = $PurchaseReceiptLine->purchaseLines->tasks_id;
+                                $componentPrice = $PurchaseReceiptLine->purchaseLines->tasks->Component->purchased_price ?? null;
                               }
                               elseif($PurchaseReceiptLine->purchaseLines->product_id ?? null){
                                 $productId = $PurchaseReceiptLine->purchaseLines->product_id;
                                 $taskId = null;
+                                $componentPrice = $PurchaseReceiptLine->purchaseLines->product->purchased_price ?? null;
                               }
+                              $componentPrice = $componentPrice ?? $PurchaseReceiptLine->purchaseLines->selling_price;
                             @endphp
 
                             <form  method="POST" action="{{ route('products.stockline.store.from.purchase.order') }}" class="form-horizontal">
@@ -316,7 +319,7 @@
                               <input type="hidden" name="code" id="code" value="STOCK|{{ $PurchaseReceiptLine->purchaseReceipt->code }}|{{ $PurchaseReceiptLine->id }}|{{ now()->format('Y-m-d') }}">
                               <input type="hidden" name="stock_qty" id="stock_qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
                               <input type="hidden" name="mini_qty" id="mini_qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
-                              <input type="hidden" name="component_price" id="component_price" value="{{ $PurchaseReceiptLine->purchaseLines->selling_price }}" >
+                              <input type="hidden" name="component_price" id="component_price" value="{{ $componentPrice }}" >
                               <input type="hidden" name="task_id" id="task_id" value="{{ $taskId }}" >
                               <input type="hidden" name="purchase_receipt_line_id" id="purchase_receipt_line_id" value="{{ $PurchaseReceiptLine->id }}" >
                               <input type="hidden" name="user_id" id="user_id" value="{{ Auth::id() }}" >
@@ -349,7 +352,7 @@
                                 <input type="hidden" name="qty" id="qty" value="{{ $PurchaseReceiptLine->receipt_qty }}" >
                                 <input type="hidden" name="task_id" id="task_id" value="{{ $taskId }}" >
                                 <input type="hidden" name="purchase_receipt_line_id" id="purchase_receipt_line_id" value="{{ $PurchaseReceiptLine->id }}" >
-                                <input type="hidden" name="component_price" id="component_price" value="{{ $PurchaseReceiptLine->purchaseLines->selling_price }}" >
+                                <input type="hidden" name="component_price" id="component_price" value="{{ $componentPrice }}" >
                                 <input type="hidden" name="typ_move" id="typ_move" value="3" >
                                 <div class="form-group">
                                   <label for="stock_location_products_id">{{ __('general_content.stock_location_product_list_trans_key') }}</label>
