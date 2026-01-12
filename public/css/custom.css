@@ -173,3 +173,117 @@
     margin-left: 0.5rem;
     white-space: nowrap;
 }
+
+/** BUSINESS BALANCE **/
+
+.business-balance-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.business-balance-table thead th {
+    font-weight: 600;
+    text-align: center;
+    border-color: rgba(0, 0, 0, 0.04);
+}
+
+.business-balance-table td {
+    border-color: rgba(0, 0, 0, 0.04);
+}
+
+.business-balance-table__group-row th:first-child {
+    background-color: #f3f4f6;
+}
+
+.business-balance-table__group {
+    color: #1f2933;
+    font-weight: 600;
+}
+
+.business-balance-table__group--info {
+    background-color: #34a0dc;
+    color: #0b1f2a;
+}
+
+.business-balance-table__group--danger {
+    background-color: #e76161;
+    color: #3a0f0f;
+}
+
+.business-balance-table__group--warning {
+    background-color: #f2a65a;
+    color: #4a2d0f;
+}
+
+.business-balance-table__subhead-row th {
+    font-size: 0.85rem;
+    text-transform: none;
+}
+
+.business-balance-table__service-head {
+    background-color: #e9ecef;
+}
+
+.business-balance-table__subhead--info,
+.business-balance-table__cell--info {
+    background-color: #e6f5ff;
+}
+
+.business-balance-table__subhead--danger,
+.business-balance-table__cell--danger {
+    background-color: #fde9e9;
+}
+
+.business-balance-table__subhead--warning,
+.business-balance-table__cell--warning {
+    background-color: #fff2e2;
+}
+
+.business-balance-table__service-cell {
+    background-color: #f8f9fb;
+    font-weight: 600;
+}
+
+.business-balance-table__cell {
+    text-align: center;
+}
+
+.business-balance-table__total-row td {
+    background-color: #f0f1f5;
+    font-weight: 600;
+}
+
+.business-balance-info {
+    row-gap: 1rem;
+}
+
+.business-balance-info__card {
+    background-color: #f8f9fb;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    height: 100%;
+}
+
+.business-balance-info__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+    margin-bottom: 0.35rem;
+}
+
+.business-balance-info__value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0;
+}
+
+.business-balance-info__trend {
+    font-size: 0.75rem;
+    color: #22a06b;
+    margin-left: 0.25rem;
+}
