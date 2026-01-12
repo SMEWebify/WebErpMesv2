@@ -361,6 +361,7 @@ class TaskManage extends Component
                         'methods_tools_id' => $this->methods_tools_id,
                         'origin' => "0"];
 
+                        
             if ($this->idType == 'nomenclature_lines_id') {
                 $taskData['methods_nomenclature_standard_id'] = $this->nomenclature_lines_id;
                 MethodsStandardTask::create($taskData);
@@ -372,11 +373,6 @@ class TaskManage extends Component
                     $OrderLine->save();
                 }
                 
-                if($this->idType == 'order_lines_id'){
-                    $OrderLine = OrderLines::find($this->order_lines_id);
-                    $OrderLine->tasks_status = 2;
-                    $OrderLine->save();
-                }
             }
 
             // Set Flash Message
