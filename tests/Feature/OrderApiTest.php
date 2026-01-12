@@ -21,6 +21,7 @@ class OrderApiTest extends TestCase
         $order = Orders::factory()->create();
 
         // Fais une requête GET pour afficher cette commande spécifique
+        $this->authenticateApiUser();
         $response = $this->getJson("/api/orders/{$order->id}");
 
         // Vérifie que la réponse a le statut 200 (succès)

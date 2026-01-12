@@ -22,6 +22,7 @@ class TaskApiTest extends TestCase
         Task::factory()->count(5)->create();
 
         // Fais une requête GET pour obtenir toutes les tâches
+        $this->authenticateApiUser();
         $response = $this->getJson('/api/tasks');
 
         // Vérifie que la réponse a le statut 200 (succès)
@@ -42,6 +43,7 @@ class TaskApiTest extends TestCase
         $task = Task::factory()->create();
 
         // Fais une requête GET pour afficher cette tâche spécifique
+        $this->authenticateApiUser();
         $response = $this->getJson("/api/tasks/{$task->id}");
 
         // Vérifie que la réponse a le statut 200 (succès)

@@ -90,6 +90,7 @@ class ExportSalesOrderTest extends TestCase
             'validity_date' => Carbon::create(2024, 1, 15),
         ]);
 
+        $this->actingAs($this->user, 'api');
         $response = $this->getJson('/api/exports/sales-orders');
 
         $response->assertOk();
@@ -186,6 +187,7 @@ class ExportSalesOrderTest extends TestCase
             'weight' => 1.2,
         ]);
 
+        $this->actingAs($this->user, 'api');
         $response = $this->getJson('/api/exports/sales-orders?include_lines=1');
 
         $response->assertOk();
@@ -240,6 +242,7 @@ class ExportSalesOrderTest extends TestCase
             'statu' => 1,
         ]);
 
+        $this->actingAs($this->user, 'api');
         $response = $this->getJson('/api/exports/sales-orders?from=2024-01-01&status=1');
 
         $response->assertOk();
