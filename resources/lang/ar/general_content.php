@@ -156,6 +156,7 @@ return [
     'action_trans_key'                         => 'الإجراءات',
     'save_trans_key'                           => 'حفظ',
     'user_trans_key'                           => 'المستخدم',
+    'success_trans_key'                        => 'تمت العملية بنجاح.',
     'status_client_trans_key'                  => 'حالة العميل',
     'status_supplier_trans_key'                => 'حالة المورد',
     'color_trans_key'                          => 'اللون',

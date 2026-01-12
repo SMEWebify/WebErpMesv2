@@ -187,6 +187,7 @@ return [
     'attendance_entry_trans_key'               => 'Entry',
     'attendance_exit_trans_key'                => 'Exit',
     'attendance_success_trans_key'             => 'Attendance recorded.',
+    'success_trans_key'                        => 'Operation completed successfully.',
     'status_client_trans_key'                  => 'Status client',
     'status_supplier_trans_key'                => 'Status supplier',
     'color_trans_key'                          => 'Color',
