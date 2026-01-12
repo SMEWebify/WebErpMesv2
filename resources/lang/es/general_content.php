@@ -156,6 +156,7 @@ return [
     'action_trans_key'                         => 'Acciones',
     'save_trans_key'                           => 'Guardar',
     'user_trans_key'                           => 'Usuario',
+    'success_trans_key'                        => 'Operación realizada correctamente.',
     'status_client_trans_key'                  => 'Estado del cliente',
     'status_supplier_trans_key'                => 'Estado del proveedor',
     'color_trans_key'                          => 'Color',

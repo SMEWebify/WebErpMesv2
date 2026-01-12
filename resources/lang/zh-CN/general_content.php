@@ -182,6 +182,7 @@ return [
     'action_trans_key'                         => '操作',
     'save_trans_key'                           => '保存',
     'user_trans_key'                           => '用户',
+    'success_trans_key'                        => '操作成功。',
     'status_client_trans_key'                  => '客户状态',
     'status_supplier_trans_key'                => '供应商状态',
     'color_trans_key'                          => '颜色',
