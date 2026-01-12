@@ -32,7 +32,7 @@ class QuotesIndex extends Component
     public $search = '';
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
-    public $searchIdStatus = '';
+    public $searchIdStatus = '1';
     
     public $userSelect = [];
     public $LastQuote = null;
@@ -114,6 +114,8 @@ class QuotesIndex extends Component
         $this->accounting_deliveries_id = $this->getDefaultId(AccountingDelivery::class);
     
         $this->setQuoteCodeAndLabel();
+
+        $this->searchIdStatus = '1';
 
         
         $this->statuses = [
@@ -293,4 +295,3 @@ class QuotesIndex extends Component
         session()->flash('success','Line added Successfully');
     }
 }
-
