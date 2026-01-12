@@ -31,7 +31,7 @@ class OrdersIndex extends Component
     public $search = '';
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
-    public $searchIdStatus = '';
+    public $searchIdStatus = '1';
 
     public $userSelect = [];
     public $LastOrder = null;
