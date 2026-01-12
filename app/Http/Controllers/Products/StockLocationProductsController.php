@@ -11,6 +11,7 @@ use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
 use App\Services\StockCalculationService;
+use App\Models\Purchases\PurchaseReceiptLines;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\StoreStockMoveRequest;
 use App\Http\Requests\Products\StoreStockLocationProductsRequest;
@@ -167,6 +168,8 @@ class StockLocationProductsController extends Controller
             $tracability = null;
         }
 
+        $componentPrice = $this->resolvePurchaseReceiptUnitPrice($request->purchase_receipt_line_id, $request->component_price);
+
         $data = [
             'user_id' => $request->user_id,
             'qty' => $request->mini_qty,
@@ -174,7 +177,7 @@ class StockLocationProductsController extends Controller
             'task_id' => $request->task_id,
             'purchase_receipt_line_id' => $request->purchase_receipt_line_id,
             'typ_move' => 3,
-            'component_price' => $request->component_price,
+            'component_price' => $componentPrice,
             'x_size' => $product->x_size,
             'y_size' => $product->y_size,
             'z_size' => $product->z_size,
@@ -195,7 +198,10 @@ class StockLocationProductsController extends Controller
      */
     public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
     {
+        $componentPrice = $this->resolvePurchaseReceiptUnitPrice($request->purchase_receipt_line_id, $request->component_price);
+
         $data = $request->only('user_id', 'qty', 'stock_location_products_id', 'task_id', 'purchase_receipt_line_id', 'typ_move', 'component_price');
+        $data['component_price'] = $componentPrice;
         $this->stockService->createStockMove($data);
 
         // Mise à jour de la ligne de réception de l'achat
@@ -253,5 +259,26 @@ class StockLocationProductsController extends Controller
         else{
             return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('error', 'Not enough stock available for this tracability');
         }
+    }
+
+    private function resolvePurchaseReceiptUnitPrice($purchaseReceiptLineId, $fallbackPrice): float
+    {
+        $purchaseReceiptLine = PurchaseReceiptLines::with('purchaseLines')->find($purchaseReceiptLineId);
+
+        if (! $purchaseReceiptLine || ! $purchaseReceiptLine->purchaseLines) {
+            return (float) $fallbackPrice;
+        }
+
+        $purchaseLine = $purchaseReceiptLine->purchaseLines;
+
+        if (! is_null($purchaseLine->unit_price_after_discount)) {
+            return (float) $purchaseLine->unit_price_after_discount;
+        }
+
+        if (! is_null($purchaseLine->total_selling_price) && $purchaseLine->qty > 0) {
+            return (float) ($purchaseLine->total_selling_price / $purchaseLine->qty);
+        }
+
+        return (float) ($purchaseLine->selling_price ?? $fallbackPrice);
     }
 }
