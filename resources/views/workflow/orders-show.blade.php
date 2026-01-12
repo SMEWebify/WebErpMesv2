@@ -352,71 +352,114 @@
       </div> 
       <div class="tab-pane" id="Bilan">
         <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" maximizable>
-          <table class="table table-bordered table-hover">
-            <thead>
-              <tr class="bg-dark disabled color-palette">
-                  <th></th>
-                  <th colspan="3" class="bg-info disabled color-palette">{{ __('general_content.manufacturing_range_trans_key') }}</th>
-                  <th colspan="2" class="bg-danger disabled color-palette">{{ __('general_content.accomplished_trans_key') }}</th>
-                  <th colspan="2" class="bg-orange disabled color-palette">{{ __('general_content.gap_trans_key') }}</th>
-              </tr>
-                <tr >
-                    <th>{{ __('general_content.service_trans_key') }}</th>
-                    <th class="bg-info disabled color-palette">{{ __('general_content.hours_trans_key') }}</th>
-                    <th class="bg-info disabled color-palette">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th> 
-                    <th class="bg-info disabled color-palette">{{ __('general_content.selling_price_trans_key') }} ({{ $Factory->curency }})</th>
-                    <th class="bg-danger disabled color-palette">{{ __('general_content.hours_trans_key') }}</th>
-                    <th class="bg-danger disabled color-palette">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
-                    <th class="bg-orange disabled color-palette">{{ __('general_content.hours_trans_key') }}</th>
-                    <th class="bg-orange disabled color-palette">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover business-balance-table">
+              <thead>
+                <tr class="business-balance-table__group-row">
+                    <th></th>
+                    <th colspan="3" class="business-balance-table__group business-balance-table__group--info">{{ __('general_content.manufacturing_range_trans_key') }}</th>
+                    <th colspan="2" class="business-balance-table__group business-balance-table__group--danger">{{ __('general_content.accomplished_trans_key') }}</th>
+                    <th colspan="2" class="business-balance-table__group business-balance-table__group--warning">{{ __('general_content.gap_trans_key') }}</th>
                 </tr>
-            </thead>
-            <tbody>
-                @forelse($businessBalance as $group => $data)
-                    <tr>
-                        <td>{{ strtoupper($group) }}</td>
-                        <td class="bg-info disabled color-palette">{{ $data['total_hours'] }} h</td>
-                        <td class="bg-info disabled color-palette">{{ $data['total_display_cost'] }}</td>
-                        <td class="bg-info disabled color-palette">{{ $data['total_display_price'] }}</td>
-                        <td class="bg-danger disabled color-palette">{{ $data['realized_hours'] }} h</td>
-                        <td class="bg-danger disabled color-palette">{{ $data['realized_display_cost'] }}</td>
-                        <td class="bg-orange disabled color-palette">{{ $data['difference_hours'] }} h</td>
-                        <td class="bg-orange disabled color-palette">{{ $data['difference_display_cost'] }}</td>
-                    </tr>
-                @empty
-                <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
-                @endforelse
-            </tbody>
-            <tfoot>
-              <tr class="bg-gray disabled color-palette">
-                <td><strong>{{ __('general_content.total_trans_key') }}</strong></td>
-                <td><strong>{{ $businessBalancetotals['total_hours'] }} h</strong></td>
-                <td><strong>{{ $businessBalancetotals['total_display_cost'] }} </strong></td>
-                <td><strong>{{ $businessBalancetotals['total_display_price'] }} </strong></td>
-                <td><strong>{{ $businessBalancetotals['realized_hours'] }} h</strong></td>
-                <td><strong>{{ $businessBalancetotals['realized_display_cost'] }} </strong></td>
-                <td><strong>{{ $businessBalancetotals['difference_hours'] }} h</strong></td>
-                <td><strong>{{ $businessBalancetotals['difference_display_cost'] }} </strong></td>
-              </tr>
-            </tfoot>
-          </table>
+                  <tr class="business-balance-table__subhead-row">
+                      <th class="business-balance-table__service-head">{{ __('general_content.service_trans_key') }}</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.hours_trans_key') }}</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.selling_price_trans_key') }} ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--danger">{{ __('general_content.hours_trans_key') }}</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--danger">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--warning">{{ __('general_content.hours_trans_key') }}</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--warning">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  @forelse($businessBalance as $group => $data)
+                      <tr>
+                          <td class="business-balance-table__service-cell">{{ strtoupper($group) }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--info">{{ $data['total_hours'] }} h</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--info">{{ $data['total_display_cost'] }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--info">{{ $data['total_display_price'] }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--danger">{{ $data['realized_hours'] }} h</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--danger">{{ $data['realized_display_cost'] }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--warning">{{ $data['difference_hours'] }} h</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--warning">{{ $data['difference_display_cost'] }}</td>
+                      </tr>
+                  @empty
+                  <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
+                  @endforelse
+              </tbody>
+              <tfoot>
+                <tr class="business-balance-table__total-row">
+                  <td><strong>{{ __('general_content.total_trans_key') }}</strong></td>
+                  <td><strong>{{ $businessBalancetotals['total_hours'] }} h</strong></td>
+                  <td><strong>{{ $businessBalancetotals['total_display_cost'] }} </strong></td>
+                  <td><strong>{{ $businessBalancetotals['total_display_price'] }} </strong></td>
+                  <td><strong>{{ $businessBalancetotals['realized_hours'] }} h</strong></td>
+                  <td><strong>{{ $businessBalancetotals['realized_display_cost'] }} </strong></td>
+                  <td><strong>{{ $businessBalancetotals['difference_hours'] }} h</strong></td>
+                  <td><strong>{{ $businessBalancetotals['difference_display_cost'] }} </strong></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </x-adminlte-card>
         
         @if($Order->type == 1)
 
         <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="warning" maximizable>
-          <p><strong>{{ __('general_content.progress_trans_key') }} :</strong> {{ $Order->average_percent_progress_lines }} %</p>
-          <p><strong>{{ __('general_content.amount_trans_key') }} :</strong> {{ $totalPrices }}</p>
-
-          <p><strong>{{ __('general_content.amount_of_invoice_trans_key') }} :</strong> {{ $invoicedAmount }}</p>
-          <p><strong>{{ __('general_content.still_invoiced_trans_key') }} :</strong> {{ $stillInvoiced }} @if($totalPrices > 0 )({{ $percentageInvoiced }} %)@endif</p>
-          <p><strong>{{ __('general_content.payments_received_of_invoice_trans_key') }} :</strong> {{ $receivedPayment }}</p>          
-          <p><strong>{{ __('general_content.forecast_margin_trans_key') }} :</strong> {{ $forecastMarginFormatted }} 
-            @if($businessBalancetotals['total_cost'] > 0) ({{ $forecastMarginPercentageFormatted }}) @endif
-          </p>
-          <p><strong>{{ __('general_content.current_margin_trans_key') }} :</strong> {{ $currentMarginFormatted }} 
-            @if($businessBalancetotals['realized_cost'] > 0) ({{ $currentMarginPercentageFormatted }}) @endif
-          </p>
+          <div class="row business-balance-info">
+            <div class="col-lg-3 col-md-6">
+              <div class="business-balance-info__card">
+                <p class="business-balance-info__label">{{ __('general_content.progress_trans_key') }}</p>
+                <p class="business-balance-info__value">{{ $Order->average_percent_progress_lines }} %</p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="business-balance-info__card">
+                <p class="business-balance-info__label">{{ __('general_content.amount_trans_key') }}</p>
+                <p class="business-balance-info__value">{{ $totalPrices }}</p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="business-balance-info__card">
+                <p class="business-balance-info__label">{{ __('general_content.amount_of_invoice_trans_key') }}</p>
+                <p class="business-balance-info__value">{{ $invoicedAmount }}</p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="business-balance-info__card">
+                <p class="business-balance-info__label">{{ __('general_content.still_invoiced_trans_key') }}</p>
+                <p class="business-balance-info__value">
+                  {{ $stillInvoiced }}
+                  @if($totalPrices > 0 )<span class="business-balance-info__trend">({{ $percentageInvoiced }} %)</span>@endif
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="business-balance-info__card">
+                <p class="business-balance-info__label">{{ __('general_content.payments_received_of_invoice_trans_key') }}</p>
+                <p class="business-balance-info__value">{{ $receivedPayment }}</p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="business-balance-info__card">
+                <p class="business-balance-info__label">{{ __('general_content.forecast_margin_trans_key') }}</p>
+                <p class="business-balance-info__value">
+                  {{ $forecastMarginFormatted }}
+                  @if($businessBalancetotals['total_cost'] > 0) <span class="business-balance-info__trend">({{ $forecastMarginPercentageFormatted }})</span> @endif
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="business-balance-info__card">
+                <p class="business-balance-info__label">{{ __('general_content.current_margin_trans_key') }}</p>
+                <p class="business-balance-info__value">
+                  {{ $currentMarginFormatted }}
+                  @if($businessBalancetotals['realized_cost'] > 0) <span class="business-balance-info__trend">({{ $currentMarginPercentageFormatted }})</span> @endif
+                </p>
+              </div>
+            </div>
+          </div>
         </x-adminlte-card>
         
         <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="warning" maximizable>
