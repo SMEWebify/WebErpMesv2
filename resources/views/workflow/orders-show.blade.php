@@ -329,22 +329,22 @@
       <div class="tab-pane" id="Charts">
         <div class="row">
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('Total product time by service') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.total_product_time_by_service') }}" theme="secondary" maximizable>
               <canvas id="productDonutChart" width="400" height="400"></canvas>
             </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('Total setting time by service') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.total_setting_time_by_service') }}" theme="secondary" maximizable>
               <canvas id="settingDonutChart" width="400" height="400"></canvas>
             </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('Total cost by service') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.total_cost_by_service') }}" theme="secondary" maximizable>
               <canvas id="CostDonutChart" width="400" height="400"></canvas>
             </x-adminlte-card>
           </div>
           <div class="col-md-6">
-            <x-adminlte-card title="{{ __('Total price by service') }}" theme="secondary" maximizable>
+            <x-adminlte-card title="{{ __('general_content.total_price_by_service') }}" theme="secondary" maximizable>
                 <canvas id="PriceDonutChart" width="400" height="400"></canvas>
               </x-adminlte-card>
           </div>
