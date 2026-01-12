@@ -58,14 +58,15 @@ class OrderLinesController extends Controller
     {
         
         $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'picture' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
         
         if($request->hasFile('picture')){
             $OrderLineDetails = OrderLineDetails::findOrFail($request->id);
             $file =  $request->file('picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $request->picture->move(public_path('images/order-lines'), $filename);
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+            $file->move(public_path('images/order-lines'), $filename);
             $OrderLineDetails->update(['picture' => $filename]);
             $OrderLineDetails->save();
             return redirect()->route('orders.show', ['id' =>  $idOrder])->with('success', 'Successfully updated image');

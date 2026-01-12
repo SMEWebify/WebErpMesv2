@@ -21,6 +21,7 @@ class CompanyApiTest extends TestCase
         Companies::factory()->count(3)->create();
 
         // Fais une requête GET à l'API
+        $this->authenticateApiUser();
         $response = $this->getJson('/api/companies');
 
         // Vérifie que la réponse a le statut 200
@@ -41,6 +42,7 @@ class CompanyApiTest extends TestCase
         $company = Companies::factory()->create();
 
         // Fais une requête GET pour afficher cette compagnie spécifique
+        $this->authenticateApiUser();
         $response = $this->getJson("/api/companies/{$company->id}");
 
         // Vérifie que la réponse a le statut 200
