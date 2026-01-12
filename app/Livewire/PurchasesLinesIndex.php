@@ -92,7 +92,14 @@ class PurchasesLinesIndex extends Component
         $this->order_Statu = $OrderStatu;
         $this->Factory = Factory::first();
         $this->status_id = Status::select('id')->orderBy('order')->first();
-        $this->ProductsSelect = Products::select('id', 'label', 'code')->orderBy('code')->get();
+        $purchase = Purchases::select('companies_id')->find($this->purchase_id);
+        $productsQuery = Products::select('id', 'label', 'code');
+        if ($purchase && $purchase->companies_id) {
+            $productsQuery->whereHas('preferredSuppliers', function ($query) use ($purchase) {
+                $query->where('companies_id', $purchase->companies_id);
+            });
+        }
+        $this->ProductsSelect = $productsQuery->orderBy('code')->get();
         $this->UnitsSelect = MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
         $this->ProductSelect = Products::select('id', 'code','label', 'methods_services_id')->get();
 }
