@@ -1,11 +1,14 @@
 @extends('adminlte::page')
 
-@section('title', $StockLocationProduct->code . ' '. __('general_content.stock_location_trans_key')) 
+@section('title', $StockLocationProduct->code . ' - ' . $Product->code . ' ' . __('general_content.stock_location_trans_key')) 
 
 @section('content_header')
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>{{ $StockLocationProduct->code }}  {{ __('general_content.stock_location_trans_key') }}</h1>
+        <h1>{{ $StockLocationProduct->code }} {{ __('general_content.stock_location_trans_key') }}</h1>
+        <div class="text-muted">
+          {{ __('general_content.product_trans_key') }}: {{ $Product->code }} - {{ $Product->label }}
+        </div>
       </div>
       <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
