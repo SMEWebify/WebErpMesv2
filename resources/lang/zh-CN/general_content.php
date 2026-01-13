@@ -427,6 +427,9 @@ return [
     'new_receipt_document_trans_key'           => '新建收据',
     'new_invoice_document_trans_key'           => '新建发票',
     'new_purchase_document_trans_key'          => '新建采购单',
+    'export_csv_trans_key'                     => '导出 CSV',
+    'open_orders_not_started_trans_key'        => '开放订单 / 未开始任务',
+    'open_orders_not_started_hint_trans_key'   => '导出包含未开始任务的开放订单行。',
 
     //SELECT
     'select_trans_key'                         => '选择',

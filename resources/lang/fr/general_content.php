@@ -437,6 +437,9 @@ return [
     'new_receipt_document_trans_key'           => 'Nouveau reçu',
     'new_invoice_document_trans_key'           => 'Nouvelle facture',
     'new_purchase_document_trans_key'          => 'Nouvelle commande d\'achat',
+    'export_csv_trans_key'                     => 'Exporter CSV',
+    'open_orders_not_started_trans_key'        => 'Commandes ouvertes / tâches non commencées',
+    'open_orders_not_started_hint_trans_key'   => 'Exporter les lignes des commandes ouvertes avec tâches non commencées.',
 
     //SELECT
     'select_trans_key'                         => 'Selectionner',

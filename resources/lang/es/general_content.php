@@ -377,6 +377,9 @@ return [
     'new_receipt_document_trans_key'           => 'Nuevo documento de recibo',
     'new_invoice_document_trans_key'           => 'Nuevo documento de factura',
     'new_purchase_document_trans_key'          => 'Nuevo documento de compra',
+    'export_csv_trans_key'                     => 'Exportar CSV',
+    'open_orders_not_started_trans_key'        => 'Pedidos abiertos / tareas no iniciadas',
+    'open_orders_not_started_hint_trans_key'   => 'Exportar líneas de pedidos abiertos con tareas no iniciadas.',
 
     // SELECT
     'select_trans_key'                         => 'Seleccionar',
