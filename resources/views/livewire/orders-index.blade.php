@@ -273,7 +273,9 @@
                                 <th>
                                     <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')"   role="button" href="#">{{__('general_content.customer_trans_key') }} @include('include.sort-icon', ['field' => 'companies_id'])</a>
                                 </th>
-                                <th>{{__('general_content.code_trans_key') }}</th>
+                                <th>
+                                    <a class="btn btn-secondary" wire:click.prevent="sortBy('validity_date')" role="button" href="#">{{ __('general_content.delivery_date_trans_key') }} @include('include.sort-icon', ['field' => 'validity_date'])</a>
+                                </th>
                                 <th>{{__('general_content.lines_count_trans_key') }}</th>
                                 <th>{{ __('general_content.progress_trans_key') }}</th>
                                 <th>{{__('general_content.total_price_trans_key') }}</th>
@@ -297,7 +299,28 @@
                                     {{ __('general_content.internal_order_trans_key') }}
                                     @endif
                                 </td>
-                                <td>{{ $Order->customer_reference }}</td>
+                                <td>
+                                    @php
+                                        $deliveryDate = $Order->validity_date ? \Carbon\Carbon::parse($Order->validity_date) : null;
+                                        $today = \Carbon\Carbon::today();
+                                        $deliveryBadgeClass = 'badge-secondary';
+
+                                        if ($deliveryDate) {
+                                            if ($deliveryDate->lt($today)) {
+                                                $deliveryBadgeClass = 'badge-danger';
+                                            } elseif ($deliveryDate->equalTo($today)) {
+                                                $deliveryBadgeClass = 'badge-warning';
+                                            } else {
+                                                $deliveryBadgeClass = 'badge-success';
+                                            }
+                                        }
+                                    @endphp
+                                    @if($deliveryDate)
+                                        <span class="badge {{ $deliveryBadgeClass }}">{{ $deliveryDate->format('d/m/Y') }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td>{{ $Order->order_lines_count }}</td>
                                 <td><x-adminlte-progress theme="teal" value="{{ $Order->getAveragePercentProgressLinesAttribute() }}" with-label animated/></td>
                                 <td>{{ $Order->formatted_total_price }}</td>
@@ -336,7 +359,7 @@
                                 <th>{{__('general_content.id_trans_key') }}</th>
                                 <th>{{__('general_content.label_trans_key') }}</th>
                                 <th>{{__('general_content.customer_trans_key') }}</th>
-                                <th>{{__('general_content.code_trans_key') }}</th>
+                                <th>{{ __('general_content.delivery_date_trans_key') }}</th>
                                 <th>{{__('general_content.lines_count_trans_key') }}</th>
                                 <th>{{ __('general_content.progress_trans_key') }}</th>
                                 <th>{{__('general_content.total_price_trans_key') }}</th>
