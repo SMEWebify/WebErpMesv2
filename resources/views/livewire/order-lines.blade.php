@@ -49,9 +49,18 @@
                             <th>{{__('general_content.action_trans_key') }}</th>
                             <th>
                                 @if($OrderStatu != 6 && $OrderType != 2)
-                                    <button type="button" class="btn btn-outline-primary btn-sm" wire:click="toggleSelectAllLines">
-                                        {{ $selectAllLines ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
-                                    </button>
+                                    <div class="custom-control custom-checkbox">
+                                        <input
+                                            class="custom-control-input"
+                                            id="select-all-order-lines"
+                                            type="checkbox"
+                                            wire:click="toggleSelectAllLines"
+                                            @checked($selectAllLines)
+                                        >
+                                        <label class="custom-control-label" for="select-all-order-lines">
+                                            {{ $selectAllLines ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
+                                        </label>
+                                    </div>
                                 @endif
                             </th>
                         </tr>
