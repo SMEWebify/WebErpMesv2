@@ -76,6 +76,7 @@ class OrderLine extends Component
     public $customRequirements = [];
     public $RemoveFromStock = false;
     public $CreateSerialNumber = false;
+    public $selectAllLines = false;
     
     private $deleveryOrdre = 10;
     private $invoiceOrdre = 10;
@@ -175,6 +176,8 @@ class OrderLine extends Component
     {
         $OrderLineslist = $this->OrderLineslist = Orderlines::with('OrderLineDetails')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->where('orders_id', '=', $this->orders_id)->where('label','like', '%'.$this->search.'%')->get();
 
+        $this->syncSelectAllState($this->getSelectableLineIds($OrderLineslist));
+
         foreach ($OrderLineslist as $line) {
             $detail = $line->OrderLineDetails;
             if ($detail && !array_key_exists($detail->id, $this->customRequirements)) {
@@ -185,6 +188,68 @@ class OrderLine extends Component
         return view('livewire.order-lines', [
             'OrderLineslist' => $OrderLineslist,
         ]);
+    }
+
+    public function toggleSelectAllLines(): void
+    {
+        $shouldSelect = ! $this->selectAllLines;
+        $lineIds = $this->getSelectableLineIds();
+
+        if ($shouldSelect) {
+            foreach ($lineIds as $lineId) {
+                $this->data[$lineId]['order_line_id'] = true;
+            }
+        } else {
+            foreach ($lineIds as $lineId) {
+                unset($this->data[$lineId]);
+            }
+        }
+
+        $this->selectAllLines = $shouldSelect;
+    }
+
+    private function syncSelectAllState(array $lineIds): void
+    {
+        if (empty($lineIds)) {
+            $this->selectAllLines = false;
+            return;
+        }
+
+        $this->selectAllLines = collect($lineIds)->every(function ($lineId) {
+            return $this->isLineSelected((int) $lineId);
+        });
+    }
+
+    private function isLineSelected(int $lineId): bool
+    {
+        return !empty($this->data[$lineId]['order_line_id']);
+    }
+
+    private function getSelectableLineIds($lines = null): array
+    {
+        if ($this->OrderStatu == 6 || $this->OrderType == 2) {
+            return [];
+        }
+
+        if ($lines) {
+            return $lines->filter(function ($line) {
+                return $this->isLineSelectable($line);
+            })->pluck('id')->all();
+        }
+
+        return OrderLines::where('orders_id', $this->orders_id)
+            ->whereNotIn('delivery_status', [3, 4])
+            ->pluck('id')
+            ->all();
+    }
+
+    private function isLineSelectable(OrderLines $line): bool
+    {
+        if ($this->OrderStatu == 6 || $this->OrderType == 2) {
+            return false;
+        }
+
+        return !in_array($line->delivery_status, [3, 4], true);
     }
 
     private function initializeCustomRequirements(): void
