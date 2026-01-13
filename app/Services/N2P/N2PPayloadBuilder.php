@@ -113,9 +113,9 @@ class N2PPayloadBuilder
     private function mapTasks(OrderLines $orderLine, $tasks): array
     {
         return $tasks->map(function (Task $task) use ($orderLine) {
-            $operationCode = $task->code ?: ($task->label ?: ($task->service->code ?? null));
+            $operationCode = $task->code ?: ($task->service->code ?: ($task->label ?? null));
             if (!$operationCode) {
-                $operationCode = Str::slug($task->label ?? 'task-' . $task->getKey());
+                $operationCode = Str::slug($task->service->code ?? 'task-' . $task->getKey());
             }
 
             $plannedTimeMinutes = null;

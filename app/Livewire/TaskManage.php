@@ -324,7 +324,8 @@ class TaskManage extends Component
             $this->methods_services_id =  $splitMethod[0]; 
             $this->type =  $splitMethod[1]; 
             // Create Task
-            $taskData = ['label' => $this->label, 
+            $taskData = ['code' => $this->label, 
+                        'label' => $this->label, 
                         'ordre' => $this->ordre, 
                         'quote_lines_id' => $this->quote_lines_id, 
                         'order_lines_id' => $this->order_lines_id, 
