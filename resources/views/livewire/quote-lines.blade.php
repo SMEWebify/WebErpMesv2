@@ -579,7 +579,7 @@
                             </td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $QuoteLine->id }}" wire:model.live="data.{{ $QuoteLine->id }}.quote_line_id" id="data.{{ $QuoteLine->id }}.quote_line_id"  type="checkbox">
+                                    <input class="custom-control-input" wire:model.live="data.{{ $QuoteLine->id }}.quote_line_id" id="data.{{ $QuoteLine->id }}.quote_line_id" type="checkbox">
                                     <label for="data.{{ $QuoteLine->id }}.quote_line_id" class="custom-control-label">+</label>
                                 </div>
                             </td>
