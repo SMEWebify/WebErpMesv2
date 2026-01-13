@@ -21,15 +21,13 @@ return new class extends Migration
         });
 
         $services = DB::table('methods_services')
-            ->select('id', 'companies_id')
-            ->whereNotNull('companies_id')
+            ->select('methods_services.id', 'methods_services.companies_id')
+            ->whereNotNull('methods_services.companies_id')
+            ->whereRaw('methods_services.companies_id REGEXP "^[0-9]+$"')
+            ->join('companies', 'companies.id', '=', DB::raw('methods_services.companies_id'))
             ->get();
 
         foreach ($services as $service) {
-            if (!is_numeric($service->companies_id)) {
-                continue;
-            }
-
             DB::table('methods_service_suppliers')->insert([
                 'methods_service_id' => $service->id,
                 'companies_id' => (int) $service->companies_id,
