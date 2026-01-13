@@ -29,6 +29,8 @@ class UpdateServicesRequest extends FormRequest
             'hourly_rate'=>'required',
             'margin'=>'required',
             'picture'=>'image|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'companies_ids' => 'nullable|array',
+            'companies_ids.*' => 'integer|exists:companies,id',
         ];
     }
 }

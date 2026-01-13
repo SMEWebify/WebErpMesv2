@@ -24,7 +24,7 @@ class ServicesController extends Controller
      */
     public function index()
     {
-        $MethodsServices = MethodsServices::orderBy('ordre')->get();
+        $MethodsServices = MethodsServices::with('Suppliers')->orderBy('ordre')->get();
         $CompanieSelect = $this->SelectDataService->getSupplier();
         return view('methods/methods-services', [
             'MethodsServices' => $MethodsServices,
@@ -40,7 +40,15 @@ class ServicesController extends Controller
      */
     public function store(StoreServicesRequest $request)
     {
-        $Service =  MethodsServices::create($request->only('code','ordre', 'label','type', 'hourly_rate','margin', 'color', 'companies_id'));
+        $supplierIds = collect($request->input('companies_ids', []))
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
+        $serviceData = $request->only('code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color');
+        $serviceData['companies_id'] = $supplierIds->first();
+        $Service = MethodsServices::create($serviceData);
+        $Service->Suppliers()->sync($supplierIds);
         
         if($request->hasFile('picture')){
             $Service = MethodsServices::findOrFail($Service->id);
@@ -66,7 +74,7 @@ class ServicesController extends Controller
     public function show($id)
     {
         $factory = app('Factory');  
-        $service = MethodsServices::findOrFail($id);
+        $service = MethodsServices::with('Suppliers')->findOrFail($id);
         return view('methods/methods-services-show', [
             'service' => $service,
             'factory' => $factory,
@@ -82,7 +90,15 @@ class ServicesController extends Controller
     public function update(UpdateServicesRequest $request)
     {
         $service = MethodsServices::findOrFail($request->id);
-        $service->update($request->only(['ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'companies_id']));
+        $supplierIds = collect($request->input('companies_ids', []))
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
+        $serviceData = $request->only(['ordre', 'label', 'type', 'hourly_rate', 'margin', 'color']);
+        $serviceData['companies_id'] = $supplierIds->first();
+        $service->update($serviceData);
+        $service->Suppliers()->sync($supplierIds);
         return redirect()->route('methods.service')->with('success', 'Successfully updated service.');
     }
 

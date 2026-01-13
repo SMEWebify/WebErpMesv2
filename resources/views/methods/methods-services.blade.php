@@ -121,13 +121,13 @@
                           <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}">
                         </div>
                         <div class="form-group">
-                          <label for="companies_id_{{ $MethodsService->id }}">{{ __('general_content.supplier_trans_key') }}</label>
-                            <select class="form-control" name="companies_id" id="companies_id_{{ $MethodsService->id }}">
-                              <option value="NULL">-</option>
+                          @php($selectedSuppliers = $MethodsService->Suppliers->pluck('id')->all())
+                          <label for="companies_ids_{{ $MethodsService->id }}">{{ __('general_content.supplier_trans_key') }}</label>
+                            <select class="form-control" name="companies_ids[]" id="companies_ids_{{ $MethodsService->id }}" multiple>
                               @forelse ($CompanieSelect as $item)
-                              <option value="{{ $item->id }}" @if($MethodsService->companies_id == $item->id  ) Selected @endif>{{ $item->label }}</option>
+                              <option value="{{ $item->id }}" @if(in_array($item->id, $selectedSuppliers, true)) Selected @endif>{{ $item->label }}</option>
                               @empty
-                              <option value="NULL">{{ __('general_content.no_select_company_trans_key') }}</option>
+                              <option value="" disabled>{{ __('general_content.no_select_company_trans_key') }}</option>
                               @endforelse
                             </select>
                         </div>
@@ -264,7 +264,14 @@
                 </div>
             </div>
             <div class="form-group">
-              @include('include.form.form-select-companie',['companiesId' =>  null])
+              <label for="companies_ids">{{ __('general_content.supplier_trans_key') }}</label>
+              <select class="form-control" name="companies_ids[]" id="companies_ids" multiple>
+                @forelse ($CompanieSelect as $item)
+                  <option value="{{ $item->id }}">{{ $item->label }}</option>
+                @empty
+                  <option value="" disabled>{{ __('general_content.no_select_company_trans_key') }}</option>
+                @endforelse
+              </select>
             </div>
           <!-- /.form-group -->
           </div>
