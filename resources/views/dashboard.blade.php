@@ -197,6 +197,8 @@
                   @if(2 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.in_progress_trans_key') }}</span>@endif
                   @if(3 == $LastOrder->statu )  <span class="badge badge-success">{{ __('general_content.delivered_trans_key') }}</span>@endif
                   @if(4 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.partly_delivered_trans_key') }}</span>@endif
+                  @if(5 == $LastOrder->statu )  <span class="badge badge-danger">{{ __('general_content.stopped_trans_key') }}</span>@endif
+                  @if(6 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.canceled_trans_key') }}</span>@endif
                 </td>
                 <td>{{ $LastOrder->formatted_total_price }}</td>
                 <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
