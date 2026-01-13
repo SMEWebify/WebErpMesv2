@@ -175,7 +175,7 @@ class QuoteLine extends Component
 
         if ($shouldSelect) {
             foreach ($lineIds as $lineId) {
-                $this->data[$lineId]['quote_line_id'] = $lineId;
+                $this->data[$lineId]['quote_line_id'] = true;
             }
         } else {
             foreach ($lineIds as $lineId) {
@@ -200,8 +200,7 @@ class QuoteLine extends Component
 
     private function isLineSelected(int $lineId): bool
     {
-        return isset($this->data[$lineId]['quote_line_id'])
-            && (int) $this->data[$lineId]['quote_line_id'] === $lineId;
+        return !empty($this->data[$lineId]['quote_line_id']);
     }
 
     private function getSelectableLineIds(): array
