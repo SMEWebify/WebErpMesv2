@@ -2,6 +2,7 @@
 
 namespace App\Models\Methods;
 
+use App\Models\Companies\Companies;
 use App\Models\Products\Products;
 use App\Models\Methods\MethodsFamilies;
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +41,12 @@ class MethodsServices extends Model
     public function Tasks()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function Suppliers()
+    {
+        return $this->belongsToMany(Companies::class, 'methods_service_suppliers', 'methods_service_id', 'companies_id')
+            ->withTimestamps();
     }
 
     /**
