@@ -62,6 +62,15 @@
                             <button type="Submit" wire:click.prevent="storePurchase()" class="btn btn-success btn-block">{{ __('general_content.new_purchase_document_trans_key') }}</button>
                         </div>
                     </div>
+                    <div class="form-group col-md-4">
+                        <label for="open-order-not-started">{{ __('general_content.open_orders_not_started_trans_key') }}</label>
+                        <button type="button" id="open-order-not-started" wire:click="exportOpenOrderNotStartedCsv" class="btn btn-outline-info btn-block">
+                            <i class="fas fa-file-csv mr-1"></i>
+                            {{ __('general_content.export_csv_trans_key') }}
+                            <span class="badge badge-light ml-2">{{ $openOrderNotStartedCount }}</span>
+                        </button>
+                        <small class="form-text text-muted">{{ __('general_content.open_orders_not_started_hint_trans_key') }}</small>
+                    </div>
                 </div>
                 
             </form>

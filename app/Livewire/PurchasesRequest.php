@@ -9,6 +9,7 @@ use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
 use App\Services\SelectDataService;
 use Illuminate\Support\Facades\App;
+use Carbon\Carbon;
 use App\Services\PurchaseOrderService;
 use App\Services\PurchaseQuotationService;
 use App\Models\Companies\CompaniesContacts;
@@ -132,9 +133,12 @@ class PurchasesRequest extends Component
                                                                                     $supplierQuery->where('companies_id', $this->companies_id);
                                                                                 });
                                                                             })->get();
+
+        $openOrderNotStartedCount = $this->getOpenOrderNotStartedTasksQuery()->count();
         return view('livewire.purchases-request', [
             'PurchasesRequestsLineslist' => $PurchasesRequestsLineslist,
             'userSelect' => $userSelect,
+            'openOrderNotStartedCount' => $openOrderNotStartedCount,
         ]);
     }
 
@@ -228,5 +232,91 @@ class PurchasesRequest extends Component
         else{
             return redirect()->back()->with('error', 'no document type');
         }
+    }
+
+    public function exportOpenOrderNotStartedCsv()
+    {
+        $tasks = $this->getOpenOrderNotStartedTasksQuery()
+                        ->with(['OrderLines.order.companie', 'Component', 'service'])
+                        ->get();
+
+        $filename = 'purchase-request-open-orders-not-started-' . now()->format('Y-m-d') . '.csv';
+
+        return response()->streamDownload(function () use ($tasks) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, [
+                'ExternalId',
+                'OF',
+                'Designation',
+                'Material',
+                'Thickness',
+                'Quantity',
+                'Orientation',
+                'CutDeadline',
+                'DeliveryDeadline',
+                'SymPath',
+                'DxfPath',
+                'Client',
+                'NextOperation',
+            ], ';');
+
+            foreach ($tasks as $task) {
+                $orderLine = $task->OrderLines;
+                $order = $orderLine?->order;
+                $component = $task->Component;
+                $service = $task->service;
+                $cutDeadline = $task->due_date ? $task->due_date->format('Y-m-d') : '';
+                $deliveryDeadline = $orderLine?->delivery_date
+                    ? Carbon::parse($orderLine->delivery_date)->format('Y-m-d')
+                    : '';
+
+                fputcsv($handle, [
+                    $task->id,
+                    $order?->code ?? '',
+                    $component?->label ?? $task->label ?? '',
+                    $task->material ?? $component?->material ?? '',
+                    $task->thickness ?? $component?->thickness ?? '',
+                    number_format($task->getQualityRequiredAttribute(), 0, '', ''),
+                    0,
+                    $cutDeadline,
+                    $deliveryDeadline,
+                    '',
+                    '',
+                    $order?->companie?->label ?? '',
+                    $service?->label ?? '',
+                ], ';');
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv']);
+    }
+
+    private function getOpenOrderNotStartedTasksQuery()
+    {
+        $statusIds = Status::whereIn('title', ['Open', 'No start', 'Not started'])->pluck('id')->all();
+
+        if (empty($statusIds)) {
+            $fallbackStatusId = Status::orderBy('order')->value('id');
+            $statusIds = $fallbackStatusId ? [$fallbackStatusId] : [];
+        }
+
+        return Task::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                    ->when(!empty($statusIds), function ($query) use ($statusIds) {
+                        return $query->whereIn('status_id', $statusIds);
+                    })
+                    ->whereNotNull('order_lines_id')
+                    ->whereHas('OrderLines.order', function ($query) {
+                        $query->where('statu', 1);
+                    })
+                    ->where(function ($query) {
+                        return $query
+                            ->where('type', '=', '2')
+                            ->orWhere('type', '=', '3')
+                            ->orWhere('type', '=', '4')
+                            ->orWhere('type', '=', '5')
+                            ->orWhere('type', '=', '6')
+                            ->orWhere('type', '=', '7');
+                    });
     }
 }
