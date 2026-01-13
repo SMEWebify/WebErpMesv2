@@ -761,6 +761,8 @@ return [
     'quotes_list_trans_key'                    => 'Quotes list',
     'quotes_lines_list_trans_key'              => 'Quotes lines list',
     'new_quote_trans_key'                      => 'New Quote',
+    'select_all_lines_trans_key'               => 'Select all',
+    'deselect_all_lines_trans_key'             => 'Deselect all',
     'header_line_ask_trans_key'                => 'Header line ?',
     'quote_not_open_trans_key'                 => 'Quote curently not open',
     'name_quote_trans_key'                     => 'Name of quote',
