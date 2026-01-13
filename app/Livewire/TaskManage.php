@@ -110,17 +110,23 @@ class TaskManage extends Component
 
     public function ChangeCodelabel()
     {
-        $Service = MethodsServices::select('id', 'ordre', 'label', 'margin' , 'hourly_rate')->where('id', $this->methods_services_id)->get();
-        if(count($Service) > 0){
-            $this->label =  $Service[0]->label;
-            $this->ordre =  $Service[0]->ordre;
+        $selection = $this->resolveServiceSelection();
+        $serviceId = $selection['service_id'];
+        $Service = $serviceId
+            ? MethodsServices::select('id', 'ordre', 'label', 'margin', 'hourly_rate')
+                ->where('id', $serviceId)
+                ->get()
+            : collect();
+        if (count($Service) > 0) {
+            $this->label = $Service[0]->label;
+            $this->ordre = $Service[0]->ordre;
             $this->methods_services_margin = $Service[0]->margin;
             $this->methods_services_hourly_rate = $Service[0]->hourly_rate;
-        }else{
+        } else {
             $this->label = '';
-            $this->ordre =10;
-            $this->methods_services_margin =0;
-            $this->methods_services_hourly_rate =0;
+            $this->ordre = 10;
+            $this->methods_services_margin = 0;
+            $this->methods_services_hourly_rate = 0;
             
         }
     }
@@ -174,6 +180,25 @@ class TaskManage extends Component
         }
 
         return $query->exists();
+    }
+
+    private function resolveServiceSelection(): array
+    {
+        $splitMethod = explode("-", (string) $this->methods_services_id, 2);
+
+        return [
+            'service_id' => isset($splitMethod[0]) && $splitMethod[0] !== '' ? (int) $splitMethod[0] : null,
+            'type' => $splitMethod[1] ?? null,
+        ];
+    }
+
+    private function resolveServiceCode(?int $serviceId): ?string
+    {
+        if (!$serviceId) {
+            return null;
+        }
+
+        return MethodsServices::whereKey($serviceId)->value('code');
     }
 
     public function mount($idType, $idPage, $idLine) 
@@ -320,11 +345,12 @@ class TaskManage extends Component
                 $this->nomenclature_lines_id = $idLine;
             }
             
-            $splitMethod = explode("-", $this->methods_services_id);
-            $this->methods_services_id =  $splitMethod[0]; 
-            $this->type =  $splitMethod[1]; 
+            $selection = $this->resolveServiceSelection();
+            $this->methods_services_id = $selection['service_id']; 
+            $this->type = $selection['type']; 
+            $serviceCode = $this->resolveServiceCode($this->methods_services_id);
             // Create Task
-            $taskData = ['code' => $this->label, 
+            $taskData = ['code' => $serviceCode, 
                         'label' => $this->label, 
                         'ordre' => $this->ordre, 
                         'quote_lines_id' => $this->quote_lines_id, 
@@ -481,9 +507,10 @@ class TaskManage extends Component
         // Validate request
         $this->validate();
 
-        $splitMethod = explode("-", $this->methods_services_id);
-        $this->methods_services_id =  $splitMethod[0]; 
-        $this->type =  $splitMethod[1]; 
+        $selection = $this->resolveServiceSelection();
+        $this->methods_services_id = $selection['service_id']; 
+        $this->type = $selection['type']; 
+        $serviceCode = $this->resolveServiceCode($this->methods_services_id);
 
         $task = Task::find($this->taskId);
         if ($this->toolIsAlreadyBooked($task)) {
@@ -495,6 +522,7 @@ class TaskManage extends Component
         $task->fill([
             'ordre' => $this->ordre, 
             'label' => $this->label,
+            'code' => $serviceCode,
             'methods_services_id' => $this->methods_services_id,  
             'component_id' => $this->component_id,  
             'seting_time' => $this->seting_time,   
