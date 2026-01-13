@@ -11,7 +11,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <select class="form-control"  wire:click.prevent="changeDocument()" wire:model.live="document_type" name="document_type" id="document_type">
+                            <select class="form-control" wire:model.live="document_type" name="document_type" id="document_type">
                                 <option value="">{{ __('general_content.select_document_trans_key') }}</option>
                                 <option value="PU">{{ __('general_content.purchase_order_trans_key') }}</option>
                                 <option value="PQ">{{ __('general_content.purchase_quotation_trans_key') }}</option>

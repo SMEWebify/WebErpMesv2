@@ -70,6 +70,12 @@ class PurchasesRequest extends Component
         // Get the last purchase and quotation codes
         $this->LastPurchase = $this->purchaseOrderService->generatePurchaseCode();
         $this->LastPurchaseQuotation = $this->purchaseQuotationService->generatePurchasesQuotationCode();
+        $this->changeDocument();
+    }
+
+    public function updatedDocumentType()
+    {
+        $this->changeDocument();
     }
     
     public function sortBy($field)
@@ -139,91 +145,88 @@ class PurchasesRequest extends Component
         // Check if any lines are selected
         $taskIds = collect($this->data)->pluck('task_id')->filter()->count();
 
-        if ($taskIds > 0) {
+        // Get default settings for the purchase order or quotation
+        $defaultSettings = [
+            'AccountingVat' => $this->purchaseOrderService->getAccountingVat(),
+            'defaultAddress' => CompaniesAddresses::getDefault(['companies_id' => $this->companies_id]),
+            'defaultContact' => CompaniesContacts::getDefault(['companies_id' => $this->companies_id]),
+        ];
 
-            // Get default settings for the purchase order or quotation
-            $defaultSettings = [
-                'AccountingVat' => $this->purchaseOrderService->getAccountingVat(),
-                'defaultAddress' => CompaniesAddresses::getDefault(['companies_id' => $this->companies_id]),
-                'defaultContact' => CompaniesContacts::getDefault(['companies_id' => $this->companies_id]),
-            ];
-    
-            // Check if all default settings are available
-            foreach ($defaultSettings as $key => $setting) {
-                if (is_null($setting)) {
-                    return redirect()->back()->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
-                }
-                $defaultSettings[$key] = $setting->id;
+        // Check if all default settings are available
+        foreach ($defaultSettings as $key => $setting) {
+            if (is_null($setting)) {
+                return redirect()->back()->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
+            }
+            $defaultSettings[$key] = $setting->id;
+        }
+
+        // Create puchase order
+        if($this->document_type == 'PU'){
+
+            // Get the status update for the purchase order
+            $statusUpdate = $this->purchaseOrderService->getStatusUpdate();
+
+            if (!$statusUpdate) {
+                return redirect()->back()->with('error', 'No status "Supplied" or "In progress" in kanban for defining progress');
             }
 
-            // Create puchase order
-            if($this->document_type == 'PU'){
+            // Create the purchase order
+            $PurchaseOrderCreated = $this->purchaseOrderService->createPurchaseOrder($this->companies_id, 
+                                                                $this->code , 
+                                                                $this->label , 
+                                                                $defaultSettings['defaultAddress'],
+                                                                $defaultSettings['defaultContact']);
 
-                // Get the status update for the purchase order
-                $statusUpdate = $this->purchaseOrderService->getStatusUpdate();
-    
-                if (!$statusUpdate) {
-                    return redirect()->back()->with('error', 'No status "Supplied" or "In progress" in kanban for defining progress');
-                }
+            if (!$PurchaseOrderCreated) {
+                return redirect()->back()->withErrors(['msg' => 'Something went wrong (like no default settings for address, contact or accounting vat)']);
+            }
 
-                // Create the purchase order
-                $PurchaseOrderCreated = $this->purchaseOrderService->createPurchaseOrder($this->companies_id, 
-                                                                    $this->code , 
-                                                                    $this->label , 
-                                                                    $defaultSettings['defaultAddress'],
-                                                                    $defaultSettings['defaultContact']);
-
-                if (!$PurchaseOrderCreated) {
-                    return redirect()->back()->withErrors(['msg' => 'Something went wrong (like no default settings for address, contact or accounting vat)']);
-                }
-
+            if ($taskIds > 0) {
                 // Process the purchase request lines
                 $this->purchaseOrderService->processPurchaseRequestLines(
                     $this->data,
                     $PurchaseOrderCreated,
                     $statusUpdate->id
                 );
-
-                return redirect()->route('purchases.show', ['id' => $PurchaseOrderCreated->id])
-                                    ->with('success', 'Successfully created new purchase order');
             }
-            // Create purchase quotation
-            elseif($this->document_type == 'PQ'){
 
-                // Get the status update for the purchase quotation
-                $statusUpdate = $this->purchaseQuotationService->getStatusUpdate();
-    
-                if (!$statusUpdate) {
-                    return redirect()->back()->with('error', 'No status "RFQ in progress" or "Started" in kanban for defining progress');
-                }
+            return redirect()->route('purchases.show', ['id' => $PurchaseOrderCreated->id])
+                                ->with('success', 'Successfully created new purchase order');
+        }
+        // Create purchase quotation
+        elseif($this->document_type == 'PQ'){
 
-                // Create the purchase quotation
-                $PurchaseQuotationCreated = $this->purchaseQuotationService->createPurchasesQuotation($this->companies_id, 
-                                                                                                    $this->code , 
-                                                                                                    $this->label , 
-                                                                                                    $defaultSettings['defaultAddress'],
-                                                                                                    $defaultSettings['defaultContact']);
+            // Get the status update for the purchase quotation
+            $statusUpdate = $this->purchaseQuotationService->getStatusUpdate();
 
-                if (!$PurchaseQuotationCreated) {
-                    return redirect()->back()->withErrors(['msg' => 'Something went wrong (like no default settings for address, contact or accounting vat)']);
-                }
+            if (!$statusUpdate) {
+                return redirect()->back()->with('error', 'No status "RFQ in progress" or "Started" in kanban for defining progress');
+            }
 
+            // Create the purchase quotation
+            $PurchaseQuotationCreated = $this->purchaseQuotationService->createPurchasesQuotation($this->companies_id, 
+                                                                                                $this->code , 
+                                                                                                $this->label , 
+                                                                                                $defaultSettings['defaultAddress'],
+                                                                                                $defaultSettings['defaultContact']);
+
+            if (!$PurchaseQuotationCreated) {
+                return redirect()->back()->withErrors(['msg' => 'Something went wrong (like no default settings for address, contact or accounting vat)']);
+            }
+
+            if ($taskIds > 0) {
                 // Process the purchase request lines
                 $this->purchaseQuotationService->processPurchaseRequestLines(
                     $this->data,
                     $PurchaseQuotationCreated,
                     $statusUpdate->id
                 );
-                    
-                return redirect()->route('purchases.quotations.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
             }
-            else{
-                return redirect()->back()->with('error', 'no document type');
-            }
+                
+            return redirect()->route('purchases.quotations.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
         }
         else{
-            $errors = $this->getErrorBag();
-            $errors->add('errors', 'no lines selected');
+            return redirect()->back()->with('error', 'no document type');
         }
     }
 }
