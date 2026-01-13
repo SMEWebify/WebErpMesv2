@@ -629,6 +629,8 @@ return [
     'order_to_be_delivered_trans_key'          => 'Pedidos pendientes de entrega',
     'delivered_month_in_progress_trans_key'    => 'Total entregado en el mes',
     'remaining_month_trans_key'                => 'Total restante por entregar',
+    'remaining_invoice_month_trans_key'        => 'Total restante por facturar',
+    'forecast_next_three_months_trans_key'     => 'Pronóstico para los próximos 3 meses',
 
         
     //COMPANIES

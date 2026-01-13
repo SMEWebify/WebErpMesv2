@@ -703,6 +703,7 @@ return [
     'delivered_month_in_progress_trans_key'    => '本月已交付总计',
     'remaining_month_trans_key'                => '本月剩余交付',
     'remaining_invoice_month_trans_key'        => '本月剩余开票',
+    'forecast_next_three_months_trans_key'     => '未来3个月预测',
     'service_rate_trans_key'                   => '服务率',
     'average_order_processing_time_trans_key'  => '平均处理时间',
     'order_processing_time_trans_key'          => '处理时间',

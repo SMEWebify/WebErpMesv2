@@ -280,7 +280,7 @@
     </div>
 
     <!-- TABLE: DELIVERED -->
-    <div class="col-lg-6 col-md-12">
+    <div class="col-lg-3 col-md-6">
       <x-adminlte-small-box title="{{ $deliveredMonthInProgress }} " 
                           text="{{ __('general_content.delivered_month_in_progress_trans_key') }}" 
                           icon="icon fas fa-info"
@@ -288,11 +288,27 @@
                           url="{{ route('orders') }}" 
                           url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>
-    <div class="col-lg-6 col-md-12">
+    <div class="col-lg-3 col-md-6">
       <x-adminlte-small-box title="{{ $remainingDeliveryOrder }} " 
                           text="{{ __('general_content.remaining_month_trans_key') }}" 
                           icon="icon fas fa-info"
                           theme="danger" 
+                          url="{{ route('orders') }}" 
+                          url-text="{{ __('general_content.view_details_trans_key') }}"/>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <x-adminlte-small-box title="{{ $remainingInvoiceOrder }} " 
+                          text="{{ __('general_content.remaining_invoice_month_trans_key') }}" 
+                          icon="icon fas fa-file-invoice-dollar"
+                          theme="info" 
+                          url="{{ route('invoices') }}" 
+                          url-text="{{ __('general_content.view_details_trans_key') }}"/>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <x-adminlte-small-box title="{{ $forecastNextThreeMonths }} " 
+                          text="{{ __('general_content.forecast_next_three_months_trans_key') }}" 
+                          icon="icon fas fa-chart-line"
+                          theme="teal" 
                           url="{{ route('orders') }}" 
                           url-text="{{ __('general_content.view_details_trans_key') }}"/>
     </div>

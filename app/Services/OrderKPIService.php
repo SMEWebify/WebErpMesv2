@@ -221,6 +221,79 @@ class OrderKPIService
     }
 
     /**
+     * Retrieves the monthly summary of orders remaining to invoice for a given month.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getOrderMonthlyRemainingToInvoiceByMonth($month, $year, $companyId = null)
+    {
+        $cacheKey = 'order_remaining_invoice_' . $year . '_month_' . $month . '_company_' . ($companyId ?? 'all');
+
+        return Cache::remember($cacheKey, now()->addMinutes(1), function () use ($companyId, $month, $year) {
+            $query = DB::table('order_lines')
+                        ->selectRaw('
+                            FLOOR(SUM((selling_price * invoiced_remaining_qty)-(selling_price * invoiced_remaining_qty)*(discount/100))) AS orderSum
+                        ')
+                        ->join('orders', 'order_lines.orders_id', '=', 'orders.id');
+
+                        $query->where(function ($subQuery) {
+                            $subQuery->where('order_lines.invoice_status', 1)
+                                        ->orWhere('order_lines.invoice_status', 2);
+                        })
+                        ->whereYear('order_lines.delivery_date', $year)
+                        ->whereMonth('order_lines.delivery_date', $month);
+
+                        if ($companyId) {
+                            $query->where('orders.companies_id', $companyId);
+                        }
+
+                        $result = $query->first();
+
+                        if (!$result || $result->orderSum === null) {
+                            return (object) ['orderSum' => 0];
+                        }
+
+                        return $result;
+        });
+    }
+
+    /**
+     * Retrieves the forecast total for the next months starting from a date.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getOrderForecastNextMonths($months = 3, $startDate = null)
+    {
+        $startDate = $startDate ? Carbon::parse($startDate)->startOfMonth() : now()->startOfMonth();
+        $endDate = (clone $startDate)->addMonths($months)->endOfMonth();
+        $cacheKey = 'order_forecast_next_months_' . $startDate->format('Y_m') . '_' . $months;
+
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($startDate, $endDate) {
+            $result = DB::table('order_lines')
+                        ->selectRaw('
+                            ROUND(SUM((selling_price * qty)-(selling_price * qty)*(discount/100)),2) AS orderSum
+                        ')
+                        ->leftJoin('orders', function($join) {
+                            $join->on('order_lines.orders_id', '=', 'orders.id')
+                                ->where('orders.type', '=', 1)
+                                ->where('orders.statu', '!=', 6);
+                        })
+                        ->whereIn('delivery_status', [1, 2])
+                        ->whereBetween('order_lines.delivery_date', [
+                            $startDate->toDateString(),
+                            $endDate->toDateString()
+                        ])
+                        ->first();
+
+            if (!$result || $result->orderSum === null) {
+                return (object) ['orderSum' => 0];
+            }
+
+            return $result;
+        });
+    }
+
+    /**
      * Retrieves the total amount summary of order for the comming current year.
      *
      * @return \Illuminate\Support\Collection
