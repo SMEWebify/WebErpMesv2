@@ -155,11 +155,15 @@ class HomeController extends Controller
         $deliveredMonthInProgress = Number::currency($deliveredMonthInProgress->orderSum ?? 0, $currency, config('app.locale'));
                                                 
         $remainingDeliveryOrder =   $this->orderKPIService->getOrderMonthlyRemainingToDelivery($CurentMonth, $CurentYear);
+        $remainingInvoiceOrder =   $this->orderKPIService->getOrderMonthlyRemainingToInvoiceByMonth($CurentMonth, $CurentYear);
+        $forecastNextThreeMonths = $this->orderKPIService->getOrderForecastNextMonths(3, Carbon::create($CurentYear, $CurentMonth, 1));
 
         $orderTotalFormattedDelivered =   Number::currency($orderTotalDelivered ?? 0, $currency, config('app.locale'));
         $orderTotalFormattedInvoiced =   Number::currency($orderTotaInvoiced ?? 0, $currency, config('app.locale'));
         $FormattedEstimatedBudgets =   Number::currency($EstimatedBudgets ?? 0, $currency, config('app.locale'));
         $remainingDeliveryOrder =   Number::currency($remainingDeliveryOrder->orderSum ?? 0, $currency, config('app.locale'));
+        $remainingInvoiceOrder =   Number::currency($remainingInvoiceOrder->orderSum ?? 0, $currency, config('app.locale'));
+        $forecastNextThreeMonths =   Number::currency($forecastNextThreeMonths->orderSum ?? 0, $currency, config('app.locale'));
 
         return view('dashboard', [
             'userRoleCount' => $userRoleCount,
@@ -179,7 +183,9 @@ class HomeController extends Controller
             'EstimatedBudgets' => $EstimatedBudgets,
             'FormattedEstimatedBudgets' => $FormattedEstimatedBudgets,
             'deliveredMonthInProgress' => $deliveredMonthInProgress,
-            'remainingDeliveryOrder' => $remainingDeliveryOrder
+            'remainingDeliveryOrder' => $remainingDeliveryOrder,
+            'remainingInvoiceOrder' => $remainingInvoiceOrder,
+            'forecastNextThreeMonths' => $forecastNextThreeMonths
         ])->with('data',$data);
     }
 
