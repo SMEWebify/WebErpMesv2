@@ -761,6 +761,8 @@ return [
     'quotes_list_trans_key'                    => 'Liste des devis',
     'quotes_lines_list_trans_key'              => 'Lignes de devis',
     'new_quote_trans_key'                      => 'Nouveau devis',
+    'select_all_lines_trans_key'               => 'Tout sélectionner',
+    'deselect_all_lines_trans_key'             => 'Tout désélectionner',
     'header_line_ask_trans_key'                => 'En-tête ?',
     'quote_not_open_trans_key'                 => 'Devis actuellement non ouvert',
     'name_quote_trans_key'                     => 'Nom du devis',

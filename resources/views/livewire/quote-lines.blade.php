@@ -603,6 +603,9 @@
                             <th>{{__('general_content.status_trans_key') }}</th>
                             <th></th>
                             <th >
+                                <button type="button" class="btn btn-outline-primary btn-sm mr-2" wire:click="toggleSelectAllLines">
+                                    {{ $selectAllLines ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
+                                </button>
                                 <a class="btn btn-primary btn-sm" wire:click="storeOrder({{ $QuoteId }})" href="#">
                                     <i class="fas fa-folder"></i>
                                     {{ __('general_content.new_order_trans_key') }}

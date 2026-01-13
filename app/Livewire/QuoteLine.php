@@ -69,6 +69,7 @@ class QuoteLine extends Component
 
     public $data = [];
     public $customRequirements = [];
+    public $selectAllLines = false;
 
     protected $orderService;
 
@@ -153,6 +154,7 @@ class QuoteLine extends Component
                                                             ->where('label','like', '%'.$this->search.'%')->get();
 
         $this->loadProductCustomFields($QuoteLineslist);
+        $this->syncSelectAllState($QuoteLineslist->pluck('id'));
 
         foreach ($QuoteLineslist as $line) {
             $detail = $line->QuoteLineDetails;
@@ -164,6 +166,54 @@ class QuoteLine extends Component
         return view('livewire.quote-lines', [
             'QuoteLineslist' => $QuoteLineslist,
         ]);
+    }
+
+    public function toggleSelectAllLines(): void
+    {
+        $shouldSelect = ! $this->selectAllLines;
+        $lineIds = $this->getSelectableLineIds();
+
+        if ($shouldSelect) {
+            foreach ($lineIds as $lineId) {
+                $this->data[$lineId]['quote_line_id'] = $lineId;
+            }
+        } else {
+            foreach ($lineIds as $lineId) {
+                unset($this->data[$lineId]);
+            }
+        }
+
+        $this->selectAllLines = $shouldSelect;
+    }
+
+    private function syncSelectAllState($lineIds): void
+    {
+        if ($lineIds->isEmpty()) {
+            $this->selectAllLines = false;
+            return;
+        }
+
+        $this->selectAllLines = $lineIds->every(function ($lineId) {
+            return $this->isLineSelected((int) $lineId);
+        });
+    }
+
+    private function isLineSelected(int $lineId): bool
+    {
+        return isset($this->data[$lineId]['quote_line_id'])
+            && (int) $this->data[$lineId]['quote_line_id'] === $lineId;
+    }
+
+    private function getSelectableLineIds(): array
+    {
+        if ($this->QuoteLineslist) {
+            return $this->QuoteLineslist->pluck('id')->all();
+        }
+
+        return QuoteLines::where('quotes_id', '=', $this->quotes_id)
+            ->where('label', 'like', '%' . $this->search . '%')
+            ->pluck('id')
+            ->all();
     }
 
     private function initializeCustomRequirements(): void
