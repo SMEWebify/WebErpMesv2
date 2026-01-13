@@ -264,9 +264,14 @@ class PurchasesRequest extends Component
             foreach ($tasks as $task) {
                 $orderLine = $task->OrderLines;
                 $order = $orderLine?->order;
-                $component = $task->Component;
+                $Designation = $orderLine?->label;
+                $Material = $orderLine?->OrderLineDetails->material;
+                
+                $Qty = $orderLine?->qty;
                 $service = $task->service;
                 $cutDeadline = $task->due_date ? $task->due_date->format('Y-m-d') : '';
+                $DxfPath = $orderLine?->OrderLineDetails->cad_file_path;
+                $SymPath = $orderLine?->OrderLineDetails->cam_file_path;
                 $deliveryDeadline = $orderLine?->delivery_date
                     ? Carbon::parse($orderLine->delivery_date)->format('Y-m-d')
                     : '';
@@ -274,15 +279,15 @@ class PurchasesRequest extends Component
                 fputcsv($handle, [
                     $task->id,
                     $order?->code ?? '',
-                    $component?->label ?? $task->label ?? '',
-                    $task->material ?? $component?->material ?? '',
+                    $Designation ?? '',
+                    $Material ?? '',
                     $task->thickness ?? $component?->thickness ?? '',
-                    number_format($task->getQualityRequiredAttribute(), 0, '', ''),
+                    $Qty,
                     0,
                     $cutDeadline,
                     $deliveryDeadline,
-                    '',
-                    '',
+                    $SymPath,
+                    $DxfPath,
                     $order?->companie?->label ?? '',
                     $service?->label ?? '',
                 ], ';');
