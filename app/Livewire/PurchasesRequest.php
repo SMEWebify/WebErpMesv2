@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;
 use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
@@ -134,7 +135,7 @@ class PurchasesRequest extends Component
                                                                                 });
                                                                             })->get();
 
-        $openOrderNotStartedCount = $this->getOpenOrderNotStartedTasksQuery()->count();
+        $openOrderNotStartedCount = $this->getOpenOrderNotStartedOrderLinesQuery()->count();
         return view('livewire.purchases-request', [
             'PurchasesRequestsLineslist' => $PurchasesRequestsLineslist,
             'userSelect' => $userSelect,
@@ -236,13 +237,13 @@ class PurchasesRequest extends Component
 
     public function exportOpenOrderNotStartedCsv()
     {
-        $tasks = $this->getOpenOrderNotStartedTasksQuery()
-                        ->with(['OrderLines.order.companie', 'Component', 'service'])
-                        ->get();
+        $orderLines = $this->getOpenOrderNotStartedOrderLinesQuery()
+                            ->with(['order.companie', 'OrderLineDetails', 'Task.service'])
+                            ->get();
 
         $filename = 'purchase-request-open-orders-not-started-' . now()->format('Y-m-d') . '.csv';
 
-        return response()->streamDownload(function () use ($tasks) {
+        return response()->streamDownload(function () use ($orderLines) {
             $handle = fopen('php://output', 'w');
 
             fputcsv($handle, [
@@ -261,28 +262,28 @@ class PurchasesRequest extends Component
                 'NextOperation',
             ], ';');
 
-            foreach ($tasks as $task) {
-                $orderLine = $task->OrderLines;
-                $order = $orderLine?->order;
-                $component = $task->Component;
-                $service = $task->service;
-                $cutDeadline = $task->due_date ? $task->due_date->format('Y-m-d') : '';
-                $deliveryDeadline = $orderLine?->delivery_date
+            foreach ($orderLines as $orderLine) {
+                $order = $orderLine->order;
+                $orderLineDetails = $orderLine->OrderLineDetails;
+                $nextTask = $orderLine->Task->first();
+                $service = $nextTask?->service;
+                $cutDeadline = $nextTask?->due_date ? $nextTask->due_date->format('Y-m-d') : '';
+                $deliveryDeadline = $orderLine->delivery_date
                     ? Carbon::parse($orderLine->delivery_date)->format('Y-m-d')
                     : '';
 
                 fputcsv($handle, [
-                    $task->id,
+                    $orderLine->id,
                     $order?->code ?? '',
-                    $component?->label ?? $task->label ?? '',
-                    $task->material ?? $component?->material ?? '',
-                    $task->thickness ?? $component?->thickness ?? '',
-                    number_format($task->getQualityRequiredAttribute(), 0, '', ''),
+                    $orderLine->label ?? '',
+                    $orderLineDetails?->material ?? '',
+                    $orderLineDetails?->thickness ?? '',
+                    $orderLine->qty,
                     0,
                     $cutDeadline,
                     $deliveryDeadline,
-                    '',
-                    '',
+                    $orderLineDetails?->cam_file_path ?? '',
+                    $orderLineDetails?->cad_file_path ?? '',
                     $order?->companie?->label ?? '',
                     $service?->label ?? '',
                 ], ';');
@@ -292,31 +293,13 @@ class PurchasesRequest extends Component
         }, $filename, ['Content-Type' => 'text/csv']);
     }
 
-    private function getOpenOrderNotStartedTasksQuery()
+    private function getOpenOrderNotStartedOrderLinesQuery()
     {
-        $statusIds = Status::whereIn('title', ['Open', 'No start', 'Not started'])->pluck('id')->all();
-
-        if (empty($statusIds)) {
-            $fallbackStatusId = Status::orderBy('order')->value('id');
-            $statusIds = $fallbackStatusId ? [$fallbackStatusId] : [];
-        }
-
-        return Task::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                    ->when(!empty($statusIds), function ($query) use ($statusIds) {
-                        return $query->whereIn('status_id', $statusIds);
-                    })
-                    ->whereNotNull('order_lines_id')
-                    ->whereHas('OrderLines.order', function ($query) {
-                        $query->where('statu', 1);
-                    })
-                    ->where(function ($query) {
-                        return $query
-                            ->where('type', '=', '2')
-                            ->orWhere('type', '=', '3')
-                            ->orWhere('type', '=', '4')
-                            ->orWhere('type', '=', '5')
-                            ->orWhere('type', '=', '6')
-                            ->orWhere('type', '=', '7');
-                    });
+        return OrderLines::query()
+            ->whereIn('tasks_status', [1, 2])
+            ->whereHas('order', function ($query) {
+                $query->where('statu', 1);
+            })
+            ->orderBy('order_lines.id');
     }
 }
