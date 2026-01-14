@@ -143,19 +143,35 @@
                             {{__('general_content.generic_trans_key') }} 
                             @endif
                         </td>
-                        <td>@if($PurchaseQuotationLine->tasks->OrderLines ?? null){{ $PurchaseQuotationLine->tasks->OrderLines->qty }} x {{ $PurchaseQuotationLine->tasks->qty }}@endif</td>
-                        <td>@if($PurchaseQuotationLine->tasks->OrderLines ?? null){{ $PurchaseQuotationLine->tasks->OrderLines->label }}@endif</td>
                         <td>
-                            <a href="{{ route('production.task.statu.id', ['id' => $PurchaseQuotationLine->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
-                            #{{ $PurchaseQuotationLine->tasks->id }} - {{ $PurchaseQuotationLine->tasks->label }}
-                            @if($PurchaseQuotationLine->tasks->component_id )
-                                - {{ $PurchaseQuotationLine->tasks->Component['label'] }}
+                          @if($PurchaseQuotationLine->tasks->OrderLines ?? null)
+                            {{ $PurchaseQuotationLine->tasks->OrderLines->qty }} x {{ $PurchaseQuotationLine->tasks->qty }}
+                          @else
+                            {{__('general_content.generic_trans_key') }}
+                          @endif
+                        </td>
+                        <td>
+                          @if($PurchaseQuotationLine->tasks->OrderLines ?? null)
+                            {{ $PurchaseQuotationLine->tasks->OrderLines->label }}
+                          @else
+                            {{ $PurchaseQuotationLine->label }}
+                          @endif
+                        </td>
+                        <td>
+                            @if($PurchaseQuotationLine->tasks)
+                              <a href="{{ route('production.task.statu.id', ['id' => $PurchaseQuotationLine->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                              #{{ $PurchaseQuotationLine->tasks->id }} - {{ $PurchaseQuotationLine->tasks->label }}
+                              @if($PurchaseQuotationLine->tasks->component_id )
+                                  - {{ $PurchaseQuotationLine->tasks->Component['label'] }}
+                              @endif
+                            @else
+                              {{ $PurchaseQuotationLine->label }}
                             @endif
                         </td>
                         
                         <td>
-                            @if($PurchaseQuotationLine->tasks->component_id ) 
-                            <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseQuotationLine->tasks->component_id])}}" />
+                            @if($PurchaseQuotationLine->tasks?->component_id ) 
+                              <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseQuotationLine->tasks->component_id])}}" />
                             @endif
                         </td>
                         <td>{{ number_format($PurchaseQuotationLine->qty_to_order, 0, '', ' ') }}</td>
@@ -165,7 +181,7 @@
                           @if($PurchaseQuotationLine->qty_to_order > $PurchaseQuotationLine->qty_accepted)
                             <div class="form-group">
                               <div class="custom-control custom-checkbox">
-                                <input type="hidden" value="{{ $PurchaseQuotationLine->tasks->id }}" name="PurchaseQuotationLineTaskid[]" >
+                                <input type="hidden" value="{{ $PurchaseQuotationLine->tasks->id ?? 0 }}" name="PurchaseQuotationLineTaskid[]" >
                                 <input class="custom-control-input" value="{{ $PurchaseQuotationLine->id }}" name="PurchaseQuotationLine[]" id="PurchaseQuotationLine.{{ $PurchaseQuotationLine->id }}" type="checkbox">
                                 <label for="PurchaseQuotationLine.{{ $PurchaseQuotationLine->id }}" class="custom-control-label">+</label>
                               </div>

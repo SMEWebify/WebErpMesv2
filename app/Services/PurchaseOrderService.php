@@ -110,6 +110,39 @@ class PurchaseOrderService
     }
 
     /**
+     * Create a new purchase order line from a quotation line.
+     *
+     * This method creates a purchase order line based on a generic quotation line.
+     *
+     * @param int $purchaseOrder The ID of the purchase order.
+     * @param \App\Models\Purchases\PurchaseQuotationLines $quotationLine The quotation line to convert.
+     * @param int $accountingVat The ID of the accounting VAT.
+     * @param int $ordre The order of the line.
+     * @param float|null $purchasePrice The purchase price applied to the line.
+     * @return \App\Models\Purchases\PurchaseLines The created purchase order line.
+     */
+    public function createPurchaseOrderLineFromQuotationLine($purchaseOrder, $quotationLine, $accountingVat, $ordre, $purchasePrice = null)
+    {
+        $finalPrice = (!empty($purchasePrice)) ? $purchasePrice : $quotationLine->unit_price;
+        return PurchaseLines::create([
+            'purchases_id' => $purchaseOrder,
+            'tasks_id' => 0,
+            'ordre' => $ordre,
+            'code' => null,
+            'product_id' => null,
+            'label' => $quotationLine->label ?? 'Generic line',
+            'qty' => $quotationLine->qty_to_order,
+            'selling_price' => $finalPrice,
+            'discount' => 0,
+            'unit_price_after_discount' => $finalPrice,
+            'total_selling_price' => $finalPrice * $quotationLine->qty_to_order,
+            'methods_units_id' => null,
+            'accounting_vats_id' => $accountingVat,
+            'statu' => 1,
+        ]);
+    }
+
+    /**
      * Get the default accounting VAT.
      *
      * This method retrieves the default accounting VAT from the database.
@@ -176,11 +209,19 @@ class PurchaseOrderService
         $accountingVat = $this->getAccountingVat();
         $ordre = 10;
         foreach ($quotationLines as $key => $line) {
-            $task = Task::find($taskIds[$key]);
-            $price = $prices[$key];
-            $this->createPurchaseOrderLine($purchaseOrder->id, $task, $accountingVat->id, $ordre, $price);
-            $this->updateTaskStatus($task->id, $statusUpdateId);
-            $this->updateQuotationLine($line, $task->getQualityRequiredAttribute());
+            $taskId = $taskIds[$key] ?? null;
+            $price = $prices[$key] ?? null;
+            $quotationLine = PurchaseQuotationLines::find($line);
+            $task = $taskId ? Task::find($taskId) : null;
+
+            if ($task) {
+                $this->createPurchaseOrderLine($purchaseOrder->id, $task, $accountingVat->id, $ordre, $price);
+                $this->updateTaskStatus($task->id, $statusUpdateId);
+                $this->updateQuotationLine($line, $task->getQualityRequiredAttribute());
+            } elseif ($quotationLine) {
+                $this->createPurchaseOrderLineFromQuotationLine($purchaseOrder->id, $quotationLine, $accountingVat->id, $ordre, $price);
+                $this->updateQuotationLine($line, $quotationLine->qty_to_order);
+            }
             $ordre += 10;
         }
     }
