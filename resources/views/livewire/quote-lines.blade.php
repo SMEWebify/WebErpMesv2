@@ -474,7 +474,7 @@
                                         </x-adminlte-modal>
                                     </div>
                                     <div class="input-group-prepend">
-                                        @if( $QuoteLine->product_id && $QuoteLine->Product->drawing_file)
+                                        @if($QuoteLine->product_id && $QuoteLine->Product && $QuoteLine->Product->drawing_file)
                                             <!-- Drawing link -->
                                             <x-button-text-view :bankFile="$QuoteLine->Product->drawing_file" />
                                         @endif
