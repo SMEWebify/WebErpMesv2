@@ -110,13 +110,14 @@ class PrintController extends Controller
         
         $formattedTotalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
         $formattedSubPrice = Number::currency($subPrice, $currency, config('app.locale'));
+        $normalizeCurrency = fn ($value) => $this->normalizePdfCurrency($value);
 
         $this->getDocumentLines($Document, 'invoiceLines');
         $image = $Factory->getImageFactoryPath();
         $resolver = app(PdfThemeResolver::class);
         $view = $resolver->resolveForDocument($Document, 'print/pdf-invoice', $Factory);
         $customCss = $Factory->pdf_custom_css;
-        $dompdf = PDF::loadView($view, compact('typeDocumentName', 'Document', 'Factory', 'image', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'customCss'));
+        $dompdf = PDF::loadView($view, compact('typeDocumentName', 'Document', 'Factory', 'image', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'customCss', 'normalizeCurrency'));
 
         // Récupération des informations client depuis le modèle associé
         $client = $Document->companie;
@@ -259,13 +260,14 @@ class PrintController extends Controller
 
         $formattedTotalPrice = Number::currency($totalPrice, $currency, config('app.locale'));
         $formattedSubPrice = Number::currency($subPrice, $currency, config('app.locale'));
+        $normalizeCurrency = fn ($value) => $this->normalizePdfCurrency($value);
 
         $this->getDocumentLines($Document, $this->getDocumentLinesKey($Document));
         $image = $Factory->getImageFactoryPath();
         $resolver = app(PdfThemeResolver::class);
         $resolvedView = $resolver->resolveForDocument($Document, $viewKey, $Factory);
         $customCss = $Factory->pdf_custom_css;
-        $pdf = PDF::loadView($resolvedView, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss'));
+        $pdf = PDF::loadView($resolvedView, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss', 'normalizeCurrency'));
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
@@ -324,5 +326,16 @@ class PrintController extends Controller
             default:
                 throw new \Exception('Unknown document type');
         }
+    }
+
+    /**
+     * Normalize currency spacing for PDF fonts.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    private function normalizePdfCurrency($value): string
+    {
+        return str_replace(["\u{00A0}", "\u{202F}"], ' ', (string) $value);
     }
 }

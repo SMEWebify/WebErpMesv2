@@ -133,7 +133,7 @@
                         </td>
                         <td>{{ $DocumentLine->supplier_ref }}</td>
                         <td>{{ $DocumentLine->qty }}</td>
-                        <td>{{ $DocumentLine->formatted_selling_price }}</td>
+                        <td>{{ $normalizeCurrency($DocumentLine->formatted_selling_price) }}</td>
                         <td>{{ $DocumentLine->discount }} %</td>
                         <td> 
                             @if($DocumentLine->accounting_vats_id)
