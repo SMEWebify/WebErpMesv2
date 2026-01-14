@@ -474,7 +474,7 @@
                                         </x-adminlte-modal>
                                     </div>
                                     <div class="input-group-prepend">
-                                        @if( $QuoteLine->product_id && $QuoteLine->Product->drawing_file)
+                                        @if($QuoteLine->product_id && $QuoteLine->Product && $QuoteLine->Product->drawing_file)
                                             <!-- Drawing link -->
                                             <x-button-text-view :bankFile="$QuoteLine->Product->drawing_file" />
                                         @endif
@@ -603,9 +603,18 @@
                             <th>{{__('general_content.status_trans_key') }}</th>
                             <th></th>
                             <th >
-                                <button type="button" class="btn btn-outline-primary btn-sm mr-2" wire:click="toggleSelectAllLines">
-                                    {{ $selectAllLines ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
-                                </button>
+                                <div class="custom-control custom-checkbox d-inline-block mr-2">
+                                    <input
+                                        class="custom-control-input"
+                                        id="select-all-quote-lines"
+                                        type="checkbox"
+                                        wire:click="toggleSelectAllLines"
+                                        @checked($selectAllLines)
+                                    >
+                                    <label class="custom-control-label" for="select-all-quote-lines">
+                                        {{ $selectAllLines ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
+                                    </label>
+                                </div>
                                 <a class="btn btn-primary btn-sm" wire:click="storeOrder({{ $QuoteId }})" href="#">
                                     <i class="fas fa-folder"></i>
                                     {{ __('general_content.new_order_trans_key') }}
