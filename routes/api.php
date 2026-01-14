@@ -54,3 +54,11 @@ Route::prefix('collaboration/whiteboards')->name('api.collaboration.whiteboards.
     Route::get('/{whiteboard}/files', [WhiteboardFileController::class, 'index'])->name('files.index');
     Route::post('/{whiteboard}/files', [WhiteboardFileController::class, 'store'])->name('files.store');
 });
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/inspection-projects/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show');
+    Route::get('/inspection-sessions/{id}', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@show');
+    Route::post('/inspection-measures', 'App\Http\Controllers\Inspection\InspectionMeasureController@store');
+    Route::put('/inspection-measures/{id}', 'App\Http\Controllers\Inspection\InspectionMeasureController@update');
+    Route::post('/inspection-nonconformities', 'App\Http\Controllers\Inspection\InspectionNonconformityController@store');
+});
