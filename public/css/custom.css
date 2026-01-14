@@ -207,9 +207,9 @@
     color: #0b1f2a;
 }
 
-.business-balance-table__group--danger {
-    background-color: #e76161;
-    color: #3a0f0f;
+.business-balance-table__group--neutral {
+    background-color: #d7dde5;
+    color: #1f2933;
 }
 
 .business-balance-table__group--warning {
@@ -231,14 +231,24 @@
     background-color: #e6f5ff;
 }
 
-.business-balance-table__subhead--danger,
-.business-balance-table__cell--danger {
-    background-color: #fde9e9;
+.business-balance-table__subhead--neutral,
+.business-balance-table__cell--neutral {
+    background-color: #eff2f6;
 }
 
 .business-balance-table__subhead--warning,
 .business-balance-table__cell--warning {
     background-color: #fff2e2;
+}
+
+.business-balance-table__cell--gap-positive {
+    background-color: #e6f7ed;
+    color: #0f3d1e;
+}
+
+.business-balance-table__cell--gap-negative {
+    background-color: #fde9e9;
+    color: #3a0f0f;
 }
 
 .business-balance-table__service-cell {
@@ -253,6 +263,16 @@
 .business-balance-table__total-row td {
     background-color: #f0f1f5;
     font-weight: 600;
+}
+
+.business-balance-table__total-row .business-balance-table__cell--gap-positive {
+    background-color: #d8f3e3;
+    color: #0f3d1e;
+}
+
+.business-balance-table__total-row .business-balance-table__cell--gap-negative {
+    background-color: #f9d6d6;
+    color: #3a0f0f;
 }
 
 .business-balance-info {
