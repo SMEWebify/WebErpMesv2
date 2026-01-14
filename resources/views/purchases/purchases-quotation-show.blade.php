@@ -137,21 +137,21 @@
                       @forelse($PurchaseQuotation->PurchaseQuotationLines as $PurchaseQuotationLine)
                       <tr>
                         <td>
-                            @if($PurchaseQuotationLine->tasks->OrderLines ?? null)
+                            @if($PurchaseQuotationLine->tasks?->OrderLines)
                                 <x-OrderButton id="{{ $PurchaseQuotationLine->tasks->OrderLines->orders_id }}" code="{{ $PurchaseQuotationLine->tasks->OrderLines->order->code }}"  /> 
                             @else
                             {{__('general_content.generic_trans_key') }} 
                             @endif
                         </td>
                         <td>
-                          @if($PurchaseQuotationLine->tasks->OrderLines ?? null)
+                          @if($PurchaseQuotationLine->tasks?->OrderLines)
                             {{ $PurchaseQuotationLine->tasks->OrderLines->qty }} x {{ $PurchaseQuotationLine->tasks->qty }}
                           @else
                             {{__('general_content.generic_trans_key') }}
                           @endif
                         </td>
                         <td>
-                          @if($PurchaseQuotationLine->tasks->OrderLines ?? null)
+                          @if($PurchaseQuotationLine->tasks?->OrderLines)
                             {{ $PurchaseQuotationLine->tasks->OrderLines->label }}
                           @else
                             {{ $PurchaseQuotationLine->label }}
