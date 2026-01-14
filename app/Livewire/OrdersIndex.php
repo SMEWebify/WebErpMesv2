@@ -29,8 +29,8 @@ class OrdersIndex extends Component
     public $viewType = 'table'; // Defaults to 'table'
 
     public $search = '';
-    public $sortField = 'created_at'; // default sorting field
-    public $sortAsc = false; // default sort direction
+    public $sortField = 'validity_date'; // default sorting field
+    public $sortAsc = true; // default sort direction
     public $searchIdStatus = '1';
 
     public $userSelect = [];
@@ -212,19 +212,17 @@ class OrdersIndex extends Component
     public function render()
     {
         if(is_numeric($this->idCompanie)){
-            $Orders = Orders::withCount('OrderLines')
+            $OrdersQuery = Orders::withCount('OrderLines')
                             ->where('companies_id', $this->idCompanie)
-                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
-                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                            ->paginate(15);
+                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%');
         }
         else{
-            $Orders = Orders::withCount('OrderLines')
+            $OrdersQuery = Orders::withCount('OrderLines')
                             ->where('label','like', '%'.$this->search.'%')
-                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
-                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                            ->paginate(15);
+                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%');
         }
+
+        $Orders = $this->applySorting($OrdersQuery)->paginate(15);
 
         $userSelect = User::select('id', 'name')->get();
         $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('active', 1)->get();
@@ -245,6 +243,17 @@ class OrdersIndex extends Component
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
             'type' => $this->type,
         ]);
+    }
+
+    private function applySorting($query)
+    {
+        if ($this->sortField === 'validity_date') {
+            return $query
+                ->orderByRaw('validity_date is null')
+                ->orderBy('validity_date', $this->sortAsc ? 'asc' : 'desc');
+        }
+
+        return $query->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc');
     }
 
     public function storeOrder(){
