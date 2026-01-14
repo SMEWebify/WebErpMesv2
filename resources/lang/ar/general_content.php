@@ -381,6 +381,8 @@ return [
     'new_invoice_document_trans_key'    => 'مستند فاتورة جديد',
     'new_purchase_document_trans_key'   => 'مستند شراء جديد',
     'export_csv_trans_key'              => 'تصدير CSV',
+    'sheet_metal_global_need_csv_trans_key' => 'CSV لتقدير الاحتياج العالمي للصفائح المعدنية',
+    'sheet_metal_global_need_csv_hint_trans_key' => 'تصدير CSV لتقدير الاحتياج العالمي للصفائح المعدنية.',
     'open_orders_not_started_trans_key' => 'طلبات مفتوحة / مهام غير مبدوءة',
     'open_orders_not_started_hint_trans_key' => 'تصدير أسطر الطلبات المفتوحة مع المهام غير المبدوءة.',
     
