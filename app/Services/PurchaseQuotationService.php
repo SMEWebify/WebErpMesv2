@@ -56,6 +56,7 @@ class PurchaseQuotationService
         return PurchaseQuotationLines::create([
             'purchases_quotation_id' => $purchaseQuotation->id,
             'tasks_id' => $task->id,
+            'label' => $task->label,
             'ordre' => $ordre, 
             //'supplier_ref' => , can be null
             'qty_to_order' => $task->getQualityRequiredAttribute(),

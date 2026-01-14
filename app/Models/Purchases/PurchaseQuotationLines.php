@@ -14,7 +14,8 @@ class PurchaseQuotationLines extends Model
 
     // Fillable attributes for mass assignment
     protected $fillable= ['purchases_quotation_id', 
-        'tasks_id', 
+        'tasks_id',
+        'label',
         'ordre',
         'qty_to_order',
         'unit_price',
