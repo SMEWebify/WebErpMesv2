@@ -3,7 +3,10 @@
 @section('title', __('general_content.quality_trans_key')) 
 
 @section('content_header')
-    <h1>{{ __('general_content.quality_trans_key') }}</h1>
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>{{ __('general_content.quality_trans_key') }}</h1>
+      <a class="btn btn-primary" href="{{ route('quality.inspection.projects') }}">Inspections - Projets</a>
+    </div>
 @stop
 
 @section('right-sidebar')

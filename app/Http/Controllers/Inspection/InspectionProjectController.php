@@ -52,6 +52,11 @@ class InspectionProjectController extends Controller
         return response()->json($projects);
     }
 
+    public function indexView()
+    {
+        return view('quality/quality-inspection-projects');
+    }
+
     /**
      * @return \Illuminate\Http\JsonResponse
      */
