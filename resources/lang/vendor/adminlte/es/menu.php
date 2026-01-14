@@ -17,4 +17,5 @@ return [
     'warning'                       => 'Advertencia',
     'information'                   => 'Información',
     'whiteboard_trans_key'          => 'Pizarra',
+    'inspection_trans_key'                 => 'Inspection',
 ];

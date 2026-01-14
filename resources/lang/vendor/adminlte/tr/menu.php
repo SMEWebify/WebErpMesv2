@@ -16,4 +16,5 @@ return [
     'important'                     => 'Önemli',
     'warning'                       => 'Uyarı',
     'information'                   => 'Bilgi',
+    'inspection_trans_key'                 => 'Inspection',
 ];
