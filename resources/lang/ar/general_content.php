@@ -12,6 +12,7 @@ return [
     'closed_trans_key'                         => 'مغلق',
     'obsolete_trans_key'                       => 'مهمل',
     'started_trans_key'                        => 'بدأ',
+    'planned_trans_key'                        => 'مخطط',
     'in_progress_trans_key'                    => 'قيد التقدم',
     'finished_trans_key'                       => 'منتهي',
     'suspended_trans_key'                      => 'معلق',

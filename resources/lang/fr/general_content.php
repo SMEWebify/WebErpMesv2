@@ -12,6 +12,7 @@ return [
     'closed_trans_key'                         => 'Fermée',
     'obsolete_trans_key'                       => 'Obselète',
     'started_trans_key'                        => 'Démarer',
+    'planned_trans_key'                        => 'Prévue',
     'in_progress_trans_key'                    => 'En cours',
     'finished_trans_key'                       => 'Fini',
     'suspended_trans_key'                      => 'Suspendue',

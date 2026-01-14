@@ -4,6 +4,7 @@ return [
     //STATUS
     'open_trans_key'                           => 'Mở',
     'started_trans_key'                        => 'Đã bắt đầu',
+    'planned_trans_key'                        => 'Dự kiến',
     'in_progress_trans_key'                    => 'Tiến trình',
     'finished_trans_key'                       => 'Đã kết thúc',
     'delivered_trans_key'                      => 'Đã giao hàng',

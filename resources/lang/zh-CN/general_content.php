@@ -12,6 +12,7 @@ return [
     'closed_trans_key'                         => '已关闭',
     'obsolete_trans_key'                       => '过时',
     'started_trans_key'                        => '已开始',
+    'planned_trans_key'                        => '计划',
     'in_progress_trans_key'                    => '进行中',
     'finished_trans_key'                       => '已完成',
     'suspended_trans_key'                      => '已暂停',

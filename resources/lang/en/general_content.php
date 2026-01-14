@@ -12,6 +12,7 @@ return [
     'closed_trans_key'                         => 'Closed',
     'obsolete_trans_key'                       => 'Obsolete',
     'started_trans_key'                        => 'Started',
+    'planned_trans_key'                        => 'Planned',
     'in_progress_trans_key'                    => 'In Progress',
     'finished_trans_key'                       => 'Finished',
     'suspended_trans_key'                      => 'Suspended',
