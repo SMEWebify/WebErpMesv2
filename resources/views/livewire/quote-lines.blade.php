@@ -42,7 +42,22 @@
                             <th>{{ __('general_content.vat_trans_key') }}</th>
                             <th>{{ __('general_content.delivery_date_trans_key') }}</th>
                             <th>{{__('general_content.status_trans_key') }}</th>
-                            <th colspan="2">{{__('general_content.action_trans_key') }}</th>
+                            <th>{{__('general_content.action_trans_key') }}</th>
+                            <th>
+                                
+                                <div class="custom-control custom-checkbox d-inline-block mr-2">
+                                    <input
+                                        class="custom-control-input"
+                                        id="select-all-quote-lines"
+                                        type="checkbox"
+                                        wire:click="toggleSelectAllLines"
+                                        @checked($selectAllLines)
+                                    >
+                                    <label class="custom-control-label" for="select-all-quote-lines">
+                                        {{ $selectAllLines ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
+                                    </label>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -603,18 +618,6 @@
                             <th>{{__('general_content.status_trans_key') }}</th>
                             <th></th>
                             <th >
-                                <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                    <input
-                                        class="custom-control-input"
-                                        id="select-all-quote-lines"
-                                        type="checkbox"
-                                        wire:click="toggleSelectAllLines"
-                                        @checked($selectAllLines)
-                                    >
-                                    <label class="custom-control-label" for="select-all-quote-lines">
-                                        {{ $selectAllLines ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
-                                    </label>
-                                </div>
                                 <a class="btn btn-primary btn-sm" wire:click="storeOrder({{ $QuoteId }})" href="#">
                                     <i class="fas fa-folder"></i>
                                     {{ __('general_content.new_order_trans_key') }}

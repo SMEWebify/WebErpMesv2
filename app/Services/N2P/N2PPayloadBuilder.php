@@ -66,7 +66,7 @@ class N2PPayloadBuilder
           ]);
 
         $job = [
-            'of_code' => $order->code ?? "OF" . $orderLine->id,
+            'of_code' => "OF" . $orderLine->id,
             'line_ref' => (string) $orderLine->getKey(),
             'status' => $jobStatus,
             'priority' => $priority,
