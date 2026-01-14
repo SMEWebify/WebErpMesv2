@@ -16,4 +16,5 @@ return [
     'important'                     => 'Важливо',
     'warning'                       => 'Увага',
     'information'                   => 'Інформація',
+    'inspection_trans_key'                 => 'Inspection',
 ];

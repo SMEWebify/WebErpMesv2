@@ -16,4 +16,5 @@ return [
     'important'                     => 'ສຳຄັນ',
     'warning'                       => 'ຄຳເຕືອນ',
     'information'                   => 'ຂໍ້ມູນ',
+    'inspection_trans_key'                 => 'Inspection',
 ];

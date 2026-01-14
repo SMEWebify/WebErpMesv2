@@ -54,6 +54,7 @@ return [
     'derogations_trans_key'                    => 'Derogations',
     'non_conformities_trans_key'               => 'Non conformities',
     'amdec_trans_key'                          => 'FMEA',
+    'inspection_trans_key'                 => 'Inspection',
     'settings_trans_key'                       => 'Settings',
     'settings_time_trans_key'                  => 'Settings time',
     'methods_trans_key'                        => 'Methods',

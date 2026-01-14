@@ -16,4 +16,5 @@ return [
     'important'                     => '重要',
     'warning'                       => '警告',
     'information'                   => 'インフォメーション',
+    'inspection_trans_key'                 => 'Inspection',
 ];

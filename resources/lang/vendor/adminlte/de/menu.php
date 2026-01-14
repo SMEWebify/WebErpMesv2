@@ -16,4 +16,5 @@ return [
     'important'                     => 'Wichtig',
     'warning'                       => 'Warnung',
     'information'                   => 'Information',
+    'inspection_trans_key'                 => 'Inspection',
 ];

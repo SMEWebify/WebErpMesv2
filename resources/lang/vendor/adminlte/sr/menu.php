@@ -18,4 +18,5 @@ return [
     'information'                   => 'Informacije',
     'menu'                          => 'MENI',
     'users'                         => 'Korisnici',
+    'inspection_trans_key'                 => 'Inspection',
 ];

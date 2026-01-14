@@ -545,6 +545,11 @@ return [
                     'icon_color' => 'danger',
                 ],
                 [
+                    'text' => 'inspection_trans_key',
+                    'url'  => 'inspection-projects',
+                    'icon_color' => 'info',
+                ],
+                [
                     'text' => 'amdec_trans_key',
                     'url'  => 'quality/amdec',
                     'icon_color' => 'teal',
