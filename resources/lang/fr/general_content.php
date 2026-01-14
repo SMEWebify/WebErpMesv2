@@ -438,6 +438,8 @@ return [
     'new_invoice_document_trans_key'           => 'Nouvelle facture',
     'new_purchase_document_trans_key'          => 'Nouvelle commande d\'achat',
     'export_csv_trans_key'                     => 'Exporter CSV',
+    'sheet_metal_global_need_csv_trans_key'    => 'CSV pour estimation du besoin de tôle globale',
+    'sheet_metal_global_need_csv_hint_trans_key' => 'Exporter un CSV pour estimer le besoin global en tôle.',
     'open_orders_not_started_trans_key'        => 'Commandes ouvertes / tâches non commencées',
     'open_orders_not_started_hint_trans_key'   => 'Exporter les lignes des commandes ouvertes avec tâches non commencées.',
 

@@ -428,6 +428,8 @@ return [
     'new_invoice_document_trans_key'           => '新建发票',
     'new_purchase_document_trans_key'          => '新建采购单',
     'export_csv_trans_key'                     => '导出 CSV',
+    'sheet_metal_global_need_csv_trans_key'    => '用于估算全局板材需求的 CSV',
+    'sheet_metal_global_need_csv_hint_trans_key' => '导出 CSV 以估算全局板材需求。',
     'open_orders_not_started_trans_key'        => '开放订单 / 未开始任务',
     'open_orders_not_started_hint_trans_key'   => '导出包含未开始任务的开放订单行。',
 

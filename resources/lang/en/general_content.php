@@ -438,6 +438,8 @@ return [
     'new_invoice_document_trans_key'           => 'New invoice document',
     'new_purchase_document_trans_key'          => 'New purchase document',
     'export_csv_trans_key'                     => 'Export CSV',
+    'sheet_metal_global_need_csv_trans_key'    => 'CSV for global sheet metal needs estimate',
+    'sheet_metal_global_need_csv_hint_trans_key' => 'Export a CSV to estimate the global sheet metal needs.',
     'open_orders_not_started_trans_key'        => 'Open orders / not started tasks',
     'open_orders_not_started_hint_trans_key'   => 'Export lines from open orders with not started tasks.',
     

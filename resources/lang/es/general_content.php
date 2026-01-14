@@ -378,6 +378,8 @@ return [
     'new_invoice_document_trans_key'           => 'Nuevo documento de factura',
     'new_purchase_document_trans_key'          => 'Nuevo documento de compra',
     'export_csv_trans_key'                     => 'Exportar CSV',
+    'sheet_metal_global_need_csv_trans_key'    => 'CSV para estimar la necesidad global de chapa',
+    'sheet_metal_global_need_csv_hint_trans_key' => 'Exportar un CSV para estimar la necesidad global de chapa.',
     'open_orders_not_started_trans_key'        => 'Pedidos abiertos / tareas no iniciadas',
     'open_orders_not_started_hint_trans_key'   => 'Exportar líneas de pedidos abiertos con tareas no iniciadas.',
 
