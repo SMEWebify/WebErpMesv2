@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
 
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
 
-            $OrdersNotFinishCount = Orders::where('statu', '!=', '3')->count();
+            $OrdersNotFinishCount = Orders::whereNotIn('statu', [3, 6])->count();
             
             $DeliverysRequestsCount = OrderLines::where(
                 function($query) {
