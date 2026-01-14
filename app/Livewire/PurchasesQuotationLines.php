@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Admin\Factory;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Purchases\PurchaseQuotationLines;
 
@@ -17,6 +18,7 @@ class PurchasesQuotationLines extends Component
     public $qty_to_order = 0;
     public $unit_price = 0;
     public $OrderStatu;
+    public $Factory;
 
     public function mount($purchaseQuotationId)
     {
@@ -25,6 +27,7 @@ class PurchasesQuotationLines extends Component
         $this->purchase_quotation_id = $quotation->id;
         $this->OrderStatu = $quotation->statu;
         $this->ordre = $this->getNextQuotationLineOrder($quotation->id);
+        $this->Factory = Factory::first();
     }
 
     public function render()
