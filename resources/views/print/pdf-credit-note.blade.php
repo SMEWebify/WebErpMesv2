@@ -123,7 +123,7 @@
                         </td>
                         <td>{{ $DocumentLine->qty }}</td>
                         <td>{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
-                        <td>{{ $DocumentLine->OrderLine->formatted_selling_price }}</td>
+                        <td>{{ $normalizeCurrency($DocumentLine->OrderLine->formatted_selling_price) }}</td>
                         <td align="center">{{ $DocumentLine->OrderLine->discount }} %</td>
                         <td>{{ $DocumentLine->OrderLine->VAT['rate'] }} %</td>
                         @if($DocumentLine->OrderLine->delivery_date )
