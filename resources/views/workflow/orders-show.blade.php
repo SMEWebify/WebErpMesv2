@@ -358,7 +358,7 @@
                 <tr class="business-balance-table__group-row">
                     <th></th>
                     <th colspan="3" class="business-balance-table__group business-balance-table__group--info">{{ __('general_content.manufacturing_range_trans_key') }}</th>
-                    <th colspan="2" class="business-balance-table__group business-balance-table__group--danger">{{ __('general_content.accomplished_trans_key') }}</th>
+                    <th colspan="2" class="business-balance-table__group business-balance-table__group--neutral">{{ __('general_content.accomplished_trans_key') }}</th>
                     <th colspan="2" class="business-balance-table__group business-balance-table__group--warning">{{ __('general_content.gap_trans_key') }}</th>
                 </tr>
                   <tr class="business-balance-table__subhead-row">
@@ -366,8 +366,8 @@
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.hours_trans_key') }}</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.selling_price_trans_key') }} ({{ $Factory->curency }})</th>
-                      <th class="business-balance-table__subhead business-balance-table__subhead--danger">{{ __('general_content.hours_trans_key') }}</th>
-                      <th class="business-balance-table__subhead business-balance-table__subhead--danger">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--neutral">{{ __('general_content.hours_trans_key') }}</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--neutral">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--warning">{{ __('general_content.hours_trans_key') }}</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--warning">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
                   </tr>
@@ -379,10 +379,10 @@
                           <td class="business-balance-table__cell business-balance-table__cell--info">{{ $data['total_hours'] }} h</td>
                           <td class="business-balance-table__cell business-balance-table__cell--info">{{ $data['total_display_cost'] }}</td>
                           <td class="business-balance-table__cell business-balance-table__cell--info">{{ $data['total_display_price'] }}</td>
-                          <td class="business-balance-table__cell business-balance-table__cell--danger">{{ $data['realized_hours'] }} h</td>
-                          <td class="business-balance-table__cell business-balance-table__cell--danger">{{ $data['realized_display_cost'] }}</td>
-                          <td class="business-balance-table__cell business-balance-table__cell--warning">{{ $data['difference_hours'] }} h</td>
-                          <td class="business-balance-table__cell business-balance-table__cell--warning">{{ $data['difference_display_cost'] }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--neutral">{{ $data['realized_hours'] }} h</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--neutral">{{ $data['realized_display_cost'] }}</td>
+                          <td class="business-balance-table__cell {{ $data['difference_hours'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}">{{ $data['difference_hours'] }} h</td>
+                          <td class="business-balance-table__cell {{ $data['difference_cost'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}">{{ $data['difference_display_cost'] }}</td>
                       </tr>
                   @empty
                   <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
@@ -396,8 +396,8 @@
                   <td><strong>{{ $businessBalancetotals['total_display_price'] }} </strong></td>
                   <td><strong>{{ $businessBalancetotals['realized_hours'] }} h</strong></td>
                   <td><strong>{{ $businessBalancetotals['realized_display_cost'] }} </strong></td>
-                  <td><strong>{{ $businessBalancetotals['difference_hours'] }} h</strong></td>
-                  <td><strong>{{ $businessBalancetotals['difference_display_cost'] }} </strong></td>
+                  <td class="business-balance-table__cell {{ $businessBalancetotals['difference_hours'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}"><strong>{{ $businessBalancetotals['difference_hours'] }} h</strong></td>
+                  <td class="business-balance-table__cell {{ $businessBalancetotals['difference_cost'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}"><strong>{{ $businessBalancetotals['difference_display_cost'] }} </strong></td>
                 </tr>
               </tfoot>
             </table>
