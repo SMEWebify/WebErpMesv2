@@ -16,22 +16,42 @@
                             <div class="form-row">
                                 <div class="form-group col-md-2">
                                     <label for="ordre">{{ __('general_content.sort_trans_key') }} :</label>
-                                    <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" min="0" wire:model.live="ordre">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model.live="ordre">
+                                    </div>
                                     @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="line_label">{{ __('general_content.description_trans_key') }}</label>
-                                    <input type="text" class="form-control @error('line_label') is-invalid @enderror" id="line_label" wire:model.live="line_label">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-tags"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control @error('line_label') is-invalid @enderror" id="line_label" placeholder="{{ __('general_content.description_trans_key') }}" wire:model.live="line_label">
+                                    </div>
                                     @error('line_label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label for="qty_to_order">{{ __('general_content.qty_trans_key') }}</label>
-                                    <input type="number" class="form-control @error('qty_to_order') is-invalid @enderror" id="qty_to_order" min="0" wire:model.live="qty_to_order">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-times"></i></span>
+                                        </div>
+                                        <input type="number" class="form-control @error('qty_to_order') is-invalid @enderror" id="qty_to_order" placeholder="{{ __('general_content.qty_trans_key') }}" min="0" wire:model.live="qty_to_order">
+                                    </div>
                                     @error('qty_to_order') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label for="unit_price">{{ __('general_content.price_trans_key') }}</label>
-                                    <input type="number" class="form-control @error('unit_price') is-invalid @enderror" id="unit_price" min="0" step="0.01" wire:model.live="unit_price">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">{{ $Factory->curency ?? 'EUR' }}</span>
+                                        </div>
+                                        <input type="number" class="form-control @error('unit_price') is-invalid @enderror" id="unit_price" placeholder="{{ __('general_content.price_trans_key') }}" min="0" step="0.01" wire:model.live="unit_price">
+                                    </div>
                                     @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-2 d-flex align-items-end">
