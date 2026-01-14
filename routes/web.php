@@ -567,6 +567,22 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
+    Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Inspection\InspectionProjectController@index')->name('inspection.projects.index');
+        Route::post('/', 'App\Http\Controllers\Inspection\InspectionProjectController@store')->name('inspection.projects.store');
+        Route::get('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show')->name('inspection.projects.show');
+        Route::put('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@update')->name('inspection.projects.update');
+        Route::post('/{id}/documents', 'App\Http\Controllers\Inspection\InspectionDocumentController@store')->name('inspection.projects.documents.store');
+        Route::post('/{id}/control-points', 'App\Http\Controllers\Inspection\InspectionControlPointController@store')->name('inspection.projects.points.store');
+        Route::put('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@update')->name('inspection.points.update');
+        Route::delete('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@destroy')->name('inspection.points.destroy');
+        Route::post('/{id}/sessions', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@store')->name('inspection.projects.sessions.store');
+        Route::post('/sessions/{id}/submit', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@submit')->name('inspection.sessions.submit');
+        Route::post('/sessions/{id}/close', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@close')->name('inspection.sessions.close');
+        Route::get('/{id}/export/pdf', 'App\Http\Controllers\Inspection\InspectionProjectController@exportPdf')->name('inspection.projects.export.pdf');
+        Route::get('/{id}/export/xlsx', 'App\Http\Controllers\Inspection\InspectionProjectController@exportXlsx')->name('inspection.projects.export.xlsx');
+    });
+
     Route::group(['prefix' => 'methods', 'middleware' => ['auth', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Methods\MethodsController@index')->name('methods');
