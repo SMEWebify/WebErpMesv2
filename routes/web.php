@@ -511,6 +511,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
+        Route::get('/inspection-projects', 'App\Http\Controllers\Inspection\InspectionProjectController@indexView')->name('quality.inspection.projects');
     
         // Routes for Action
         Route::group(['prefix' => 'action'], function () {
