@@ -357,7 +357,7 @@
               <thead>
                 <tr class="business-balance-table__group-row">
                     <th></th>
-                    <th colspan="3" class="business-balance-table__group business-balance-table__group--info">{{ __('general_content.manufacturing_range_trans_key') }}</th>
+                    <th colspan="3" class="business-balance-table__group business-balance-table__group--info">{{ __('general_content.planned_trans_key') }}</th>
                     <th colspan="2" class="business-balance-table__group business-balance-table__group--danger">{{ __('general_content.accomplished_trans_key') }}</th>
                     <th colspan="2" class="business-balance-table__group business-balance-table__group--warning">{{ __('general_content.gap_trans_key') }}</th>
                 </tr>
