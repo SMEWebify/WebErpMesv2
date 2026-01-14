@@ -1,0 +1,114 @@
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use App\Models\Purchases\PurchasesQuotation;
+use App\Models\Purchases\PurchaseQuotationLines;
+
+class PurchasesQuotationLines extends Component
+{
+    public $purchaseQuotationId;
+    public $purchase_quotation_id;
+    public $purchase_quotation_line_id;
+    public $updateLines = false;
+    public $ordre = 10;
+    public $line_label = '';
+    public $qty_to_order = 0;
+    public $unit_price = 0;
+    public $OrderStatu;
+
+    public function mount($purchaseQuotationId)
+    {
+        $this->purchaseQuotationId = $purchaseQuotationId;
+        $quotation = PurchasesQuotation::select('id', 'statu')->findOrFail($purchaseQuotationId);
+        $this->purchase_quotation_id = $quotation->id;
+        $this->OrderStatu = $quotation->statu;
+        $this->ordre = $this->getNextQuotationLineOrder($quotation->id);
+    }
+
+    public function render()
+    {
+        $purchaseQuotation = PurchasesQuotation::with([
+            'PurchaseQuotationLines.tasks.OrderLines.order',
+            'PurchaseQuotationLines.tasks.Component',
+        ])->findOrFail($this->purchaseQuotationId);
+
+        return view('livewire.purchases-quotation-lines', [
+            'PurchaseQuotation' => $purchaseQuotation,
+        ]);
+    }
+
+    public function storePurchaseQuotationLine()
+    {
+        $this->validate([
+            'purchase_quotation_id' => 'required|numeric',
+            'ordre' => 'required|numeric|gt:0',
+            'line_label' => 'required|string',
+            'qty_to_order' => 'required|numeric|gt:0',
+            'unit_price' => 'required|numeric|min:0',
+        ]);
+
+        PurchaseQuotationLines::create([
+            'purchases_quotation_id' => $this->purchase_quotation_id,
+            'tasks_id' => 0,
+            'label' => $this->line_label,
+            'ordre' => $this->ordre,
+            'qty_to_order' => $this->qty_to_order,
+            'unit_price' => $this->unit_price,
+            'total_price' => $this->unit_price * $this->qty_to_order,
+        ]);
+
+        session()->flash('success', 'Line added Successfully');
+        $this->resetLineFields();
+    }
+
+    public function editPurchaseQuotationLine($id)
+    {
+        $line = PurchaseQuotationLines::findOrFail($id);
+        $this->purchase_quotation_line_id = $id;
+        $this->purchase_quotation_id = $line->purchases_quotation_id;
+        $this->ordre = $line->ordre;
+        $this->line_label = $line->label;
+        $this->qty_to_order = $line->qty_to_order;
+        $this->unit_price = $line->unit_price;
+        $this->updateLines = true;
+    }
+
+    public function updatePurchaseQuotationLine()
+    {
+        $this->validate([
+            'purchase_quotation_id' => 'required|numeric',
+            'ordre' => 'required|numeric|gt:0',
+            'line_label' => 'required|string',
+            'qty_to_order' => 'required|numeric|gt:0',
+            'unit_price' => 'required|numeric|min:0',
+        ]);
+
+        PurchaseQuotationLines::find($this->purchase_quotation_line_id)->fill([
+            'ordre' => $this->ordre,
+            'label' => $this->line_label,
+            'qty_to_order' => $this->qty_to_order,
+            'unit_price' => $this->unit_price,
+            'total_price' => $this->unit_price * $this->qty_to_order,
+        ])->save();
+
+        session()->flash('success', 'Line Updated Successfully');
+        $this->resetLineFields();
+        $this->updateLines = false;
+    }
+
+    private function resetLineFields()
+    {
+        $this->ordre = $this->getNextQuotationLineOrder($this->purchase_quotation_id);
+        $this->line_label = '';
+        $this->qty_to_order = 0;
+        $this->unit_price = 0;
+    }
+
+    private function getNextQuotationLineOrder($quotationId)
+    {
+        $lastOrder = PurchaseQuotationLines::where('purchases_quotation_id', $quotationId)->max('ordre');
+        return $lastOrder ? $lastOrder + 10 : 10;
+    }
+}
