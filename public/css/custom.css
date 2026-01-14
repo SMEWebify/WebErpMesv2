@@ -143,6 +143,16 @@
 
 #tblDemo th,
 #tblDemo td {
+    vertical-align: middle;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+#tblDemo th,
+#tblDemo td {
     width: 100px;
     text-align: center; 
     white-space: nowrap; 
