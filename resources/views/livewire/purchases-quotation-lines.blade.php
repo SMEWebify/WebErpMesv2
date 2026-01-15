@@ -24,7 +24,32 @@
                                     </div>
                                     @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-2">
+                                    <x-adminlte-select name="product_id" id="product_id" label="{{ __('general_content.product_trans_key') }}" label-class="text-lightblue"
+                                        igroup-size="s" data-placeholder="{{ __('general_content.select_product_trans_key') }}" wire:model.live="product_id" wire:change.prevent="ChangeCodelabel()">
+                                        <x-slot name="prependSlot">
+                                            <div class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-barcode"></i>
+                                            </div>
+                                        </x-slot>
+                                        <option value="">{{ __('general_content.select_product_trans_key') }}</option>
+                                        @foreach ($ProductsSelect as $item)
+                                        <option value="{{ $item->id }}" data-txt="{{ $item->code }}">{{ $item->code }} - {{ $item->label }}</option>
+                                        @endforeach
+                                    </x-adminlte-select>
+                                    @error('product_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
+                                        </div>
+                                        <input type="text" class="code form-control @error('code') is-invalid @enderror" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" wire:model.live="code">
+                                    </div>
+                                    @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                                </div>
+                                <div class="form-group col-md-2">
                                     <label for="line_label">{{ __('general_content.description_trans_key') }}</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -126,6 +151,8 @@
                             <td>
                                 @if($PurchaseQuotationLine->tasks?->component_id )
                                 <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseQuotationLine->tasks->component_id])}}" />
+                                @elseif($PurchaseQuotationLine->product_id)
+                                <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseQuotationLine->product_id])}}" />
                                 @endif
                             </td>
                             <td>{{ number_format($PurchaseQuotationLine->qty_to_order, 0, '', ' ') }}</td>

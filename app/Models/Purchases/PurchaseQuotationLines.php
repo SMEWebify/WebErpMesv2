@@ -15,6 +15,8 @@ class PurchaseQuotationLines extends Model
     // Fillable attributes for mass assignment
     protected $fillable= ['purchases_quotation_id', 
         'tasks_id',
+        'code',
+        'product_id',
         'label',
         'ordre',
         'qty_to_order',
@@ -32,6 +34,11 @@ class PurchaseQuotationLines extends Model
     public function purchaseQuotation()
     {
         return $this->belongsTo(PurchasesQuotation::class, 'purchases_quotation_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(\App\Models\Products\Products::class, 'product_id');
     }
 
     /**
