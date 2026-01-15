@@ -1,4 +1,4 @@
-<div class="tab-pane" id="PurchaseQuotationLines">
+<div class="tab-pane" id="PurchaseQuotationLines" wire:ignore.self>
     <div class="row">
         <div class="col-12">
             <div class="card">
