@@ -75,7 +75,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ $Factory->curency ?? 'EUR' }}</span>
                                         </div>
-                                        <input type="number" class="form-control @error('unit_price') is-invalid @enderror" id="unit_price" placeholder="{{ __('general_content.price_trans_key') }}" min="0" step="0.01" wire:model.live="unit_price">
+                                        <input type="number" class="form-control @error('unit_price') is-invalid @enderror" id="unit_price" placeholder="{{ __('general_content.price_trans_key') }}" min="0" step="0.001" wire:model.live="unit_price">
                                     </div>
                                     @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -167,7 +167,7 @@
                                         <label for="PurchaseQuotationLine.{{ $PurchaseQuotationLine->id }}" class="custom-control-label">+</label>
                                     </div>
                                     <label for="purchase_price_{{ $PurchaseQuotationLine->id }}">{{ __('general_content.proposed_purchase_price_trans_key') }}</label>
-                                    <input type="number" class="form-control" name="PurchaseQuotationLinePrice[]" id="purchase_price_{{ $PurchaseQuotationLine->id }}" step="0.01" value="{{ $PurchaseQuotationLine->unit_price?? 0 }}">
+                                    <input type="number" class="form-control" name="PurchaseQuotationLinePrice[]" id="purchase_price_{{ $PurchaseQuotationLine->id }}" step="0.001" value="{{ $PurchaseQuotationLine->unit_price?? 0 }}">
                                 </div>
                                 @endif
                             </td>
