@@ -113,6 +113,11 @@
                         <div class="input-group">
                             <button type="Submit" wire:click.prevent="storeInvoice()" class="btn btn-success">{{ __('general_content.new_invoice_trans_key') }}</button>
                         </div>
+                        @if($companies_id)
+                            <div class="input-group mt-2">
+                                <button type="button" wire:click.prevent="generateInvoicesForCompany()" class="btn btn-primary">{{ __('general_content.generate_pending_invoices_trans_key') }}</button>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

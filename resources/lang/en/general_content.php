@@ -917,6 +917,7 @@ return [
     'invoices_export_trans_key'                => 'Invoice lines export',
     'others_trans_key'                         => 'Others',
     'new_invoice_trans_key'                    => 'New invoice',
+    'generate_pending_invoices_trans_key'      => 'Generate pending invoices',
     'number_of_invoice_trans_key'              => 'Total number of invoices',
     'amount_of_invoice_trans_key'              => 'Total amount of invoices',
     'payments_received_of_invoice_trans_key'   => 'Total amount of payments received',
