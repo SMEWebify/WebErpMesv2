@@ -95,20 +95,20 @@
                             <table class="table table-bordered table-sm">
                                 <tbody>
                                     <tr>
-                                        <th>OF</th>
+                                        <th>Commande</th>
                                         <td>{{ $Document->code }}</td>
                                         <th>Statut</th>
-                                        <td>{{ data_get($Document, 'status', 'N/A') }}</td>
+                                        <td>{{ data_get($Document, 'statu', 'N/A') }}</td>
                                         <th>Priorité</th>
                                         <td>{{ data_get($Document, 'priority', 'N/A') }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Client / Commande</th>
+                                        <th>Client</th>
                                         <td>{{ data_get($Document, 'companie.label', __('general_content.internal_order_trans_key')) }}</td>
                                         <th>Référence client</th>
                                         <td>{{ $Document->customer_reference ?: 'N/A' }}</td>
                                         <th>Date souhaitée</th>
-                                        <td>{{ data_get($Document, 'delivery_date', 'N/A') }}</td>
+                                        <td>{{ data_get($Document, 'validity_date', 'N/A') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -126,9 +126,9 @@
                                         {{ $DocumentLine->label }}
                                     </th>
                                     <th>{{ __('general_content.qty_trans_key') }} : {{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</th>
-                                    <th>Time limit :
-                                        @if($DocumentLine->delivery_date )
-                                            {{ $DocumentLine->delivery_date }}
+                                    <th>Délai interne :
+                                        @if($DocumentLine->internal_delay )
+                                            {{ $DocumentLine->internal_delay }}
                                         @else
                                             N/A
                                         @endif
@@ -138,19 +138,20 @@
                                     <td colspan="2">
                                         <table class="table table-bordered">
                                             <tr class="thead-light">
-                                                <th colspan="7">Données techniques</th>
+                                                <th colspan="8">Données techniques</th>
                                             </tr>
                                             <tr>
-                                                <td colspan="2"><strong>Matière</strong> : {{ data_get($DocumentLine, 'material', 'N/A') }}</td>
-                                                <td colspan="2"><strong>Plan</strong> : {{ data_get($DocumentLine, 'drawing_reference', 'N/A') }}</td>
-                                                <td colspan="3"><strong>Traitement</strong> : {{ data_get($DocumentLine, 'treatment', 'N/A') }}</td>
+                                                <td colspan="2"><strong>Matière</strong> : {{ data_get($DocumentLine->OrderLineDetails, 'material', 'N/A') }}</td>
+                                                <td colspan="2"><strong>Epaisseur</strong> : {{ data_get($DocumentLine->OrderLineDetails, 'thickness', 'N/A') }}</td>
+                                                <td colspan="2"><strong>Plan</strong> : {{ data_get($DocumentLine->OrderLineDetails, 'cad_file', 'N/A') }}</td>
+                                                <td colspan="2"><strong>Finition</strong> : {{ data_get($DocumentLine->OrderLineDetails, 'finishing', 'N/A') }}</td>
                                             </tr>
                                         @forelse($DocumentLine->TechnicalCut as $TechnicalCut)
                                                         <tr>
                                                             <td class="align-middle" rowspan="3">
                                                                 {{ __('general_content.sort_trans_key') }}. {{ $TechnicalCut->ordre }}
                                                             </td>
-                                                            <td>{{ __('general_content.label_trans_key') }} : {{ $TechnicalCut->label }}</td>
+                                                            <td>{{ $TechnicalCut->label }}</td>
                                                             <td>Poste / Machine :</td>
                                                             <td>...............</td>
                                                             <td>{{ __('general_content.total_time_trans_key') }}</td>
@@ -158,9 +159,13 @@
                                                             <td rowspan="3">
                                                                 {{ __('general_content.visa_trans_key') }} :
                                                             </td>
+                                                            <td rowspan="3">
+                                                                {{ __('general_content.comment_trans_key') }} :
+                                                            </td>
+                                                       
                                                         </tr>
                                                         <tr>
-                                                            <td>{{ $TechnicalCut->service['label'] }}</td>
+                                                            <td>{{ $TechnicalCut->service['code'] }}</td>
                                                             <td>{{ __('general_content.ressource_trans_key') }} :</td>
                                                             <td></td>
                                                             <td>Temps passé</td>
@@ -171,10 +176,8 @@
                                                             <td class="align-middle">
                                                                 {!! DNS1D::getBarcodeHTML(strval($TechnicalCut->id), $Factory->task_barre_code) !!}
                                                             </td>
-                                                            <td>{{ $TechnicalCut->service['code'] }}</td>
-                                                            <td colspan="3">Consignes / Contrôles :</td>
-                                                            <td colspan="3">{{ __('general_content.comment_trans_key') }} :</td>
-                                                        </tr>
+                                                            <td colspan="4">Consignes / Contrôles :</td>
+                                                         </tr>
                                                     
                                         @empty
                                             <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
@@ -231,6 +234,6 @@
 
 @section('js')
   <script>
-    window.addEventListener("load", () => window.print());
+    //window.addEventListener("load", () => window.print());
   </script>
 @stop

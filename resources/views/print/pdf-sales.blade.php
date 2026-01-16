@@ -114,7 +114,6 @@
                         <th align="center">{{ __('general_content.unit_trans_key') }}</th>
                         <th align="center">{{ __('general_content.price_trans_key') }}</th>
                         <th align="center">{{ __('general_content.discount_trans_key') }}</th>
-                        <th align="center">{{ __('general_content.vat_trans_key') }}</th>
                         <th align="center">{{ __('general_content.delivery_date_trans_key') }}</th>
                     </tr>
                 </thead>
@@ -134,7 +133,6 @@
                         <td>{{ $DocumentLine->Unit['label'] }}</td>
                         <td>{{ $normalizeCurrency($DocumentLine->formatted_selling_price) }}</td>
                         <td align="center">{{ $DocumentLine->discount }} %</td>
-                        <td>{{ $DocumentLine->VAT['rate'] }} %</td>
                         @if($DocumentLine->delivery_date )
                         <td align="center">{{ $DocumentLine->delivery_date }}</td>
                         @else
