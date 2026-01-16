@@ -546,7 +546,7 @@ return [
                 ],
                 [
                     'text' => 'inspection_trans_key',
-                    'url'  => 'inspection-projects',
+                    'url'  => 'quality/inspection-projects',
                     'icon_color' => 'info',
                 ],
                 [
