@@ -220,6 +220,8 @@ return [
     'discount_trans_key'                       => '折扣',
     'vat_trans_key'                            => '增值税',
     'delivery_date_trans_key'                  => '交货日期',
+    'delivery_note_date_from_trans_key'        => '送货单日期从',
+    'delivery_note_date_to_trans_key'          => '送货单日期至',
     'internal_delay_trans_key'                 => '内部周期',
     'tasks_status_trans_key'                   => '任务状态',
     'delivery_status_trans_key'                => '交付状态',

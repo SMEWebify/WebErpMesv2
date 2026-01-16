@@ -229,6 +229,8 @@ return [
     'discount_trans_key'                       => 'Discount',
     'vat_trans_key'                            => 'VAT',
     'delivery_date_trans_key'                  => 'Delivery date',
+    'delivery_note_date_from_trans_key'        => 'Delivery note date from',
+    'delivery_note_date_to_trans_key'          => 'Delivery note date to',
     'internal_delay_trans_key'                 => 'Internal delay',
     'tasks_status_trans_key'                   => 'Tasks status',
     'delivery_status_trans_key'                => 'Delivery status',

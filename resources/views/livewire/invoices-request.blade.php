@@ -23,6 +23,24 @@
                         @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="form-group col-md-3">
+                        <label for="delivery_date_start">{{ __('general_content.delivery_note_date_from_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            </div>
+                            <input type="date" class="form-control" wire:model.live="deliveryDateStart" name="delivery_date_start" id="delivery_date_start">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="delivery_date_end">{{ __('general_content.delivery_note_date_to_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            </div>
+                            <input type="date" class="form-control" wire:model.live="deliveryDateEnd" name="delivery_date_end" id="delivery_date_end">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
                         <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend">

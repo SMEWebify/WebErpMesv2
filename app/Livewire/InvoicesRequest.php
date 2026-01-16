@@ -26,6 +26,8 @@ class InvoicesRequest extends Component
     public $code, $label, $companies_id, $companies_addresses_id, $companies_contacts_id, $user_id; 
     public $updateLines = false;
     public $CompanieSelect = [];
+    public $deliveryDateStart;
+    public $deliveryDateEnd;
     public $data = [];
     public $qty = [];
     public $idCompanie = '';
@@ -92,7 +94,13 @@ class InvoicesRequest extends Component
         
         //Select delevery line where not Partly invoiced or Invoiced
         $this->InvoicesRequestsLineslist = $this->InvoiceDataService
-        ->getInvoiceRequestsLines($this->companies_id ? (int) $this->companies_id : null,$this->sortField, $this->sortAsc);
+        ->getInvoiceRequestsLines(
+            $this->companies_id ? (int) $this->companies_id : null,
+            $this->deliveryDateStart,
+            $this->deliveryDateEnd,
+            $this->sortField,
+            $this->sortAsc
+        );
 
         return view('livewire.invoices-request', [
             'InvoicesRequestsLineslist' => $this->InvoicesRequestsLineslist,
