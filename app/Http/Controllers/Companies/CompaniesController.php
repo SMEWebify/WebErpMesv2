@@ -88,6 +88,7 @@ class CompaniesController extends Controller
         $remainingInvoiceOrder =  $this->orderKPIService->getOrderMonthlyRemainingToInvoice($id->id);
         $paidInvoices = $this->invoiceKPIService->getPaidInvoicesCount($id->id);
         $unpaidInvoices = $this->invoiceKPIService->getUnpaidInvoicesCount($id->id);
+        $serviceRate = $this->orderKPIService->getServiceRate($id->id);
         $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear, $id->id);
         $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, $id->id);
         $data['orderAverage'] = $this->orderKPIService->getAverageOrderPriceAttribute($id->id);
@@ -147,6 +148,7 @@ class CompaniesController extends Controller
                                                         'customerProcessingCost',
                                                         'paidInvoices',
                                                         'unpaidInvoices',
+                                                        'serviceRate',
                                                         'data',
                                                         'evaluationHistory',
                                                         'latestEvaluation',

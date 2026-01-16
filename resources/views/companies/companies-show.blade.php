@@ -54,6 +54,13 @@
           </div>
 
           <div class="col-lg-3 col-md-3">
+            <x-adminlte-small-box title="{{ $serviceRate }}%"
+              text="{{ __('general_content.service_rate_trans_key') }}"
+              icon="icon fas fa-chart-line"
+              theme="primary" />
+          </div>
+
+          <div class="col-lg-3 col-md-3">
             <x-adminlte-card  theme="primary" theme-mode="outline">
               <p class="card-text">{{ __('general_content.bills_paid_trans_key') }} : {{ $paidInvoices }}</p>
               <p class="card-text">{{ __('general_content.bills_unpaid_trans_key') }}  : {{ $unpaidInvoices }}</p>

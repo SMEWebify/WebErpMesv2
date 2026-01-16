@@ -422,18 +422,32 @@ class OrderKPIService
     * fulfilled on time (those with a delivery date less than or equal to the
     * expected date) by the total number of requests, then multiplying the result by 100
     *
+    * @param int|null $companyId
     * @return float Service Rate as a percentage
     */
-    public function getServiceRate()
+    public function getServiceRate($companyId = null)
     {
-        $cacheKey = 'service_rate_' . now()->year;
-        return Cache::remember($cacheKey, now()->addHours(1), function () {
-            $totalOrderLines = OrderLines::where('delivery_status', 3)->count();
+        $cacheKey = 'service_rate_' . now()->year . '_company_' . ($companyId ?? 'all');
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($companyId) {
+            $totalOrderLinesQuery = OrderLines::where('delivery_status', 3);
 
-            $onTimeDeliveries = OrderLines::where('delivery_status', 3)
-                                            ->whereHas('DeliveryLines', function ($query) {
-                                                $query->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
-                                            })->count();
+            $onTimeDeliveriesQuery = OrderLines::where('delivery_status', 3)
+                ->whereHas('DeliveryLines', function ($query) {
+                    $query->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
+                });
+
+            if ($companyId) {
+                $totalOrderLinesQuery->whereHas('order', function ($query) use ($companyId) {
+                    $query->where('companies_id', $companyId);
+                });
+
+                $onTimeDeliveriesQuery->whereHas('order', function ($query) use ($companyId) {
+                    $query->where('companies_id', $companyId);
+                });
+            }
+
+            $totalOrderLines = $totalOrderLinesQuery->count();
+            $onTimeDeliveries = $onTimeDeliveriesQuery->count();
 
             if ($totalOrderLines === 0) {
                 return 0; // Éviter la division par zéro
