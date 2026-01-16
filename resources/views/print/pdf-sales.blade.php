@@ -108,6 +108,8 @@
                 <thead >
                     <tr style="background-color: grey;">
                         <th align="center">{{ __('general_content.description_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.material_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.thickness_trans_key') }}</th>
                         <th align="center">{{ __('general_content.qty_trans_key') }}</th>
                         <th align="center">{{ __('general_content.unit_trans_key') }}</th>
                         <th align="center">{{ __('general_content.price_trans_key') }}</th>
@@ -118,11 +120,16 @@
                 </thead>
                 <tbody>
                     @forelse($Document->Lines as $DocumentLine)
+                    @php
+                        $lineDetails = $DocumentLine->QuoteLineDetails ?? $DocumentLine->OrderLineDetails;
+                    @endphp
                     <tr>
                         <td align="center">
                             {{ $DocumentLine->label }}<br>
                             <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
                         </td>
+                        <td align="center">{{ $lineDetails?->material ?? '-' }}</td>
+                        <td align="center">{{ $lineDetails?->thickness ?? '-' }}</td>
                         <td align="center">{{ $DocumentLine->qty }}</td>
                         <td>{{ $DocumentLine->Unit['label'] }}</td>
                         <td>{{ $normalizeCurrency($DocumentLine->formatted_selling_price) }}</td>
@@ -136,7 +143,7 @@
                         
                     </tr>
                     @empty
-                        <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
             </table>
