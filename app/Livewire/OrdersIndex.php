@@ -31,7 +31,7 @@ class OrdersIndex extends Component
     public $search = '';
     public $sortField = 'validity_date'; // default sorting field
     public $sortAsc = true; // default sort direction
-    public $searchIdStatus = '1';
+    public $searchIdStatus = [1, 2];
 
     public $userSelect = [];
     public $LastOrder = null;
@@ -126,53 +126,6 @@ class OrdersIndex extends Component
     
         $this->setOrderCodeAndLabel();
 
-        $this->statuses = [
-            [
-                'id' => 1, 
-                'title' => __('general_content.open_trans_key'), 
-                'Orders' => Orders::with(['companie', 'contact']) 
-                                    ->where('statu', 1)
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 2, 
-                'title' => __('general_content.in_progress_trans_key'), 
-                'Orders' => Orders::with(['companie', 'contact'])
-                                    ->where('statu', 2)
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 3, 
-                'title' => __('general_content.delivered_trans_key'), 
-                'Orders' => Orders::with(['companie', 'contact'])
-                                    ->where('statu', 3)
-                                    ->where('updated_at', '>=', Carbon::now()->subHours(48))
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 4, 
-                'title' => __('general_content.partly_delivered_trans_key'), 
-                'Orders' => Orders::with(['companie', 'contact'])
-                                    ->where('statu', 4)
-                                    ->where('updated_at', '>=', Carbon::now()->subHours(48))
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 5, 
-                'title' => __('general_content.stopped_trans_key'), 
-                'Orders' => Orders::with(['companie', 'contact'])
-                                    ->where('statu', 5)
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 6, 
-                'title' => __('general_content.canceled_trans_key'), 
-                'Orders' => Orders::with(['companie', 'contact'])
-                                    ->where('statu', 6)
-                                    ->get()  // Garder les objets Eloquent
-            ]
-        ];
-
         $this->viewType = session()->get('viewType', 'table'); 
     }
     
@@ -211,18 +164,25 @@ class OrdersIndex extends Component
 
     public function render()
     {
+        $selectedStatuses = $this->normalizeStatuses($this->searchIdStatus);
+
         if(is_numeric($this->idCompanie)){
             $OrdersQuery = Orders::withCount('OrderLines')
                             ->where('companies_id', $this->idCompanie)
-                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%');
+                            ->when($selectedStatuses, function ($query) use ($selectedStatuses) {
+                                $query->whereIn('statu', $selectedStatuses);
+                            });
         }
         else{
             $OrdersQuery = Orders::withCount('OrderLines')
                             ->where('label','like', '%'.$this->search.'%')
-                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%');
+                            ->when($selectedStatuses, function ($query) use ($selectedStatuses) {
+                                $query->whereIn('statu', $selectedStatuses);
+                            });
         }
 
         $Orders = $this->applySorting($OrdersQuery)->paginate(15);
+        $this->statuses = $this->buildStatuses($selectedStatuses);
 
         $userSelect = User::select('id', 'name')->get();
         $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('active', 1)->get();
@@ -254,6 +214,48 @@ class OrdersIndex extends Component
         }
 
         return $query->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc');
+    }
+
+    private function normalizeStatuses($statuses)
+    {
+        if (!is_array($statuses)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('intval', $statuses)));
+    }
+
+    private function buildStatuses(array $selectedStatuses)
+    {
+        $allStatuses = [
+            1 => __('general_content.open_trans_key'),
+            2 => __('general_content.in_progress_trans_key'),
+            3 => __('general_content.delivered_trans_key'),
+            4 => __('general_content.partly_delivered_trans_key'),
+            5 => __('general_content.stopped_trans_key'),
+            6 => __('general_content.canceled_trans_key'),
+        ];
+
+        $statusesToShow = $selectedStatuses ?: array_keys($allStatuses);
+
+        return collect($statusesToShow)->map(function ($statusId) use ($allStatuses) {
+            $query = Orders::with(['companie', 'contact'])
+                ->where('statu', $statusId);
+
+            if (in_array($statusId, [3, 4], true)) {
+                $query->where('updated_at', '>=', Carbon::now()->subHours(48));
+            }
+
+            if ($this->search !== '') {
+                $query->where('label', 'like', '%'.$this->search.'%');
+            }
+
+            return [
+                'id' => $statusId,
+                'title' => $allStatuses[$statusId],
+                'Orders' => $query->get(),
+            ];
+        })->values()->all();
     }
 
     public function storeOrder(){
