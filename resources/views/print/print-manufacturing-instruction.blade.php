@@ -8,16 +8,15 @@
         <h1>Print document</h1>
         </div>
         <div class="col-sm-6">
-        <a class="btn btn-primary btn-sm" href="{{ url()->previous() }}">
-            <button type="button" class="btn btn-primary float-sm-right" data-toggle="modal" data-target="#ModalQuote">
+        <a class="btn btn-primary btn-sm float-sm-right" href="{{ url()->previous() }}">
             {{ __('general_content.back_trans_key') }}
-            </button>
         </a>
         </div>
     </div>
 @stop
 
 @section('right-sidebar')
+@stop
 
 @section('content')
 <div class="container-fluid">
@@ -94,7 +93,7 @@
                     <div class="row">
                         <div class="col-12 table-responsive">
                         <table class="table table-bordered table-sm">
-                            <thead class="thead-light">
+                            <tbody class="thead-light">
                             @forelse($Document->Lines as $DocumentLine)
                                 <tr>
                                     <th rowspan="2" class="align-middle">
@@ -184,7 +183,7 @@
                                 @empty
                                     <x-EmptyDataLine col="3" text="{{ __('general_content.no_data_trans_key') }}"  />
                                 @endforelse
-                            </thead>
+                            </tbody>
                         </table>
                     </div>
                     <!-- /.col -->
@@ -198,6 +197,6 @@
 
 @section('js')
   <script>
-    window.addEventListener("load", window.print());
+    window.addEventListener("load", () => window.print());
   </script>
 @stop
