@@ -119,4 +119,26 @@ class PurchasesWaintingReceipt extends Component
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function storeEmptyReceipt()
+    {
+        $this->validate();
+
+        try {
+            $receiptData = [
+                'code' => $this->code,
+                'label' => $this->label,
+                'companies_id' => $this->companies_id,
+                'delivery_note_number' => $this->deliveryNoteNumber,
+                'user_id' => $this->user_id,
+            ];
+
+            $receiptCreated = $this->purchaseReceiptService->createEmptyPurchaseReceipt($receiptData);
+
+            return redirect()->route('purchase.receipts.show', ['id' => $receiptCreated->id])
+                ->with('success', 'Successfully created new receipt');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
 }

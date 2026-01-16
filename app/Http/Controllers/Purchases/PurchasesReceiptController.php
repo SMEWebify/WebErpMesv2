@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Purchases;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
 use App\Models\Purchases\Purchases;
+use App\Models\Products\Products;
+use App\Models\Accounting\AccountingVat;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompaniesAddresses;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
@@ -16,6 +20,7 @@ use App\Models\Products\StockLocation;
 use App\Models\Purchases\PurchaseReceipt;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\Products\StockLocationProducts;
+use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Http\Requests\Purchases\UpdatePurchaseRequest;
 use App\Http\Requests\Purchases\UpdatePurchaseReceiptRequest;
@@ -76,6 +81,7 @@ class PurchasesReceiptController extends Controller
         $StockLocationProductList = StockLocationProducts::all();
         $userSelect = $this->SelectDataService->getUsers();
         $nonConformities = $this->SelectDataService->getQualityNonConformity();
+        $productSelect = $this->SelectDataService->getProductsSelect();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchaseReceipt(), $id->id);
 
         $averageReceptionDelay = PurchaseReceiptLines::join('purchase_lines', 'purchase_receipt_lines.purchase_line_id', '=', 'purchase_lines.id')
@@ -92,6 +98,7 @@ class PurchasesReceiptController extends Controller
             'averageReceptionDelay' => $averageReceptionDelay->avg_reception_delay,
             'userSelect' => $userSelect,
             'nonConformities' => $nonConformities,
+            'productSelect' => $productSelect,
         ]);
     }
 
@@ -220,6 +227,78 @@ class PurchasesReceiptController extends Controller
         ]);
 
         return redirect()->back()->with('success', __('general_content.inspection_update_success_trans_key'));
+    }
+
+    public function storeManualReceiptLine(Request $request, PurchaseReceipt $id)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'qty' => 'required|integer|min:1',
+        ]);
+
+        $product = Products::findOrFail($validated['product_id']);
+        $defaultAddress = CompaniesAddresses::getDefault(['companies_id' => $id->companies_id]);
+        $defaultContact = CompaniesContacts::getDefault(['companies_id' => $id->companies_id]);
+        $accountingVat = AccountingVat::getDefault();
+
+        if (!$defaultAddress || !$defaultContact) {
+            return redirect()->back()->with('error', 'No default settings fount for address or contact');
+        }
+
+        if (!$accountingVat) {
+            return redirect()->back()->with('error', 'No default accounting VAT found');
+        }
+
+        $manualPurchaseCode = 'MANUAL-' . $id->code;
+        $purchase = Purchases::firstOrCreate(
+            ['code' => $manualPurchaseCode],
+            [
+                'label' => $manualPurchaseCode,
+                'companies_id' => $id->companies_id,
+                'companies_contacts_id' => $defaultContact->id,
+                'companies_addresses_id' => $defaultAddress->id,
+                'user_id' => Auth::id(),
+            ]
+        );
+
+        $nextPurchaseOrdre = (int) PurchaseLines::where('purchases_id', $purchase->id)->max('ordre');
+        $nextReceiptOrdre = (int) PurchaseReceiptLines::where('purchase_receipt_id', $id->id)->max('ordre');
+        $qty = (int) $validated['qty'];
+        $price = $product->purchased_price ?? 0;
+
+        $purchaseLine = PurchaseLines::create([
+            'purchases_id' => $purchase->id,
+            'tasks_id' => 0,
+            'ordre' => $nextPurchaseOrdre + 10,
+            'code' => $product->code,
+            'product_id' => $product->id,
+            'label' => $product->label,
+            'qty' => $qty,
+            'selling_price' => $price,
+            'discount' => 0,
+            'unit_price_after_discount' => $price,
+            'total_selling_price' => $price * $qty,
+            'receipt_qty' => $qty,
+            'methods_units_id' => $product->methods_units_id,
+            'accounting_vats_id' => $accountingVat->id,
+        ]);
+
+        PurchaseReceiptLines::create([
+            'purchase_receipt_id' => $id->id,
+            'purchase_line_id' => $purchaseLine->id,
+            'ordre' => $nextReceiptOrdre + 10,
+            'receipt_qty' => $qty,
+        ]);
+
+        $purchaseLines = PurchaseLines::where('purchases_id', $purchase->id)->get();
+        $allReceived = $purchaseLines->every(function ($purchaseLineItem) {
+            return $purchaseLineItem->receipt_qty >= $purchaseLineItem->qty;
+        });
+
+        $purchase->statu = $allReceived ? 4 : 3;
+        $purchase->save();
+
+        return redirect()->back()->with('success', 'Successfully added manual receipt line');
     }
 
     protected function createQuickNonConformity(
