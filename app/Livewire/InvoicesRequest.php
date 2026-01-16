@@ -131,6 +131,56 @@ class InvoicesRequest extends Component
         }
     }
 
+    public function generateInvoicesForCompany()
+    {
+        $this->validate([
+            'companies_id' => 'required',
+            'companies_addresses_id' => 'required',
+            'companies_contacts_id' => 'required',
+            'user_id' => 'required',
+        ]);
+
+        $deliveryLines = $this->InvoiceDataService->getInvoiceRequestsLines(
+            (int) $this->companies_id,
+            $this->deliveryDateStart,
+            $this->deliveryDateEnd,
+            $this->sortField,
+            $this->sortAsc
+        );
+
+        if ($deliveryLines->isEmpty()) {
+            session()->flash('error', 'No lines to invoice');
+            return;
+        }
+
+        $deliveryLines
+            ->groupBy(fn($line) => $line->orderLine->orders_id)
+            ->each(function ($lines) {
+                $this->ordre = 10;
+                $invoiceCreated = $this->createInvoiceForCompany();
+
+                foreach ($lines as $deliveryLine) {
+                    $this->invoiceLineService->createInvoiceLine(
+                        $invoiceCreated,
+                        $deliveryLine->order_line_id,
+                        $deliveryLine->id,
+                        $this->ordre,
+                        $deliveryLine->qty,
+                        $deliveryLine->OrderLine->accounting_vats_id
+                    );
+
+                    $this->updateDeliveryLineStatus($deliveryLine);
+                    $this->updateOrderLineInfo($deliveryLine);
+                    $this->ordre += 10;
+                }
+            });
+
+        $this->refreshInvoiceDefaults();
+        $this->data = [];
+
+        session()->flash('success', 'Invoices created');
+    }
+
     private function hasDeliveryLines()
     {
         foreach ($this->data as $item) {
@@ -144,6 +194,30 @@ class InvoicesRequest extends Component
     private function createInvoice()
     {
         return $this->invoiceService->createInvoice($this->code, $this->label, $this->companies_id, $this->companies_addresses_id, $this->companies_contacts_id, $this->user_id);
+    }
+
+    private function createInvoiceForCompany()
+    {
+        $lastInvoice = Invoices::latest()->first();
+        $invoiceId = $lastInvoice ? $lastInvoice->id : 0;
+        $code = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
+
+        return $this->invoiceService->createInvoice(
+            $code,
+            $code,
+            $this->companies_id,
+            $this->companies_addresses_id,
+            $this->companies_contacts_id,
+            $this->user_id
+        );
+    }
+
+    private function refreshInvoiceDefaults()
+    {
+        $this->LastInvoice = Invoices::latest()->first();
+        $invoiceId = $this->LastInvoice ? $this->LastInvoice->id : 0;
+        $this->code = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
+        $this->label = $this->code;
     }
 
     private function createInvoiceNoteLines($invoiceCreated)

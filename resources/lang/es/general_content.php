@@ -777,6 +777,7 @@ return [
     'invoices_export_trans_key'                => 'Exportar líneas de factura',
     'others_trans_key'                         => 'Otros',
     'new_invoice_trans_key'                    => 'Nueva factura',
+    'generate_pending_invoices_trans_key'      => 'Generar facturas pendientes',
     'number_of_invoice_trans_key'              => 'Número total de facturas',
     'amount_of_invoice_trans_key'              => 'Cantidad total de facturas',
     'payments_received_of_invoice_trans_key'   => 'Total de pagos recibidos',

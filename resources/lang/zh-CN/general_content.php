@@ -905,6 +905,7 @@ return [
     'invoices_export_trans_key'                => '导出发票行',
     'others_trans_key'                         => '其他',
     'new_invoice_trans_key'                    => '新建发票',
+    'generate_pending_invoices_trans_key'      => '生成待处理发票',
     'number_of_invoice_trans_key'              => '发票总数',
     'amount_of_invoice_trans_key'              => '发票总金额',
     'payments_received_of_invoice_trans_key'   => '已收款总额',

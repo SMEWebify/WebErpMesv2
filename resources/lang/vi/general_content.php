@@ -90,6 +90,7 @@ return [
     'invoices_request_trans_key'               => 'Yêu cầu hóa đơn',
     'invoices_list_trans_key'                  => 'Danh sách hóa đơn',
     'others_trans_key'                         => 'Khác',
+    'generate_pending_invoices_trans_key'      => 'Tạo hóa đơn đang chờ',
 
     //PRODUCT
     'product_trans_key'                        => 'Sản phẩm',

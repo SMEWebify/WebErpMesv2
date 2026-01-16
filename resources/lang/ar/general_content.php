@@ -777,6 +777,7 @@ return [
     'invoices_export_trans_key'                => 'تصدير أسطر الفاتورة',
     'others_trans_key'                         => 'أخرى',
     'new_invoice_trans_key'                    => 'فاتورة جديدة',
+    'generate_pending_invoices_trans_key'      => 'إنشاء الفواتير المعلقة',
     'number_of_invoice_trans_key'              => 'إجمالي عدد الفواتير',
     'amount_of_invoice_trans_key'              => 'إجمالي مبلغ الفواتير',
     'payments_received_of_invoice_trans_key'   => 'إجمالي المبالغ المستلمة',
