@@ -89,6 +89,31 @@
                             @endif
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="text-uppercase mt-3">Résumé de fabrication</h5>
+                            <table class="table table-bordered table-sm">
+                                <tbody>
+                                    <tr>
+                                        <th>OF</th>
+                                        <td>{{ $Document->code }}</td>
+                                        <th>Statut</th>
+                                        <td>{{ data_get($Document, 'status', 'N/A') }}</td>
+                                        <th>Priorité</th>
+                                        <td>{{ data_get($Document, 'priority', 'N/A') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Client / Commande</th>
+                                        <td>{{ data_get($Document, 'companie.label', __('general_content.internal_order_trans_key')) }}</td>
+                                        <th>Référence client</th>
+                                        <td>{{ $Document->customer_reference ?: 'N/A' }}</td>
+                                        <th>Date souhaitée</th>
+                                        <td>{{ data_get($Document, 'delivery_date', 'N/A') }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <!-- Table row -->
                     <div class="row">
                         <div class="col-12 table-responsive">
@@ -112,13 +137,21 @@
                                 <tr>
                                     <td colspan="2">
                                         <table class="table table-bordered">
+                                            <tr class="thead-light">
+                                                <th colspan="7">Données techniques</th>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"><strong>Matière</strong> : {{ data_get($DocumentLine, 'material', 'N/A') }}</td>
+                                                <td colspan="2"><strong>Plan</strong> : {{ data_get($DocumentLine, 'drawing_reference', 'N/A') }}</td>
+                                                <td colspan="3"><strong>Traitement</strong> : {{ data_get($DocumentLine, 'treatment', 'N/A') }}</td>
+                                            </tr>
                                         @forelse($DocumentLine->TechnicalCut as $TechnicalCut)
                                                         <tr>
                                                             <td class="align-middle" rowspan="3">
                                                                 {{ __('general_content.sort_trans_key') }}. {{ $TechnicalCut->ordre }}
                                                             </td>
                                                             <td>{{ __('general_content.label_trans_key') }} : {{ $TechnicalCut->label }}</td>
-                                                            <td>{{ __('general_content.user_trans_key') }} :</td>
+                                                            <td>Poste / Machine :</td>
                                                             <td>...............</td>
                                                             <td>{{ __('general_content.total_time_trans_key') }}</td>
                                                             <td>{{ $TechnicalCut->TotalTime() }}</td>
@@ -130,7 +163,7 @@
                                                             <td>{{ $TechnicalCut->service['label'] }}</td>
                                                             <td>{{ __('general_content.ressource_trans_key') }} :</td>
                                                             <td></td>
-                                                            <td>Time spent</td>
+                                                            <td>Temps passé</td>
                                                             <td></td>
                                                         </tr>
                                                         <tr>
@@ -139,7 +172,8 @@
                                                                 {!! DNS1D::getBarcodeHTML(strval($TechnicalCut->id), $Factory->task_barre_code) !!}
                                                             </td>
                                                             <td>{{ $TechnicalCut->service['code'] }}</td>
-                                                            <td colspan="6">{{ __('general_content.comment_trans_key') }} :</td>
+                                                            <td colspan="3">Consignes / Contrôles :</td>
+                                                            <td colspan="3">{{ __('general_content.comment_trans_key') }} :</td>
                                                         </tr>
                                                     
                                         @empty
@@ -154,18 +188,18 @@
                                                             <td>{{ __('general_content.label_trans_key') }} : {{ $BOM->label }}</td>
                                                             <td>{{ __('general_content.supplier_trans_key') }}  :</td>
                                                             <td>...............</td>
-                                                            <td></td>
-                                                            <td></td>
+                                                            <td>Qté / Pièce :</td>
+                                                            <td>{{ data_get($BOM, 'qty', 'N/A') }}</td>
                                                             <td rowspan="3">
                                                                 {{ __('general_content.visa_trans_key') }} :
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>{{ $BOM->Component['label'] }}</td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
+                                                            <td>Emplacement :</td>
+                                                            <td>...............</td>
+                                                            <td>Lot matière :</td>
+                                                            <td>...............</td>
                                                         </tr>
                                                         <tr>
                                                             <td class="align-middle">
