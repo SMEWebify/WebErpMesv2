@@ -117,6 +117,33 @@
         </div>
       </div>    
       <div class="tab-pane " id="PurchaseLines">
+        <div class="card mb-3">
+          <div class="card-body">
+            <form method="POST" action="{{ route('purchase.receipts.lines.manual', $PurchaseReceipt->id) }}">
+              @csrf
+              <div class="form-row align-items-end">
+                <div class="form-group col-md-6">
+                  <label for="manual_product_id">{{ __('general_content.product_trans_key') }}</label>
+                  <select class="form-control" name="product_id" id="manual_product_id">
+                    <option value="">{{ __('general_content.select_option_trans_key') }}</option>
+                    @foreach ($productSelect as $product)
+                      <option value="{{ $product->id }}">{{ $product->code }} - {{ $product->label }}</option>
+                    @endforeach
+                  </select>
+                  @error('product_id') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="manual_qty">{{ __('general_content.qty_trans_key') }}</label>
+                  <input type="number" min="1" class="form-control" name="qty" id="manual_qty" value="{{ old('qty', 1) }}">
+                  @error('qty') <span class="text-danger">{{ $message }}</span> @enderror
+                </div>
+                <div class="form-group col-md-3">
+                  <button type="submit" class="btn btn-outline-primary btn-block">{{ __('general_content.add_manual_receipt_line_trans_key') }}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
         <!-- Table row -->
         <div class="row">
           <div class="col-12 table-responsive">
@@ -143,10 +170,13 @@
               </thead>
               <tbody>
                   @forelse($PurchaseReceipt->PurchaseReceiptLines as $PurchaseReceiptLine)
+                  @php
+                    $task = $PurchaseReceiptLine->purchaseLines->tasks;
+                  @endphp
                   <tr>
                     <td>
-                      @if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null)
-                        <x-OrderButton id="{{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->orders_id }}" code="{{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->order->code }}"  />
+                      @if(optional($task)->OrderLines)
+                        <x-OrderButton id="{{ $task->OrderLines->orders_id }}" code="{{ $task->OrderLines->order->code }}"  />
                       @else
                         {{__('general_content.generic_trans_key') }} 
                       @endif
@@ -158,34 +188,34 @@
                       </a>
                     </td>
                     <td>
-                      @if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null)
-                        {{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->qty }} x {{ $PurchaseReceiptLine->purchaseLines->tasks->qty }}
+                      @if(optional($task)->OrderLines)
+                        {{ $task->OrderLines->qty }} x {{ $task->qty }}
                       @else
                         {{__('general_content.generic_trans_key') }} 
                       @endif
                     </td>
                     <td>
-                      @if($PurchaseReceiptLine->purchaseLines->tasks->OrderLines ?? null)
-                        {{ $PurchaseReceiptLine->purchaseLines->tasks->OrderLines->label }}
+                      @if(optional($task)->OrderLines)
+                        {{ $task->OrderLines->label }}
                       @else
                         {{__('general_content.generic_trans_key') }} 
                       @endif
                     </td>
                     <td>
                       @if($PurchaseReceiptLine->purchaseLines->tasks_id ?? null)
-                        <a href="{{ route('production.task.statu.id', ['id' => $PurchaseReceiptLine->purchaseLines->tasks->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
-                        #{{ $PurchaseReceiptLine->purchaseLines->tasks->id }} - {{ $PurchaseReceiptLine->purchaseLines->tasks->label }}
-                        @if($PurchaseReceiptLine->purchaseLines->tasks->component_id )
-                            - {{ $PurchaseReceiptLine->purchaseLines->tasks->Component['label'] }}
+                        <a href="{{ route('production.task.statu.id', ['id' => $task->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                        #{{ $task->id }} - {{ $task->label }}
+                        @if($task?->component_id)
+                            - {{ $task->Component['label'] }}
                         @endif
                       @else
                           {{ $PurchaseReceiptLine->purchaseLines->label }}
                       @endif
                     </td>
                     <td>
-                      @if($PurchaseReceiptLinepurchaseLines->tasks_id ?? null)
-                          @if($PurchaseReceiptLine->purchaseLines->tasks->component_id ) 
-                          <x-ButtonTextView route="{{ route('products.show', ['id' => $PurchaseReceiptLine->purchaseLines->tasks->component_id])}}" />
+                      @if($PurchaseReceiptLine->purchaseLines->tasks_id ?? null)
+                          @if($task?->component_id) 
+                          <x-ButtonTextView route="{{ route('products.show', ['id' => $task->component_id])}}" />
                           @endif
                       @else
                           @if($PurchaseReceiptLine->purchaseLines->product_id ) 
@@ -195,7 +225,7 @@
                     </td>
                     <td>
                       @if($PurchaseReceiptLine->purchaseLines->tasks_id ?? null)
-                        {{ number_format($PurchaseReceiptLine->purchaseLines->tasks->getQualityRequiredAttribute(), 0, '', ' ')  }} 
+                        {{ number_format($task->getQualityRequiredAttribute(), 0, '', ' ')  }} 
                       @else
                         {{__('general_content.generic_trans_key') }} 
                       @endif
@@ -297,11 +327,11 @@
                           </div>
                         </form>
                       </x-adminlte-modal>
-                        @if($PurchaseReceiptLine->purchaseLines->tasks->component_id ?? null || $PurchaseReceiptLine->purchaseLines->product_id ?? null)
+                        @if($task?->component_id || $PurchaseReceiptLine->purchaseLines->product_id ?? null)
                           @if(empty($PurchaseReceiptLine->stock_location_products_id))
                             @php
-                              if($PurchaseReceiptLine->purchaseLines->tasks->component_id ?? null){
-                                $productId = $PurchaseReceiptLine->purchaseLines->tasks->component_id;
+                              if($task?->component_id){
+                                $productId = $task->component_id;
                                 $taskId = $PurchaseReceiptLine->purchaseLines->tasks_id;
                               }
                               elseif($PurchaseReceiptLine->purchaseLines->product_id ?? null){

@@ -97,6 +97,17 @@ class PurchaseReceiptService
         throw new \Exception('No lines selected');
     }
 
+    /**
+     * Create an empty purchase receipt with only header data.
+     *
+     * @param array $receiptData The data for creating the purchase receipt.
+     * @return \App\Models\Purchases\PurchaseReceipt The created purchase receipt.
+     */
+    public function createEmptyPurchaseReceipt($receiptData)
+    {
+        return PurchaseReceipt::create($receiptData);
+    }
+
 
     /**
      * Get purchase lines that are waiting for receipt.

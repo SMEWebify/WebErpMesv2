@@ -61,7 +61,8 @@
                     <div class="row">
                         <div class="card-footer">
                             <div class="input-group">
-                                <button type="Submit" wire:click.prevent="storeReciep()" class="btn btn-success btn-block">{{ __('general_content.new_receipt_document_trans_key') }}</button>
+                                <button type="Submit" wire:click.prevent="storeReciep()" class="btn btn-success">{{ __('general_content.new_receipt_document_trans_key') }}</button>
+                                <button type="Submit" wire:click.prevent="storeEmptyReceipt()" class="btn btn-outline-secondary ml-2">{{ __('general_content.new_empty_receipt_document_trans_key') }}</button>
                             </div>
                         </div>
                     </div>
