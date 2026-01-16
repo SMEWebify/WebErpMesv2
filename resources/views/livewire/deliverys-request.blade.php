@@ -128,7 +128,17 @@
                         <th>{{ __('general_content.discount_trans_key') }}</th>
                         <th>{{ __('general_content.vat_trans_key') }}</th>
                         <th>{{ __('general_content.delivery_date_trans_key') }}</th>
-                        <th>{{__('general_content.action_trans_key') }}</th>
+                        <th>
+                            {{__('general_content.action_trans_key') }}
+                            @if($companies_id)
+                                <div class="custom-control custom-checkbox mt-2">
+                                    <input class="custom-control-input" id="selectAllLines" type="checkbox" wire:model.live="selectAll">
+                                    <label class="custom-control-label" for="selectAllLines">
+                                        {{ $selectAll ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
+                                    </label>
+                                </div>
+                            @endif
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
