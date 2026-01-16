@@ -229,6 +229,8 @@ return [
     'discount_trans_key'                       => 'Réduction',
     'vat_trans_key'                            => 'TVA',
     'delivery_date_trans_key'                  => 'Date de livraison',
+    'delivery_note_date_from_trans_key'        => 'Date du bon de livraison du',
+    'delivery_note_date_to_trans_key'          => 'Date du bon de livraison au',
     'internal_delay_trans_key'                 => 'délai interne',
     'tasks_status_trans_key'                   => 'Statut des taches',
     'delivery_status_trans_key'                => 'Statut de livraison',

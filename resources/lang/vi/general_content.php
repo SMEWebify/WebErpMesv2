@@ -84,6 +84,8 @@ return [
     'delivery_notes_trans_key'                 => 'Ghi chép giao hàng',
     'deliverys_notes_request_trans_key'        => 'Yêu cầu ghi chép giao hàng',
     'deliverys_notes_list_trans_key'           => 'Danh sách ghi chép giao hàng',
+    'delivery_note_date_from_trans_key'        => 'Ngày phiếu giao hàng từ',
+    'delivery_note_date_to_trans_key'          => 'Ngày phiếu giao hàng đến',
     'invoices_trans_key'                       => 'Hóa đơn',
     'invoices_request_trans_key'               => 'Yêu cầu hóa đơn',
     'invoices_list_trans_key'                  => 'Danh sách hóa đơn',

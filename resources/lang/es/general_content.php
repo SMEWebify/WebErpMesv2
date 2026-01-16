@@ -193,6 +193,8 @@ return [
     'discount_trans_key'                       => 'Descuento',
     'vat_trans_key'                            => 'IVA',
     'delivery_date_trans_key'                  => 'Fecha de entrega',
+    'delivery_note_date_from_trans_key'        => 'Fecha del albarán desde',
+    'delivery_note_date_to_trans_key'          => 'Fecha del albarán hasta',
     'tasks_status_trans_key'                   => 'Estado de tareas',
     'delivery_status_trans_key'                => 'Estado de entrega',
     'invoice_status_trans_key'                 => 'Estado de factura',

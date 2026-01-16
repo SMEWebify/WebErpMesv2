@@ -193,6 +193,8 @@ return [
     'discount_trans_key'                       => 'الخصم',
     'vat_trans_key'                            => 'ضريبة القيمة المضافة',
     'delivery_date_trans_key'                  => 'تاريخ التسليم',
+    'delivery_note_date_from_trans_key'        => 'تاريخ إشعار التسليم من',
+    'delivery_note_date_to_trans_key'          => 'تاريخ إشعار التسليم إلى',
     'internal_delay_trans_key'                 => 'التأخير الداخلي',
     'tasks_status_trans_key'                   => 'حالة المهام',
     'delivery_status_trans_key'                => 'حالة التسليم',
