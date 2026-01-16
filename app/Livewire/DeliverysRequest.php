@@ -55,6 +55,7 @@ class DeliverysRequest extends Component
     public $CompanieSelect = [];
     public $data = [];
     public $qty = [];
+    public $selectAll = false;
 
     private $ordre = 10;
 
@@ -86,6 +87,25 @@ class DeliverysRequest extends Component
         $deliveryId = $this->LastDelivery ? $this->LastDelivery->id : 0;
         $this->code = $this->documentCodeGenerator->generateDocumentCode('delivery', $deliveryId);
         $this->label = $this->code;
+    }
+
+    public function updatedCompaniesId()
+    {
+        $this->selectAll = false;
+        $this->data = [];
+    }
+
+    public function updatedSelectAll($value)
+    {
+        $lines = $this->DeliveryDataService->getDeliveryRequestsLines(
+            $this->companies_id,
+            $this->sortField,
+            $this->sortAsc
+        );
+
+        foreach ($lines as $line) {
+            $this->data[$line->id]['order_line_id'] = $value ? $line->id : false;
+        }
     }
 
     public function render()
