@@ -21,8 +21,14 @@
             <th>{{ __('general_content.qty_trans_key') }}</th>
             @foreach($quotations as $quotation)
               <th>
-                {{ $quotation->companie?->label ?? $quotation->code }}
-                <div class="text-muted">{{ $quotation->code }}</div>
+                <a href="{{ route('purchases.quotations.show', ['id' => $quotation->id]) }}">
+                  {{ $quotation->companie?->label ?? $quotation->code }}
+                </a>
+                <div class="text-muted">
+                  <a href="{{ route('purchases.quotations.show', ['id' => $quotation->id]) }}">
+                    {{ $quotation->code }}
+                  </a>
+                </div>
               </th>
             @endforeach
           </tr>
