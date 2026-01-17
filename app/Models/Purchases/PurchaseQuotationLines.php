@@ -54,11 +54,21 @@ class PurchaseQuotationLines extends Model
      *
      * @return string The formatted unit price.
      */
-    public function getFormattedSellingPriceAttribute()
+    public function getFormattedUnitPriceAttribute()
     {
         $factory = app('Factory'); 
         $currency = $factory->curency ?? 'EUR';
         return Number::currency($this->unit_price, $currency, config('app.locale'));
+    }
+
+    /**
+     * Get the formatted selling price attribute.
+     *
+     * @return string The formatted selling price.
+     */
+    public function getFormattedSellingPriceAttribute()
+    {
+        return $this->formatted_unit_price;
     }
 
     /**
