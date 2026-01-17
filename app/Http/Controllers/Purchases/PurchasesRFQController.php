@@ -109,7 +109,9 @@ class PurchasesRFQController extends Controller
                     ]);
                 }
 
-                $lineGroups[$key]['lines'][$quotation->id] = $line;
+                $lineGroup = $lineGroups->get($key);
+                $lineGroup['lines'][$quotation->id] = $line;
+                $lineGroups->put($key, $lineGroup);
             }
         }
 
