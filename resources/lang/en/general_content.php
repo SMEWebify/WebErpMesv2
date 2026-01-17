@@ -343,6 +343,8 @@ return [
     'purchase_quotation_trans_key'             => 'Purchase quotation',
     'purchase_quotation_info_trans_key'        => 'Purchase quotation info',
     'purchase_quotation_lines_trans_key'       => 'Purchase quotation lines',
+    'lead_time_trans_key'                      => 'Lead time',
+    'score_trans_key'                          => 'Score',
 
     'purchase_info_trans_key'                  => 'Purchase info',
     'purchase_lines_trans_key'                 => 'Purchase lines',
@@ -456,6 +458,7 @@ return [
     'select_user_trans_key'                    => 'Select user',
     'select_user_management_trans_key'         => 'Select user management',
     'select_company_trans_key'                 => 'Select third party',
+    'select_suppliers_trans_key'               => 'Select suppliers',
     'select_address_trans_key'                 => 'Select address',
     'select_contact_trans_key'                 => 'Select contact',
     'select_payement_condition_trans_key'      => 'Select payement condition',
@@ -1005,6 +1008,7 @@ return [
     'purchase_request_trans_key'               => 'Purchase request',
     'requests_for_quotation_list_trans_key'    => 'Requests for quotation',
     'name_quote_request_trans_key'             => 'Name of quotation request',
+    'compare_rfq_trans_key'                    => 'Compare suppliers',
     
     'purchase_list_trans_key'                  => 'Purchase list',
     'waiting_to_receipt_trans_key'             => 'Waiting to receipt',

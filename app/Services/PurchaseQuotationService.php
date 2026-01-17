@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Models\Planning\Task;
 use App\Models\Planning\Status;
+use App\Models\Companies\Companies;
 use Illuminate\Support\Facades\Auth;
 use App\Services\DocumentCodeGenerator;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Purchases\PurchaseQuotationLines;
+use App\Models\Purchases\PurchaseRfqGroup;
 
 class PurchaseQuotationService
 {
@@ -27,9 +29,10 @@ class PurchaseQuotationService
      * @param string $purchaseQuotationLabel The label for the purchase quotation.
      * @param int $defaultContact The ID of the default contact for the purchase quotation.
      * @param int $defaultAddress The ID of the default address for the purchase quotation.
+     * @param int|null $rfqGroupId The ID of the RFQ group.
      * @return \App\Models\Purchases\PurchasesQuotation The created purchase quotation.
      */
-    public function createPurchasesQuotation($purchaseQuotationData, $purchaseQuotationCode, $purchaseQuotationLabel, $defaultContact, $defaultAddress)
+    public function createPurchasesQuotation($purchaseQuotationData, $purchaseQuotationCode, $purchaseQuotationLabel, $defaultContact, $defaultAddress, $rfqGroupId = null)
     {
         return PurchasesQuotation::create([
             'code' => $purchaseQuotationCode,
@@ -37,8 +40,46 @@ class PurchaseQuotationService
             'companies_id' => $purchaseQuotationData,
             'companies_contacts_id' => $defaultContact,
             'companies_addresses_id' => $defaultAddress,
+            'rfq_group_id' => $rfqGroupId,
             'user_id' => Auth::id(),
         ]);
+    }
+
+    /**
+     * Create a new RFQ group.
+     *
+     * @param string $code
+     * @param string $label
+     * @param string|null $description
+     * @return \App\Models\Purchases\PurchaseRfqGroup
+     */
+    public function createRfqGroup($code, $label, $description = null)
+    {
+        return PurchaseRfqGroup::create([
+            'code' => $code,
+            'label' => $label,
+            'description' => $description,
+            'user_id' => Auth::id(),
+        ]);
+    }
+
+    /**
+     * Generate a unique quotation code for a supplier in a RFQ group.
+     *
+     * @param string $baseCode
+     * @param \App\Models\Companies\Companies $company
+     * @return string
+     */
+    public function generateGroupedQuotationCode($baseCode, Companies $company)
+    {
+        $suffix = $company->code ?: $company->id;
+        $code = $baseCode . '-' . $suffix;
+
+        if (PurchasesQuotation::where('code', $code)->exists()) {
+            $code = $baseCode . '-' . $company->id . '-' . now()->format('His');
+        }
+
+        return $code;
     }
 
     /**
@@ -56,6 +97,8 @@ class PurchaseQuotationService
         return PurchaseQuotationLines::create([
             'purchases_quotation_id' => $purchaseQuotation->id,
             'tasks_id' => $task->id,
+            'code' => $task->Component?->code ?? $task->code,
+            'product_id' => $task->component_id,
             'label' => $task->label,
             'ordre' => $ordre, 
             //'supplier_ref' => , can be null

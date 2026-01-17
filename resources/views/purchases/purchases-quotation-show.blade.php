@@ -102,6 +102,16 @@
                     <td><x-ButtonTextEmail route="{{ route('email.create', ['type' => 'purchase-quotation', 'id' => $PurchaseQuotation->id]) }}" /></td>
                   </tr>
                   @endif
+                  @if($PurchaseQuotation->rfq_group_id)
+                  <tr>
+                    <td style="width:50%">{{ __('general_content.compare_rfq_trans_key') }}</td>
+                    <td>
+                      <a class="btn btn-outline-primary btn-sm" href="{{ route('purchases.quotations.compare', ['group' => $PurchaseQuotation->rfq_group_id]) }}">
+                        <i class="fas fa-balance-scale"></i> {{ __('general_content.compare_rfq_trans_key') }}
+                      </a>
+                    </td>
+                  </tr>
+                  @endif
                 </table>
               </div>
             </x-adminlte-card>

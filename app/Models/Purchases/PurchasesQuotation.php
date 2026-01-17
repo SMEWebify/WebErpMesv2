@@ -12,6 +12,7 @@ use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchaseQuotationLines;
+use App\Models\Purchases\PurchaseRfqGroup;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchasesQuotation extends Model
@@ -24,6 +25,7 @@ class PurchasesQuotation extends Model
                             'companies_id', 
                             'companies_contacts_id',   
                             'companies_addresses_id',  
+                            'rfq_group_id',
                             'statu',  
                             'user_id',
                             'comment',
@@ -67,6 +69,11 @@ class PurchasesQuotation extends Model
     public function PurchaseQuotationLines()
     {
         return $this->hasMany(PurchaseQuotationLines::class)->orderBy('ordre');
+    }
+
+    public function rfqGroup()
+    {
+        return $this->belongsTo(PurchaseRfqGroup::class, 'rfq_group_id');
     }
 
     /**

@@ -294,6 +294,8 @@ return [
     'purchase_quotation_trans_key'             => 'عرض الشراء',
     'purchase_quotation_info_trans_key'        => 'معلومات عرض الشراء',
     'purchase_quotation_lines_trans_key'       => 'أسطر عرض الشراء',
+    'lead_time_trans_key'                      => 'المهلة',
+    'score_trans_key'                          => 'الدرجة',
 
     'purchase_info_trans_key'                  => 'معلومات الشراء',
     'purchase_lines_trans_key'                 => 'أسطر الشراء',
@@ -398,6 +400,7 @@ return [
     'select_user_trans_key'                 => 'اختر مستخدم',
     'select_user_management_trans_key'      => 'اختر إدارة المستخدمين',
     'select_company_trans_key'              => 'اختر جهة ثالثة',
+    'select_suppliers_trans_key'            => 'اختر الموردين',
     'select_address_trans_key'              => 'اختر العنوان',
     'select_contact_trans_key'              => 'اختر جهة اتصال',
     'select_payement_condition_trans_key'   => 'اختر شرط الدفع',
@@ -852,6 +855,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'طلب شراء',
     'requests_for_quotation_list_trans_key'    => 'طلبات السعر',
+    'compare_rfq_trans_key'                    => 'مقارنة الموردين',
     'name_quote_request_trans_key'             => 'اسم طلب العرض',
     
     'purchase_list_trans_key'      => 'قائمة الشراء',

@@ -334,6 +334,8 @@ return [
     'purchase_quotation_trans_key'             => '采购询价',
     'purchase_quotation_info_trans_key'        => '采购报价信息',
     'purchase_quotation_lines_trans_key'       => '采购报价行',
+    'lead_time_trans_key'                      => '交期',
+    'score_trans_key'                          => '评分',
 
     'purchase_info_trans_key'                  => '采购信息',
     'purchase_lines_trans_key'                 => '采购行',
@@ -446,6 +448,7 @@ return [
     'select_user_trans_key'                    => '选择用户',
     'select_user_management_trans_key'         => '选择用户',
     'select_company_trans_key'                 => '选择第三方',
+    'select_suppliers_trans_key'               => '选择供应商',
     'select_address_trans_key'                 => '选择地址',
     'select_contact_trans_key'                 => '选择联系人',
     'select_payement_condition_trans_key'      => '选择付款条件',
@@ -992,6 +995,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => '采购申请',
     'requests_for_quotation_list_trans_key'    => '询价单',
+    'compare_rfq_trans_key'                    => '对比供应商',
     'name_quote_request_trans_key'             => '采购申请名称',
 
     'purchase_list_trans_key'                  => '采购订单列表',

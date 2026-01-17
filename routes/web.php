@@ -231,6 +231,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchases.show');
         Route::get('/quotation/{id}', 'App\Http\Controllers\Purchases\PurchasesRFQController@showQuotation')->middleware(['auth'])->name('purchases.quotations.show');
+        Route::get('/quotation/group/{group}/compare', 'App\Http\Controllers\Purchases\PurchasesRFQController@compareQuotationGroup')->middleware(['auth'])->name('purchases.quotations.compare');
         Route::get('/receipt/{id}', 'App\Http\Controllers\Purchases\PurchasesReceiptController@showReceipt')->middleware(['auth'])->name('purchase.receipts.show');
         Route::get('/invoice/{id}', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@showInvoice')->middleware(['auth'])->name('purchase.invoices.show');
     });
