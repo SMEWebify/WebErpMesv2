@@ -856,6 +856,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Solicitud de compra',
     'requests_for_quotation_list_trans_key'    => 'Solicitudes de cotización',
+    'rfq_group_trans_key'                      => 'Grupo RFQ',
     'compare_rfq_trans_key'                    => 'Comparar proveedores',
     'name_quote_request_trans_key'             => 'Nombre de la solicitud de cotización',
 

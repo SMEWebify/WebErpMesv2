@@ -995,6 +995,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => '采购申请',
     'requests_for_quotation_list_trans_key'    => '询价单',
+    'rfq_group_trans_key'                      => '询价组',
     'compare_rfq_trans_key'                    => '对比供应商',
     'name_quote_request_trans_key'             => '采购申请名称',
 

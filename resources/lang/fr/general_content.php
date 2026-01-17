@@ -1007,6 +1007,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Demande d\'achat',
     'requests_for_quotation_list_trans_key'    => 'Demande de devis',
+    'rfq_group_trans_key'                      => 'Groupe RFQ',
     'compare_rfq_trans_key'                    => 'Comparer les fournisseurs',
     'name_quote_request_trans_key'             => 'Nom de la demande d\'achat',
 
