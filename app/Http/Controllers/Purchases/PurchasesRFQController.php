@@ -7,10 +7,12 @@ use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\PurchaseKPIService;
+use App\Services\PurchaseQuotationService;
 use App\Services\PurchaseOrderService;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Purchases\PurchaseRfqGroup;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
+use Illuminate\Support\Facades\DB;
 
 class PurchasesRFQController extends Controller
 {
@@ -19,6 +21,7 @@ class PurchasesRFQController extends Controller
     protected $SelectDataService;
     protected $purchaseKPIService;
     protected $customFieldService;
+    protected $purchaseQuotationService;
     protected $purchaseOrderService;
 
     /**
@@ -33,11 +36,13 @@ class PurchasesRFQController extends Controller
             SelectDataService $SelectDataService, 
             PurchaseKPIService $purchaseKPIService,
             CustomFieldService $customFieldService,
+            PurchaseQuotationService $purchaseQuotationService,
             PurchaseOrderService $purchaseOrderService,
         ){
         $this->SelectDataService = $SelectDataService;
         $this->purchaseKPIService = $purchaseKPIService;
         $this->customFieldService = $customFieldService;
+        $this->purchaseQuotationService = $purchaseQuotationService;
         $this->purchaseOrderService = $purchaseOrderService;
     }
     
@@ -125,6 +130,45 @@ class PurchasesRFQController extends Controller
             'lineGroups' => $lineGroups->values(),
             'supplierTotals' => $supplierTotals,
         ]);
+    }
+
+    /**
+     * Duplicate a purchase quotation with its lines.
+     *
+     * @param PurchasesQuotation $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function duplicateQuotation(PurchasesQuotation $id)
+    {
+        $id->load('PurchaseQuotationLines');
+        $newCode = $this->purchaseQuotationService->generatePurchasesQuotationCode();
+        $newLabel = $id->label . ' #duplicate' . $id->id;
+
+        $newQuotation = DB::transaction(function () use ($id, $newCode, $newLabel) {
+            $newQuotation = $this->purchaseQuotationService->createPurchasesQuotation(
+                $id->companies_id,
+                $newCode,
+                $newLabel,
+                $id->companies_contacts_id,
+                $id->companies_addresses_id,
+                $id->rfq_group_id
+            );
+            $newQuotation->delay = $id->delay;
+            $newQuotation->statu = $id->statu;
+            $newQuotation->comment = $id->comment;
+            $newQuotation->save();
+
+            foreach ($id->PurchaseQuotationLines as $line) {
+                $newLine = $line->replicate();
+                $newLine->purchases_quotation_id = $newQuotation->id;
+                $newLine->save();
+            }
+
+            return $newQuotation;
+        });
+
+        return redirect()->route('purchases.quotations.show', ['id' =>  $newQuotation->id])
+            ->with('success', 'Successfully duplicated purchase quotation');
     }
 
     /**

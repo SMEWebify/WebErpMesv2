@@ -806,6 +806,7 @@ return [
     'quantite_eco_max_trans_key'               => 'الحد الأقصى لكمية مستدامة',
     'quantite_max_trans_key'                   => 'الحد الأقصى للكمية',
     'duplicate_product_trans_key'              => 'نسخ المنتج',
+    'duplicate_purchase_quotation_trans_key'   => 'نسخ طلب عرض السعر',
     'other_information_trans_key'              => 'معلومات أخرى',
     'index_trans_key'                          => 'الفهرس',
     'new_product_trans_key'                    => 'منتج جديد',

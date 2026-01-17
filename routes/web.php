@@ -223,6 +223,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         
         Route::post('/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesController@updatePurchase')->middleware(['auth'])->name('purchase.update');
         Route::post('/quotation/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesRFQController@updatePurchaseQuotation')->middleware(['auth'])->name('quotation.update');
+        Route::get('/quotation/{id}/duplicate', 'App\Http\Controllers\Purchases\PurchasesRFQController@duplicateQuotation')->middleware(['auth'])->name('purchases.quotations.duplicate');
         Route::post('/receipt/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updatePurchaseReceipt')->middleware(['auth'])->name('receipt.update');
         Route::post('/receipt/control/{id}', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateReceiptControl')->middleware(['auth'])->name('purchase.receipts.reception_control');
         Route::post('/receipt/line/{purchaseReceiptLine}/inspection', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateLineInspection')->middleware(['auth'])->name('purchase.receipts.lines.update');

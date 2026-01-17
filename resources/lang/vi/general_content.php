@@ -190,6 +190,7 @@ return [
     'custom_fields_options_help_trans_key'     => 'Được hiển thị như các giá trị có thể chọn trong danh sách.',
     'custom_fields_select_placeholder_trans_key' => 'Chọn một tùy chọn',
     'select_user_trans_key'                    => 'Chọn người dùng',
+    'duplicate_purchase_quotation_trans_key'   => 'Nhân bản yêu cầu báo giá',
 
     //REVIEW & CHANGE
     'review_change_tracking_trans_key'         => 'Theo dõi xem xét và thay đổi',

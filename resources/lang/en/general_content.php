@@ -953,6 +953,7 @@ return [
     'quantite_eco_max_trans_key'               => 'Qty eco max',
     'quantite_max_trans_key'                   => 'Qty max',
     'duplicate_product_trans_key'              => 'Duplicate product',
+    'duplicate_purchase_quotation_trans_key'   => 'Duplicate purchase quotation',
     'other_information_trans_key'              => 'Other information',
     'index_trans_key'                          => 'Index',
     'new_product_trans_key'                    => 'New product',
