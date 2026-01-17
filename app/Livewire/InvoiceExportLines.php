@@ -15,11 +15,11 @@ class InvoiceExportLines extends Component
     public $data = [];
 
     //export
-    public Collection $selectedInvoiceLine;
+    public array $selectedInvoiceLine = [];
 
     public function mount() 
     {
-        $this->selectedInvoiceLine = collect();
+        $this->selectedInvoiceLine = [];
     }
 
     public function render()
@@ -34,7 +34,9 @@ class InvoiceExportLines extends Component
 
     private function getSelectedInvoiceLine()
     {
-        return $this->selectedInvoiceLine->filter(fn($p) => $p)->keys();
+        return collect($this->selectedInvoiceLine)
+            ->filter(fn($p) => $p)
+            ->keys();
     }
 
     public function export($ext)
