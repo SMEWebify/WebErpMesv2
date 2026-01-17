@@ -17,7 +17,7 @@
       <canvas id="donutChart" width="400" height="400"></canvas>
     </x-adminlte-card>
     <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="warning" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-      <canvas id="donutChart" width="400" height="400"></canvas>
+      <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
     </x-adminlte-card>
   </div>
   <div class="col-md-9">
@@ -74,6 +74,52 @@
         options: donutOptions
       })
   
-  
+    //-------------
+    //- BAR CHART -
+    //-------------
+    var barChartCanvas = $('#barChart').get(0).getContext('2d')
+    var barChartData =  {
+      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','September','December ' ],
+      datasets: [
+        {
+          label               : 'Total receipts',
+          backgroundColor     : 'rgba(60,141,188,0.9)',
+          borderColor         : 'rgba(60,141,188,0.8)',
+          pointRadius          : false,
+          pointColor          : '#3b8bba',
+          pointStrokeColor    : 'rgba(60,141,188,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data                : [
+                              @php ($j = 1)
+                              @for($iM =1;$iM<=12;$iM++)
+                                @foreach ($data['purchaseReceiptMonthlyRecap'] as $key => $item)
+                                @php ($j = 1)
+                                  @if($iM  == $item->month) 
+                                  "{{ $item->receiptCount }}",
+                                    @php ($j = 2)
+                                    @break
+                                  @endif
+                                @endforeach
+                                @if($j == 1) 
+                                  0,
+                                  @php ($j = 1)
+                                @endif
+                              @endfor ]
+        },
+      ]
+    }
+
+    var barChartOptions = {
+      responsive              : true,
+      maintainAspectRatio     : false,
+      datasetFill             : false
+    }
+
+    new Chart(barChartCanvas, {
+      type: 'bar',
+      data: barChartData,
+      options: barChartOptions
+    })
     </script>
 @stop
