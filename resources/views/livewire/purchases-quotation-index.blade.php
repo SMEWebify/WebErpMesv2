@@ -37,11 +37,20 @@
                     @if ($currentGroup && $currentGroup !== $previousGroup)
                         <tr class="table-active">
                             <td colspan="8">
-                                <strong>{{ __('general_content.rfq_group_trans_key') }}:</strong>
-                                {{ $PurchaseQuotation->rfqGroup?->label ?? $PurchaseQuotation->rfqGroup?->code }}
-                                @if($PurchaseQuotation->rfqGroup?->code)
-                                    <span class="text-muted">({{ $PurchaseQuotation->rfqGroup->code }})</span>
-                                @endif
+                                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                    <div>
+                                        <strong>{{ __('general_content.rfq_group_trans_key') }}:</strong>
+                                        {{ $PurchaseQuotation->rfqGroup?->label ?? $PurchaseQuotation->rfqGroup?->code }}
+                                        @if($PurchaseQuotation->rfqGroup?->code)
+                                            <span class="text-muted">({{ $PurchaseQuotation->rfqGroup->code }})</span>
+                                        @endif
+                                    </div>
+                                    @if($PurchaseQuotation->rfq_group_id)
+                                        <a class="btn btn-outline-primary btn-sm" href="{{ route('purchases.quotations.compare', ['group' => $PurchaseQuotation->rfq_group_id]) }}">
+                                            <i class="fas fa-balance-scale"></i> {{ __('general_content.compare_rfq_trans_key') }}
+                                        </a>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @endif
