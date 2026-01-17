@@ -112,6 +112,7 @@ return [
     'purchase_trans_key'                       => 'Mua hàng',
     'purchase_request_trans_key'               => 'Đề xuất mua hàng',
     'requests_for_quotation_list_trans_key'    => 'Danh mục báo giá đề xuất',
+    'rfq_group_trans_key'                      => 'Nhóm RFQ',
     'lead_time_trans_key'                      => 'Thời gian giao hàng',
     'score_trans_key'                          => 'Điểm số',
     'compare_rfq_trans_key'                    => 'So sánh nhà cung cấp',

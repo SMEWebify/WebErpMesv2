@@ -1007,6 +1007,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Purchase request',
     'requests_for_quotation_list_trans_key'    => 'Requests for quotation',
+    'rfq_group_trans_key'                      => 'RFQ group',
     'name_quote_request_trans_key'             => 'Name of quotation request',
     'compare_rfq_trans_key'                    => 'Compare suppliers',
     

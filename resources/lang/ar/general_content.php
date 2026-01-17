@@ -855,6 +855,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'طلب شراء',
     'requests_for_quotation_list_trans_key'    => 'طلبات السعر',
+    'rfq_group_trans_key'                      => 'مجموعة طلبات الأسعار',
     'compare_rfq_trans_key'                    => 'مقارنة الموردين',
     'name_quote_request_trans_key'             => 'اسم طلب العرض',
     

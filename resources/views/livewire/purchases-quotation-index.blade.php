@@ -14,6 +14,7 @@
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                         </th>
+                        <th>{{ __('general_content.rfq_group_trans_key') }}</th>
                         <th>
                             <a class="btn btn-secondary" wire:click.prevent="sortBy('companies_id')"   role="button" href="#">{{__('general_content.id_trans_key') }} @include('include.sort-icon', ['field' => 'companies_id'])</a>
                         </th>
@@ -26,10 +27,35 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $previousGroup = null;
+                    @endphp
                     @forelse ($PurchasesQuotationList as $PurchaseQuotation)
-                    <tr>
+                    @php
+                        $currentGroup = $PurchaseQuotation->rfq_group_id;
+                    @endphp
+                    @if ($currentGroup && $currentGroup !== $previousGroup)
+                        <tr class="table-active">
+                            <td colspan="8">
+                                <strong>{{ __('general_content.rfq_group_trans_key') }}:</strong>
+                                {{ $PurchaseQuotation->rfqGroup?->label ?? $PurchaseQuotation->rfqGroup?->code }}
+                                @if($PurchaseQuotation->rfqGroup?->code)
+                                    <span class="text-muted">({{ $PurchaseQuotation->rfqGroup->code }})</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endif
+                    <tr @if($currentGroup) style="border-left: 4px solid #6c757d;" @endif>
                         <td>{{ $PurchaseQuotation->code }}</td>
                         <td>{{ $PurchaseQuotation->label }}</td>
+                        <td>
+                            @if($PurchaseQuotation->rfqGroup)
+                                <span class="badge badge-light">{{ $PurchaseQuotation->rfqGroup->code }}</span>
+                                <div class="text-muted small">{{ $PurchaseQuotation->rfqGroup->label }}</div>
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
+                        </td>
                         <td>
                             <x-CompanieButton id="{{ $PurchaseQuotation->companies_id }}" label="{{ $PurchaseQuotation->companie['label'] }}"  />
                         </td>
@@ -50,14 +76,18 @@
                             @endif
                         </td>
                     </tr>
+                    @php
+                        $previousGroup = $currentGroup;
+                    @endphp
                     @empty
-                        <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="8" text="{{ __('general_content.no_data_trans_key') }}"  />
                     @endforelse
                 </tbody>
                 <tfoot>
                     <tr>
                         <th>{{__('general_content.id_trans_key') }}</th>
                         <th>{{__('general_content.label_trans_key') }}</th>
+                        <th>{{ __('general_content.rfq_group_trans_key') }}</th>
                         <th>{{__('general_content.customer_trans_key') }}</th>
                         <th>{{__('general_content.lines_count_trans_key') }}</th>
                         <th>{{__('general_content.status_trans_key') }}</th>
