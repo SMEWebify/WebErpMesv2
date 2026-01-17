@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
 use App\Services\PurchaseOrderService;
 use App\Services\PurchaseQuotationService;
+use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 
@@ -20,6 +21,7 @@ class PurchasesRequest extends Component
 {
     // Properties for managing state
     public $companies_id = '';
+    public $selected_companies = [];
     public $sortField = 'tasks.id'; // default sorting field
     public $sortAsc = true; // default sort direction
     
@@ -60,9 +62,9 @@ class PurchasesRequest extends Component
         }
         elseif($this->document_type == 'PQ'){
             return [
-                'code' =>'required|unique:purchases_quotations',
+                'code' =>'required|unique:purchase_rfq_groups,code',
                 'label' =>'required',
-                'companies_id'=>'required',
+                'selected_companies' => 'required|array|min:1',
             ];
         }
     }
@@ -151,22 +153,21 @@ class PurchasesRequest extends Component
         $taskIds = collect($this->data)->pluck('task_id')->filter()->count();
 
         // Get default settings for the purchase order or quotation
-        $defaultSettings = [
-            'AccountingVat' => $this->purchaseOrderService->getAccountingVat(),
-            'defaultAddress' => CompaniesAddresses::getDefault(['companies_id' => $this->companies_id]),
-            'defaultContact' => CompaniesContacts::getDefault(['companies_id' => $this->companies_id]),
-        ];
-
-        // Check if all default settings are available
-        foreach ($defaultSettings as $key => $setting) {
-            if (is_null($setting)) {
-                return redirect()->back()->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
-            }
-            $defaultSettings[$key] = $setting->id;
-        }
-
         // Create puchase order
         if($this->document_type == 'PU'){
+            $defaultSettings = [
+                'AccountingVat' => $this->purchaseOrderService->getAccountingVat(),
+                'defaultAddress' => CompaniesAddresses::getDefault(['companies_id' => $this->companies_id]),
+                'defaultContact' => CompaniesContacts::getDefault(['companies_id' => $this->companies_id]),
+            ];
+
+            // Check if all default settings are available
+            foreach ($defaultSettings as $key => $setting) {
+                if (is_null($setting)) {
+                    return redirect()->back()->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
+                }
+                $defaultSettings[$key] = $setting->id;
+            }
 
             // Get the status update for the purchase order
             $statusUpdate = $this->purchaseOrderService->getStatusUpdate();
@@ -208,27 +209,58 @@ class PurchasesRequest extends Component
                 return redirect()->back()->with('error', 'No status "RFQ in progress" or "Started" in kanban for defining progress');
             }
 
-            // Create the purchase quotation
-            $PurchaseQuotationCreated = $this->purchaseQuotationService->createPurchasesQuotation($this->companies_id, 
-                                                                                                $this->code , 
-                                                                                                $this->label , 
-                                                                                                $defaultSettings['defaultAddress'],
-                                                                                                $defaultSettings['defaultContact']);
+            $rfqGroup = $this->purchaseQuotationService->createRfqGroup($this->code, $this->label);
+            $selectedCompanies = collect($this->selected_companies)->filter()->unique()->values();
 
-            if (!$PurchaseQuotationCreated) {
-                return redirect()->back()->withErrors(['msg' => 'Something went wrong (like no default settings for address, contact or accounting vat)']);
-            }
+            foreach ($selectedCompanies as $companyId) {
+                $company = Companies::find($companyId);
 
-            if ($taskIds > 0) {
-                // Process the purchase request lines
-                $this->purchaseQuotationService->processPurchaseRequestLines(
-                    $this->data,
-                    $PurchaseQuotationCreated,
-                    $statusUpdate->id
+                if (!$company) {
+                    return redirect()->back()->withErrors(['msg' => 'Supplier not found']);
+                }
+
+                $defaultSettings = [
+                    'AccountingVat' => $this->purchaseOrderService->getAccountingVat(),
+                    'defaultAddress' => CompaniesAddresses::getDefault(['companies_id' => $companyId]),
+                    'defaultContact' => CompaniesContacts::getDefault(['companies_id' => $companyId]),
+                ];
+
+                foreach ($defaultSettings as $key => $setting) {
+                    if (is_null($setting)) {
+                        return redirect()->back()->with('error', 'No default settings for ' . str_replace('_', ' ', $key));
+                    }
+                    $defaultSettings[$key] = $setting->id;
+                }
+
+                $quotationCode = $this->purchaseQuotationService->generateGroupedQuotationCode($this->code, $company);
+                $quotationLabel = $this->label . ' - ' . $company->label;
+
+                $PurchaseQuotationCreated = $this->purchaseQuotationService->createPurchasesQuotation(
+                    $companyId,
+                    $quotationCode,
+                    $quotationLabel,
+                    $defaultSettings['defaultAddress'],
+                    $defaultSettings['defaultContact'],
+                    $rfqGroup->id
                 );
+
+                if (!$PurchaseQuotationCreated) {
+                    return redirect()->back()->withErrors(['msg' => 'Something went wrong (like no default settings for address, contact or accounting vat)']);
+                }
+
+                if ($taskIds > 0) {
+                    $this->purchaseQuotationService->processPurchaseRequestLines(
+                        $this->data,
+                        $PurchaseQuotationCreated,
+                        $statusUpdate->id
+                    );
+                }
             }
-                
-            return redirect()->route('purchases.quotations.show', ['id' => $PurchaseQuotationCreated->id])->with('success', 'Successfully created new purchase quotation');
+
+            $firstQuotation = PurchasesQuotation::where('rfq_group_id', $rfqGroup->id)->orderBy('id')->first();
+
+            return redirect()->route('purchases.quotations.show', ['id' => $firstQuotation->id])
+                ->with('success', 'Successfully created new purchase quotation');
         }
         else{
             return redirect()->back()->with('error', 'no document type');

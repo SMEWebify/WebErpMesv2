@@ -112,6 +112,9 @@ return [
     'purchase_trans_key'                       => 'Mua hàng',
     'purchase_request_trans_key'               => 'Đề xuất mua hàng',
     'requests_for_quotation_list_trans_key'    => 'Danh mục báo giá đề xuất',
+    'lead_time_trans_key'                      => 'Thời gian giao hàng',
+    'score_trans_key'                          => 'Điểm số',
+    'compare_rfq_trans_key'                    => 'So sánh nhà cung cấp',
     'purchase_list_trans_key'                  => 'Danh sách mua hàng',
     'waiting_to_receipt_trans_key'             => 'Chờ đơn nhận',
     'po_receipt_trans_key'                     => 'Đơn nhận PO',
@@ -197,4 +200,5 @@ return [
     'change_reason_trans_key'                  => 'Lý do thay đổi',
     'change_approved_at_trans_key'             => 'Thời gian phê duyệt thay đổi',
     'changes_trans_key'                        => 'Thay đổi',
+    'select_suppliers_trans_key'               => 'Chọn nhà cung cấp',
 ];

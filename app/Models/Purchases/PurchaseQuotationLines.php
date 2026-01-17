@@ -22,6 +22,10 @@ class PurchaseQuotationLines extends Model
         'qty_to_order',
         'unit_price',
         'total_price',
+        'lead_time_days',
+        'conditions',
+        'supplier_score',
+        'supplier_comment',
         'qty_accepted',
         'canceled_qty',
     ];

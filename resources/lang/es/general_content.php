@@ -291,6 +291,8 @@ return [
     'purchase_quotation_trans_key'             => 'Cotización de compra',
     'purchase_quotation_info_trans_key'        => 'Información de cotización de compra',
     'purchase_quotation_lines_trans_key'       => 'Líneas de cotización de compra',
+    'lead_time_trans_key'                      => 'Plazo',
+    'score_trans_key'                          => 'Puntuación',
 
     'purchase_info_trans_key'                  => 'Información de compra',
     'purchase_lines_trans_key'                 => 'Líneas de compra',
@@ -396,6 +398,7 @@ return [
     'select_user_trans_key'                    => 'Seleccionar usuario',
     'select_user_management_trans_key'         => 'Seleccionar gestión de usuarios',
     'select_company_trans_key'                 => 'Seleccionar tercero',
+    'select_suppliers_trans_key'               => 'Seleccionar proveedores',
     'select_address_trans_key'                 => 'Seleccionar dirección',
     'select_contact_trans_key'                 => 'Seleccionar contacto',
     'select_payement_condition_trans_key'      => 'Seleccionar condición de pago',
@@ -853,6 +856,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Solicitud de compra',
     'requests_for_quotation_list_trans_key'    => 'Solicitudes de cotización',
+    'compare_rfq_trans_key'                    => 'Comparar proveedores',
     'name_quote_request_trans_key'             => 'Nombre de la solicitud de cotización',
 
     'purchase_list_trans_key'                  => 'Lista de compras',

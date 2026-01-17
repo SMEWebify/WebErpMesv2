@@ -343,6 +343,8 @@ return [
     'purchase_quotation_trans_key'             => 'Demande d\'achat',
     'purchase_quotation_info_trans_key'        => 'Info Devis d\'achat',
     'purchase_quotation_lines_trans_key'       => 'Ligne devis d\'achat',
+    'lead_time_trans_key'                      => 'Délai',
+    'score_trans_key'                          => 'Score',
 
     'purchase_info_trans_key'                  => 'Achat info',
     'purchase_lines_trans_key'                 => 'Ligne achat',
@@ -456,6 +458,7 @@ return [
     'select_user_trans_key'                    => 'Sélectionner un utilisateur',
     'select_user_management_trans_key'         => 'Selectionner l\'utilisateur',
     'select_company_trans_key'                 => 'Selectionner tiers',
+    'select_suppliers_trans_key'               => 'Sélectionner des fournisseurs',
     'select_address_trans_key'                 => 'Selectionner adresse',
     'select_contact_trans_key'                 => 'Selectionner contact',
     'select_payement_condition_trans_key'      => 'Selectionner condition de paiement',
@@ -1004,6 +1007,7 @@ return [
     //PURCHASE REQUEST
     'purchase_request_trans_key'               => 'Demande d\'achat',
     'requests_for_quotation_list_trans_key'    => 'Demande de devis',
+    'compare_rfq_trans_key'                    => 'Comparer les fournisseurs',
     'name_quote_request_trans_key'             => 'Nom de la demande d\'achat',
 
     'purchase_list_trans_key'                  => 'Liste commande d\'achat',

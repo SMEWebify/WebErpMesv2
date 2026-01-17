@@ -9,6 +9,7 @@ use App\Services\CustomFieldService;
 use App\Services\PurchaseKPIService;
 use App\Services\PurchaseOrderService;
 use App\Models\Purchases\PurchasesQuotation;
+use App\Models\Purchases\PurchaseRfqGroup;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
 
 class PurchasesRFQController extends Controller
@@ -82,6 +83,45 @@ class PurchasesRFQController extends Controller
             'ContactSelect' => $ContactSelect,
             'previousUrl' =>  $previousUrl,
             'nextUrl' =>  $nextUrl,
+        ]);
+    }
+
+    /**
+     * Display a comparison table for a RFQ group.
+     *
+     * @param PurchaseRfqGroup $group
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function compareQuotationGroup(PurchaseRfqGroup $group)
+    {
+        $group->load(['purchaseQuotations.companie', 'purchaseQuotations.PurchaseQuotationLines']);
+        $quotations = $group->purchaseQuotations;
+
+        $lineGroups = collect();
+        foreach ($quotations as $quotation) {
+            foreach ($quotation->PurchaseQuotationLines as $line) {
+                $key = $line->product_id ? 'product-' . $line->product_id : 'line-' . $line->id;
+                if (!$lineGroups->has($key)) {
+                    $lineGroups->put($key, [
+                        'label' => $line->label ?? $line->code ?? __('general_content.line_trans_key'),
+                        'qty' => $line->qty_to_order,
+                        'lines' => [],
+                    ]);
+                }
+
+                $lineGroups[$key]['lines'][$quotation->id] = $line;
+            }
+        }
+
+        $supplierTotals = $quotations->mapWithKeys(function ($quotation) {
+            return [$quotation->id => $quotation->PurchaseQuotationLines->sum('total_price')];
+        });
+
+        return view('purchases/purchases-quotation-compare', [
+            'rfqGroup' => $group,
+            'quotations' => $quotations,
+            'lineGroups' => $lineGroups->values(),
+            'supplierTotals' => $supplierTotals,
         ]);
     }
 

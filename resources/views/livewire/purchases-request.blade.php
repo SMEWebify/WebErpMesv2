@@ -36,6 +36,24 @@
                         </div>
                         @error('companies_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
+                    @if($document_type == 'PQ')
+                    <div class="form-group col-md-3">
+                        <label for="selected_companies">{{ __('general_content.select_suppliers_trans_key') }}</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-industry"></i></span>
+                            </div>
+                            <select class="form-control" wire:model.live="selected_companies" name="selected_companies[]" id="selected_companies" multiple>
+                                @forelse ($CompanieSelect as $item)
+                                    <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                @empty
+                                    <option value="">{{ __('general_content.no_select_company_trans_key') }}</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        @error('selected_companies') <span class="text-danger">{{ $message }}<br/></span>@enderror
+                    </div>
+                    @endif
                     <div class="form-group col-md-3">
                         <label for="code">{{ __('general_content.external_id_trans_key') }}</label>
                         <div class="input-group">
