@@ -10,8 +10,10 @@ use App\Services\PurchaseKPIService;
 use App\Services\PurchaseQuotationService;
 use App\Services\PurchaseOrderService;
 use App\Models\Purchases\PurchasesQuotation;
+use App\Models\Purchases\PurchaseQuotationLines;
 use App\Models\Purchases\PurchaseRfqGroup;
 use App\Http\Requests\Purchases\UpdatePurchaseQuotationRequest;
+use Illuminate\Support\Number;
 use Illuminate\Support\Facades\DB;
 
 class PurchasesRFQController extends Controller
@@ -63,9 +65,22 @@ class PurchasesRFQController extends Controller
      */
     public function quotation()
     {    
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
         $data['purchasesQuotationDataRate'] = $this->purchaseKPIService->getPurchaseQuotationDataRate();
+        $totalPurchaseQuotationCount = PurchasesQuotation::count();
+        $totalPurchaseQuotationLineCount = PurchaseQuotationLines::count();
+        $totalPurchaseQuotationAmount = Number::currency(
+            PurchaseQuotationLines::sum('total_price'),
+            $currency,
+            config('app.locale')
+        );
                                                             
-        return view('purchases/purchases-quotation')->with('data',$data);
+        return view('purchases/purchases-quotation', [
+            'totalPurchaseQuotationCount' => $totalPurchaseQuotationCount,
+            'totalPurchaseQuotationLineCount' => $totalPurchaseQuotationLineCount,
+            'totalPurchaseQuotationAmount' => $totalPurchaseQuotationAmount,
+        ])->with('data', $data);
     }
 
     /**
