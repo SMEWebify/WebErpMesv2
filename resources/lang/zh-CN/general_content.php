@@ -941,6 +941,7 @@ return [
     'quantite_eco_max_trans_key'               => '经济最大量',
     'quantite_max_trans_key'                   => '最大量',
     'duplicate_product_trans_key'              => '复制产品',
+    'duplicate_purchase_quotation_trans_key'   => '复制采购询价单',
     'other_information_trans_key'              => '其他信息',
     'index_trans_key'                          => '索引',
     'new_product_trans_key'                    => '新建产品',

@@ -112,6 +112,14 @@
                     </td>
                   </tr>
                   @endif
+                  <tr>
+                    <td style="width:50%">{{ __('general_content.duplicate_purchase_quotation_trans_key') }}</td>
+                    <td>
+                      <a class="btn btn-outline-secondary btn-sm" href="{{ route('purchases.quotations.duplicate', ['id' => $PurchaseQuotation->id]) }}">
+                        <i class="fas fa-copy"></i> {{ __('general_content.duplicate_purchase_quotation_trans_key') }}
+                      </a>
+                    </td>
+                  </tr>
                 </table>
               </div>
             </x-adminlte-card>

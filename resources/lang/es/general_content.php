@@ -806,6 +806,7 @@ return [
     'quantite_eco_max_trans_key'               => 'Cantidad eco máxima',
     'quantite_max_trans_key'                   => 'Cantidad máxima',
     'duplicate_product_trans_key'              => 'Duplicar producto',
+    'duplicate_purchase_quotation_trans_key'   => 'Duplicar solicitud de cotización',
     'other_information_trans_key'              => 'Otra información',
     'index_trans_key'                          => 'Índice',
     'new_product_trans_key'                    => 'Nuevo producto',
