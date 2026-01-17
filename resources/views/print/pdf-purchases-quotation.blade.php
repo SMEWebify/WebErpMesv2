@@ -112,8 +112,8 @@
                 <tbody>
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
-                        <td>{{ $DocumentLine->tasks->OrderLines->order->code }}</td>
-                        <td>#{{ $DocumentLine->tasks->id }}  {{ $DocumentLine->tasks->label }}</td>
+                        <td>{{ data_get($DocumentLine, 'tasks.OrderLines.order.code', '-') }}</td>
+                        <td>#{{ data_get($DocumentLine, 'tasks.id', '-') }}  {{ data_get($DocumentLine, 'tasks.label', '') }}</td>
                         <td>{{ $DocumentLine->qty_to_order }}</td>
                         <td>.............{{ $Factory->curency }}</td>
                         <td>.............{{ $Factory->curency }}</td>
