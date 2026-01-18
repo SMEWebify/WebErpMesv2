@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new DispatchGtdTaskReminders())->dailyAt('08:00')->withoutOverlapping();
         $schedule->command('quality:dispatch-calibration-alerts')->dailyAt('07:30')->withoutOverlapping();
+        $schedule->command('emails:send-auto-reports')->everyMinute()->withoutOverlapping();
     }
 
     /**

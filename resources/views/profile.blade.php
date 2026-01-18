@@ -141,6 +141,9 @@
                         </form>
                     </div>
                 </div>
+                <div class="row mt-3">
+                    @livewire('user-auto-email-reports')
+                </div>
             </div>
             <div class="tab-pane" id="LeaveRequest">
                 <div class="row">

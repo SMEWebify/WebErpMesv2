@@ -25,6 +25,7 @@ use App\Models\Quality\QualityNonConformity;
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\Planning\AndonAlerts;
 use App\Models\Products\StockLocationProducts;
+use App\Models\UserAutoEmailReport;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -182,6 +183,11 @@ class User extends Authenticatable
     public function companie()
     {
         return $this->hasMany(Companies::class);
+    }
+
+    public function autoEmailReports()
+    {
+        return $this->hasMany(UserAutoEmailReport::class);
     }
 
     /**
