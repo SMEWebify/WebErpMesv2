@@ -304,6 +304,30 @@ class PurchaseKPIService
     }
 
     /**
+     * Get the monthly recap of purchase receipts for the current year.
+     *
+     * This function retrieves the count of purchase receipts per month
+     * for the current year.
+     *
+     * @return \Illuminate\Support\Collection A collection of objects where each object contains:
+     * - month: The month of the purchase receipt.
+     * - receiptCount: The total number of receipts for that month.
+     */
+    public function getPurchaseReceiptMonthlyRecap()
+    {
+        $currentYear = Carbon::now()->format('Y');
+
+        return DB::table('purchase_receipts')
+            ->selectRaw('
+                MONTH(purchase_receipts.created_at) AS month,
+                COUNT(*) AS receiptCount
+            ')
+            ->whereYear('purchase_receipts.created_at', $currentYear)
+            ->groupByRaw('MONTH(purchase_receipts.created_at)')
+            ->get();
+    }
+
+    /**
      * Retrieve the purchase invoice data rate.
      *
      * This function queries the 'purchase_invoices' table and returns the count of purchase invoices

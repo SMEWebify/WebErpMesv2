@@ -166,6 +166,7 @@ class PurchasesReceiptController extends Controller
     public function receipt()
     {
         $data['PurchaseReciepCountDataRate'] = $this->purchaseKPIService->getPurchaseReciepCountDataRate();
+        $data['purchaseReceiptMonthlyRecap'] = $this->purchaseKPIService->getPurchaseReceiptMonthlyRecap();
         return view('purchases/purchases-receipt')->with('data',$data);
     }
 
