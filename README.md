@@ -120,6 +120,18 @@ Run specific tests:
 php artisan test --filter TestName
 ```
 
+## 🛠️ Custom Artisan Commands (Commandes Artisan spécifiques)
+
+These commands are defined in this repository and complement the default Laravel tooling.
+
+| Command | Description | Example |
+| --- | --- | --- |
+| `php artisan wem:diagnostics` | Check common local setup requirements (PHP version, extensions, app key, cache/storage permissions, Redis, DB, broadcasting). | `php artisan wem:diagnostics` |
+| `php artisan wem:n2p:push-order {orderId} {--sync}` | Push a specific order to Nest2Prod (sync option bypasses the queue). | `php artisan wem:n2p:push-order 123 --sync` |
+| `php artisan quality:dispatch-calibration-alerts` | Notify responsible users when quality control device calibration is due or overdue. | `php artisan quality:dispatch-calibration-alerts` |
+| `php artisan emails:send-auto-reports` | Send scheduled automatic email reports based on user preferences. | `php artisan emails:send-auto-reports` |
+| `php artisan ldap:import-users` | Import LDAP users into the Laravel database. | `php artisan ldap:import-users` |
+
 ## 🤝 Contributing
 
 We welcome contributions! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated.
