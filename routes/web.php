@@ -162,6 +162,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines'); 
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->name('orders.update');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->name('orders.show');
+        Route::post('/{order}/calculate-task-dates', 'App\Http\Controllers\Workflow\OrdersController@calculateTaskDates')->name('orders.calculate.task.dates');
         //order line
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');
         Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->name('orders.update.detail.picture');

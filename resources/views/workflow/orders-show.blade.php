@@ -291,6 +291,17 @@
                         <a href="{{ route('print.manufacturing.instruction', ['Document' => $Order->id])}}" rel="noopener" target="_blank" class="btn btn-info btn-sm"><i class="fas fa-print"></i>Print</a>
                       </td>
                     </tr>
+                    <tr>
+                      <td style="width:50%">{{ __('general_content.calculate_date_task_trans_key') }}</td>
+                      <td>
+                        <form method="POST" action="{{ route('orders.calculate.task.dates', ['order' => $Order->id]) }}">
+                          @csrf
+                          <button class="btn btn-success btn-sm" type="submit">
+                            <i class="fas fa-calendar-check"></i> {{ __('general_content.calculate_task_trans_key') }}
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
                     @if($Order->statu != 1 && $nest2prodUrl !== '')
                     <tr>
                       <td style="width:50%">Nest2Prod</td>
