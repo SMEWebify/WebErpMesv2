@@ -593,6 +593,7 @@ return [
     'thickness_trans_key'                      => 'Thickness',
     'weight_trans_key'                         => 'Net weight',
     'gross_weight_trans_key'                   => 'Gross weight',
+    'total_weight_trans_key'                   => 'Total weight',
     'bend_count_trans_key'                     => 'Bend count',
     'x_size_trans_key'                         => 'X size',
     'y_size_trans_key'                         => 'Y size',
