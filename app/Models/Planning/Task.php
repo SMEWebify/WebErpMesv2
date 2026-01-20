@@ -293,19 +293,29 @@ class Task extends Model
     }
 
     /**
-     * Get the quantity of the order line.
+     * Get the quantity used for time and cost calculations.
      *
-     * This method retrieves the order line associated with the task and returns its quantity.
-     * If the order line or its quantity is not found, it returns 0.
+     * This method retrieves the order line quantity when available. If the task
+     * is tied to a quote line (before an order exists), it falls back to the
+     * quote line quantity or the task's own quantity.
      *
-     * @return int The quantity of the order line.
+     * @return int The quantity of the related line or task.
      */
     public function GetOrderQtyLine()
     {
-        $OrderLine = OrderLines::find($this->order_lines_id);
-        if(empty($OrderLine->qty)) $LineQty = 0;
-        else $LineQty = $OrderLine->qty;
-        return $LineQty;
+        if (!empty($this->order_lines_id)) {
+            $OrderLine = OrderLines::find($this->order_lines_id);
+            return $OrderLine->qty ?? 0;
+        }
+
+        if (!empty($this->quote_lines_id)) {
+            $QuoteLine = QuoteLines::find($this->quote_lines_id);
+            if (!empty($QuoteLine->qty)) {
+                return $QuoteLine->qty;
+            }
+        }
+
+        return $this->qty ?? 0;
     }
 
     /**
