@@ -192,6 +192,70 @@
               @include('include.sub-total-price')
             </x-adminlte-card>
 
+            <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" collapsible maximizable>
+              <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
+                @csrf
+                <div class="form-group">
+                  <label for="requested_delivery_date">{{ __('general_content.requested_delivery_date_trans_key') }}</label>
+                  <input type="date" class="form-control" id="requested_delivery_date" name="requested_delivery_date" value="{{ old('requested_delivery_date') }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="fas fa-play-circle"></i> {{ __('general_content.run_simulation_trans_key') }}
+                </button>
+              </form>
+
+              @if(session('delivery_simulation'))
+                @php($simulation = session('delivery_simulation'))
+                <div class="mt-3">
+                  <h6 class="text-muted mb-2">{{ __('general_content.simulation_results_trans_key') }}</h6>
+                  @if($simulation['is_possible'])
+                    <span class="badge badge-success">{{ __('general_content.simulation_possible_trans_key') }}</span>
+                  @else
+                    <span class="badge badge-danger">{{ __('general_content.simulation_not_possible_trans_key') }}</span>
+                  @endif
+
+                  <p class="mt-2 mb-1">
+                    <strong>{{ __('general_content.requested_delivery_date_trans_key') }}:</strong>
+                    {{ $simulation['requested_date'] }}
+                  </p>
+
+                  @if(!empty($simulation['earliest_date']))
+                    <p class="mb-2">
+                      <strong>{{ __('general_content.earliest_possible_date_trans_key') }}:</strong>
+                      {{ $simulation['earliest_date'] }}
+                    </p>
+                  @endif
+
+                  <p class="text-muted mb-2">
+                    {{ __('general_content.simulation_capacity_per_day_trans_key') }} ({{ $simulation['capacity_per_day'] }} h)
+                  </p>
+
+                  <table class="table table-sm table-striped mb-0">
+                    <thead>
+                      <tr>
+                        <th>{{ __('general_content.simulation_service_trans_key') }}</th>
+                        <th class="text-right">{{ __('general_content.simulation_required_hours_trans_key') }}</th>
+                        @if(!$simulation['is_possible'])
+                          <th class="text-right">{{ __('general_content.simulation_remaining_hours_trans_key') }}</th>
+                        @endif
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($simulation['required_by_service'] as $serviceId => $requiredHours)
+                        <tr>
+                          <td>{{ $simulation['service_labels'][$serviceId] ?? $serviceId }}</td>
+                          <td class="text-right">{{ $requiredHours }}</td>
+                          @if(!$simulation['is_possible'])
+                            <td class="text-right">{{ $simulation['missing_by_service'][$serviceId] ?? 0 }}</td>
+                          @endif
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              @endif
+            </x-adminlte-card>
+
             @if($Quote->opportunities_id)
               <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info"  collapsible="collapsed" maximizable>
                 <div class="text-muted">

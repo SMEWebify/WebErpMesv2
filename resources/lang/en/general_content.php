@@ -607,6 +607,7 @@ return [
     'section_size_trans_key'                   => 'Section size',
 
     'delivery_note_number_trans_key'           => 'Delivery note number',
+    'delivery_simulation_trans_key'            => 'Delivery lead-time simulation',
     'customer_reference_trans_key'             => 'Customer reference',
     
     'absence_type_day_trans_key'               => 'Absence type day',
@@ -833,6 +834,19 @@ return [
     'days_late_trans_key'                      => ':days days late',
     'to_deliver_today_trans_key'               => 'To be delivered today',
     'delivery_in_days_trans_key'               => 'Delivery in :days days',
+    'requested_delivery_date_trans_key'        => 'Requested delivery date',
+    'run_simulation_trans_key'                 => 'Run simulation',
+    'simulation_possible_trans_key'            => 'Feasible with current load',
+    'simulation_not_possible_trans_key'        => 'Not feasible with current load',
+    'earliest_possible_date_trans_key'         => 'Earliest possible date',
+    'simulation_missing_capacity_trans_key'    => 'Missing capacity (hours)',
+    'simulation_no_tasks_trans_key'            => 'No quote tasks available to run the simulation.',
+    'simulation_invalid_date_trans_key'        => 'The requested date must be today or later.',
+    'simulation_results_trans_key'             => 'Simulation result',
+    'simulation_required_hours_trans_key'      => 'Theoretical time (hours)',
+    'simulation_service_trans_key'             => 'Service',
+    'simulation_remaining_hours_trans_key'     => 'Missing hours',
+    'simulation_capacity_per_day_trans_key'    => 'Daily capacity used',
     
     'info_statu_trans_key'                     => 'The document status does not allow adding / modifying / deleting lines.',
     

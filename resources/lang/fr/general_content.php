@@ -607,6 +607,7 @@ return [
     'section_size_trans_key'                   => 'Taille des sections',
 
     'delivery_note_number_trans_key'           => 'Nom du bon de livraison',
+    'delivery_simulation_trans_key'            => 'Simulation de délai de livraison',
     'customer_reference_trans_key'             => 'Référence client',
 
     'absence_type_day_trans_key'               => 'Type de jour d\'absence',
@@ -833,6 +834,19 @@ return [
     'days_late_trans_key'                      => ':days jr de retard',
     'to_deliver_today_trans_key'               => 'À livrer aujourd’hui',
     'delivery_in_days_trans_key'               => 'Livraison dans :days jr',
+    'requested_delivery_date_trans_key'        => 'Date de livraison souhaitée',
+    'run_simulation_trans_key'                 => 'Lancer la simulation',
+    'simulation_possible_trans_key'            => 'Faisable avec la charge actuelle',
+    'simulation_not_possible_trans_key'        => 'Non faisable avec la charge actuelle',
+    'earliest_possible_date_trans_key'         => 'Date au plus tôt',
+    'simulation_missing_capacity_trans_key'    => 'Manque de capacité (heures)',
+    'simulation_no_tasks_trans_key'            => 'Aucune tâche de devis pour lancer la simulation.',
+    'simulation_invalid_date_trans_key'        => 'La date souhaitée doit être supérieure ou égale à aujourd\'hui.',
+    'simulation_results_trans_key'             => 'Résultat de la simulation',
+    'simulation_required_hours_trans_key'      => 'Temps théorique (heures)',
+    'simulation_service_trans_key'             => 'Service',
+    'simulation_remaining_hours_trans_key'     => 'Heures manquantes',
+    'simulation_capacity_per_day_trans_key'    => 'Capacité journalière utilisée',
     
     'info_statu_trans_key'                     => 'Le statut du document ne permet pas d\'ajouter/modifier/supprimer des lignes.',
 
