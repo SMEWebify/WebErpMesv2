@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Workflow;
 
 use Illuminate\Support\Number;
 use App\Models\Workflow\Orders;
+use App\Jobs\CalculateTaskDates;
 use App\Services\OrderKPIService;
 use App\Traits\NextPreviousTrait;
 use App\Models\Admin\Factory;
@@ -15,6 +16,7 @@ use App\Services\OrderInvoiceDataService;
 use App\Services\OrderBusinessBalanceService;
 use App\Models\Workflow\OrderLines;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Activity;
 
 class OrdersController extends Controller
@@ -248,5 +250,15 @@ class OrdersController extends Controller
 
         // Redirect with success message
         return redirect()->route('orders.show', ['id' => $order->id])->with('success', 'Successfully updated Order');
+    }
+
+    public function calculateTaskDates(Orders $order)
+    {
+        Cache::forget(CalculateTaskDates::cacheKeyForOrder($order->id));
+        CalculateTaskDates::dispatchAfterResponse($order->id);
+
+        return redirect()
+            ->route('orders.show', ['id' => $order->id])
+            ->with('success', 'Task date calculation queued for this order.');
     }
 }
