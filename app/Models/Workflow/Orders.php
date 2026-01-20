@@ -252,6 +252,15 @@ class Orders extends Model
         return round($SumPercent/$TotalCountLines,2);
     }
 
+    public function getTotalWeightAttribute()
+    {
+        return $this->OrderLines->sum(function ($orderLine) {
+            $weight = optional($orderLine->OrderLineDetails)->weight ?? 0;
+
+            return (float) $weight * (float) $orderLine->qty;
+        });
+    }
+
     // Relationship with the Rating associated with the Purchases
     public function Rating()
     {
