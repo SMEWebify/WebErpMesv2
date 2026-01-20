@@ -644,6 +644,7 @@ return [
     'delivered_month_in_progress_trans_key'    => 'إجمالي التسليم للشهر',
     'remaining_month_trans_key'                => 'الإجمالي المتبقي للتسليم',
     'remaining_invoice_month_trans_key'        => 'الإجمالي المتبقي للفوترة',
+    'pending_orders_trans_key'                => 'الطلبات قيد التنفيذ',
     'forecast_next_three_months_trans_key'     => 'توقعات الأشهر الثلاثة القادمة',
 
     
