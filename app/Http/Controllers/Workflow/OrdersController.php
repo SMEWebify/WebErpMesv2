@@ -92,7 +92,7 @@ class OrdersController extends Controller
     {
         $factory = app('Factory');
 
-        $id->load(['OrderSite.OrderSiteImplantations']);
+        $id->load(['OrderSite.OrderSiteImplantations', 'OrderLines.OrderLineDetails']);
 
         // Retrieve necessary data for dropdowns
         $CompanieSelect = $this->SelectDataService->getCompanies();
