@@ -50,7 +50,7 @@
                     <input type="hidden" name="type" value="{{ $Order->type }}">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Order->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Order->GetshortCreatedAttribute() }}</p>
-                    <p><label class="text-success">{{ __('general_content.total_weight_trans_key') }}</label>  {{ number_format($Order->total_weight, 3, '.', ' ') }}</p>
+                    <p><label class="text-success">{{ __('general_content.total_weight_trans_key') }}</label>  {{ number_format($Order->total_weight, 3, '.', ' ') }} kg</p>
                   </div>
                   <div class="form-group col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_order_trans_key'), 'Value' =>  $Order->label])

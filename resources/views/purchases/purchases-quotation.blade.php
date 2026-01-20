@@ -16,8 +16,7 @@
     <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
       <canvas id="donutChart" width="400" height="400"></canvas>
     </x-adminlte-card>
-    <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="warning" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-      <x-adminlte-small-box
+    <x-adminlte-small-box
         title="{{ __('general_content.purchase_quotation_trans_key') }}"
         text="{{ $totalPurchaseQuotationCount }}"
         icon="fas fa-file-signature text-white"
@@ -32,7 +31,6 @@
         text="{{ $totalPurchaseQuotationAmount }}"
         icon="fas fa-coins text-white"
         theme="success"/>
-    </x-adminlte-card>
   </div>
   <div class="col-md-9">
     @livewire('purchases-quotation-index')
