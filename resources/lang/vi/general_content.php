@@ -56,6 +56,7 @@ return [
     'delivered_month_in_progress_trans_key'    => 'Số đơn đã giao trong tháng',
     'remaining_month_trans_key'                => 'Số đơn phải giao',
     'remaining_invoice_month_trans_key'        => 'Tổng còn lại cần xuất hóa đơn',
+    'pending_orders_trans_key'                => 'Đơn hàng đang xử lý',
     'forecast_next_three_months_trans_key'     => 'Dự báo cho 3 tháng tới',
     
 

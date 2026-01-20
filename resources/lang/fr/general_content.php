@@ -728,6 +728,7 @@ return [
     'delivered_month_in_progress_trans_key'    => 'Total livré du mois',
     'remaining_month_trans_key'                => 'Total restant à livrer',
     'remaining_invoice_month_trans_key'        => 'Total restant à facturer',
+    'pending_orders_trans_key'                => 'Commandes en cours',
     'forecast_next_three_months_trans_key'     => 'Prévision pour les 3 prochains mois',
     'service_rate_trans_key'                   => 'Taux de service',
     'average_order_processing_time_trans_key'  => 'Temps moyen de traitement',

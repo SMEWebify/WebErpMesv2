@@ -86,6 +86,7 @@ class CompaniesController extends Controller
         $userSelect = $this->SelectDataService->getUsers();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Companies(), $id->id);
         $remainingInvoiceOrder =  $this->orderKPIService->getOrderMonthlyRemainingToInvoice($id->id);
+        $pendingOrdersCount = $this->orderKPIService->getPendingOrdersCountForCompany($id->id);
         $paidInvoices = $this->invoiceKPIService->getPaidInvoicesCount($id->id);
         $unpaidInvoices = $this->invoiceKPIService->getUnpaidInvoicesCount($id->id);
         $serviceRate = $this->orderKPIService->getServiceRate($id->id);
@@ -145,6 +146,7 @@ class CompaniesController extends Controller
                                                         'previousUrl',
                                                         'nextUrl',
                                                         'remainingInvoiceOrder',
+                                                        'pendingOrdersCount',
                                                         'customerProcessingCost',
                                                         'paidInvoices',
                                                         'unpaidInvoices',

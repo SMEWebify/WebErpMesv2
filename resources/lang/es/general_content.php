@@ -644,6 +644,7 @@ return [
     'delivered_month_in_progress_trans_key'    => 'Total entregado en el mes',
     'remaining_month_trans_key'                => 'Total restante por entregar',
     'remaining_invoice_month_trans_key'        => 'Total restante por facturar',
+    'pending_orders_trans_key'                => 'Pedidos en curso',
     'forecast_next_three_months_trans_key'     => 'Pronóstico para los próximos 3 meses',
 
         

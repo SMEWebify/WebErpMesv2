@@ -47,6 +47,13 @@
           </div>
 
           <div class="col-lg-3 col-md-3">
+            <x-adminlte-small-box title="{{ $pendingOrdersCount }}"
+              text="{{ __('general_content.pending_orders_trans_key') }}"
+              icon="icon fas fa-box-open"
+              theme="warning" />
+          </div>
+
+          <div class="col-lg-3 col-md-3">
             <x-adminlte-small-box title="{{ $customerProcessingCost }}"
               text="{{ __('general_content.customer_processing_cost_trans_key') }}"
               icon="icon fas fa-info"

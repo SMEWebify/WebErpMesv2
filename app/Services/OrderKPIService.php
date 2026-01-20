@@ -416,6 +416,28 @@ class OrderKPIService
     }
 
     /**
+    * Get the number of pending orders for a specific company for the current year.
+    *
+    * An order is pending if it has at least one order line that is not fully delivered.
+    *
+    * @param int $companyId
+    * @return int The number of pending orders for the company.
+    */
+    public function getPendingOrdersCountForCompany(int $companyId)
+    {
+        $cacheKey = 'pending_orders_count_' . now()->year . '_company_' . $companyId;
+
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($companyId) {
+            return Orders::where('companies_id', $companyId)
+                ->whereYear('created_at', now()->year)
+                ->whereHas('orderLines', function ($query) {
+                    $query->whereIn('delivery_status', [1, 2]);
+                })
+                ->count();
+        });
+    }
+
+    /**
     * Calculate the Service Rate.
     *
     * The Service Rate is calculated by dividing the number of requests (order lines)
