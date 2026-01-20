@@ -6,6 +6,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Log;
 use App\Models\Workflow\Quotes;
+use App\Models\Planning\Task;
+use App\Models\Methods\MethodsServices;
+use App\Models\Times\TimesBanckHoliday;
 use App\Services\QuoteKPIService;
 use App\Traits\NextPreviousTrait;
 use App\Services\SelectDataService;
@@ -13,6 +16,7 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\QuoteCalculatorService;
 use App\Models\Workflow\QuoteProjectEstimate;
+use Illuminate\Http\Request;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 use App\Http\Requests\Workflow\ProjectEstimateRequest;
 use Spatie\Activitylog\Models\Activity;
@@ -213,4 +217,214 @@ class QuotesController extends Controller
     return redirect()->route('quotes.show', ['id' => $quoteId])
         ->with('success', __('Estimation de projet enregistrée avec succès.'));
 }
+
+    public function simulateDelivery(Request $request, Quotes $id)
+    {
+        $validated = $request->validate([
+            'requested_delivery_date' => 'required|date',
+        ]);
+
+        $requestedDate = Carbon::parse($validated['requested_delivery_date'])->startOfDay();
+        $startDate = Carbon::now()->startOfDay();
+
+        if ($requestedDate->lt($startDate)) {
+            return redirect()
+                ->route('quotes.show', ['id' => $id->id])
+                ->with('error', __('general_content.simulation_invalid_date_trans_key'));
+        }
+
+        $quoteLineIds = $id->QuoteLines()->pluck('id');
+
+        if ($quoteLineIds->isEmpty()) {
+            return redirect()
+                ->route('quotes.show', ['id' => $id->id])
+                ->with('error', __('general_content.simulation_no_tasks_trans_key'));
+        }
+
+        $quoteTasks = Task::query()
+            ->whereIn('quote_lines_id', $quoteLineIds)
+            ->where(function ($query) {
+                return $query->where('tasks.type', 1)
+                    ->orWhere('tasks.type', 7);
+            })
+            ->get();
+
+        if ($quoteTasks->isEmpty()) {
+            return redirect()
+                ->route('quotes.show', ['id' => $id->id])
+                ->with('error', __('general_content.simulation_no_tasks_trans_key'));
+        }
+
+        $requiredByService = $quoteTasks
+            ->filter(fn (Task $task) => !is_null($task->methods_services_id))
+            ->groupBy('methods_services_id')
+            ->map(fn ($tasks) => round($tasks->sum(fn (Task $task) => $task->TotalTime()), 2))
+            ->toArray();
+
+        if ($requiredByService === []) {
+            return redirect()
+                ->route('quotes.show', ['id' => $id->id])
+                ->with('error', __('general_content.simulation_no_tasks_trans_key'));
+        }
+
+        $maxSearchDays = 365;
+        $simulationEndDate = $startDate->copy()->addDays($maxSearchDays);
+        if ($requestedDate->gt($simulationEndDate)) {
+            $simulationEndDate = $requestedDate->copy();
+        }
+
+        $loadTasks = Task::query()
+            ->whereNotNull('order_lines_id')
+            ->whereBetween('end_date', [$startDate->toDateString(), $simulationEndDate->toDateString()])
+            ->where(function ($query) {
+                return $query->where('tasks.type', 1)
+                    ->orWhere('tasks.type', 7);
+            })
+            ->get();
+
+        $loadByServiceDay = [];
+        foreach ($loadTasks as $task) {
+            if (is_null($task->methods_services_id) || is_null($task->end_date)) {
+                continue;
+            }
+            $day = Carbon::parse($task->end_date)->toDateString();
+            $serviceId = $task->methods_services_id;
+            $loadByServiceDay[$serviceId][$day] = ($loadByServiceDay[$serviceId][$day] ?? 0) + $task->TotalTime();
+        }
+
+        $capacityPerDay = 16;
+        $remainingAfterRequested = $this->simulateRemainingHours(
+            $requiredByService,
+            $startDate,
+            $requestedDate,
+            $capacityPerDay,
+            $loadByServiceDay
+        );
+
+        $isPossible = $this->allServicesSatisfied($remainingAfterRequested);
+        $earliestDate = $this->calculateEarliestCompletionDate(
+            $requiredByService,
+            $startDate,
+            $simulationEndDate,
+            $capacityPerDay,
+            $loadByServiceDay
+        );
+
+        $missingByService = [];
+        if (!$isPossible) {
+            foreach ($remainingAfterRequested as $serviceId => $remainingHours) {
+                if ($remainingHours > 0) {
+                    $missingByService[$serviceId] = round($remainingHours, 2);
+                }
+            }
+        }
+
+        $serviceLabels = MethodsServices::query()
+            ->whereIn('id', array_keys($requiredByService))
+            ->pluck('label', 'id')
+            ->toArray();
+
+        return redirect()
+            ->route('quotes.show', ['id' => $id->id])
+            ->with('delivery_simulation', [
+                'requested_date' => $requestedDate->toDateString(),
+                'is_possible' => $isPossible,
+                'earliest_date' => $earliestDate?->toDateString(),
+                'required_by_service' => $requiredByService,
+                'missing_by_service' => $missingByService,
+                'service_labels' => $serviceLabels,
+                'capacity_per_day' => $capacityPerDay,
+            ]);
+    }
+
+    private function simulateRemainingHours(
+        array $requiredByService,
+        Carbon $startDate,
+        Carbon $endDate,
+        int $capacityPerDay,
+        array $loadByServiceDay
+    ): array {
+        $remaining = $requiredByService;
+        $cursor = $startDate->copy();
+
+        while ($cursor->lte($endDate)) {
+            if (!$this->isWorkingDay($cursor)) {
+                $cursor->addDay();
+                continue;
+            }
+
+            $dayKey = $cursor->toDateString();
+            foreach ($remaining as $serviceId => $hours) {
+                if ($hours <= 0) {
+                    continue;
+                }
+                $loaded = $loadByServiceDay[$serviceId][$dayKey] ?? 0;
+                $available = $capacityPerDay - $loaded;
+                if ($available <= 0) {
+                    continue;
+                }
+                $remaining[$serviceId] = round($hours - min($available, $hours), 2);
+            }
+
+            $cursor->addDay();
+        }
+
+        return $remaining;
+    }
+
+    private function calculateEarliestCompletionDate(
+        array $requiredByService,
+        Carbon $startDate,
+        Carbon $endDate,
+        int $capacityPerDay,
+        array $loadByServiceDay
+    ): ?Carbon {
+        $remaining = $requiredByService;
+        $cursor = $startDate->copy();
+
+        while ($cursor->lte($endDate)) {
+            if ($this->isWorkingDay($cursor)) {
+                $dayKey = $cursor->toDateString();
+                foreach ($remaining as $serviceId => $hours) {
+                    if ($hours <= 0) {
+                        continue;
+                    }
+                    $loaded = $loadByServiceDay[$serviceId][$dayKey] ?? 0;
+                    $available = $capacityPerDay - $loaded;
+                    if ($available <= 0) {
+                        continue;
+                    }
+                    $remaining[$serviceId] = round($hours - min($available, $hours), 2);
+                }
+
+                if ($this->allServicesSatisfied($remaining)) {
+                    return $cursor->copy();
+                }
+            }
+
+            $cursor->addDay();
+        }
+
+        return null;
+    }
+
+    private function allServicesSatisfied(array $remainingByService): bool
+    {
+        foreach ($remainingByService as $hours) {
+            if ($hours > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function isWorkingDay(Carbon $date): bool
+    {
+        if ($date->isWeekend()) {
+            return false;
+        }
+
+        return !TimesBanckHoliday::isBankHoliday($date);
+    }
 }
