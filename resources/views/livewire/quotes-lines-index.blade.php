@@ -36,7 +36,7 @@
                         @forelse ($QuoteLineslist as $QuoteLine)
                         <tr>
                             <td>
-                                <x-QuoteButton id="{{ $QuoteLine->quotes_id }}" code="{{ $QuoteLine->quote['code'] }}"  />
+                                <x-QuoteButton id="{{ $QuoteLine->quotes_id }}" code="{{ data_get($QuoteLine, 'quote.code') }}"  />
                             </td>
                             <td>{{ $QuoteLine->ordre }}</td>
                             <td>{{ $QuoteLine->code }}</td>
