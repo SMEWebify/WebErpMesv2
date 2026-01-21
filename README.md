@@ -23,6 +23,24 @@ Manufacturing often faces a gap between quoting and production. ΣEM bridges tha
 - 📦 **Stock & Resource Management**: Optimize inventory, raw materials, and resources with ease.
 - 🌐 **Community-Driven**: Open-source with ongoing improvements from a passionate developer community.
 
+## 🧰 Fonctions métier pour un atelier de tôlerie (supportées)
+
+- 📋 **Devis & chiffrage** : gestion des demandes clients, variantes, marges et conditions commerciales.
+- 🧾 **Commandes clients** : validation, suivi des statuts et traçabilité du cycle de vente.
+- 🧩 **Nomenclatures (BOM)** : structuration des ensembles, sous-ensembles et composants.
+- 🛠️ **Gamme & routage** : définition des opérations (découpe, pliage, soudure, finition) et des postes.
+- 🧮 **Planification & ordonnancement** : charges atelier, priorités et jalons de production.
+- 🏭 **Suivi de production** : avancement en temps réel, temps passés et quantités produites.
+- ✅ **Contrôle qualité** : plans de contrôle, non‑conformités, actions correctives.
+- 📦 **Stocks & mouvements** : matières, semi‑finis, produits finis, inventaires.
+- 🔧 **Maintenance & outillage** : suivi des équipements, calibrations et disponibilité.
+- 👥 **Ressources humaines** : équipes, compétences, affectations et présence.
+- 💸 **Achats & fournisseurs** : approvisionnements, commandes, délais et coûts.
+- 🚚 **Expéditions & logistique** : préparation, emballage, transport et livraison.
+- 📊 **Tableaux de bord** : KPI, OEE/TRS, coûts, marges et performance.
+- 📁 **Documents & traçabilité** : plans, versions, historiques et preuves.
+- 🔄 **Intégrations** : CRM, comptabilité, API et échanges de données.
+
 <img width="1877" height="831" alt="image" src="https://github.com/user-attachments/assets/21b92345-46ad-4af2-9f3a-b38d601eb091" />
 
 ## 🚀 Quick Start
