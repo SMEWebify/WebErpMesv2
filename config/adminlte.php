@@ -622,6 +622,11 @@ return [
             'can'  => ['asset_manager'],
             'submenu' => [
                 [
+                    'text' => 'Dashboard',
+                    'url'  => 'gmao/dashboard',
+                    'icon_color' => 'info',
+                ],
+                [
                     'text' => 'assets_trans_key',
                     'url'  => 'assets',
                     'icon_color' => 'info',
