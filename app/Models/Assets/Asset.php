@@ -5,6 +5,7 @@ namespace App\Models\Assets;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Accounting\AccountingEntry;
+use App\Models\Maintenance\WorkOrder;
 
 class Asset extends Model
 {
@@ -25,5 +26,10 @@ class Asset extends Model
     public function accountingEntries(): HasMany
     {
         return $this->hasMany(AccountingEntry::class);
+    }
+
+    public function workOrders(): HasMany
+    {
+        return $this->hasMany(WorkOrder::class);
     }
 }

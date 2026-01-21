@@ -34,6 +34,7 @@ class PermissionTableSeeder  extends Seeder
                         'osh-menu',
                         'your-company-menu',
                         'asset_manager',
+                        'asset-menu',
                         ];
     
                         foreach ($permissions as $permission) {

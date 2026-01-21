@@ -34,5 +34,17 @@
                 <li>{{ $entry->entry_label }} - {{ $entry->debit_amount }} / {{ $entry->credit_amount }}</li>
             @endforeach
         </ul>
+        <h2>Maintenance work orders</h2>
+        <ul>
+            @forelse($asset->workOrders as $workOrder)
+                <li>
+                    <a href="{{ route('gmao.work-orders.show', $workOrder->id) }}">#{{ $workOrder->id }} - {{ $workOrder->title }}</a>
+                    ({{ ucfirst(str_replace('_', ' ', $workOrder->status)) }})
+                </li>
+            @empty
+                <li>{{ __('general_content.no_data_trans_key') }}</li>
+            @endforelse
+        </ul>
+        <a href="{{ route('gmao.work-orders.create', ['asset_id' => $asset->id]) }}" class="btn btn-primary">New work order</a>
     </x-adminlte-card>
 @stop
