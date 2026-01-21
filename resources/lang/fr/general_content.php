@@ -390,6 +390,7 @@ return [
     'capability_index_trans_key'               => 'Indice de capabilité',
     'not_available_trans_key'                  => 'N/D',
 
+    'factory_trans_key'                        => 'Usine',
     'factory_settings_trans_key'               => 'Réglage usine',
     'announcements_trans_key'                  => 'Annonces',
     'workflow_settings_trans_key'              => 'Workflow réglage',
@@ -426,6 +427,8 @@ return [
 
     // BUTTON    
     'view_trans_key'                           => 'Voir',
+    'show_trans_key'                           => 'Afficher',
+    'search_trans_key'                         => 'Rechercher',
     'view_count_trans_key'                     => 'Nombre de vue(s)',
     'print_trans_key'                          => 'Imprimer',
     'pdf_trans_key'                            => 'PDF',
@@ -573,6 +576,7 @@ return [
     'internal_comment_trans_key'               => 'Commentaire interne',
     'external_comment_trans_key'               => 'Commentaire externe',
     'identifier_trans_key'                     => 'Référence',
+    'payment_method_trans_key'                 => 'Mode de paiement',
     'payment_methods_trans_key'                => 'Méthode de paiement',
     'payment_conditions_trans_key'             => 'Condition de paiement',
     'delevery_method_trans_key'                => 'Mode de livraison',
@@ -881,6 +885,7 @@ return [
     'task_detail_trans_key'                    => 'Détail de la tâche',
     'logs_activity_trans_key'                  => 'Journal d\'activité',
     'no_activity_trans_key'                    => 'Aucune activité.',
+    'unknown_activity_trans_key'               => 'Activité inconnue',
     'set_to_start_trans_key'                   => 'Tâche démarée',
     'set_to_end_trans_key'                     => 'Tâche arrêtée',
     'set_to_finish_trans_key'                  => 'Tâche finie',

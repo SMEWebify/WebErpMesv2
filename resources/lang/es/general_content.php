@@ -337,6 +337,7 @@ return [
     'capability_index_trans_key'               => 'Índice de capacidad',
     'not_available_trans_key'                  => 'N/D',
 
+    'factory_trans_key'                        => 'Fábrica',
     'factory_settings_trans_key'               => 'Configuraciones de fábrica',
     'announcements_trans_key'                  => 'Anuncios',
     'workflow_settings_trans_key'              => 'Configuraciones de flujo de trabajo',
@@ -366,6 +367,8 @@ return [
 
     // BOTÓN
     'view_trans_key'                           => 'Ver',
+    'show_trans_key'                           => 'Mostrar',
+    'search_trans_key'                         => 'Buscar',
     'view_count_trans_key'                     => 'Número de vistas',
     'print_trans_key'                          => 'Imprimir',
     'pdf_trans_key'                            => 'PDF',
@@ -511,6 +514,7 @@ return [
         'internal_comment_trans_key'               => 'Comentario interno',
         'external_comment_trans_key'               => 'Comentario externo',
     'identifier_trans_key'                     => 'Identificador',
+    'payment_method_trans_key'                 => 'Método de pago',
     'payment_methods_trans_key'                => 'Métodos de pago',
     'payment_conditions_trans_key'             => 'Condiciones de pago',
     'delevery_method_trans_key'                => 'Método de entrega',
@@ -736,6 +740,7 @@ return [
     'task_detail_trans_key'                    => 'Detalle de la tarea',
     'logs_activity_trans_key'                  => 'Registro de actividades',
     'no_activity_trans_key'                    => 'Sin actividades.',
+    'unknown_activity_trans_key'               => 'Actividad desconocida',
     'set_to_start_trans_key'                   => 'Establecer inicio de tarea',
     'set_to_end_trans_key'                     => 'Establecer fin de tarea',
     'set_to_finish_trans_key'                  => 'Marcar tarea como finalizada',

@@ -24,6 +24,9 @@ return [
 
     // BUTTON
     'view_all_trans_key'                       => 'Xem toàn bộ',
+    'view_trans_key'                           => 'Xem',
+    'show_trans_key'                           => 'Hiển thị',
+    'search_trans_key'                         => 'Tìm kiếm',
 
     //DASHBOARD
     'dashboard_trans_key'                      => 'Bảng điều khiển',
@@ -145,6 +148,7 @@ return [
 
     'users_trans_key'                          => 'Người dùng',
     'your_company_trans_key'                   => 'Công ty',
+    'factory_trans_key'                        => 'Nhà máy',
     'header_font_color_trans_key'              => 'Màu chữ tiêu đề',
     'pdf_theme_trans_key'                      => 'Giao diện PDF',
     'pdf_theme_fallback_trans_key'             => 'Mặc định',
@@ -174,6 +178,8 @@ return [
     'no_documents_found_trans_key'             => 'Không có tài liệu phù hợp với bộ lọc',
     'hashtags_trans_key'                       => 'Hashtags',
     'customer_processing_cost_trans_key'       => 'Chi phí xử lý khách hàng',
+    'payment_method_trans_key'                 => 'Phương thức thanh toán',
+    'unknown_activity_trans_key'               => 'Hoạt động không xác định',
     'average_supply_delay_trans_key'           => 'Thời gian cung ứng trung bình',
     'order_site_trans_key'                     => 'Công trường',
     'characteristics_trans_key'                => 'Đặc điểm',

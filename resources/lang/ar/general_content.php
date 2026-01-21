@@ -340,6 +340,7 @@ return [
     'capability_index_trans_key'               => 'Capability index',
     'not_available_trans_key'                  => 'N/A',
 
+    'factory_trans_key'                        => 'مصنع',
     'factory_settings_trans_key'               => 'إعدادات المصنع',
     'announcements_trans_key'                  => 'الإعلانات',
     'workflow_settings_trans_key'              => 'إعدادات سير العمل',
@@ -369,6 +370,8 @@ return [
 
     // BUTTON
     'view_trans_key'                    => 'عرض',
+    'show_trans_key'                    => 'إظهار',
+    'search_trans_key'                  => 'بحث',
     'view_count_trans_key'              => 'عدد المشاهدات',
     'print_trans_key'                   => 'طباعة',
     'pdf_trans_key'                     => 'PDF',
@@ -511,6 +514,7 @@ return [
     'internal_comment_trans_key'    => 'التعليق الداخلي',
     'external_comment_trans_key'    => 'التعليق الخارجي',
     'identifier_trans_key'          => 'المعرف',
+    'payment_method_trans_key'      => 'طريقة الدفع',
     'payment_methods_trans_key'     => 'طرق الدفع',
     'payment_conditions_trans_key'  => 'شروط الدفع',
     'delevery_method_trans_key'     => 'طريقة التسليم',
@@ -737,6 +741,7 @@ return [
     'task_detail_trans_key'                    => 'تفاصيل المهمة',
     'logs_activity_trans_key'                  => 'سجل النشاط',
     'no_activity_trans_key'                    => 'لا توجد أنشطة.',
+    'unknown_activity_trans_key'               => 'نشاط غير معروف',
     'set_to_start_trans_key'                   => 'تعيين البدء للمهمة',
     'set_to_end_trans_key'                     => 'تعيين الانتهاء للمهمة',
     'set_to_finish_trans_key'                  => 'تعيين الانتهاء للمهمة',

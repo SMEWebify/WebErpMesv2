@@ -390,6 +390,7 @@ return [
     'capability_index_trans_key'               => 'Capability index',
     'not_available_trans_key'                  => 'N/A',
 
+    'factory_trans_key'                        => 'Factory',
     'factory_settings_trans_key'               => 'Factory settings',
     'announcements_trans_key'                  => 'Announcements',
     'workflow_settings_trans_key'              => 'Workflow settings',
@@ -426,6 +427,8 @@ return [
 
     // BUTTON
     'view_trans_key'                           => 'View',
+    'show_trans_key'                           => 'Show',
+    'search_trans_key'                         => 'Search',
     'view_count_trans_key'                     => 'View(s) count',
     'print_trans_key'                          => 'Print',
     'pdf_trans_key'                            => 'PDF',
@@ -573,6 +576,7 @@ return [
     'internal_comment_trans_key'               => 'Internal comment',
     'external_comment_trans_key'               => 'External comment',
     'identifier_trans_key'                     => 'Identifier',
+    'payment_method_trans_key'                 => 'Payment method',
     'payment_methods_trans_key'                => 'Payment Methods',
     'payment_conditions_trans_key'             => 'Payment Conditions',
     'delevery_method_trans_key'                => 'Delivery method',
@@ -881,6 +885,7 @@ return [
     'task_detail_trans_key'                    => 'Task  Detail',
     'logs_activity_trans_key'                  => 'Logs Activity',
     'no_activity_trans_key'                    => 'No activities.',
+    'unknown_activity_trans_key'               => 'Unknown activity',
     'set_to_start_trans_key'                   => 'Task set to start time',
     'set_to_end_trans_key'                     => 'Task set to end time',
     'set_to_finish_trans_key'                  => 'Task set to finish Task',
