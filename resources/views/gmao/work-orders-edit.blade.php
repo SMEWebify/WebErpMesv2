@@ -46,10 +46,27 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="work_type">Type</label>
+                <select class="form-control" name="work_type" id="work_type">
+                    @foreach($workTypes as $value => $label)
+                        <option value="{{ $value }}" @selected(old('work_type', $workOrder->work_type) == $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="status">Status</label>
                 <select class="form-control" name="status" id="status">
                     @foreach($statuses as $value => $label)
                         <option value="{{ $value }}" @selected(old('status', $workOrder->status) == $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="assigned_to">Assigned technician</label>
+                <select class="form-control" name="assigned_to" id="assigned_to">
+                    <option value="">Not assigned</option>
+                    @foreach($technicians as $technician)
+                        <option value="{{ $technician->id }}" @selected(old('assigned_to', $workOrder->assigned_to) == $technician->id)>{{ $technician->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -62,8 +79,55 @@
                 <input type="date" class="form-control" name="scheduled_at" id="scheduled_at" value="{{ old('scheduled_at', optional($workOrder->scheduled_at)->format('Y-m-d')) }}">
             </div>
             <div class="form-group">
+                <label for="started_at">Started at</label>
+                <input type="datetime-local" class="form-control" name="started_at" id="started_at" value="{{ old('started_at', optional($workOrder->started_at)->format('Y-m-d\\TH:i')) }}">
+            </div>
+            <div class="form-group">
+                <label for="finished_at">Finished at</label>
+                <input type="datetime-local" class="form-control" name="finished_at" id="finished_at" value="{{ old('finished_at', optional($workOrder->finished_at)->format('Y-m-d\\TH:i')) }}">
+            </div>
+            <div class="form-group">
                 <label for="completed_at">Completed at</label>
                 <input type="date" class="form-control" name="completed_at" id="completed_at" value="{{ old('completed_at', optional($workOrder->completed_at)->format('Y-m-d')) }}">
+            </div>
+            <div class="form-group">
+                <label for="estimated_duration_minutes">Estimated duration (minutes)</label>
+                <input type="number" min="0" class="form-control" name="estimated_duration_minutes" id="estimated_duration_minutes" value="{{ old('estimated_duration_minutes', $workOrder->estimated_duration_minutes) }}">
+            </div>
+            <div class="form-group">
+                <label for="actual_duration_minutes">Actual duration (minutes)</label>
+                <input type="number" min="0" class="form-control" name="actual_duration_minutes" id="actual_duration_minutes" value="{{ old('actual_duration_minutes', $workOrder->actual_duration_minutes) }}">
+            </div>
+            <div class="form-group">
+                <label for="actions_performed">Actions performed</label>
+                <textarea class="form-control" name="actions_performed" id="actions_performed" rows="4">{{ old('actions_performed', $workOrder->actions_performed) }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="parts_consumed">Parts consumed</label>
+                <textarea class="form-control" name="parts_consumed" id="parts_consumed" rows="3">{{ old('parts_consumed', $workOrder->parts_consumed) }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="comments">Comments / photos</label>
+                <textarea class="form-control" name="comments" id="comments" rows="3">{{ old('comments', $workOrder->comments) }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="failure_type">Failure type</label>
+                <input type="text" class="form-control" name="failure_type" id="failure_type" value="{{ old('failure_type', $workOrder->failure_type) }}">
+            </div>
+            <div class="form-group">
+                <label for="severity">Severity</label>
+                <input type="text" class="form-control" name="severity" id="severity" value="{{ old('severity', $workOrder->severity) }}">
+            </div>
+            <div class="form-group">
+                <label for="machine_stopped">Machine stopped</label>
+                <select class="form-control" name="machine_stopped" id="machine_stopped">
+                    <option value="0" @selected(old('machine_stopped', $workOrder->machine_stopped ? '1' : '0') === '0')>No</option>
+                    <option value="1" @selected(old('machine_stopped', $workOrder->machine_stopped ? '1' : '0') === '1')>Yes</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="failure_started_at">Failure started at</label>
+                <input type="datetime-local" class="form-control" name="failure_started_at" id="failure_started_at" value="{{ old('failure_started_at', optional($workOrder->failure_started_at)->format('Y-m-d\\TH:i')) }}">
             </div>
             <x-slot name="footerSlot">
                 <x-adminlte-button class="btn-flat" type="submit" label="Save" theme="success" icon="fas fa-lg fa-save" />

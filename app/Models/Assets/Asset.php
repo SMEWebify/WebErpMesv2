@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Accounting\AccountingEntry;
+use App\Models\Maintenance\MaintenancePlan;
 use App\Models\Maintenance\WorkOrder;
 use App\Models\Methods\MethodsRessources;
 

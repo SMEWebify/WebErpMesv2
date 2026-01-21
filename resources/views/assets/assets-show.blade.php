@@ -48,5 +48,17 @@
             @endforelse
         </ul>
         <a href="{{ route('gmao.work-orders.create', ['asset_id' => $asset->id]) }}" class="btn btn-primary">New work order</a>
+        <h2 class="mt-4">Maintenance plans</h2>
+        <ul>
+            @forelse($asset->maintenancePlans as $plan)
+                <li>
+                    <a href="{{ route('gmao.maintenance-plans.show', $plan->id) }}">{{ $plan->title }}</a>
+                    ({{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }})
+                </li>
+            @empty
+                <li>{{ __('general_content.no_data_trans_key') }}</li>
+            @endforelse
+        </ul>
+        <a href="{{ route('gmao.maintenance-plans.create', ['asset_id' => $asset->id]) }}" class="btn btn-secondary">New maintenance plan</a>
     </x-adminlte-card>
 @stop

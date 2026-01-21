@@ -45,7 +45,7 @@ class AssetController extends Controller
 
     public function show($id)
     {
-        $asset = Asset::with(['accountingEntries', 'workOrders', 'methodsRessource'])->findOrFail($id);
+        $asset = Asset::with(['accountingEntries', 'workOrders', 'maintenancePlans'])->findOrFail($id);
         return view('assets.assets-show', compact('asset'));
     }
 

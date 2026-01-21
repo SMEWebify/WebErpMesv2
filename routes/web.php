@@ -309,6 +309,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/work-orders/{id}/edit', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@edit')->name('gmao.work-orders.edit');
         Route::put('/work-orders/{id}', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@update')->name('gmao.work-orders.update');
         Route::delete('/work-orders/{id}', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@destroy')->name('gmao.work-orders.destroy');
+        Route::get('/maintenance-plans', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@index')->name('gmao.maintenance-plans.index');
+        Route::get('/maintenance-plans/create', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@create')->name('gmao.maintenance-plans.create');
+        Route::post('/maintenance-plans', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@store')->name('gmao.maintenance-plans.store');
+        Route::get('/maintenance-plans/{id}', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@show')->name('gmao.maintenance-plans.show');
+        Route::get('/maintenance-plans/{id}/edit', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@edit')->name('gmao.maintenance-plans.edit');
+        Route::put('/maintenance-plans/{id}', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@update')->name('gmao.maintenance-plans.update');
+        Route::delete('/maintenance-plans/{id}', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@destroy')->name('gmao.maintenance-plans.destroy');
+        Route::post('/maintenance-plans/{id}/generate-work-order', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@generateWorkOrder')->name('gmao.maintenance-plans.generate-work-order');
     });
 
     Route::group(['prefix' => 'times', 'middleware' => ['auth', 'check.factory']], function () {
