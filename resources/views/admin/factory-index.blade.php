@@ -751,7 +751,7 @@
                                                             @csrf
                                                             <div class="card-body">
                                                                 <div class="form-group">
-                                                                    <label for="template">{{ __('general_content.template') }} :</label>
+                                                                    <label for="template">{{ __('general_content.template_trans_key') }} :</label>
                                                                     <div class="input-group">
                                                                         <div class="input-group-prepend">
                                                                             <span class="input-group-text"><i class="fas fa-code"></i></span>

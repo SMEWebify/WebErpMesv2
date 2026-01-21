@@ -22,7 +22,7 @@
                             <small><i class="fas fa-clock"></i> {{ $order->order->delay_info }}</small>
                         </div>
                     @empty
-                        <p>{{ __('general_content.no_late_orders_trans_key_trans_key') }}</p>
+                        <p>{{ __('general_content.no_late_orders_trans_key') }}</p>
                     @endforelse
                 </div>
             </div>

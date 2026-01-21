@@ -380,6 +380,7 @@ return [
     'capability_index_trans_key'               => '能力指数',
     'not_available_trans_key'                  => 'N/A',
 
+    'factory_trans_key'                        => '工厂',
     'factory_settings_trans_key'               => '工厂设置',
     'announcements_trans_key'                  => '公告',
     'workflow_settings_trans_key'              => '流程设置',
@@ -416,6 +417,8 @@ return [
 
     // BUTTON    
     'view_trans_key'                           => '查看',
+    'show_trans_key'                           => '显示',
+    'search_trans_key'                         => '搜索',
     'view_count_trans_key'                     => '查看次数',
     'print_trans_key'                          => '打印',
     'pdf_trans_key'                            => 'PDF',
@@ -563,6 +566,7 @@ return [
     'internal_comment_trans_key'               => '内部备注',
     'external_comment_trans_key'               => '外部备注',
     'identifier_trans_key'                     => '参考号',
+    'payment_method_trans_key'                 => '付款方式',
     'payment_methods_trans_key'                => '支付方式',
     'payment_conditions_trans_key'             => '付款条件',
     'delevery_method_trans_key'                => '配送方式',
@@ -855,6 +859,7 @@ return [
     'task_detail_trans_key'                    => '任务详情',
     'logs_activity_trans_key'                  => '活动日志',
     'no_activity_trans_key'                    => '无活动。',
+    'unknown_activity_trans_key'               => '未知活动',
     'set_to_start_trans_key'                   => '任务已开始',
     'set_to_end_trans_key'                     => '任务已停止',
     'set_to_finish_trans_key'                  => '任务已完成',
