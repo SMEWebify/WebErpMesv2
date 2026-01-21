@@ -37,6 +37,11 @@ class Asset extends Model
         return $this->hasMany(WorkOrder::class);
     }
 
+    public function maintenancePlans(): HasMany
+    {
+        return $this->hasMany(MaintenancePlan::class);
+    }
+
     public function methodsRessource(): BelongsTo
     {
         return $this->belongsTo(MethodsRessources::class, 'methods_ressource_id');
