@@ -19,6 +19,17 @@
                 <input type="text" class="form-control" name="category" id="category" value="{{ old('category') }}">
             </div>
             <div class="form-group">
+                <label for="methods_ressource_id">{{ __('general_content.ressource_trans_key') }}</label>
+                <select class="form-control" name="methods_ressource_id" id="methods_ressource_id">
+                    <option value="">{{ __('general_content.select_ressource_trans_key') }}</option>
+                    @foreach($ressourcesSelect as $ressource)
+                        <option value="{{ $ressource->id }}" {{ old('methods_ressource_id') == $ressource->id ? 'selected' : '' }}>
+                            {{ $ressource->label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="acquisition_value">Acquisition value</label>
                 <input type="number" step="0.01" class="form-control" name="acquisition_value" id="acquisition_value" value="{{ old('acquisition_value') }}">
             </div>

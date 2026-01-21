@@ -5,6 +5,7 @@
                 <tr>
                     <th>{{ __('general_content.name_trans_key') }}</th>
                     <th>Category</th>
+                    <th>{{ __('general_content.ressource_trans_key') }}</th>
                     <th>Acquisition value</th>
                     <th>Acquisition date</th>
                     <th>Depreciation duration (months)</th>
@@ -16,6 +17,7 @@
                     <tr>
                         <td><a href="{{ route('assets.show', $asset->id) }}">{{ $asset->name }}</a></td>
                         <td>{{ $asset->category }}</td>
+                        <td>{{ $asset->methodsRessource?->label ?? __('general_content.no_data_trans_key') }}</td>
                         <td>{{ $asset->acquisition_value }}</td>
                         <td>{{ $asset->acquisition_date->format('Y-m-d') }}</td>
                         <td>{{ $asset->depreciation_duration }}</td>
@@ -27,7 +29,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6">{{ __('general_content.no_data_trans_key') }}</td>
+                        <td colspan="7">{{ __('general_content.no_data_trans_key') }}</td>
                     </tr>
                 @endforelse
             </tbody>

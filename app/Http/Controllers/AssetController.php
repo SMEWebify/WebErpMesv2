@@ -4,24 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Assets\Asset;
+use App\Services\SelectDataService;
 use Illuminate\Support\Facades\Redirect;
 
 class AssetController extends Controller
 {
-    public function __construct()
+    protected SelectDataService $SelectDataService;
+
+    public function __construct(SelectDataService $SelectDataService)
     {
         $this->middleware(['auth', 'check.factory', 'permission:asset_manager']);
+        $this->SelectDataService = $SelectDataService;
     }
 
     public function index()
     {
-        $assets = Asset::orderBy('id')->paginate(10);
+        $assets = Asset::with('methodsRessource')->orderBy('id')->paginate(10);
         return view('assets.assets-index', compact('assets'));
     }
 
     public function create()
     {
-        return view('assets.assets-create');
+        $ressourcesSelect = $this->SelectDataService->getRessources();
+        return view('assets.assets-create', compact('ressourcesSelect'));
     }
 
     public function store(Request $request)
@@ -29,6 +34,7 @@ class AssetController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'category' => 'nullable|string',
+            'methods_ressource_id' => 'nullable|exists:methods_ressources,id',
             'acquisition_value' => 'required|numeric',
             'acquisition_date' => 'required|date',
             'depreciation_duration' => 'required|integer',
@@ -39,14 +45,15 @@ class AssetController extends Controller
 
     public function show($id)
     {
-        $asset = Asset::with(['accountingEntries', 'workOrders'])->findOrFail($id);
+        $asset = Asset::with(['accountingEntries', 'workOrders', 'methodsRessource'])->findOrFail($id);
         return view('assets.assets-show', compact('asset'));
     }
 
     public function edit($id)
     {
         $asset = Asset::findOrFail($id);
-        return view('assets.assets-edit', compact('asset'));
+        $ressourcesSelect = $this->SelectDataService->getRessources();
+        return view('assets.assets-edit', compact('asset', 'ressourcesSelect'));
     }
 
     public function update(Request $request, $id)
@@ -55,6 +62,7 @@ class AssetController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'category' => 'nullable|string',
+            'methods_ressource_id' => 'nullable|exists:methods_ressources,id',
             'acquisition_value' => 'required|numeric',
             'acquisition_date' => 'required|date',
             'depreciation_duration' => 'required|integer',
