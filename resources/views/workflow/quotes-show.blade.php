@@ -205,7 +205,9 @@
               </form>
 
               @if(session('delivery_simulation'))
-                @php($simulation = session('delivery_simulation'))
+              @php
+                $simulation = session('delivery_simulation');
+              @endphp
                 <div class="mt-3">
                   <h6 class="text-muted mb-2">{{ __('general_content.simulation_results_trans_key') }}</h6>
                   @if($simulation['is_possible'])
