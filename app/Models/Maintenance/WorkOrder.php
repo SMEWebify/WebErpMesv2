@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkOrder extends Model
 {
+    protected $table = 'maintenance_work_orders';
+
     protected $fillable = [
         'asset_id',
         'times_machine_event_id',
