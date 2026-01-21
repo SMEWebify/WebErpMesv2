@@ -9,56 +9,130 @@
 @section('content')
     <x-adminlte-card title="{{ $asset->name }}" theme="primary" maximizable>
         <div class="row">
-            <div class="col-md-6">
-                <dl>
-                    <dt>Category</dt>
-                    <dd>{{ $asset->category }}</dd>
-                    <dt>{{ __('general_content.ressource_trans_key') }}</dt>
-                    <dd>{{ $asset->methodsRessource?->label ?? __('general_content.no_data_trans_key') }}</dd>
-                    <dt>Acquisition value</dt>
-                    <dd>{{ $asset->acquisition_value }}</dd>
-                    <dt>Acquisition date</dt>
-                    <dd>{{ $asset->acquisition_date->format('Y-m-d') }}</dd>
-                    <dt>Depreciation duration</dt>
-                    <dd>{{ $asset->depreciation_duration }} months</dd>
-                </dl>
-                <a href="{{ route('assets.edit', $asset->id) }}" class="btn btn-info">{{ __('general_content.edit_trans_key') }}</a>
-                <form method="POST" action="{{ route('assets.destroy', $asset->id) }}" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">{{ __('general_content.delete_trans_key') }}</button>
-                </form>
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 42px; height: 42px;">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm">Category</div>
+                        <div class="h6 mb-0">{{ $asset->category }}</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 42px; height: 42px;">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm">{{ __('general_content.ressource_trans_key') }}</div>
+                        <div class="h6 mb-0">{{ $asset->methodsRessource?->label ?? __('general_content.no_data_trans_key') }}</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-light text-success rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 42px; height: 42px;">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm">Acquisition value</div>
+                        <div class="h6 mb-0">{{ $asset->acquisition_value }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-light text-primary rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 42px; height: 42px;">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm">Acquisition date</div>
+                        <div class="h6 mb-0">{{ $asset->acquisition_date->format('Y-m-d') }}</div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-4">
+                    <div class="bg-light text-warning rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 42px; height: 42px;">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted text-sm">Depreciation duration</div>
+                        <div class="h6 mb-0">{{ $asset->depreciation_duration }} months</div>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap align-items-center mt-3">
+                    <a href="{{ route('assets.edit', $asset->id) }}" class="btn btn-info mr-2 mb-2">
+                        <i class="fas fa-edit mr-1"></i>{{ __('general_content.edit_trans_key') }}
+                    </a>
+                    <form method="POST" action="{{ route('assets.destroy', $asset->id) }}" class="d-inline mb-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash mr-1"></i>{{ __('general_content.delete_trans_key') }}
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-        <h2>{{ __('general_content.accounting_trans_key') }}</h2>
-        <ul>
-            @foreach($asset->accountingEntries as $entry)
-                <li>{{ $entry->entry_label }} - {{ $entry->debit_amount }} / {{ $entry->credit_amount }}</li>
-            @endforeach
-        </ul>
-        <h2>Maintenance work orders</h2>
-        <ul>
-            @forelse($asset->workOrders as $workOrder)
-                <li>
-                    <a href="{{ route('gmao.work-orders.show', $workOrder->id) }}">#{{ $workOrder->id }} - {{ $workOrder->title }}</a>
-                    ({{ ucfirst(str_replace('_', ' ', $workOrder->status)) }})
-                </li>
-            @empty
-                <li>{{ __('general_content.no_data_trans_key') }}</li>
-            @endforelse
-        </ul>
-        <a href="{{ route('gmao.work-orders.create', ['asset_id' => $asset->id]) }}" class="btn btn-primary">New work order</a>
-        <h2 class="mt-4">Maintenance plans</h2>
-        <ul>
-            @forelse($asset->maintenancePlans as $plan)
-                <li>
-                    <a href="{{ route('gmao.maintenance-plans.show', $plan->id) }}">{{ $plan->title }}</a>
-                    ({{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }})
-                </li>
-            @empty
-                <li>{{ __('general_content.no_data_trans_key') }}</li>
-            @endforelse
-        </ul>
-        <a href="{{ route('gmao.maintenance-plans.create', ['asset_id' => $asset->id]) }}" class="btn btn-secondary">New maintenance plan</a>
     </x-adminlte-card>
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <x-adminlte-card title="{{ __('general_content.accounting_trans_key') }}" theme="light" icon="fas fa-book">
+                <ul class="list-group list-group-flush">
+                    @forelse($asset->accountingEntries as $entry)
+                        <li class="list-group-item d-flex flex-wrap justify-content-between">
+                            <span class="font-weight-bold">{{ $entry->entry_label }}</span>
+                            <span class="text-muted">{{ $entry->debit_amount }} / {{ $entry->credit_amount }}</span>
+                        </li>
+                    @empty
+                        <li class="list-group-item text-muted">{{ __('general_content.no_data_trans_key') }}</li>
+                    @endforelse
+                </ul>
+            </x-adminlte-card>
+        </div>
+        <div class="col-12 mb-4">
+            <x-adminlte-card title="Maintenance work orders" theme="light" icon="fas fa-tools">
+                <ul class="list-group list-group-flush">
+                    @forelse($asset->workOrders as $workOrder)
+                        <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+                            <a href="{{ route('gmao.work-orders.show', $workOrder->id) }}" class="font-weight-bold">
+                                #{{ $workOrder->id }} - {{ $workOrder->title }}
+                            </a>
+                            <span class="badge badge-info text-uppercase">
+                                {{ ucfirst(str_replace('_', ' ', $workOrder->status)) }}
+                            </span>
+                        </li>
+                    @empty
+                        <li class="list-group-item text-muted">{{ __('general_content.no_data_trans_key') }}</li>
+                    @endforelse
+                </ul>
+                <div class="mt-3">
+                    <a href="{{ route('gmao.work-orders.create', ['asset_id' => $asset->id]) }}" class="btn btn-primary">
+                        <i class="fas fa-plus mr-1"></i>New work order
+                    </a>
+                </div>
+            </x-adminlte-card>
+        </div>
+        <div class="col-12">
+            <x-adminlte-card title="Maintenance plans" theme="light" icon="fas fa-clipboard-list">
+                <ul class="list-group list-group-flush">
+                    @forelse($asset->maintenancePlans as $plan)
+                        <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+                            <a href="{{ route('gmao.maintenance-plans.show', $plan->id) }}" class="font-weight-bold">
+                                {{ $plan->title }}
+                            </a>
+                            <span class="badge badge-secondary text-uppercase">
+                                {{ ucfirst(str_replace('_', ' ', $plan->trigger_type)) }}
+                            </span>
+                        </li>
+                    @empty
+                        <li class="list-group-item text-muted">{{ __('general_content.no_data_trans_key') }}</li>
+                    @endforelse
+                </ul>
+                <div class="mt-3">
+                    <a href="{{ route('gmao.maintenance-plans.create', ['asset_id' => $asset->id]) }}" class="btn btn-secondary">
+                        <i class="fas fa-plus mr-1"></i>New maintenance plan
+                    </a>
+                </div>
+            </x-adminlte-card>
+        </div>
+    </div>
 @stop
