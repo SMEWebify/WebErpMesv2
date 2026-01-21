@@ -301,6 +301,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{id}', 'App\\Http\\Controllers\\AssetController@destroy')->name('assets.destroy');
     });
 
+    Route::group(['prefix' => 'gmao', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/work-orders', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@index')->name('gmao.work-orders.index');
+        Route::get('/work-orders/create', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@create')->name('gmao.work-orders.create');
+        Route::post('/work-orders', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@store')->name('gmao.work-orders.store');
+        Route::get('/work-orders/{id}', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@show')->name('gmao.work-orders.show');
+        Route::get('/work-orders/{id}/edit', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@edit')->name('gmao.work-orders.edit');
+        Route::put('/work-orders/{id}', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@update')->name('gmao.work-orders.update');
+        Route::delete('/work-orders/{id}', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@destroy')->name('gmao.work-orders.destroy');
+    });
+
     Route::group(['prefix' => 'times', 'middleware' => ['auth', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->name('times');

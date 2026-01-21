@@ -617,6 +617,24 @@ return [
             'can'  => ['accounting-menu'],
         ],
         [
+            'text' => 'GMAO',
+            'icon' => 'fas fa-tools',
+            'can'  => ['asset_manager'],
+            'submenu' => [
+                [
+                    'text' => 'assets_trans_key',
+                    'url'  => 'assets',
+                    'icon_color' => 'info',
+                    'can'  => ['asset-menu'],
+                ],
+                [
+                    'text' => 'Work orders',
+                    'url'  => 'gmao/work-orders',
+                    'icon_color' => 'primary',
+                ],
+            ],
+        ],
+        [
             'text' => 'human_resources_trans_key',
             'icon' => 'fas fa-users',
             'url'  => '',
