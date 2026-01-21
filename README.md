@@ -1,4 +1,4 @@
-# ΣEM - L'ERP/MES dédié à la Tolerie & Mécanique Industrielle 🏭
+# ΣEM - The ERP/MES Dedicated to Sheet Metal & Industrial Mechanics 🏭
 
 <p align="center">
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/README.md">English</a> •
@@ -14,103 +14,103 @@
 
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
 
-## 🎯 Pourquoi ΣEM pour votre atelier ?
+## 🎯 Why ΣEM for your workshop?
 
-Conçu **par des professionnels de la tolerie et mécanique, pour des professionnels**, ΣEM répond aux défis spécifiques de votre métier :
+Designed **by sheet metal and mechanical professionals, for professionals**, ΣEM answers the specific challenges of your trade:
 
-### 🔧 Votre activité
-- **Tolerie industrielle** : pliage, découpe laser/plasma, poinçonnage, soudure
-- **Mécanique de précision** : tournage, fraisage, rectification
-- **Fabrication de moules** : conception, usinage, ajustage
-- **Sous-traitance industrielle** : gestion multi-clients, séries variées
+### 🔧 Your activity
+- **Industrial sheet metal**: bending, laser/plasma cutting, punching, welding
+- **Precision mechanics**: turning, milling, grinding
+- **Mold manufacturing**: design, machining, fitting
+- **Industrial subcontracting**: multi-customer management, varied series
 
-### 💡 Vos problématiques quotidiennes résolues
+### 💡 Your day-to-day problems solved
 
-| Problème | Solution ΣEM |
+| Problem | ΣEM Solution |
 |----------|-------------|
-| 📋 **Devis complexes** avec nombreuses opérations | Nomenclatures (BOM) détaillées, gammes d'usinage, calcul automatique temps/coûts |
-| ⏱️ **Suivi production** en temps réel impossible | Tableau de bord live, pointage atelier, avancement par OF |
-| 📦 **Gestion matières premières** (tôles, barres, tubes) | Stock par dimensions, traçabilité matière, alertes réapprovisionnement |
-| 🔄 **Planification atelier** chaotique | Planning visuel par machine, gestion priorités, charge machines |
-| 📊 **Rentabilité par projet** floue | Suivi coûts réels vs prévisionnels, analyse marges par commande |
-| 🚚 **Traçabilité client/fournisseur** limitée | Historique complet, documents attachés, notes techniques |
+| 📋 **Complex quotes** with many operations | Detailed BOMs, machining routings, automatic time/cost calculation |
+| ⏱️ **Real-time production tracking** not possible | Live dashboard, shop-floor time tracking, progress by work order |
+| 📦 **Raw material management** (sheets, bars, tubes) | Stock by dimensions, material traceability, replenishment alerts |
+| 🔄 **Chaotic shop planning** | Visual planning per machine, priority management, machine load |
+| 📊 **Unclear project profitability** | Actual vs. forecast cost tracking, margin analysis per order |
+| 🚚 **Limited customer/supplier traceability** | Full history, attached documents, technical notes |
 
-## ✨ Fonctionnalités métier spécialisées
+## ✨ Specialized business features
 
-### 🏭 Module Production (MES)
-- **Gammes d'usinage** : définir les opérations (découpe, pliage, soudure, usinage...)
-- **Nomenclatures (BOM)** : matières premières, composants, sous-ensembles
-- **Planning atelier** : visualisation charge par machine/poste
-- **Ordres de fabrication** : génération automatique depuis devis
-- **Pointage production** : suivi temps réel par opération
-- **Contrôle qualité** : fiches de contrôle, non-conformités
+### 🏭 Production Module (MES)
+- **Machining routings**: define operations (cutting, bending, welding, machining...)
+- **Bills of Materials (BOM)**: raw materials, components, sub-assemblies
+- **Shop planning**: visualize load per machine/work center
+- **Work orders**: automatic generation from quotes
+- **Production time tracking**: real-time tracking by operation
+- **Quality control**: control sheets, non-conformities
 
-### 📋 Gestion Commerciale
-- **Devis détaillés** : lignes multiples, options, variantes
-- **Calcul coûts** : matière + main d'œuvre + sous-traitance
-- **Suivi affaires** : du lead jusqu'à la livraison
-- **Gestion multi-devises** et multi-langues
-- **Historique client** : toutes les commandes en un clin d'œil
+### 📋 Sales Management
+- **Detailed quotes**: multiple lines, options, variants
+- **Cost calculation**: material + labor + subcontracting
+- **Opportunity tracking**: from lead to delivery
+- **Multi-currency** and multi-language support
+- **Customer history**: all orders at a glance
 
-### 📦 Stocks & Approvisionnement
-- **Gestion par dimensions** : Tôle 2000x1000x3mm, Tube Ø50x3...
-- **Traçabilité matière** : numéros de coulée, certificats matière
-- **Mouvements stocks** : entrées, sorties, transferts, inventaires
-- **Alertes** : seuils mini, réapprovisionnement automatique
-- **Fournisseurs** : tarifs, délais, évaluation
+### 📦 Inventory & Procurement
+- **Dimension-based management**: Sheet 2000x1000x3mm, Tube Ø50x3...
+- **Material traceability**: heat numbers, material certificates
+- **Stock movements**: receipts, issues, transfers, inventories
+- **Alerts**: minimum thresholds, automatic replenishment
+- **Suppliers**: pricing, lead times, evaluation
 
-### 💰 Comptabilité & Facturation
-- **Facturation** : acomptes, situations, avoirs
-- **TVA** : gestion multi-taux, déclarations
-- **Paiements** : suivi règlements, relances
-- **Analytique** : rentabilité par projet, client, période
-
-
-## 💼 Cas d'usage sectoriels
-
-### Exemple 1 : Atelier de tolerie fine
-**Contexte** : 15 personnes, pliage + découpe laser + soudure
-
-**Utilisation ΣEM** :
-- Devis avec gammes détaillées (laser → ébavurage → pliage → soudure)
-- Planification sur 3 plieuses et 2 lasers
-- Gestion stock tôles par format et épaisseur
-- Suivi temps réel des OF en cours
-
-**Résultat** : +30% productivité planning, -20% stocks dormants
-
-### Exemple 2 : Mécanique de précision
-**Contexte** : Sous-traitance automobile, séries moyennes
-
-**Utilisation ΣEM** :
-- Nomenclatures avec matières premières certifiées
-- Gammes d'usinage (tournage → fraisage → traitement thermique → rectif)
-- Contrôle qualité intégré (fiches de contrôle par OF)
-- Traçabilité complète matière → pièce finie
-
-**Résultat** : Conformité ISO 9001, traçabilité parfaite
-
-### Exemple 3 : Fabricant de moules
-**Contexte** : Moules injection plastique, projets complexes
-
-**Utilisation ΣEM** :
-- Devis multi-phases (étude, ébauche, finition, essais)
-- Gestion sous-traitance (traitements thermiques, polissage)
-- Suivi rentabilité projet en temps réel
-- Documentation technique centralisée
-
-**Résultat** : Meilleure maîtrise coûts, délais respectés
+### 💰 Accounting & Invoicing
+- **Invoicing**: deposits, progress billing, credit notes
+- **VAT**: multi-rate management, declarations
+- **Payments**: settlement tracking, reminders
+- **Analytics**: profitability by project, customer, period
 
 
-## 🎬 Voir ΣEM en action
+## 💼 Industry use cases
 
-### 📺 Démo en ligne
-**[Tester la démo](http://demo.wem-project.org)**
+### Example 1: Fine sheet metal workshop
+**Context**: 15 people, bending + laser cutting + welding
 
-- **Email** : contact@wem-project.org 
-- **Mot de passe** : password
+**ΣEM usage**:
+- Quotes with detailed routings (laser → deburring → bending → welding)
+- Planning across 3 press brakes and 2 lasers
+- Sheet stock management by format and thickness
+- Real-time tracking of work orders in progress
 
-### 🎥 Vidéo de présentation
+**Result**: +30% planning productivity, -20% dormant stock
+
+### Example 2: Precision mechanics
+**Context**: Automotive subcontracting, medium series
+
+**ΣEM usage**:
+- BOMs with certified raw materials
+- Machining routings (turning → milling → heat treatment → grinding)
+- Integrated quality control (inspection sheets per work order)
+- Full traceability from material to finished part
+
+**Result**: ISO 9001 compliance, perfect traceability
+
+### Example 3: Mold manufacturer
+**Context**: Plastic injection molds, complex projects
+
+**ΣEM usage**:
+- Multi-phase quotes (study, roughing, finishing, trials)
+- Subcontracting management (heat treatments, polishing)
+- Real-time project profitability tracking
+- Centralized technical documentation
+
+**Result**: Better cost control, on-time delivery
+
+
+## 🎬 See ΣEM in action
+
+### 📺 Online demo
+**[Try the demo](http://demo.wem-project.org)**
+
+- **Email**: contact@wem-project.org 
+- **Password**: password
+
+### 🎥 Presentation video
 
 https://github.com/user-attachments/assets/200e1322-ae60-4270-aa9c-0a28e5ca737a
 
@@ -119,11 +119,11 @@ https://github.com/user-attachments/assets/200e1322-ae60-4270-aa9c-0a28e5ca737a
 
 ### Installation
 
-## 🚀 Installation rapide
+## 🚀 Quick installation
 
-### Option 1 : Docker (Recommandé) 🐳
+### Option 1: Docker (Recommended) 🐳
 
-Démarrage en **3 minutes** :
+Start in **3 minutes**:
 
 ```bash
 git clone https://github.com/SMEWebify/WebErpMesv2.git
@@ -131,32 +131,32 @@ cd WebErpMesv2
 docker compose up --build
 ```
 
-➡️ Accédez à http://localhost:45060
+➡️ Access http://localhost:45060
 
-### Option 2 : Installation locale 💻
+### Option 2: Local installation 💻
 
 ```bash
-# Cloner et configurer
+# Clone and configure
 git clone https://github.com/SMEWebify/WebErpMesv2.git
 cd WebErpMesv2
 cp .env.example .env
 
-# Installer les dépendances
+# Install dependencies
 composer install
 npm install
 
-# Configurer l'application
+# Configure the application
 php artisan key:generate
 php artisan migrate --seed
 
-# Lancer
+# Run
 npm run dev
 php artisan serve
 ```
 
-➡️ Accédez à http://localhost:8000
+➡️ Access http://localhost:8000
 
-> 📚 **Guides détaillés** : 
+> 📚 **Detailed guides**: 
 > - [Development setup](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-dev))
 > - [Production deployment](https://github.com/SMEWebify/WebErpMesv2/wiki/Installation-Steps-(for-production))
 
@@ -171,9 +171,9 @@ Without these settings, you cannot add lines to quotes.
 
 <img width="831" alt="Configuration screenshot" src="https://github.com/user-attachments/assets/f527881c-a7c4-460a-9b06-f647c91402d8" />
 
-## 🏗️ Architecture technique
+## 🏗️ Technical architecture
 
-### Stack technologique moderne
+### Modern technology stack
 ```
 WebErpMesv2/
 ├── app/
@@ -209,7 +209,7 @@ Run specific tests:
 php artisan test --filter TestName
 ```
 
-## 🛠️ Custom Artisan Commands (Commandes Artisan spécifiques)
+## 🛠️ Custom Artisan Commands (Specific Artisan Commands)
 
 These commands are defined in this repository and complement the default Laravel tooling.
 
@@ -221,22 +221,22 @@ These commands are defined in this repository and complement the default Laravel
 | `php artisan emails:send-auto-reports` | Send scheduled automatic email reports based on user preferences. | `php artisan emails:send-auto-reports` |
 | `php artisan ldap:import-users` | Import LDAP users into the Laravel database. | `php artisan ldap:import-users` |
 
-## 🤝 Contribuer au projet
+## 🤝 Contribute to the project
 
-ΣEM est **open source** ! Votre expertise métier est précieuse.
+ΣEM is **open source**! Your domain expertise is valuable.
 
-### 🌟 Comment aider ?
+### 🌟 How to help?
 
-**Développeurs** :
-- Corriger des bugs → [`good first issue`](https://github.com/SMEWebify/WebErpMesv2/labels/good%20first%20issue)
-- Ajouter des fonctionnalités → voir [Roadmap](ROADMAP.md)
-- Améliorer la documentation → [Contributing Guide](CONTRIBUTING.md)
+**Developers**:
+- Fix bugs → [`good first issue`](https://github.com/SMEWebify/WebErpMesv2/labels/good%20first%20issue)
+- Add features → see [Roadmap](ROADMAP.md)
+- Improve documentation → [Contributing Guide](CONTRIBUTING.md)
 
-**Professionnels du secteur** :
-- Tester et donner du feedback
-- Proposer des améliorations métier
-- Partager vos cas d'usage
-- Traduire l'interface
+**Industry professionals**:
+- Test and provide feedback
+- Propose domain improvements
+- Share your use cases
+- Translate the interface
 
 ### Development Workflow
 
@@ -254,9 +254,9 @@ git commit -m "Add amazing feature"
 git push origin feature/amazing-feature
 ```
 
-## 👥 Contributeurs
+## 👥 Contributors
 
-Merci à tous ceux qui font vivre ce projet !
+Thanks to everyone who keeps this project alive!
 
 <table>
   <tr>
@@ -370,51 +370,51 @@ Check our [roadmap](ROADMAP.md) to see what's coming next and how you can help!
 - 🧪 Test coverage improvement
 - 📚 Complete API documentation
 
-## 💬 Support & Communauté
+## 💬 Support & Community
 
-- 💭 [Discussions GitHub](https://github.com/SMEWebify/WebErpMesv2/discussions) - Questions, idées, retours
-- 🐛 [Issue Tracker](https://github.com/SMEWebify/WebErpMesv2/issues) - Bugs et demandes de fonctionnalités
-- 📧 [Email](mailto:contact@wem-project.org) - Support direct
-- 🌐 [Démo en ligne](http://demo.wem-project.org) - Tester gratuitement
+- 💭 [GitHub Discussions](https://github.com/SMEWebify/WebErpMesv2/discussions) - Questions, ideas, feedback
+- 🐛 [Issue Tracker](https://github.com/SMEWebify/WebErpMesv2/issues) - Bugs and feature requests
+- 📧 [Email](mailto:contact@wem-project.org) - Direct support
+- 🌐 [Online demo](http://demo.wem-project.org) - Try it for free
 
-## 📄 Licence
+## 📄 License
 
-Projet sous licence **MIT** - Voir [LICENSE](LICENSE)
+Project under the **MIT** license - See [LICENSE](LICENSE)
 
-Vous êtes libre de :
-- ✅ Utiliser commercialement
-- ✅ Modifier le code
-- ✅ Distribuer
-- ✅ Utiliser en privé
+You are free to:
+- ✅ Use commercially
+- ✅ Modify the code
+- ✅ Distribute
+- ✅ Use privately
 
-## 🙏 Remerciements
+## 🙏 Acknowledgements
 
-Merci à :
-- Tous nos [contributeurs](https://github.com/SMEWebify/WebErpMesv2/graphs/contributors)
-- Les ateliers qui testent et donnent leur feedback
-- Les communautés Laravel et Vue.js
-- Tous ceux qui ont ⭐ starred le projet
+Thanks to:
+- All our [contributors](https://github.com/SMEWebify/WebErpMesv2/graphs/contributors)
+- The workshops that test and provide feedback
+- The Laravel and Vue.js communities
+- Everyone who starred ⭐ the project
 
 ---
 
-## 🏭 Développé pour l'industrie, par l'industrie
+## 🏭 Built for industry, by industry
 
-ΣEM est né de l'expérience terrain en tolerie industrielle. Chaque fonctionnalité répond à un besoin réel d'atelier.
+ΣEM was born from hands-on experience in industrial sheet metal. Every feature meets a real workshop need.
 
-**Vous êtes tôlier, mécanicien, usineur ?**  
-Votre retour est précieux pour améliorer l'outil → [Contactez-nous](mailto:contact@wem-project.org)
+**Are you a sheet metal worker, mechanic, machinist?**  
+Your feedback is invaluable to improve the tool → [Contact us](mailto:contact@wem-project.org)
 
-**Vous êtes développeur passionné d'industrie ?**  
-Rejoignez-nous → [Guide de contribution](CONTRIBUTING.md)
+**Are you a developer passionate about industry?**  
+Join us → [Contributing Guide](CONTRIBUTING.md)
 
 ---
 
 <p align="center">
-  <b>Fait avec ❤️ pour les professionnels de la tolerie et de la mécanique</b>
+  <b>Made with ❤️ for sheet metal and mechanical professionals</b>
   <br />
   <br />
-  <a href="https://github.com/SMEWebify/WebErpMesv2/stargazers">⭐ Star le projet</a> •
+  <a href="https://github.com/SMEWebify/WebErpMesv2/stargazers">⭐ Star the project</a> •
   <a href="https://github.com/SMEWebify/WebErpMesv2/fork">🍴 Fork</a> •
-  <a href="CONTRIBUTING.md">🤝 Contribuer</a> •
-  <a href="http://demo.wem-project.org">🎬 Tester la démo</a>
+  <a href="CONTRIBUTING.md">🤝 Contribute</a> •
+  <a href="http://demo.wem-project.org">🎬 Try the demo</a>
 </p>
