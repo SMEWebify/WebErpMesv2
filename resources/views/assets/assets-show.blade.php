@@ -13,6 +13,8 @@
                 <dl>
                     <dt>Category</dt>
                     <dd>{{ $asset->category }}</dd>
+                    <dt>{{ __('general_content.ressource_trans_key') }}</dt>
+                    <dd>{{ $asset->methodsRessource?->label ?? __('general_content.no_data_trans_key') }}</dd>
                     <dt>Acquisition value</dt>
                     <dd>{{ $asset->acquisition_value }}</dd>
                     <dt>Acquisition date</dt>

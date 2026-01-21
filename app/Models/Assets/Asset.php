@@ -4,15 +4,18 @@ namespace App\Models\Assets;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Accounting\AccountingEntry;
 use App\Models\Maintenance\MaintenancePlan;
 use App\Models\Maintenance\WorkOrder;
+use App\Models\Methods\MethodsRessources;
 
 class Asset extends Model
 {
     protected $fillable = [
         'name',
         'category',
+        'methods_ressource_id',
         'acquisition_value',
         'acquisition_date',
         'depreciation_duration',
@@ -34,8 +37,8 @@ class Asset extends Model
         return $this->hasMany(WorkOrder::class);
     }
 
-    public function maintenancePlans(): HasMany
+    public function methodsRessource(): BelongsTo
     {
-        return $this->hasMany(MaintenancePlan::class);
+        return $this->belongsTo(MethodsRessources::class, 'methods_ressource_id');
     }
 }
