@@ -302,6 +302,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'gmao', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/dashboard', 'App\\Http\\Controllers\\Maintenance\\DashboardController')->name('gmao.dashboard');
         Route::get('/work-orders', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@index')->name('gmao.work-orders.index');
         Route::get('/work-orders/create', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@create')->name('gmao.work-orders.create');
         Route::post('/work-orders', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@store')->name('gmao.work-orders.store');
