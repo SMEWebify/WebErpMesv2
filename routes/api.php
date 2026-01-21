@@ -32,8 +32,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // new route :
 Route::get('/gantt/order/{order_lines_id}', 'App\Http\Controllers\Planning\GanttController@getTasksByOrderLine');
 
-Route::apiResource('company',CompanyController::class);
-Route::post('/company', 'App\Http\Controllers\Api\CompanyController@store');
 Route::apiResource('companies', CompanyController::class);
 
 Route::apiResource('quote',QuoteController::class);
