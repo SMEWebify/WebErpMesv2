@@ -453,7 +453,6 @@ return [
                 ],
             ]
         ],
-        ['header' => 'others_trans_key'],
         [
             'text'    => 'product_trans_key',
             'icon'    => 'fas fa-barcode',

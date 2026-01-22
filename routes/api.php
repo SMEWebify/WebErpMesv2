@@ -27,33 +27,31 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//https://github.com/SMEWebify/WebErpMesv2/issues/507
-// old route => Route::get('/gantt/data', 'App\Http\Controllers\Planning\GanttController@get');
-// new route :
-Route::get('/gantt/order/{order_lines_id}', 'App\Http\Controllers\Planning\GanttController@getTasksByOrderLine');
-
-Route::apiResource('companies', CompanyController::class);
-
-Route::apiResource('quote',QuoteController::class);
-Route::apiResource('order',OrderController::class);
-Route::apiResource('tasks', TaskController::class);
-Route::apiResource('energy-consumptions', EnergyConsumptionController::class)->only(['index','store']);
-Route::get('/exports/sales-orders', ExportSalesOrderController::class);
-
-Route::prefix('collaboration/whiteboards')->name('api.collaboration.whiteboards.')->group(function () {
-    Route::get('/', [ApiWhiteboardController::class, 'index'])->name('index');
-    Route::post('/', [ApiWhiteboardController::class, 'store'])->name('store');
-    Route::get('/{whiteboard}', [ApiWhiteboardController::class, 'show'])->name('show');
-    Route::put('/{whiteboard}', [ApiWhiteboardController::class, 'update'])->name('update');
-
-    Route::get('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'index'])->name('snapshots.index');
-    Route::post('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'store'])->name('snapshots.store');
-
-    Route::get('/{whiteboard}/files', [WhiteboardFileController::class, 'index'])->name('files.index');
-    Route::post('/{whiteboard}/files', [WhiteboardFileController::class, 'store'])->name('files.store');
-});
-
 Route::middleware('auth:api')->group(function () {
+
+    Route::apiResource('companies', CompanyController::class);
+
+    Route::apiResource('quote', QuoteController::class);
+    Route::apiResource('order', OrderController::class);
+    Route::apiResource('tasks', TaskController::class);
+    Route::apiResource('energy-consumptions', EnergyConsumptionController::class)->only(['index','store']);
+
+    Route::get('/exports/sales-orders', ExportSalesOrderController::class);
+
+    Route::prefix('collaboration/whiteboards')->name('api.collaboration.whiteboards.')->group(function () {
+        Route::get('/', [ApiWhiteboardController::class, 'index'])->name('index');
+        Route::post('/', [ApiWhiteboardController::class, 'store'])->name('store');
+        Route::get('/{whiteboard}', [ApiWhiteboardController::class, 'show'])->name('show');
+        Route::put('/{whiteboard}', [ApiWhiteboardController::class, 'update'])->name('update');
+
+        Route::get('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'index'])->name('snapshots.index');
+        Route::post('/{whiteboard}/snapshots', [WhiteboardSnapshotController::class, 'store'])->name('snapshots.store');
+
+        Route::get('/{whiteboard}/files', [WhiteboardFileController::class, 'index'])->name('files.index');
+        Route::post('/{whiteboard}/files', [WhiteboardFileController::class, 'store'])->name('files.store');
+    });
+
+    // inspection...
     Route::get('/inspection-projects/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show');
     Route::get('/inspection-sessions/{id}', 'App\Http\Controllers\Inspection\InspectionMeasureSessionController@show');
     Route::post('/inspection-measures', 'App\Http\Controllers\Inspection\InspectionMeasureController@store');
