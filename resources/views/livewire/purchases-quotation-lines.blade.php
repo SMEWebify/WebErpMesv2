@@ -108,7 +108,7 @@
                             <th>{{ __('general_content.qty_trans_key') }}</th>
                             <th>{{ __('general_content.price_trans_key') }}</th>
                             <th>{{__('general_content.total_price_trans_key') }}</th>
-                            <th></th>
+                            <th>{{ __('general_content.action_trans_key') }}</th>
                             <th>{{__('general_content.qty_accepted_trans_key') }}</th>
                             <th>{{ __('general_content.qty_canceled_trans_key') }}</th>
                         </tr>
@@ -159,6 +159,11 @@
                             <td>{{ $PurchaseQuotationLine->formatted_unit_price }}</td>
                             <td>{{ $PurchaseQuotationLine->formatted_total_price }}</td>
                             <td>
+                                @if($PurchaseQuotation->statu == 1)
+                                <button type="button" class="btn btn-outline-secondary btn-sm mb-2" wire:click.prevent="editPurchaseQuotationLine({{ $PurchaseQuotationLine->id }})">
+                                    <i class="fas fa-edit"></i> {{ __('general_content.edit_trans_key') }}
+                                </button>
+                                @endif
                                 @if($PurchaseQuotationLine->qty_to_order > $PurchaseQuotationLine->qty_accepted)
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
