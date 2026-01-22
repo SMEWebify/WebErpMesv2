@@ -1,25 +1,25 @@
 @extends('adminlte::page')
 
-@section('title', 'GMAO - Work Orders')
+@section('title', __('general_content.gmao_work_orders_page_title_trans_key'))
 
 @section('content_header')
-    <h1>GMAO - Work Orders</h1>
+    <h1>{{ __('general_content.gmao_work_orders_page_title_trans_key') }}</h1>
 @stop
 
 @section('content')
-    <x-adminlte-card title="Work Orders" theme="primary" maximizable>
+    <x-adminlte-card title="{{ __('general_content.gmao_work_orders_card_title_trans_key') }}" theme="primary" maximizable>
         <div class="card-body table-responsive p-0">
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Asset</th>
-                        <th>Title</th>
-                        <th>Type</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th>Technician</th>
-                        <th>Requested at</th>
+                        <th>{{ __('general_content.asset_trans_key') }}</th>
+                        <th>{{ __('general_content.title_trans_key') }}</th>
+                        <th>{{ __('general_content.type_trans_key') }}</th>
+                        <th>{{ __('general_content.priority_trans_key') }}</th>
+                        <th>{{ __('general_content.status_trans_key') }}</th>
+                        <th>{{ __('general_content.gmao_technician_trans_key') }}</th>
+                        <th>{{ __('general_content.gmao_requested_at_trans_key') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -32,10 +32,10 @@
                             <td>{{ ucfirst(str_replace('_', ' ', $workOrder->work_type)) }}</td>
                             <td>{{ ucfirst(str_replace('_', ' ', $workOrder->priority)) }}</td>
                             <td>{{ ucfirst(str_replace('_', ' ', $workOrder->status)) }}</td>
-                            <td>{{ $workOrder->technician?->name ?? 'N/A' }}</td>
+                            <td>{{ $workOrder->technician?->name ?? __('general_content.not_available_trans_key') }}</td>
                             <td>{{ optional($workOrder->requested_at)->format('Y-m-d') }}</td>
                             <td class="text-right">
-                                <a href="{{ route('gmao.work-orders.edit', $workOrder->id) }}" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
+                                <a href="{{ route('gmao.work-orders.edit', $workOrder->id) }}" class="btn btn-xs btn-default text-primary mx-1 shadow" title="{{ __('general_content.edit_trans_key') }}">
                                     <i class="fa fa-lg fa-fw fa-pen"></i>
                                 </a>
                             </td>
@@ -49,7 +49,7 @@
             </table>
         </div>
         <div class="card-footer">
-            <a href="{{ route('gmao.work-orders.create') }}" class="btn btn-primary">New Work Order</a>
+            <a href="{{ route('gmao.work-orders.create') }}" class="btn btn-primary">{{ __('general_content.gmao_new_work_order_trans_key') }}</a>
             {{ $workOrders->links() }}
         </div>
     </x-adminlte-card>

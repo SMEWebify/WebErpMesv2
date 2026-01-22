@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'GMAO - Dashboard')
+@section('title', __('general_content.gmao_dashboard_page_title_trans_key'))
 
 @section('content_header')
-    <h1>GMAO - Dashboard</h1>
+    <h1>{{ __('general_content.gmao_dashboard_page_title_trans_key') }}</h1>
 @stop
 
 @section('content')
@@ -22,13 +22,13 @@
         @endforeach
     </div>
 
-    <x-adminlte-card title="3. 📊 KPI & Indicateurs maintenance" theme="primary" maximizable>
+    <x-adminlte-card title="{{ __('general_content.gmao_kpi_maintenance_card_trans_key') }}" theme="primary" maximizable>
         <div class="card-body table-responsive p-0">
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>KPI</th>
-                        <th>Description</th>
+                        <th>{{ __('general_content.gmao_kpi_trans_key') }}</th>
+                        <th>{{ __('general_content.description_trans_key') }}</th>
                     </tr>
                 </thead>
                 <tbody>

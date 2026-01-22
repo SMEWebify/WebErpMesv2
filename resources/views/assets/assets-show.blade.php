@@ -89,7 +89,7 @@
             </x-adminlte-card>
         </div>
         <div class="col-12 mb-4">
-            <x-adminlte-card title="Maintenance work orders" theme="light" icon="fas fa-tools">
+            <x-adminlte-card title="{{ __('general_content.gmao_maintenance_work_orders_trans_key') }}" theme="light" icon="fas fa-tools">
                 <ul class="list-group list-group-flush">
                     @forelse($asset->workOrders as $workOrder)
                         <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
@@ -106,13 +106,13 @@
                 </ul>
                 <div class="mt-3">
                     <a href="{{ route('gmao.work-orders.create', ['asset_id' => $asset->id]) }}" class="btn btn-primary">
-                        <i class="fas fa-plus mr-1"></i>New work order
+                        <i class="fas fa-plus mr-1"></i> {{ __('general_content.gmao_new_work_order_trans_key') }}
                     </a>
                 </div>
             </x-adminlte-card>
         </div>
         <div class="col-12">
-            <x-adminlte-card title="Maintenance plans" theme="light" icon="fas fa-clipboard-list">
+            <x-adminlte-card title="{{ __('general_content.gmao_maintenance_plans_card_title_trans_key') }}" theme="light" icon="fas fa-clipboard-list">
                 <ul class="list-group list-group-flush">
                     @forelse($asset->maintenancePlans as $plan)
                         <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
@@ -129,7 +129,7 @@
                 </ul>
                 <div class="mt-3">
                     <a href="{{ route('gmao.maintenance-plans.create', ['asset_id' => $asset->id]) }}" class="btn btn-secondary">
-                        <i class="fas fa-plus mr-1"></i>New maintenance plan
+                        <i class="fas fa-plus mr-1"></i> {{ __('general_content.gmao_new_maintenance_plan_trans_key') }}
                     </a>
                 </div>
             </x-adminlte-card>
