@@ -2,6 +2,11 @@
 
 @section('title', 'Maintenance Plan #' . $plan->id)
 
+@section('content_header')
+    <h1>Maintenance Plan #{{ $plan->id }}</h1>
+@stop
+
+
 @section('content')
     <div class="row">
         <div class="col-lg-8">
