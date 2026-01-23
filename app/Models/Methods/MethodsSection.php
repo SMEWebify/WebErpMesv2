@@ -24,7 +24,7 @@ class MethodsSection extends Model
 
     public function Ressources()
     {
-        return $this->hasMany(MethodsRessources::class);
+        return $this->hasMany(MethodsRessources::class, 'section_id');
     }
 
     public function Risque()
