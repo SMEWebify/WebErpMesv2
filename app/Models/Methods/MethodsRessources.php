@@ -35,7 +35,7 @@ class MethodsRessources extends Model
 
     public function locations()
     {
-        return $this->hasMany(MethodsLocation::class);
+        return $this->hasMany(MethodsLocation::class, 'ressource_id');
     }
 
     /**
