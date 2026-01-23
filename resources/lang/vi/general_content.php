@@ -283,4 +283,5 @@ return [
     'gmao_duration_trans_key'                      => 'Duration',
     'gmao_next_scheduled_trans_key'                => 'Next Scheduled',
     'gmao_maintenance_work_orders_trans_key'       => 'Maintenance work orders',
+    'methods_overview_trans_key'               => 'Tổng quan phương pháp',
 ];

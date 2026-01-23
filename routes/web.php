@@ -641,6 +641,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Methods\SectionsController@store')->name('methods.section.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Methods\SectionsController@update')->name('methods.section.update');
         });
+
+        Route::get('/overview', 'App\Http\Controllers\Methods\MethodsController@overview')->name('methods.overview');
     
         // Routes for Ressources
         Route::group(['prefix' => 'ressources'], function () {

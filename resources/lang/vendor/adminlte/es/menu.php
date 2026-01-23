@@ -18,4 +18,5 @@ return [
     'information'                   => 'Información',
     'whiteboard_trans_key'          => 'Pizarra',
     'inspection_trans_key'                 => 'Inspection',
+    'methods_overview_trans_key'               => 'Resumen de métodos',
 ];

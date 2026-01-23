@@ -397,6 +397,11 @@ return [
                     'icon_color' => 'info',
                 ],
                 [
+                    'text' => 'methods_overview_trans_key',
+                    'url'  => 'methods/overview',
+                    'icon_color' => 'success',
+                ],
+                [
                     'text' => 'tasks_calendar_trans_key',
                     'url'  => 'production/calendar/tasks',
                     'icon_color' => 'primary',
