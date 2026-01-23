@@ -17,4 +17,5 @@ return [
     'warning'                       => '警告',
     'information'                   => 'インフォメーション',
     'inspection_trans_key'                 => 'Inspection',
+    'methods_overview_trans_key'               => 'Methods overview',
 ];

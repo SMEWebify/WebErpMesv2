@@ -17,4 +17,5 @@ return [
     'warning'                       => 'Uyarı',
     'information'                   => 'Bilgi',
     'inspection_trans_key'                 => 'Inspection',
+    'methods_overview_trans_key'               => 'Methods overview',
 ];

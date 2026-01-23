@@ -90,4 +90,5 @@ return [
     'logs_view_trans_key'                      => 'Logs view',
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',
+    'methods_overview_trans_key'               => 'Vue d'ensemble méthodes',
 ];

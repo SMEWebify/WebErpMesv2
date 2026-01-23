@@ -19,4 +19,5 @@ return [
     'menu'                          => 'MENI',
     'users'                         => 'Korisnici',
     'inspection_trans_key'                 => 'Inspection',
+    'methods_overview_trans_key'               => 'Methods overview',
 ];
