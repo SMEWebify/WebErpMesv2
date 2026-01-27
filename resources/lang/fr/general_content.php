@@ -1328,5 +1328,5 @@ return [
     'gmao_duration_trans_key'                      => 'Durée',
     'gmao_next_scheduled_trans_key'                => 'Prochaine planification',
     'gmao_maintenance_work_orders_trans_key'       => 'Ordres de travail de maintenance',
-    'methods_overview_trans_key'               => 'Vue d'ensemble méthodes',
+    'methods_overview_trans_key'                    => 'Vue d\'ensemble méthodes',
 ];

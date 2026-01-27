@@ -54,7 +54,7 @@ return [
     'derogations_trans_key'                    => 'Dérogations',
     'non_conformities_trans_key'               => 'Non conformités',
     'amdec_trans_key'                          => 'AMDEC',
-    'inspection_trans_key'                 => 'Inspection',
+    'inspection_trans_key'                     => 'Inspection',
     'settings_trans_key'                       => 'Paramètres',
     'settings_time_trans_key'                  => 'Temps management',
     'methods_trans_key'                        => 'Méthodes',
@@ -90,5 +90,5 @@ return [
     'logs_view_trans_key'                      => 'Logs view',
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',
-    'methods_overview_trans_key'               => 'Vue d'ensemble méthodes',
+    'methods_overview_trans_key'               => 'Vue d\'ensemble méthodes',
 ];
