@@ -271,6 +271,19 @@ class StockLocationProductsController extends Controller
             return (int) $purchaseReceiptLine->receipt_qty;
         }
 
+        if ($purchaseReceiptLine->accepted_qty === 0 && ! $this->hasInspection($purchaseReceiptLine)) {
+            return (int) $purchaseReceiptLine->receipt_qty;
+        }
+
         return (int) $purchaseReceiptLine->accepted_qty;
+    }
+
+    private function hasInspection(PurchaseReceiptLines $purchaseReceiptLine): bool
+    {
+        return $purchaseReceiptLine->inspected_by !== null
+            || $purchaseReceiptLine->inspection_date !== null
+            || $purchaseReceiptLine->inspection_result !== null
+            || (int) $purchaseReceiptLine->rejected_qty > 0
+            || $purchaseReceiptLine->quality_non_conformity_id !== null;
     }
 }
