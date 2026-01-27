@@ -1345,4 +1345,8 @@ return [
     'gmao_next_scheduled_trans_key'                => 'Prochaine planification',
     'gmao_maintenance_work_orders_trans_key'       => 'Ordres de travail de maintenance',
     'methods_overview_trans_key'               => 'Vue d'ensemble méthodes',
+    'logs_trans_key'                            => 'Journaux',
+    'beta_trans_key'                            => 'Bêta',
+    'info_trans_key'                            => 'Info',
+    'customer_disabled_warning_trans_key'       => 'Le client :customer est actuellement désactivé. Vous ne pouvez pas modifier le nom, le contact ou l\'adresse.',
 ];
