@@ -10,6 +10,7 @@ use App\Models\Products\StockMove;
 use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
+use App\Models\Purchases\PurchaseReceiptLines;
 use App\Services\StockCalculationService;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\StoreStockMoveRequest;
@@ -153,6 +154,9 @@ class StockLocationProductsController extends Controller
      */
     public function storeFromPurchaseOrder(StoreStockLocationProductsRequest $request)
     {
+        $purchaseReceiptLine = PurchaseReceiptLines::findOrFail($request->purchase_receipt_line_id);
+        $receivedQty = $this->resolveAcceptedQty($purchaseReceiptLine);
+
         $StockLocationProduct = StockLocationProducts::create($request->only('code',
                                                                 'user_id', 
                                                                 'stock_locations_id',
@@ -171,7 +175,7 @@ class StockLocationProductsController extends Controller
 
         $data = [
             'user_id' => $request->user_id,
-            'qty' => $request->mini_qty,
+            'qty' => $receivedQty,
             'stock_location_products_id' => $StockLocationProduct->id,
             'task_id' => $request->task_id,
             'purchase_receipt_line_id' => $request->purchase_receipt_line_id,
@@ -197,7 +201,11 @@ class StockLocationProductsController extends Controller
      */
     public function entryFromPurchaseOrder(StoreStockMoveRequest $request)
     {
-        $data = $request->only('user_id', 'qty', 'stock_location_products_id', 'task_id', 'purchase_receipt_line_id', 'typ_move', 'component_price');
+        $purchaseReceiptLine = PurchaseReceiptLines::findOrFail($request->purchase_receipt_line_id);
+        $receivedQty = $this->resolveAcceptedQty($purchaseReceiptLine);
+
+        $data = $request->only('user_id', 'stock_location_products_id', 'task_id', 'purchase_receipt_line_id', 'typ_move', 'component_price');
+        $data['qty'] = $receivedQty;
         $this->stockService->createStockMove($data);
 
         // Mise à jour de la ligne de réception de l'achat
@@ -255,5 +263,27 @@ class StockLocationProductsController extends Controller
         else{
             return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('error', 'Not enough stock available for this tracability');
         }
+    }
+
+    private function resolveAcceptedQty(PurchaseReceiptLines $purchaseReceiptLine): int
+    {
+        if ($purchaseReceiptLine->accepted_qty === null) {
+            return (int) $purchaseReceiptLine->receipt_qty;
+        }
+
+        if ($purchaseReceiptLine->accepted_qty === 0 && ! $this->hasInspection($purchaseReceiptLine)) {
+            return (int) $purchaseReceiptLine->receipt_qty;
+        }
+
+        return (int) $purchaseReceiptLine->accepted_qty;
+    }
+
+    private function hasInspection(PurchaseReceiptLines $purchaseReceiptLine): bool
+    {
+        return $purchaseReceiptLine->inspected_by !== null
+            || $purchaseReceiptLine->inspection_date !== null
+            || $purchaseReceiptLine->inspection_result !== null
+            || (int) $purchaseReceiptLine->rejected_qty > 0
+            || $purchaseReceiptLine->quality_non_conformity_id !== null;
     }
 }
