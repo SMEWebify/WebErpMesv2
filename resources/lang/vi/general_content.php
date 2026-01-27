@@ -284,4 +284,8 @@ return [
     'gmao_next_scheduled_trans_key'                => 'Next Scheduled',
     'gmao_maintenance_work_orders_trans_key'       => 'Maintenance work orders',
     'methods_overview_trans_key'               => 'Tổng quan phương pháp',
+    'logs_trans_key'                            => 'Nhật ký',
+    'beta_trans_key'                            => 'Beta',
+    'info_trans_key'                            => 'Thông tin',
+    'customer_disabled_warning_trans_key'       => 'Khách hàng :customer hiện đang bị vô hiệu hóa. Bạn không thể thay đổi tên, liên hệ hoặc địa chỉ khách hàng.',
 ];

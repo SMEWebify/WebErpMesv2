@@ -1111,4 +1111,8 @@ return [
     'gmao_next_scheduled_trans_key'                => 'Next Scheduled',
     'gmao_maintenance_work_orders_trans_key'       => 'Maintenance work orders',
     'methods_overview_trans_key'               => 'نظرة عامة على الطرق',
+    'logs_trans_key'                            => 'السجلات',
+    'beta_trans_key'                            => 'بيتا',
+    'info_trans_key'                            => 'معلومات',
+    'customer_disabled_warning_trans_key'       => 'العميل :customer معطل حاليًا. لا يمكنك تغيير اسم العميل أو جهة الاتصال أو العنوان.',
 ];

@@ -1345,4 +1345,8 @@ return [
     'gmao_next_scheduled_trans_key'                => 'Next Scheduled',
     'gmao_maintenance_work_orders_trans_key'       => 'Maintenance work orders',
     'methods_overview_trans_key'               => 'Methods overview',
+    'logs_trans_key'                            => 'Logs',
+    'beta_trans_key'                            => 'Beta',
+    'info_trans_key'                            => 'Info',
+    'customer_disabled_warning_trans_key'       => 'The customer :customer is currently disabled. You cannot change the customer name, contact, or address.',
 ];

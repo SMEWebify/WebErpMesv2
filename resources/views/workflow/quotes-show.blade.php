@@ -19,14 +19,14 @@
     <ul class="nav nav-pills"  id="DocumentTabs">
       <li class="nav-item"><a class="nav-link " href="#Quote" data-toggle="tab">{{ __('general_content.quote_info_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Lines" data-toggle="tab">{{ __('general_content.quote_line_trans_key') }} ({{ count($Quote->QuoteLines) }})</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Construction" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }} <span class="badge badge-danger right">Beta</span></a></li>
+      <li class="nav-item"><a class="nav-link" href="#Construction" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }} <span class="badge badge-danger right">{{ __('general_content.beta_trans_key') }}</span></a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }} ( {{  $Quote->visitsCount() }} )</a></li>
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
       <li class="nav-item"><a class="nav-link" href="#LinesImport" data-toggle="tab">{{ __('general_content.lines_import_trans_key') }}</a></li>
-      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">{{ __('general_content.logs_trans_key') }}</a></li>
     </ul>
   </div>
   <!-- /.card-header -->
@@ -79,8 +79,14 @@
                 <input type="hidden" name="customer_reference" value="{{ $Quote->customer_reference }}">
                 <input type="hidden" name="companies_addresses_id" value="{{ $Quote->companies_addresses_id }}">
                 <input type="hidden" name="companies_contacts_id" value="{{ $Quote->companies_contacts_id }}">
-                <x-adminlte-alert theme="info" title="Info">
-                  The customer <x-CompanieButton id="{{ $Quote->companie['id'] }}" label="{{ $Quote->companie['label'] }}"  /> is currently disabled, you cannot change the you cannot change the customer name, contact and address.
+                @php
+                  $customerButton = view('components.companie-button', [
+                    'id' => $Quote->companie['id'],
+                    'label' => $Quote->companie['label'],
+                  ])->render();
+                @endphp
+                <x-adminlte-alert theme="info" title="{{ __('general_content.info_trans_key') }}">
+                  {!! __('general_content.customer_disabled_warning_trans_key', ['customer' => $customerButton]) !!}
                 </x-adminlte-alert>
                 @endif
                   <div class="row">
@@ -595,7 +601,7 @@
           </x-adminlte-card>
         </form>
         @else
-        <x-adminlte-alert theme="info" title="Info">
+        <x-adminlte-alert theme="info" title="{{ __('general_content.info_trans_key') }}">
             {{ __('general_content.info_statu_trans_key') }}
         </x-adminlte-alert>
         @endif
