@@ -73,7 +73,11 @@ class PreOrdersController extends Controller
             'type' => 'required|in:1,2',
         ]);
 
-        $preOrder->load('lines');
+        $preOrder->load('lines', 'importBatch');
+
+        if ($preOrder->lines->isEmpty()) {
+            return redirect()->route('pre-orders.show', $preOrder)->withErrors('Pré-commande vide, impossible de convertir.');
+        }
 
         DB::transaction(function () use ($preOrder, $data) {
             $order = Orders::create([
@@ -124,4 +128,3 @@ class PreOrdersController extends Controller
         return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Pré-commande convertie en commande.');
     }
 }
-

@@ -5,9 +5,19 @@ namespace App\Services;
 use App\Models\Workflow\PreOrder;
 use App\Models\Workflow\PreOrderImport;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PreOrderImportService
 {
+    private const REQUIRED_HEADERS = [
+        'reference',
+        'product',
+        'quantity',
+        'unit_price',
+        'total_price',
+        'source_pdf',
+    ];
+
     public function importCsvFile(string $filePath): bool
     {
         if (!is_file($filePath)) {
@@ -37,20 +47,22 @@ class PreOrderImportService
             ];
         }
 
-        $import = PreOrderImport::create([
-            'file_name' => basename($filePath),
-            'checksum' => $checksum,
-            'imported_at' => Carbon::now(),
-        ]);
-
-        foreach ($groupedRows as $sourcePdf => $lines) {
-            $preOrder = $import->preOrders()->create([
-                'source_pdf' => $sourcePdf,
-                'status' => PreOrder::STATUS_PENDING,
+        DB::transaction(function () use ($filePath, $checksum, $groupedRows) {
+            $import = PreOrderImport::create([
+                'file_name' => basename($filePath),
+                'checksum' => $checksum,
+                'imported_at' => Carbon::now(),
             ]);
 
-            $preOrder->lines()->createMany($lines);
-        }
+            foreach ($groupedRows as $sourcePdf => $lines) {
+                $preOrder = $import->preOrders()->create([
+                    'source_pdf' => $sourcePdf,
+                    'status' => PreOrder::STATUS_PENDING,
+                ]);
+
+                $preOrder->lines()->createMany($lines);
+            }
+        });
 
         return true;
     }
@@ -81,13 +93,25 @@ class PreOrderImportService
             return strtolower(trim((string) $header));
         }, $headers);
 
+        foreach (self::REQUIRED_HEADERS as $requiredHeader) {
+            if (!in_array($requiredHeader, $headers, true)) {
+                fclose($handle);
+                return [];
+            }
+        }
+
         $rows = [];
         while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
             if (count(array_filter($data, fn ($value) => trim((string) $value) !== '')) === 0) {
                 continue;
             }
 
-            $rows[] = array_combine($headers, array_pad($data, count($headers), null));
+            $row = array_combine($headers, array_pad($data, count($headers), null));
+            if ($row === false) {
+                continue;
+            }
+
+            $rows[] = $row;
         }
 
         fclose($handle);
@@ -101,4 +125,3 @@ class PreOrderImportService
         return (float) $normalized;
     }
 }
-
