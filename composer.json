@@ -55,7 +55,7 @@
         "laravel/telescope": "*",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "8.8",
-        "phpunit/phpunit": "11.5.15"
+        "phpunit/phpunit": "11.5.50"
     },
     "autoload": {
         "psr-4": {
