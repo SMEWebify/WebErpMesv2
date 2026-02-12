@@ -702,6 +702,7 @@ return [
     'order_confirm_trans_key'                  => 'Confirmar orden',
     'internal_order_trans_key'                 => 'Orden interna',
     'new_order_trans_key'                      => 'Nueva orden',
+    'new_pre_order_trans_key'                  => 'Nuevo pre-pedido',
     'name_order_trans_key'                     => 'Nombre de la orden',
     'historical_trans_key'                     => 'Histórico',
     'order_create_from_trans_key'              => 'Crear orden desde',

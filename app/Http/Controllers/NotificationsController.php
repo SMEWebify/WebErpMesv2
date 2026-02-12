@@ -45,10 +45,15 @@ class NotificationsController extends Controller
                 $type = 'fas fa-undo';
                 $route = route('returns.show', ['id' => $id]);
             }
+            if($notification->type == 'App\Notifications\PreOrderNotification') {
+                $type = 'fas fa-file-import';
+                $route = route('pre-orders.show', ['preOrder' => $id]);
+            }
 
             $code = $notification->data['code'];
-            $notificationOriginUser = User::find($notification->data['user_id']);
-            $text = ''.$code .' created by '. $notificationOriginUser['name'] .'';
+            $notificationOriginUser = User::find($notification->data['user_id'] ?? null);
+            $originUserName = $notificationOriginUser?->name ?? 'System';
+            $text = ''.$code .' created by '. $originUserName .'';
 
             array_push($notifications,[
                             'icon' => $type,

@@ -3,12 +3,19 @@
 namespace App\Services;
 
 use App\Models\Workflow\PreOrder;
+use App\Models\User;
 use App\Models\Workflow\PreOrderImport;
+use App\Notifications\PreOrderNotification;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PreOrderImportService
 {
+    public function __construct(private NotificationService $notificationService)
+    {
+    }
+
     private const REQUIRED_HEADERS = [
         'reference',
         'product',
@@ -69,6 +76,19 @@ class PreOrderImportService
                 ]);
 
                 $preOrder->lines()->createMany($lines);
+
+                $originUserId = Auth::id() ?? User::query()->value('id');
+                $payload = [
+                    'id' => $preOrder->id,
+                    'code' => $preOrder->source_pdf,
+                    'user_id' => $originUserId,
+                ];
+
+                $this->notificationService->sendNotification(
+                    PreOrderNotification::class,
+                    $payload,
+                    'pre_order_notification'
+                );
             }
         });
 

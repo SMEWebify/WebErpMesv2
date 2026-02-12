@@ -69,7 +69,11 @@ class UsersController extends Controller
 
         if($request->non_conformity_notification) $settingNotification->non_conformity_notification=1;
         else $settingNotification->non_conformity_notification = 0;
-        
+
+
+        if($request->pre_order_notification) $settingNotification->pre_order_notification=1;
+        else $settingNotification->pre_order_notification = 0;
+
         $settingNotification->save();
 
         return redirect()->route('user.profile', ['id' => Auth::user()->id])->with('success', 'Successfully update notification settings.');

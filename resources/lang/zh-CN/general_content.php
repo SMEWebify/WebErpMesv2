@@ -806,6 +806,7 @@ return [
     'order_confirm_trans_key'                  => '订单确认',
     'internal_order_trans_key'                 => '内部订单',
     'new_order_trans_key'                      => '新建订单',
+    'new_pre_order_trans_key'                  => '新建预订单',
     'name_order_trans_key'                     => '订单名称',
     'historical_trans_key'                     => '历史',
     'order_create_from_trans_key'              => '订单创建自 ',
