@@ -69,7 +69,7 @@ class PreOrdersController extends Controller
         ]);
 
         $disk = config('filesystems.default');
-        $inputPath = trim(config('pre_orders.input_path', 'pre-orders/input'), '/');
+        $inputPath = $this->resolveInputPath((string) config('pre_orders.input_path', 'pre-orders/input'));
 
         foreach ($data['pdfs'] as $pdfFile) {
             $originalName = pathinfo($pdfFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -96,6 +96,27 @@ class PreOrdersController extends Controller
         }
 
         return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
+    }
+
+    private function resolveInputPath(string $configuredPath): string
+    {
+        $normalizedPath = trim(str_replace('\\', '/', $configuredPath));
+
+        if ($normalizedPath === '') {
+            return 'pre-orders/input';
+        }
+
+        if (preg_match('/^[A-Za-z]:\//', $normalizedPath) === 1 || str_starts_with($normalizedPath, '/')) {
+            return ltrim(str_replace('\\', '/', basename($normalizedPath)), '/');
+        }
+
+        $normalizedPath = ltrim($normalizedPath, '/');
+
+        if (str_starts_with($normalizedPath, 'storage/app/')) {
+            $normalizedPath = substr($normalizedPath, strlen('storage/app/'));
+        }
+
+        return trim($normalizedPath, '/');
     }
 
     public function show(PreOrder $preOrder)
