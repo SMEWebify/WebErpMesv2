@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PreOrdersController extends Controller
 {
@@ -156,6 +157,10 @@ class PreOrdersController extends Controller
     {
         $preOrder->load('lines', 'convertedOrder');
 
+        $sourcePdfUrl = $this->resolveSourcePdfPath($preOrder)
+            ? route('pre-orders.source-pdf', $preOrder)
+            : null;
+
         return view('workflow.pre-orders-show', [
             'preOrder' => $preOrder,
             'companies' => Companies::orderBy('code')->get(),
@@ -168,7 +173,24 @@ class PreOrdersController extends Controller
             'defaultUnit' => MethodsUnits::where('default', 1)->first(),
             'defaultVat' => AccountingVat::where('default', 1)->first(),
             'generatedOrderCode' => $this->generateOrderCodeByType(1),
+            'sourcePdfUrl' => $sourcePdfUrl,
         ]);
+    }
+
+    public function sourcePdf(PreOrder $preOrder): StreamedResponse
+    {
+        $sourcePdfPath = $this->resolveSourcePdfPath($preOrder);
+
+        abort_if($sourcePdfPath === null, 404);
+
+        return Storage::disk(config('filesystems.default'))->response(
+            $sourcePdfPath,
+            basename($sourcePdfPath),
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . basename($sourcePdfPath) . '"',
+            ]
+        );
     }
 
     public function convert(Request $request, PreOrder $preOrder)
@@ -258,5 +280,31 @@ class PreOrdersController extends Controller
         $documentType = $type === 2 ? 'internal-order' : 'order';
 
         return $this->documentCodeGenerator->generateDocumentCode($documentType, (int) $lastOrderId);
+    }
+
+    private function resolveSourcePdfPath(PreOrder $preOrder): ?string
+    {
+        $sourcePdfName = basename(trim((string) $preOrder->source_pdf));
+
+        if ($sourcePdfName === '' || ! Str::of($sourcePdfName)->lower()->endsWith('.pdf')) {
+            return null;
+        }
+
+        $disk = Storage::disk(config('filesystems.default'));
+        $paths = [
+            $this->resolveInputPath((string) config('pre_orders.input_path', 'pre-orders/input')),
+            trim((string) config('pre_orders.output_path', 'output'), '/'),
+            trim((string) config('pre_orders.done_path', 'output/done'), '/'),
+        ];
+
+        foreach ($paths as $path) {
+            $candidate = trim($path . '/' . $sourcePdfName, '/');
+
+            if ($disk->exists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 }

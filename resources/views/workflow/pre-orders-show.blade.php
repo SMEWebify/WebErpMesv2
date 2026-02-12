@@ -56,6 +56,25 @@
                     </table>
                 </div>
             </x-adminlte-card>
+
+            <x-adminlte-card title="PDF source" theme="info" maximizable class="mt-3">
+                @if($sourcePdfUrl)
+                    <div class="mb-2">
+                        <a href="{{ $sourcePdfUrl }}" target="_blank" rel="noopener" class="btn btn-default btn-sm">
+                            <i class="fas fa-external-link-alt mr-1"></i> Ouvrir dans un nouvel onglet
+                        </a>
+                    </div>
+                    <iframe
+                        src="{{ $sourcePdfUrl }}#toolbar=1&navpanes=0"
+                        title="PDF source de la pré-commande"
+                        width="100%"
+                        height="700"
+                        style="border: 1px solid #dee2e6; border-radius: .25rem;"
+                    ></iframe>
+                @else
+                    <p class="text-muted mb-0">PDF source introuvable pour cette pré-commande.</p>
+                @endif
+            </x-adminlte-card>
         </div>
         <div class="col-lg-4">
             <x-adminlte-card title="Transformation en commande" theme="lightblue">
