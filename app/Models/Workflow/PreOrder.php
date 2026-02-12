@@ -4,6 +4,7 @@ namespace App\Models\Workflow;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
 
 class PreOrder extends Model
 {
@@ -45,6 +46,14 @@ class PreOrder extends Model
         return $this->lines->sum(function (PreOrderLine $line) {
             return $line->effective_total_price;
         });
+    }
+
+    public function getFormattedTotalPriceAttribute(): string
+    {
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        return Number::currency($this->computed_total_price, $currency, config('app.locale'));
     }
 
 }
