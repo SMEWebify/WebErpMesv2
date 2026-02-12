@@ -48,7 +48,7 @@ class PreOrdersController extends Controller
         return view('workflow.pre-orders-index', compact('preOrders', 'invoiceReportRows', 'invoiceReportReadError'));
     }
 
-
+    
     public function upload(Request $request)
     {
         $data = $request->validate([
@@ -60,43 +60,63 @@ class PreOrdersController extends Controller
                 function (string $attribute, $file, $fail): void {
                     $extension = strtolower((string) $file->getClientOriginalExtension());
                     $mimeType = strtolower((string) $file->getMimeType());
-
                     if ($extension !== 'pdf' && ! str_contains($mimeType, 'pdf')) {
                         $fail('Le champ ' . $attribute . ' doit être un fichier de type : pdf.');
                     }
                 },
             ],
         ]);
-
+    
         $disk = config('filesystems.default');
         $inputPath = $this->resolveInputPath((string) config('pre_orders.input_path', 'pre-orders/input'));
-
+    
         foreach ($data['pdfs'] as $pdfFile) {
             $originalName = pathinfo($pdfFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeBaseName = Str::slug($originalName, '_') ?: 'pre_order';
             $fileName = $safeBaseName . '_' . now()->format('Ymd_His_u') . '.pdf';
             Storage::disk($disk)->putFileAs($inputPath, $pdfFile, $fileName);
         }
-
+    
         $pythonPath = config('pre_orders.python_executable');
         $scriptPath = config('pre_orders.python_script');
-
+    
         if ($pythonPath && $scriptPath) {
-            $result = Process::timeout((int) config('pre_orders.python_timeout', 120))
+    
+            $systemRoot = getenv('SystemRoot') ?: getenv('SYSTEMROOT') ?: 'C:\Windows';
+    
+            $env = [
+                'PYTHONHASHSEED'   => '0',
+                'PYTHONIOENCODING' => 'utf-8',
+    
+                // Important sur Windows
+                'PATH'        => (string) getenv('PATH'),
+                'SystemRoot'  => (string) $systemRoot,
+                'WINDIR'      => (string) (getenv('WINDIR') ?: $systemRoot),
+                'SystemDrive' => (string) (getenv('SystemDrive') ?: 'C:'),
+                'TEMP'        => (string) getenv('TEMP'),
+                'TMP'         => (string) getenv('TMP'),
+                'USERPROFILE' => (string) getenv('USERPROFILE'),
+                'COMSPEC'     => (string) getenv('COMSPEC'),
+            ];
+    
+            $result = Process::env($env)
+                ->timeout((int) config('pre_orders.python_timeout', 120))
                 ->path(dirname($scriptPath))
-                ->run([$pythonPath, $scriptPath]);
-
+                ->run([$pythonPath, $scriptPath]); // ✅ plus safe que sprintf
+    
             if (! $result->successful()) {
                 return redirect()->route('pre-orders.index')->withErrors(
-                    'PDF(s) envoyé(s), mais le traitement Python a échoué : ' . trim($result->errorOutput())
+                    'PDF(s) envoyé(s), mais le traitement Python a échoué : ' .
+                    trim($result->errorOutput() ?: $result->output())
                 );
             }
-
+    
             return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) et traitement Python exécuté avec succès.');
         }
-
+    
         return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
     }
+    
 
     private function resolveInputPath(string $configuredPath): string
     {
