@@ -47,8 +47,6 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Fichier source</th>
                         <th>PDF source</th>
                         <th>Nb lignes</th>
                         <th>Total</th>
@@ -59,8 +57,6 @@
                 <tbody>
                     @forelse($preOrders as $preOrder)
                         <tr>
-                            <td>{{ $preOrder->id }}</td>
-                            <td>{{ $preOrder->importBatch?->file_name }}</td>
                             <td>{{ $preOrder->source_pdf }}</td>
                             <td>{{ $preOrder->lines_count }}</td>
                             <td>{{ $preOrder->formatted_total_price }}</td>
