@@ -17,6 +17,7 @@ use App\Services\DocumentCodeGenerator;
 use App\Services\InvoiceReportInterpreter;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
@@ -111,7 +112,19 @@ class PreOrdersController extends Controller
                 );
             }
     
-            return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) et traitement Python exécuté avec succès.');
+            $scanExitCode = Artisan::call('preorders:scan-output', [
+                '--path' => config('pre_orders.output_path', 'output'),
+                '--pattern' => config('pre_orders.file_pattern', '*.csv'),
+                '--done-path' => config('pre_orders.done_path', 'output/done'),
+            ]);
+
+            if ($scanExitCode !== 0) {
+                return redirect()->route('pre-orders.index')->withErrors(
+                    "PDF(s) traité(s), mais l'import des CSV a échoué. Vérifiez les logs de la commande preorders:scan-output."
+                );
+            }
+
+            return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s), traitement Python terminé et import CSV exécuté avec succès.');
         }
     
         return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
