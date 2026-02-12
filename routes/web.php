@@ -183,6 +183,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Workflow\PreOrdersController@index')->name('pre-orders.index');
         Route::post('/upload', 'App\Http\Controllers\Workflow\PreOrdersController@upload')->name('pre-orders.upload');
         Route::get('/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@show')->name('pre-orders.show');
+        Route::get('/{preOrder}/source-pdf', 'App\Http\Controllers\Workflow\PreOrdersController@sourcePdf')->name('pre-orders.source-pdf');
         Route::post('/{preOrder}/convert', 'App\Http\Controllers\Workflow\PreOrdersController@convert')->name('pre-orders.convert');
     });
 
