@@ -28,7 +28,7 @@
                             <td>{{ $preOrder->importBatch?->file_name }}</td>
                             <td>{{ $preOrder->source_pdf }}</td>
                             <td>{{ $preOrder->lines_count }}</td>
-                            <td>{{ number_format((float) $preOrder->lines_sum_total_price, 2, ',', ' ') }}</td>
+                            <td>{{ number_format((float) $preOrder->computed_total_price, 2, ',', ' ') }}</td>
                             <td>
                                 @if($preOrder->status === \App\Models\Workflow\PreOrder::STATUS_CONVERTED)
                                     <span class="badge badge-success">Convertie</span>

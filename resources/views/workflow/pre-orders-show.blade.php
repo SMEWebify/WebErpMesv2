@@ -44,7 +44,7 @@
                                     <td>{{ $line->product }}</td>
                                     <td>{{ $line->quantity }}</td>
                                     <td>{{ number_format((float) $line->unit_price, 2, ',', ' ') }}</td>
-                                    <td>{{ number_format((float) $line->total_price, 2, ',', ' ') }}</td>
+                                    <td>{{ number_format((float) $line->effective_total_price, 2, ',', ' ') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

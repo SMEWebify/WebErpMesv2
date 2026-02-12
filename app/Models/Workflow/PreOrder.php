@@ -39,5 +39,13 @@ class PreOrder extends Model
     {
         return $this->belongsTo(Orders::class, 'converted_order_id');
     }
+
+    public function getComputedTotalPriceAttribute(): float
+    {
+        return $this->lines->sum(function (PreOrderLine $line) {
+            return $line->effective_total_price;
+        });
+    }
+
 }
 
