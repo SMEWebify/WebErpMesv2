@@ -13,6 +13,7 @@ use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\PreOrder;
+use App\Services\DocumentCodeGenerator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,10 @@ use Illuminate\Support\Str;
 
 class PreOrdersController extends Controller
 {
+    public function __construct(protected DocumentCodeGenerator $documentCodeGenerator)
+    {
+    }
+
     public function index()
     {
         $preOrders = PreOrder::withCount('lines')
@@ -67,6 +72,7 @@ class PreOrdersController extends Controller
             'vats' => AccountingVat::orderBy('code')->get(),
             'defaultUnit' => MethodsUnits::where('default', 1)->first(),
             'defaultVat' => AccountingVat::where('default', 1)->first(),
+            'generatedOrderCode' => $this->generateOrderCodeByType(1),
         ]);
     }
 
@@ -77,7 +83,7 @@ class PreOrdersController extends Controller
         }
 
         $data = $request->validate([
-            'code' => 'required|string|max:255',
+            'code' => 'nullable|string|max:255',
             'label' => 'required|string|max:255',
             'user_id' => 'required|exists:users,id',
             'companies_id' => 'nullable|exists:companies,id',
@@ -93,6 +99,8 @@ class PreOrdersController extends Controller
             'discount' => 'nullable|numeric|min:0',
             'type' => 'required|in:1,2',
         ]);
+
+        $data['code'] = $data['code'] ?? $this->generateOrderCodeByType((int) $data['type']);
 
         $preOrder->load('lines', 'importBatch');
 
@@ -147,5 +155,13 @@ class PreOrdersController extends Controller
         });
 
         return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Pré-commande convertie en commande.');
+    }
+
+    private function generateOrderCodeByType(int $type): string
+    {
+        $lastOrderId = Orders::query()->max('id') ?? 0;
+        $documentType = $type === 2 ? 'internal-order' : 'order';
+
+        return $this->documentCodeGenerator->generateDocumentCode($documentType, (int) $lastOrderId);
     }
 }

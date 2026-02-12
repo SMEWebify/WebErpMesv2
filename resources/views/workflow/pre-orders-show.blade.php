@@ -67,7 +67,7 @@
                 @else
                     <form method="POST" action="{{ route('pre-orders.convert', $preOrder) }}">
                         @csrf
-                        <x-adminlte-input name="code" label="Code commande" value="ORD-PRE-{{ now()->format('YmdHis') }}" required />
+                        <x-adminlte-input name="code" label="Code commande" value="{{ old('code', $generatedOrderCode) }}" required />
                         <x-adminlte-input name="label" label="Libellé" value="Pré-commande issue de {{ $preOrder->source_pdf }}" required />
                         <x-adminlte-input name="customer_reference" label="Référence client" />
 
