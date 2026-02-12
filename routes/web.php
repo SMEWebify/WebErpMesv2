@@ -179,6 +179,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{order}/site/{site}/implantation/{implantation}', 'App\Http\Controllers\Workflow\OrderSiteController@destroyImplantation')->name('orders.site.implantation.destroy');
     });
 
+    Route::group(['prefix' => 'pre-orders', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\PreOrdersController@index')->name('pre-orders.index');
+        Route::get('/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@show')->name('pre-orders.show');
+        Route::post('/{preOrder}/convert', 'App\Http\Controllers\Workflow\PreOrdersController@convert')->name('pre-orders.convert');
+    });
+
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys'); 
         Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request'); 
