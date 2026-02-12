@@ -16,6 +16,7 @@ use App\Models\Workflow\PreOrder;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PreOrdersController extends Controller
@@ -29,6 +30,27 @@ class PreOrdersController extends Controller
             ->paginate(25);
 
         return view('workflow.pre-orders-index', compact('preOrders'));
+    }
+
+
+    public function upload(Request $request)
+    {
+        $data = $request->validate([
+            'pdfs' => 'required|array|min:1',
+            'pdfs.*' => 'required|file|mimes:pdf|max:20480',
+        ]);
+
+        $disk = config('filesystems.default');
+        $inputPath = trim(config('pre_orders.input_path', 'pre-orders/input'), '/');
+
+        foreach ($data['pdfs'] as $pdfFile) {
+            $originalName = pathinfo($pdfFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeBaseName = Str::slug($originalName, '_') ?: 'pre_order';
+            $fileName = $safeBaseName . '_' . now()->format('Ymd_His_u') . '.pdf';
+            Storage::disk($disk)->putFileAs($inputPath, $pdfFile, $fileName);
+        }
+
+        return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
     }
 
     public function show(PreOrder $preOrder)
