@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class ScanPreOrdersOutputCommand extends Command
 {
-    protected $signature = 'preorders:scan-output {--path=} {--pattern=}';
+    protected $signature = 'preorders:scan-output {--path=} {--pattern=} {--done-path=}';
 
     protected $description = 'Scan output folder and import CSV files as pre-orders';
 
@@ -15,9 +15,11 @@ class ScanPreOrdersOutputCommand extends Command
     {
         $configuredPath = config('pre_orders.output_path', 'output');
         $configuredPattern = config('pre_orders.file_pattern', '*.csv');
+        $configuredDonePath = config('pre_orders.done_path', 'output/done');
 
         $pathOption = $this->option('path') ?: $configuredPath;
         $patternOption = $this->option('pattern') ?: $configuredPattern;
+        $donePathOption = $this->option('done-path') ?: $configuredDonePath;
 
         $path = base_path($pathOption);
 
@@ -31,6 +33,7 @@ class ScanPreOrdersOutputCommand extends Command
 
         foreach ($files as $file) {
             if ($importService->importCsvFile($file)) {
+                $this->moveToDoneFolder($file, $donePathOption);
                 $importedCount++;
                 $this->info('Imported: ' . basename($file));
             }
@@ -39,5 +42,28 @@ class ScanPreOrdersOutputCommand extends Command
         $this->info("Done. Imported {$importedCount} file(s) from {$pathOption} (pattern: {$patternOption}).");
 
         return self::SUCCESS;
+    }
+
+    private function moveToDoneFolder(string $filePath, string $donePathOption): void
+    {
+        $doneDirectory = base_path($donePathOption);
+
+        if (!is_dir($doneDirectory) && !mkdir($doneDirectory, 0775, true) && !is_dir($doneDirectory)) {
+            $this->warn("Unable to create done directory: {$doneDirectory}");
+            return;
+        }
+
+        $destination = $doneDirectory . DIRECTORY_SEPARATOR . basename($filePath);
+
+        if (is_file($destination)) {
+            $pathInfo = pathinfo($destination);
+            $filename = $pathInfo['filename'] ?? basename($filePath);
+            $extension = isset($pathInfo['extension']) ? '.' . $pathInfo['extension'] : '';
+            $destination = $doneDirectory . DIRECTORY_SEPARATOR . $filename . '-' . now()->format('YmdHis') . $extension;
+        }
+
+        if (!rename($filePath, $destination)) {
+            $this->warn('Unable to move imported file to done folder: ' . basename($filePath));
+        }
     }
 }
