@@ -100,7 +100,7 @@
                                             <i class="fas fa-info-circle"></i>
                                         </button>
                                         <!-- Modal {{ $QuoteLine->id }} -->
-                                        <x-adminlte-modal wire:ignore.self id="QuoteLine{{ $QuoteLine->id }}" title="Update detail information for {{ $QuoteLine->label }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
+                                        <x-adminlte-modal wire:ignore.self id="QuoteLine{{ $QuoteLine->id }}" title="{{ __('general_content.update_detail_information_for_trans_key', ['label' => $QuoteLine->label]) }}" theme="teal" icon="fa fa-pen" size='lg' disable-animations>
                                             <form method="POST" action="{{ route('quotes.update.detail.line', ['idQuote'=>  $QuoteLine->quotes_id, 'id' => $QuoteLine->QuoteLineDetails->id]) }}" enctype="multipart/form-data">
                                             @csrf
                                             <div class="card-body">
@@ -109,7 +109,7 @@
                                                         <div class="card-header">
                                                             <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineMainFeatures{{ $QuoteLine->id }}" aria-expanded="true" aria-controls="quoteLineMainFeatures{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
-                                                                    <i class="fas fa-stream text-success mr-2"></i> {{ __('Caractéristiques principales') }}
+                                                                    <i class="fas fa-stream text-success mr-2"></i> {{ __('general_content.main_features_trans_key') }}
                                                                 </span>
                                                                 <i class="fas fa-chevron-down"></i>
                                                             </button>
@@ -150,7 +150,7 @@
                                                         <div class="card-header">
                                                             <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineDimensions{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineDimensions{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
-                                                                    <i class="fas fa-ruler-combined text-primary mr-2"></i> {{ __('Dimensions (X, Y, Z)') }}
+                                                                    <i class="fas fa-ruler-combined text-primary mr-2"></i> {{ __('general_content.dimensions_xyz_trans_key') }}
                                                                 </span>
                                                                 <i class="fas fa-chevron-down"></i>
                                                             </button>
@@ -220,7 +220,7 @@
                                                         <div class="card-header">
                                                             <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineCircularSpecs{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineCircularSpecs{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
-                                                                    <i class="fas fa-circle-notch text-warning mr-2"></i> {{ __('Spécifications circulaires') }}
+                                                                    <i class="fas fa-circle-notch text-warning mr-2"></i> {{ __('general_content.circular_specs_trans_key') }}
                                                                 </span>
                                                                 <i class="fas fa-chevron-down"></i>
                                                             </button>
@@ -269,7 +269,7 @@
                                                         <div class="card-header">
                                                             <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineFiles{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineFiles{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
-                                                                    <i class="fas fa-paperclip text-success mr-2"></i> {{ __('Fichiers') }}
+                                                                    <i class="fas fa-paperclip text-success mr-2"></i> {{ __('general_content.files_trans_key') }}
                                                                 </span>
                                                                 <i class="fas fa-chevron-down"></i>
                                                             </button>
@@ -278,41 +278,41 @@
                                                             <div class="card-body">
                                                                 <div class="row">
                                                                     <div class="form-group col-md-6">
-                                                                        <label for="cad_file">{{ __('CAD file') }}</label>
+                                                                        <label for="cad_file">{{ __('general_content.cad_file_trans_key') }}</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text"><i class="fas fa-drafting-compass"></i></span>
                                                                             </div>
-                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cad_file }}" name="cad_file" id="cad_file" placeholder="{{ __('CAD file name') }}">
+                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cad_file }}" name="cad_file" id="cad_file" placeholder="{{ __('general_content.cad_file_name_trans_key') }}">
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group col-md-6">
-                                                                        <label for="cam_file">{{ __('CAM file') }}</label>
+                                                                        <label for="cam_file">{{ __('general_content.cam_file_trans_key') }}</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text"><i class="fas fa-cogs"></i></span>
                                                                             </div>
-                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cam_file }}" name="cam_file" id="cam_file" placeholder="{{ __('CAM file name') }}">
+                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cam_file }}" name="cam_file" id="cam_file" placeholder="{{ __('general_content.cam_file_name_trans_key') }}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="form-group col-md-6">
-                                                                        <label for="cad_file_path">{{ __('CAD file path') }}</label>
+                                                                        <label for="cad_file_path">{{ __('general_content.cad_file_path_trans_key') }}</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text"><i class="fas fa-folder-open"></i></span>
                                                                             </div>
-                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cad_file_path }}" name="cad_file_path" id="cad_file_path" placeholder="{{ __('CAD file path') }}">
+                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cad_file_path }}" name="cad_file_path" id="cad_file_path" placeholder="{{ __('general_content.cad_file_path_trans_key') }}">
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group col-md-6">
-                                                                        <label for="cam_file_path">{{ __('CAM file path') }}</label>
+                                                                        <label for="cam_file_path">{{ __('general_content.cam_file_path_trans_key') }}</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text"><i class="fas fa-folder-open"></i></span>
                                                                             </div>
-                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cam_file_path }}" name="cam_file_path" id="cam_file_path" placeholder="{{ __('CAM file path') }}">
+                                                                            <input type="text" class="form-control" value="{{ $QuoteLine->QuoteLineDetails->cam_file_path }}" name="cam_file_path" id="cam_file_path" placeholder="{{ __('general_content.cam_file_path_trans_key') }}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -325,7 +325,7 @@
                                                         <div class="card-header">
                                                             <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineCustomReq{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineCustomReq{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
-                                                                    <i class="fas fa-tasks text-danger mr-2"></i> {{ __('Exigences personnalisées') }}
+                                                                    <i class="fas fa-tasks text-danger mr-2"></i> {{ __('general_content.custom_requirements_trans_key') }}
                                                                 </span>
                                                                 <i class="fas fa-chevron-down"></i>
                                                             </button>
@@ -334,17 +334,17 @@
                                                             <div class="card-body">
                                                                 <div class="row">
                                                                     <div class="col-12">
-                                                                        <label class="text-info">{{ __('Custom requirements') }}</label>
+                                                                        <label class="text-info">{{ __('general_content.custom_requirements_trans_key') }}</label>
                                                                     </div>
                                                                     @forelse($customRequirements[$quoteDetailId] ?? [] as $index => $requirement)
                                                                         <div class="form-row align-items-end w-100" wire:key="quote-custom-{{ $quoteDetailId }}-{{ $index }}">
                                                                             <div class="form-group col-md-5">
-                                                                                <label for="custom_requirement_label_{{ $quoteDetailId }}_{{ $index }}">{{ __('Label') }}</label>
-                                                                                <input type="text" class="form-control" id="custom_requirement_label_{{ $quoteDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][label]" wire:model="customRequirements.{{ $quoteDetailId }}.{{ $index }}.label" placeholder="{{ __('Label') }}">
+                                                                                <label for="custom_requirement_label_{{ $quoteDetailId }}_{{ $index }}">{{ __('general_content.label_trans_key') }}</label>
+                                                                                <input type="text" class="form-control" id="custom_requirement_label_{{ $quoteDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][label]" wire:model="customRequirements.{{ $quoteDetailId }}.{{ $index }}.label" placeholder="{{ __('general_content.label_trans_key') }}">
                                                                             </div>
                                                                             <div class="form-group col-md-5">
-                                                                                <label for="custom_requirement_value_{{ $quoteDetailId }}_{{ $index }}">{{ __('Value') }}</label>
-                                                                                <input type="text" class="form-control" id="custom_requirement_value_{{ $quoteDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][value]" wire:model="customRequirements.{{ $quoteDetailId }}.{{ $index }}.value" placeholder="{{ __('Value') }}">
+                                                                                <label for="custom_requirement_value_{{ $quoteDetailId }}_{{ $index }}">{{ __('general_content.value_trans_key') }}</label>
+                                                                                <input type="text" class="form-control" id="custom_requirement_value_{{ $quoteDetailId }}_{{ $index }}" name="custom_requirements[{{ $index }}][value]" wire:model="customRequirements.{{ $quoteDetailId }}.{{ $index }}.value" placeholder="{{ __('general_content.value_trans_key') }}">
                                                                             </div>
                                                                             <div class="form-group col-md-2">
                                                                                 <button type="button" class="btn btn-outline-danger mt-4" wire:click="removeCustomRequirement({{ $quoteDetailId }}, {{ $index }})"><i class="fas fa-trash"></i></button>
@@ -352,11 +352,11 @@
                                                                         </div>
                                                                     @empty
                                                                         <div class="col-12">
-                                                                            <p class="text-muted">{{ __('No custom requirement added yet.') }}</p>
+                                                                            <p class="text-muted">{{ __('general_content.no_custom_requirement_trans_key') }}</p>
                                                                         </div>
                                                                     @endforelse
                                                                     <div class="col-12 mb-3">
-                                                                        <button type="button" class="btn btn-outline-primary" wire:click="addCustomRequirement({{ $quoteDetailId }})"><i class="fas fa-plus"></i> {{ __('Add requirement') }}</button>
+                                                                        <button type="button" class="btn btn-outline-primary" wire:click="addCustomRequirement({{ $quoteDetailId }})"><i class="fas fa-plus"></i> {{ __('general_content.add_requirement_trans_key') }}</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -430,7 +430,7 @@
                                                         <div class="card-header">
                                                             <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineComments{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineComments{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
-                                                                    <i class="fas fa-comments text-secondary mr-2"></i> {{ __('Commentaires') }}
+                                                                    <i class="fas fa-comments text-secondary mr-2"></i> {{ __('general_content.comment_trans_key') }}
                                                                 </span>
                                                                 <i class="fas fa-chevron-down"></i>
                                                             </button>
@@ -438,10 +438,10 @@
                                                         <div id="quoteLineComments{{ $QuoteLine->id }}" class="collapse" aria-labelledby="quoteLineComments{{ $QuoteLine->id }}" data-parent="#quoteLineDetailAccordion{{ $QuoteLine->id }}">
                                                             <div class="card-body">
                                                                 <div class="row">
-                                                                    <x-FormTextareaComment  label="Internal comment" name="internal_comment" comment="{{ $QuoteLine->QuoteLineDetails->internal_comment }}" />
+                                                                    <x-FormTextareaComment  label="{{ __('general_content.internal_comment_trans_key') }}" name="internal_comment" comment="{{ $QuoteLine->QuoteLineDetails->internal_comment }}" />
                                                                 </div>
                                                                 <div class="row mt-3">
-                                                                    <x-FormTextareaComment  label="External comment" name="external_comment" comment="{{ $QuoteLine->QuoteLineDetails->external_comment }}" />
+                                                                    <x-FormTextareaComment  label="{{ __('general_content.external_comment_trans_key') }}" name="external_comment" comment="{{ $QuoteLine->QuoteLineDetails->external_comment }}" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -457,7 +457,7 @@
                                                         <div class="card-header">
                                                             <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineAttachments{{ $QuoteLine->id }}" aria-expanded="true" aria-controls="quoteLineAttachments{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
-                                                                    <i class="fas fa-paperclip text-success mr-2"></i> {{ __('Fichiers attachés') }}
+                                                                    <i class="fas fa-paperclip text-success mr-2"></i> {{ __('general_content.attached_file_trans_key') }}
                                                                 </span>
                                                                 <i class="fas fa-chevron-down"></i>
                                                             </button>
@@ -517,7 +517,7 @@
                                             <i class="fa fa-lg fa-fw  fas fa-list"></i>
                                         </button>
                                         <!-- Modal {{ $QuoteLine->id }} -->
-                                        <x-adminlte-modal id="QuoteLineTasks{{ $QuoteLine->id }}" title="Task detail for {{ $QuoteLine->label }}" theme="warning" icon="fa fa-pen" size='lg' disable-animations>
+                                    <x-adminlte-modal id="QuoteLineTasks{{ $QuoteLine->id }}" title="{{ __('general_content.task_detail_for_trans_key', ['label' => $QuoteLine->label]) }}" theme="warning" icon="fa fa-pen" size='lg' disable-animations>
                                             <div class="card-body">
                                                 <div class="row">
                                                     <table class="table table-hover">

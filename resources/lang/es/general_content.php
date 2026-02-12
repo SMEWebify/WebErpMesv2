@@ -1112,4 +1112,8 @@ return [
     'gmao_next_scheduled_trans_key'                => 'Next Scheduled',
     'gmao_maintenance_work_orders_trans_key'       => 'Maintenance work orders',
     'methods_overview_trans_key'               => 'Resumen de métodos',
+    'logs_trans_key'                            => 'Registros',
+    'beta_trans_key'                            => 'Beta',
+    'info_trans_key'                            => 'Info',
+    'customer_disabled_warning_trans_key'       => 'El cliente :customer está deshabilitado actualmente. No puede cambiar el nombre, el contacto ni la dirección del cliente.',
 ];

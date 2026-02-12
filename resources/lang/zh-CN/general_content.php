@@ -1291,4 +1291,8 @@ return [
     'gmao_next_scheduled_trans_key'                => 'Next Scheduled',
     'gmao_maintenance_work_orders_trans_key'       => 'Maintenance work orders',
     'methods_overview_trans_key'               => '方法总览',
+    'logs_trans_key'                            => '日志',
+    'beta_trans_key'                            => '测试版',
+    'info_trans_key'                            => '信息',
+    'customer_disabled_warning_trans_key'       => '客户:customer 当前已被停用。您无法更改客户名称、联系人或地址。',
 ];

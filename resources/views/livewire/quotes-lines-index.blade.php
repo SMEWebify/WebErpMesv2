@@ -68,7 +68,7 @@
                                         <i class="fa fa-lg fa-fw  fas fa-list"></i>
                                     </button>
                                     <!-- Modal {{ $QuoteLine->id }} -->
-                                    <x-adminlte-modal id="QuoteLineTasks{{ $QuoteLine->id }}" title="Task detail for {{ $QuoteLine->label }}" theme="warning" icon="fa fa-pen" size='lg' disable-animations>
+                                    <x-adminlte-modal id="QuoteLineTasks{{ $QuoteLine->id }}" title="{{ __('general_content.task_detail_for_trans_key', ['label' => $QuoteLine->label]) }}" theme="warning" icon="fa fa-pen" size='lg' disable-animations>
                                         <div class="card-body">
                                             <div class="row">
                                                 <table class="table table-hover">
