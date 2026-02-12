@@ -48,8 +48,8 @@
                                     <td>{{ $line->reference }}</td>
                                     <td>{{ $line->product }}</td>
                                     <td>{{ $line->quantity }}</td>
-                                    <td>{{ number_format((float) $line->unit_price, 2, ',', ' ') }}</td>
-                                    <td>{{ number_format((float) $line->effective_total_price, 2, ',', ' ') }}</td>
+                                    <td>{{ $line->formatted_selling_price }}</td>
+                                    <td>{{ $line->formatted_total_price }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
