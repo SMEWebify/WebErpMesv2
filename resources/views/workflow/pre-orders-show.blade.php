@@ -3,7 +3,12 @@
 @section('title', 'Pré-commande #'.$preOrder->id)
 
 @section('content_header')
-    <h1>Pré-commande #{{ $preOrder->id }}</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Pré-commande #{{ $preOrder->id }}</h1>
+        <a href="{{ route('pre-orders.index') }}" class="btn btn-default btn-sm">
+            <i class="fas fa-arrow-left mr-1"></i> Retour à l'index
+        </a>
+    </div>
 @stop
 
 @section('content')
