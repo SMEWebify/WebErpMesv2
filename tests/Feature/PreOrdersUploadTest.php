@@ -46,6 +46,30 @@ class PreOrdersUploadTest extends TestCase
         $this->assertCount(1, Storage::disk('local')->files('pre-orders/input'));
     }
 
+
+    public function test_it_accepts_pdf_extension_even_with_generic_mime_type(): void
+    {
+        Process::fake();
+
+        Config::set('pre_orders.python_executable', null);
+        Config::set('pre_orders.python_script', null);
+        Config::set('pre_orders.input_path', 'pre-orders/input');
+
+        $this->actingAs(User::factory()->create());
+
+        $response = $this->post(route('pre-orders.upload'), [
+            'pdfs' => [
+                UploadedFile::fake()->create('pdf1.pdf', 100, 'application/octet-stream'),
+            ],
+        ]);
+
+        $response
+            ->assertRedirect(route('pre-orders.index'))
+            ->assertSessionHas('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
+
+        $this->assertCount(1, Storage::disk('local')->files('pre-orders/input'));
+    }
+
     public function test_it_only_uploads_pdfs_when_python_script_is_not_configured(): void
     {
         Process::fake();
