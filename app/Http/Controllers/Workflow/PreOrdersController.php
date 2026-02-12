@@ -14,6 +14,7 @@ use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\PreOrder;
 use App\Services\DocumentCodeGenerator;
+use App\Services\InvoiceReportInterpreter;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +35,17 @@ class PreOrdersController extends Controller
             ->orderByDesc('id')
             ->paginate(25);
 
-        return view('workflow.pre-orders-index', compact('preOrders'));
+        $invoiceReportRows = collect();
+        $invoiceReportReadError = null;
+
+        try {
+            $interpreter = app(InvoiceReportInterpreter::class);
+            $invoiceReportRows = $interpreter->getReport();
+        } catch (\RuntimeException $exception) {
+            $invoiceReportReadError = $exception->getMessage();
+        }
+
+        return view('workflow.pre-orders-index', compact('preOrders', 'invoiceReportRows', 'invoiceReportReadError'));
     }
 
 

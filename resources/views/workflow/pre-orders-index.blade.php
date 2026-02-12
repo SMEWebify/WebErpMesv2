@@ -89,6 +89,52 @@
             {{ $preOrders->links() }}
         </div>
     </x-adminlte-card>
+
+    <x-adminlte-card title="Rapport de traitement Python (aujourd'hui)" theme="secondary" maximizable>
+        @if(!empty($invoiceReportReadError))
+            <x-adminlte-alert theme="warning" title="Rapport indisponible" dismissable>
+                {{ $invoiceReportReadError }}
+            </x-adminlte-alert>
+        @elseif($invoiceReportRows->isEmpty())
+            <p class="mb-0 text-muted">Aucun résultat de traitement disponible pour aujourd'hui.</p>
+        @else
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fichier</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Articles extraits</th>
+                            <th>Détails</th>
+                            <th>Durée (s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($invoiceReportRows as $reportRow)
+                            <tr>
+                                <td>{{ $reportRow['filename'] }}</td>
+                                <td>{{ $reportRow['date'] }}</td>
+                                <td>
+                                    @if($reportRow['is_error'])
+                                        <span class="badge badge-danger">Erreur</span>
+                                    @elseif($reportRow['is_warning'])
+                                        <span class="badge badge-warning">Alerte</span>
+                                    @else
+                                        <span class="badge badge-success">Succès</span>
+                                    @endif
+                                    <span class="ml-1">{{ $reportRow['status'] }}</span>
+                                </td>
+                                <td>{{ $reportRow['items_extracted'] }}</td>
+                                <td>{{ $reportRow['error_details'] }}</td>
+                                <td>{{ number_format((float) $reportRow['duration_sec'], 2, ',', ' ') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </x-adminlte-card>
 @stop
 
 @section('css')
