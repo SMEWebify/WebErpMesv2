@@ -19,6 +19,16 @@ class PreOrderLine extends Model
         'total_price',
     ];
 
+    public function getEffectiveTotalPriceAttribute(): float
+    {
+        $totalPrice = (float) ($this->total_price ?? 0);
+        if ($totalPrice > 0) {
+            return $totalPrice;
+        }
+
+        return (float) ($this->quantity ?? 0) * (float) ($this->unit_price ?? 0);
+    }
+
     public function preOrder()
     {
         return $this->belongsTo(PreOrder::class);

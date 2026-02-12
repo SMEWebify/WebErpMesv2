@@ -37,13 +37,21 @@ class PreOrderImportService
         $groupedRows = [];
         foreach ($rows as $index => $row) {
             $sourcePdf = trim((string) ($row['source_pdf'] ?? 'unknown.pdf'));
+            $quantity = $this->asDecimal($row['quantity'] ?? 0);
+            $unitPrice = $this->asDecimal($row['unit_price'] ?? 0);
+            $totalPrice = $this->asDecimal($row['total_price'] ?? 0);
+
+            if ($totalPrice <= 0 && $quantity > 0 && $unitPrice > 0) {
+                $totalPrice = $quantity * $unitPrice;
+            }
+
             $groupedRows[$sourcePdf][] = [
                 'row_index' => $index + 1,
                 'reference' => $row['reference'] ?? null,
                 'product' => $row['product'] ?? null,
-                'quantity' => $this->asDecimal($row['quantity'] ?? 0),
-                'unit_price' => $this->asDecimal($row['unit_price'] ?? 0),
-                'total_price' => $this->asDecimal($row['total_price'] ?? 0),
+                'quantity' => $quantity,
+                'unit_price' => $unitPrice,
+                'total_price' => $totalPrice,
             ];
         }
 

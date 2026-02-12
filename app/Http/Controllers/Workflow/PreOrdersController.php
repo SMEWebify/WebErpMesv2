@@ -23,8 +23,7 @@ class PreOrdersController extends Controller
     public function index()
     {
         $preOrders = PreOrder::withCount('lines')
-            ->withSum('lines', 'total_price')
-            ->with(['convertedOrder', 'importBatch'])
+            ->with(['convertedOrder', 'importBatch', 'lines'])
             ->orderByDesc('id')
             ->paginate(25);
 
