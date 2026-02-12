@@ -17,6 +17,7 @@ use App\Services\DocumentCodeGenerator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -52,6 +53,23 @@ class PreOrdersController extends Controller
             $safeBaseName = Str::slug($originalName, '_') ?: 'pre_order';
             $fileName = $safeBaseName . '_' . now()->format('Ymd_His_u') . '.pdf';
             Storage::disk($disk)->putFileAs($inputPath, $pdfFile, $fileName);
+        }
+
+        $pythonPath = config('pre_orders.python_executable');
+        $scriptPath = config('pre_orders.python_script');
+
+        if ($pythonPath && $scriptPath) {
+            $result = Process::timeout((int) config('pre_orders.python_timeout', 120))
+                ->path(dirname($scriptPath))
+                ->run([$pythonPath, $scriptPath]);
+
+            if (! $result->successful()) {
+                return redirect()->route('pre-orders.index')->withErrors(
+                    'PDF(s) envoyé(s), mais le traitement Python a échoué : ' . trim($result->errorOutput())
+                );
+            }
+
+            return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) et traitement Python exécuté avec succès.');
         }
 
         return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
