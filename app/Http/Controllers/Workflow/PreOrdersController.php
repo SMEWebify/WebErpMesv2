@@ -53,7 +53,19 @@ class PreOrdersController extends Controller
     {
         $data = $request->validate([
             'pdfs' => 'required|array|min:1',
-            'pdfs.*' => 'required|file|mimes:pdf|max:20480',
+            'pdfs.*' => [
+                'required',
+                'file',
+                'max:20480',
+                function (string $attribute, $file, $fail): void {
+                    $extension = strtolower((string) $file->getClientOriginalExtension());
+                    $mimeType = strtolower((string) $file->getMimeType());
+
+                    if ($extension !== 'pdf' && ! str_contains($mimeType, 'pdf')) {
+                        $fail('Le champ ' . $attribute . ' doit être un fichier de type : pdf.');
+                    }
+                },
+            ],
         ]);
 
         $disk = config('filesystems.default');
