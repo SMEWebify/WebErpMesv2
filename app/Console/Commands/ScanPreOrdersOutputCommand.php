@@ -21,7 +21,7 @@ class ScanPreOrdersOutputCommand extends Command
         $patternOption = $this->option('pattern') ?: $configuredPattern;
         $donePathOption = $this->option('done-path') ?: $configuredDonePath;
 
-        $path = base_path($pathOption);
+        $path = $this->resolveConfiguredPath($pathOption);
 
         if (!is_dir($path)) {
             $this->warn("Directory not found: {$path}");
@@ -46,7 +46,7 @@ class ScanPreOrdersOutputCommand extends Command
 
     private function moveToDoneFolder(string $filePath, string $donePathOption): void
     {
-        $doneDirectory = base_path($donePathOption);
+        $doneDirectory = $this->resolveConfiguredPath($donePathOption);
 
         if (!is_dir($doneDirectory) && !mkdir($doneDirectory, 0775, true) && !is_dir($doneDirectory)) {
             $this->warn("Unable to create done directory: {$doneDirectory}");
@@ -65,5 +65,20 @@ class ScanPreOrdersOutputCommand extends Command
         if (!rename($filePath, $destination)) {
             $this->warn('Unable to move imported file to done folder: ' . basename($filePath));
         }
+    }
+
+    private function resolveConfiguredPath(string $pathOption): string
+    {
+        $normalized = trim(str_replace('\\', '/', $pathOption));
+
+        if ($normalized === '') {
+            return base_path();
+        }
+
+        if (preg_match('/^[A-Za-z]:\//', $normalized) === 1 || str_starts_with($normalized, '/')) {
+            return $normalized;
+        }
+
+        return base_path(ltrim($normalized, '/'));
     }
 }
