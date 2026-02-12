@@ -90,13 +90,17 @@
         </div>
     </x-adminlte-card>
 
-    <x-adminlte-card title="Rapport de traitement Python (aujourd'hui)" theme="secondary" maximizable>
+    @php
+        $invoiceErrorRows = $invoiceReportRows->filter(fn (array $row) => $row['is_error'] ?? false)->values();
+    @endphp
+
+    <x-adminlte-card title="Log d'import" theme="secondary" maximizable>
         @if(!empty($invoiceReportReadError))
             <x-adminlte-alert theme="warning" title="Rapport indisponible" dismissable>
                 {{ $invoiceReportReadError }}
             </x-adminlte-alert>
-        @elseif($invoiceReportRows->isEmpty())
-            <p class="mb-0 text-muted">Aucun résultat de traitement disponible pour aujourd'hui.</p>
+        @elseif($invoiceErrorRows->isEmpty())
+            <p class="mb-0 text-muted">Aucune erreur d'import disponible pour aujourd'hui.</p>
         @else
             <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
@@ -111,7 +115,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($invoiceReportRows as $reportRow)
+                        @foreach($invoiceErrorRows as $reportRow)
                             <tr>
                                 <td>{{ $reportRow['filename'] }}</td>
                                 <td>{{ $reportRow['date'] }}</td>
