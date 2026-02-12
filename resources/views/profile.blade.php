@@ -134,6 +134,18 @@
                                             is-checked="{{ $UserProfil->non_conformity_notification }}" />
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-4 text-right"><label for="pre_order_notification" class="col-form-label">{{ __('general_content.new_pre_order_trans_key') }}</label></div>
+                                    <div class="col-8">
+                                        <x-adminlte-input-switch name="pre_order_notification" 
+                                            data-on-text="{{ __('general_content.yes_trans_key') }}" 
+                                            data-off-text="{{ __('general_content.no_trans_key') }}"
+                                            data-on-color="teal" 
+                                            data-off-color="danger" 
+                                            is-checked="{{ $UserProfil->pre_order_notification }}" />
+                                    </div>
+                                </div>
                                 <x-slot name="footerSlot">
                                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                 </x-slot>

@@ -702,6 +702,7 @@ return [
     'order_confirm_trans_key'                  => 'تأكيد الطلب',
     'internal_order_trans_key'                 => 'طلب داخلي',
     'new_order_trans_key'                      => 'طلب جديد',
+    'new_pre_order_trans_key'                  => 'طلب مسبق جديد',
     'name_order_trans_key'                     => 'اسم الطلب',
     'historical_trans_key'                     => 'تاريخي',
     'order_create_from_trans_key'              => 'إنشاء طلب من',
