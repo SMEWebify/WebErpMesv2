@@ -57,7 +57,11 @@
                 <tbody>
                     @forelse($preOrders as $preOrder)
                         <tr>
-                            <td>{{ $preOrder->source_pdf }}</td>
+                            <td>
+                                <a href="{{ route('pre-orders.pdf', $preOrder) }}" target="_blank" rel="noopener noreferrer">
+                                    {{ $preOrder->source_pdf }}
+                                </a>
+                            </td>
                             <td>{{ $preOrder->lines_count }}</td>
                             <td>{{ $preOrder->formatted_total_price }}</td>
                             <td>
