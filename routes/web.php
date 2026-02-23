@@ -94,7 +94,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importCompanies')->name('companies.import');
-        Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.update');
+        Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.edit.update');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
 
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Companies\CompaniesController@storeQuote')->name('companies.store.quote');
