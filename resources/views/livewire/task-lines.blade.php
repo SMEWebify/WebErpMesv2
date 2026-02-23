@@ -85,6 +85,21 @@
                     </div>
                 </div>
             </div>
+            <div class="row px-3 pb-2">
+                <div class="col-12">
+                    <label class="mb-2">Order ref</label>
+                    <div class="d-flex flex-wrap" style="gap: 8px;">
+                        <button type="button" class="btn btn-sm {{ $selectedOrderRef === '' ? 'btn-primary' : 'btn-outline-primary' }}" wire:click="clearOrderRefFilter">
+                            Tous
+                        </button>
+                        @foreach ($availableOrderRefs as $orderRef)
+                            <button type="button" class="btn btn-sm {{ $selectedOrderRef === $orderRef ? 'btn-primary' : 'btn-outline-primary' }}" wire:click="filterByOrderRef('{{ $orderRef }}')">
+                                {{ $orderRef }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
             <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <thead>
@@ -113,14 +128,12 @@
                         @forelse ($Tasklist as $Task)
                         <tr > 
                             <td>
-                                @if($Task->SubAssembly) <!-- Checks if the task is linked to a subset -->
-                                    @if($Task->SubAssembly->order_lines_id) <!-- Checks if the subset is linked to a command line -->
-                                        <x-OrderButton id="{{ $Task->SubAssembly->OrderLines->orders_id }}" code="{{ $Task->SubAssembly->OrderLines->order->code }}"  />
-                                    @endif
-                                @elseif($Task->OrderLines) <!-- If the task is linked directly to a command line -->
-                                    <x-OrderButton id="{{ $Task->OrderLines->orders_id }}" code="{{ $Task->OrderLines->order->code }}"  /> 
+                                @if($Task->SubAssembly && $Task->SubAssembly->order_lines_id)
+                                    {{ $Task->SubAssembly->OrderLines->order->code }}
+                                @elseif($Task->OrderLines)
+                                    {{ $Task->OrderLines->order->code }}
                                 @else
-                                    {{__('general_content.generic_trans_key') }} <!-- Otherwise, it's a generic task -->
+                                    {{__('general_content.generic_trans_key') }}
                                 @endif
                             </td>
                             @if($Task->SubAssembly)
