@@ -116,7 +116,7 @@
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
-            <form method="POST" action="{{ route('companies.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('companies.edit.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
               @csrf
               <x-adminlte-card title="{{ __('general_content.general_information_trans_key') }}" theme="primary" maximizable>
                 <div class="row">
