@@ -34,7 +34,9 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('quote', QuoteController::class);
     Route::apiResource('order', OrderController::class);
     Route::apiResource('tasks', TaskController::class);
-    Route::apiResource('energy-consumptions', EnergyConsumptionController::class)->only(['index','store']);
+    Route::apiResource('energy-consumptions', EnergyConsumptionController::class)
+        ->only(['index','store'])
+        ->names('api.energy-consumptions');
 
     Route::get('/exports/sales-orders', ExportSalesOrderController::class);
 
