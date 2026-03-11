@@ -19,7 +19,7 @@ class PaymentMethodController extends Controller
     public function store(StorePaymentMethodRequest $request)
     {
         $paymentMethod = AccountingPaymentMethod::create($request->validated());
-        return redirect()->to(route('accounting') . '#PaymentChoice')
+        return redirect()->to(route('accounting.paymentMethods'))
                         ->with('success', 'Successfully created payment method mode.');
     }
 
@@ -38,7 +38,7 @@ class PaymentMethodController extends Controller
         if ($request->default) {
             AccountingPaymentMethod::where('id', '!=', $paymentMethod->id)->update(['default' => 0]);
         }
-        return redirect()->to(route('accounting') . '#PaymentChoice')
+        return redirect()->to(route('accounting.paymentMethods'))
                         ->with('success', 'Successfully updated payment method mode.');
     }
 }

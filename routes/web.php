@@ -267,8 +267,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'accounting', 'middleware' => ['auth', 'check.factory']], function () {
-        //index route
+        // Index route
         Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
+        Route::get('/payment-conditions', 'App\Http\Controllers\Accounting\AccountingController@paymentConditions')->name('accounting.paymentConditions');
+        Route::get('/payment-methods', 'App\Http\Controllers\Accounting\AccountingController@paymentMethods')->name('accounting.paymentMethods');
+        Route::get('/vats', 'App\Http\Controllers\Accounting\AccountingController@vats')->name('accounting.vats');
+        Route::get('/allocations', 'App\Http\Controllers\Accounting\AccountingController@allocations')->name('accounting.allocations');
+        Route::get('/deliveries', 'App\Http\Controllers\Accounting\AccountingController@deliveries')->name('accounting.deliveries');
+        Route::get('/assets', 'App\Http\Controllers\Accounting\AccountingController@assets')->name('accounting.assets');
         
         // Routes for Allocation
         Route::prefix('allocation')->group(function () {
@@ -298,7 +304,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::prefix('vat')->group(function () {
             Route::post('/create', 'App\Http\Controllers\Accounting\VatController@store')->name('accounting.vat.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\VatController@update')->name('accounting.vat.update');
-        }); });
+        });
+    });
 
     Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\\Http\\Controllers\\AssetController@index')->name('assets');

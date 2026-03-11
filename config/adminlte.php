@@ -623,8 +623,40 @@ return [
         [
             'text' => 'accounting_trans_key',
             'icon' => 'fas fa-piggy-bank',
-            'url'  => 'accounting',
             'can'  => ['accounting-menu'],
+            'submenu' => [
+                [
+                    'text' => 'payment_conditions_trans_key',
+                    'url'  => 'accounting/payment-conditions',
+                    'icon_color' => 'primary',
+                ],
+                [
+                    'text' => 'payment_methods_trans_key',
+                    'url'  => 'accounting/payment-methods',
+                    'icon_color' => 'info',
+                ],
+                [
+                    'text' => 'vat_trans_key',
+                    'url'  => 'accounting/vats',
+                    'icon_color' => 'warning',
+                ],
+                [
+                    'text' => 'accounting_allocations_trans_key',
+                    'url'  => 'accounting/allocations',
+                    'icon_color' => 'teal',
+                ],
+                [
+                    'text' => 'delevery_method_trans_key',
+                    'url'  => 'accounting/deliveries',
+                    'icon_color' => 'danger',
+                ],
+                [
+                    'text' => 'assets_trans_key',
+                    'url'  => 'accounting/assets',
+                    'icon_color' => 'purple',
+                    'can'  => ['asset-menu'],
+                ],
+            ],
         ],
         [
             'text' => 'GMAO',

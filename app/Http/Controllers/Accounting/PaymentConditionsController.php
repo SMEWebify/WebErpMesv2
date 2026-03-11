@@ -22,7 +22,7 @@ class PaymentConditionsController extends Controller
         $paymentCondition->month_end = $request->month_end ? 1 : 2;
         $paymentCondition->save();
 
-        return redirect()->to(route('accounting') . '#PaymentCondition')
+        return redirect()->to(route('accounting.paymentConditions'))
                         ->with('success', 'Successfully created payment condition mode.');
     }
 
@@ -44,7 +44,7 @@ class PaymentConditionsController extends Controller
             AccountingPaymentConditions::where('id', '!=', $paymentCondition->id)->update(['default' => 0]);
         }
 
-        return redirect()->to(route('accounting') . '#PaymentCondition')
+        return redirect()->to(route('accounting.paymentConditions'))
                         ->with('success', 'Successfully updated payment condition mode.');
     }
 }

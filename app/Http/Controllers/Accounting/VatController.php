@@ -18,7 +18,7 @@ class VatController extends Controller
     public function store(StoreVatRequest $request)
     {
         $vat = AccountingVat::create($request->validated());
-        return redirect()->to(route('accounting') . '#VAT')
+        return redirect()->to(route('accounting.vats'))
                         ->with('success', 'Successfully created VAT type.');
     }
 
@@ -37,7 +37,7 @@ class VatController extends Controller
         if ($request->default) {
             AccountingVat::where('id', '!=', $vat->id)->update(['default' => 0]);
         }
-        return redirect()->to(route('accounting') . '#VAT')
+        return redirect()->to(route('accounting.vats'))
                         ->with('success', 'Successfully updated VAT type.');
     }
 }
