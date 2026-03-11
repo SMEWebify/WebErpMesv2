@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Accounting;
 
-use Illuminate\Http\Request;
-use App\Services\SelectDataService;
-use App\Models\Accounting\AccountingVat;
-use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingAllocation;
-use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentConditions;
+use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Accounting\AccountingVat;
 use App\Models\Assets\Asset;
+use App\Services\SelectDataService;
 
 class AccountingController extends Controller
 {
@@ -21,26 +20,83 @@ class AccountingController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function index()
     {
-        $Allocations = AccountingAllocation::All();
-        $Deleverys = AccountingDelivery::All();
-        $PaymentConditions = AccountingPaymentConditions::All();
-        $PaymentMethods = AccountingPaymentMethod::All();
-        $VATs = AccountingVat::All();
-        $VATSelect = $this->SelectDataService->getVATSelect();
-        $Assets = Asset::paginate(10);
+        return redirect()->route('accounting.paymentConditions');
+    }
 
-        return view('accounting/accounting-index', [
-            'Allocations' => $Allocations,
-            'Deleverys' => $Deleverys,
-            'PaymentConditions' => $PaymentConditions,
-            'PaymentMethods' => $PaymentMethods,
-            'VATs' => $VATs,
-            'VATSelect' => $VATSelect,
-            'Assets' => $Assets,
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function paymentConditions()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'payment-conditions',
+            'partial' => 'accounting.partials.payment-conditions',
+            'PaymentConditions' => AccountingPaymentConditions::all(),
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function paymentMethods()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'payment-methods',
+            'partial' => 'accounting.partials.payment-methods',
+            'PaymentMethods' => AccountingPaymentMethod::all(),
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function vats()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'vat',
+            'partial' => 'accounting.partials.vat',
+            'VATs' => AccountingVat::all(),
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function allocations()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'allocations',
+            'partial' => 'accounting.partials.allocations',
+            'Allocations' => AccountingAllocation::all(),
+            'VATSelect' => $this->SelectDataService->getVATSelect(),
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function deliveries()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'deliveries',
+            'partial' => 'accounting.partials.deliveries',
+            'Deleverys' => AccountingDelivery::all(),
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function assets()
+    {
+        return view('accounting.accounting-page', [
+            'activeTab' => 'assets',
+            'partial' => 'accounting.partials.assets',
+            'Assets' => Asset::paginate(10),
         ]);
     }
 }
