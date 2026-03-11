@@ -4,13 +4,13 @@
         <!-- View toggle button -->
         <div class="col-2">
             <button class="btn {{ $viewType === 'table' ? 'btn-primary' : 'btn-secondary' }}" wire:click="changeView('table')">
-                <i class="fas fa-table mr-1"></i> Table
+                <i class="fas fa-table" title="Table" aria-label="Table"></i>
             </button>
             <button class="btn {{ $viewType === 'cards' ? 'btn-primary' : 'btn-secondary' }}" wire:click="changeView('cards')">
-                <i class="fas fa-th-large mr-1"></i> Cards
+                <i class="fas fa-th-large" title="Cards" aria-label="Cards"></i>
             </button>
             <button class="btn {{ $viewType === 'kanban' ? 'btn-primary' : 'btn-secondary' }}" wire:click="changeView('kanban')">
-                <i class="fas  fa-tasks mr-1"></i> Kanban
+                <i class="fas fa-tasks" title="Kanban" aria-label="Kanban"></i>
             </button>
         </div>
         <div class="col-6">
