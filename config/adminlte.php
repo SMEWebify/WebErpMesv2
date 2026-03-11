@@ -671,6 +671,7 @@ return [
             'icon' => 'fas fa-folder-open',
             'icon_color' => 'cyan',
             'url'  => 'documents',
+            'can'  => ['documents-menu'],
         ],
         [
             'text' => 'osh_trans_key',
@@ -704,6 +705,7 @@ return [
             'icon' => 'fas fa-chart-pie',
             'icon_color' => 'purple',
             'url'  => 'reports',
+            'can'  => ['reports-menu'],
             'submenu' => [
                 [
                     'text' => 'dashboard_trans_key',
