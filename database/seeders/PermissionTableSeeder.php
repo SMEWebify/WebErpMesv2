@@ -31,6 +31,8 @@ class PermissionTableSeeder  extends Seeder
                         'methods-menu',
                         'accounting-menu',
                         'human-resources-menu',
+                        'documents-menu',
+                        'reports-menu',
                         'osh-menu',
                         'your-company-menu',
                         'asset_manager',
