@@ -19,7 +19,7 @@ return [
     'outsourced_trans_key'                     => 'Externalisé',
     'rfq_in_progress_trans_key'                => 'Appel d\'offres en cours',
     'to_rfq_trans_key'                         => 'Vers la demande de prix',
-    'finished_task_trans_key'                  => 'Terminé (toutes les tâches sont terminées)',
+    'finished_task_trans_key'                  => 'Terminé',
     'delivered_trans_key'                      => 'Livré',
     'partly_delivered_trans_key'               => 'Partiellement livré',
     'partly_stored_trans_key'                  => 'Partiellement stocké',
