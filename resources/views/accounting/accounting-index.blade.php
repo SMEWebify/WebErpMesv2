@@ -20,7 +20,9 @@
       <li class="nav-item"><a class="nav-link" href="#VAT" data-toggle="tab">{{ __('general_content.vat_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#AccountingAllocations" data-toggle="tab">{{ __('general_content.accounting_allocations_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Delevery" data-toggle="tab">{{ __('general_content.delevery_method_trans_key') }}</a></li>
+      @can('asset-menu')
       <li class="nav-item"><a class="nav-link" href="#Assets" data-toggle="tab">{{ __('general_content.assets_trans_key') }}</a></li>
+      @endcan
     </ul>
   </div>
   <!-- /.card-header -->
@@ -714,9 +716,11 @@
       <!-- /.row -->
     </div>
     <!-- /.tab-pane -->
+    @can('asset-menu')
     <div class="tab-pane" id="Assets">
       @include('assets.partials.assets-list', ['assets' => $Assets])
     </div>
+    @endcan
   </div>
   <!-- /.card -->
 </div>
