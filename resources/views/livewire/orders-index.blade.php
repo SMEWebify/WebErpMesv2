@@ -1,6 +1,7 @@
 
 <div>
     @php
+        $nest2prodEnabled = (bool) app(\App\Services\Settings\SettingsService::class)->get('n2p_enabled', false);
         $nest2prodUrl = rtrim((string) app(\App\Services\Settings\SettingsService::class)->get('n2p_base_url'), '/');
     @endphp
     <!-- Modal -->
@@ -343,7 +344,7 @@
                                 <td>
                                     <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
                                     <x-ButtonTextPDF route="{{ route('pdf.order', ['Document' => $Order->id])}}" />
-                                    @if($Order->statu != 1 && $nest2prodUrl !== '')
+                                    @if($Order->statu != 1 && $nest2prodEnabled && $nest2prodUrl !== '')
                                         <a href="{{ $nest2prodUrl }}/fr/orders/{{ rawurlencode($Order->code) }}" rel="noopener" target="_blank" class="btn btn-info btn-sm">
                                             <i class="fas fa-external-link-alt"></i> Nest2Prod
                                         </a>
@@ -411,7 +412,7 @@
                                         </div>
                                         <div class="col-4">
                                             <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
-                                            @if($Order->statu != 1 && $nest2prodUrl !== '')
+                                            @if($Order->statu != 1 && $nest2prodEnabled && $nest2prodUrl !== '')
                                                 <a href="{{ $nest2prodUrl }}/fr/orders/{{ rawurlencode($Order->code) }}" rel="noopener" target="_blank" class="btn btn-info btn-sm mt-1">
                                                     <i class="fas fa-external-link-alt"></i>
                                                 </a>
@@ -502,7 +503,7 @@
                                                             </div>
                                                             <div class="col-4">
                                                                 <x-ButtonTextView route="{{ route('orders.show', ['id' => $Order->id])}}" />
-                                                                @if($Order->statu != 1 && $nest2prodUrl !== '')
+                                                                @if($Order->statu != 1 && $nest2prodEnabled && $nest2prodUrl !== '')
                                                                     <a href="{{ $nest2prodUrl }}/fr/orders/{{ rawurlencode($Order->code) }}" rel="noopener" target="_blank" class="btn btn-info btn-sm mt-1">
                                                                         <i class="fas fa-external-link-alt"></i>
                                                                     </a>

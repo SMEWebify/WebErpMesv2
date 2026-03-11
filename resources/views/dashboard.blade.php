@@ -24,6 +24,81 @@
       margin-right: 10px;
       white-space: nowrap;
   }
+  .delivery-board {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+  }
+  .delivery-lane {
+      background: #f8f9fb;
+      border: 1px solid #e6e9ef;
+      border-radius: 12px;
+      padding: 0.75rem;
+  }
+  .delivery-lane--danger {
+      border-color: #ffd4da;
+      background: #fff6f7;
+  }
+  .delivery-lane__content {
+      display: flex;
+      gap: 0.65rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+  }
+  .delivery-lane__badge {
+      min-width: 170px;
+      border-radius: 10px;
+      color: #fff;
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none !important;
+  }
+  .delivery-lane__badge--warning { background: #f4b000; }
+  .delivery-lane__badge--danger { background: #dc3545; }
+  .delivery-card {
+      min-width: 170px;
+      border-radius: 10px;
+      color: #fff;
+      padding: 0.9rem;
+      line-height: 1.35;
+      font-size: 1.1rem;
+  }
+  .delivery-card a {
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+  }
+  .delivery-card--warning { background: #f2bf33; }
+  .delivery-card--danger { background: #df3345; }
+  .delivery-card__line { display: block; }
+  .delivery-card__empty {
+      min-width: 200px;
+      font-weight: 600;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem;
+  }
+  .delivery-lane__more {
+      min-width: 120px;
+      border-radius: 10px;
+      color: #fff !important;
+      text-decoration: none !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-weight: 700;
+      padding: 0.9rem;
+  }
+  .delivery-lane__more--warning { background: #f4b000; }
+  .delivery-lane__more--danger { background: #dc3545; }
 </style>
 
   @if($userRoleCount < 1)
@@ -85,83 +160,65 @@
     <!-- TABLE: INCOMING AND LATE ORDER -->
     <div class="col-md-12">
       <x-adminlte-card title="{{ __('general_content.order_to_be_delivered_trans_key') }}" theme="orange" icon="fas fa-shopping-cart text-white" collapsible="collapsed" removable maximizable>
-        <div class="row">
-            <div class="col-md-12">
-              <div class="row">
-                <div class="col-md-1">
-                  <a href="{{ route('orders') }}" class="btn btn-lg btn-warning">
-                    {{ __('general_content.incoming_orders_trans_key') }}
-                      <i class="icon fas fa-ban"></i><br/>
-                  </a>
-                </div>
-                @forelse ($incomingOrders as $incomingOrder)
-                <div class="col-md-1">
-                  <div class="progress-group alert alert-warning">
-                      <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id]) }}"><i class="fas fa-calculator"></i></a> {{ $incomingOrder->order['code'] }}<br/>
-                      <a href="{{ route('production.calendar.orders') }}"><i class="fas fa-calendar-alt"></i></a> {{ $incomingOrder->delivery_date }}
-                  </div>
-                </div>
-                <!-- /.col-md-1 -->
-                @empty
-                <div class="col-md-1">
-                    <div class="progress-group">
-                    {{ __('general_content.no_coming_orders_trans_key') }}
-                    </div>
-                </div>
-                <!-- /.progress-group -->
-                @endforelse
+        <div class="delivery-board">
+          <div class="delivery-lane">
+            <div class="delivery-lane__content">
+              <a href="{{ route('orders') }}" class="delivery-lane__badge delivery-lane__badge--warning">
+                {{ __('general_content.incoming_orders_trans_key') }}
+                <i class="icon fas fa-ban mt-2"></i>
+              </a>
 
-                @if ($incomingOrdersCount >= 1)
-                <div class="col-md-1">
-                  <a href="{{ route('orders') }}" class="btn btn-lg btn-warning">
-                      + {{ $incomingOrdersCount }} <br/>
-                      <i class="fas fa-arrow-circle-right"></i><br/>
+              @forelse ($incomingOrders as $incomingOrder)
+                <div class="delivery-card delivery-card--warning">
+                  <a href="{{ route('orders.show', ['id' => $incomingOrder->orders_id]) }}" class="delivery-card__line">
+                    <i class="fas fa-calculator"></i> {{ $incomingOrder->order['code'] }}
+                  </a>
+                  <a href="{{ route('production.calendar.orders') }}" class="delivery-card__line">
+                    <i class="fas fa-calendar-alt"></i> {{ $incomingOrder->delivery_date }}
                   </a>
                 </div>
-                @endif
+              @empty
+                <div class="delivery-card__empty">{{ __('general_content.no_coming_orders_trans_key') }}</div>
+              @endforelse
+
+              @if ($incomingOrdersCount >= 1)
+                <a href="{{ route('orders') }}" class="delivery-lane__more delivery-lane__more--warning">
+                  + {{ $incomingOrdersCount }}
+                  <i class="fas fa-arrow-circle-right mt-2"></i>
+                </a>
+              @endif
             </div>
           </div>
-          <!-- /.col-md-12 -->
-        </div>
-        <!-- /.row -->
-        <div class="row">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-1">
-                <a href="{{ route('orders') }}" class="btn btn-lg btn-danger">
-                  {{ __('general_content.late_orders_trans_key') }}
-                    <i class="icon fas fa-ban"></i><br/>
-                </a>
-              </div>
+
+          <div class="delivery-lane delivery-lane--danger">
+            <div class="delivery-lane__content">
+              <a href="{{ route('orders') }}" class="delivery-lane__badge delivery-lane__badge--danger">
+                {{ __('general_content.late_orders_trans_key') }}
+                <i class="icon fas fa-ban mt-2"></i>
+              </a>
+
               @forelse ($lateOrders as $LateOrder)
-              <div class="col-md-1">
-                  <div class="progress-group alert alert-danger">
-                      <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id]) }}"><i class="fas fa-calculator"></i></a> {{ $LateOrder->order['code'] }}<br/>
-                      <a href="{{ route('production.calendar.orders') }}"><i class="fas fa-calendar-alt"></i></a> {{ $LateOrder->delivery_date }}
-                  </div>
-              </div>
-              <!-- /.col-md-1 -->
+                <div class="delivery-card delivery-card--danger">
+                  <a href="{{ route('orders.show', ['id' => $LateOrder->orders_id]) }}" class="delivery-card__line">
+                    <i class="fas fa-calculator"></i> {{ $LateOrder->order['code'] }}
+                  </a>
+                  <a href="{{ route('production.calendar.orders') }}" class="delivery-card__line">
+                    <i class="fas fa-calendar-alt"></i> {{ $LateOrder->delivery_date }}
+                  </a>
+                </div>
               @empty
-              <div class="col-md-1">
-                  <div class="progress-group">
-                      {{ __('general_content.no_late_orders_trans_key') }}
-                  </div>
-              </div>
-              <!-- /.col-md-12 -->
+                <div class="delivery-card__empty">{{ __('general_content.no_late_orders_trans_key') }}</div>
               @endforelse
 
               @if ($lateOrdersCount >= 1)
-              <div class="col-md-1">
-                <a href="{{ route('orders') }}" class="btn btn-lg btn-danger">
-                    + {{ $lateOrdersCount }} <br/>
-                    <i class="fas fa-arrow-circle-right"></i><br/>
+                <a href="{{ route('orders') }}" class="delivery-lane__more delivery-lane__more--danger">
+                  + {{ $lateOrdersCount }}
+                  <i class="fas fa-arrow-circle-right mt-2"></i>
                 </a>
-              </div>
               @endif
             </div>
           </div>
         </div>
-        <!-- /.row -->
       </x-adminlte-card>
     </div>
 
