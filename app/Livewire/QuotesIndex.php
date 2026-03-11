@@ -32,7 +32,7 @@ class QuotesIndex extends Component
     public $search = '';
     public $sortField = 'created_at'; // default sorting field
     public $sortAsc = false; // default sort direction
-    public $searchIdStatus = '1';
+    public $searchIdStatus = [1];
     
     public $userSelect = [];
     public $LastQuote = null;
@@ -115,57 +115,7 @@ class QuotesIndex extends Component
     
         $this->setQuoteCodeAndLabel();
 
-        $this->searchIdStatus = '1';
-
-        
-        $this->statuses = [
-            [
-                'id' => 1, 
-                'title' => __('general_content.open_trans_key'), 
-                'Quotes' => Quotes::with(['companie', 'contact']) 
-                                    ->where('statu', 1)
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 2, 
-                'title' => __('general_content.send_trans_key'), 
-                'Quotes' => Quotes::with(['companie', 'contact'])
-                                    ->where('statu', 2)
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 3, 
-                'title' => __('general_content.win_trans_key'), 
-                'Quotes' => Quotes::with(['companie', 'contact'])
-                                    ->where('statu', 3)
-                                    ->where('updated_at', '>=', Carbon::now()->subHours(48))
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 4, 
-                'title' => __('general_content.lost_trans_key'), 
-                'Quotes' => Quotes::with(['companie', 'contact'])
-                                    ->where('statu', 4)
-                                    ->where('updated_at', '>=', Carbon::now()->subHours(48))
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 5, 
-                'title' => __('general_content.closed_trans_key'), 
-                'Quotes' => Quotes::with(['companie', 'contact'])
-                                    ->where('statu', 5)
-                                    ->where('updated_at', '>=', Carbon::now()->subHours(48))
-                                    ->get()  // Garder les objets Eloquent
-            ],
-            [
-                'id' => 6, 
-                'title' => __('general_content.obsolete_trans_key'), 
-                'Quotes' => Quotes::with(['companie', 'contact'])
-                                    ->where('statu', 6)
-                                    ->where('updated_at', '>=', Carbon::now()->subHours(48))
-                                    ->get()  // Garder les objets Eloquent
-            ]
-        ];
+        $this->searchIdStatus = [1];
 
         $this->viewType = session()->get('viewType', 'table'); 
     }
@@ -186,20 +136,27 @@ class QuotesIndex extends Component
 
     public function render()
     {
+        $selectedStatuses = $this->normalizeStatuses($this->searchIdStatus);
+
         if(is_numeric($this->idCompanie)){
-            $Quotes = Quotes::withCount('QuoteLines')
+            $QuotesQuery = Quotes::withCount('QuoteLines')
                             ->where('companies_id', $this->idCompanie)
-                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
-                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                            ->paginate(15);
+                            ->when($selectedStatuses, function ($query) use ($selectedStatuses) {
+                                $query->whereIn('statu', $selectedStatuses);
+                            });
         }
         else{
-            $Quotes = Quotes::withCount('QuoteLines')
+            $QuotesQuery = Quotes::withCount('QuoteLines')
                             ->where('label','like', '%'.$this->search.'%')
-                            ->where('statu', 'like', '%'.$this->searchIdStatus.'%')
-                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                            ->paginate(15);
+                            ->when($selectedStatuses, function ($query) use ($selectedStatuses) {
+                                $query->whereIn('statu', $selectedStatuses);
+                            });
         }
+
+        $Quotes = $QuotesQuery
+                    ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                    ->paginate(15);
+        $this->statuses = $this->buildStatuses($selectedStatuses);
 
         
         $CompanieSelect = Companies::select('id', 'code','client_type','civility','label','last_name')->where('active', 1)->get();
@@ -218,6 +175,48 @@ class QuotesIndex extends Component
             'AccountingMethodsSelect' => $AccountingMethodsSelect,
             'AccountingDeleveriesSelect' => $AccountingDeleveriesSelect,
         ]);
+    }
+
+    private function normalizeStatuses($statuses)
+    {
+        if (!is_array($statuses)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('intval', $statuses)));
+    }
+
+    private function buildStatuses(array $selectedStatuses)
+    {
+        $allStatuses = [
+            1 => __('general_content.open_trans_key'),
+            2 => __('general_content.send_trans_key'),
+            3 => __('general_content.win_trans_key'),
+            4 => __('general_content.lost_trans_key'),
+            5 => __('general_content.closed_trans_key'),
+            6 => __('general_content.obsolete_trans_key'),
+        ];
+
+        $statusesToShow = $selectedStatuses ?: array_keys($allStatuses);
+
+        return collect($statusesToShow)->map(function ($statusId) use ($allStatuses) {
+            $query = Quotes::with(['companie', 'contact'])
+                ->where('statu', $statusId);
+
+            if (in_array($statusId, [3, 4, 5, 6], true)) {
+                $query->where('updated_at', '>=', Carbon::now()->subHours(48));
+            }
+
+            if ($this->search !== '') {
+                $query->where('label', 'like', '%'.$this->search.'%');
+            }
+
+            return [
+                'id' => $statusId,
+                'title' => $allStatuses[$statusId],
+                'Quotes' => $query->get(),
+            ];
+        })->values()->all();
     }
     
     public function storeQuote(){

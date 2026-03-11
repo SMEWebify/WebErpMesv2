@@ -362,8 +362,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
-                            <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus">
-                                <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
+                            <select class="form-control" name="searchIdStatus" id="searchIdStatus" wire:model.live="searchIdStatus" multiple>
                                 <option value="1">{{ __('general_content.open_trans_key') }}</option>
                                 <option value="2">{{ __('general_content.send_trans_key') }}</option>
                                 <option value="3">{{ __('general_content.win_trans_key') }}</option>
@@ -372,6 +371,7 @@
                                 <option value="6">{{ __('general_content.obsolete_trans_key') }}</option>
                             </select>
                         </div>
+                        <small class="form-text text-muted">{{ __('general_content.select_status_trans_key') }}</small>
                     </div>
                 </div>
                 <div class="col-md-1">
