@@ -70,6 +70,7 @@ class QuoteLine extends Component
     public $data = [];
     public $customRequirements = [];
     public $selectAllLines = false;
+    public $priceIncreaseAmount = 0;
 
     protected $orderService;
 
@@ -252,6 +253,29 @@ class QuoteLine extends Component
         }
 
         $this->customRequirements[$detailId][] = ['label' => '', 'value' => ''];
+    }
+
+    public function applyPriceIncreaseToAllLines(): void
+    {
+        if ((int) $this->quote_Statu !== 1) {
+            session()->flash('error', __('general_content.quote_not_open_trans_key'));
+            return;
+        }
+
+        $this->validate([
+            'priceIncreaseAmount' => 'required|numeric|gt:0',
+        ]);
+
+        $updatedLines = QuoteLines::where('quotes_id', $this->quotes_id)
+            ->increment('selling_price', (float) $this->priceIncreaseAmount);
+
+        if ($updatedLines === 0) {
+            session()->flash('error', __('general_content.no_data_trans_key'));
+            return;
+        }
+
+        $this->priceIncreaseAmount = 0;
+        session()->flash('success', __('general_content.price_increase_applied_trans_key', ['count' => $updatedLines]));
     }
 
     private function loadProductCustomFields($quoteLines): void
