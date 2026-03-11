@@ -77,6 +77,7 @@ class OrderLine extends Component
     public $RemoveFromStock = false;
     public $CreateSerialNumber = false;
     public $selectAllLines = false;
+    public $priceIncreaseAmount = 0;
     
     private $deleveryOrdre = 10;
     private $invoiceOrdre = 10;
@@ -291,6 +292,29 @@ class OrderLine extends Component
         $this->customRequirements[$detailId][] = ['label' => '', 'value' => ''];
     }
 
+
+    public function applyPriceIncreaseToAllLines(): void
+    {
+        if ((int) $this->order_Statu === 6 || (int) $this->OrderType === 2) {
+            session()->flash('error', __('general_content.order_canceled_no_document_trans_key'));
+            return;
+        }
+
+        $this->validate([
+            'priceIncreaseAmount' => 'required|numeric|gt:0',
+        ]);
+
+        $updatedLines = OrderLines::where('orders_id', $this->orders_id)
+            ->increment('selling_price', (float) $this->priceIncreaseAmount);
+
+        if ($updatedLines === 0) {
+            session()->flash('error', __('general_content.no_data_trans_key'));
+            return;
+        }
+
+        $this->priceIncreaseAmount = 0;
+        session()->flash('success', __('general_content.price_increase_applied_trans_key', ['count' => $updatedLines]));
+    }
     public function removeCustomRequirement($detailId, $index): void
     {
         if (!isset($this->customRequirements[$detailId][$index])) {

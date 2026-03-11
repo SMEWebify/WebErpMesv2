@@ -784,6 +784,10 @@ return [
     'new_quote_trans_key'                      => 'Nouveau devis',
     'select_all_lines_trans_key'               => 'Tout sélectionner',
     'deselect_all_lines_trans_key'             => 'Tout désélectionner',
+
+    'price_increase_amount_trans_key'          => 'Montant à ajouter',
+    'apply_price_increase_to_lines_trans_key'  => 'Ajouter montant aux lignes',
+    'price_increase_applied_trans_key'         => 'Majoration appliquée à :count ligne(s).',
     'header_line_ask_trans_key'                => 'En-tête ?',
     'quote_not_open_trans_key'                 => 'Devis actuellement non ouvert',
     'name_quote_trans_key'                     => 'Nom du devis',

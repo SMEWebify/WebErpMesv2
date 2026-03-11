@@ -27,6 +27,24 @@
                     @include('include.search-card')
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="number" step="0.01" min="0" class="form-control"
+                               wire:model.live="priceIncreaseAmount"
+                               placeholder="{{ __('general_content.price_increase_amount_trans_key') }}"
+                               @disabled($QuoteStatu != 1)>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" wire:click="applyPriceIncreaseToAllLines" @disabled($QuoteStatu != 1)>
+                                <i class="fas fa-plus-circle"></i> {{ __('general_content.apply_price_increase_to_lines_trans_key') }}
+                            </button>
+                        </div>
+                    </div>
+                    @error('priceIncreaseAmount')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
             <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <thead>

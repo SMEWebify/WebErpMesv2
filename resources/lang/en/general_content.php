@@ -784,6 +784,10 @@ return [
     'new_quote_trans_key'                      => 'New Quote',
     'select_all_lines_trans_key'               => 'Select all',
     'deselect_all_lines_trans_key'             => 'Deselect all',
+
+    'price_increase_amount_trans_key'          => 'Amount to add',
+    'apply_price_increase_to_lines_trans_key'  => 'Add amount to lines',
+    'price_increase_applied_trans_key'         => 'Price increase applied to :count line(s).',
     'header_line_ask_trans_key'                => 'Header line ?',
     'quote_not_open_trans_key'                 => 'Quote curently not open',
     'name_quote_trans_key'                     => 'Name of quote',
