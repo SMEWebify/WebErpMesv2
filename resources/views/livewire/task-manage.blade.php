@@ -6,20 +6,16 @@
         }) : collect();
     @endphp
 
-    @if($detail)
+    @if($detail && $customRequirementsForDisplay->isNotEmpty())
         <x-adminlte-card title="{{ __('Custom requirements') }}" theme="secondary" icon="fas fa-swatchbook" class="mb-3">
-            @if($customRequirementsForDisplay->isNotEmpty())
-                <ul class="list-unstyled mb-0">
-                    @foreach($customRequirementsForDisplay as $requirement)
-                        <li>
-                            <strong>{{ $requirement['label'] ?? __('Requirement') }}:</strong>
-                            <span>{{ $requirement['value'] ?? '' }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-            @else
-                <span class="text-muted">{{ __('No custom requirement added yet.') }}</span>
-            @endif
+            <ul class="list-unstyled mb-0">
+                @foreach($customRequirementsForDisplay as $requirement)
+                    <li>
+                        <strong>{{ $requirement['label'] ?? __('Requirement') }}:</strong>
+                        <span>{{ $requirement['value'] ?? '' }}</span>
+                    </li>
+                @endforeach
+            </ul>
         </x-adminlte-card>
     @endif
 
