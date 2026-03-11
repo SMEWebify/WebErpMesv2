@@ -97,32 +97,21 @@
         </div>
         <div class="col-md-3">
           <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="orange" icon="fas fa-users text-white" collapsible removable maximizable>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>{{ __('general_content.user_trans_key') }}</th>
-                        <th>{{ __('general_content.open_trans_key') }}</th>
-                        <th>{{ __('general_content.send_trans_key') }}</th>
-                        <th>{{ __('general_content.win_trans_key') }}</th>
-                        <th>{{ __('general_content.lost_trans_key') }}</th>
-                        <th>{{ __('general_content.closed_trans_key') }}</th>
-                        <th>{{ __('general_content.obsolete_trans_key') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  @foreach ($quotesCountByUser as $userId => $quotes)
-                  <tr>
-                    <td>{{ $quotes->first()->UserManagement->name ?? 'N/A' }}</td>
-                      @for ($i = 1; $i <= 6; $i++)
-                          <td>
-                              {{ $quotes->where('statu', $i)->sum('total') ?? 0 }}
-                              <!-- Shows 0 if no leads for this user with this status -->
-                          </td>
-                      @endfor
-                  </tr>
-                  @endforeach
-                </tbody>
-            </table>
+            <div class="quote-kpi-list">
+              @foreach ($quotesCountByUser as $userId => $quotes)
+                <div class="quote-kpi-item border rounded p-2 mb-2">
+                  <div class="font-weight-bold mb-2 text-truncate">{{ $quotes->first()->UserManagement->name ?? 'N/A' }}</div>
+                  <div class="d-flex flex-wrap">
+                    <span class="badge badge-info m-1">{{ __('general_content.open_trans_key') }}: {{ $quotes->where('statu', 1)->sum('total') ?? 0 }}</span>
+                    <span class="badge badge-warning m-1">{{ __('general_content.send_trans_key') }}: {{ $quotes->where('statu', 2)->sum('total') ?? 0 }}</span>
+                    <span class="badge badge-success m-1">{{ __('general_content.win_trans_key') }}: {{ $quotes->where('statu', 3)->sum('total') ?? 0 }}</span>
+                    <span class="badge badge-danger m-1">{{ __('general_content.lost_trans_key') }}: {{ $quotes->where('statu', 4)->sum('total') ?? 0 }}</span>
+                    <span class="badge badge-secondary m-1">{{ __('general_content.closed_trans_key') }}: {{ $quotes->where('statu', 5)->sum('total') ?? 0 }}</span>
+                    <span class="badge badge-dark m-1">{{ __('general_content.obsolete_trans_key') }}: {{ $quotes->where('statu', 6)->sum('total') ?? 0 }}</span>
+                  </div>
+                </div>
+              @endforeach
+            </div>
           </x-adminlte-card>
         </div>
       </div>
@@ -136,6 +125,17 @@
 @stop
 
 @section('css')
+<style>
+  .quote-kpi-item {
+    background-color: #f8f9fa;
+  }
+
+  .quote-kpi-item .badge {
+    font-size: 0.8rem;
+    white-space: normal;
+    text-align: left;
+  }
+</style>
 @stop
 
 @section('js')
