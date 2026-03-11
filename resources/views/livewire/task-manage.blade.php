@@ -273,7 +273,7 @@
                         @forelse ($Line->TechnicalCut as $TechLine)
                         <tr>
                             <td>
-                                @if($idType == "order_lines_id")
+                                @if($idType == "order_lines_id" && auth()->user()->can('scheduling-menu'))
                                     <a href="{{ route('production.task.statu.id', ['id' => $TechLine->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $TechLine->id }}</a>
                                 @else
                                     #{{ $TechLine->id }}
@@ -389,7 +389,7 @@
                         <tr>
                             <td>
                                 
-                                @if($idType == "order_lines_id")
+                                @if($idType == "order_lines_id" && auth()->user()->can('scheduling-menu'))
                                     <a href="{{ route('production.task.statu.id', ['id' => $BOMline->id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a> #{{ $BOMline->id }}</a>
                                 @else
                                     #{{ $BOMline->id }}
