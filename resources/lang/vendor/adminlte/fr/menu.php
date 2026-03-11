@@ -19,6 +19,7 @@ return [
     'orders_lines_list_trans_key'              => 'Liste des ligne de commandes',
     'scheduling_trans_key'                     => 'Planification',
     'order_calendar_trans_key'                 => 'Calendrier des commandes',
+    'pre_orders_trans_key'                     => 'Pré-commandes',
     'load_planning_trans_key'                  => 'Planning de charge',
     'tasks_list_trans_key'                     => 'Liste des tâches',
     'tasks_trans_key'                          => 'Tâches',
