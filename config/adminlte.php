@@ -378,6 +378,12 @@ return [
                     'url'  => 'production/calendar/orders',
                     'icon_color' => 'info',
                 ],
+                [
+                    'text' => 'pre_orders_trans_key',
+                    'url'  => 'pre-orders',
+                    'icon_color' => 'primary',
+                    'enabled' => (bool) config('pre_orders.menu_enabled', false),
+                ],
             ]
         ],
         [
