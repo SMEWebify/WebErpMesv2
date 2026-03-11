@@ -17,6 +17,9 @@ class OrderLinesService
                 ['delivery_date', '<=', Carbon::now()->addDays(2)->toDateString()],
             ])
             ->where('delivery_status', '<', 3)
+            ->whereHas('order', function ($q) {
+                $q->whereNotIn('statu', [5, 6]);
+            })
             ->groupBy('orders_id')
             ->orderBy('id', 'desc')
             ->take($limit)
@@ -33,6 +36,9 @@ class OrderLinesService
                 ['delivery_date', '<', Carbon::now()->addDays(2)->toDateString()],
             ])
             ->where('delivery_status', '<', 3)
+            ->whereHas('order', function ($q) {
+                $q->whereNotIn('statu', [5, 6]);
+            })
             ->groupBy('orders_id')
             ->count();
 
@@ -46,6 +52,9 @@ class OrderLinesService
     {
         return OrderLines::where('delivery_date', '<', Carbon::now()->toDateString())
             ->where('delivery_status', '<', 3)
+            ->whereHas('order', function ($q) {
+                $q->whereNotIn('statu', [5, 6]);
+            })
             ->groupBy('orders_id')
             ->orderBy('id', 'desc')
             ->take($limit)
@@ -59,6 +68,9 @@ class OrderLinesService
     {
         $count = OrderLines::where('delivery_date', '<', Carbon::now()->toDateString())
             ->where('delivery_status', '<', 3)
+            ->whereHas('order', function ($q) {
+                $q->whereNotIn('statu', [5, 6]);
+            })
             ->groupBy('orders_id')
             ->count();
 
