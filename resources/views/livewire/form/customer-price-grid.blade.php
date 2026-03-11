@@ -1,3 +1,4 @@
+@if($product_id)
 <div class="mt-3">
     <div class="card card-outline card-info">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -11,9 +12,7 @@
             @if($priceSource)
                 <p class="mb-2"><strong>{{ __('general_content.price_source_trans_key') }}:</strong> {{ $priceSource }}</p>
             @endif
-            @if(!$product_id)
-                <p class="text-muted mb-0">{{ __('general_content.select_product_trans_key') }}</p>
-            @elseif(empty($customerPriceList))
+            @if(empty($customerPriceList))
                 <p class="text-muted mb-0">{{ __('general_content.no_price_defined_trans_key') }}</p>
             @else
                 <div class="table-responsive">
@@ -62,3 +61,4 @@
         </div>
     </div>
 </div>
+@endif
