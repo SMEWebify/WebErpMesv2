@@ -839,6 +839,7 @@ return [
     'order_confirm_trans_key'                  => 'Order Confirm',
     'internal_order_trans_key'                 => 'Internal order',
     'new_order_trans_key'                      => 'New order',
+    'pre_orders_trans_key'                    => 'Pre-orders',
     'new_pre_order_trans_key'                  => 'New pre-order',
     'name_order_trans_key'                     => 'Name of order',
     'historical_trans_key'                     => 'Historical',
