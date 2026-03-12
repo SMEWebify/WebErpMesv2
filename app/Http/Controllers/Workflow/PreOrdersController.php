@@ -155,18 +155,19 @@ class PreOrdersController extends Controller
 
     public function pdf(PreOrder $preOrder): StreamedResponse
     {
-        $disk = config('filesystems.default');
-        $inputPath = $this->resolveInputPath((string) config('pre_orders.input_path', 'pre-orders/input'));
-        $relativePath = trim($inputPath . '/' . ltrim($preOrder->source_pdf, '/'), '/');
+        $sourcePdfPath = $this->resolveSourcePdfPath($preOrder);
 
-        if (!Storage::disk($disk)->exists($relativePath)) {
+        if ($sourcePdfPath === null) {
             abort(404, 'PDF introuvable.');
         }
 
-        return Storage::disk($disk)->response(
-            $relativePath,
-            $preOrder->source_pdf,
-            ['Content-Type' => 'application/pdf']
+        return Storage::disk(config('filesystems.default'))->response(
+            $sourcePdfPath,
+            basename($sourcePdfPath),
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . basename($sourcePdfPath) . '"',
+            ]
         );
     }
 
