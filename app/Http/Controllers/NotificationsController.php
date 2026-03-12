@@ -67,7 +67,7 @@ class NotificationsController extends Controller
         $dropdownHtml = '';
         foreach ($notifications as $key => $not) {
             $icon = "<span class='notification-icon mr-2'><i class='{$not['icon']} fa-fw'></i></span>";
-            $text = "<span class='notification-text'>{$not['text']}</span>";
+            $text = "<span class='notification-text d-inline-block text-truncate' style='max-width: 220px;' title='{$not['text']}'>{$not['text']}</span>";
             $time = "<span class='notification-time text-muted text-sm'>{$not['time']}</span>";
             $content = "<div class='notification-content flex-fill'>{$text}{$time}</div>";
             $dropdownHtml .= "<a href='{$not['route']}' class='dropdown-item notification-item d-flex align-items-start'>{$icon}{$content}</a>";
