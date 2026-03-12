@@ -79,6 +79,11 @@ class HomeController extends Controller
             ? Carbon::parse($latestCustomerCreatedAt)->diffForHumans()
             : __('general_content.not_available_trans_key');
 
+        $data['current_month_delivery_notes_count'] = DB::table('deliverys')
+            ->whereYear('created_at', '=', $CurentYear)
+            ->whereMonth('created_at', '=', $CurentMonth)
+            ->count();
+
         $Announcement = Announcements::latest()->first();
 
         //Estimated Budgets data for chart
