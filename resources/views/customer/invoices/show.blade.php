@@ -48,7 +48,7 @@
                                                 </div>
                                             </td>
                                             <td>{{ $DocumentLine->qty }} {{ $DocumentLine->orderLine?->Unit['label'] }}</td>
-                                            <td class="text-end">{{ $DocumentLine->selling_price }} {{ $Factory->curency }}</td>
+                                            <td class="text-end">{{ number_format((float) $DocumentLine->selling_price, 2, '.', ' ') }} {{ $Factory->curency }}</td>
                                             <td>{{ $DocumentLine->discount }} %</td>
                                             <td>{{ $DocumentLine->orderLine?->VAT['rate'] }} %</td>
                                             <td>
@@ -69,12 +69,12 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2">{{ __('general_content.sub_total_trans_key') }}</td>
-                                        <td colspan="2" class="text-end">{{ $subPrice }} {{ $Factory->curency }}</td>
+                                        <td colspan="2" class="text-end">{{ number_format((float) $subPrice, 2, '.', ' ') }} {{ $Factory->curency }}</td>
                                     </tr>
                                     @forelse($vatPrice as $vatRate)
                                         <tr>
-                                            <td colspan="2">{{ __('general_content.tax_trans_key') }} {{ $vatRate[0] }}%</td>
-                                            <td colspan="2" class="text-end">{{ number_format($vatRate[1], 2, '.', ' ') }} {{ $Factory->curency }}</td>
+                                            <td colspan="2">{{ __('general_content.tax_trans_key') }} {{ number_format((float) $vatRate[0], 2, '.', ' ') }} %</td>
+                                            <td colspan="2" class="text-end">{{ number_format((float) $vatRate[1], 2, '.', ' ') }} {{ $Factory->curency }}</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -84,7 +84,7 @@
                                     @endforelse
                                     <tr>
                                         <td colspan="2">{{ __('general_content.total_trans_key') }}</td>
-                                        <td colspan="2" class="text-end fw-bold">{{ number_format($totalPrices, 2, '.', ' ') }} {{ $Factory->curency }}</td>
+                                        <td colspan="2" class="text-end fw-bold">{{ number_format((float) $totalPrices, 2, '.', ' ') }} {{ $Factory->curency }}</td>
                                     </tr>
                                 </tfoot>
                             </table>
