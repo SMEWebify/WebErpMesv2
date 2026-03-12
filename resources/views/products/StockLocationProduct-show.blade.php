@@ -64,20 +64,32 @@
                   <td>{{ $StockMove->tracability }}</td>
                   <td>
                   @if($StockMove->order_line_id)
-                    <x-OrderButton id="{{ $StockMove->OrderLine->order['id'] }}" code="{{ $StockMove->OrderLine->order['code'] }}"  />
+                    @can('orders-menu')
+                      <x-OrderButton id="{{ $StockMove->OrderLine->order['id'] }}" code="{{ $StockMove->OrderLine->order['code'] }}"  />
+                    @else
+                      {{ $StockMove->OrderLine->order['code'] }}
+                    @endcan
                   @endif
                   </td>
                   <td>
                   @if($StockMove->task_id)
-                    <a href="{{ route('production.task.statu.id', ['id' => $StockMove->task_id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                    @can('scheduling-menu')
+                      <a href="{{ route('production.task.statu.id', ['id' => $StockMove->task_id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                    @else
+                      #{{ $StockMove->task_id }}
+                    @endcan
                   @endif
                   </td>
                   <td>
                   @if($StockMove->purchase_receipt_line_id)
-                    <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipts.show', ['id' => $StockMove->purchaseReceiptLines->purchase_receipt_id])}}">
-                      <i class="fas fa-folder"></i>
+                    @can('purchases-menu')
+                      <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipts.show', ['id' => $StockMove->purchaseReceiptLines->purchase_receipt_id])}}">
+                        <i class="fas fa-folder"></i>
+                        {{ $StockMove->purchaseReceiptLines->purchaseReceipt->code }}
+                      </a>
+                    @else
                       {{ $StockMove->purchaseReceiptLines->purchaseReceipt->code }}
-                    </a>
+                    @endcan
                   @endif
                   </td>
                   <td>
