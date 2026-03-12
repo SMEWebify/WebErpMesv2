@@ -38,20 +38,32 @@
                     <td>{{ $StockDetails->qty }}</td>
                     <td>
                         @if($StockDetails->order_line_id)
-                        <x-OrderButton id="{{ $StockDetails->OrderLine->order['id'] }}" code="{{ $StockDetails->OrderLine->order['code'] }}"  />
+                            @can('orders-menu')
+                                <x-OrderButton id="{{ $StockDetails->OrderLine->order['id'] }}" code="{{ $StockDetails->OrderLine->order['code'] }}"  />
+                            @else
+                                {{ $StockDetails->OrderLine->order['code'] }}
+                            @endcan
                         @endif
                         </td>
                         <td>
                         @if($StockDetails->task_id)
-                        <a href="{{ route('production.task.statu.id', ['id' => $StockDetails->task_id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                            @can('scheduling-menu')
+                                <a href="{{ route('production.task.statu.id', ['id' => $StockDetails->task_id]) }}" class="btn btn-sm btn-success">{{__('general_content.view_trans_key') }} </a>
+                            @else
+                                #{{ $StockDetails->task_id }}
+                            @endcan
                         @endif
                         </td>
                         <td>
                         @if($StockDetails->purchase_receipt_line_id)
-                        <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipts.show', ['id' => $StockDetails->purchaseReceiptLines->purchase_receipt_id])}}">
-                            <i class="fas fa-folder"></i>
-                            {{ $StockDetails->purchaseReceiptLines->purchaseReceipt->code }}
-                        </a>
+                            @can('purchases-menu')
+                                <a class="btn btn-primary btn-sm" href="{{ route('purchase.receipts.show', ['id' => $StockDetails->purchaseReceiptLines->purchase_receipt_id])}}">
+                                    <i class="fas fa-folder"></i>
+                                    {{ $StockDetails->purchaseReceiptLines->purchaseReceipt->code }}
+                                </a>
+                            @else
+                                {{ $StockDetails->purchaseReceiptLines->purchaseReceipt->code }}
+                            @endcan
                         @endif
                     </td>
                     <td>
