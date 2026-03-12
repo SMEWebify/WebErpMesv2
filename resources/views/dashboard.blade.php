@@ -227,16 +227,6 @@
       <x-adminlte-card title="{{ __('general_content.latest_orders_trans_key') }}" theme="info" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
         <div class="table-responsive">
           <table class="table m-0">
-            <thead>
-            <tr>
-              <th>{{ __('general_content.id_trans_key') }}</th>
-              <th>{{ __('general_content.customer_trans_key') }}</th>
-              <th>{{ __('general_content.status_trans_key') }}</th>
-              <th>{{ __('general_content.total_price_trans_key') }}</th>
-              <th>{{ __('general_content.created_at_trans_key') }}</th>
-              <th>{{ __('general_content.assigned_trans_key') }}</th>
-            </tr>
-            </thead>
             <tbody>
               @forelse ($LastOrders as $LastOrder)
               <tr>
@@ -259,7 +249,6 @@
                 </td>
                 <td>{{ $LastOrder->formatted_total_price }}</td>
                 <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
-                <td><img src="{{ Avatar::create($LastOrder->UserManagement['name'])->toBase64() }}" /></td>
               </tr>
               <!-- /.item -->
               @empty
@@ -395,16 +384,6 @@
       <x-adminlte-card title="{{ __('general_content.latest_quotes_trans_key') }}" theme="success" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
           <div class="table-responsive">
             <table class="table m-0">
-              <thead>
-              <tr>
-                <th>{{ __('general_content.id_trans_key') }}</th>
-                <th>{{ __('general_content.customer_trans_key') }}</th>
-                <th>{{ __('general_content.status_trans_key') }}</th>
-                <th>{{ __('general_content.total_price_trans_key') }}</th>
-                <th>{{ __('general_content.created_at_trans_key') }}</th>
-                <th>{{ __('general_content.assigned_trans_key') }}</th>
-              </tr>
-              </thead>
               <tbody>
                 @forelse ($LastQuotes as $LastQuote)
                 <tr>
@@ -424,7 +403,6 @@
                   </td>
                   <td>{{ $LastQuote->formatted_total_price }}</td>
                   <td>{{ $LastQuote->GetPrettyCreatedAttribute() }}</td>
-                  <td><img src="{{ Avatar::create($LastQuote->UserManagement['name'])->toBase64() }}" /></td>
                 </tr>
                 <!-- /.item -->
                 @empty
