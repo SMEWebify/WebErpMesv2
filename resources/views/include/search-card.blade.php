@@ -1,5 +1,5 @@
 <div>
-    <div class="input-group mb-3">
+    <div class="input-group {{ ($compact ?? false) ? 'mb-2' : 'mb-3' }}">
         <div class="input-group-prepend">
             <span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>
         </div>
