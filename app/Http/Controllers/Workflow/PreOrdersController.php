@@ -9,10 +9,12 @@ use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Companies\Companies;
 use App\Models\Methods\MethodsUnits;
+use App\Models\Products\Products;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\PreOrder;
+use App\Models\Workflow\PreOrderLine;
 use App\Services\DocumentCodeGenerator;
 use App\Services\InvoiceReportInterpreter;
 use App\Models\User;
@@ -174,7 +176,7 @@ class PreOrdersController extends Controller
 
     public function show(PreOrder $preOrder)
     {
-        $preOrder->load('lines', 'convertedOrder');
+        $preOrder->load('lines.suggestedProduct', 'lines.linkedProduct', 'convertedOrder');
 
         $sourcePdfUrl = $this->resolveSourcePdfPath($preOrder)
             ? route('pre-orders.source-pdf', $preOrder)
@@ -210,6 +212,52 @@ class PreOrdersController extends Controller
                 'Content-Disposition' => 'inline; filename="' . basename($sourcePdfPath) . '"',
             ]
         );
+    }
+
+
+    public function matchArticles(PreOrder $preOrder)
+    {
+        $preOrder->load('lines');
+
+        foreach ($preOrder->lines as $line) {
+            $reference = trim((string) $line->reference);
+
+            if ($reference === '') {
+                $line->update([
+                    'suggested_product_id' => null,
+                    'matching_unit_price' => null,
+                ]);
+
+                continue;
+            }
+
+            $product = Products::query()
+                ->where('code', $reference)
+                ->first();
+
+            $line->update([
+                'suggested_product_id' => $product?->id,
+                'matching_unit_price' => $product?->selling_price,
+            ]);
+        }
+
+        return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Matching des articles terminé.');
+    }
+
+    public function acceptMatching(PreOrder $preOrder, PreOrderLine $line)
+    {
+        abort_unless((int) $line->pre_order_id === (int) $preOrder->id, 404);
+
+        if (! $line->suggested_product_id) {
+            return redirect()->route('pre-orders.show', $preOrder)->withErrors('Aucun article suggéré sur cette ligne.');
+        }
+
+        $line->update([
+            'linked_product_id' => $line->suggested_product_id,
+            'matching_confirmed_at' => now(),
+        ]);
+
+        return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Matching accepté pour la ligne ' . $line->row_index . '.');
     }
 
     public function convert(Request $request, PreOrder $preOrder)
@@ -263,16 +311,19 @@ class PreOrdersController extends Controller
             ]);
 
             foreach ($preOrder->lines as $index => $line) {
+                $matchedProduct = $line->linkedProduct;
+
                 $orderLine = OrderLines::create([
                     'orders_id' => $order->id,
                     'ordre' => $index + 1,
-                    'code' => $line->reference,
-                    'label' => $line->product ?: $line->reference,
+                    'code' => $matchedProduct?->code ?: $line->reference,
+                    'product_id' => $line->linked_product_id,
+                    'label' => $matchedProduct?->label ?: ($line->product ?: $line->reference),
                     'qty' => max((int) $line->quantity, 1),
                     'delivered_remaining_qty' => max((int) $line->quantity, 1),
                     'invoiced_remaining_qty' => max((int) $line->quantity, 1),
                     'methods_units_id' => $data['methods_units_id'],
-                    'selling_price' => $line->unit_price,
+                    'selling_price' => $line->matching_unit_price ?? $line->unit_price,
                     'discount' => $data['discount'] ?? 0,
                     'accounting_vats_id' => $data['accounting_vats_id'],
                     'delivery_date' => $data['delivery_date'] ?? null,

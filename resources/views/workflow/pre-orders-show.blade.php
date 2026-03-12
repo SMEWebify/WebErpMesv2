@@ -29,6 +29,13 @@
     <div class="row">
         <div class="col-lg-8">
             <x-adminlte-card title="Lignes importées" theme="primary" maximizable>
+                <form method="POST" action="{{ route('pre-orders.matching', $preOrder) }}" class="mb-3">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-link mr-1"></i> Matching article
+                    </button>
+                </form>
+
                 <div class="table-responsive p-0">
                     <table class="table table-sm table-hover">
                         <thead>
@@ -39,6 +46,9 @@
                                 <th>Quantité</th>
                                 <th>PU</th>
                                 <th>Total</th>
+                                <th>Article matché</th>
+                                <th>PU article</th>
+                                <th>Validation</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +60,28 @@
                                     <td>{{ $line->quantity }}</td>
                                     <td>{{ $line->formatted_selling_price }}</td>
                                     <td>{{ $line->formatted_total_price }}</td>
+                                    <td>
+                                        @if($line->linkedProduct)
+                                            <span class="badge badge-success">{{ $line->linkedProduct->code }} - {{ $line->linkedProduct->label }}</span>
+                                        @elseif($line->suggestedProduct)
+                                            <span class="badge badge-warning">{{ $line->suggestedProduct->code }} - {{ $line->suggestedProduct->label }}</span>
+                                        @else
+                                            <span class="text-muted">Aucun</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $line->formatted_matching_unit_price ?? '-' }}</td>
+                                    <td>
+                                        @if($line->linked_product_id)
+                                            <span class="badge badge-success">Validé</span>
+                                        @elseif($line->suggested_product_id)
+                                            <form method="POST" action="{{ route('pre-orders.accept-matching', [$preOrder, $line]) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-xs btn-success">Accepter</button>
+                                            </form>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

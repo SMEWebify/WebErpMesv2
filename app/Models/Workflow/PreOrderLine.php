@@ -2,6 +2,7 @@
 
 namespace App\Models\Workflow;
 
+use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
@@ -18,6 +19,14 @@ class PreOrderLine extends Model
         'quantity',
         'unit_price',
         'total_price',
+        'suggested_product_id',
+        'linked_product_id',
+        'matching_unit_price',
+        'matching_confirmed_at',
+    ];
+
+    protected $casts = [
+        'matching_confirmed_at' => 'datetime',
     ];
 
     public function getEffectiveTotalPriceAttribute(): float
@@ -54,5 +63,27 @@ class PreOrderLine extends Model
     public function preOrder()
     {
         return $this->belongsTo(PreOrder::class);
+    }
+
+    public function suggestedProduct()
+    {
+        return $this->belongsTo(Products::class, 'suggested_product_id');
+    }
+
+    public function linkedProduct()
+    {
+        return $this->belongsTo(Products::class, 'linked_product_id');
+    }
+
+    public function getFormattedMatchingUnitPriceAttribute(): ?string
+    {
+        if ($this->matching_unit_price === null) {
+            return null;
+        }
+
+        $factory = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+
+        return Number::currency((float) $this->matching_unit_price, $currency, config('app.locale'));
     }
 }
