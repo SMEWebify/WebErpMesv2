@@ -22,13 +22,11 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-12">
-                    @include('include.search-card')
+            <div class="row align-items-start mb-2">
+                <div class="col-md-6">
+                    @include('include.search-card', ['compact' => true])
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <div class="input-group">
                         <input type="number" step="0.01" min="0" class="form-control"
                                wire:model.live="priceIncreaseAmount"
@@ -41,7 +39,7 @@
                         </div>
                     </div>
                     @error('priceIncreaseAmount')
-                        <span class="text-danger">{{ $message }}</span>
+                        <span class="text-danger d-block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
             </div>
