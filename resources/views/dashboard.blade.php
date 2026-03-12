@@ -562,10 +562,10 @@
   // Get context with jQuery - using jQuery's .get() method.
   var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
   var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','November','December' ],
+      labels  : @json(__('general_content.chart_months_trans_key')),
       datasets: [
         {
-          label               : 'Order forecast',
+          label               : @json(__('general_content.chart_order_forecast_trans_key')),
           borderColor         : 'rgba(60,141,188,0.5)',
           pointRadius          : 5,
           pointColor          : '#3b8bba',
@@ -590,7 +590,7 @@
                               @endfor ]
         },
         {
-          label               : 'Delivered revenues',
+          label               : @json(__('general_content.chart_delivered_revenues_trans_key')),
           borderColor         : 'rgba(240, 173, 78,0.5)',
           pointRadius          : 5,
           pointColor          : '#f0ad4e',
@@ -615,7 +615,7 @@
                               @endfor ]
         },
         {
-          label               : 'Invoiced revenues',
+          label               : @json(__('general_content.chart_invoiced_revenues_trans_key')),
           borderColor         : 'rgba(217, 83, 79,0.5)',
           pointRadius          : 5,
           pointColor          : '#d9534f',
@@ -640,7 +640,7 @@
                               @endfor ]
         },
         {
-          label               : 'Purchase revenues',
+          label               : @json(__('general_content.chart_purchase_revenues_trans_key')),
           borderColor         : 'rgba(21, 83, 79,0.5)',
           pointRadius          : 5,
           pointColor          : '#d9534f',
@@ -665,7 +665,7 @@
                               @endfor ]
         },
         {
-          label               : 'Order targets ',
+          label               : @json(__('general_content.chart_order_targets_trans_key')),
           borderColor         : 'rgba(40, 167, 69, 1)',
           pointRadius         : 5,
           pointColor          : 'rgba(40, 167, 69, 1)',
