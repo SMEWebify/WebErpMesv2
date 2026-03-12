@@ -1192,10 +1192,10 @@
   // Get context with jQuery - using jQuery's .get() method.
   var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
   var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','November','December' ],
+      labels  : @json(__('general_content.chart_months_trans_key')),
       datasets: [
         {
-          label               : 'Order forecast',
+          label               : @json(__('general_content.chart_order_forecast_trans_key')),
           borderColor         : 'rgba(60,141,188,0.5)',
           pointRadius          : 5,
           pointColor          : '#3b8bba',
