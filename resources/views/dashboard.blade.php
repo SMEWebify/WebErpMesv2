@@ -124,12 +124,21 @@
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-md-2">
-      <x-adminlte-small-box title="{{ $data['suppliers_count'] }}"
-                            text="{{ __('general_content.suppliers_trans_key') }}" 
-                            icon="far fa-building"
-                            theme="success" 
-                            url="{{ route('companies', ['type' => 'supplier']) }}" 
-                            url-text="{{ __('general_content.view_details_trans_key') }}"/>
+      @can('purchases-menu')
+        <x-adminlte-small-box title="{{ $data['suppliers_count'] }}"
+                              text="{{ __('general_content.suppliers_trans_key') }}" 
+                              icon="far fa-building"
+                              theme="success" 
+                              url="{{ route('companies', ['type' => 'supplier']) }}" 
+                              url-text="{{ __('general_content.view_details_trans_key') }}"/>
+      @else
+        <x-adminlte-small-box title="{{ $data['current_month_delivery_notes_count'] }}"
+                              text="{{ __('general_content.delivery_notes_trans_key') }} - {{ __('general_content.current_month_trans_key') }}" 
+                              icon="fas fa-truck"
+                              theme="success"
+                              url="{{ route('deliverys') }}" 
+                              url-text="{{ __('general_content.view_details_trans_key') }}"/>
+      @endcan
     </div>
     <!-- ./col -->
     <div class="col-lg-2 col-md-2">
@@ -617,31 +626,33 @@
                                 @endif
                               @endfor ]
         },
-        {
-          label               : @json(__('general_content.chart_purchase_revenues_trans_key')),
-          borderColor         : 'rgba(21, 83, 79,0.5)',
-          pointRadius          : 5,
-          pointColor          : '#d9534f',
-          pointStrokeColor    : 'rgba(21, 83, 79,1)',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(21, 83, 79,1)',
-          data                : [
-                              @php ($j = 1)
-                              @for($iM =1;$iM<=12;$iM++)
-                                @foreach ($data['purchaseMonthlyRecap'] as $key => $item)
+        @can('purchases-menu')
+          {
+            label               : @json(__('general_content.chart_purchase_revenues_trans_key')),
+            borderColor         : 'rgba(21, 83, 79,0.5)',
+            pointRadius          : 5,
+            pointColor          : '#d9534f',
+            pointStrokeColor    : 'rgba(21, 83, 79,1)',
+            pointHighlightFill  : '#fff',
+            pointHighlightStroke: 'rgba(21, 83, 79,1)',
+            data                : [
                                 @php ($j = 1)
-                                  @if($iM  == $item->month) 
-                                  "-{{ $item->purchaseSum }}",
-                                    @php ($j = 2)
-                                    @break
-                                  @endif
-                                @endforeach
-                                @if($j == 1) 
-                                  0,
+                                @for($iM =1;$iM<=12;$iM++)
+                                  @foreach ($data['purchaseMonthlyRecap'] as $key => $item)
                                   @php ($j = 1)
-                                @endif
-                              @endfor ]
-        },
+                                    @if($iM  == $item->month) 
+                                    "-{{ $item->purchaseSum }}",
+                                      @php ($j = 2)
+                                      @break
+                                    @endif
+                                  @endforeach
+                                  @if($j == 1) 
+                                    0,
+                                    @php ($j = 1)
+                                  @endif
+                                @endfor ]
+          },
+        @endcan
         {
           label               : @json(__('general_content.chart_order_targets_trans_key')),
           borderColor         : 'rgba(40, 167, 69, 1)',

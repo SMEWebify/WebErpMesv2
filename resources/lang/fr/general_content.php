@@ -953,6 +953,7 @@ return [
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Bons de livraisons',
+    'current_month_trans_key'                  => 'Mois en cours',
     'deliverys_notes_request_trans_key'        => 'Attente de bons de livraison',
     'deliverys_notes_list_trans_key'           => 'Liste des bons de livraisons',
     'name_of_deliverys_notes_trans_key'        => 'Nom du bon de livraison',

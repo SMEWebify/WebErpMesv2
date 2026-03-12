@@ -953,6 +953,7 @@ return [
     
     //DELIVERY
     'delivery_notes_trans_key'                 => 'Delivery notes',
+    'current_month_trans_key'                  => 'Current month',
     'deliverys_notes_request_trans_key'        => 'Deliverys notes request',
     'deliverys_notes_list_trans_key'           => 'Deliverys notes list',
     'name_of_deliverys_notes_trans_key'        => 'Name of Delivery note',
