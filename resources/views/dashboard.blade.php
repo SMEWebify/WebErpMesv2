@@ -248,7 +248,7 @@
                   @if(6 == $LastOrder->statu )  <span class="badge badge-warning">{{ __('general_content.canceled_trans_key') }}</span>@endif
                 </td>
                 <td>{{ $LastOrder->formatted_total_price }}</td>
-                <td>{{ $LastOrder->GetPrettyCreatedAttribute() }}</td>
+                <td>{{ $LastOrder->validity_date ? \Carbon\Carbon::parse($LastOrder->validity_date)->format('d/m/Y') : '—' }}</td>
               </tr>
               <!-- /.item -->
               @empty
