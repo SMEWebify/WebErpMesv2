@@ -158,8 +158,8 @@
                             </tr>
                             @forelse($vatPrice as $key => $value)
                             <tr>
-                                <td align="right" style="width:50%">{{ __('general_content.tax_trans_key') }} <?= $vatPrice[$key][0] ?> %</td> 
-                                <td align="right" style="width:30%"><?= $vatPrice[$key][1] ?> {{ $Factory->curency }}</td>
+                                <td align="right" style="width:50%">{{ __('general_content.tax_trans_key') }} {{ number_format((float) $vatPrice[$key][0], 2, '.', '') }} %</td>
+                                <td align="right" style="width:30%">{{ $normalizeCurrency(number_format((float) $vatPrice[$key][1], 2, '.', '')) }}</td>
                             </tr>
                             @empty
                             <tr>
