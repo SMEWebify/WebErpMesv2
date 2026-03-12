@@ -29,12 +29,25 @@
     <div class="row">
         <div class="col-lg-8">
             <x-adminlte-card title="Lignes importées" theme="primary" maximizable>
-                <form method="POST" action="{{ route('pre-orders.matching', $preOrder) }}" class="mb-3">
-                    @csrf
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        <i class="fas fa-link mr-1"></i> Matching article
-                    </button>
-                </form>
+                @php
+                    $hasPendingMatching = $preOrder->lines->contains(fn ($line) => $line->suggested_product_id && ! $line->linked_product_id);
+                @endphp
+
+                <div class="d-flex mb-3">
+                    <form method="POST" action="{{ route('pre-orders.matching', $preOrder) }}" class="mr-2">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-link mr-1"></i> Matching article
+                        </button>
+                    </form>
+
+                    <form method="POST" action="{{ route('pre-orders.accept-all-matching', $preOrder) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-success btn-sm" @disabled(! $hasPendingMatching)>
+                            <i class="fas fa-check-double mr-1"></i> Valider toutes les lignes
+                        </button>
+                    </form>
+                </div>
 
                 <div class="table-responsive p-0">
                     <table class="table table-sm table-hover">

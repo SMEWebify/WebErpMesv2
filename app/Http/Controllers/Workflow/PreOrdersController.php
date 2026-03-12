@@ -260,6 +260,24 @@ class PreOrdersController extends Controller
         return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Matching accepté pour la ligne ' . $line->row_index . '.');
     }
 
+    public function acceptAllMatching(PreOrder $preOrder)
+    {
+        $updatedCount = PreOrderLine::query()
+            ->where('pre_order_id', $preOrder->id)
+            ->whereNotNull('suggested_product_id')
+            ->whereNull('linked_product_id')
+            ->update([
+                'linked_product_id' => DB::raw('suggested_product_id'),
+                'matching_confirmed_at' => now(),
+            ]);
+
+        if ($updatedCount === 0) {
+            return redirect()->route('pre-orders.show', $preOrder)->withErrors('Aucune ligne à valider.');
+        }
+
+        return redirect()->route('pre-orders.show', $preOrder)->with('success', $updatedCount . ' ligne(s) validée(s) automatiquement.');
+    }
+
     public function convert(Request $request, PreOrder $preOrder)
     {
         if ($preOrder->status === PreOrder::STATUS_CONVERTED) {
