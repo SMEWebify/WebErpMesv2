@@ -22,7 +22,11 @@
       <li class="nav-item"><a class="nav-link" href="#Site" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
+      @can('purchases-menu')
       <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
+      @else
+      <li class="nav-item"><a class="nav-link disabled" href="#" aria-disabled="true" tabindex="-1">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
+      @endcan
       
       <!--<a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
       @if(count($CustomFields)> 0)
@@ -483,6 +487,7 @@
       </div> 
       <div class="tab-pane " id="Views">
       </div>
+      @can('purchases-menu')
       <div class="tab-pane" id="purchase">
         <div class="table-responsive p-0">
           <table class="table table-hover">
@@ -572,6 +577,7 @@
           </table>
         </div>
       </div>
+      @endcan
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">
         @include('include.custom-fields-form', ['id' => $Order->id, 'type' => 'order'])
