@@ -23,6 +23,7 @@ class UpdateDocumentCodeTemplateRequest extends FormRequest
     {
         return [
             'template' => 'required|string|max:255',
+            'reset_period' => 'required|in:none,daily,weekly,monthly',
         ];
     }
 }
