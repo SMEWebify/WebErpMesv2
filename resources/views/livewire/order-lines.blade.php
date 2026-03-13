@@ -123,10 +123,9 @@
                             </td>
                             <td>
                                 @if($OrderLine->order->type == 2)
-                                    @php($stockBadgeClass = auth()->user()->can('stock-lot-serial-management') ? 'badge' : '')
-                                    @if(1 == $OrderLine->delivery_status )  <span class="{{ trim($stockBadgeClass . ' badge-info') }}">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
-                                    @if(2 == $OrderLine->delivery_status )  <span class="{{ trim($stockBadgeClass . ' badge-warning') }}">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
-                                    @if(3 == $OrderLine->delivery_status )  <span class="{{ trim($stockBadgeClass . ' badge-success') }}">{{ __('general_content.stock_trans_key') }}</span>@endif
+                                    @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
+                                    @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
+                                    @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
                                 @else
                                     @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
                                     @if(2 == $OrderLine->delivery_status )  
@@ -671,8 +670,8 @@
                             <th></th>
                         </tr>
                         <tr>
-                            <th colspan="11"></th>
-                            <th colspan="4">
+                            <th colspan="8"></th>
+                            <th colspan="7">
                                 @can('stock-lot-serial-management')
                                 <div>
                                     <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
