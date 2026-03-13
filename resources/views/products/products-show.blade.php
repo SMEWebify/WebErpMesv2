@@ -28,7 +28,9 @@
           @endif
           <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab"><i class="fas fa-file-invoice"></i> {{ __('general_content.quotes_list_trans_key') }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab"><i class="fas fa-shopping-cart"></i> {{ __('general_content.orders_list_trans_key') }}</a></li>
+          @can('purchases-menu')
           <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab"><i class="fas fa-cart-arrow-down"></i> {{ __('general_content.purchase_list_trans_key') }}</a></li>
+          @endcan
           @can('stock-lot-serial-management')
           <li class="nav-item"><a class="nav-link" href="#serialNumber" data-toggle="tab"><i class="fas fa-barcode"></i> {{ __('general_content.serial_numbers_trans_key') }}</a></li>
           @endcan
@@ -697,9 +699,11 @@
         <div class="tab-pane" id="order">
           @livewire('orders-lines-index' , ['product_id' => $Product->id ])
         </div>
+        @can('purchases-menu')
         <div class="tab-pane" id="purchase">
           @livewire('purchases-lines-index' , ['search_product_id' => $Product->id, 'purchase_id' => null, 'OrderStatu' => 0 ])
         </div>
+        @endcan
         @can('stock-lot-serial-management')
         <div class="tab-pane" id="serialNumber">
           @livewire('serial-numbers-index' , ['product_id' => $Product->id ])
