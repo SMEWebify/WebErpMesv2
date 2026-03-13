@@ -705,12 +705,21 @@ class TaskManage extends Component
     private function determineContextProductId(): ?int
     {
         return match ($this->idType) {
-            'products_id' => $this->idLine,
-            'quote_lines_id' => QuoteLines::whereKey($this->idLine)->value('product_id'),
-            'order_lines_id' => OrderLines::whereKey($this->idLine)->value('product_id'),
-            'sub_assembly_id' => SubAssembly::whereKey($this->idLine)->value('products_id'),
+            'products_id' => $this->castToNullableInt($this->idLine),
+            'quote_lines_id' => $this->castToNullableInt(QuoteLines::whereKey($this->idLine)->value('product_id')),
+            'order_lines_id' => $this->castToNullableInt(OrderLines::whereKey($this->idLine)->value('product_id')),
+            'sub_assembly_id' => $this->castToNullableInt(SubAssembly::whereKey($this->idLine)->value('products_id')),
             default => null,
         };
+    }
+
+    private function castToNullableInt(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (int) $value;
     }
 
     private function loadToolsForProduct(?int $productId): void
