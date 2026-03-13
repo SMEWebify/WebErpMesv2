@@ -11,6 +11,9 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
+    private const LOGIN_ATTEMPTS_LIMIT = 5;
+    private const IP_ATTEMPTS_LIMIT = 10;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -47,6 +50,7 @@ class LoginRequest extends FormRequest
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
+            RateLimiter::hit($this->ipThrottleKey());
 
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
@@ -65,7 +69,19 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited()
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (RateLimiter::tooManyAttempts($this->ipThrottleKey(), self::IP_ATTEMPTS_LIMIT)) {
+            event(new Lockout($this));
+
+            $seconds = RateLimiter::availableIn($this->ipThrottleKey());
+
+            throw ValidationException::withMessages([
+                'email' => __('Trop de tentatives de connexion depuis cette adresse IP. Réessayez dans :minutes minute(s).', [
+                    'minutes' => ceil($seconds / 60),
+                ]),
+            ]);
+        }
+
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), self::LOGIN_ATTEMPTS_LIMIT)) {
             return;
         }
 
@@ -89,5 +105,15 @@ class LoginRequest extends FormRequest
     public function throttleKey()
     {
         return Str::lower($this->input('email')).'|'.$this->ip();
+    }
+
+    /**
+     * Get the rate limiting key used for IP lockouts.
+     *
+     * @return string
+     */
+    public function ipThrottleKey()
+    {
+        return 'ip|'.$this->ip();
     }
 }
