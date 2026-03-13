@@ -316,9 +316,28 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     @include('include.search-card')
                 </div>
+                <div class="col-md-2">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt fa-fw"></i></span>
+                        </div>
+                        <input type="date" class="form-control" wire:model.live="createdAtFrom" aria-label="Date de création du" title="Date de création du">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt fa-fw"></i></span>
+                        </div>
+                        <input type="date" class="form-control" wire:model.live="createdAtTo" aria-label="Date de création au" title="Date de création au">
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-10"></div>
                 <div class="col-md-2">
                     <button type="button" class="btn btn-success float-sm-right" data-toggle="modal" data-target="#ModalProduct">
                         {{ __('general_content.new_product_trans_key') }}

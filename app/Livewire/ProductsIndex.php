@@ -16,6 +16,8 @@ class ProductsIndex extends Component
     protected $paginationTheme = 'bootstrap';
     
     public $search = '';
+    public $createdAtFrom = '';
+    public $createdAtTo = '';
     public $sortField = 'label'; // default sorting field
     public $sortAsc = true; // default sort direction
     
@@ -76,6 +78,16 @@ class ProductsIndex extends Component
         $this->resetPage();
     }
 
+    public function updatingCreatedAtFrom()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingCreatedAtTo()
+    {
+        $this->resetPage();
+    }
+
     public function mount() 
     {
         $this->userSelect = User::select('id', 'name')->get();
@@ -83,7 +95,15 @@ class ProductsIndex extends Component
 
     public function render()
     {
-        $Products = Products::where('label','like', '%'.$this->search.'%')->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate(15);
+        $Products = Products::where('label', 'like', '%'.$this->search.'%')
+            ->when($this->createdAtFrom, function ($query) {
+                $query->whereDate('created_at', '>=', $this->createdAtFrom);
+            })
+            ->when($this->createdAtTo, function ($query) {
+                $query->whereDate('created_at', '<=', $this->createdAtTo);
+            })
+            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+            ->paginate(15);
         $userSelect = User::select('id', 'name')->get();
         $ServicesSelect = MethodsServices::select('id', 'label')->orderBy('ordre')->get();
         $UnitsSelect = MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get();
