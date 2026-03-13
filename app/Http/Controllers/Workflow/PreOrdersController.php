@@ -380,6 +380,7 @@ class PreOrdersController extends Controller
 
         $disk = Storage::disk(config('filesystems.default'));
         $paths = [
+            trim((string) config('pre_orders.processed_path', 'public/output/processed'), '/'),
             $this->resolveInputPath((string) config('pre_orders.input_path', 'pre-orders/input')),
             trim((string) config('pre_orders.output_path', 'output'), '/'),
             trim((string) config('pre_orders.done_path', 'output/done'), '/'),
