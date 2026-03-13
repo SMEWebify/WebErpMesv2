@@ -82,18 +82,22 @@
         </div>
 
         {{-- Mode field --}}
-        <div class="input-group mb-3">
-            <select name="modeView" id="modeView" class="form-control">
-                <option value="desktop">Desktop</option>
-                <option value="workshop">Workshop (Beta)</option>
-            </select>
+        @if(config('auth.login_mode_selector_enabled'))
+            <div class="input-group mb-3">
+                <select name="modeView" id="modeView" class="form-control">
+                    <option value="desktop">Desktop</option>
+                    <option value="workshop">Workshop (Beta)</option>
+                </select>
 
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fa fa-window-maximize {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fa fa-window-maximize {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                    </div>
                 </div>
             </div>
-        </div>
+        @else
+            <input type="hidden" name="modeView" value="desktop">
+        @endif
 
         {{-- Login field --}}
         <div class="row">

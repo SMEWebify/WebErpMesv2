@@ -128,4 +128,16 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Login View Options
+    |--------------------------------------------------------------------------
+    |
+    | This option controls whether the mode selector is displayed on
+    | the login screen.
+    |
+    */
+
+    'login_mode_selector_enabled' => env('LOGIN_MODE_SELECTOR_ENABLED', true),
+
 ];
