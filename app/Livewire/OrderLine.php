@@ -1038,13 +1038,20 @@ class OrderLine extends Component
     // Helper method to check if lines exist
     private function linesExist()
     {
-        $i = 0;
-        foreach ($this->data as $key => $item) {
-            if (array_key_exists("order_line_id", $this->data[$key]) && $this->data[$key]['order_line_id'] != false) {
-                $i++;
-            }
-        }
-        return $i > 0;
+        return !empty($this->getSelectedLineIds());
+    }
+
+    private function getSelectedLineIds(): array
+    {
+        return collect($this->data)
+            ->filter(function ($item) {
+                return !empty($item['order_line_id']);
+            })
+            ->keys()
+            ->map(function ($lineId) {
+                return (int) $lineId;
+            })
+            ->all();
     }
 
     // Helper method to create serial numbers
@@ -1104,7 +1111,9 @@ class OrderLine extends Component
 
     public function storeDelevery($orderId)
     {
-        if (!$this->linesExist()) {
+        $selectedLineIds = $this->getSelectedLineIds();
+
+        if (empty($selectedLineIds)) {
             $errors = $this->getErrorBag();
             $errors->add('errors', 'no lines selected');
             return;
@@ -1124,7 +1133,7 @@ class OrderLine extends Component
         $DeliveryCreated = $this->deliveryService->createDelivery($deliveryCode, $deliveryCode, $OrderData->companies_id, $OrderData->companies_addresses_id, $OrderData->companies_contacts_id, $user->id);
 
         if ($DeliveryCreated) {
-            foreach ($this->data as $key => $item) {
+            foreach ($selectedLineIds as $key) {
                 $OrderLineData = OrderLines::find($key);
                 $this->deliveryLineService->createDeliveryLine($DeliveryCreated, $key, $this->deleveryOrdre, $OrderLineData->delivered_remaining_qty);
 
@@ -1148,7 +1157,9 @@ class OrderLine extends Component
 
     public function storeInvoice($orderId)
     {
-        if (!$this->linesExist()) {
+        $selectedLineIds = $this->getSelectedLineIds();
+
+        if (empty($selectedLineIds)) {
             $errors = $this->getErrorBag();
             $errors->add('errors', 'no lines selected');
             return;
@@ -1168,7 +1179,7 @@ class OrderLine extends Component
         $InvoiceCreated = $this->invoiceService->createInvoice($invoiceCode, $invoiceCode, $OrderData->companies_id, $OrderData->companies_addresses_id, $OrderData->companies_contacts_id, $user->id);
 
         if ($InvoiceCreated) {
-            foreach ($this->data as $key => $item) {
+            foreach ($selectedLineIds as $key) {
                 $OrderLineData = OrderLines::find($key);
                 $this->invoiceLineService->createInvoiceLine($InvoiceCreated, $key, null, $this->invoiceOrdre, $OrderLineData->invoiced_remaining_qty, $OrderLineData->accounting_vats_id);
 
@@ -1190,5 +1201,22 @@ class OrderLine extends Component
         } else {
             return redirect()->back()->with('error', 'Something went wrong');
         }
+    }
+
+    public function createProductsFromSelectedLines(): void
+    {
+        $selectedLineIds = $this->getSelectedLineIds();
+
+        if (empty($selectedLineIds)) {
+            $errors = $this->getErrorBag();
+            $errors->add('errors', 'no lines selected');
+            return;
+        }
+
+        foreach ($selectedLineIds as $lineId) {
+            $this->createProduct($lineId);
+        }
+
+        session()->flash('success', __('general_content.create_products_from_selected_lines_success_trans_key'));
     }
 }

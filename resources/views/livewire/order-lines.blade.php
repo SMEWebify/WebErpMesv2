@@ -123,9 +123,10 @@
                             </td>
                             <td>
                                 @if($OrderLine->order->type == 2)
-                                    @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
-                                    @if(2 == $OrderLine->delivery_status )  <span class="badge badge-warning">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
-                                    @if(3 == $OrderLine->delivery_status )  <span class="badge badge-success">{{ __('general_content.stock_trans_key') }}</span>@endif
+                                    @php($stockBadgeClass = auth()->user()->can('stock-lot-serial-management') ? 'badge' : '')
+                                    @if(1 == $OrderLine->delivery_status )  <span class="{{ trim($stockBadgeClass . ' badge-info') }}">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
+                                    @if(2 == $OrderLine->delivery_status )  <span class="{{ trim($stockBadgeClass . ' badge-warning') }}">{{ __('general_content.partly_stored_trans_key') }}</span>@endif
+                                    @if(3 == $OrderLine->delivery_status )  <span class="{{ trim($stockBadgeClass . ' badge-success') }}">{{ __('general_content.stock_trans_key') }}</span>@endif
                                 @else
                                     @if(1 == $OrderLine->delivery_status )  <span class="badge badge-info">{{ __('general_content.not_delivered_trans_key') }}</span>@endif
                                     @if(2 == $OrderLine->delivery_status )  
@@ -684,14 +685,19 @@
                                 @endcan
                                 <div>
                                     @if($OrderStatu != 6)
-                                        <a class="btn btn-primary btn-sm" wire:click="storeDelevery({{ $OrderId }})" href="#">
+                                        <a class="btn btn-success btn-sm mb-1" wire:click="createProductsFromSelectedLines" href="#">
+                                            <i class="fas fa-barcode"></i>
+                                            {{ __('general_content.create_products_from_selected_lines_trans_key') }}
+                                        </a>
+
+                                        <a class="btn btn-primary btn-sm mb-1" wire:click="storeDelevery({{ $OrderId }})" href="#">
                                             <i class="fas fa-folder"></i>
                                             {{ __('general_content.new_delivery_note_trans_key') }}
                                         </a>
                                         
                                         or
 
-                                        <a class="btn btn-primary btn-sm" wire:click="storeInvoice({{ $OrderId }})" href="#">
+                                        <a class="btn btn-primary btn-sm mb-1" wire:click="storeInvoice({{ $OrderId }})" href="#">
                                             <i class="fas fa-folder"></i>
                                             {{ __('general_content.new_invoice_trans_key') }}
                                         </a>

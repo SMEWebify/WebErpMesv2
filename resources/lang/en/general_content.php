@@ -526,6 +526,8 @@ return [
     'delete_line_trans_key'                    => 'Delete line',
     'break_down_task_trans_key'                => 'Break down the article task',
     'create_product_trans_key'                 => 'Create item from this line',
+    'create_products_from_selected_lines_trans_key'    => 'Create items from selected lines',
+    'create_products_from_selected_lines_success_trans_key' => 'Items created for selected lines',
 
     //LABEL
     'customer_info_trans_key'                  => 'Customer information',

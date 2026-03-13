@@ -516,6 +516,8 @@ return [
     'delete_line_trans_key'                    => '删除行',
     'break_down_task_trans_key'                => '分解该物料的任务',
     'create_product_trans_key'                 => '由此行创建产品',
+    'create_products_from_selected_lines_trans_key'    => '从所选行创建产品',
+    'create_products_from_selected_lines_success_trans_key' => '已为所选行创建产品',
 
     //LABEL
     'customer_info_trans_key'                  => '客户信息',
