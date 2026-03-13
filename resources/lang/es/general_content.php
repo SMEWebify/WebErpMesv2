@@ -466,6 +466,8 @@ return [
     'delete_line_trans_key'                    => 'Eliminar línea',
     'break_down_task_trans_key'                => 'Desglosar la tarea del artículo',
     'create_product_trans_key'                 => 'Crear artículo a partir de esta línea',
+    'create_products_from_selected_lines_trans_key'    => 'Crear artículos de las líneas seleccionadas',
+    'create_products_from_selected_lines_success_trans_key' => 'Artículos creados para las líneas seleccionadas',
 
     //LABEL
     'customer_info_trans_key'                  => 'Información del cliente',

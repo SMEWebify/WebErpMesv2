@@ -467,6 +467,8 @@ return [
     'delete_line_trans_key'             => 'حذف السطر',
     'break_down_task_trans_key'         => 'تفكيك مهمة المادة',
     'create_product_trans_key'          => 'إنشاء منتج من هذا السطر',
+    'create_products_from_selected_lines_trans_key'    => 'إنشاء المنتجات من السطور المحددة',
+    'create_products_from_selected_lines_success_trans_key' => 'تم إنشاء المنتجات للسطور المحددة',
 
     //LABEL
     'customer_info_trans_key'        => 'معلومات العميل',

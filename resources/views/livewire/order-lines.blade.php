@@ -684,14 +684,19 @@
                                 @endcan
                                 <div>
                                     @if($OrderStatu != 6)
-                                        <a class="btn btn-primary btn-sm" wire:click="storeDelevery({{ $OrderId }})" href="#">
+                                        <a class="btn btn-success btn-sm mb-1" wire:click="createProductsFromSelectedLines" href="#">
+                                            <i class="fas fa-barcode"></i>
+                                            {{ __('general_content.create_products_from_selected_lines_trans_key') }}
+                                        </a>
+
+                                        <a class="btn btn-primary btn-sm mb-1" wire:click="storeDelevery({{ $OrderId }})" href="#">
                                             <i class="fas fa-folder"></i>
                                             {{ __('general_content.new_delivery_note_trans_key') }}
                                         </a>
                                         
                                         or
 
-                                        <a class="btn btn-primary btn-sm" wire:click="storeInvoice({{ $OrderId }})" href="#">
+                                        <a class="btn btn-primary btn-sm mb-1" wire:click="storeInvoice({{ $OrderId }})" href="#">
                                             <i class="fas fa-folder"></i>
                                             {{ __('general_content.new_invoice_trans_key') }}
                                         </a>
