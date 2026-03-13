@@ -80,7 +80,6 @@
                 </span>
             @enderror
         </div>
-
         {{-- Mode field --}}
         @if(config('auth.login_mode_selector_enabled'))
             <div class="input-group mb-3">
