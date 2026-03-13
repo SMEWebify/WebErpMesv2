@@ -17,7 +17,9 @@
         <ul class="nav nav-tabs" id="productTab" role="tablist">
           <li class="nav-item"><a class="nav-link active" href="#Product" data-toggle="tab"><i class="fas fa-info-circle"></i> {{ __('general_content.product_info_trans_key') }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#TechnicalInfo" data-toggle="tab"><i class="fas fa-cogs"></i> {{ __('general_content.tech_bom_trans_key') }} {{ $Product->getAllTaskCountAttribute() }}</a></li>
+          @can('stock-lot-serial-management')
           <li class="nav-item"><a class="nav-link" href="#Stock" data-toggle="tab"><i class="fas fa-boxes"></i> {{ __('general_content.stock_trans_key') }} ({{ $Product->StockLocationProductCount() }})</a></li>
+          @endcan
           @if($CustomFields->count() > 0)
           <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab"><i class="fas fa-list"></i> {{ __('general_content.custom_fields_trans_key') }}</a></li>
           @endif
@@ -27,7 +29,9 @@
           <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab"><i class="fas fa-file-invoice"></i> {{ __('general_content.quotes_list_trans_key') }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab"><i class="fas fa-shopping-cart"></i> {{ __('general_content.orders_list_trans_key') }}</a></li>
           <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab"><i class="fas fa-cart-arrow-down"></i> {{ __('general_content.purchase_list_trans_key') }}</a></li>
+          @can('stock-lot-serial-management')
           <li class="nav-item"><a class="nav-link" href="#serialNumber" data-toggle="tab"><i class="fas fa-barcode"></i> {{ __('general_content.serial_numbers_trans_key') }}</a></li>
+          @endcan
           
           @if($Product->drawing_file)
           <li class="nav-item"><a class="nav-link" href="#DrawingViewer" data-toggle="tab"> {{ __('general_content.drawing_trans_key') }}</a></li>
@@ -526,11 +530,13 @@
         <div class="tab-pane " id="TechnicalInfo">
           @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id, 'statu' => 1])
         </div>
+        @can('stock-lot-serial-management')
         <div class="tab-pane " id="Stock">
           <x-adminlte-card title="{{ __('general_content.stock_location_product_list_trans_key') }}" theme="primary" maximizable>
             @include('include.table-stock-locations-products')
           </x-adminlte-card>
         </div>
+        @endcan
         @if($CustomFields->count() > 0)
         <div class="tab-pane" id="CustomFields">
           @include('include.custom-fields-form', ['id' => $Product->id, 'type' => 'product'])
@@ -694,9 +700,11 @@
         <div class="tab-pane" id="purchase">
           @livewire('purchases-lines-index' , ['search_product_id' => $Product->id, 'purchase_id' => null, 'OrderStatu' => 0 ])
         </div>
+        @can('stock-lot-serial-management')
         <div class="tab-pane" id="serialNumber">
           @livewire('serial-numbers-index' , ['product_id' => $Product->id ])
         </div>
+        @endcan
         @if($Product->drawing_file)
         <div class="tab-pane" id="DrawingViewer">
           <object data="{{ asset('drawing/'. $Product->drawing_file) }}" type="application/pdf" width="100%" height="1000px"></object>

@@ -672,6 +672,7 @@
                         <tr>
                             <th colspan="11"></th>
                             <th colspan="4">
+                                @can('stock-lot-serial-management')
                                 <div>
                                     <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
                                     <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" >
@@ -680,6 +681,7 @@
                                     <label for="CreateSerialNumber">{{ __('general_content.create_serial_number_trans_key') }}</label>
                                     <input type="checkbox" id="CreateSerialNumber" wire:model.live="CreateSerialNumber" >
                                 </div>
+                                @endcan
                                 <div>
                                     @if($OrderStatu != 6)
                                         <a class="btn btn-primary btn-sm" wire:click="storeDelevery({{ $OrderId }})" href="#">
