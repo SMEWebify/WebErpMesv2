@@ -19,7 +19,9 @@
       <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }} ({{ $Companie->getOrdersCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#delivery" data-toggle="tab">{{ __('general_content.deliverys_notes_list_trans_key') }} ({{ $Companie->getDeliverysCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#invoice" data-toggle="tab">{{ __('general_content.invoices_list_trans_key') }} ({{ $Companie->getInvoicesCountAttribute() }})</a></li>
+      @can('purchases-menu')
       <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Companie->getPurchasesCountAttribute() }})</a></li>
+      @endcan
       
       @if($Companie->statu_supplier == 2 )
       <li class="nav-item"><a class="nav-link" href="#evaluation" data-toggle="tab">{{ __('general_content.supplier_evaluations_trans_key') }}</a></li>
@@ -901,9 +903,11 @@
       <div class="tab-pane" id="invoice">
         @livewire('invoices-index' , ['idCompanie' => $Companie->id ])
       </div>
+      @can('purchases-menu')
       <div class="tab-pane" id="purchase">
         @livewire('purchases-index' , ['idCompanie' => $Companie->id ])
       </div>
+      @endcan
       <div class="tab-pane" id="evaluation">
         @php
           $newEvaluationLabel = trans('general_content.new_supplier_evaluation_trans_key');
