@@ -64,13 +64,11 @@
                 <div class="form-group">
                     <label>{{ __('general_content.entity_type_trans_key') }} :</label>
                     <select class="form-control" name="document_type" required>
-                        <option value="quote">{{ __('general_content.quote_trans_key') }}</option>
-                        <option value="order">{{ __('general_content.orders_trans_key') }}</option>
-                        <option value="delivery">{{ __('general_content.delivery_notes_trans_key') }}</option>
-                        <option value="invoice">{{ __('general_content.invoice_trans_key') }}</option>
-                        <option value="creditnote">{{ __('general_content.credit_note_trans_key') }}</option>
-                        <option value="purchase-quotation">{{ __('general_content.requests_for_quotation_list_trans_key') }}</option>
-                        <option value="purchase">{{ __('general_content.purchase_order_trans_key') }}</option>
+                        @forelse($availableDocumentTypes as $value => $label)
+                            <option value="{{ $value }}">{{ __($label) }}</option>
+                        @empty
+                            <option value="" disabled selected>{{ __('general_content.no_data_trans_key') }}</option>
+                        @endforelse
                     </select>
                 </div>
                 <div class="form-group">
@@ -82,7 +80,7 @@
                     <textarea name="content" class="form-control summernote" required></textarea>
                 </div>
                 <div class="card-footer">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
+                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save" :disabled="empty($availableDocumentTypes)"/>
                 </div>
             </form>
         </x-adminlte-card>
