@@ -281,8 +281,10 @@ class QuoteLine extends Component
     private function loadProductCustomFields($quoteLines): void
     {
         foreach ($quoteLines as $line) {
+            $productId = is_numeric($line->product_id) ? (int) $line->product_id : null;
+
             $this->productCustomFields[$line->id] = $this->customFieldService
-                ->getProductCustomFieldsForQuoteLine($line->product_id, $line->id);
+                ->getProductCustomFieldsForQuoteLine($productId, $line->id);
         }
     }
 
