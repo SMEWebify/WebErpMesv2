@@ -34,8 +34,12 @@ class CustomFieldService
      * previously saved for the provided quote line (entity_type = quote_line)
      * and the product's own value as a fallback.
      */
-    public function getProductCustomFieldsForQuoteLine(?int $productId, int $quoteLineId)
+    public function getProductCustomFieldsForQuoteLine(int|string|null $productId, int $quoteLineId)
     {
+        if (is_string($productId)) {
+            $productId = ctype_digit($productId) ? (int) $productId : null;
+        }
+
         if (!$productId) {
             return collect();
         }
