@@ -44,6 +44,9 @@
             <table width="100%; border: none; ">
                 <tr>
                     <td align="left" style="width: 50%; background-color: {{ $Factory->pdf_header_font_color }}">
+                        @if($image)
+                            <img src="data:image/png;base64,{{ $image }}" alt="Logo" style="height: 120px;"/>
+                        @endif
                     </td>
                     <td colspan="2" align="center" style="width: 400%; background-color: {{ $Factory->pdf_header_font_color }}">
                         <h2>{{ $typeDocumentName }}</h2>
