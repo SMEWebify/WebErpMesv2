@@ -92,7 +92,7 @@
                                 </div>
                             </td>
                             <td>{{ $OrderLine->code }}</td>
-                            <td   @if($OrderLine->product_id )  class="bg-{{ $OrderLine->Product->getColorStockStatu() }} color-palette" @endif>
+                            <td @if($OrderLine->product_id && auth()->user()->can('stock-lot-serial-management')) class="bg-{{ $OrderLine->Product->getColorStockStatu() }} color-palette" @endif>
                                 @if($OrderLine->product_id ) <x-ButtonTextView route="{{ route('products.show', ['id' => $OrderLine->product_id])}}" />@endif
                             </td>
                             <td>{{ $OrderLine->label }}</td>
