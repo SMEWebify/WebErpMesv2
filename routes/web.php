@@ -394,16 +394,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importProducts')->name('products.import');
 
         // Serial numbers routes
-        Route::group(['prefix' => 'serial-numbers'], function () {
+        Route::group(['prefix' => 'serial-numbers', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::get('/', 'App\Http\Controllers\Products\SerialNumbersController@index')->name('products.serialNumbers');
         });
 
-        Route::group(['prefix' => 'batches'], function () {
+        Route::group(['prefix' => 'batches', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::get('/', 'App\Http\Controllers\Products\BatchesController@index')->name('products.batches');
         });
 
         // Stock routes
-        Route::group(['prefix' => 'Stock'], function () {
+        Route::group(['prefix' => 'Stock', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::get('/', 'App\Http\Controllers\Products\StockController@index')->name('products.stock');
             Route::post('/create', 'App\Http\Controllers\Products\StockController@store')->name('products.stock.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->name('products.stock.update');
@@ -415,14 +415,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
 
         // Stock Location routes
-        Route::group(['prefix' => 'stock/location'], function () {
+        Route::group(['prefix' => 'stock/location', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::post('/create', 'App\Http\Controllers\Products\StockLocationController@store')->name('products.stocklocation.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\StockLocationController@update')->name('products.stocklocation.update');
             Route::get('/{id}', 'App\Http\Controllers\Products\StockLocationController@show')->name('products.stocklocation.show');
         });
 
         // Stock Location Products routes
-        Route::group(['prefix' => 'stock/location/product'], function () {
+        Route::group(['prefix' => 'stock/location/product', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::post('/create', 'App\Http\Controllers\Products\StockLocationProductsController@store')->name('products.stockline.store');
             Route::post('/create/internal-order', 'App\Http\Controllers\Products\StockLocationProductsController@storeFromInternalOrder')->name('products.stockline.store.from.internal.order');
             Route::post('/create/purchase-order', 'App\Http\Controllers\Products\StockLocationProductsController@storeFromPurchaseOrder')->name('products.stockline.store.from.purchase.order');

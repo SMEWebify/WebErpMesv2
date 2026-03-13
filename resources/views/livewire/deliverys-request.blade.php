@@ -92,10 +92,12 @@
                         @error('companies_contacts_id') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
                     <div class="form-group col-md-3">
+                        @can('stock-lot-serial-management')
                         <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
                         <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" >
                         <label for="CreateSerialNumber">{{ __('general_content.create_serial_number_trans_key') }}</label>
                         <input type="checkbox" id="CreateSerialNumber" wire:model.live="CreateSerialNumber" >
+                        @endcan
                     </div>
                     
                     <div class="form-group col-md-3"><br/>

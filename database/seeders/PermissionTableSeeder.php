@@ -25,6 +25,7 @@ class PermissionTableSeeder  extends Seeder
                         'deliverys-menu',
                         'invoices-menu',
                         'products-menu',
+                        'stock-lot-serial-management',
                         'purchases-menu',
                         'quality-menu',
                         'settings-time-menu',

@@ -479,16 +479,19 @@ return [
                     'text' => 'serial_numbers_trans_key',
                     'url'  => 'products/serial-numbers',
                     'icon_color' => 'info',
+                    'can'  => ['stock-lot-serial-management'],
                 ],
                 [
                     'text' => 'batches_trans_key',
                     'url'  => 'products/batches',
                     'icon_color' => 'info', // choose color consistent with design
+                    'can'  => ['stock-lot-serial-management'],
                 ],
                 [
                     'text' => 'stock_trans_key',
                     'url'  => 'products/Stock',
                     'icon_color' => 'primary',
+                    'can'  => ['stock-lot-serial-management'],
                 ],
                 /*[
                     'text' => 'inventory_trans_key',
