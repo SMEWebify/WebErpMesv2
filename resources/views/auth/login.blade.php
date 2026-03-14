@@ -138,4 +138,7 @@
             </a>
         </p>
     @endif
+
+
+    <p class="my-2 text-muted">v1.19</p>
 @stop
