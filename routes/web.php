@@ -8,6 +8,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\ProductionTraceController;
 use App\Http\Controllers\EnergyConsumptionController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\SpreadsheetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/documents', [DocumentController::class, 'index'])
         ->middleware(['auth', 'check.factory'])
         ->name('documents.index');
+
+    Route::group(['prefix' => 'spreadsheet', 'middleware' => ['auth', 'check.factory']], function () {
+        // TODO: add role-based permission
+        Route::get('/', [SpreadsheetController::class, 'index'])->name('spreadsheet.index');
+        Route::get('/create', [SpreadsheetController::class, 'create'])->name('spreadsheet.create');
+        Route::post('/', [SpreadsheetController::class, 'store'])->name('spreadsheet.store');
+        Route::get('/{spreadsheet}/edit', [SpreadsheetController::class, 'edit'])->name('spreadsheet.edit');
+        Route::put('/{spreadsheet}', [SpreadsheetController::class, 'update'])->name('spreadsheet.update');
+        Route::delete('/{spreadsheet}', [SpreadsheetController::class, 'destroy'])->name('spreadsheet.destroy');
+        Route::post('/{spreadsheet}/save', [SpreadsheetController::class, 'save'])->name('spreadsheet.save');
+    });
 
     Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'check.factory'])->name('workshop');
