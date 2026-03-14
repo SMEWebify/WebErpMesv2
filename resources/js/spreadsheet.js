@@ -1,79 +1,125 @@
+// ─── CSS — ordre obligatoire ──────────────────────────────────────────────────
+import '@univerjs/design/lib/index.css';
 import '@univerjs/ui/lib/index.css';
-import { Univer, LocaleType, merge } from '@univerjs/core';
-import { UniverSheetsPlugin } from '@univerjs/sheets';
-import { UniverSheetsUIPlugin } from '@univerjs/sheets-ui';
-import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
+import '@univerjs/docs-ui/lib/index.css';
+import '@univerjs/sheets-ui/lib/index.css';
+import '@univerjs/sheets-formula-ui/lib/index.css';
+import '@univerjs/sheets-numfmt-ui/lib/index.css';
+
+// ─── Core ─────────────────────────────────────────────────────────────────────
+import {
+    Univer,
+    LocaleType,
+    mergeLocales,
+    UniverInstanceType,
+    IUniverInstanceService,
+    ICommandService,
+} from '@univerjs/core';
+
+// ─── Locales ──────────────────────────────────────────────────────────────────
+import DesignFrFR        from '@univerjs/design/lib/locale/fr-FR';
+import UIFrFR            from '@univerjs/ui/lib/locale/fr-FR';
+import DocsFrFR          from '@univerjs/docs-ui/lib/locale/fr-FR';
+import SheetsFrFR        from '@univerjs/sheets/lib/locale/fr-FR';
+import SheetsUIFrFR      from '@univerjs/sheets-ui/lib/locale/fr-FR';
+import SheetsFormulaFrFR from '@univerjs/sheets-formula-ui/lib/locale/fr-FR';
+import SheetsNumfmtFrFR  from '@univerjs/sheets-numfmt-ui/lib/locale/fr-FR';
+
+// ─── Plugins ──────────────────────────────────────────────────────────────────
+import { UniverRenderEnginePlugin }      from '@univerjs/engine-render';
+import { UniverFormulaEnginePlugin }     from '@univerjs/engine-formula';
+import { UniverUIPlugin }                from '@univerjs/ui';
+import { UniverDocsPlugin }              from '@univerjs/docs';
+import { UniverDocsUIPlugin }            from '@univerjs/docs-ui';
+import { UniverSheetsPlugin }            from '@univerjs/sheets';
+import { UniverSheetsUIPlugin }          from '@univerjs/sheets-ui';
+import { UniverSheetsFormulaPlugin }     from '@univerjs/sheets-formula';
+import { UniverSheetsFormulaUIPlugin }   from '@univerjs/sheets-formula-ui';
+import { UniverSheetsNumfmtPlugin }      from '@univerjs/sheets-numfmt';
+import { UniverSheetsNumfmtUIPlugin }    from '@univerjs/sheets-numfmt-ui';
+
+// ─── Facades (optionnel mais recommandé pour l'API save/load) ─────────────────
+
 import { WemFormulaPlugin } from './plugins/WemFormulaPlugin';
 
+// ─── Init ─────────────────────────────────────────────────────────────────────
 const config = window.WEM_SPREADSHEET;
 
-if (config && document.getElementById('univer-container')) {
-    const registerPlugin = (univer, plugin, options = undefined) => {
-        if (options === undefined) {
-            univer.registerPlugin(plugin);
-            return;
-        }
-
-        univer.registerPlugin(plugin, options);
-    };
-
+if (!config || !document.getElementById('univer-container')) {
+    console.error('WEM Spreadsheet: config ou container manquant');
+} else {
     const univer = new Univer({
-        locale: LocaleType.FR_FR,
-        locales: {},
-    });
+    locale: LocaleType.FR_FR,
+    locales: {
+        [LocaleType.FR_FR]: mergeLocales(
+            DesignFrFR,
+            UIFrFR,
+            DocsFrFR,
+            SheetsFrFR,
+            SheetsUIFrFR,
+            SheetsFormulaFrFR,
+            SheetsNumfmtFrFR,
+        ),
+    },
+});
 
-    registerPlugin(univer, UniverSheetsPlugin);
-    registerPlugin(univer, UniverSheetsFormulaPlugin);
-    registerPlugin(univer, UniverSheetsUIPlugin, {
+    // ─── Ordre d'enregistrement obligatoire ───────────────────────────────────
+    univer.registerPlugin(UniverRenderEnginePlugin);
+    univer.registerPlugin(UniverFormulaEnginePlugin);
+
+    univer.registerPlugin(UniverUIPlugin, {
         container: 'univer-container',
     });
 
+    univer.registerPlugin(UniverDocsPlugin);
+    univer.registerPlugin(UniverDocsUIPlugin);
+
+    univer.registerPlugin(UniverSheetsPlugin);
+    univer.registerPlugin(UniverSheetsUIPlugin);
+    univer.registerPlugin(UniverSheetsFormulaPlugin);
+    univer.registerPlugin(UniverSheetsFormulaUIPlugin);
+    univer.registerPlugin(UniverSheetsNumfmtPlugin);
+    univer.registerPlugin(UniverSheetsNumfmtUIPlugin);
+
+    // ─── Charger les données existantes ───────────────────────────────────────
     const workbookData = {
         id: `spreadsheet-${config.id}`,
         name: config.name,
-        sheetOrder: config.sheets.map((sheet, index) => sheet?.data?.id || `sheet-${index + 1}`),
+        sheetOrder: config.sheets.map((s, i) => s?.data?.id || `sheet-${i + 1}`),
         sheets: config.sheets.reduce((carry, sheet, index) => {
             const sheetId = sheet?.data?.id || `sheet-${index + 1}`;
-            carry[sheetId] = merge(
-                {
-                    id: sheetId,
-                    name: sheet.name || `Sheet${index + 1}`,
-                    cellData: {},
-                },
-                sheet.data || {}
-            );
-
+            carry[sheetId] = {
+                id: sheetId,
+                name: sheet.name || `Feuille${index + 1}`,
+                cellData: {},
+                ...(sheet.data || {}),
+            };
             return carry;
         }, {}),
     };
 
-    univer.createUnit('UNIVER_SHEET', workbookData);
+    univer.createUnit(UniverInstanceType.UNIVER_SHEET, workbookData);
 
-    const wemFormulaPlugin = new WemFormulaPlugin({ dataApiBase: config.dataApiBase });
-    wemFormulaPlugin.register(univer);
+    // ─── Plugin formules WEM ──────────────────────────────────────────────────
+    const wemPlugin = new WemFormulaPlugin({ dataApiBase: config.dataApiBase });
+    wemPlugin.register(univer);
 
+    // ─── Auto-save ────────────────────────────────────────────────────────────
     const saveStatus = document.getElementById('save-status');
     let saveTimer = null;
 
     const setStatus = (text) => {
-        if (saveStatus) {
-            saveStatus.textContent = text;
-        }
+        if (saveStatus) saveStatus.textContent = text;
     };
 
     const saveWorkbook = async () => {
         setStatus('Enregistrement…');
 
-        const workbook = univer.getActiveWorkbook();
-        const snapshot = workbook ? workbook.save() : null;
+        const instanceService = univer.__getInjector().get(IUniverInstanceService);
+        const workbook = instanceService.getCurrentUnitForType(UniverInstanceType.UNIVER_SHEET);
+        const snapshot = workbook?.save() ?? null;
 
-        const payloadSheets = (config.sheets || []).map((sheet, index) => ({
-            id: sheet.id,
-            name: sheet.name || `Sheet${index + 1}`,
-            data: snapshot,
-        }));
-
-        await fetch(config.saveUrl, {
+        const res = await fetch(config.saveUrl, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -81,10 +127,10 @@ if (config && document.getElementById('univer-container')) {
                 'X-CSRF-TOKEN': config.csrfToken,
                 Accept: 'application/json',
             },
-            body: JSON.stringify({ sheets: payloadSheets }),
+            body: JSON.stringify({ snapshot }),
         });
 
-        setStatus('Enregistré ✓');
+        setStatus(res.ok ? 'Enregistré ✓' : 'Erreur de sauvegarde');
     };
 
     const debounceSave = () => {
@@ -94,8 +140,9 @@ if (config && document.getElementById('univer-container')) {
         }, 2000);
     };
 
-    const commandService = univer.__getInjector().get('commandService', null);
-    if (commandService && typeof commandService.onCommandExecuted === 'function') {
+    // Écoute des changements via ICommandService
+    const commandService = univer.__getInjector().get(ICommandService);
+    if (commandService?.onCommandExecuted) {
         commandService.onCommandExecuted(() => debounceSave());
     }
 }
