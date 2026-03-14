@@ -45,8 +45,8 @@ return [
     |
     */
 
-    'logo' => 'v1.19',
-    'logo_img' => 'vendor/adminlte/dist/img/simple-logo.PNG',
+    'logo' => '',
+    'logo_img' => 'vendor/adminlte/dist/img/simple-logo -R.PNG',
     'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
