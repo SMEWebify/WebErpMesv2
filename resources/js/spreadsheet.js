@@ -1,20 +1,14 @@
 import '@univerjs/ui/lib/index.css';
 import { Univer, LocaleType, merge } from '@univerjs/core';
-import * as UniverSheets from '@univerjs/sheets';
-import * as UniverSheetsUI from '@univerjs/sheets-ui';
-import * as UniverSheetsFormula from '@univerjs/sheets-formula';
+import { UniverSheetsPlugin } from '@univerjs/sheets';
+import { UniverSheetsUIPlugin } from '@univerjs/sheets-ui';
+import { UniverSheetsFormulaPlugin } from '@univerjs/sheets-formula';
 import { WemFormulaPlugin } from './plugins/WemFormulaPlugin';
 
 const config = window.WEM_SPREADSHEET;
 
 if (config && document.getElementById('univer-container')) {
-    const firstAvailable = (...candidates) => candidates.find(Boolean);
-
-    const registerPluginIfAvailable = (univer, plugin, options = undefined) => {
-        if (!plugin) {
-            return;
-        }
-
+    const registerPlugin = (univer, plugin, options = undefined) => {
         if (options === undefined) {
             univer.registerPlugin(plugin);
             return;
@@ -23,32 +17,14 @@ if (config && document.getElementById('univer-container')) {
         univer.registerPlugin(plugin, options);
     };
 
-    const sheetsPlugin = firstAvailable(
-        UniverSheets.UniverSheetsPlugin,
-        UniverSheets.default,
-        UniverSheets.plugin
-    );
-    const sheetsUIPlugin = firstAvailable(
-        UniverSheetsUI.UniverSheetsUIPlugin,
-        UniverSheetsUI.default,
-        UniverSheetsUI.plugin
-    );
-    const formulaPlugin =
-        firstAvailable(
-            UniverSheetsFormula.UniverFormulaEnginePlugin,
-            UniverSheetsFormula.UniverSheetsFormulaPlugin,
-            UniverSheetsFormula.default,
-            UniverSheetsFormula.plugin
-        );
-
     const univer = new Univer({
         locale: LocaleType.FR_FR,
         locales: {},
     });
 
-    registerPluginIfAvailable(univer, sheetsPlugin);
-    registerPluginIfAvailable(univer, formulaPlugin);
-    registerPluginIfAvailable(univer, sheetsUIPlugin, {
+    registerPlugin(univer, UniverSheetsPlugin);
+    registerPlugin(univer, UniverSheetsFormulaPlugin);
+    registerPlugin(univer, UniverSheetsUIPlugin, {
         container: 'univer-container',
     });
 
