@@ -791,6 +791,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/orders', [SpreadsheetDataController::class, 'orders'])->name('orders');
         Route::get('/revenue', [SpreadsheetDataController::class, 'revenue'])->name('revenue');
         Route::get('/production/kpis', [SpreadsheetDataController::class, 'productionKpis'])->name('productionKpis');
+        Route::get('/orders/late', [SpreadsheetDataController::class, 'lateOrders'])->name('lateOrders');
+        Route::get('/orders/summary', [SpreadsheetDataController::class, 'ordersSummary'])->name('ordersSummary');
+        Route::get('/context', [SpreadsheetDataController::class, 'context'])->name('context');
         Route::get('/customers', [SpreadsheetDataController::class, 'customers'])->name('customers');
         Route::get('/products', [SpreadsheetDataController::class, 'products'])->name('products');
     });

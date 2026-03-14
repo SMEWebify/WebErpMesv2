@@ -41,7 +41,7 @@ export class WemFormulaPlugin {
     }
 
     async _prefetch() {
-        for (const path of ['/orders?status=open', '/production/kpis']) {
+        for (const path of ['/orders?status=open', '/production/kpis', '/orders/summary', '/orders/late', '/context']) {
             try {
                 const res = await fetch(`${this.dataApiBase}${path}`, {
                     headers: { Accept: 'application/json' },
@@ -93,6 +93,57 @@ export class WemFormulaPlugin {
                     calculate() {
                         const data = self.fetchSync('/production/kpis');
                         return NumberValueObject.create(Number(data?.late_orders || 0));
+                    },
+                },
+                {
+                    name: 'WEM_LISTE_COMMANDES_RETARD',
+                    calculate() {
+                        const data = self.fetchSync('/orders/late');
+                        const refs = Array.isArray(data)
+                            ? data.map((order) => order?.reference).filter(Boolean)
+                            : [];
+                        return StringValueObject.create(refs.join(', '));
+                    },
+                },
+                {
+                    name: 'WEM_LISTE_COMMANDES',
+                    calculate(status) {
+                        const requestedStatus = status?.getValue?.()?.toString()?.trim() || 'all';
+                        const allowed = ['all', 'open', 'closed'];
+                        const normalizedStatus = allowed.includes(requestedStatus) ? requestedStatus : 'all';
+                        const data = self.fetchSync(`/orders?status=${encodeURIComponent(normalizedStatus)}`);
+                        const refs = Array.isArray(data)
+                            ? data.map((order) => order?.reference).filter(Boolean)
+                            : [];
+                        return StringValueObject.create(refs.join(', '));
+                    },
+                },
+                {
+                    name: 'WEM_CA_COMMANDES_OUVERTES',
+                    calculate() {
+                        const data = self.fetchSync('/orders/summary');
+                        return NumberValueObject.create(Number(data?.open_orders_total_ht || 0));
+                    },
+                },
+                {
+                    name: 'WEM_MOIS_COURANT',
+                    calculate() {
+                        const data = self.fetchSync('/context');
+                        return StringValueObject.create((data?.current_month || '').toString());
+                    },
+                },
+                {
+                    name: 'WEM_AUJOURDHUI',
+                    calculate() {
+                        const data = self.fetchSync('/context');
+                        return StringValueObject.create((data?.today || '').toString());
+                    },
+                },
+                {
+                    name: 'WEM_ANNEE_COURANTE',
+                    calculate() {
+                        const data = self.fetchSync('/context');
+                        return NumberValueObject.create(Number(data?.current_year || 0));
                     },
                 },
             ];

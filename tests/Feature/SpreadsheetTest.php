@@ -90,8 +90,17 @@ class SpreadsheetTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Aide formules');
-        $response->assertSee('WEM.STOCK(reference)');
-        $response->assertSee('WEM.COMMANDES_EN_COURS()');
+        $response->assertSee('WEM_STOCK(reference)');
+        $response->assertSee('WEM_COMMANDES_EN_COURS()');
+        $response->assertSee('WEM_COMMANDES_RETARD()');
+        $response->assertSee('WEM_LISTE_COMMANDES_RETARD()');
+        $response->assertSee('WEM_LISTE_COMMANDES([status])');
+        $response->assertSee('WEM_CA_COMMANDES_OUVERTES()');
+        $response->assertSee('WEM_CA_MOIS(mois)');
+        $response->assertSee('WEM_DELAI_MOYEN()');
+        $response->assertSee('WEM_MOIS_COURANT()');
+        $response->assertSee('WEM_AUJOURDHUI()');
+        $response->assertSee('WEM_ANNEE_COURANTE()');
     }
 
     public function test_stock_data_endpoint_returns_json(): void
@@ -107,6 +116,52 @@ class SpreadsheetTest extends TestCase
             'quantity',
             'unit',
             'updated_at',
+        ]);
+    }
+
+
+    public function test_late_orders_data_endpoint_returns_json(): void
+    {
+        $this->withoutMiddleware();
+
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson('/api/spreadsheet/data/orders/late');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_orders_summary_data_endpoint_returns_json(): void
+    {
+        $this->withoutMiddleware();
+
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson('/api/spreadsheet/data/orders/summary');
+
+        $response->assertStatus(200)->assertJsonStructure([
+            'month',
+            'total_orders',
+            'open_orders',
+            'late_orders',
+            'open_orders_total_ht',
+            'month_revenue_ht',
+            'month_revenue_count',
+        ]);
+    }
+
+    public function test_context_data_endpoint_returns_json(): void
+    {
+        $this->withoutMiddleware();
+
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson('/api/spreadsheet/data/context');
+
+        $response->assertStatus(200)->assertJsonStructure([
+            'today',
+            'current_month',
+            'current_year',
         ]);
     }
 
