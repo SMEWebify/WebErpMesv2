@@ -5,12 +5,88 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <h1>{{ $spreadsheet->name }}</h1>
-        <span id="save-status" class="text-muted">Prêt</span>
+        <div class="d-flex align-items-center">
+            <button
+                type="button"
+                class="btn btn-outline-info btn-sm mr-3"
+                data-toggle="modal"
+                data-target="#spreadsheet-help-modal"
+            >
+                Aide formules
+            </button>
+            <span id="save-status" class="text-muted">Prêt</span>
+        </div>
     </div>
 @stop
 
 @section('content')
     <div id="univer-container" style="height: calc(100vh - 60px);"></div>
+
+    <div class="modal fade" id="spreadsheet-help-modal" tabindex="-1" role="dialog" aria-labelledby="spreadsheet-help-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="spreadsheet-help-modal-label">Aide des formules tableur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Vous pouvez utiliser les fonctions standards du tableur (ex: <code>=SUM(A1:A10)</code>,
+                        <code>=IF(A1&gt;0;"OK";"KO")</code>) ainsi que les formules métier WEM ci-dessous.
+                    </p>
+
+                    <h6 class="mt-3">Formules WEM disponibles</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Formule</th>
+                                    <th>Description</th>
+                                    <th>Exemple</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>WEM.STOCK(reference)</code></td>
+                                    <td>Retourne le stock actuel d'une référence article.</td>
+                                    <td><code>=WEM.STOCK("REF-001")</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM.COMMANDES_EN_COURS()</code></td>
+                                    <td>Retourne le nombre de commandes ouvertes.</td>
+                                    <td><code>=WEM.COMMANDES_EN_COURS()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM.CA_MOIS(mois)</code></td>
+                                    <td>Retourne le chiffre d'affaires HT du mois (format <code>YYYY-MM</code>).</td>
+                                    <td><code>=WEM.CA_MOIS("2026-03")</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM.DELAI_MOYEN()</code></td>
+                                    <td>Retourne le délai moyen de production en jours.</td>
+                                    <td><code>=WEM.DELAI_MOYEN()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM.COMMANDES_RETARD()</code></td>
+                                    <td>Retourne le nombre de commandes en retard.</td>
+                                    <td><code>=WEM.COMMANDES_RETARD()</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <small class="text-muted">
+                        Astuce&nbsp;: après avoir saisi une formule, appuyez sur Entrée pour calculer la cellule.
+                    </small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         window.WEM_SPREADSHEET = {
