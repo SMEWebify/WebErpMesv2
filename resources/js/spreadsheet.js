@@ -2,20 +2,36 @@ import '@univerjs/ui/lib/index.css';
 import { Univer, LocaleType, merge } from '@univerjs/core';
 import { UniverSheetsPlugin } from '@univerjs/sheets';
 import { UniverSheetsUIPlugin } from '@univerjs/sheets-ui';
-import { UniverFormulaEnginePlugin } from '@univerjs/sheets-formula';
+import * as UniverSheetsFormula from '@univerjs/sheets-formula';
 import { WemFormulaPlugin } from './plugins/WemFormulaPlugin';
 
 const config = window.WEM_SPREADSHEET;
 
 if (config && document.getElementById('univer-container')) {
+    const registerPluginIfAvailable = (univer, plugin, options = undefined) => {
+        if (!plugin) {
+            return;
+        }
+
+        if (options === undefined) {
+            univer.registerPlugin(plugin);
+            return;
+        }
+
+        univer.registerPlugin(plugin, options);
+    };
+
+    const formulaPlugin =
+        UniverSheetsFormula.UniverFormulaEnginePlugin || UniverSheetsFormula.UniverSheetsFormulaPlugin;
+
     const univer = new Univer({
         locale: LocaleType.FR_FR,
         locales: {},
     });
 
-    univer.registerPlugin(UniverSheetsPlugin);
-    univer.registerPlugin(UniverFormulaEnginePlugin);
-    univer.registerPlugin(UniverSheetsUIPlugin, {
+    registerPluginIfAvailable(univer, UniverSheetsPlugin);
+    registerPluginIfAvailable(univer, formulaPlugin);
+    registerPluginIfAvailable(univer, UniverSheetsUIPlugin, {
         container: 'univer-container',
     });
 
