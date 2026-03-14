@@ -741,6 +741,13 @@ return [
                 ],
             ],
         ],
+
+        [
+            'text' => 'Tableurs',
+            'icon' => 'nav-icon fas fa-table',
+            'url'  => 'spreadsheet',
+            'active' => ['spreadsheet*'],
+        ],
         [
             'text' => 'Reports',
             'icon' => 'fas fa-chart-pie',
