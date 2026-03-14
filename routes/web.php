@@ -1,14 +1,15 @@
 <?php
 
-use Livewire\Livewire;
-use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use App\Http\Controllers\AttendanceController;
-use Illuminate\Support\Facades\Route;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use App\Http\Controllers\ProductionTraceController;
-use App\Http\Controllers\EnergyConsumptionController;
+use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EnergyConsumptionController;
+use App\Http\Controllers\ProductionTraceController;
 use App\Http\Controllers\SpreadsheetController;
+use App\Http\Controllers\SpreadsheetDataController;
+use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
 |--------------------------------------------------------------------------
@@ -784,3 +785,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 });
+
+    Route::prefix('api/spreadsheet/data')->name('spreadsheet.data.')->group(function () {
+        Route::get('/stock/{reference}', [SpreadsheetDataController::class, 'stock'])->name('stock');
+        Route::get('/orders', [SpreadsheetDataController::class, 'orders'])->name('orders');
+        Route::get('/revenue', [SpreadsheetDataController::class, 'revenue'])->name('revenue');
+        Route::get('/production/kpis', [SpreadsheetDataController::class, 'productionKpis'])->name('productionKpis');
+        Route::get('/customers', [SpreadsheetDataController::class, 'customers'])->name('customers');
+        Route::get('/products', [SpreadsheetDataController::class, 'products'])->name('products');
+    });

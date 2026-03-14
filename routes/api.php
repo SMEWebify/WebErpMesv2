@@ -42,14 +42,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/exports/sales-orders', ExportSalesOrderController::class);
 
 
-    Route::prefix('spreadsheet/data')->name('spreadsheet.data.')->group(function () {
-        Route::get('/stock/{reference}', [SpreadsheetDataController::class, 'stock'])->name('stock');
-        Route::get('/orders', [SpreadsheetDataController::class, 'orders'])->name('orders');
-        Route::get('/revenue', [SpreadsheetDataController::class, 'revenue'])->name('revenue');
-        Route::get('/production/kpis', [SpreadsheetDataController::class, 'productionKpis'])->name('productionKpis');
-        Route::get('/customers', [SpreadsheetDataController::class, 'customers'])->name('customers');
-        Route::get('/products', [SpreadsheetDataController::class, 'products'])->name('products');
-    });
+
 
     Route::prefix('collaboration/whiteboards')->name('api.collaboration.whiteboards.')->group(function () {
         Route::get('/', [ApiWhiteboardController::class, 'index'])->name('index');

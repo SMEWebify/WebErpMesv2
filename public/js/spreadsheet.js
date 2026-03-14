@@ -240891,7 +240891,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   WemFormulaPlugin: () => (/* binding */ WemFormulaPlugin)
 /* harmony export */ });
+/* harmony import */ var _univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @univerjs/engine-formula */ "./node_modules/@univerjs/engine-formula/lib/es/index.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -240901,6 +240909,7 @@ function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = 
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 var CACHE_TTL_MS = 30000;
 var WemFormulaPlugin = /*#__PURE__*/function () {
   function WemFormulaPlugin() {
@@ -240910,6 +240919,7 @@ var WemFormulaPlugin = /*#__PURE__*/function () {
     _classCallCheck(this, WemFormulaPlugin);
     this.dataApiBase = dataApiBase;
     this.cache = new Map();
+    this._prefetch();
   }
   return _createClass(WemFormulaPlugin, [{
     key: "getCache",
@@ -240932,205 +240942,135 @@ var WemFormulaPlugin = /*#__PURE__*/function () {
       return value;
     }
   }, {
-    key: "fetchJson",
+    key: "fetchSync",
+    value: function fetchSync(path) {
+      var cached = this.getCache(path);
+      if (cached !== null) return cached;
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "".concat(this.dataApiBase).concat(path), false);
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.withCredentials = true;
+      xhr.send();
+      if (xhr.status === 200) {
+        return this.setCache(path, JSON.parse(xhr.responseText));
+      }
+      return null;
+    }
+  }, {
+    key: "_prefetch",
     value: function () {
-      var _fetchJson = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(path) {
-        var key, cached, response, data;
+      var _prefetch2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        var _i, _arr, path, res, _t, _t2, _t3;
         return _regenerator().w(function (_context) {
-          while (1) switch (_context.n) {
+          while (1) switch (_context.p = _context.n) {
             case 0:
-              key = path;
-              cached = this.getCache(key);
-              if (!(cached !== null)) {
-                _context.n = 1;
+              _i = 0, _arr = ['/orders?status=open', '/production/kpis'];
+            case 1:
+              if (!(_i < _arr.length)) {
+                _context.n = 7;
                 break;
               }
-              return _context.a(2, cached);
-            case 1:
-              _context.n = 2;
+              path = _arr[_i];
+              _context.p = 2;
+              _context.n = 3;
               return fetch("".concat(this.dataApiBase).concat(path), {
                 headers: {
                   Accept: 'application/json'
                 },
                 credentials: 'same-origin'
               });
-            case 2:
-              response = _context.v;
-              _context.n = 3;
-              return response.json();
             case 3:
-              data = _context.v;
-              return _context.a(2, this.setCache(key, data));
+              res = _context.v;
+              _t = this;
+              _t2 = path;
+              _context.n = 4;
+              return res.json();
+            case 4:
+              _t.setCache.call(_t, _t2, _context.v);
+              _context.n = 6;
+              break;
+            case 5:
+              _context.p = 5;
+              _t3 = _context.v;
+            case 6:
+              _i++;
+              _context.n = 1;
+              break;
+            case 7:
+              return _context.a(2);
           }
-        }, _callee, this);
+        }, _callee, this, [[2, 5]]);
       }));
-      function fetchJson(_x) {
-        return _fetchJson.apply(this, arguments);
+      function _prefetch() {
+        return _prefetch2.apply(this, arguments);
       }
-      return fetchJson;
-    }()
-  }, {
-    key: "stock",
-    value: function () {
-      var _stock = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(reference) {
-        var data;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.n) {
-            case 0:
-              _context2.n = 1;
-              return this.fetchJson("/stock/".concat(encodeURIComponent(reference)));
-            case 1:
-              data = _context2.v;
-              return _context2.a(2, Number(data.quantity || 0));
-          }
-        }, _callee2, this);
-      }));
-      function stock(_x2) {
-        return _stock.apply(this, arguments);
-      }
-      return stock;
-    }()
-  }, {
-    key: "commandesEnCours",
-    value: function () {
-      var _commandesEnCours = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-        var data;
-        return _regenerator().w(function (_context3) {
-          while (1) switch (_context3.n) {
-            case 0:
-              _context3.n = 1;
-              return this.fetchJson('/orders?status=open');
-            case 1:
-              data = _context3.v;
-              return _context3.a(2, Array.isArray(data) ? data.length : 0);
-          }
-        }, _callee3, this);
-      }));
-      function commandesEnCours() {
-        return _commandesEnCours.apply(this, arguments);
-      }
-      return commandesEnCours;
-    }()
-  }, {
-    key: "caMois",
-    value: function () {
-      var _caMois = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(month) {
-        var data;
-        return _regenerator().w(function (_context4) {
-          while (1) switch (_context4.n) {
-            case 0:
-              _context4.n = 1;
-              return this.fetchJson("/revenue?month=".concat(encodeURIComponent(month)));
-            case 1:
-              data = _context4.v;
-              return _context4.a(2, Number(data.total_ht || 0));
-          }
-        }, _callee4, this);
-      }));
-      function caMois(_x3) {
-        return _caMois.apply(this, arguments);
-      }
-      return caMois;
-    }()
-  }, {
-    key: "delaiMoyen",
-    value: function () {
-      var _delaiMoyen = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-        var data;
-        return _regenerator().w(function (_context5) {
-          while (1) switch (_context5.n) {
-            case 0:
-              _context5.n = 1;
-              return this.fetchJson('/production/kpis');
-            case 1:
-              data = _context5.v;
-              return _context5.a(2, Number(data.avg_lead_time_days || 0));
-          }
-        }, _callee5, this);
-      }));
-      function delaiMoyen() {
-        return _delaiMoyen.apply(this, arguments);
-      }
-      return delaiMoyen;
-    }()
-  }, {
-    key: "commandesRetard",
-    value: function () {
-      var _commandesRetard = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-        var data;
-        return _regenerator().w(function (_context6) {
-          while (1) switch (_context6.n) {
-            case 0:
-              _context6.n = 1;
-              return this.fetchJson('/production/kpis');
-            case 1:
-              data = _context6.v;
-              return _context6.a(2, Number(data.late_orders || 0));
-          }
-        }, _callee6, this);
-      }));
-      function commandesRetard() {
-        return _commandesRetard.apply(this, arguments);
-      }
-      return commandesRetard;
+      return _prefetch;
     }()
   }, {
     key: "register",
-    value: function register(univerApi) {
-      var _this = this;
-      if (!univerApi || typeof univerApi.registerFunction !== 'function') {
-        return;
+    value: function register(univer) {
+      var self = this;
+      try {
+        var functionService = univer.__getInjector().get(_univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__.IFunctionService);
+        var formulas = [{
+          name: 'WEM_STOCK',
+          calculate: function calculate(ref) {
+            var _ref$getValue;
+            var data = self.fetchSync("/stock/".concat(encodeURIComponent((ref === null || ref === void 0 || (_ref$getValue = ref.getValue) === null || _ref$getValue === void 0 || (_ref$getValue = _ref$getValue.call(ref)) === null || _ref$getValue === void 0 ? void 0 : _ref$getValue.toString()) || '')));
+            return _univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__.NumberValueObject.create(Number((data === null || data === void 0 ? void 0 : data.quantity) || 0));
+          }
+        }, {
+          name: 'WEM_COMMANDES_EN_COURS',
+          calculate: function calculate() {
+            var data = self.fetchSync('/orders?status=open');
+            return _univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__.NumberValueObject.create(Array.isArray(data) ? data.length : 0);
+          }
+        }, {
+          name: 'WEM_CA_MOIS',
+          calculate: function calculate(month) {
+            var _month$getValue;
+            var m = (month === null || month === void 0 || (_month$getValue = month.getValue) === null || _month$getValue === void 0 || (_month$getValue = _month$getValue.call(month)) === null || _month$getValue === void 0 ? void 0 : _month$getValue.toString()) || '';
+            var data = self.fetchSync("/revenue?month=".concat(encodeURIComponent(m)));
+            return _univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__.NumberValueObject.create(Number((data === null || data === void 0 ? void 0 : data.total_ht) || 0));
+          }
+        }, {
+          name: 'WEM_DELAI_MOYEN',
+          calculate: function calculate() {
+            var data = self.fetchSync('/production/kpis');
+            return _univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__.NumberValueObject.create(Number((data === null || data === void 0 ? void 0 : data.avg_lead_time_days) || 0));
+          }
+        }, {
+          name: 'WEM_COMMANDES_RETARD',
+          calculate: function calculate() {
+            var data = self.fetchSync('/production/kpis');
+            return _univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__.NumberValueObject.create(Number((data === null || data === void 0 ? void 0 : data.late_orders) || 0));
+          }
+        }];
+        formulas.forEach(function (_ref2) {
+          var name = _ref2.name,
+            _calculate = _ref2.calculate;
+          var WemFunction = /*#__PURE__*/function (_BaseFunction) {
+            function WemFunction() {
+              _classCallCheck(this, WemFunction);
+              return _callSuper(this, WemFunction, arguments);
+            }
+            _inherits(WemFunction, _BaseFunction);
+            return _createClass(WemFunction, [{
+              key: "calculate",
+              value: function calculate() {
+                return _calculate.apply(void 0, arguments);
+              }
+            }]);
+          }(_univerjs_engine_formula__WEBPACK_IMPORTED_MODULE_0__.BaseFunction);
+          Object.defineProperty(WemFunction, 'name', {
+            value: name
+          });
+          functionService.registerExecutors(new WemFunction(name));
+        });
+        console.log('[WEM] Formules enregistrées');
+      } catch (e) {
+        console.warn('[WEM] Impossible d\'enregistrer les formules :', e);
       }
-      univerApi.registerFunction('WEM.STOCK', /*#__PURE__*/function () {
-        var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(reference) {
-          return _regenerator().w(function (_context7) {
-            while (1) switch (_context7.n) {
-              case 0:
-                return _context7.a(2, _this.stock(reference));
-            }
-          }, _callee7);
-        }));
-        return function (_x4) {
-          return _ref2.apply(this, arguments);
-        };
-      }());
-      univerApi.registerFunction('WEM.COMMANDES_EN_COURS', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
-        return _regenerator().w(function (_context8) {
-          while (1) switch (_context8.n) {
-            case 0:
-              return _context8.a(2, _this.commandesEnCours());
-          }
-        }, _callee8);
-      })));
-      univerApi.registerFunction('WEM.CA_MOIS', /*#__PURE__*/function () {
-        var _ref4 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9(month) {
-          return _regenerator().w(function (_context9) {
-            while (1) switch (_context9.n) {
-              case 0:
-                return _context9.a(2, _this.caMois(month));
-            }
-          }, _callee9);
-        }));
-        return function (_x5) {
-          return _ref4.apply(this, arguments);
-        };
-      }());
-      univerApi.registerFunction('WEM.DELAI_MOYEN', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0() {
-        return _regenerator().w(function (_context0) {
-          while (1) switch (_context0.n) {
-            case 0:
-              return _context0.a(2, _this.delaiMoyen());
-          }
-        }, _callee0);
-      })));
-      univerApi.registerFunction('WEM.COMMANDES_RETARD', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1() {
-        return _regenerator().w(function (_context1) {
-          while (1) switch (_context1.n) {
-            case 0:
-              return _context1.a(2, _this.commandesRetard());
-          }
-        }, _callee1);
-      })));
     }
   }]);
 }();
