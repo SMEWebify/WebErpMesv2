@@ -121,6 +121,88 @@ class SpreadsheetDataController extends Controller
         ]);
     }
 
+
+    public function lateOrders(): JsonResponse
+    {
+        if ($response = $this->guard()) {
+            return $response;
+        }
+
+        $orders = Orders::with('companie')
+            ->whereNotIn('statu', [3, 4, 5])
+            ->whereDate('created_at', '<', now()->subDays(30))
+            ->latest()
+            ->limit(200)
+            ->get()
+            ->map(function (Orders $order) {
+                $createdAt = $order->created_at;
+
+                return [
+                    'id' => $order->id,
+                    'reference' => $order->code,
+                    'customer' => optional($order->companie)->label,
+                    'total' => (float) ($order->total_price ?? 0),
+                    'status' => $order->statu,
+                    'days_open' => $createdAt ? $createdAt->diffInDays(now()) : null,
+                    'created_at' => optional($createdAt)?->toDateTimeString(),
+                ];
+            });
+
+        return response()->json($orders->values());
+    }
+
+    public function ordersSummary(Request $request): JsonResponse
+    {
+        if ($response = $this->guard()) {
+            return $response;
+        }
+
+        $month = $request->get('month', now()->format('Y-m'));
+        try {
+            $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        } catch (\Throwable $exception) {
+            $start = now()->startOfMonth();
+            $month = $start->format('Y-m');
+        }
+        $end = $start->copy()->endOfMonth();
+
+        $ordersQuery = Orders::query();
+        $openOrdersQuery = Orders::query()->whereNotIn('statu', [3, 4, 5]);
+
+        $totalOrders = (clone $ordersQuery)->count();
+        $openOrders = (clone $openOrdersQuery)->count();
+        $lateOrders = (clone $openOrdersQuery)->whereDate('created_at', '<', now()->subDays(30))->count();
+        $openAmount = (float) ((clone $openOrdersQuery)->sum('total_price') ?? 0);
+
+        $invoices = Invoices::whereBetween('created_at', [$start, $end])->get();
+        $totalHt = (float) $invoices->sum(fn (Invoices $invoice) => (float) $invoice->total_price);
+
+        return response()->json([
+            'month' => $month,
+            'total_orders' => $totalOrders,
+            'open_orders' => $openOrders,
+            'late_orders' => $lateOrders,
+            'open_orders_total_ht' => round($openAmount, 2),
+            'month_revenue_ht' => round($totalHt, 2),
+            'month_revenue_count' => $invoices->count(),
+        ]);
+    }
+
+    public function context(): JsonResponse
+    {
+        if ($response = $this->guard()) {
+            return $response;
+        }
+
+        $now = now();
+
+        return response()->json([
+            'today' => $now->format('Y-m-d'),
+            'current_month' => $now->format('Y-m'),
+            'current_year' => (int) $now->format('Y'),
+        ]);
+    }
+
     public function customers(): JsonResponse
     {
         if ($response = $this->guard()) {

@@ -37,7 +37,7 @@
                         <code>=IF(A1&gt;0;"OK";"KO")</code>) ainsi que les formules métier WEM ci-dessous.
                     </p>
 
-                    <h6 class="mt-3">Formules WEM disponibles</h6>
+                    <h6 class="mt-3">Commandes WEM disponibles</h6>
                     <div class="table-responsive">
                         <table class="table table-sm table-striped">
                             <thead>
@@ -49,29 +49,74 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><code>WEM.STOCK(reference)</code></td>
+                                    <td><code>WEM_STOCK(reference)</code></td>
                                     <td>Retourne le stock actuel d'une référence article.</td>
-                                    <td><code>=WEM.STOCK("REF-001")</code></td>
+                                    <td><code>=WEM_STOCK("TL-AC-2000x1000-EP1")</code></td>
                                 </tr>
                                 <tr>
-                                    <td><code>WEM.COMMANDES_EN_COURS()</code></td>
+                                    <td><code>WEM_COMMANDES_EN_COURS()</code></td>
                                     <td>Retourne le nombre de commandes ouvertes.</td>
-                                    <td><code>=WEM.COMMANDES_EN_COURS()</code></td>
+                                    <td><code>=WEM_COMMANDES_EN_COURS()</code></td>
                                 </tr>
                                 <tr>
-                                    <td><code>WEM.CA_MOIS(mois)</code></td>
-                                    <td>Retourne le chiffre d'affaires HT du mois (format <code>YYYY-MM</code>).</td>
-                                    <td><code>=WEM.CA_MOIS("2026-03")</code></td>
-                                </tr>
-                                <tr>
-                                    <td><code>WEM.DELAI_MOYEN()</code></td>
-                                    <td>Retourne le délai moyen de production en jours.</td>
-                                    <td><code>=WEM.DELAI_MOYEN()</code></td>
-                                </tr>
-                                <tr>
-                                    <td><code>WEM.COMMANDES_RETARD()</code></td>
+                                    <td><code>WEM_COMMANDES_RETARD()</code></td>
                                     <td>Retourne le nombre de commandes en retard.</td>
-                                    <td><code>=WEM.COMMANDES_RETARD()</code></td>
+                                    <td><code>=WEM_COMMANDES_RETARD()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM_LISTE_COMMANDES_RETARD()</code></td>
+                                    <td>Retourne la liste des références de commandes en retard (texte).</td>
+                                    <td><code>=WEM_LISTE_COMMANDES_RETARD()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM_LISTE_COMMANDES([status])</code></td>
+                                    <td>Retourne la liste des références de commandes (status: <code>all</code>, <code>open</code>, <code>closed</code>).</td>
+                                    <td><code>=WEM_LISTE_COMMANDES("open")</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM_CA_COMMANDES_OUVERTES()</code></td>
+                                    <td>Retourne le CA HT total des commandes ouvertes.</td>
+                                    <td><code>=WEM_CA_COMMANDES_OUVERTES()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM_CA_MOIS(mois)</code></td>
+                                    <td>Retourne le chiffre d'affaires HT du mois (format <code>YYYY-MM</code>).</td>
+                                    <td><code>=WEM_CA_MOIS("2026-03")</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM_DELAI_MOYEN()</code></td>
+                                    <td>Retourne le délai moyen de production en jours.</td>
+                                    <td><code>=WEM_DELAI_MOYEN()</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h6 class="mt-4">Variables pratiques WEM</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Description</th>
+                                    <th>Exemple</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>WEM_MOIS_COURANT()</code></td>
+                                    <td>Retourne le mois courant au format <code>YYYY-MM</code>.</td>
+                                    <td><code>=WEM_CA_MOIS(WEM_MOIS_COURANT())</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM_AUJOURDHUI()</code></td>
+                                    <td>Retourne la date du jour au format <code>YYYY-MM-DD</code>.</td>
+                                    <td><code>=WEM_AUJOURDHUI()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WEM_ANNEE_COURANTE()</code></td>
+                                    <td>Retourne l'année en cours (format numérique).</td>
+                                    <td><code>=WEM_ANNEE_COURANTE()</code></td>
                                 </tr>
                             </tbody>
                         </table>
