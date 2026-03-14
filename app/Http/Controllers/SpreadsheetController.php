@@ -91,13 +91,24 @@ class SpreadsheetController extends Controller
         abort_unless($spreadsheet->created_by === auth()->id(), 403);
 
         $validated = $request->validate([
-            'sheets' => ['required', 'array'],
+            'sheets' => ['nullable', 'array'],
             'sheets.*.id' => ['nullable', 'integer'],
             'sheets.*.name' => ['nullable', 'string', 'max:255'],
             'sheets.*.data' => ['nullable', 'array'],
+            'snapshot' => ['nullable', 'array'],
+            'snapshot.sheets' => ['nullable', 'array'],
         ]);
 
-        foreach ($validated['sheets'] as $index => $sheetData) {
+        $sheetsPayload = $validated['sheets'] ?? $this->extractSheetsFromSnapshot($validated['snapshot'] ?? null);
+
+        if (empty($sheetsPayload)) {
+            return response()->json([
+                'message' => 'Aucune feuille à sauvegarder.',
+                'errors' => ['sheets' => ['Le tableur ne contient aucune feuille valide.']],
+            ], 422);
+        }
+
+        foreach ($sheetsPayload as $index => $sheetData) {
             $payload = [
                 'name' => $sheetData['name'] ?? ('Sheet' . ($index + 1)),
                 'order' => $index,
@@ -113,5 +124,32 @@ class SpreadsheetController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    private function extractSheetsFromSnapshot(?array $snapshot): array
+    {
+        if (empty($snapshot['sheets']) || !is_array($snapshot['sheets'])) {
+            return [];
+        }
+
+        $sheetOrder = is_array($snapshot['sheetOrder'] ?? null)
+            ? $snapshot['sheetOrder']
+            : array_keys($snapshot['sheets']);
+
+        $sheets = [];
+        foreach ($sheetOrder as $sheetKey) {
+            $sheetData = $snapshot['sheets'][$sheetKey] ?? null;
+
+            if (!is_array($sheetData)) {
+                continue;
+            }
+
+            $sheets[] = [
+                'name' => $sheetData['name'] ?? null,
+                'data' => $sheetData,
+            ];
+        }
+
+        return $sheets;
     }
 }
