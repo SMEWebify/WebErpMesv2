@@ -354,7 +354,10 @@
                             <th>
                                 <a class="btn btn-secondary" wire:click.prevent="sortBy('label')" role="button" href="#">{{__('general_content.label_trans_key') }} @include('include.sort-icon', ['field' => 'label'])</a>
                             </th>
-                            <th>{{__('general_content.created_at_trans_key') }}</th>
+                            
+                            <th>
+                                <a class="btn btn-secondary" wire:click.prevent="sortBy('created_at')" role="button" href="#">{{__('general_content.created_at_trans_key') }} @include('include.sort-icon', ['field' => 'created_at'])</a>
+                            </th>
                             <th>{{ __('general_content.sold_trans_key') }}</th>
                             <th>{{__('general_content.purchase_trans_key') }}</th>
                             <th></th>

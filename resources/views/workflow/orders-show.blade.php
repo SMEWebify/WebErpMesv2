@@ -24,10 +24,7 @@
       <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
       @can('purchases-menu')
       <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
-      @else
-      <li class="nav-item"><a class="nav-link disabled" href="#" aria-disabled="true" tabindex="-1">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
       @endcan
-      
       <!--<a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>

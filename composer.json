@@ -48,7 +48,7 @@
         "webklex/laravel-pdfmerger": "^1.3"
     },
     "require-dev": {
-        "dominikb/composer-license-checker": "^2.5",
+        "dominikb/composer-license-checker": "^2.7",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^2.0",
         "laravel/sail": "^1.12",
