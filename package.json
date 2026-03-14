@@ -40,6 +40,11 @@
         "socket.io-client": "^4.8.0",
         "three": "^0.157.0",
         "vue-resizable": "^2.1.7",
-        "vuedraggable": "^4.1.0"
+        "vuedraggable": "^4.1.0",
+        "@univerjs/core": "^0.5",
+        "@univerjs/sheets": "^0.5",
+        "@univerjs/sheets-formula": "^0.5",
+        "@univerjs/ui": "^0.5",
+        "@univerjs/sheets-ui": "^0.5"
     }
 }
