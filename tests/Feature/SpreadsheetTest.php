@@ -76,6 +76,24 @@ class SpreadsheetTest extends TestCase
         $response->assertOk()->assertJson(['success' => true]);
     }
 
+    public function test_edit_page_displays_formula_help_modal(): void
+    {
+        $this->withoutMiddleware();
+
+        $user = User::factory()->create();
+        $spreadsheet = Spreadsheet::create([
+            'name' => 'Aide formules',
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('spreadsheet.edit', $spreadsheet));
+
+        $response->assertStatus(200);
+        $response->assertSee('Aide formules');
+        $response->assertSee('WEM.STOCK(reference)');
+        $response->assertSee('WEM.COMMANDES_EN_COURS()');
+    }
+
     public function test_stock_data_endpoint_returns_json(): void
     {
         $this->withoutMiddleware();
