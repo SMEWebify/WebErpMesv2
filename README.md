@@ -10,6 +10,7 @@
   <a href="https://github.com/SMEWebify/WebErpMesv2/network/members"><img src="https://img.shields.io/github/forks/SMEWebify/WebErpMesv2?style=social" alt="Forks"></a>
   <a href="https://github.com/SMEWebify/WebErpMesv2/issues"><img src="https://img.shields.io/github/issues/SMEWebify/WebErpMesv2" alt="Issues"></a>
   <a href="https://github.com/SMEWebify/WebErpMesv2/blob/WEM-2.0/LICENSE"><img src="https://img.shields.io/github/license/SMEWebify/WebErpMesv2" alt="License"></a>
+  <a href="https://github.com/SMEWebify/WebErpMesv2"><img src="https://img.shields.io/github/downloads/SMEWebify/WebErpMesv2/total" alt="License"></a>
 </p>
 
 ![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
