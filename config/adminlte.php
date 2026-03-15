@@ -1010,6 +1010,16 @@ return [
                 ],
             ],
         ],
+        'BsCustomFileInput' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js',
+                ],
+            ],
+        ],
         'FlagIconCss' => [
             'active' => true,
             'files' => [
