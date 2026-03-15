@@ -8,6 +8,8 @@ use App\Models\Accounting\AccountingPaymentConditions;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Companies\Companies;
+use App\Models\Companies\CompaniesAddresses;
+use App\Models\Companies\CompaniesContacts;
 use App\Models\Methods\MethodsUnits;
 use App\Models\Products\Products;
 use App\Models\Workflow\OrderLineDetails;
@@ -310,13 +312,32 @@ class PreOrdersController extends Controller
             return redirect()->route('pre-orders.show', $preOrder)->withErrors('Pré-commande vide, impossible de convertir.');
         }
 
-        DB::transaction(function () use ($preOrder, $data) {
+        $defaultAddressId = null;
+        $defaultContactId = null;
+
+        if (! empty($data['companies_id'])) {
+            $defaultAddress = CompaniesAddresses::getDefault(['companies_id' => $data['companies_id']]);
+            $defaultContact = CompaniesContacts::getDefault(['companies_id' => $data['companies_id']]);
+
+            if (is_null($defaultAddress) || is_null($defaultContact)) {
+                return redirect()->route('pre-orders.show', $preOrder)
+                    ->withInput()
+                    ->withErrors("Le client sélectionné ne possède pas d'adresse et/ou de contact par défaut.");
+            }
+
+            $defaultAddressId = $defaultAddress->id;
+            $defaultContactId = $defaultContact->id;
+        }
+
+        DB::transaction(function () use ($preOrder, $data, $defaultAddressId, $defaultContactId) {
             $order = Orders::create([
                 'uuid' => Str::uuid(),
                 'code' => $data['code'],
                 'label' => $data['label'],
                 'customer_reference' => $data['customer_reference'] ?? null,
                 'companies_id' => $data['companies_id'] ?? null,
+                'companies_contacts_id' => $defaultContactId,
+                'companies_addresses_id' => $defaultAddressId,
                 'validity_date' => $data['validity_date'] ?? null,
                 'statu' => 1,
                 'user_id' => $data['user_id'],
