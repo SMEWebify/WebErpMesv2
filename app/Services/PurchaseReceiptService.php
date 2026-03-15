@@ -123,7 +123,7 @@ class PurchaseReceiptService
     public function getPurchasesWaintingReceiptLines($companies_id = null, $sortField = 'id', $sortAsc = true)
     {
         return PurchaseLines::orderBy($sortField, $sortAsc ? 'asc' : 'desc')
-        ->where('receipt_qty','<=', 'qty')
+        ->whereColumn('receipt_qty','<=', 'qty')
         ->whereHas('purchase', function($q)use ($companies_id) {
             $q->where('companies_id','like', '%'. $companies_id .'%');
         })
@@ -137,7 +137,7 @@ class PurchaseReceiptService
      */
     public function getUniqueCompanyIdsWithOpenPurchaseLines(): Collection
     {
-        return PurchaseLines::where('receipt_qty','<=', 'qty')
+        return PurchaseLines::whereColumn('receipt_qty','<=', 'qty')
                             ->leftJoin('purchases', 'purchase_lines.purchases_id', '=', 'purchases.id')
                             ->pluck('purchases.companies_id')
                             ->filter()

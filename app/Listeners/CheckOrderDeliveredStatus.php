@@ -8,7 +8,7 @@ use App\Models\Workflow\OrderLines;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CheckOrderDeliveredStatus
+class CheckOrderDeliveredStatus implements ShouldQueue
 {
     /**
      * Create the event listener.

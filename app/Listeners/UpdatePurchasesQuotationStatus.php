@@ -2,11 +2,12 @@
 
 namespace App\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Events\PurchaseCreated;
 use App\Models\Purchases\PurchasesQuotation;
 use App\Models\Purchases\PurchaseQuotationLines;
 
-class UpdatePurchasesQuotationStatus
+class UpdatePurchasesQuotationStatus implements ShouldQueue
 {
     /**
      * Create the event listener.

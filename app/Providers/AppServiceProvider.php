@@ -14,6 +14,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
 use Laravel\Pulse\Facades\Pulse;
 
@@ -48,25 +49,31 @@ class AppServiceProvider extends ServiceProvider
 
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
 
-            $OrdersNotFinishCount = Orders::whereNotIn('statu', [3, 6])->count();
+            $OrdersNotFinishCount = Cache::remember('menu_orders_not_finish', 60, function() {
+                return Orders::whereNotIn('statu', [3, 6])->count();
+            });
             
-            $DeliverysRequestsCount = OrderLines::where(
-                function($query) {
-                    return $query
-                        ->where('delivery_status', '=', '1')
-                        ->orWhere('delivery_status', '=', '2');
-                })
-                ->whereHas('order', function($q){
-                    $q->whereNotIn('statu', [5, 6])
-                        ->where('type', '=', '1');
-                })->count();
+            $DeliverysRequestsCount = Cache::remember('menu_deliverys_requests', 60, function() {
+                return OrderLines::where(
+                    function($query) {
+                        return $query
+                            ->where('delivery_status', '=', '1')
+                            ->orWhere('delivery_status', '=', '2');
+                    })
+                    ->whereHas('order', function($q){
+                        $q->whereNotIn('statu', [5, 6])
+                            ->where('type', '=', '1');
+                    })->count();
+            });
 
-            $InvoicesRequestsCount =  DeliveryLines::where(
-                                                        function($query) {
-                                                            return $query
-                                                                ->where('invoice_status', '=', '1')
-                                                                ->orWhere('invoice_status', '=', '2');
-                                                        })->count();
+            $InvoicesRequestsCount = Cache::remember('menu_invoices_requests', 60, function() {
+                return DeliveryLines::where(
+                    function($query) {
+                        return $query
+                            ->where('invoice_status', '=', '1')
+                            ->orWhere('invoice_status', '=', '2');
+                    })->count();
+            });
 
             /* not use because Status is not init on start of instal, and what is incident if statu is null on menu init ?*/ 
             //$Status = Status::select('id')->orderBy('order')->first();
@@ -83,8 +90,12 @@ class AppServiceProvider extends ServiceProvider
                                                                                     ->orWhere('type', '=', '7');
                                                                             })->get();*/
 
-            $PurchasesWaintingReceiptCount = PurchaseLines::where('receipt_qty','<=', 'qty')->count();
-            $PurchasesWaintingInvoiceCount = PurchaseLines::where('invoiced_qty','<=', 'qty')->count();
+            $PurchasesWaintingReceiptCount = Cache::remember('menu_purchases_receipt', 60, function() {
+                return PurchaseLines::whereColumn('receipt_qty','<=', 'qty')->count();
+            });
+            $PurchasesWaintingInvoiceCount = Cache::remember('menu_purchases_invoice', 60, function() {
+                return PurchaseLines::whereColumn('invoiced_qty','<=', 'qty')->count();
+            });
 
             $event->menu->addBefore('orders_lines_list', [
                 'text' => 'orders_list_trans_key',

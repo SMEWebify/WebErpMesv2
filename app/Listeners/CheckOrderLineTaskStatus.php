@@ -9,7 +9,7 @@ use App\Models\Workflow\OrderLines;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CheckOrderLineTaskStatus
+class CheckOrderLineTaskStatus implements ShouldQueue
 {
     /**
      * Create the event listener.

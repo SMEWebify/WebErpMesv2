@@ -25,6 +25,7 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class QuoteLine extends Component
@@ -948,131 +949,132 @@ class QuoteLine extends Component
         }
 
         if($i>0){
+            return DB::transaction(function() use ($quoteId) {
 
-            //get data to dulicate for new order
-            $QuoteData = Quotes::find($quoteId);
+                //get data to dulicate for new order
+                $QuoteData = Quotes::find($quoteId);
 
-            // Generate new order code
-            $lastOrder = Orders::latest('id')->first();
-            $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
-            
-
-             // Create order
-            $user = Auth::user();
-            $OrdersCreated = $this->orderService->createOrder(
-                $orderCode,
-                $QuoteData->label,
-                $QuoteData->customer_reference,
-                $QuoteData->companies_id,
-                $QuoteData->companies_contacts_id,
-                $QuoteData->companies_addresses_id,
-                $QuoteData->validity_date,
-                1,
-                $user->id,
-                $QuoteData->accounting_payment_conditions_id,
-                $QuoteData->accounting_payment_methods_id,
-                $QuoteData->accounting_deliveries_id,
-                $QuoteData->comment,
-                1,
-                $QuoteData->id,
-                null
-            );
-
-           // Trigger the event
-            event(new OrderCreated($OrdersCreated));
-
-            if($OrdersCreated){
-                // Create lines
-                foreach ($this->data as $key => $item) {
-
-                    //get data to dulicate for new order
-                    $QuoteLineData = Quotelines::find($key);
-
-                    $date = date_create($QuoteLineData->delivery_date);
-                    $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
-                    
-                    $newOrderline = Orderlines::create([
-                        'orders_id'=>$OrdersCreated->id,
-                        'ordre'=>$QuoteLineData->ordre,
-                        'code'=>$QuoteLineData->code,
-                        'product_id'=>$QuoteLineData->product_id,
-                        'label'=>$QuoteLineData->label,
-                        'qty'=>$QuoteLineData->qty,
-                        'delivered_remaining_qty'=>$QuoteLineData->qty,
-                        'invoiced_remaining_qty'=>$QuoteLineData->qty,
-                        'methods_units_id'=>$QuoteLineData->methods_units_id,
-                        'selling_price'=>$QuoteLineData->selling_price,
-                        'discount'=>$QuoteLineData->discount,
-                        'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
-                        'internal_delay'=>$internalDelay,
-                        'delivery_date'=>$QuoteLineData->delivery_date,
-                    ]);
-
-                    //add line detail
-                    $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $key)->first();
-                    $newOrderLineDetail = OrderLineDetails::create([
-                        'order_lines_id'=>$newOrderline->id,
-                        'x_size'=>$QuoteLineDetailData->x_size,
-                        'y_size'=>$QuoteLineDetailData->y_size,
-                        'z_size'=>$QuoteLineDetailData->z_size,
-                        'x_oversize'=>$QuoteLineDetailData->x_oversize,
-                        'y_oversize'=>$QuoteLineDetailData->y_oversize,
-                        'z_oversize'=>$QuoteLineDetailData->z_oversize,
-                        'diameter'=>$QuoteLineDetailData->diameter,
-                        'diameter_oversize'=>$QuoteLineDetailData->diameter_oversize,
-                        'material'=>$QuoteLineDetailData->material,
-                        'thickness'=>$QuoteLineDetailData->thickness,
-                        'finishing'=>$QuoteLineDetailData->finishing,
-                        'weight'=>$QuoteLineDetailData->weight,
-                        'bend_count'=>$QuoteLineDetailData->bend_count,
-                        'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
-                        'cad_file'=>$QuoteLineDetailData->cad_file,
-                        'cam_file'=>$QuoteLineDetailData->cam_file,
-                        'cad_file_path'=>$QuoteLineDetailData->cad_file_path,
-                        'cam_file_path'=>$QuoteLineDetailData->cam_file_path,
-                        'internal_comment'=>$QuoteLineDetailData->internal_comment,
-                        'external_comment'=>$QuoteLineDetailData->external_comment,
-                    ]);
-
-                    $Tasks = Task::where('quote_lines_id', $key)->get();
-                    foreach ($Tasks as $Task) 
-                    {
-                        $newTask = $Task->replicate();
-                        $newTask->order_lines_id = $newOrderline->id;
-                        $newTask->quote_lines_id = null;
-                        $newTask->origin = "6";
-                        $newTask->save();
-
-                        //update info that order line as task
-                        $OrderLine = OrderLines::find($newOrderline->id);
-                        $OrderLine->tasks_status = 2;
-                        $OrderLine->save();
-                        
-                    }
-                    
-                    $SubAssemblyLine = SubAssembly::where('quote_lines_id', $key)->get();
-                    foreach ($SubAssemblyLine as $SubAssembly) 
-                    {
-                        $newSubAssembly = $SubAssembly->replicate();
-                        $newSubAssembly->order_lines_id = $newOrderline->id;
-                        $newSubAssembly->quote_lines_id = null;
-                        $newSubAssembly->save();
-                    }
-
-                    //update quote lines statu
-                    Quotelines::where('id',$QuoteLineData->id)->update(['statu'=>3]);
-                }
-                //update quote statu
-                Quotes::where('id',$quoteId)->update(['statu'=>3]);
+                // Generate new order code
+                $lastOrder = Orders::latest('id')->first();
+                $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
                 
-            }
-            else{
-                return redirect()->back()->with('error', 'Something went wrong');
-            }
 
-            // Reset Form Fields After Creating line
-            return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
+                 // Create order
+                $user = Auth::user();
+                $OrdersCreated = $this->orderService->createOrder(
+                    $orderCode,
+                    $QuoteData->label,
+                    $QuoteData->customer_reference,
+                    $QuoteData->companies_id,
+                    $QuoteData->companies_contacts_id,
+                    $QuoteData->companies_addresses_id,
+                    $QuoteData->validity_date,
+                    1,
+                    $user->id,
+                    $QuoteData->accounting_payment_conditions_id,
+                    $QuoteData->accounting_payment_methods_id,
+                    $QuoteData->accounting_deliveries_id,
+                    $QuoteData->comment,
+                    1,
+                    $QuoteData->id,
+                    null
+                );
 
+               // Trigger the event
+                event(new OrderCreated($OrdersCreated));
+
+                if($OrdersCreated){
+                    // Create lines
+                    foreach ($this->data as $key => $item) {
+
+                        //get data to dulicate for new order
+                        $QuoteLineData = Quotelines::find($key);
+
+                        $date = date_create($QuoteLineData->delivery_date);
+                        $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
+                        
+                        $newOrderline = Orderlines::create([
+                            'orders_id'=>$OrdersCreated->id,
+                            'ordre'=>$QuoteLineData->ordre,
+                            'code'=>$QuoteLineData->code,
+                            'product_id'=>$QuoteLineData->product_id,
+                            'label'=>$QuoteLineData->label,
+                            'qty'=>$QuoteLineData->qty,
+                            'delivered_remaining_qty'=>$QuoteLineData->qty,
+                            'invoiced_remaining_qty'=>$QuoteLineData->qty,
+                            'methods_units_id'=>$QuoteLineData->methods_units_id,
+                            'selling_price'=>$QuoteLineData->selling_price,
+                            'discount'=>$QuoteLineData->discount,
+                            'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
+                            'internal_delay'=>$internalDelay,
+                            'delivery_date'=>$QuoteLineData->delivery_date,
+                        ]);
+
+                        //add line detail
+                        $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $key)->first();
+                        $newOrderLineDetail = OrderLineDetails::create([
+                            'order_lines_id'=>$newOrderline->id,
+                            'x_size'=>$QuoteLineDetailData->x_size,
+                            'y_size'=>$QuoteLineDetailData->y_size,
+                            'z_size'=>$QuoteLineDetailData->z_size,
+                            'x_oversize'=>$QuoteLineDetailData->x_oversize,
+                            'y_oversize'=>$QuoteLineDetailData->y_oversize,
+                            'z_oversize'=>$QuoteLineDetailData->z_oversize,
+                            'diameter'=>$QuoteLineDetailData->diameter,
+                            'diameter_oversize'=>$QuoteLineDetailData->diameter_oversize,
+                            'material'=>$QuoteLineDetailData->material,
+                            'thickness'=>$QuoteLineDetailData->thickness,
+                            'finishing'=>$QuoteLineDetailData->finishing,
+                            'weight'=>$QuoteLineDetailData->weight,
+                            'bend_count'=>$QuoteLineDetailData->bend_count,
+                            'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
+                            'cad_file'=>$QuoteLineDetailData->cad_file,
+                            'cam_file'=>$QuoteLineDetailData->cam_file,
+                            'cad_file_path'=>$QuoteLineDetailData->cad_file_path,
+                            'cam_file_path'=>$QuoteLineDetailData->cam_file_path,
+                            'internal_comment'=>$QuoteLineDetailData->internal_comment,
+                            'external_comment'=>$QuoteLineDetailData->external_comment,
+                        ]);
+
+                        $Tasks = Task::where('quote_lines_id', $key)->get();
+                        foreach ($Tasks as $Task) 
+                        {
+                            $newTask = $Task->replicate();
+                            $newTask->order_lines_id = $newOrderline->id;
+                            $newTask->quote_lines_id = null;
+                            $newTask->origin = "6";
+                            $newTask->save();
+
+                            //update info that order line as task
+                            $OrderLine = OrderLines::find($newOrderline->id);
+                            $OrderLine->tasks_status = 2;
+                            $OrderLine->save();
+                            
+                        }
+                        
+                        $SubAssemblyLine = SubAssembly::where('quote_lines_id', $key)->get();
+                        foreach ($SubAssemblyLine as $SubAssembly) 
+                        {
+                            $newSubAssembly = $SubAssembly->replicate();
+                            $newSubAssembly->order_lines_id = $newOrderline->id;
+                            $newSubAssembly->quote_lines_id = null;
+                            $newSubAssembly->save();
+                        }
+
+                        //update quote lines statu
+                        Quotelines::where('id',$QuoteLineData->id)->update(['statu'=>3]);
+                    }
+                    //update quote statu
+                    Quotes::where('id',$quoteId)->update(['statu'=>3]);
+                    
+                }
+                else{
+                    return redirect()->back()->with('error', 'Something went wrong');
+                }
+
+                // Reset Form Fields After Creating line
+                return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
+            });
         }
         else{
             $errors = $this->getErrorBag();
