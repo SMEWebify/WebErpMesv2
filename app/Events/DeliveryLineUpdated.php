@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use App\Models\Workflow\DeliveryLines;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,15 +15,15 @@ class DeliveryLineUpdated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $deliveryLineId;
+    public $deliveryLine;
 
 
     /**
      * Create a new event instance.
      */
-    public function __construct($deliveryLineId)
+    public function __construct(DeliveryLines $deliveryLine)
     {
-        $this->deliveryLineId = $deliveryLineId;
+        $this->deliveryLine = $deliveryLine;
     }
 
     /**

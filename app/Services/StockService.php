@@ -51,7 +51,7 @@ class StockService
         }
 
         $OrderLine->save();
-        event(new OrderLineUpdated($OrderLine->id));
+        event(new OrderLineUpdated($OrderLine));
     }
 
     /**

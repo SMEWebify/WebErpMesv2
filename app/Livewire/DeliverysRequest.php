@@ -207,7 +207,7 @@ class DeliverysRequest extends Component
         }
     
         $orderLine->save();
-        event(new OrderLineUpdated($orderLine->id));
+        event(new OrderLineUpdated($orderLine));
     }
     
     private function generateSerialNumbers($productId, $orderLineId, $scumQty, $batchId = null)

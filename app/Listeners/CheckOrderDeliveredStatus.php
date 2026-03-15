@@ -24,7 +24,7 @@ class CheckOrderDeliveredStatus implements ShouldQueue
     public function handle(OrderLineUpdated $event)
     {
 
-        $orderLine = OrderLines::find($event->orderLineId);
+        $orderLine = $event->orderLine;
         $orderId = $orderLine->orders_id;
         
         #1 = Not delivered
