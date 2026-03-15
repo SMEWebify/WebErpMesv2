@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Purchases\PurchaseReceiptLines;
 
-class UpdatePurchaseStatus
+class UpdatePurchaseStatus implements ShouldQueue
 {
     /**
      * Create the event listener.
