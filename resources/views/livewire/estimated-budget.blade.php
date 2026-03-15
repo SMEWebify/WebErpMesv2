@@ -13,7 +13,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
-                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model.live="year">
+                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model.lazy="year">
                                 <option value="" >{{ __('general_content.select_year_trans_key') }}</option>
                                 <option value="2021" >2021</option>
                                 <option value="2022" >2022</option>
@@ -34,7 +34,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model.live="amount1">
+                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model.lazy="amount1">
                         </div>
                     </div>
                     <div class="col-2">
@@ -43,7 +43,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model.live="amount2">
+                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model.lazy="amount2">
                         </div>
                     </div>
                     <div class="col-2">
@@ -52,7 +52,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model.live="amount3">
+                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model.lazy="amount3">
                         </div>
                     </div>
                     <div class="col-2">
@@ -61,7 +61,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model.live="amount4">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model.lazy="amount4">
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model.live="amount5">
+                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model.lazy="amount5">
                         </div>
                     </div>
                     <div class="col-2">
@@ -85,7 +85,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model.live="amount6">
+                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model.lazy="amount6">
                         </div>
                     </div>
                     <div class="col-2">
@@ -94,7 +94,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model.live="amount7">
+                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model.lazy="amount7">
                         </div>
                     </div>
                     <div class="col-2">
@@ -103,7 +103,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model.live="amount8">
+                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model.lazy="amount8">
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model.live="amount9">
+                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model.lazy="amount9">
                         </div>
                     </div>
                     <div class="col-2">
@@ -127,7 +127,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model.live="amount10">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model.lazy="amount10">
                         </div>
                     </div>
                     <div class="col-2">
@@ -136,7 +136,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model.live="amount11">
+                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model.lazy="amount11">
                         </div>
                     </div>
                     <div class="col-2">
@@ -145,7 +145,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model.live="amount12">
+                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model.lazy="amount12">
                         </div>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                             </div>
-                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model.live="year">
+                            <select class="form-control @error('year') is-invalid @enderror" name="year" id="year"  wire:model.lazy="year">
                                 <option value="" >{{ __('general_content.select_year_trans_key') }}</option>
                                 <option value="2021" >2021</option>
                                 <option value="2022" >2022</option>
@@ -180,7 +180,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model.live="amount1">
+                            <input type="number" class="form-control @error('amount1') is-invalid @enderror" id="amount1" placeholder="{{ __('general_content.amount_trans_key') }} 1" wire:model.lazy="amount1">
                         </div>
                     </div>
                     <div class="col-2">
@@ -189,7 +189,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model.live="amount2">
+                            <input type="number" class="form-control @error('amount2') is-invalid @enderror" id="amount2" placeholder="{{ __('general_content.amount_trans_key') }} 2" wire:model.lazy="amount2">
                         </div>
                     </div>
                     <div class="col-2">
@@ -198,7 +198,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model.live="amount3">
+                            <input type="number" class="form-control @error('amount3') is-invalid @enderror" id="amount3" placeholder="{{ __('general_content.amount_trans_key') }} 3" wire:model.lazy="amount3">
                         </div>
                     </div>
                     <div class="col-2">
@@ -207,7 +207,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model.live="amount4">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount4" placeholder="{{ __('general_content.amount_trans_key') }} 4" wire:model.lazy="amount4">
                         </div>
                     </div>
                 </div>
@@ -222,7 +222,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model.live="amount5">
+                            <input type="number" class="form-control @error('amount5') is-invalid @enderror" id="amount5" placeholder="{{ __('general_content.amount_trans_key') }} 5" wire:model.lazy="amount5">
                         </div>
                     </div>
                     <div class="col-2">
@@ -231,7 +231,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model.live="amount6">
+                            <input type="number" class="form-control @error('amount6') is-invalid @enderror" id="amount6" placeholder="{{ __('general_content.amount_trans_key') }} 6" wire:model.lazy="amount6">
                         </div>
                     </div>
                     <div class="col-2">
@@ -240,7 +240,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model.live="amount7">
+                            <input type="number" class="form-control @error('amount7') is-invalid @enderror" id="amount7" placeholder="{{ __('general_content.amount_trans_key') }} 7" wire:model.lazy="amount7">
                         </div>
                     </div>
                     <div class="col-2">
@@ -249,7 +249,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model.live="amount8">
+                            <input type="number" class="form-control @error('amount8') is-invalid @enderror" id="amount8" placeholder="{{ __('general_content.amount_trans_key') }} 8" wire:model.lazy="amount8">
                         </div>
                     </div>
                 </div>
@@ -263,7 +263,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model.live="amount9">
+                            <input type="number" class="form-control @error('amount9') is-invalid @enderror" id="amount9" placeholder="{{ __('general_content.amount_trans_key') }} 9" wire:model.lazy="amount9">
                         </div>
                     </div>
                     <div class="col-2">
@@ -272,7 +272,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model.live="amount10">
+                            <input type="number" class="form-control @error('amount4') is-invalid @enderror" id="amount10" placeholder="{{ __('general_content.amount_trans_key') }} 10" wire:model.lazy="amount10">
                         </div>
                     </div>
                     <div class="col-2">
@@ -281,7 +281,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model.live="amount11">
+                            <input type="number" class="form-control @error('amount11') is-invalid @enderror" id="amount11" placeholder="{{ __('general_content.amount_trans_key') }} 11" wire:model.lazy="amount11">
                         </div>
                     </div>
                     <div class="col-2">
@@ -290,7 +290,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model.live="amount12">
+                            <input type="number" class="form-control @error('amount12') is-invalid @enderror" id="amount12" placeholder="{{ __('general_content.amount_trans_key') }} 12" wire:model.lazy="amount12">
                         </div>
                     </div>
                 </div>

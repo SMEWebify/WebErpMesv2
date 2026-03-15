@@ -11,7 +11,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-building"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="companies_id" name="companies_id" id="companies_id">
+                            <select class="form-control" wire:model.lazy="companies_id" name="companies_id" id="companies_id">
                                 <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                             @forelse ($CompanieSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -28,7 +28,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                             </div>
-                            <input type="date" class="form-control" wire:model.live="deliveryDateStart" name="delivery_date_start" id="delivery_date_start">
+                            <input type="date" class="form-control" wire:model.lazy="deliveryDateStart" name="delivery_date_start" id="delivery_date_start">
                         </div>
                     </div>
                     <div class="form-group col-md-3">
@@ -37,7 +37,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                             </div>
-                            <input type="date" class="form-control" wire:model.live="deliveryDateEnd" name="delivery_date_end" id="delivery_date_end">
+                            <input type="date" class="form-control" wire:model.lazy="deliveryDateEnd" name="delivery_date_end" id="delivery_date_end">
                         </div>
                     </div>
                     <div class="form-group col-md-3">
@@ -46,7 +46,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model.live="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
+                            <input type="text" class="form-control" wire:model.lazy="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                             @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model.live="label" name="label"  id="label"  placeholder="Name of quote" required>
+                            <input type="text" class="form-control" wire:model.lazy="label" name="label"  id="label"  placeholder="Name of quote" required>
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -66,7 +66,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="user_id" name="user_id" id="user_id">
+                            <select class="form-control" wire:model.lazy="user_id" name="user_id" id="user_id">
                                 <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                             @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -81,7 +81,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
+                            <select class="form-control" wire:model.lazy="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
                                 <option value="">{{ __('general_content.select_address_trans_key') }}</option>
                             @forelse ($AddressSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
@@ -98,7 +98,7 @@
                             <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
+                            <select class="form-control" wire:model.lazy="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
                                 <option value="">{{ __('general_content.select_contact_trans_key') }}</option>
                             @forelse ($ContactSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
@@ -169,7 +169,7 @@
                             <td>{{ $InvoicesRequestsLine->orderLine->VAT['label'] }} %</td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $InvoicesRequestsLine->id }}" wire:model.live="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id" id="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id"  type="checkbox">
+                                    <input class="custom-control-input" value="{{ $InvoicesRequestsLine->id }}" wire:model.lazy="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id" id="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id"  type="checkbox">
                                     <label for="data.{{ $InvoicesRequestsLine->id }}.deliveryLine_id" class="custom-control-label">{{ __('general_content.add_to_document_trans_key') }}</label>
                                 </div>
                             </td>

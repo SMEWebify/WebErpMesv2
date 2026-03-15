@@ -66,7 +66,7 @@
     </div> 
         
     <div class="input-group">
-        <input type="text" wire:model.live="label" name="label"  id="label" placeholder="Chat ..." class="form-control">
+        <input type="text" wire:model.lazy="label" name="label"  id="label" placeholder="Chat ..." class="form-control">
         <span class="input-group-append">
             <button type="button" wire:click="storeMessage({{ $idItem }}, '{{ $Class }}')" class="btn btn-danger">{{ __('general_content.add_trans_key') }}</button>
         </span>

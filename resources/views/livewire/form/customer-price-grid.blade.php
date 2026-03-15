@@ -4,7 +4,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="card-title mb-0">{{ __('general_content.customer_price_grid_trans_key') }}</h3>
             <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="usePriceListSwitch-{{ $priceListToggleKey }}" wire:model.live="usePriceList" @if(!$product_id) disabled @endif>
+                <input type="checkbox" class="custom-control-input" id="usePriceListSwitch-{{ $priceListToggleKey }}" wire:model.lazy="usePriceList" @if(!$product_id) disabled @endif>
                 <label class="custom-control-label" for="usePriceListSwitch-{{ $priceListToggleKey }}">{{ __('general_content.automatic_pricing_trans_key') }}</label>
             </div>
         </div>

@@ -21,7 +21,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
+                                        <input type="text" class="form-control" wire:model.lazy="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                                     </div>
                                     @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -31,13 +31,13 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="label" name="label"  id="label" placeholder="{{ __('general_content.description_trans_key') }}">
+                                        <input type="text" class="form-control" wire:model.lazy="label" name="label"  id="label" placeholder="{{ __('general_content.description_trans_key') }}">
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="ind">{{ __('general_content.index_trans_key') }}</label>
-                                    <input type="text" class="form-control"  wire:model.live="ind" name="ind"  id="ind" placeholder="{{ __('general_content.index_trans_key') }}">
+                                    <input type="text" class="form-control"  wire:model.lazy="ind" name="ind"  id="ind" placeholder="{{ __('general_content.index_trans_key') }}">
                                     @error('ind') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
@@ -50,7 +50,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-list"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="methods_services_id" name="methods_services_id" id="methods_services_id">
+                                        <select class="form-control" wire:model.lazy="methods_services_id" name="methods_services_id" id="methods_services_id">
                                             <option value="">{{ __('general_content.select_service_trans_key') }}</option>
                                             @forelse ($ServicesSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->label }}</option>
@@ -67,7 +67,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-grip-horizontal"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="methods_families_id" name="methods_families_id" id="methods_families_id">
+                                        <select class="form-control" wire:model.lazy="methods_families_id" name="methods_families_id" id="methods_families_id">
                                             <option value="">{{ __('general_content.family_trans_key') }}</option>
                                             @forelse ($FamiliesSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->label }}</option>
@@ -84,7 +84,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="methods_units_id" name="methods_units_id" id="methods_units_id">
+                                        <select class="form-control" wire:model.lazy="methods_units_id" name="methods_units_id" id="methods_units_id">
                                             <option value="">{{ __('general_content.select_unit_trans_key') }}</option>
                                             @forelse ($UnitsSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->label }}</option>
@@ -105,7 +105,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="purchased" name="purchased" id="purchased">
+                                        <select class="form-control" wire:model.lazy="purchased" name="purchased" id="purchased">
                                             <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
                                             <option value="2">{{ __('general_content.no_trans_key') }}</option>
                                             <option value="1">{{ __('general_content.yes_trans_key') }}</option>
@@ -119,7 +119,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-exclamation"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="sold" name="sold" id="sold">
+                                        <select class="form-control" wire:model.lazy="sold" name="sold" id="sold">
                                             <option value="">{{ __('general_content.select_statu_trans_key') }}</option>
                                             <option value="2">{{ __('general_content.no_trans_key') }}</option>
                                             <option value="1">{{ __('general_content.yes_trans_key') }}</option>
@@ -129,7 +129,7 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="tracability_type">{{ __('general_content.tracability_trans_key') }}</label>
-                                    <select class="form-control" wire:model.live="tracability_type" name="tracability_type" id="tracability_type">
+                                    <select class="form-control" wire:model.lazy="tracability_type" name="tracability_type" id="tracability_type">
                                         <option value="">{{ __('general_content.select_type_trans_key') }}</option>
                                         <option value="1">{{ __('general_content.no_traceability_trans_key') }}</option>
                                         <option value="2">{{ __('general_content.with_batch_number_trans_key') }}</option>
@@ -144,7 +144,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ $Factory->curency }}</span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="purchased_price" name="purchased_price" id="purchased_price" min="0" placeholder="{{ __('general_content.purchased_price_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="purchased_price" name="purchased_price" id="purchased_price" min="0" placeholder="{{ __('general_content.purchased_price_trans_key') }}" step=".001">
                                     </div>
                                     @error('purchased_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -153,7 +153,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ $Factory->curency }}</span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="selling_price" name="selling_price" id="selling_price" min="0" placeholder="{{ __('general_content.price_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="selling_price" name="selling_price" id="selling_price" min="0" placeholder="{{ __('general_content.price_trans_key') }}" step=".001">
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fab fa-mdb"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="material" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
+                                        <input type="text" class="form-control" wire:model.lazy="material" name="material" id="material"  placeholder="{{ __('general_content.material_trans_key') }}">
                                     </div>
                                     @error('material') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -177,7 +177,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-vertical"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="thickness" name="thickness" id="thickness" min="0"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="thickness" name="thickness" id="thickness" min="0"  placeholder="{{ __('general_content.thickness_trans_key') }}" step=".001">
                                     </div>
                                     @error('thickness') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -186,7 +186,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-weight-hanging"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="weight" name="weight" id="weight" min="0"  placeholder="{{ __('general_content.weight_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="weight" name="weight" id="weight" min="0"  placeholder="{{ __('general_content.weight_trans_key') }}" step=".001">
                                     </div>
                                     @error('weight') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -197,7 +197,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fab fa-mdb"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="finishing" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
+                                        <input type="text" class="form-control" wire:model.lazy="finishing" name="finishing" id="finishing"  placeholder="{{ __('general_content.finishing_trans_key') }}">
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -213,7 +213,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="x_size" name="x_size" id="x_size" min="0"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="x_size" name="x_size" id="x_size" min="0"  placeholder="{{ __('general_content.x_size_trans_key') }}" step=".001">
                                     </div>
                                     @error('x_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -223,7 +223,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="y_size" name="y_size" id="y_size" min="0"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="y_size" name="y_size" id="y_size" min="0"  placeholder="{{ __('general_content.y_size_trans_key') }}" step=".001">
                                     </div>
                                     @error('y_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -233,7 +233,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="z_size" name="z_size" id="z_size" min="0"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="z_size" name="z_size" id="z_size" min="0"  placeholder="{{ __('general_content.z_size_trans_key') }}" step=".001">
                                     </div>
                                     @error('z_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -244,7 +244,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="x_oversize" name="x_oversize" id="x_oversize" min="0"   placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="x_oversize" name="x_oversize" id="x_oversize" min="0"   placeholder="{{ __('general_content.x_oversize_trans_key') }}" step=".001">
                                     </div>
                                     @error('x_oversize') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -253,7 +253,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="y_oversize" name="y_oversize" id="y_oversize" min="0"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="y_oversize" name="y_oversize" id="y_oversize" min="0"  placeholder="{{ __('general_content.y_oversize_trans_key') }}" step=".001">
                                     </div>
                                     @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -262,7 +262,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
                                         </div>
-                                        <input type="number" class="form-control" wire:model.live="z_oversize" name="z_oversize" id="z_oversize" min="0"   placeholder="{{ __('general_content.z_oversize_trans_key') }}" step=".001">
+                                        <input type="number" class="form-control" wire:model.lazy="z_oversize" name="z_oversize" id="z_oversize" min="0"   placeholder="{{ __('general_content.z_oversize_trans_key') }}" step=".001">
                                     </div>
                                     @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -270,15 +270,15 @@
                             <hr>
                             <div class="row">
                                 <div class="form-group col-md-4">
-                                    <input type="number" class="form-control" wire:model.live="diameter" name="diameter" id="diameter" min="0"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
+                                    <input type="number" class="form-control" wire:model.lazy="diameter" name="diameter" id="diameter" min="0"  placeholder="{{ __('general_content.diameter_trans_key') }}" step=".001">
                                     @error('diameter') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <input type="number" class="form-control" wire:model.live="diameter_oversize" name="diameter_oversize" id="diameter_oversize" min="0"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
+                                    <input type="number" class="form-control" wire:model.lazy="diameter_oversize" name="diameter_oversize" id="diameter_oversize" min="0"  placeholder="{{ __('general_content.diameter_oversize_trans_key') }}" step=".001">
                                     @error('diameter_oversize') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <input type="number" class="form-control" wire:model.live="section_size" name="section_size" id="section_size" min="0" placeholder="{{ __('general_content.section_size_trans_key') }}" step=".001">
+                                    <input type="number" class="form-control" wire:model.lazy="section_size" name="section_size" id="section_size" min="0" placeholder="{{ __('general_content.section_size_trans_key') }}" step=".001">
                                     @error('section_size') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
@@ -289,15 +289,15 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-4">
-                                    <input type="number" class="form-control" wire:model.live="qty_eco_min" name="qty_eco_min" id="qty_eco_min" min="0" placeholder="{{ __('general_content.quantite_eco_min_trans_key') }}" step=".001">
+                                    <input type="number" class="form-control" wire:model.lazy="qty_eco_min" name="qty_eco_min" id="qty_eco_min" min="0" placeholder="{{ __('general_content.quantite_eco_min_trans_key') }}" step=".001">
                                     @error('qty_eco_min') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <input type="number" class="form-control" wire:model.live="qty_eco_max" name="qty_eco_max" id="qty_eco_max" min="0" placeholder="{{ __('general_content.quantite_eco_max_trans_key') }}" step=".001">
+                                    <input type="number" class="form-control" wire:model.lazy="qty_eco_max" name="qty_eco_max" id="qty_eco_max" min="0" placeholder="{{ __('general_content.quantite_eco_max_trans_key') }}" step=".001">
                                     @error('qty_eco_max') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <textarea class="form-control" rows="3"  wire:model.live="comment" name="comment"  placeholder="..."></textarea>
+                                    <textarea class="form-control" rows="3"  wire:model.lazy="comment" name="comment"  placeholder="..."></textarea>
                                     @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
@@ -324,7 +324,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-calendar-alt fa-fw"></i></span>
                         </div>
-                        <input type="date" class="form-control" wire:model.live="createdAtFrom" aria-label="Date de création du" title="Date de création du">
+                        <input type="date" class="form-control" wire:model.lazy="createdAtFrom" aria-label="Date de création du" title="Date de création du">
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -332,7 +332,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-calendar-alt fa-fw"></i></span>
                         </div>
-                        <input type="date" class="form-control" wire:model.live="createdAtTo" aria-label="Date de création au" title="Date de création au">
+                        <input type="date" class="form-control" wire:model.lazy="createdAtTo" aria-label="Date de création au" title="Date de création au">
                     </div>
                 </div>
             </div>

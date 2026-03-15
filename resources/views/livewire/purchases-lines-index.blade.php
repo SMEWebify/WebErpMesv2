@@ -7,11 +7,11 @@
             @if($OrderStatu == 1)
                 @if($updateLines)
                 <form wire:submit.prevent="updatePurchaseLine">
-                            <input type="hidden" wire:model.live="purchase_lines_id">
+                            <input type="hidden" wire:model.lazy="purchase_lines_id">
                             @include('livewire.form.line-update')
                 @else
                 <form wire:submit.prevent="storeOrderLine">
-                            <input type="hidden"  name="purchase_id"  id="purchase_id" value="1" wire:model.live="purchase_id" >
+                            <input type="hidden"  name="purchase_id"  id="purchase_id" value="1" wire:model.lazy="purchase_id" >
                             @include('livewire.form.line-create')
                 @endif
             @else
@@ -139,7 +139,7 @@
                                 <td>
                                     @if($PurchaseLine->qty > $PurchaseLine->receipt_qty)
                                     <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" value="{{ $PurchaseLine->id }}" wire:model.live="data.{{ $PurchaseLine->id }}.purchase_line_id" id="data.{{ $PurchaseLine->id }}.purchase_line_id"  type="checkbox">
+                                        <input class="custom-control-input" value="{{ $PurchaseLine->id }}" wire:model.lazy="data.{{ $PurchaseLine->id }}.purchase_line_id" id="data.{{ $PurchaseLine->id }}.purchase_line_id"  type="checkbox">
                                         <label for="data.{{ $PurchaseLine->id }}.purchase_line_id" class="custom-control-label">+</label>
                                     </div>
                                     @endif

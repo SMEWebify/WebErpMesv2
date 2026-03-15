@@ -11,7 +11,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-building"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="companies_id" name="companies_id" id="companies_id">
+                            <select class="form-control" wire:model.lazy="companies_id" name="companies_id" id="companies_id">
                                 <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                             @forelse ($CompanieSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -28,7 +28,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model.live="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
+                            <input type="text" class="form-control" wire:model.lazy="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                         </div>
                         @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -38,7 +38,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control" wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_of_deliverys_notes_trans_key') }}" required>
+                            <input type="text" class="form-control" wire:model.lazy="label" name="label"  id="label"  placeholder="{{ __('general_content.name_of_deliverys_notes_trans_key') }}" required>
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -48,7 +48,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="user_id" name="user_id" id="user_id">
+                            <select class="form-control" wire:model.lazy="user_id" name="user_id" id="user_id">
                                 <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                             @foreach ($userSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -63,7 +63,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
+                            <select class="form-control" wire:model.lazy="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id">
                                 <option value="">{{ __('general_content.select_address_trans_key') }}</option>
                             @forelse ($AddressSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->label }} - {{ $item->adress }}</option>
@@ -80,7 +80,7 @@
                             <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                             </div>
-                            <select class="form-control" wire:model.live="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
+                            <select class="form-control" wire:model.lazy="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id">
                                 <option value="">{{ __('general_content.select_contact_trans_key') }}</option>
                             @forelse ($ContactSelect as $item)
                                 <option value="{{ $item->id }}">{{ $item->first_name }} - {{ $item->name }}</option>
@@ -94,9 +94,9 @@
                     <div class="form-group col-md-3">
                         @can('stock-lot-serial-management')
                         <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
-                        <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" >
+                        <input type="checkbox" id="RemoveFromStock" wire:model.lazy="RemoveFromStock" >
                         <label for="CreateSerialNumber">{{ __('general_content.create_serial_number_trans_key') }}</label>
-                        <input type="checkbox" id="CreateSerialNumber" wire:model.live="CreateSerialNumber" >
+                        <input type="checkbox" id="CreateSerialNumber" wire:model.lazy="CreateSerialNumber" >
                         @endcan
                     </div>
                     
@@ -134,7 +134,7 @@
                             {{__('general_content.action_trans_key') }}
                             @if($companies_id)
                                 <div class="custom-control custom-checkbox mt-2">
-                                    <input class="custom-control-input" id="selectAllLines" type="checkbox" wire:model.live="selectAll">
+                                    <input class="custom-control-input" id="selectAllLines" type="checkbox" wire:model.lazy="selectAll">
                                     <label class="custom-control-label" for="selectAllLines">
                                         {{ $selectAll ? __('general_content.deselect_all_lines_trans_key') : __('general_content.select_all_lines_trans_key') }}
                                     </label>
@@ -169,7 +169,7 @@
                         <td>{{ $DeliverysRequestsLine->delivered_remaining_qty }}</td>
                         <td>
                             <input class="form-control" 
-                            wire:model.live="data.{{ $DeliverysRequestsLine->id }}.scumQty" 
+                            wire:model.lazy="data.{{ $DeliverysRequestsLine->id }}.scumQty" 
                             id="data.{{ $DeliverysRequestsLine->id }}.scumQty"
                             name="data.{{ $DeliverysRequestsLine->id }}.scumQty" 
                             placeholder="{{ __('general_content.qty_trans_key') }}" 
@@ -184,7 +184,7 @@
                             <div class="custom-control custom-checkbox">
                                 <input class="custom-control-input" 
                                         value="{{ $DeliverysRequestsLine->id }}" 
-                                        wire:model.live="data.{{ $DeliverysRequestsLine->id }}.order_line_id" 
+                                        wire:model.lazy="data.{{ $DeliverysRequestsLine->id }}.order_line_id" 
                                         name="data.{{ $DeliverysRequestsLine->id }}.order_line_id" 
                                         id="data.{{ $DeliverysRequestsLine->id }}.order_line_id"  
                                         type="checkbox">
