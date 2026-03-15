@@ -172,7 +172,9 @@ class SpreadsheetDataController extends Controller
         $totalOrders = (clone $ordersQuery)->count();
         $openOrders = (clone $openOrdersQuery)->count();
         $lateOrders = (clone $openOrdersQuery)->whereDate('created_at', '<', now()->subDays(30))->count();
-        $openAmount = (float) ((clone $openOrdersQuery)->sum('total_price') ?? 0);
+        $openAmount = (float) (clone $openOrdersQuery)
+            ->get()
+            ->sum(fn (Orders $order) => (float) ($order->total_price ?? 0));
 
         $invoices = Invoices::whereBetween('created_at', [$start, $end])->get();
         $totalHt = (float) $invoices->sum(fn (Invoices $invoice) => (float) $invoice->total_price);
