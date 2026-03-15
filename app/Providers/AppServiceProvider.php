@@ -84,8 +84,8 @@ class AppServiceProvider extends ServiceProvider
                                                                                     ->orWhere('type', '=', '7');
                                                                             })->get();*/
 
-            $PurchasesWaintingReceiptCount = PurchaseLines::where('receipt_qty','<=', 'qty')->count();
-            $PurchasesWaintingInvoiceCount = PurchaseLines::where('invoiced_qty','<=', 'qty')->count();
+            $PurchasesWaintingReceiptCount = PurchaseLines::whereColumn('receipt_qty','<=', 'qty')->count();
+            $PurchasesWaintingInvoiceCount = PurchaseLines::whereColumn('invoiced_qty','<=', 'qty')->count();
 
             $event->menu->addBefore('orders_lines_list', [
                 'text' => 'orders_list_trans_key',
