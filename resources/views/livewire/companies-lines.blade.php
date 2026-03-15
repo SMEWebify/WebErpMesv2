@@ -132,7 +132,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-filter fa-fw"></i></span>
                                             </div>
-                                            <select class="form-control" wire:model.lazy="statusFilter">
+                                            <select class="form-control" wire:model.live="statusFilter">
                                                 <option value="all">{{ __('general_content.view_all_trans_key') }}</option>
                                                 <option value="client">{{ __('general_content.client_trans_key') }}</option>
                                                 <option value="prospect">{{ __('general_content.prospect_trans_key') }}</option>
