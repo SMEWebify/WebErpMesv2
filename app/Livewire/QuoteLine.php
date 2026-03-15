@@ -949,7 +949,7 @@ class QuoteLine extends Component
         }
 
         if($i>0){
-            return DB::transaction(function() use ($quoteId) {
+            $OrdersCreated = DB::transaction(function() use ($quoteId) {
 
                 //get data to dulicate for new order
                 $QuoteData = Quotes::find($quoteId);
@@ -979,10 +979,6 @@ class QuoteLine extends Component
                     $QuoteData->id,
                     null
                 );
-
-               // Trigger the event
-                event(new OrderCreated($OrdersCreated));
-
                 if($OrdersCreated){
                     // Create lines
                     foreach ($this->data as $key => $item) {
@@ -1072,9 +1068,13 @@ class QuoteLine extends Component
                     return redirect()->back()->with('error', 'Something went wrong');
                 }
 
-                // Reset Form Fields After Creating line
-                return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
+                return $OrdersCreated;
             });
+
+            event(new OrderCreated($OrdersCreated));
+
+            // Reset Form Fields After Creating line
+            return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
         }
         else{
             $errors = $this->getErrorBag();
