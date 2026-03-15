@@ -339,7 +339,7 @@
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-times"></i></span>
                           </div>
-                          <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.live="addGoodQt">
+                          <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.lazy="addGoodQt">
                           <span class="input-group-append">
                             <button type="submit" class="btn btn-info btn-flat">Set</button>
                           </span>
@@ -376,7 +376,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-times"></i></span>
                             </div>
-                            <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.live="addGoodQt">
+                            <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.lazy="addGoodQt">
                             <span class="input-group-append">
                               <button type="submit" class="btn btn-info btn-flat">Set</button>
                             </span>
@@ -412,7 +412,7 @@
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-times"></i></span>
                           </div>
-                          <input type="number" class="form-control @error('addBadQt') is-invalid @enderror" id="addBadQt" placeholder="{{ __('general_content.quantity_rejected_trans_key') }}" min="0" wire:model.live="addBadQt">
+                          <input type="number" class="form-control @error('addBadQt') is-invalid @enderror" id="addBadQt" placeholder="{{ __('general_content.quantity_rejected_trans_key') }}" min="0" wire:model.lazy="addBadQt">
                           <span class="input-group-append">
                             <button type="submit" class="btn btn-info btn-flat">Set</button>
                           </span>
@@ -434,7 +434,7 @@
                       <div class="col-md-2 text-muted">
                         <div class="form-group">
                           <label for="not_recalculate">Not Recalculate</label>
-                          <input type="checkbox" id="not_recalculate" wire:model.live="not_recalculate" style=" display:flex; align-items:center;">
+                          <input type="checkbox" id="not_recalculate" wire:model.lazy="not_recalculate" style=" display:flex; align-items:center;">
                         </div>
                       </div>
                       <div class="col-md-8 text-muted">
@@ -444,7 +444,7 @@
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                               </div>
-                              <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" id="end_date"  wire:model.live="end_date">
+                              <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" id="end_date"  wire:model.lazy="end_date">
                               <span class="input-group-append">
                                 <button type="submit" class="btn btn-info btn-flat">Set</button>
                               </span>
@@ -463,7 +463,7 @@
                       <div class="col-md-4 text-muted">
                         <div class="form-group">
                           <label for="userforced_ressource">{{ __('general_content.user_choise_trans_key') }}</label>
-                          <input type="checkbox" id="userforced_ressource" wire:model.live="userforced_ressource" style=" display:flex; align-items:center;">
+                          <input type="checkbox" id="userforced_ressource" wire:model.lazy="userforced_ressource" style=" display:flex; align-items:center;">
                         </div>
                       </div>
                       <div class="col-md-8">

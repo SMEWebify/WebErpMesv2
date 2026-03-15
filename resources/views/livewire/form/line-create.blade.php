@@ -5,13 +5,13 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                 </div>
-                <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model.live="ordre" >
+                <input type="number" class="form-control @error('ordre') is-invalid @enderror" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model.lazy="ordre" >
             </div>
             @error('ordre') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
             <x-adminlte-select name="product_id" id="product_id" label="{{ __('general_content.product_trans_key') }}" label-class="text-lightblue"
-                igroup-size="s" data-placeholder="{{ __('general_content.select_product_trans_key') }}" wire:model.live="product_id" wire:change.prevent="ChangeCodelabel()">
+                igroup-size="s" data-placeholder="{{ __('general_content.select_product_trans_key') }}" wire:model.lazy="product_id" wire:change.prevent="ChangeCodelabel()">
                 <x-slot name="prependSlot">
                     <div class="input-group-text bg-gradient-info">
                         <i class="fas fa-barcode"></i>
@@ -30,7 +30,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                 </div>
-                <input type="text" class="code form-control @error('code') is-invalid @enderror" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" wire:model.live="code">
+                <input type="text" class="code form-control @error('code') is-invalid @enderror" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}" wire:model.lazy="code">
             </div>
             @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
@@ -40,7 +40,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-tags"></i></span>
                 </div>
-                <input type="text" class="form-control @error('label') is-invalid @enderror" id="label" placeholder="{{ __('general_content.description_trans_key') }}" wire:model.live="label">
+                <input type="text" class="form-control @error('label') is-invalid @enderror" id="label" placeholder="{{ __('general_content.description_trans_key') }}" wire:model.lazy="label">
             </div>
             @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
@@ -50,7 +50,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-times"></i></span>
                 </div>
-                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="{{ __('general_content.qty_trans_key') }}" min="0" wire:model.live="qty">
+                <input type="number" class="form-control @error('qty') is-invalid @enderror" id="qty" placeholder="{{ __('general_content.qty_trans_key') }}" min="0" wire:model.lazy="qty">
             </div>
             @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
@@ -60,7 +60,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">{{ $Factory->curency }}</span>
                 </div>
-                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="{{ __('general_content.price_trans_key') }}" min="0" wire:model.live="selling_price" step=".001" value="0">
+                <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" placeholder="{{ __('general_content.price_trans_key') }}" min="0" wire:model.lazy="selling_price" step=".001" value="0">
             </div>
             @error('selling_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
@@ -70,13 +70,13 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                 </div>
-                <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="{{ __('general_content.discount_trans_key') }}" wire:model.live="discount" step=".01" value="0">
+                <input type="number" class="form-control @error('discount') is-invalid @enderror" id="discount" placeholder="{{ __('general_content.discount_trans_key') }}" wire:model.lazy="discount" step=".01" value="0">
             </div>
             @error('discount') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">
             <label for="delivery_date">{{ __('general_content.delivery_date_trans_key') }}</label>
-            <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model.live="delivery_date">
+            <input type="date" class="form-control" @error('delivery_date') is-invalid @enderror name="delivery_date"  id="delivery_date" wire:model.lazy="delivery_date">
             @error('delivery_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
         </div>
         <div class="form-group col-md-2">

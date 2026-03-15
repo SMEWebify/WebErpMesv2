@@ -5,11 +5,11 @@
             @if($QuoteStatu == 1)
                 @if($updateLines)
                 <form wire:submit.prevent="updateQuoteLine">
-                            <input type="hidden" wire:model.live="quote_lines_id">
+                            <input type="hidden" wire:model.lazy="quote_lines_id">
                             @include('livewire.form.line-update')
                 @else
                 <form wire:submit.prevent="storeQuoteLine">
-                            <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model.live="quotes_id" >
+                            <input type="hidden"  name="quotes_id"  id="quotes_id" value="1" wire:model.lazy="quotes_id" >
                             @include('livewire.form.line-create')
                 @endif
                 @include('livewire.form.customer-price-grid')
@@ -29,7 +29,7 @@
                 <div class="col-md-6">
                     <div class="input-group">
                         <input type="number" step="0.01" min="0" class="form-control"
-                               wire:model.live="priceIncreaseAmount"
+                               wire:model.lazy="priceIncreaseAmount"
                                placeholder="{{ __('general_content.price_increase_amount_trans_key') }}"
                                @disabled($QuoteStatu != 1)>
                         <div class="input-group-append">
@@ -610,7 +610,7 @@
                             </td>
                             <td>
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" wire:model.live="data.{{ $QuoteLine->id }}.quote_line_id" id="data.{{ $QuoteLine->id }}.quote_line_id" type="checkbox">
+                                    <input class="custom-control-input" wire:model.lazy="data.{{ $QuoteLine->id }}.quote_line_id" id="data.{{ $QuoteLine->id }}.quote_line_id" type="checkbox">
                                     <label for="data.{{ $QuoteLine->id }}.quote_line_id" class="custom-control-label">+</label>
                                 </div>
                             </td>

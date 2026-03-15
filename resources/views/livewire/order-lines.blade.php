@@ -7,11 +7,11 @@
             @if($OrderStatu == 1)
                 @if($updateLines)
                 <form wire:submit.prevent="update">
-                            <input type="hidden" wire:model.live="order_lines_id">
+                            <input type="hidden" wire:model.lazy="order_lines_id">
                             @include('livewire.form.line-update')
                 @else
                 <form wire:submit.prevent="storeOrderLine">
-                            <input type="hidden"  name="orders_id"  id="orders_id" value="1" wire:model.live="orders_id" >
+                            <input type="hidden"  name="orders_id"  id="orders_id" value="1" wire:model.lazy="orders_id" >
                             @include('livewire.form.line-create')
                 @endif
                 @include('livewire.form.customer-price-grid')
@@ -31,7 +31,7 @@
                 <div class="col-md-6">
                     <div class="input-group">
                         <input type="number" step="0.01" min="0" class="form-control"
-                               wire:model.live="priceIncreaseAmount"
+                               wire:model.lazy="priceIncreaseAmount"
                                placeholder="{{ __('general_content.price_increase_amount_trans_key') }}"
                                @disabled($OrderStatu == 6 || $OrderType == 2)>
                         <div class="input-group-append">
@@ -641,7 +641,7 @@
                             <td>
                                 @if($OrderStatu != 6 && (($OrderLine->delivery_status != 3 && $OrderLine->order->type != 2) && ($OrderLine->delivery_status != 4 && $OrderLine->order->type != 2)))
                                 <div class="custom-control custom-checkbox">
-                                    <input class="custom-control-input" value="{{ $OrderLine->id }}" wire:model.live="data.{{ $OrderLine->id }}.order_line_id" id="data.{{ $OrderLine->id }}.order_line_id"  type="checkbox">
+                                    <input class="custom-control-input" value="{{ $OrderLine->id }}" wire:model.lazy="data.{{ $OrderLine->id }}.order_line_id" id="data.{{ $OrderLine->id }}.order_line_id"  type="checkbox">
                                     <label for="data.{{ $OrderLine->id }}.order_line_id" class="custom-control-label">+</label>
                                 </div>
                                 @endif
@@ -675,11 +675,11 @@
                                 @can('stock-lot-serial-management')
                                 <div>
                                     <label for="RemoveFromStock">{{ __('general_content.remove_component_lines_stock_trans_key') }}</label>
-                                    <input type="checkbox" id="RemoveFromStock" wire:model.live="RemoveFromStock" >
+                                    <input type="checkbox" id="RemoveFromStock" wire:model.lazy="RemoveFromStock" >
                                 </div>
                                 <div>
                                     <label for="CreateSerialNumber">{{ __('general_content.create_serial_number_trans_key') }}</label>
-                                    <input type="checkbox" id="CreateSerialNumber" wire:model.live="CreateSerialNumber" >
+                                    <input type="checkbox" id="CreateSerialNumber" wire:model.lazy="CreateSerialNumber" >
                                 </div>
                                 @endcan
                                 <div>

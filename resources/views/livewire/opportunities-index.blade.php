@@ -21,7 +21,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
-                                        <input type="text" class="form-control"  wire:model.live="label" name="label"  id="label"  placeholder="{{ __('general_content.name_opportunity_trans_key') }}" required>
+                                        <input type="text" class="form-control"  wire:model.lazy="label" name="label"  id="label"  placeholder="{{ __('general_content.name_opportunity_trans_key') }}" required>
                                     </div>
                                     @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -31,7 +31,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control"  wire:model.live="user_id" name="user_id" id="user_id">
+                                        <select class="form-control"  wire:model.lazy="user_id" name="user_id" id="user_id">
                                             <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                                             @foreach ($userSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -54,7 +54,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-building"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="companies_id" name="companies_id" id="companies_id">
+                                        <select class="form-control" wire:model.lazy="companies_id" name="companies_id" id="companies_id">
                                             <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                                         @forelse ($CompanieSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -115,7 +115,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                         </div>
-                                        <input type="number" class="form-control @error('probality') is-invalid @enderror" wire:model.live="probality" name="probality"  id="probality"  placeholder="50" required>
+                                        <input type="number" class="form-control @error('probality') is-invalid @enderror" wire:model.lazy="probality" name="probality"  id="probality"  placeholder="50" required>
                                     </div>
                                     @error('probality') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -125,7 +125,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">{{ $Factory->curency }}</span>
                                         </div>
-                                        <input type="number" class="form-control @error('budget') is-invalid @enderror" id="budget" placeholder="0" min="0" wire:model.live="budget" step=".001" value="0">
+                                        <input type="number" class="form-control @error('budget') is-invalid @enderror" id="budget" placeholder="0" min="0" wire:model.lazy="budget" step=".001" value="0">
                                     </div>
                                     @error('budget') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -135,7 +135,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <label>{{ __('general_content.comment_trans_key') }}</label>
-                                    <textarea class="form-control" rows="3"  wire:model.live="comment" name="comment"  placeholder="..."></textarea>
+                                    <textarea class="form-control" rows="3"  wire:model.lazy="comment" name="comment"  placeholder="..."></textarea>
                                     @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
