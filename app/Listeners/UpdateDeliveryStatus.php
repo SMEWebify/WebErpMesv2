@@ -23,7 +23,7 @@ class UpdateDeliveryStatus implements ShouldQueue
      */
     public function handle(DeliveryLineUpdated $event)
     {
-        $deliveryLine = DeliveryLines::find($event->deliveryLineId);
+        $deliveryLine = $event->deliveryLine;
         $deliveryId = $deliveryLine->deliverys_id;
 
         #1 = Chargeable

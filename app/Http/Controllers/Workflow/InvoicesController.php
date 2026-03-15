@@ -97,7 +97,7 @@ class InvoicesController extends Controller
     {
         $DeliveryLine->invoice_status = 4;
         $DeliveryLine->save();
-        event(new DeliveryLineUpdated($DeliveryLine->id));
+        event(new DeliveryLineUpdated($DeliveryLine));
     }
 
     /**

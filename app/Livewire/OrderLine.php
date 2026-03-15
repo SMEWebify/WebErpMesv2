@@ -1070,7 +1070,7 @@ class OrderLine extends Component
         $OrderLineData->delivered_remaining_qty = 0;
         $OrderLineData->delivery_status = $OrderLineData->delivered_remaining_qty == 0 ? 3 : 2;
         $OrderLineData->save();
-        event(new OrderLineUpdated($OrderLineData->id));
+        event(new OrderLineUpdated($OrderLineData));
     }
 
     // Helper method to update order line info
@@ -1080,7 +1080,7 @@ class OrderLine extends Component
         $OrderLineData->invoiced_remaining_qty = 0;
         $OrderLineData->invoice_status  = $OrderLineData->invoiced_remaining_qty == 0 ? 3 : 2;
         $OrderLineData->save();
-        event(new OrderLineUpdated($OrderLineData->id));
+        event(new OrderLineUpdated($OrderLineData));
     }
     
 

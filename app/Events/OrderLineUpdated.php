@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Workflow\OrderLines;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,14 +15,14 @@ class OrderLineUpdated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $orderLineId;
+    public $orderLine;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($orderLineId)
+    public function __construct(OrderLines $orderLine)
     {
-        $this->orderLineId = $orderLineId;
+        $this->orderLine = $orderLine;
     }
 
     /**
