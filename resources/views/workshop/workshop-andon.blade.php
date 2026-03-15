@@ -82,7 +82,7 @@
         });
     </script>
 
-    <script src="{{ mix('js/app.js') }}"></script>
+    <script src="{{ asset(Vite::asset('js/app.js')) }}"></script>
     <script>
         Echo.channel('AndonAlert')
         .listen('.andon.alert.triggered', function(data) {

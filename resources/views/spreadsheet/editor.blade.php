@@ -143,5 +143,5 @@
             sheets: @json($spreadsheet->sheets->map(fn($s) => ['id' => $s->id, 'name' => $s->name, 'data' => $s->data]))
         };
     </script>
-    <script src="{{ mix('js/spreadsheet.js') }}"></script>
+    <script src="{{ asset(Vite::asset('js/spreadsheet.js')) }}"></script>
 @stop
