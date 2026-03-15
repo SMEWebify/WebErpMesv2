@@ -2,21 +2,20 @@
 
 namespace App\Providers;
 
-use App\Models\Menu;
-use App\Models\User;
-use App\Models\Planning\Task;
-use App\Models\Workflow\Orders;
-use App\Models\Workflow\OrderLines;
-use Illuminate\Console\Command;
-use App\Services\SelectDataService;
-use Illuminate\Pagination\Paginator;
-use App\Observers\OrdersObserver;
-use App\Models\Workflow\DeliveryLines;
 use App\Models\Purchases\PurchaseLines;
-use Illuminate\Support\ServiceProvider;
+use App\Models\User;
+use App\Models\Workflow\DeliveryLines;
+use App\Models\Workflow\OrderLines;
+use App\Models\Workflow\Orders;
+use App\Observers\OrdersObserver;
+use App\Services\SelectDataService;
+use Illuminate\Console\Command;
 use Illuminate\Contracts\Events\Dispatcher;
-use App\Models\Purchases\PurchaseReceiptLines;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 use JeroenNoten\LaravelAdminLte\Events\BuildingMenu;
+use Laravel\Pulse\Facades\Pulse;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -128,6 +127,10 @@ class AppServiceProvider extends ServiceProvider
                 'label'       => $PurchasesWaintingInvoiceCount,
                 'label_color' => 'warning',
             ]);
+        });
+
+         Gate::define('viewPulse', function (User $user) {
+            return $user->hasRole('Admin');
         });
     }
 }

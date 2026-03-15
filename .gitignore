@@ -19,6 +19,7 @@
 .env
 .env.backup
 .phpunit.result.cache
+.claude/settings.local.json
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
