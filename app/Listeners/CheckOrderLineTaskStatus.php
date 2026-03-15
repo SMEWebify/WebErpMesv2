@@ -8,6 +8,7 @@ use App\Models\Planning\Status;
 use App\Models\Workflow\OrderLines;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Cache;
 
 class CheckOrderLineTaskStatus implements ShouldQueue
 {
@@ -28,7 +29,9 @@ class CheckOrderLineTaskStatus implements ShouldQueue
         $orderLineId = $task->order_lines_id;
     
         // Trouvez l'ID du statut "Finished"
-        $finishedStatusId = Status::where('title', 'Finished')->value('id');
+        $finishedStatusId = Cache::rememberForever('status_finished_id', function() {
+            return Status::where('title', 'Finished')->value('id');
+        });
         
         $allLinesOderLine = Task::where('order_lines_id', $orderLineId)
             ->where('status_id', '<>', $finishedStatusId) 
