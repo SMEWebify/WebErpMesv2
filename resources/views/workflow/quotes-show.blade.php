@@ -198,19 +198,20 @@
               @include('include.sub-total-price')
             </x-adminlte-card>
 
+            @php($canUseScheduling = auth()->user()->can('scheduling-menu'))
             <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" collapsible maximizable>
               <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
                 @csrf
                 <div class="form-group">
                   <label for="requested_delivery_date">{{ __('general_content.requested_delivery_date_trans_key') }}</label>
-                  <input type="date" class="form-control" id="requested_delivery_date" name="requested_delivery_date" value="{{ old('requested_delivery_date') }}" required>
+                  <input type="date" class="form-control" id="requested_delivery_date" name="requested_delivery_date" value="{{ old('requested_delivery_date') }}" @disabled(!$canUseScheduling) required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm">
+                <button type="submit" class="btn btn-primary btn-sm" @disabled(!$canUseScheduling)>
                   <i class="fas fa-play-circle"></i> {{ __('general_content.run_simulation_trans_key') }}
                 </button>
               </form>
 
-              @if(session('delivery_simulation'))
+              @if($canUseScheduling && session('delivery_simulation'))
               @php
                 $simulation = session('delivery_simulation');
               @endphp

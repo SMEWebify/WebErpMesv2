@@ -163,7 +163,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');
         Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->name('quotes.update.detail.picture');
         Route::post('/{idQuote}/lines/import', 'App\Http\Controllers\Workflow\QuoteLinesController@import')->name('quotes.lines.import');
-        Route::post('/{id}/delivery-simulation', 'App\Http\Controllers\Workflow\QuotesController@simulateDelivery')->name('quotes.delivery.simulation');
+        Route::post('/{id}/delivery-simulation', 'App\Http\Controllers\Workflow\QuotesController@simulateDelivery')->middleware('permission:scheduling-menu')->name('quotes.delivery.simulation');
         //Project estimate
         Route::post('project-estimate/save/{id}', 'App\Http\Controllers\Workflow\QuotesController@saveProjectEstimate')->name('quotes.project.estimates');
         //import
