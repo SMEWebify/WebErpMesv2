@@ -1,12 +1,12 @@
 # WebErpMesv2 — ERP/MES pour l'industrie (tôlerie, usinage, moule)
 
 ## Stack technique actuelle
-- **Backend** : Laravel (PHP), architecture MVC classique
+- **Backend** : Laravel 12 (PHP 8.2+), architecture MVC classique
 - **Frontend** : Blade (rendu serveur dominant), Livewire (composants interactifs),
   Vue.js (1.2% — déprécié), React (spreadsheet)
 - **CSS** : Tailwind CSS + Bootstrap 4 via AdminLTE (conflit à résoudre)
 - **JS utilitaire** : Alpine.js (micro-interactions)
-- **Bundler** : Laravel Mix (webpack.mix.js) — déprécié, à migrer vers Vite
+- **Bundler** : Vite (migré depuis Laravel Mix)
 - **Temps réel** : Laravel Echo + Redis (laravel-echo-server)
 - **Tests** : PHPUnit (backend), aucun test frontend connu
 - **Infra** : Docker (Nginx + PHP-FPM), docker-compose.yaml
@@ -32,11 +32,12 @@ Projet open source : React est universel et réduit la barrière à la contribut
 Livewire est peu connu et freine les contributeurs externes.
 
 ### Roadmap de migration
-1. Résoudre le conflit CSS Bootstrap/Tailwind
-2. Optimiser Livewire QuoteLine (Alpine.js + OrderService)
-3. Migrer Vue.js → React + Laravel Mix → Vite
-4. Créer API REST QuoteLines → Migrer QuoteLine vers React
-5. Créer API REST OrderLines → Migrer OrderLine vers React
+1. ~~Migrer Laravel Mix → Vite~~ ✅ Fait
+2. Résoudre le conflit CSS Bootstrap/Tailwind
+3. Optimiser Livewire QuoteLine (Alpine.js + OrderService)
+4. Migrer Vue.js → React
+5. Créer API REST QuoteLines → Migrer QuoteLine vers React
+6. Créer API REST OrderLines → Migrer OrderLine vers React
 
 ### Ce qu'on ne migre PAS
 - Le layout AdminLTE/Blade reste en place
@@ -67,36 +68,44 @@ Livewire est peu connu et freine les contributeurs externes.
 - Aucune vérification d'ownership sur les ressources (ex: destroyQuoteLine)
 - $fillable à auditer sur les modèles critiques (Order, Quote, Product)
 
-### CRITIQUE — Performance
-- 5 requêtes SQL dans AppServiceProvider à chaque chargement de page
-- whereColumn() manquant sur PurchaseLines (comparaison incorrecte)
-- Aucun listener n'implémente ShouldQueue → tout bloque l'utilisateur
-- Requêtes N+1 dans les vues Blade (relations non eager-loadées)
-- storeOrder() sans DB::transaction() → risque de données partielles
-- Livewire QuoteLine : wire:model.live excessif, render() trop lourd,
-  ProductsSelect chargé entièrement en mémoire
+### CRITIQUE — À corriger avant prod (issues des PRs Codex)
+- Queue worker non configuré
+  → ajouter service worker dans docker-compose.yaml ou Supervisor
+
+
 
 ### Infrastructure & Ops
 - **CRITIQUE** : Aucune stratégie de backup (base + fichiers uploadés)
   → spatie/laravel-backup + destination externe (Backblaze/S3)
-- Logs Laravel non persistants dans Docker
-  → stderr channel + volume monté sur storage/logs
-- Queue worker absent de docker-compose.yaml
-- RGPD : page présente mais registre des traitements manquant,
-  durées de conservation à préciser par type de donnée
+- RGPD : page présente mais registre des traitements manquant
 
 ### Moyenne priorité
 - Double système CSS Bootstrap/Tailwind en conflit
-- Laravel Mix → migrer vers Vite
 - Vue.js marginal (1.2%) → supprimer
 - AdminLTE impose jQuery comme dépendance globale
-- Index manquants sur colonnes de filtrage (statu, delivery_status, orders_id)
 - SoftDeletes à vérifier sur les entités métier critiques
 - Accessors Eloquent sans cache (formatted_price, TotalTime, Margin)
 - SelectDataService sans cache persistant
-- Status::where('title', 'Finished') sans Cache::remember()
-- Events qui transportent des IDs au lieu des modèles complets
 - Risque de boucle infinie observer → event → update → observer
 - OrderCreated avec broadcastOn() retournant 'channel-name' littéral
 - Try/catch qui avalent les exceptions sans les logger
 - Aucun test frontend, tests métier insuffisants
+
+
+### Fait ✅ (PRs Codex mergées)
+- whereColumn() corrigé sur PurchaseLines (#1024)
+- DB::transaction() ajouté sur storeOrder() (#1025)
+- ShouldQueue ajouté sur tous les listeners (#1026)
+- Cache::remember() sur les 5 requêtes SQL du menu (#1027)
+- Index manquants ajoutés en migration dédiée (#1028)
+- wire:model.lazy sur les champs de formulaire (#1029)
+- Cache::rememberForever() sur Status Finished (#1031)
+- Events transportent les modèles complets (#1032)
+- ~~Laravel Mix → migrer vers Vite~~ ✅ Migré (PRs #1030, #1034, #1035, #1036)
+- ~~PR #1025 : event(OrderCreated) dispatché DANS la transaction~~ ✅ Corrigé (#1034)
+- ~~PR #1029 : wire:model.lazy incorrect sur chatlive.blade.php~~ ✅ Corrigé (#1035)
+- ~~PR #1029 : wire:model.lazy incorrect sur les selects de filtrage~~ ✅ Corrigé (#1035)
+- ~~PR #1030 : asset(Vite::asset()) syntax incorrecte~~ ✅ 
+- Logs Laravel non persistants dans Docker
+  → stderr channel + volume monté sur storage/logs
+- Queue worker absent de docker-compose.yaml

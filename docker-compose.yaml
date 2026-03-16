@@ -64,6 +64,19 @@ services:
       - wem-dev
     ports:
       - "6001:6001"
-
+  worker:
+    build: .
+    command: php artisan queue:work redis --tries=3 --timeout=60 --sleep=3
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - redis
+      - db
+    restart: unless-stopped
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_KEY=${APP_KEY}
+      - DB_HOST=${DB_HOST}
+      - REDIS_HOST=${REDIS_HOST}
 volumes:
   db-dev_data:

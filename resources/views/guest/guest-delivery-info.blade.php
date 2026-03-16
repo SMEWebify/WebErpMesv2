@@ -21,17 +21,7 @@
     </title>
 
     {{-- Base Stylesheets --}}
-    @if(!config('adminlte.enabled_laravel_mix'))
-        <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('vendor/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
-
-        @if(config('adminlte.google_fonts.allowed', true))
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-        @endif
-    @else
-        <link rel="stylesheet" href="{{ asset(Vite::asset(config('adminlte.laravel_mix_css_path', 'css/app.css'))) }}">
-    @endif
+    @vite(config('adminlte.laravel_mix_css_path', 'resources/css/app.css'))
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -157,7 +147,7 @@
                                                     @if($DocumentLine->QualityNonConformity->statu  == 3) <span class="badge badge-success">{{ __('general_content.validate_trans_key') }}</span> @endif
                                                     @if($DocumentLine->QualityNonConformity->statu  == 4) <span class="badge badge-danger">{{ __('general_content.canceled_trans_key') }}</span> @endif
                                                 @else
-                                                    <a class="btn btn-warning btn-sm" href="{{ route('guest.nonConformitie.create', ['id' => $DocumentLine->id])}}">
+                                                    <a class="btn btn-warning btn-sm" href="{{ route('guest.nonConformitie.create', ['uuid' => $Delivery->uuid, 'id' => $DocumentLine->id])}}">
                                                         <i class="fa fa-light fa-fw  fa-exclamation"></i>
                                                         {{ __('general_content.new_non_conformitie_trans_key') }}
                                                     </a>

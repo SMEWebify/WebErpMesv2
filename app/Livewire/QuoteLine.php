@@ -258,6 +258,8 @@ class QuoteLine extends Component
 
     public function applyPriceIncreaseToAllLines(): void
     {
+        // Authorization check: user must be authenticated
+        abort_unless(auth()->check(), 403);
         if ((int) $this->quote_Statu !== 1) {
             session()->flash('error', __('general_content.quote_not_open_trans_key'));
             return;
@@ -308,6 +310,8 @@ class QuoteLine extends Component
     }
 
     public function storeQuoteLine(){
+        // Ownership check: prevent creating a line on a different quote by tampering the property
+        abort_unless((int) $this->quotes_id === (int) $this->QuoteId, 403);
         $this->validate();
         // Create Line
         
@@ -350,6 +354,7 @@ class QuoteLine extends Component
     }
 
     public function editQuoteLine($id){
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         $Line = Quotelines::findOrFail($id);
         $this->quote_lines_id = $id;
         $this->ordre = $Line->ordre;
@@ -372,6 +377,8 @@ class QuoteLine extends Component
     }
 
     public function updateQuoteLine(){
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $this->quote_lines_id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         // Validate request
         $this->validate();
         // Update line
@@ -393,12 +400,14 @@ class QuoteLine extends Component
 
     public function enableCalculatedPrice($idline)
     {
+        abort_unless(Quotelines::where('id', $idline)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idline)->update(['use_calculated_price' => 1]);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function disableCalculatedPrice($idline)
     {
+        abort_unless(Quotelines::where('id', $idline)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idline)->update(['use_calculated_price' => 0]);
         session()->flash('success','Line Updated Successfully');
     }
@@ -447,6 +456,7 @@ class QuoteLine extends Component
 
     public function duplicateLine($id)
     {
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         // Duplicate the quote line
         $newQuoteLine = $this->duplicateQuoteLine($id);
     
@@ -511,6 +521,7 @@ class QuoteLine extends Component
     
     public function createProduct($id)
     {
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         $serviceComponent = MethodsServices::where('type', 8)->first();
         $familyComponent = MethodsFamilies::where('methods_services_id', $serviceComponent->id)->first();
     
@@ -888,6 +899,8 @@ class QuoteLine extends Component
     }
     
     public function breakDown($id){
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         $Quoteline = Quotelines::findOrFail($id);
         $TaskLine = Task::where('products_id', $Quoteline->product_id)->get();
         foreach ($TaskLine as $Task) 
@@ -915,18 +928,22 @@ class QuoteLine extends Component
     }
 
     public function upQuoteLine($idStatu){
-        // Update line
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $idStatu)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idStatu)->increment('ordre',1);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function downQuoteLine($idStatu){
-        // Update line
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $idStatu)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idStatu)->decrement('ordre',1);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function destroyQuoteLine($id){
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         try{
             Quotelines::find($id)->delete();
             Task::where('quote_lines_id',$id)->delete();
@@ -937,6 +954,8 @@ class QuoteLine extends Component
     }
 
     public function storeOrder($quoteId){
+        // Ownership check: the quote must be the current one
+        abort_unless((int) $quoteId === (int) $this->QuoteId, 403);
 
         //check if line exist
         $i = 0;

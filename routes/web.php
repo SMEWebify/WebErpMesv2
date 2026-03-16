@@ -29,7 +29,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->name('guest.quote.show');
         Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->name('guest.order.show');
         Route::get('/guest/delivery/{uuid}', 'App\Http\Controllers\GuestController@ShowDeliveryDocument')->name('guest.delivery.show');
-        Route::get('/guest/nonConformitie/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
+        Route::get('/guest/nonConformitie/{uuid}/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
         Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
     });
     Route::get('/pointage', [AttendanceController::class, 'index'])->name('attendance.index');

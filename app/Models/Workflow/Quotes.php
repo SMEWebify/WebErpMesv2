@@ -49,7 +49,8 @@ class Quotes extends Model
                             'review_decision',
                             'change_requested_by',
                             'change_reason',
-                            'change_approved_at',];
+                            'change_approved_at',
+                        ];
 
     protected $casts = [
         'reviewed_at' => 'datetime',

@@ -82,7 +82,7 @@
         });
     </script>
 
-    <script src="{{ asset(Vite::asset('js/app.js')) }}"></script>
+    @vite(config('adminlte.laravel_mix_css_path', 'resources/css/app.css'))
     <script>
         Echo.channel('AndonAlert')
         .listen('.andon.alert.triggered', function(data) {

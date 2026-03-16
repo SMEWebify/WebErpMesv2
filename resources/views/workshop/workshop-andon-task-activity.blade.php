@@ -69,7 +69,7 @@
         });
     </script>
 
-    <script src="{{ asset(Vite::asset('js/app.js')) }}"></script>
+    @vite(config('adminlte.laravel_mix_css_path', 'resources/css/app.css'))
     <script>
         Echo.channel('TaskActivity')
         .listen('.task.activity.triggered', function(data) {

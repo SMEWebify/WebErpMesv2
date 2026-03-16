@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Quality;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Companies\Companies;
+use App\Models\Workflow\DeliveryLines;
 use App\Services\SelectDataService;
 use App\Services\DocumentCodeGenerator;
 use App\Models\Quality\QualityNonConformity;
@@ -70,7 +71,10 @@ class QualityNonConformityController extends Controller
         return redirect()->route('quality.nonConformitie')->with('success', __('general_content.non_conformity_created_success_trans_key'));
     }
 
-    public function createNCFromDelivery($id){
+    public function createNCFromDelivery($uuid, $id){
+        // Ownership check: verify the delivery line belongs to the delivery identified by UUID
+        $deliveryLine = DeliveryLines::with('delivery')->findOrFail($id);
+        abort_unless($deliveryLine->delivery && $deliveryLine->delivery->uuid === $uuid, 403);
         // Create non-conformity via service
         $this->qualityNonConformityService->createNCFromDelivery($id);
         
