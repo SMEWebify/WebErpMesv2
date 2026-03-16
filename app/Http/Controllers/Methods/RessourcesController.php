@@ -58,7 +58,7 @@ class RessourcesController extends Controller
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
         }
-        return redirect()->route('methods.ressource')->with('success', 'Successfully created ressource.');
+        return redirect()->route('methods.ressource')->with('success', __('general_content.resource_created_success_trans_key'));
     }
 
     /**
@@ -81,7 +81,7 @@ class RessourcesController extends Controller
             'methods_services_id' => $request->methods_services_id,
         ]);
 
-        return redirect()->route('methods.ressource')->with('success', 'Successfully updated ressource.');
+        return redirect()->route('methods.ressource')->with('success', __('general_content.resource_updated_success_trans_key'));
     }
     
     /**
@@ -100,7 +100,7 @@ class RessourcesController extends Controller
             $path = $request->file('picture')->store('images/ressources', 'public');
             $Service->update(['picture' => basename($path)]);
             $Service->save();
-            return redirect()->route('methods.ressource')->with('success', 'Successfully updated ressource.');
+            return redirect()->route('methods.ressource')->with('success', __('general_content.resource_updated_success_trans_key'));
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);

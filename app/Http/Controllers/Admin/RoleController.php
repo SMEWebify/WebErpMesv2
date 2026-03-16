@@ -41,7 +41,7 @@ class RoleController extends Controller
             $role->givePermissionTo(collect($request->permissions)->pluck('id')->toArray());
         }*/
 
-        return to_route('admin.roles.permissions')->with('success', 'Role Created successfully.');
+        return to_route('admin.roles.permissions')->with('success', __('general_content.role_created_success_trans_key'));
     }
 
     /**
@@ -62,7 +62,7 @@ class RoleController extends Controller
         
         $role->syncPermissions($permissions);
         
-        return to_route('admin.roles.permissions')->with('success', 'Role updated successfully.');
+        return to_route('admin.roles.permissions')->with('success', __('general_content.role_updated_success_trans_key'));
     }
 
     /**
@@ -74,7 +74,7 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $role->delete();
-        return to_route('admin.roles.permissions')->with('success', 'Role deleted successfully.');
+        return to_route('admin.roles.permissions')->with('success', __('general_content.role_deleted_success_trans_key'));
     }
 
      /**

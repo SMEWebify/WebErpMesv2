@@ -164,13 +164,13 @@ class PurchasesController extends Controller
         $purchaseData = $this->preparePurchaseData($request);
 
         if ($purchaseData === false) {
-            return redirect()->back()->with('error', 'No default settings fount for address, contact or accounting vat');
+            return redirect()->back()->with('error', __('general_content.no_default_address_contact_vat_error_trans_key'));
         }
     
         $purchaseOrderCreated = Purchases::create($purchaseData);
     
         return redirect()->route('purchases.show', ['id' => $purchaseOrderCreated->id])
-                            ->with('success', 'Successfully created new purchase order');
+                            ->with('success', __('general_content.purchase_order_created_success_trans_key'));
     }
 
     /**
@@ -197,7 +197,7 @@ class PurchasesController extends Controller
         $statusUpdate = $this->purchaseOrderService->getStatusUpdate();
     
         if (!$statusUpdate) {
-            return redirect()->back()->with('error', 'No status "Supplied" or "In progress" in kanban for defining progress');
+            return redirect()->back()->with('error', __('general_content.no_supplied_in_progress_status_error_trans_key'));
         }
     
         $this->purchaseOrderService->processPurchaseQuotationLines(
@@ -212,7 +212,7 @@ class PurchasesController extends Controller
         event(new PurchaseCreated($PurchasesQuotationData));
     
         return redirect()->route('purchases.show', ['id' => $purchaseOrder->id])
-                            ->with('success', 'Successfully created new purchase order');
+                            ->with('success', __('general_content.purchase_order_created_success_trans_key'));
     }
 
     /**
@@ -231,6 +231,6 @@ class PurchasesController extends Controller
         $Purchases->comment=$request->comment;
         $Purchases->save();
         
-        return redirect()->route('purchases.show', ['id' =>  $Purchases->id])->with('success', 'Successfully updated purchase order');
+        return redirect()->route('purchases.show', ['id' =>  $Purchases->id])->with('success', __('general_content.purchase_order_updated_success_trans_key'));
     }
 }

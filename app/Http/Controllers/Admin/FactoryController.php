@@ -136,7 +136,7 @@ class FactoryController extends Controller
 
         $Factory->save();
 
-        return redirect()->route('admin.factory')->with('success', 'Successfully updated factory inforamations');
+        return redirect()->route('admin.factory')->with('success', __('general_content.factory_info_updated_success_trans_key'));
     }
 
     /**
@@ -154,7 +154,7 @@ class FactoryController extends Controller
                                                     'comment'=>$request->comment, 
                                                     ]);
 
-        return redirect()->route('admin.factory')->with('success', 'Successfully add announcement');
+        return redirect()->route('admin.factory')->with('success', __('general_content.announcement_added_success_trans_key'));
     }
 
     /**
@@ -166,7 +166,7 @@ class FactoryController extends Controller
         // Delete Line
         $AnnouncementDelete= Announcements::where('id', $id)->delete();
 
-        return redirect()->route('admin.factory')->with('success', 'Successfully delete announcement');
+        return redirect()->route('admin.factory')->with('success', __('general_content.announcement_deleted_success_trans_key'));
     }
 
 

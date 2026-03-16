@@ -19,10 +19,10 @@ class AbsenceController extends Controller
         $TimesAbsence = TimesAbsence::create($request->only('user_id', 'absence_type', 'absence_type_day', 'start_date', 'end_date'));
 
         if($request->user_id == Auth::user()->id){
-            return redirect()->route('user.profile', ['id' => Auth::user()->id])->with('success', 'Successfully created absence request.');
+            return redirect()->route('user.profile', ['id' => Auth::user()->id])->with('success', __('general_content.absence_request_created_success_trans_key'));
         }
         else{
-            return redirect()->route('times')->with('success', 'Successfully created absence request.');
+            return redirect()->route('times')->with('success', __('general_content.absence_request_created_success_trans_key'));
         }
     }
 
@@ -42,10 +42,10 @@ class AbsenceController extends Controller
         $Absence->save();
 
         if($request->user_id == Auth::user()->id){
-            return redirect()->route('user.profile', ['id' => Auth::user()->id])->with('success', 'Successfully updated absence request.');
+            return redirect()->route('user.profile', ['id' => Auth::user()->id])->with('success', __('general_content.absence_request_updated_success_trans_key'));
         }
         else{
-            return redirect()->route('times')->with('success', 'Successfully updated absence request.');
+            return redirect()->route('times')->with('success', __('general_content.absence_request_updated_success_trans_key'));
         }
 
     }

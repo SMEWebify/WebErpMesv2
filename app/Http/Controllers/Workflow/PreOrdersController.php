@@ -129,10 +129,10 @@ class PreOrdersController extends Controller
                 );
             }
 
-            return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s), traitement Python terminé et import CSV exécuté avec succès.');
+            return redirect()->route('pre-orders.index')->with('success', __('general_content.preorders_pdf_processed_success_trans_key'));
         }
     
-        return redirect()->route('pre-orders.index')->with('success', 'PDF(s) envoyé(s) dans le stockage avec succès.');
+        return redirect()->route('pre-orders.index')->with('success', __('general_content.preorders_pdf_uploaded_success_trans_key'));
     }
     
 
@@ -243,7 +243,7 @@ class PreOrdersController extends Controller
             ]);
         }
 
-        return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Matching des articles terminé.');
+        return redirect()->route('pre-orders.show', $preOrder)->with('success', __('general_content.preorders_matching_done_success_trans_key'));
     }
 
     public function acceptMatching(PreOrder $preOrder, PreOrderLine $line)
