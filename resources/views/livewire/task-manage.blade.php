@@ -208,7 +208,7 @@
                             @if($updateLines)
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             @else
-                            <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.add_trans_key') }} {{ __('general_content.task_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
                             @endif
                         @endif
                     </div>
