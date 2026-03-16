@@ -220,6 +220,8 @@ class QuotesIndex extends Component
     }
     
     public function storeQuote(){
+        abort_unless(auth()->check(), 403);
+
         $this->validate();
             // Create Line
             $QuotesCreated = Quotes::create([

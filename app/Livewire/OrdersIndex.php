@@ -259,6 +259,8 @@ class OrdersIndex extends Component
     }
 
     public function storeOrder(){
+        abort_unless(auth()->check(), 403);
+
         $this->validate();
 
         if($this->type == 2){
