@@ -135,6 +135,8 @@ class DeliverysRequest extends Component
 
     public function storeDeliveryNote()
     {
+        abort_unless(auth()->check(), 403);
+
         // Validate the request
         $this->validate();
     

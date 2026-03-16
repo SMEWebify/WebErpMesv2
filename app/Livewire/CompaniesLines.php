@@ -128,6 +128,8 @@ class CompaniesLines extends Component
     }
 
     public function storeCompany(){
+        abort_unless(auth()->check(), 403);
+
 
         $this->validate();
             // Create Line
