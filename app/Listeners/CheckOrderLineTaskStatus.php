@@ -6,7 +6,6 @@ use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Workflow\OrderLines;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Cache;
 
@@ -41,12 +40,9 @@ class CheckOrderLineTaskStatus implements ShouldQueue
         #2 = Created
         #3 = In progress
         #4 = Finished (all the tasks are finished)
-        if ($allLinesOderLine) {
-            OrderLines::where('id', $orderLineId)->update(['tasks_status' => 4]);
-        }
-        else{
-            
-            OrderLines::where('id',$orderLineId)->update(['tasks_status'=> 3]);
-        }
+        $newStatus = $allLinesOderLine ? 4 : 3;
+
+        // Use Eloquent instance so any future observer on OrderLines fires correctly
+        OrderLines::find($orderLineId)?->update(['tasks_status' => $newStatus]);
     }
 }
