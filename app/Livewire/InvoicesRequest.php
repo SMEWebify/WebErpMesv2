@@ -112,6 +112,8 @@ class InvoicesRequest extends Component
 
     public function storeInvoice()
     {
+        abort_unless(auth()->check(), 403);
+
         // Validate the request
         $this->validate();
 
