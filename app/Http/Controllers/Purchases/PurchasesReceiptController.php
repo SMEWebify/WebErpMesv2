@@ -118,7 +118,7 @@ class PurchasesReceiptController extends Controller
         $Purchases->comment=$request->comment;
         $Purchases->save();
         
-        return redirect()->route('purchases.show', ['id' =>  $Purchases->id])->with('success', 'Successfully updated purchase order');
+        return redirect()->route('purchases.show', ['id' =>  $Purchases->id])->with('success', __('general_content.purchase_order_updated_success_trans_key'));
     }
 
     /**
@@ -136,7 +136,7 @@ class PurchasesReceiptController extends Controller
         $PurchaseReceipt->comment=$request->comment;
         $PurchaseReceipt->save();
         
-        return redirect()->route('purchase.receipts.show', ['id' =>  $PurchaseReceipt->id])->with('success', 'Successfully updated reciept');
+        return redirect()->route('purchase.receipts.show', ['id' =>  $PurchaseReceipt->id])->with('success', __('general_content.purchase_receipt_updated_success_trans_key'));
     }
 
     /**
@@ -155,7 +155,7 @@ class PurchasesReceiptController extends Controller
         $purchaseReceipt->reception_control_user_id = Auth::id(); 
         $purchaseReceipt->save();
 
-        return redirect()->back()->with('success', 'Contrôle de réception mis à jour avec succès.');
+        return redirect()->back()->with('success', __('general_content.inspection_update_success_trans_key'));
     }
 
     /**

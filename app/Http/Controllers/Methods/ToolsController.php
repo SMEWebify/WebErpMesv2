@@ -55,7 +55,7 @@ class ToolsController extends Controller
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
         }
 
-        return redirect()->route('methods.tool')->with('success', 'Successfully created tool.');
+        return redirect()->route('methods.tool')->with('success', __('general_content.tool_created_success_trans_key'));
     }
 
     /**
@@ -76,7 +76,7 @@ class ToolsController extends Controller
             'qty' => $request->qty,
         ]);
 
-        return redirect()->route('methods.tool')->with('success', 'Successfully updated tool.');
+        return redirect()->route('methods.tool')->with('success', __('general_content.tool_updated_success_trans_key'));
     }
 
     /**
@@ -95,7 +95,7 @@ class ToolsController extends Controller
             $path = $request->file('picture')->store('images/tools', 'public');
             $Service->update(['picture' => basename($path)]);
             $Service->save();
-            return redirect()->route('methods.tool')->with('success', 'Successfully updated tool.');
+            return redirect()->route('methods.tool')->with('success', __('general_content.tool_updated_success_trans_key'));
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);

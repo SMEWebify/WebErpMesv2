@@ -72,7 +72,7 @@ class StockLocationProductsController extends Controller
                                                                 'end_date',
                                                                 'addressing',
                                             ));
-        return redirect()->route('products.stocklocation.show', ['id' => $StockLocationProduct->stock_locations_id])->with('success', 'Successfully created new stock line');
+        return redirect()->route('products.stocklocation.show', ['id' => $StockLocationProduct->stock_locations_id])->with('success', __('general_content.stock_line_created_success_trans_key'));
     }
 
     /**
@@ -130,7 +130,7 @@ class StockLocationProductsController extends Controller
         // Mise à jour de la ligne de commande
         $this->stockService->updateOrderLine($request->order_line_id, $request->mini_qty);
 
-        return redirect()->route('products.stockline.show', ['id' => $StockLocationProduct->id])->with('success', 'Successfully created new move stock.');
+        return redirect()->route('products.stockline.show', ['id' => $StockLocationProduct->id])->with('success', __('general_content.stock_move_created_success_trans_key'));
     }
     
     /**
@@ -145,7 +145,7 @@ class StockLocationProductsController extends Controller
         // Mise à jour de la ligne de commande
         $this->stockService->updateOrderLine($request->order_line_id, $request->qty);
 
-        return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+        return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('success', __('general_content.stock_move_created_success_trans_key'));
     }
 
     /**
@@ -192,7 +192,7 @@ class StockLocationProductsController extends Controller
         // Mise à jour de la ligne de réception de l'achat
         $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $StockLocationProduct->id);
 
-        return redirect()->route('products.stockline.show', ['id' => $StockLocationProduct->id])->with('success', 'Successfully created new move stock.');
+        return redirect()->route('products.stockline.show', ['id' => $StockLocationProduct->id])->with('success', __('general_content.stock_move_created_success_trans_key'));
     }
 
     /**
@@ -211,7 +211,7 @@ class StockLocationProductsController extends Controller
         // Mise à jour de la ligne de réception de l'achat
         $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $request->stock_location_products_id);
 
-        return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+        return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('success', __('general_content.stock_move_created_success_trans_key'));
    }
 
     /**
@@ -233,7 +233,7 @@ class StockLocationProductsController extends Controller
         ];
 
         $stockMove = $this->stockService->createStockMove($data);
-        return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+        return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', __('general_content.stock_move_created_success_trans_key'));
     }
 
     /**
@@ -258,7 +258,7 @@ class StockLocationProductsController extends Controller
 
             $stockMove = $this->stockService->createStockMove($data);
 
-            return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', 'Successfully created new move stock.');
+            return redirect()->route('products.stockline.show', ['id' => $stockMove->stock_location_products_id])->with('success', __('general_content.stock_move_created_success_trans_key'));
         }
         else{
             return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('error', 'Not enough stock available for this tracability');

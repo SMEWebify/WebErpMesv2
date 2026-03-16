@@ -60,7 +60,7 @@ class ServicesController extends Controller
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);
         }
 
-        return redirect()->route('methods.service')->with('success', 'Successfully created service.');
+        return redirect()->route('methods.service')->with('success', __('general_content.service_created_success_trans_key'));
     }
 
     /**
@@ -99,7 +99,7 @@ class ServicesController extends Controller
         $serviceData['companies_id'] = $supplierIds->first();
         $service->update($serviceData);
         $service->Suppliers()->sync($supplierIds);
-        return redirect()->route('methods.service')->with('success', 'Successfully updated service.');
+        return redirect()->route('methods.service')->with('success', __('general_content.service_updated_success_trans_key'));
     }
 
     /**
@@ -117,7 +117,7 @@ class ServicesController extends Controller
             $path = $request->file('picture')->store('images/methods', 'public');
             $Service->update(['picture' => basename($path)]);
             $Service->save();
-            return redirect()->route('methods.service')->with('success', 'Successfully updated service.');
+            return redirect()->route('methods.service')->with('success', __('general_content.service_updated_success_trans_key'));
         }
         else{
             return back()->withInput()->withErrors(['msg' => 'Error, no image selected']);

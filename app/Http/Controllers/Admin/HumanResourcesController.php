@@ -118,7 +118,7 @@ class HumanResourcesController extends Controller
 
         $UserUpdate->assignRole($request->role);
 
-        return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', 'Successfully updated user inforamations');
+        return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', __('general_content.user_info_updated_success_trans_key'));
     }
 
     /**
@@ -133,7 +133,7 @@ class HumanResourcesController extends Controller
         $UserUpdate = User::findOrFail($id);
         $UserUpdate->banned_until = $request->banned_until;
         $UserUpdate->save();
-        return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', 'Successfully lock user');
+        return redirect()->route('human.resources.show.user', ['id' => $id])->with('success', __('general_content.user_locked_success_trans_key'));
     }
 
     /**
@@ -169,7 +169,7 @@ class HumanResourcesController extends Controller
                                                                     'end_of_contract_reason'=>$request->end_of_contract_reason,
                                                                 ]);
 
-        return redirect()->route('human.resources.show.user', ['id' => $UserEmploymentContract->user_id])->with('success', 'Successfully add contract');
+        return redirect()->route('human.resources.show.user', ['id' => $UserEmploymentContract->user_id])->with('success', __('general_content.contract_added_success_trans_key'));
     }
 
     /**

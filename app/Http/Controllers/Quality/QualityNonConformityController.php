@@ -67,14 +67,14 @@ class QualityNonConformityController extends Controller
         // Create non-conformity via service
         $this->qualityNonConformityService->createNonConformity($request->validated());
         
-        return redirect()->route('quality.nonConformitie')->with('success', 'Successfully created non conformitie.');
+        return redirect()->route('quality.nonConformitie')->with('success', __('general_content.non_conformity_created_success_trans_key'));
     }
 
     public function createNCFromDelivery($id){
         // Create non-conformity via service
         $this->qualityNonConformityService->createNCFromDelivery($id);
         
-        return redirect()->back()->with('success', 'Successfully created non conformitie.');
+        return redirect()->back()->with('success', __('general_content.non_conformity_created_success_trans_key'));
     }
 
     /**
@@ -101,7 +101,7 @@ class QualityNonConformityController extends Controller
         $QualityNonConformity->companie_id=$request->companie_id;
         $QualityNonConformity->qty=$request->qty;
         $QualityNonConformity->save();
-        return redirect()->route('quality.nonConformitie')->with('success', 'Successfully updated non conformitie.');
+        return redirect()->route('quality.nonConformitie')->with('success', __('general_content.non_conformity_updated_success_trans_key'));
     }
 
     /**

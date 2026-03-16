@@ -175,7 +175,7 @@ class ProductsController extends Controller
         }
         else{
             $product->preferredSuppliers()->attach($request->companies_id);
-            return redirect()->route('products.show', ['id' =>  $request->product_id])->with('success', 'Successfully add supplier.');
+            return redirect()->route('products.show', ['id' =>  $request->product_id])->with('success', __('general_content.supplier_added_success_trans_key'));
         }
     }
 
@@ -198,7 +198,7 @@ class ProductsController extends Controller
 
         // Redirect back with success message
 
-        return redirect()->route('products.show', ['id' =>  $request->id])->with('success', 'Successfully add quantity price.');
+        return redirect()->route('products.show', ['id' =>  $request->id])->with('success', __('general_content.quantity_price_added_success_trans_key'));
     }
 
     /**
@@ -280,7 +280,7 @@ class ProductsController extends Controller
         $Product->purchased = $request->has('purchased') ? 1 : 2;
         $Product->sold = $request->has(key: 'sold') ? 1 : 2;
         $Product->save();
-        return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', 'Successfully updated product');
+        return redirect()->route('products.show', ['id' =>  $Product->id])->with('success', __('general_content.product_updated_success_trans_key'));
     }
 
 /**
