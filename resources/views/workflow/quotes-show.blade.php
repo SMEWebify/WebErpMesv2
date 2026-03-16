@@ -198,6 +198,7 @@
               @include('include.sub-total-price')
             </x-adminlte-card>
 
+            @can('scheduling-menu')
             <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" collapsible maximizable>
               <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
                 @csrf
@@ -263,6 +264,7 @@
                 </div>
               @endif
             </x-adminlte-card>
+            @endcan
 
             @if($Quote->opportunities_id)
               <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info"  collapsible="collapsed" maximizable>
