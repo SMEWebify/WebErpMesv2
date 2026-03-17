@@ -28,12 +28,13 @@ use App\Models\Products\StockLocationProducts;
 use App\Models\UserAutoEmailReport;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Crypt;
 
 class User extends Authenticatable
 {
-    use HasRoles, HasFactory,LogsActivity, Notifiable;
+    use HasRoles, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -408,8 +409,11 @@ class User extends Authenticatable
      */
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly(['name', 'email']);
-        // Chain fluent methods for configuration options
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'job_title', 'employment_status', 'statu'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn (string $event) => "Utilisateur {$event}");
     }
 
     /**

@@ -999,15 +999,26 @@ class QuoteLine extends Component
                     null
                 );
                 if($OrdersCreated){
+                    // Batch-load all selected quote lines with their relations to avoid N+1
+                    $selectedIds = array_keys($this->data);
+                    $quoteLineMap = Quotelines::with(['QuoteLineDetails', 'Task', 'SubAssembly'])
+                        ->whereIn('id', $selectedIds)
+                        ->get()
+                        ->keyBy('id');
+
                     // Create lines
                     foreach ($this->data as $key => $item) {
 
                         //get data to dulicate for new order
-                        $QuoteLineData = Quotelines::find($key);
+                        $QuoteLineData = $quoteLineMap->get($key);
+
+                        if (!$QuoteLineData) {
+                            continue;
+                        }
 
                         $date = date_create($QuoteLineData->delivery_date);
                         $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
-                        
+
                         $newOrderline = Orderlines::create([
                             'orders_id'=>$OrdersCreated->id,
                             'ordre'=>$QuoteLineData->ordre,
@@ -1026,7 +1037,7 @@ class QuoteLine extends Component
                         ]);
 
                         //add line detail
-                        $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $key)->first();
+                        $QuoteLineDetailData = $QuoteLineData->QuoteLineDetails;
                         $newOrderLineDetail = OrderLineDetails::create([
                             'order_lines_id'=>$newOrderline->id,
                             'x_size'=>$QuoteLineDetailData->x_size,
@@ -1051,24 +1062,22 @@ class QuoteLine extends Component
                             'external_comment'=>$QuoteLineDetailData->external_comment,
                         ]);
 
-                        $Tasks = Task::where('quote_lines_id', $key)->get();
-                        foreach ($Tasks as $Task) 
+                        foreach ($QuoteLineData->Task as $Task)
                         {
                             $newTask = $Task->replicate();
                             $newTask->order_lines_id = $newOrderline->id;
                             $newTask->quote_lines_id = null;
                             $newTask->origin = "6";
                             $newTask->save();
-
-                            //update info that order line as task
-                            $OrderLine = OrderLines::find($newOrderline->id);
-                            $OrderLine->tasks_status = 2;
-                            $OrderLine->save();
-                            
                         }
-                        
-                        $SubAssemblyLine = SubAssembly::where('quote_lines_id', $key)->get();
-                        foreach ($SubAssemblyLine as $SubAssembly) 
+
+                        // update tasks_status once after all tasks are saved
+                        if ($QuoteLineData->Task->isNotEmpty()) {
+                            $newOrderline->tasks_status = 2;
+                            $newOrderline->save();
+                        }
+
+                        foreach ($QuoteLineData->SubAssembly as $SubAssembly)
                         {
                             $newSubAssembly = $SubAssembly->replicate();
                             $newSubAssembly->order_lines_id = $newOrderline->id;
@@ -1077,7 +1086,7 @@ class QuoteLine extends Component
                         }
 
                         //update quote lines statu
-                        Quotelines::where('id',$QuoteLineData->id)->update(['statu'=>3]);
+                        Quotelines::where('id', $QuoteLineData->id)->update(['statu' => 3]);
                     }
                     //update quote statu
                     Quotes::where('id',$quoteId)->update(['statu'=>3]);

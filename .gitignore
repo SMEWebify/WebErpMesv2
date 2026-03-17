@@ -7,13 +7,17 @@
 /public/images/factory
 /public/images/methods
 /public/images/quotes-lines
+/public/images/quote-lines
 /public/images/orders-lines
+/public/images/order-lines
 /public/images/products
 /public/images/ressources
+/public/inspection-documents
 /public/pdf
 /public/sgv
 /public/stl
 /storage/*.key
+/output/done
 /vendor
 !*/vendor/jeroennoten
 .env
@@ -25,5 +29,7 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+dump.rdb
+WebErpMesV2.code-workspace
 /.idea
 /.vscode

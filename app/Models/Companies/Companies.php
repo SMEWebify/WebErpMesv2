@@ -17,10 +17,13 @@ use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Quality\QualityNonConformity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Companies extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -60,6 +63,15 @@ class Companies extends Model
                             'quoted_delivery_note',
                             'csv_file_name',
                         ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['label', 'last_name', 'client_type', 'active', 'statu_customer', 'statu_supplier'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn (string $event) => "Entreprise {$event}");
+    }
 
     /**
      * Get the label attribute for the company.

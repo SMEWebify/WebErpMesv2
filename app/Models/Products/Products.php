@@ -16,6 +16,7 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsTools;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Products\CustomerPriceList;
 use App\Models\Products\ProductsQuantityPrice;
@@ -281,13 +282,12 @@ class Products extends Model
     //https://github.com/SMEWebify/WebErpMesv2/issues/321
     public function unFinishedTaskLines()
     {
-        $statuses = Status::whereIn('title', ['Open', 'Started', 'In progress'])->get();
-        $openStatusId = $statuses->where('title', 'Open')->first()->id ?? null;
-        $startedStatusId = $statuses->where('title', 'Started')->first()->id ?? null;
-        $inProgressStatusId = $statuses->where('title', 'In progress')->first()->id ?? null;
+        $statusIds = Cache::rememberForever('status_unfinished_ids', fn() =>
+            Status::whereIn('title', ['Open', 'Started', 'In progress'])->pluck('id')
+        );
 
-        return  $this->hasMany(Task::class, 'component_id')
-                ->whereIn('status_id', [$openStatusId, $startedStatusId, $inProgressStatusId])
+        return $this->hasMany(Task::class, 'component_id')
+                ->whereIn('status_id', $statusIds)
                 ->whereNotNull('order_lines_id');
     }
 

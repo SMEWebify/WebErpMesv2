@@ -22,11 +22,11 @@ class OrdersObserver
 
     public function updated(Orders $order): void
     {
-        Cache::forget(self::MENU_ORDERS_NOT_FINISH_CACHE_KEY);
-
         if (!$order->isDirty('statu')) {
             return;
         }
+
+        Cache::forget(self::MENU_ORDERS_NOT_FINISH_CACHE_KEY);
 
         $config = $this->settings->getMany([
             'n2p_enabled',

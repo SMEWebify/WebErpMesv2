@@ -64,35 +64,22 @@ Livewire est peu connu et freine les contributeurs externes.
 ## Dette technique identifiée
 
 ### CRITIQUE — Sécurité (bloquant avant mise en prod)
-- Actions Livewire sans vérification de permissions (Gates/Policies)
 - Aucune vérification d'ownership sur les ressources (ex: destroyQuoteLine)
-- $fillable à auditer sur les modèles critiques (Order, Quote, Product)
-
-### CRITIQUE — À corriger avant prod (issues des PRs Codex)
 - Queue worker non configuré
   → ajouter service worker dans docker-compose.yaml ou Supervisor
-
-
-
-### Infrastructure & Ops
-- **CRITIQUE** : Aucune stratégie de backup (base + fichiers uploadés)
+-  Aucune stratégie de backup (base + fichiers uploadés)
   → spatie/laravel-backup + destination externe (Backblaze/S3)
-- RGPD : page présente mais registre des traitements manquant
 
 ### Moyenne priorité
 - Double système CSS Bootstrap/Tailwind en conflit
 - Vue.js marginal (1.2%) → supprimer
 - AdminLTE impose jQuery comme dépendance globale
-- SoftDeletes à vérifier sur les entités métier critiques
 - Accessors Eloquent sans cache (formatted_price, TotalTime, Margin)
-- SelectDataService sans cache persistant
-- Risque de boucle infinie observer → event → update → observer
-- OrderCreated avec broadcastOn() retournant 'channel-name' littéral
 - Try/catch qui avalent les exceptions sans les logger
 - Aucun test frontend, tests métier insuffisants
 
 
-### Fait ✅ (PRs Codex mergées)
+### Fait 
 - whereColumn() corrigé sur PurchaseLines (#1024)
 - DB::transaction() ajouté sur storeOrder() (#1025)
 - ShouldQueue ajouté sur tous les listeners (#1026)
@@ -109,3 +96,39 @@ Livewire est peu connu et freine les contributeurs externes.
 - Logs Laravel non persistants dans Docker
   → stderr channel + volume monté sur storage/logs
 - Queue worker absent de docker-compose.yaml
+- Ownership QuoteLine
+- Ownership OrderLine
+- Auth autres composants Livewire
+- Route guest NC
+- $fillable Orders
+- MenuServiceProvider créé — BuildingMenu extrait de AppServiceProvider
+- EventServiceProvider nettoyé — fusion des listeners Registered
+- broadcastOn() supprimé sur les 8 events (channel-name littéral retiré)
+- Orders::find()->update() dans les listeners → observers déclenchés
+- Ownership QuoteLine + OrderLine sécurisé
+- Auth sur composants Livewire (QuotesIndex, OrdersIndex, etc.)
+- SelectDataService : 16 méthodes cachées 
+  (rememberForever référentiels, remember 30min semi-dynamiques)
+- Index invoice_status ajouté en migration
+- OrdersObserver : isDirty() avant Cache::forget()
+- Products : Status IDs mis en rememberForever
+- HomeController : eager loading companie (N+1 dashboard corrigé)
+- storeOrder() : batch load QuoteLines avant la boucle
+- SoftDeletes sur companies, companies_contacts, 
+  companies_addresses, users
+- LogsActivity sur Users et Companies (logOnlyDirty)
+- RgpdAnonymizationService — anonymisation sans casser les FK
+- Commandes artisan : rgpd:erase-contact, rgpd:export-contact, 
+  rgpd:purge
+- Rétention activity_log : 365 jours
+- Purge hebdomadaire automatique
+
+### À vérifier
+- password exclu des logs d'activité User
+- rgpd:purge passe bien par RgpdAnonymizationService 
+  avant force-delete (pas de suppression brute si FK liées)
+
+### Reste à faire (RGPD)
+- Registre des traitements (document interne — hors code)
+- Mentions légales à adapter par client déployé
+- Durées de conservation à documenter par type de donnée
