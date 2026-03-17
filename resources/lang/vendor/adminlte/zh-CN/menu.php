@@ -96,4 +96,5 @@ return [
     'licence_trans_key'                        => '许可证',
     'release_note_trans_key'                   => '版本说明',
     'methods_overview_trans_key'               => '方法总览',
+    'assets_trans_key'                         => '固定资产',
 ];
