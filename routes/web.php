@@ -67,8 +67,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         ->middleware(['auth', 'check.factory'])
         ->name('documents.index');
 
-    Route::group(['prefix' => 'spreadsheet', 'middleware' => ['auth', 'check.factory']], function () {
-        // TODO: add role-based permission
+    Route::group(['prefix' => 'spreadsheet', 'middleware' => ['auth', 'check.factory', 'permission:spreadsheet-menu']], function () {
         Route::get('/', [SpreadsheetController::class, 'index'])->name('spreadsheet.index');
         Route::get('/create', [SpreadsheetController::class, 'create'])->name('spreadsheet.create');
         Route::post('/', [SpreadsheetController::class, 'store'])->name('spreadsheet.store');
@@ -788,7 +787,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
 });
 
-    Route::prefix('api/spreadsheet/data')->name('spreadsheet.data.')->group(function () {
+    Route::prefix('api/spreadsheet/data')->middleware(['auth', 'check.factory', 'permission:spreadsheet-menu'])->name('spreadsheet.data.')->group(function () {
         Route::get('/stock/{reference}', [SpreadsheetDataController::class, 'stock'])->name('stock');
         Route::get('/orders', [SpreadsheetDataController::class, 'orders'])->name('orders');
         Route::get('/revenue', [SpreadsheetDataController::class, 'revenue'])->name('revenue');
