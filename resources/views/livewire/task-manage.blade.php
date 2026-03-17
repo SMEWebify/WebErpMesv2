@@ -240,6 +240,8 @@
         @endif
     @endif
 
+    @php($showStatusColumn = $idType == 'order_lines_id')
+
     @if($Line->id ?? null)
         <x-adminlte-card title="{{ __('general_content.technical_cut_trans_key') }}" theme="primary" maximizable>
             <div class="table-responsive p-0">
@@ -260,7 +262,9 @@
                             <th>{{ __('general_content.cost_trans_key') }}</th>
                             <th>{{ __('general_content.margin_trans_key') }}</th>
                             <th>{{ __('general_content.price_trans_key') }}</th>
-                            <th>{{__('general_content.status_trans_key') }}</th>
+                            @if($showStatusColumn)
+                                <th>{{__('general_content.status_trans_key') }}</th>
+                            @endif
                             <th>{{__('general_content.action_trans_key') }}</th>
                             <th>{{__('general_content.end_date_trans_key') }}</th>
                         </tr>
@@ -304,13 +308,15 @@
                             <td>{{ $TechLine->formatted_unit_cost }}</td>
                             <td>{{ $TechLine->Margin() }} %</td>
                             <td>{{ $TechLine->formatted_unit_price }}</td>
-                            <td>
-                            @if($TechLine->order_lines_id)
-                                {{ $TechLine->status['title'] }}
-                            @else
-                                {{__('general_content.not_this_page_trans_key') }}
+                            @if($showStatusColumn)
+                                <td>
+                                    @if($TechLine->order_lines_id)
+                                        {{ $TechLine->status['title'] }}
+                                    @else
+                                        {{ __('general_content.not_available_trans_key') }}
+                                    @endif
+                                </td>
                             @endif
-                            </td>
                             <td class=" py-0 align-middle">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -332,14 +338,16 @@
                             @endif 
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="16" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="{{ $showStatusColumn ? 16 : 15 }}" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
                             <th></th>
                             <th>{{ __('general_content.total_trans_key') }} :</th>
-                            <th></th>
+                            @if($showStatusColumn)
+                                <th></th>
+                            @endif
                             <th></th>
                             <th></th>
                             <th>{{ $Line->getTechnicalCutTotalSettingTimeAttribute() }} h</th>
@@ -376,7 +384,9 @@
                             <th>{{ __('general_content.cost_trans_key') }}</th>
                             <th>{{ __('general_content.margin_trans_key') }}</th>
                             <th>{{ __('general_content.price_trans_key') }}</th>
-                            <th>{{ __('general_content.status_trans_key') }}</th>
+                            @if($showStatusColumn)
+                                <th>{{ __('general_content.status_trans_key') }}</th>
+                            @endif
                             <th>{{ __('general_content.action_trans_key') }}</th>
                         </tr>
                     </thead>
@@ -422,13 +432,15 @@
                             <td>{{ $BOMline->formatted_unit_cost }}</td>
                             <td>{{ $BOMline->Margin() }} %</td>
                             <td>{{ $BOMline->formatted_unit_price }}</td>
-                            <td>
-                                @if($BOMline->order_lines_id)
-                                {{ $BOMline->status['title'] }}
-                                @else
-                                {{__('general_content.not_this_page_trans_key') }}
-                                @endif
-                            </td>
+                            @if($showStatusColumn)
+                                <td>
+                                    @if($BOMline->order_lines_id)
+                                        {{ $BOMline->status['title'] }}
+                                    @else
+                                        {{ __('general_content.not_available_trans_key') }}
+                                    @endif
+                                </td>
+                            @endif
                             <td class=" py-0 align-middle">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -441,14 +453,16 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="13" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="{{ $showStatusColumn ? 13 : 12 }}" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
                             <th></th>
                             <th>{{ __('general_content.total_trans_key') }} :</th>
-                            <th></th>
+                            @if($showStatusColumn)
+                                <th></th>
+                            @endif
                             <th></th>
                             <th></th>
                             <th></th>
