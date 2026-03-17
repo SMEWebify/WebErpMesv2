@@ -6,6 +6,7 @@ use App\Models\User;
 use Tests\TestCase;
 use App\Models\Spreadsheet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
 
 class SpreadsheetTest extends TestCase
 {
@@ -163,6 +164,28 @@ class SpreadsheetTest extends TestCase
             'current_month',
             'current_year',
         ]);
+    }
+
+
+    public function test_user_without_spreadsheet_permission_cannot_access_spreadsheet_routes(): void
+    {
+        Permission::create(['name' => 'spreadsheet-menu']);
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('spreadsheet.index'));
+
+        $response->assertForbidden();
+    }
+
+    public function test_user_with_spreadsheet_permission_can_access_spreadsheet_routes(): void
+    {
+        Permission::create(['name' => 'spreadsheet-menu']);
+        $user = User::factory()->create();
+        $user->givePermissionTo('spreadsheet-menu');
+
+        $response = $this->actingAs($user)->get(route('spreadsheet.index'));
+
+        $response->assertOk();
     }
 
     public function test_unauthenticated_user_cannot_access(): void
