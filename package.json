@@ -6,7 +6,8 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@vitejs/plugin-vue": "^6.0.5",
+        "@vitejs/plugin-react": "^4.4.1",
+    "@vitejs/plugin-vue": "^6.0.5",
         "alpinejs": "^2.7.3",
         "autoprefixer": "^10.4.17",
         "axios": "^1.8.2",
@@ -42,12 +43,14 @@
         "cross-env": "^7.0.3",
         "flag-icon-css": "^4.1.7",
         "livewire-sortable": "^1.0.0",
+        "@dnd-kit/core": "^6.3.1",
+        "@dnd-kit/sortable": "^9.0.0",
+        "@dnd-kit/utilities": "^3.2.2",
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
         "rxjs": "^7.8.2",
         "socket.io-client": "^4.8.0",
         "three": "^0.157.0",
-        "vue-resizable": "^2.1.7",
         "vuedraggable": "^4.1.0"
     }
 }

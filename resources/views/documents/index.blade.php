@@ -20,9 +20,6 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/app.css">
-@stop
-
-@section('js')
-    <script src="/js/app.js"></script>
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
