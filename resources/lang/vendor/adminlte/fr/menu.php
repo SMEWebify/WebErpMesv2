@@ -97,4 +97,5 @@ return [
     'licence_trans_key'                        => 'Licence',
     'release_note_trans_key'                   => 'Release notes',
     'methods_overview_trans_key'               => 'Vue d\'ensemble méthodes',
+    'assets_trans_key'                         => 'Immobilisations',
 ];
