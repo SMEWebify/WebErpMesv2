@@ -34,7 +34,7 @@
                             <td>{{ ucfirst(str_replace('_', ' ', $workOrder->status)) }}</td>
                             <td>{{ $workOrder->technician?->name ?? __('general_content.not_available_trans_key') }}</td>
                             <td>{{ optional($workOrder->requested_at)->format('Y-m-d') }}</td>
-                            <td class="text-right">
+                            <td class="text-end">
                                 <a href="{{ route('gmao.work-orders.edit', $workOrder->id) }}" class="btn btn-xs btn-default text-primary mx-1 shadow" title="{{ __('general_content.edit_trans_key') }}">
                                     <i class="fa fa-lg fa-fw fa-pen"></i>
                                 </a>

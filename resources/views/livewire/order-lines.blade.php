@@ -203,7 +203,7 @@
                                                 <div class="accordion" id="orderLineDetailAccordion{{ $OrderLine->id }}">
                                                     <div class="card card-outline card-success mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineMainFeatures{{ $OrderLine->id }}" aria-expanded="true" aria-controls="orderLineMainFeatures{{ $OrderLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineMainFeatures{{ $OrderLine->id }}" aria-expanded="true" aria-controls="orderLineMainFeatures{{ $OrderLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-stream text-success mr-2"></i> {{ __('Caractéristiques principales') }}
                                                                 </span>
@@ -244,7 +244,7 @@
 
                                                     <div class="card card-outline card-primary mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineDimensions{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineDimensions{{ $OrderLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineDimensions{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineDimensions{{ $OrderLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-ruler-combined text-primary mr-2"></i> {{ __('Dimensions (X, Y, Z)') }}
                                                                 </span>
@@ -314,7 +314,7 @@
 
                                                     <div class="card card-outline card-warning mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineCircularSpecs{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineCircularSpecs{{ $OrderLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineCircularSpecs{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineCircularSpecs{{ $OrderLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-circle-notch text-warning mr-2"></i> {{ __('Spécifications circulaires') }}
                                                                 </span>
@@ -363,7 +363,7 @@
 
                                                     <div class="card card-outline card-success mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineFiles{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineFiles{{ $OrderLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineFiles{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineFiles{{ $OrderLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-paperclip text-success mr-2"></i> {{ __('Fichiers') }}
                                                                 </span>
@@ -419,7 +419,7 @@
                                                     @php $orderDetailId = $OrderLine->OrderLineDetails->id; @endphp
                                                     <div class="card card-outline card-danger mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineCustomReq{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineCustomReq{{ $OrderLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineCustomReq{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineCustomReq{{ $OrderLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-tasks text-danger mr-2"></i> {{ __('Exigences personnalisées') }}
                                                                 </span>
@@ -471,7 +471,7 @@
 
                                                     <div class="card card-outline card-secondary mb-0">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineComments{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineComments{{ $OrderLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineComments{{ $OrderLine->id }}" aria-expanded="false" aria-controls="orderLineComments{{ $OrderLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-comments text-secondary mr-2"></i> {{ __('Commentaires') }}
                                                                 </span>
@@ -498,7 +498,7 @@
                                                 <div class="accordion" id="orderLineAttachmentAccordion{{ $OrderLine->id }}">
                                                     <div class="card card-outline card-success mb-0">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineAttachments{{ $OrderLine->id }}" aria-expanded="true" aria-controls="orderLineAttachments{{ $OrderLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#orderLineAttachments{{ $OrderLine->id }}" aria-expanded="true" aria-controls="orderLineAttachments{{ $OrderLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-paperclip text-success mr-2"></i> {{ __('Fichiers attachés') }}
                                                                 </span>

@@ -6,7 +6,6 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@tailwindcss/forms": "^0.2.1",
         "@vitejs/plugin-vue": "^6.0.5",
         "alpinejs": "^2.7.3",
         "autoprefixer": "^10.4.17",
@@ -20,7 +19,6 @@
         "postcss-import": "^16.1.0",
         "pusher-js": "^8.4.0-rc2",
         "sass": "^1.70.0",
-        "tailwindcss": "^2.2.19",
         "vite": "^7.0.0",
         "vue": "^3.5.11"
     },

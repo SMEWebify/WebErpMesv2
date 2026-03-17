@@ -162,29 +162,29 @@
               <div class="text-muted">
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.statu_trans_key') }}  
+                    <p class="small">{{ __('general_content.statu_trans_key') }}
                       <b class="d-block">{{ $Task->status['title'] }}</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.qty_trans_key') }}  
+                    <p class="small">{{ __('general_content.qty_trans_key') }}  
                       <b class="d-block">{{ $Task->GetOrderQtyLine() }}</b>
                     </p>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.cost_trans_key') }}
+                    <p class="small">{{ __('general_content.cost_trans_key') }}
                       <b class="d-block">{{ $Task->formatted_unit_cost }}</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.margin_trans_key') }}  
+                    <p class="small">{{ __('general_content.margin_trans_key') }}  
                       <b class="d-block">{{ $Task->margin() }} %</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.price_trans_key') }}
+                    <p class="small">{{ __('general_content.price_trans_key') }}
                       <b class="d-block">{{ $Task->formatted_unit_price }}</b>
                     </p>
                   </div>
@@ -192,29 +192,29 @@
                 @if($Task->service->type == 1)
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.setting_time_trans_key') }}
+                    <p class="small">{{ __('general_content.setting_time_trans_key') }}
                       <b class="d-block">{{ $Task->seting_time }} s</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.unit_time_trans_key') }}
+                    <p class="small">{{ __('general_content.unit_time_trans_key') }}
                       <b class="d-block">{{ $Task->unit_time }} s</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.total_time_trans_key') }}
+                    <p class="small">{{ __('general_content.total_time_trans_key') }}
                       <b class="d-block">{{ $Task->TotalTime() }} h</b>
                     </p>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.trs_trans_key') }}
+                    <p class="small">{{ __('general_content.trs_trans_key') }}
                       <b class="d-block">{{ $Task->getTotalLogTime()  }}</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.trs_trans_key') }}
+                    <p class="small">{{ __('general_content.trs_trans_key') }}
                       <b class="d-block">{{ $Task->getTRSAttribute()  }} %</b>
                     </p>
                   </div>
@@ -225,7 +225,7 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <p class="text-sm">{{ __('general_content.progress_trans_key') }}
+                  <p class="small">{{ __('general_content.progress_trans_key') }}
                     <b class="d-block">{{ $Task->progress() }} %</b>
                   </p>
                   
@@ -427,7 +427,7 @@
                   <x-adminlte-card theme="info" theme-mode="outline">
                     <div class="row">
                       <div class="col-md-2 text-muted">
-                        <p class="text-sm">{{ __('general_content.end_date_trans_key') }}  
+                        <p class="small">{{ __('general_content.end_date_trans_key') }}  
                           <b class="d-block">{{ $Task->getFormattedEndDateAttribute() }}</b>
                         </p>
                       </div>

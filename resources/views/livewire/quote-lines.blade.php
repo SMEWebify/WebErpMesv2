@@ -123,7 +123,7 @@
                                                 <div class="accordion" id="quoteLineDetailAccordion{{ $QuoteLine->id }}">
                                                     <div class="card card-outline card-success mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineMainFeatures{{ $QuoteLine->id }}" aria-expanded="true" aria-controls="quoteLineMainFeatures{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineMainFeatures{{ $QuoteLine->id }}" aria-expanded="true" aria-controls="quoteLineMainFeatures{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-stream text-success mr-2"></i> {{ __('general_content.main_features_trans_key') }}
                                                                 </span>
@@ -164,7 +164,7 @@
 
                                                     <div class="card card-outline card-primary mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineDimensions{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineDimensions{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineDimensions{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineDimensions{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-ruler-combined text-primary mr-2"></i> {{ __('general_content.dimensions_xyz_trans_key') }}
                                                                 </span>
@@ -234,7 +234,7 @@
 
                                                     <div class="card card-outline card-warning mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineCircularSpecs{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineCircularSpecs{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineCircularSpecs{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineCircularSpecs{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-circle-notch text-warning mr-2"></i> {{ __('general_content.circular_specs_trans_key') }}
                                                                 </span>
@@ -283,7 +283,7 @@
 
                                                     <div class="card card-outline card-success mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineFiles{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineFiles{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineFiles{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineFiles{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-paperclip text-success mr-2"></i> {{ __('general_content.files_trans_key') }}
                                                                 </span>
@@ -339,7 +339,7 @@
                                                     @php $quoteDetailId = $QuoteLine->QuoteLineDetails->id; @endphp
                                                     <div class="card card-outline card-danger mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineCustomReq{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineCustomReq{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineCustomReq{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineCustomReq{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-tasks text-danger mr-2"></i> {{ __('general_content.custom_requirements_trans_key') }}
                                                                 </span>
@@ -389,7 +389,7 @@
                                                     @if($lineProductCustomFields->isNotEmpty())
                                                     <div class="card card-outline card-info mb-2">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineProductFields{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineProductFields{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineProductFields{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineProductFields{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-sliders-h text-info mr-2"></i> {{ __('general_content.custom_fields_trans_key') }} - {{ __('general_content.product_trans_key') }}
                                                                 </span>
@@ -444,7 +444,7 @@
 
                                                     <div class="card card-outline card-secondary mb-0">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineComments{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineComments{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineComments{{ $QuoteLine->id }}" aria-expanded="false" aria-controls="quoteLineComments{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-comments text-secondary mr-2"></i> {{ __('general_content.comment_trans_key') }}
                                                                 </span>
@@ -471,7 +471,7 @@
                                                 <div class="accordion" id="quoteLineAttachmentAccordion{{ $QuoteLine->id }}">
                                                     <div class="card card-outline card-success mb-0">
                                                         <div class="card-header">
-                                                            <button class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineAttachments{{ $QuoteLine->id }}" aria-expanded="true" aria-controls="quoteLineAttachments{{ $QuoteLine->id }}">
+                                                            <button class="btn btn-link text-start w-100 d-flex align-items-center justify-content-between" type="button" data-toggle="collapse" data-target="#quoteLineAttachments{{ $QuoteLine->id }}" aria-expanded="true" aria-controls="quoteLineAttachments{{ $QuoteLine->id }}">
                                                                 <span class="d-flex align-items-center">
                                                                     <i class="fas fa-paperclip text-success mr-2"></i> {{ __('general_content.attached_file_trans_key') }}
                                                                 </span>

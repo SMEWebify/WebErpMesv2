@@ -15,12 +15,7 @@
         @yield('title_postfix', config('adminlte.title_postfix', ''))
     </title>
 
-    {{-- AdminLTE --}}
-    @vite(config('adminlte.laravel_mix_css_path', 'resources/css/app.css'))
-
-    {{-- Bootstrap 5 --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    @vite('resources/sass/app.scss')
 
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))

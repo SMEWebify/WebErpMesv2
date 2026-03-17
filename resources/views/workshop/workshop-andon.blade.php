@@ -82,7 +82,7 @@
         });
     </script>
 
-    @vite(config('adminlte.laravel_mix_css_path', 'resources/css/app.css'))
+    @vite('resources/sass/app.scss')
     <script>
         Echo.channel('AndonAlert')
         .listen('.andon.alert.triggered', function(data) {

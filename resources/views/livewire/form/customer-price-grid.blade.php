@@ -23,7 +23,7 @@
                                 <th>{{ __('general_content.quantite_min_trans_key') }}</th>
                                 <th>{{ __('general_content.quantite_max_trans_key') }}</th>
                                 <th>{{ __('general_content.price_trans_key') }}</th>
-                                <th class="text-right">{{ __('general_content.action_trans_key') }}</th>
+                                <th class="text-end">{{ __('general_content.action_trans_key') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,7 +47,7 @@
                                         @endif
                                     </td>
                                     <td>{{ $entry['formatted_price'] }}</td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <button type="button" class="btn btn-xs btn-outline-primary" wire:click="applyPriceFromList({{ $entry['id'] }})" @if(!$usePriceList && $appliedPriceListId === $entry['id']) disabled @endif>
                                             {{ __('general_content.use_price_trans_key') }}
                                         </button>

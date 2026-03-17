@@ -19,7 +19,7 @@
                         <th>Description</th>
                         <th>Créé par</th>
                         <th>Mis à jour</th>
-                        <th class="text-right">Actions</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,7 +29,7 @@
                             <td>{{ $spreadsheet->description }}</td>
                             <td>{{ $spreadsheet->creator->name ?? '-' }}</td>
                             <td>{{ optional($spreadsheet->updated_at)->format('d/m/Y H:i') }}</td>
-                            <td class="text-right">
+                            <td class="text-end">
                                 <a href="{{ route('spreadsheet.edit', $spreadsheet) }}" class="btn btn-sm btn-info">Éditer</a>
                                 <form action="{{ route('spreadsheet.destroy', $spreadsheet) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Supprimer ce tableur ?')">
                                     @csrf

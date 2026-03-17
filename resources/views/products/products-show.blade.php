@@ -118,7 +118,7 @@
               <div class="card card-body">
                 <div class="row">
                     <div class="form-group col-md-4">
-                      <div class="col-4 text-left"><label for="purchased" class="col-form-label">{{ __('general_content.purchased_trans_key') }}</label></div>
+                      <div class="col-4 text-start"><label for="purchased" class="col-form-label">{{ __('general_content.purchased_trans_key') }}</label></div>
                       <div class="col-8">
                           @if($Product->purchased == 1)  
                           <x-adminlte-input-switch id="purchased" name="purchased" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
@@ -128,7 +128,7 @@
                       </div>
                     </div>
                     <div class="form-group col-md-4">
-                      <div class="col-4 text-left"><label for="sold" class="col-form-label">{{ __('general_content.sold_trans_key') }}</label></div>
+                      <div class="col-4 text-start"><label for="sold" class="col-form-label">{{ __('general_content.sold_trans_key') }}</label></div>
                       <div class="col-8">
                           @if($Product->sold == 1)  
                           <x-adminlte-input-switch id="sold" name="sold" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
@@ -427,7 +427,7 @@
                     <th>{{ __('general_content.quantite_min_trans_key') }}</th>
                     <th>{{ __('general_content.quantite_max_trans_key') }}</th>
                     <th>{{ __('general_content.price_trans_key') }}</th>
-                    <th class="text-right">{{ __('general_content.action_trans_key') }}</th>
+                    <th class="text-end">{{ __('general_content.action_trans_key') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -452,7 +452,7 @@
                       @endif
                     </td>
                     <td>{{ number_format($priceList->price, 2) }} {{ $Factory->curency }}</td>
-                    <td class="text-right">
+                    <td class="text-end">
                       <button type="button" class="btn btn-xs btn-outline-primary" data-toggle="modal" data-target="#customerPriceListEdit{{ $priceList->id }}">
                         <i class="fas fa-edit"></i>
                       </button>
@@ -505,7 +505,7 @@
                               </div>
                             </div>
                           </div>
-                          <div class="text-right">
+                          <div class="text-end">
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                           </div>
                         </form>
@@ -747,7 +747,7 @@
       <div class="row"> 
         <div class="col-12 col-sm-4">
           <div class="text-muted">
-          <p class="text-sm">{{ __('general_content.unit_trans_key') }}
+          <p class="small">{{ __('general_content.unit_trans_key') }}
             <b class="d-block">{{ $Product->Unit['label'] }}</b>
           </p>
           </div>
@@ -759,7 +759,7 @@
       <div class="row"> 
         <div class="col-12 col-sm-4">
           <div class="text-muted">
-          <p class="text-sm">{{ __('general_content.price_trans_key') }}
+          <p class="small">{{ __('general_content.price_trans_key') }}
             <b class="d-block">{{ $Product->selling_price }} {{ $Factory->curency }}</b>
           </p>
           </div>
@@ -772,16 +772,16 @@
       <div class="row">
         <div class="col-12 col-sm-4">
           <div class="text-muted">
-          <p class="text-sm">{{ __('general_content.purchased_price_trans_key') }}
+          <p class="small">{{ __('general_content.purchased_price_trans_key') }}
             <b class="d-block">{{ $Product->purchased_price }} {{ $Factory->curency }}</b>
           </p>
-          <p class="text-sm">{{ __('general_content.weighted_average_price_trans_key') }}
+          <p class="small">{{ __('general_content.weighted_average_price_trans_key') }}
             <b class="d-block"> {{ number_format($averageCost, 2) }} {{ $Factory->curency }}</b>
           </p>
-          <p class="text-sm">{{ __('general_content.last_purchase_price_price_trans_key') }}
+          <p class="small">{{ __('general_content.last_purchase_price_price_trans_key') }}
             <b class="d-block">{{ number_format($lastPurchasePrice, 2) }} {{ $Factory->curency }}</b>
           </p>
-          <p class="text-sm">{{ __('general_content.average_supply_delay_trans_key') }}
+          <p class="small">{{ __('general_content.average_supply_delay_trans_key') }}
             <b class="d-block">
               @if(!is_null($averageSupplyDelay))
                 {{ number_format($averageSupplyDelay, 0) }} {{ __('general_content.day_trans_key') }}
@@ -800,7 +800,7 @@
       <div class="row">
         <div class="col-12 col-sm-4">
           <div class="text-muted">
-          <p class="text-sm">{{ __('general_content.quantite_eco_min_trans_key') }}
+          <p class="small">{{ __('general_content.quantite_eco_min_trans_key') }}
             <b class="d-block">{{ $Product->qty_eco_min }}</b>
           </p>
           </div>
@@ -813,7 +813,7 @@
       <div class="row">
         <div class="col-12 col-sm-4">
           <div class="text-muted">
-          <p class="text-sm">{{ __('general_content.quantite_eco_max_trans_key') }}
+          <p class="small">{{ __('general_content.quantite_eco_max_trans_key') }}
             <b class="d-block">{{ $Product->qty_eco_max }}</b>
           </p>
           </div>
