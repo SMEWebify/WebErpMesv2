@@ -747,6 +747,7 @@ return [
             'icon' => 'nav-icon fas fa-table',
             'url'  => 'spreadsheet',
             'active' => ['spreadsheet*'],
+            'can'  => ['spreadsheet-menu'],
         ],
         [
             'text' => 'Reports',
