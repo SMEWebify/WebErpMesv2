@@ -224,9 +224,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
-        Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys'); 
-        Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys');
+        Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
+        // JSON API for React DeliverysIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
         Route::post('{id}/packaging/store/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsStore')->name('deliverys.packagings.store');
         Route::post('{id}/packaging/update/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsUpdate')->name('deliverys.packagings.update');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->name('deliverys.show');
@@ -238,10 +240,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'check.factory']], function () {
-        Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices'); 
-        Route::get('/store/delevery/{id}', 'App\Http\Controllers\Workflow\InvoicesController@storeFromDelevery')->name('invoices.store.from.delivery'); 
-        Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->name('invoices-request'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices');
+        Route::get('/store/delevery/{id}', 'App\Http\Controllers\Workflow\InvoicesController@storeFromDelevery')->name('invoices.store.from.delivery');
+        Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->name('invoices-request');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
+        // JSON endpoint for React InvoicesIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
     });
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use App\Models\Workflow\Packaging;
@@ -125,6 +126,62 @@ class DeliverysController extends Controller
 
         // Redirection avec un message de succès
         return redirect()->route('deliverys.show', ['id' => $id->id])->with('success', 'Successfully add packaging');
+    }
+
+    // -------------------------------------------------------------------------
+    // JSON endpoints for the React DeliverysIndex component
+    // -------------------------------------------------------------------------
+
+    public function listJson(Request $request)
+    {
+        $search         = $request->get('search', '');
+        $statuses       = array_filter(array_map('intval', (array) $request->get('statuses', [])));
+        $invoiceStatuses = array_filter(array_map('intval', (array) $request->get('invoice_statuses', [])));
+        $sortField      = $request->get('sort', 'created_at');
+        $sortAsc        = $request->boolean('asc', false);
+
+        $allowed = ['code', 'label', 'created_at', 'statu', 'companies_id', 'delivery_lines_count'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir = $sortAsc ? 'asc' : 'desc';
+
+        $query = Deliverys::withCount('DeliveryLines')
+            ->with(['companie:id,label', 'UserManagement:id,name'])
+            ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
+            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
+            ->when($invoiceStatuses, fn ($q) => $q->whereIn('invoice_status', $invoiceStatuses));
+
+        match ($sortField) {
+            'delivery_lines_count' => $query->orderBy('delivery_lines_count', $dir),
+            'companies_id'         => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = deliverys.companies_id) {$dir}"),
+            default                => $query->orderBy($sortField, $dir),
+        };
+
+        $deliverys = $query->paginate(15);
+
+        return response()->json([
+            'data' => $deliverys->map(fn ($d) => [
+                'id'             => $d->id,
+                'code'           => $d->code,
+                'label'          => $d->label,
+                'statu'          => $d->statu,
+                'invoice_status' => $d->invoice_status,
+                'lines_count'    => $d->delivery_lines_count,
+                'companie'       => $d->companie ? ['id' => $d->companie->id, 'label' => $d->companie->label] : null,
+                'user'           => $d->UserManagement ? ['name' => $d->UserManagement->name] : null,
+                'created_at'     => $d->created_at?->format('d/m/Y'),
+                'url'            => route('deliverys.show', ['id' => $d->id]),
+                'pdf_url'        => route('pdf.delivery', ['Document' => $d->id]),
+            ]),
+            'meta' => [
+                'total'        => $deliverys->total(),
+                'per_page'     => $deliverys->perPage(),
+                'current_page' => $deliverys->currentPage(),
+                'last_page'    => $deliverys->lastPage(),
+            ],
+        ]);
     }
 
     public function packagingsUpdate(UpdatePackagingRequest $request, Deliverys $id)

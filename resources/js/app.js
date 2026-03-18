@@ -9,6 +9,7 @@ import DocumentTable from './components/DocumentTable.jsx';
 import NestingPage from './components/NestingPage.jsx';
 import QuotesIndex from './components/QuotesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
+import DeliverysIndex from './components/DeliverysIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
 import OrderLinesIndex from './components/OrderLinesIndex.jsx';
 import 'livewire-sortable';
@@ -169,6 +170,24 @@ function mountOrderLinesIndex() {
     );
 }
 
+function mountDeliverysIndex() {
+    const element = document.getElementById('deliverys-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(DeliverysIndex, {
+            kpi:       parse('kpi')       ?? {},
+            chartData: parse('chart')     ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 mountKanbanBoard();
 mountDocumentTable();
 mountWhiteboard();
@@ -177,3 +196,4 @@ mountQuotesIndex();
 mountOrdersIndex();
 mountQuoteLinesIndex();
 mountOrderLinesIndex();
+mountDeliverysIndex();
