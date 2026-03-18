@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Workflow;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Number;
+use App\Models\User;
 use App\Models\Workflow\Orders;
 use App\Jobs\CalculateTaskDates;
 use App\Services\OrderKPIService;
+use App\Services\OrderService;
+use App\Services\DocumentCodeGenerator;
 use App\Traits\NextPreviousTrait;
 use App\Models\Admin\Factory;
 use App\Services\SelectDataService;
@@ -15,6 +20,11 @@ use App\Services\OrderCalculatorService;
 use App\Services\OrderInvoiceDataService;
 use App\Services\OrderBusinessBalanceService;
 use App\Models\Workflow\OrderLines;
+use App\Models\Companies\CompaniesAddresses;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Accounting\AccountingDelivery;
+use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Accounting\AccountingPaymentConditions;
 use App\Http\Requests\Workflow\UpdateOrderRequest;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Activity;
@@ -260,5 +270,206 @@ class OrdersController extends Controller
         return redirect()
             ->route('orders.show', ['id' => $order->id])
             ->with('success', 'Task date calculation queued for this order.');
+    }
+
+    // -------------------------------------------------------------------------
+    // JSON endpoints for the React OrdersIndex component
+    // -------------------------------------------------------------------------
+
+    public function listJson(Request $request)
+    {
+        $search    = $request->get('search', '');
+        $statuses  = array_filter(array_map('intval', (array) $request->get('statuses', [1, 2])));
+        $sortField = $request->get('sort', 'created_at');
+        $sortAsc   = $request->boolean('asc', false);
+        $companyId = $request->get('company_id');
+
+        $allowed = ['code', 'label', 'created_at', 'validity_date', 'statu', 'companie', 'contact', 'order_lines_count', 'total_amount'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir      = $sortAsc ? 'asc' : 'desc';
+        $totalSub = 'COALESCE((SELECT SUM(selling_price * qty * (1 - COALESCE(discount,0)/100)) FROM order_lines WHERE order_lines.orders_id = orders.id AND order_lines.deleted_at IS NULL), 0)';
+
+        $query = Orders::withCount('OrderLines')
+            ->selectRaw("orders.*, {$totalSub} as total_amount")
+            ->with(['companie:id,label,code', 'contact:id,first_name,name'])
+            ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
+            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
+
+        match ($sortField) {
+            'companie'          => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = orders.companies_id) {$dir}"),
+            'contact'           => $query->orderByRaw("(SELECT name FROM companies_contacts WHERE companies_contacts.id = orders.companies_contacts_id) {$dir}"),
+            'order_lines_count' => $query->orderBy('order_lines_count', $dir),
+            'total_amount'      => $query->orderByRaw("{$totalSub} {$dir}"),
+            default             => $query->orderBy($sortField, $dir),
+        };
+
+        $orders = $query->paginate(15);
+
+        return response()->json([
+            'data' => $orders->map(fn ($o) => [
+                'id'                 => $o->id,
+                'code'               => $o->code,
+                'label'              => $o->label,
+                'customer_reference' => $o->customer_reference,
+                'statu'              => $o->statu,
+                'validity_date'      => $o->validity_date,
+                'created_at'         => $o->created_at?->format('d/m/Y'),
+                'companie'           => $o->companie ? ['id' => $o->companie->id, 'label' => $o->companie->label] : null,
+                'contact'            => $o->contact  ? ['id' => $o->contact->id,  'name'  => trim($o->contact->first_name.' '.$o->contact->name)] : null,
+                'order_lines_count'  => $o->order_lines_count,
+                'total_amount'       => round((float) $o->total_amount, 2),
+                'url'                => route('orders.show', ['id' => $o->id]),
+            ]),
+            'meta' => [
+                'total'        => $orders->total(),
+                'per_page'     => $orders->perPage(),
+                'current_page' => $orders->currentPage(),
+                'last_page'    => $orders->lastPage(),
+            ],
+        ]);
+    }
+
+    public function storeJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $type = (int) $request->input('type', 1);
+
+        $rules = [
+            'code'               => 'required|unique:orders',
+            'label'              => 'required',
+            'user_id'            => 'required|integer',
+            'validity_date'      => 'nullable|date',
+            'comment'            => 'nullable|string',
+            'customer_reference' => 'nullable|string|max:255',
+            'type'               => 'required|in:1,2',
+        ];
+
+        if ($type === 1) {
+            $rules['companies_id']                     = 'required|integer';
+            $rules['companies_contacts_id']            = 'required|integer';
+            $rules['companies_addresses_id']           = 'required|integer';
+            $rules['accounting_payment_conditions_id'] = 'required|integer';
+            $rules['accounting_payment_methods_id']    = 'required|integer';
+            $rules['accounting_deliveries_id']         = 'required|integer';
+        }
+
+        $validated = $request->validate($rules);
+
+        $orderService = app(OrderService::class);
+        $order = $orderService->createOrder(
+            $validated['code'],
+            $validated['label'],
+            $validated['customer_reference'] ?? null,
+            $type === 1 ? ($validated['companies_id'] ?? null) : null,
+            $type === 1 ? ($validated['companies_contacts_id'] ?? null) : null,
+            $type === 1 ? ($validated['companies_addresses_id'] ?? null) : null,
+            $validated['validity_date'] ?? null,
+            1,
+            $validated['user_id'],
+            $type === 1 ? ($validated['accounting_payment_conditions_id'] ?? null) : null,
+            $type === 1 ? ($validated['accounting_payment_methods_id'] ?? null) : null,
+            $type === 1 ? ($validated['accounting_deliveries_id'] ?? null) : null,
+            $validated['comment'] ?? null,
+            $type,
+            null,
+            null
+        );
+
+        return response()->json([
+            'redirect' => route('orders.show', ['id' => $order->id]),
+        ], 201);
+    }
+
+    public function selectDataJson()
+    {
+        $lastOrder = Orders::orderBy('id', 'desc')->first();
+        $docGen    = app(DocumentCodeGenerator::class);
+
+        return response()->json([
+            'next_code_external'  => $docGen->generateDocumentCode('order',          $lastOrder?->id ?? 0),
+            'next_code_internal'  => $docGen->generateDocumentCode('internal-order',  $lastOrder?->id ?? 0),
+            'companies'           => $this->SelectDataService->getCompanies()->map(fn ($c) => [
+                'id'    => $c->id,
+                'label' => $c->label ?? $c->last_name,
+                'code'  => $c->code,
+            ]),
+            'payment_conditions'  => AccountingPaymentConditions::select('id', 'code', 'label', 'default')->get(),
+            'payment_methods'     => AccountingPaymentMethod::select('id', 'code', 'label', 'default')->get(),
+            'deliveries'          => AccountingDelivery::select('id', 'code', 'label', 'default')->get(),
+            'users'               => User::select('id', 'name')->get(),
+        ]);
+    }
+
+    public function addressesJson(int $companyId)
+    {
+        return response()->json(
+            CompaniesAddresses::select('id', 'label', 'adress')
+                ->where('companies_id', $companyId)
+                ->get()
+        );
+    }
+
+    public function contactsJson(int $companyId)
+    {
+        return response()->json(
+            CompaniesContacts::select('id', 'first_name', 'name')
+                ->where('companies_id', $companyId)
+                ->get()
+                ->map(fn ($c) => ['id' => $c->id, 'name' => trim($c->first_name.' '.$c->name)])
+        );
+    }
+
+    public function storeAddressJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'companies_id' => 'required|integer|exists:companies,id',
+            'ordre'        => 'required|numeric|gt:0',
+            'label'        => 'required|string|max:255',
+            'adress'       => 'required|string|max:255',
+            'zipcode'      => 'required|string|max:20',
+            'city'         => 'required|string|max:100',
+            'country'      => 'required|string|max:100',
+            'number'       => 'nullable|string|max:50',
+            'mail'         => 'nullable|email|max:255',
+        ]);
+
+        $address = CompaniesAddresses::create($validated);
+
+        return response()->json([
+            'id'    => $address->id,
+            'label' => $address->label,
+            'adress'=> $address->adress,
+        ], 201);
+    }
+
+    public function storeContactJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'companies_id' => 'required|integer|exists:companies,id',
+            'ordre'        => 'required|numeric|gt:0',
+            'civility'     => 'nullable|string|max:20',
+            'first_name'   => 'required|string|max:100',
+            'name'         => 'required|string|max:100',
+            'function'     => 'nullable|string|max:100',
+            'number'       => 'nullable|string|max:50',
+            'mobile'       => 'nullable|string|max:50',
+            'mail'         => 'nullable|email|max:255',
+        ]);
+
+        $contact = CompaniesContacts::create($validated);
+
+        return response()->json([
+            'id'   => $contact->id,
+            'name' => trim($contact->first_name.' '.$contact->name),
+        ], 201);
     }
 }

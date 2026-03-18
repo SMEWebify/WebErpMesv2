@@ -8,6 +8,9 @@ import KanbanBoard from './components/KanbanBoard.jsx';
 import DocumentTable from './components/DocumentTable.jsx';
 import NestingPage from './components/NestingPage.jsx';
 import QuotesIndex from './components/QuotesIndex.jsx';
+import OrdersIndex from './components/OrdersIndex.jsx';
+import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
+import OrderLinesIndex from './components/OrderLinesIndex.jsx';
 import 'livewire-sortable';
 
 function mountKanbanBoard() {
@@ -119,8 +122,58 @@ function mountQuotesIndex() {
     );
 }
 
+function mountOrdersIndex() {
+    const element = document.getElementById('orders-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(OrdersIndex, {
+            kpi:          parse('kpi')          ?? {},
+            chartData:    parse('chart')        ?? {},
+            topCustomers: parse('topCustomers') ?? [],
+            endpoints:    parse('endpoints')    ?? {},
+            trans:        parse('trans')        ?? {},
+        })
+    );
+}
+
+function mountQuoteLinesIndex() {
+    const element = document.getElementById('quote-lines-index-app');
+    if (!element) return;
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+    createRoot(element).render(
+        React.createElement(QuoteLinesIndex, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+function mountOrderLinesIndex() {
+    const element = document.getElementById('order-lines-index-app');
+    if (!element) return;
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+    createRoot(element).render(
+        React.createElement(OrderLinesIndex, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 mountKanbanBoard();
 mountDocumentTable();
 mountWhiteboard();
 mountNestingPage();
 mountQuotesIndex();
+mountOrdersIndex();
+mountQuoteLinesIndex();
+mountOrderLinesIndex();

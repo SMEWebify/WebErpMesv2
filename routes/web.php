@@ -156,6 +156,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         //quote
         Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes');
         Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines');
+        Route::get('/lines/json', 'App\Http\Controllers\Workflow\QuoteLinesController@listJson')->name('quote-lines.json.list');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->name('quotes.update');
         // JSON API for React QuotesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\QuotesController@listJson')->name('quotes.json.list');
@@ -181,9 +182,18 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
         //order
-        Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders'); 
-        Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders');
+        Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines');
+        Route::get('/lines/json', 'App\Http\Controllers\Workflow\OrderLinesController@listJson')->name('order-lines.json.list');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->name('orders.update');
+        // JSON endpoints for React OrdersIndex
+        Route::get('/json/list',                  'App\Http\Controllers\Workflow\OrdersController@listJson')->name('orders.json.list');
+        Route::post('/json/store',                'App\Http\Controllers\Workflow\OrdersController@storeJson')->name('orders.json.store');
+        Route::get('/json/select-data',           'App\Http\Controllers\Workflow\OrdersController@selectDataJson')->name('orders.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\OrdersController@addressesJson')->name('orders.json.addresses');
+        Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\OrdersController@contactsJson')->name('orders.json.contacts');
+        Route::post('/json/address/store',        'App\Http\Controllers\Workflow\OrdersController@storeAddressJson')->name('orders.json.address.store');
+        Route::post('/json/contact/store',        'App\Http\Controllers\Workflow\OrdersController@storeContactJson')->name('orders.json.contact.store');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->name('orders.show');
         Route::post('/{order}/calculate-task-dates', 'App\Http\Controllers\Workflow\OrdersController@calculateTaskDates')->name('orders.calculate.task.dates');
         //order line
