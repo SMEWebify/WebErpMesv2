@@ -7,6 +7,7 @@ import React from 'react';
 import KanbanBoard from './components/KanbanBoard.jsx';
 import DocumentTable from './components/DocumentTable.jsx';
 import NestingPage from './components/NestingPage.jsx';
+import QuotesIndex from './components/QuotesIndex.jsx';
 import 'livewire-sortable';
 
 function mountKanbanBoard() {
@@ -98,7 +99,28 @@ function mountNestingPage() {
     createRoot(element).render(React.createElement(NestingPage));
 }
 
+function mountQuotesIndex() {
+    const element = document.getElementById('quotes-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QuotesIndex, {
+            kpi:           parse('kpi')          ?? {},
+            chartData:     parse('chart')        ?? {},
+            topCustomers:  parse('topCustomers') ?? [],
+            quotesByUser:  parse('quotesByUser') ?? {},
+            endpoints:     parse('endpoints')    ?? {},
+            trans:         parse('trans')        ?? {},
+        })
+    );
+}
+
 mountKanbanBoard();
 mountDocumentTable();
 mountWhiteboard();
 mountNestingPage();
+mountQuotesIndex();

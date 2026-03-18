@@ -21,6 +21,10 @@ return [
     'assigned_trans_key'                       => 'Đã phân công',
     'action_trans_key'                         => 'Chức năng',
     'save_trans_key'                           => 'Lưu',
+    'cancel_trans_key'                         => 'Hủy',
+    'ordre_trans_key'                          => 'Thứ tự',
+    'saving_trans_key'                         => 'Đang lưu...',
+    'no_results_trans_key'                     => 'Không có kết quả',
 
     // BUTTON
     'view_all_trans_key'                       => 'Xem toàn bộ',

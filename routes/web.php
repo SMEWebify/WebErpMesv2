@@ -154,9 +154,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
         //quote
-        Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes'); 
-        Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes');
+        Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->name('quotes.update');
+        // JSON API for React QuotesIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\QuotesController@listJson')->name('quotes.json.list');
+        Route::post('/json/store', 'App\Http\Controllers\Workflow\QuotesController@storeJson')->name('quotes.json.store');
+        Route::get('/json/select-data', 'App\Http\Controllers\Workflow\QuotesController@selectDataJson')->name('quotes.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\QuotesController@addressesJson')->name('quotes.json.addresses');
+        Route::get('/json/contacts/{companyId}', 'App\Http\Controllers\Workflow\QuotesController@contactsJson')->name('quotes.json.contacts');
+        Route::post('/json/address', 'App\Http\Controllers\Workflow\QuotesController@storeAddressJson')->name('quotes.json.address.store');
+        Route::post('/json/contact', 'App\Http\Controllers\Workflow\QuotesController@storeContactJson')->name('quotes.json.contact.store');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->name('quotes.show');
         //quote line
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');

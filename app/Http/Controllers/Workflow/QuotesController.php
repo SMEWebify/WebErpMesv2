@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Workflow;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 use App\Models\Workflow\Quotes;
 use App\Models\Planning\Task;
 use App\Models\Methods\MethodsServices;
 use App\Models\Times\TimesBanckHoliday;
+use App\Events\QuoteCreated;
+use App\Notifications\QuoteNotification;
+use App\Services\NotificationService;
+use App\Services\DocumentCodeGenerator;
 use App\Services\QuoteKPIService;
 use App\Traits\NextPreviousTrait;
 use App\Services\SelectDataService;
@@ -16,6 +22,11 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\QuoteCalculatorService;
 use App\Models\Workflow\QuoteProjectEstimate;
+use App\Models\Companies\CompaniesAddresses;
+use App\Models\Companies\CompaniesContacts;
+use App\Models\Accounting\AccountingDelivery;
+use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Accounting\AccountingPaymentConditions;
 use Illuminate\Http\Request;
 use App\Http\Requests\Workflow\UpdateQuoteRequest;
 use App\Http\Requests\Workflow\ProjectEstimateRequest;
@@ -27,15 +38,21 @@ class QuotesController extends Controller
     protected $SelectDataService;
     protected $quoteKPIService;
     protected $customFieldService;
+    protected $documentCodeGenerator;
+    protected $notificationService;
 
     public function __construct(
-            SelectDataService $SelectDataService, 
+            SelectDataService $SelectDataService,
             QuoteKPIService $quoteKPIService,
-            CustomFieldService $customFieldService
+            CustomFieldService $customFieldService,
+            DocumentCodeGenerator $documentCodeGenerator,
+            NotificationService $notificationService
         ){
             $this->SelectDataService = $SelectDataService;
             $this->quoteKPIService = $quoteKPIService;
             $this->customFieldService = $customFieldService;
+            $this->documentCodeGenerator = $documentCodeGenerator;
+            $this->notificationService = $notificationService;
     }
 
     /**
@@ -426,5 +443,185 @@ class QuotesController extends Controller
         }
 
         return !TimesBanckHoliday::isBankHoliday($date);
+    }
+
+    // -------------------------------------------------------------------------
+    // JSON endpoints for the React QuotesIndex component
+    // -------------------------------------------------------------------------
+
+    public function listJson(Request $request)
+    {
+        $search     = $request->get('search', '');
+        $statuses   = array_filter(array_map('intval', (array) $request->get('statuses', [1])));
+        $sortField  = $request->get('sort', 'created_at');
+        $sortAsc    = $request->boolean('asc', false);
+        $companyId  = $request->get('company_id');
+
+        $allowed = ['code', 'label', 'created_at', 'validity_date', 'statu', 'companie', 'contact', 'quote_lines_count', 'total_amount'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir      = $sortAsc ? 'asc' : 'desc';
+        $totalSub = 'COALESCE((SELECT SUM(selling_price * qty * (1 - COALESCE(discount,0)/100)) FROM quote_lines WHERE quote_lines.quotes_id = quotes.id AND quote_lines.deleted_at IS NULL), 0)';
+
+        $query = Quotes::withCount('QuoteLines')
+            ->selectRaw("quotes.*, {$totalSub} as total_amount")
+            ->with(['companie:id,label,code', 'contact:id,first_name,name'])
+            ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
+            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
+
+        match ($sortField) {
+            'companie'          => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = quotes.companies_id) {$dir}"),
+            'contact'           => $query->orderByRaw("(SELECT name FROM companies_contacts WHERE companies_contacts.id = quotes.companies_contacts_id) {$dir}"),
+            'quote_lines_count' => $query->orderBy('quote_lines_count', $dir),
+            'total_amount'      => $query->orderByRaw("{$totalSub} {$dir}"),
+            default             => $query->orderBy($sortField, $dir),
+        };
+
+        $quotes = $query->paginate(15);
+
+        return response()->json([
+            'data' => $quotes->map(fn ($q) => [
+                'id'                  => $q->id,
+                'code'                => $q->code,
+                'label'               => $q->label,
+                'customer_reference'  => $q->customer_reference,
+                'statu'               => $q->statu,
+                'validity_date'       => $q->validity_date,
+                'created_at'          => $q->created_at?->format('d/m/Y'),
+                'companie'            => $q->companie ? ['id' => $q->companie->id, 'label' => $q->companie->label] : null,
+                'contact'             => $q->contact  ? ['id' => $q->contact->id,  'name'  => trim($q->contact->first_name.' '.$q->contact->name)] : null,
+                'quote_lines_count'   => $q->quote_lines_count,
+                'total_amount'        => round((float) $q->total_amount, 2),
+                'url'                 => route('quotes.show', ['id' => $q->id]),
+            ]),
+            'meta' => [
+                'total'        => $quotes->total(),
+                'per_page'     => $quotes->perPage(),
+                'current_page' => $quotes->currentPage(),
+                'last_page'    => $quotes->lastPage(),
+            ],
+        ]);
+    }
+
+    public function storeJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'code'                              => 'required|unique:quotes',
+            'label'                             => 'required',
+            'companies_id'                      => 'required|integer',
+            'companies_contacts_id'             => 'required|integer',
+            'companies_addresses_id'            => 'required|integer',
+            'accounting_payment_conditions_id'  => 'required|integer',
+            'accounting_payment_methods_id'     => 'required|integer',
+            'accounting_deliveries_id'          => 'required|integer',
+            'user_id'                           => 'required|integer',
+            'customer_reference'                => 'nullable|string|max:255',
+            'validity_date'                     => 'nullable|date',
+            'comment'                           => 'nullable|string',
+        ]);
+
+        $quote = Quotes::create(array_merge($validated, [
+            'uuid'  => Str::uuid(),
+            'statu' => 1,
+        ]));
+
+        $this->notificationService->sendNotification(QuoteNotification::class, $quote, 'quotes_notification');
+        event(new QuoteCreated($quote));
+
+        return response()->json([
+            'redirect' => route('quotes.show', ['id' => $quote->id]),
+        ], 201);
+    }
+
+    public function selectDataJson()
+    {
+        $lastQuote = Quotes::orderBy('id', 'desc')->first();
+        $nextCode  = $this->documentCodeGenerator->generateDocumentCode('quote', $lastQuote?->id ?? 0);
+
+        return response()->json([
+            'next_code'           => $nextCode,
+            'companies'           => $this->SelectDataService->getCompanies()->map(fn ($c) => [
+                'id'    => $c->id,
+                'label' => ($c->label ?? $c->last_name),
+                'code'  => $c->code,
+            ]),
+            'payment_conditions'  => AccountingPaymentConditions::select('id', 'code', 'label', 'default')->get(),
+            'payment_methods'     => AccountingPaymentMethod::select('id', 'code', 'label', 'default')->get(),
+            'deliveries'          => AccountingDelivery::select('id', 'code', 'label', 'default')->get(),
+            'users'               => User::select('id', 'name')->get(),
+        ]);
+    }
+
+    public function addressesJson(int $companyId)
+    {
+        return response()->json(
+            CompaniesAddresses::select('id', 'label', 'adress')
+                ->where('companies_id', $companyId)
+                ->get()
+        );
+    }
+
+    public function contactsJson(int $companyId)
+    {
+        return response()->json(
+            CompaniesContacts::select('id', 'first_name', 'name')
+                ->where('companies_id', $companyId)
+                ->get()
+                ->map(fn ($c) => ['id' => $c->id, 'name' => trim($c->first_name.' '.$c->name)])
+        );
+    }
+
+    public function storeAddressJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'companies_id' => 'required|integer|exists:companies,id',
+            'ordre'        => 'required|numeric|gt:0',
+            'label'        => 'required|string|max:255',
+            'adress'       => 'required|string|max:255',
+            'zipcode'      => 'required|string|max:20',
+            'city'         => 'required|string|max:100',
+            'country'      => 'required|string|max:100',
+            'number'       => 'nullable|string|max:50',
+            'mail'         => 'nullable|email|max:255',
+        ]);
+
+        $address = CompaniesAddresses::create($validated);
+
+        return response()->json([
+            'id'    => $address->id,
+            'label' => $address->label,
+            'adress'=> $address->adress,
+        ], 201);
+    }
+
+    public function storeContactJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'companies_id' => 'required|integer|exists:companies,id',
+            'ordre'        => 'required|numeric|gt:0',
+            'civility'     => 'nullable|string|max:20',
+            'first_name'   => 'required|string|max:100',
+            'name'         => 'required|string|max:100',
+            'function'     => 'nullable|string|max:100',
+            'number'       => 'nullable|string|max:50',
+            'mobile'       => 'nullable|string|max:50',
+            'mail'         => 'nullable|email|max:255',
+        ]);
+
+        $contact = CompaniesContacts::create($validated);
+
+        return response()->json([
+            'id'   => $contact->id,
+            'name' => trim($contact->first_name.' '.$contact->name),
+        ], 201);
     }
 }
