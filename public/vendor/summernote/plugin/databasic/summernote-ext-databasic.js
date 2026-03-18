@@ -169,8 +169,10 @@
     };
 
     self.setContent = function($node) {
-      $node.html('<p contenteditable="false">' + self.icon + ' ' + lang.databasic.name + ': ' +
-        $node.attr('data-test') + '</p>');
+      var $p = $('<p></p>').attr('contenteditable', 'false');
+      var prefix = self.icon + ' ' + lang.databasic.name + ': ';
+      $p.text(prefix + $node.attr('data-test'));
+      $node.empty().append($p);
     };
 
     self.updateNode = function(info) {
