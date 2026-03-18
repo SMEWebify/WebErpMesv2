@@ -17,11 +17,12 @@ use App\Models\Methods\MethodsServices;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Quality\QualityCorrection;
 use App\Models\Quality\QualityDerogation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QualityNonConformity extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     
     // Fillable attributes for mass assignment
     protected $fillable= ['code',

@@ -8,11 +8,12 @@ use App\Models\Methods\MethodsRessources;
 use App\Models\Admin\UserEmploymentContracts;
 use App\Models\OSH\OSHConformite;
 use App\Models\OSH\OSHRisque;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MethodsSection extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['ordre','code', 'label', 'user_id','color'];

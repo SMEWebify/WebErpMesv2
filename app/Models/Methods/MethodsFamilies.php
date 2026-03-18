@@ -4,14 +4,15 @@ namespace App\Models\Methods;
 
 use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MethodsFamilies extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['code',  'label',  'methods_services_id'];
+    protected $fillable = ['code', 'label', 'methods_services_id', 'nest_type'];
 
     public function service()
     {

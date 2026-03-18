@@ -4,11 +4,12 @@ namespace App\Models\Workflow;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Number;
 
 class PreOrder extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public const STATUS_PENDING = 1;
     public const STATUS_CONVERTED = 2;

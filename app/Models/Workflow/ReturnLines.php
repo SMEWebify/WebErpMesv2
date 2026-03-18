@@ -3,6 +3,7 @@
 namespace App\Models\Workflow;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Planning\Task;
 use App\Models\Workflow\DeliveryLines;
@@ -10,7 +11,7 @@ use App\Models\Workflow\DeliveryLines;
 
 class ReturnLines extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'return_id',

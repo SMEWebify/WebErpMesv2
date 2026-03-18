@@ -3,6 +3,7 @@
 namespace App\Models\Assets;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Accounting\AccountingEntry;
@@ -12,6 +13,8 @@ use App\Models\Methods\MethodsRessources;
 
 class Asset extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'category',

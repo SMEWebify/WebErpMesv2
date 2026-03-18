@@ -21,11 +21,12 @@ use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Quotes extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['uuid',

@@ -10,11 +10,12 @@ use App\Models\Companies\Companies;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Purchases\PurchaseReceiptLines;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseReceipt extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['code', 

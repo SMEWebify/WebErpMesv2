@@ -14,11 +14,12 @@ use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\QuoteLineDetails;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuoteLines extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
     
     // Fillable attributes for mass assignment
     protected $fillable= ['quotes_id', 

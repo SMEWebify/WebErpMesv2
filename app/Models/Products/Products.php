@@ -21,11 +21,12 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Products\CustomerPriceList;
 use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Products extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['code',

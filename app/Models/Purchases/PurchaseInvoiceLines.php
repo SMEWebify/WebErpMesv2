@@ -4,12 +4,15 @@ namespace App\Models\Purchases;
 
 use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Accounting\AccountingEntry;
 use App\Models\Purchases\PurchaseReceiptLines;
 
 class PurchaseInvoiceLines extends Model
 {
+    use SoftDeletes;
+
     // Fillable attributes for mass assignment
     protected $fillable= [
         

@@ -5,11 +5,12 @@ namespace App\Models\Workflow;
 use App\Models\Products\Products;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Number;
 
 class PreOrderLine extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'pre_order_id',

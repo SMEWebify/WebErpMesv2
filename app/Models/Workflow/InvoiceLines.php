@@ -10,11 +10,12 @@ use App\Models\Workflow\DeliveryLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingEntry;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class InvoiceLines extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['invoices_id',

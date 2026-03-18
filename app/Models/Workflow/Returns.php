@@ -4,13 +4,16 @@ namespace App\Models\Workflow;
 
 use Carbon\Carbon;
 use App\Models\User;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
 
 class Returns extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'code',
@@ -35,6 +38,34 @@ class Returns extends Model
     ];
 
     protected $appends = ['pretty_created', 'status_label'];
+
+    protected static $logOnlyDirty = true;
+    protected static $logName = 'return';
+    protected static $submitEmptyLogs = false;
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "Return has been {$eventName}";
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly([
+            'code',
+            'label',
+            'statu',
+            'deliverys_id',
+            'quality_non_conformity_id',
+            'created_by',
+            'diagnosed_by',
+            'customer_report',
+            'diagnosis',
+            'resolution_notes',
+            'received_at',
+            'diagnosed_at',
+            'closed_at',
+        ]);
+    }
 
     public function delivery()
     {

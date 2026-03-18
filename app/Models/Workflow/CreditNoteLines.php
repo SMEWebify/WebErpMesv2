@@ -9,11 +9,12 @@ use App\Models\Workflow\CreditNotes;
 use App\Models\Workflow\InvoiceLines;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CreditNoteLines extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
     
     // Fillable attributes for mass assignment
     protected $fillable= [

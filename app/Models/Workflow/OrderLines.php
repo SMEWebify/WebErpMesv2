@@ -19,11 +19,12 @@ use App\Models\Workflow\OrderLineDetails;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Quality\QualityNonConformity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderLines extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['orders_id', 

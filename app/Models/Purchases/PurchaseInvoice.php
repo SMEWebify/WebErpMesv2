@@ -11,11 +11,12 @@ use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchaseInvoiceLines;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseInvoice extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
     
     // Fillable attributes for mass assignment
     protected $fillable= ['code', 

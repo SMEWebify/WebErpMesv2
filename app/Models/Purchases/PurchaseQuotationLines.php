@@ -6,11 +6,12 @@ use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchases\PurchasesQuotation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseQuotationLines extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['purchases_quotation_id', 

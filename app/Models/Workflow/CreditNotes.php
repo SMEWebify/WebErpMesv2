@@ -16,11 +16,12 @@ use App\Models\Companies\CompaniesContacts;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Services\CreditNoteCalculatorService;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CreditNotes extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= [

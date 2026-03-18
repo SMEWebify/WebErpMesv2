@@ -8,11 +8,12 @@ use App\Models\Methods\MethodsLocation;
 use App\Models\Methods\MethodsServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MethodsRessources extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['ordre', 'code',  'label',  'picture', 'mask_time', 'capacity',  'section_id',  'color',  'methods_services_id',  'comment'];

@@ -13,11 +13,12 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Purchases\PurchaseQuotationLines;
 use App\Models\Purchases\PurchaseRfqGroup;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchasesQuotation extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['code', 

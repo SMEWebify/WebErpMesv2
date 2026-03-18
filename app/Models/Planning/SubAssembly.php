@@ -6,12 +6,13 @@ use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 
 class SubAssembly extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
 
     // Fillable attributes for mass assignment
