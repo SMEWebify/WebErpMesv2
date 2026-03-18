@@ -363,7 +363,7 @@ export default function NestingPage() {
     const [loadingParts, setLoadingParts]       = useState(false);
     const [error, setError]                     = useState(null);
 
-    const groupKey = g => (g.nest_type ?? '') + '|' + g.material + '|' + (g.thickness ?? '') + (g.y_size ?? '') + (g.z_size ?? '');
+    const groupKey = g => `${g.nest_type ?? ''}|${g.material}|${g.thickness ?? ''}|${g.y_size ?? ''}|${g.z_size ?? ''}`;
 
     const handleSearchDoc = useCallback(() => {
         if (!codeInput.trim()) return;

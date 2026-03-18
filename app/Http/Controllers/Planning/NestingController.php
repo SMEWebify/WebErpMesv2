@@ -62,11 +62,14 @@ class NestingController extends Controller
                     ->pluck($linesField)
                     ->unique();
 
-                // Nest types from paired MATERIAL tasks (triangulation)
-                $nestTypes = Task::whereIn($linesField, $serviceLineIds)
-                    ->where('methods_services_id', '!=', $service->id)
-                    ->where('component_id', '>', 0)
-                    ->whereHas('Component.family', fn($q) => $q->whereNotNull('nest_type'))
+                // Nest types from paired MATERIAL tasks (triangulation) — join au lieu de whereHas
+                $nestTypes = Task::whereIn("tasks.{$linesField}", $serviceLineIds)
+                    ->where('tasks.methods_services_id', '!=', $service->id)
+                    ->where('tasks.component_id', '>', 0)
+                    ->join('products', 'products.id', '=', 'tasks.component_id')
+                    ->join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
+                    ->whereNotNull('methods_families.nest_type')
+                    ->select('tasks.*')
                     ->with('Component.family')
                     ->get()
                     ->pluck('Component.family.nest_type')
@@ -133,23 +136,29 @@ class NestingController extends Controller
             ->keyBy($linesField);
 
         // Paired MATERIAL tasks on the same lines (component_id > 0 with nesting family)
-        $materialByLine = Task::whereIn($linesField, $lineIds)
-            ->where('methods_services_id', '!=', $serviceId)
-            ->where('component_id', '>', 0)
-            ->whereHas('Component.family', fn($q) => $q->whereNotNull('nest_type'))
-            ->with('Component.family', 'Component')
+        // Join instead of whereHas to avoid nested subqueries (indexes on component_id + methods_families_id)
+        $materialByLine = Task::whereIn("tasks.{$linesField}", $lineIds)
+            ->where('tasks.methods_services_id', '!=', $serviceId)
+            ->where('tasks.component_id', '>', 0)
+            ->join('products', 'products.id', '=', 'tasks.component_id')
+            ->join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
+            ->whereNotNull('methods_families.nest_type')
+            ->select('tasks.*')
+            ->with('Component.family')
             ->get()
             ->groupBy($linesField);
 
-        // Formats de stock disponibles par nest_type (produits du catalogue)
-        $availableSheets = \App\Models\Products\Products::whereHas('family', fn($q) => $q->where('nest_type', 'sheet'))
-            ->where('x_size', '>', 0)
-            ->get(['id', 'code', 'label', 'x_size', 'y_size', 'thickness', 'material'])
+        // Formats de stock disponibles par nest_type — join au lieu de whereHas
+        $availableSheets = \App\Models\Products\Products::join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
+            ->where('methods_families.nest_type', 'sheet')
+            ->where('products.x_size', '>', 0)
+            ->get(['products.id', 'products.label', 'products.x_size', 'products.y_size', 'products.thickness', 'products.material'])
             ->map(fn($p) => ['id' => $p->id, 'label' => $p->label, 'x' => (float)$p->x_size, 'y' => (float)$p->y_size, 'thickness' => (float)$p->thickness, 'material' => trim($p->material ?? '')]);
 
-        $availableBars = \App\Models\Products\Products::whereHas('family', fn($q) => $q->where('nest_type', 'bar'))
-            ->where('x_size', '>', 0)
-            ->get(['id', 'code', 'label', 'x_size', 'y_size', 'z_size', 'thickness', 'material'])
+        $availableBars = \App\Models\Products\Products::join('methods_families', 'methods_families.id', '=', 'products.methods_families_id')
+            ->where('methods_families.nest_type', 'bar')
+            ->where('products.x_size', '>', 0)
+            ->get(['products.id', 'products.label', 'products.x_size', 'products.y_size', 'products.z_size', 'products.thickness', 'products.material'])
             ->map(fn($p) => ['id' => $p->id, 'label' => $p->label, 'x' => (float)$p->x_size, 'y' => (float)$p->y_size, 'z' => (float)$p->z_size, 'thickness' => (float)$p->thickness, 'material' => trim($p->material ?? '')]);
 
         $groups = [];
