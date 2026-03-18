@@ -473,6 +473,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
     });
 
+    Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Planning\NestingController@index')->name('nesting.index');
+        Route::get('/document', 'App\Http\Controllers\Planning\NestingController@document')->name('nesting.document');
+        Route::get('/parts', 'App\Http\Controllers\Planning\NestingController@parts')->name('nesting.parts');
+    });
+
     Route::group(['prefix' => 'admin'], function () {
         
         Route::post('/factory/announcement/create', 'App\Http\Controllers\Admin\FactoryController@storeAnnouncement')->middleware(['auth'])->name('admin.factory.announcement.create');

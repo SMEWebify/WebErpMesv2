@@ -26,6 +26,7 @@
               <th>{{ __('general_content.hourly_rate_trans_key') }}</th>
               <th>{{ __('general_content.margin_trans_key') }}</th>
               <th>{{ __('general_content.color_trans_key') }}</th>
+              <th>Débit</th>
               <th></th>
             </tr>
             </thead>
@@ -53,6 +54,13 @@
                 <td>{{ $MethodsService->hourly_rate }}</td>
                 <td>{{ $MethodsService->margin }} %</td>
                 <td><input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}"></td>
+                <td>
+                  @if($MethodsService->is_nesting)
+                    <span class="badge badge-primary"><i class="fas fa-th"></i></span>
+                  @else
+                    <span class="text-muted">—</span>
+                  @endif
+                </td>
                 <td class="py-0 align-middle">
                   <x-ButtonTextView route="{{ route('methods.service.show', ['id' => $MethodsService->id])}}" />
                   <!-- Button Modal -->
@@ -121,6 +129,17 @@
                           <input type="color" class="form-control"  name="color" id="color" value="{{ $MethodsService->color }}">
                         </div>
                         <div class="form-group">
+                          <div class="custom-control custom-switch">
+                            <input type="hidden" name="is_nesting" value="0">
+                            <input type="checkbox" class="custom-control-input"
+                              id="is_nesting_{{ $MethodsService->id }}" name="is_nesting" value="1"
+                              @if($MethodsService->is_nesting) checked @endif>
+                            <label class="custom-control-label" for="is_nesting_{{ $MethodsService->id }}">
+                              Moyen de débit (nesting)
+                            </label>
+                          </div>
+                        </div>
+                        <div class="form-group">
                           @php($selectedSuppliers = $MethodsService->Suppliers->pluck('id')->all())
                           <label for="companies_ids_{{ $MethodsService->id }}">{{ __('general_content.supplier_trans_key') }}</label>
                             <select class="form-control" name="companies_ids[]" id="companies_ids_{{ $MethodsService->id }}" multiple>
@@ -160,7 +179,7 @@
                 </td>
               </tr>
               @empty
-                <x-EmptyDataLine col="9" text="{{ __('general_content.no_data_trans_key') }}"  />
+                <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
               @endforelse
             </tbody>
             <tfoot>
@@ -173,6 +192,7 @@
                 <th>{{ __('general_content.hourly_rate_trans_key') }}</th>
                 <th>{{ __('general_content.margin_trans_key') }}</th>
                 <th>{{ __('general_content.color_trans_key') }}</th>
+                <th>Débit</th>
                 <th></th>
               </tr>
             </tfoot>
@@ -251,6 +271,13 @@
             <div class="form-group">
               <label for="color">{{ __('general_content.color_trans_key') }}</label>
               <input type="color" class="form-control"  name="color" id="color" >
+            </div>
+            <div class="form-group">
+              <div class="custom-control custom-switch">
+                <input type="hidden" name="is_nesting" value="0">
+                <input type="checkbox" class="custom-control-input" id="is_nesting_new" name="is_nesting" value="1">
+                <label class="custom-control-label" for="is_nesting_new">Moyen de débit (nesting)</label>
+              </div>
             </div>
             <div class="form-group">
               <label for="picture">{{ __('general_content.picture_trans_key') }}</label> (peg,png,jpg,gif,svg | max: 10 240 Ko)

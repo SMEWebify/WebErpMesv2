@@ -25,8 +25,9 @@ class UpdateFamilyRequest extends FormRequest
     {
         return [
             //
-            'label'=>'required',
-            'methods_services_id'=>'required',
+            'label'               => 'required',
+            'methods_services_id' => 'required',
+            'nest_type'           => 'nullable|in:sheet,bar',
         ];
     }
 }

@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import KanbanBoard from './components/KanbanBoard.jsx';
 import DocumentTable from './components/DocumentTable.jsx';
+import NestingPage from './components/NestingPage.jsx';
 import 'livewire-sortable';
 
 function mountKanbanBoard() {
@@ -90,6 +91,14 @@ function mountWhiteboard() {
     whiteboardApp.mount(element);
 }
 
+function mountNestingPage() {
+    const element = document.getElementById('nesting-app');
+    if (!element) return;
+
+    createRoot(element).render(React.createElement(NestingPage));
+}
+
 mountKanbanBoard();
 mountDocumentTable();
 mountWhiteboard();
+mountNestingPage();

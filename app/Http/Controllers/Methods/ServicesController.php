@@ -46,6 +46,7 @@ class ServicesController extends Controller
             ->unique()
             ->values();
         $serviceData = $request->only('code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color');
+        $serviceData['is_nesting'] = $request->boolean('is_nesting');
         $serviceData['companies_id'] = $supplierIds->first();
         $Service = MethodsServices::create($serviceData);
         $Service->Suppliers()->sync($supplierIds);
@@ -96,6 +97,7 @@ class ServicesController extends Controller
             ->unique()
             ->values();
         $serviceData = $request->only(['ordre', 'label', 'type', 'hourly_rate', 'margin', 'color']);
+        $serviceData['is_nesting'] = $request->boolean('is_nesting');
         $serviceData['companies_id'] = $supplierIds->first();
         $service->update($serviceData);
         $service->Suppliers()->sync($supplierIds);
