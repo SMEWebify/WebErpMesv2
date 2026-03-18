@@ -235,58 +235,159 @@ function PieChart({ chartData, trans }) {
 }
 
 // ---------------------------------------------------------------------------
-// Line Chart
+// Line Chart — pure React SVG, no Chart.js dependency
 // ---------------------------------------------------------------------------
 
+const CHART_BLUE   = 'rgba(60,141,188,0.9)';
+const CHART_ORANGE = 'rgba(240,173,78,0.85)';
+
+function shortAmount(v) {
+    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+    if (v >= 1_000)     return `${(v / 1_000).toFixed(0)}k`;
+    return String(Math.round(v));
+}
+
+function niceMax(value) {
+    if (value <= 0) return 100;
+    const exp = Math.pow(10, Math.floor(Math.log10(value)));
+    return Math.ceil(value / exp) * exp;
+}
+
+function buildMonthlyData(items) {
+    return Array.from({ length: 12 }, (_, i) => {
+        const found = (items ?? []).find(d => d.month === i + 1);
+        return found ? parseFloat(found.quoteSum) : 0;
+    });
+}
+
 function LineChart({ chartData, trans }) {
-    const canvasRef = useRef(null);
-    const chartRef  = useRef(null);
+    const [hovered, setHovered] = useState(null);
 
-    useEffect(() => {
-        if (!canvasRef.current || !window.Chart) return;
-        if (chartRef.current) { chartRef.current.destroy(); }
+    const MONTHS = [
+        trans.jan, trans.feb, trans.mar, trans.apr, trans.may, trans.jun,
+        trans.jul, trans.aug, trans.sep, trans.oct, trans.nov, trans.dec,
+    ];
 
-        const months = [
-            trans.jan, trans.feb, trans.mar, trans.apr, trans.may, trans.jun,
-            trans.jul, trans.aug, trans.sep, trans.oct, trans.nov, trans.dec,
-        ];
+    const current  = buildMonthlyData(chartData.quoteMonthlyRecap);
+    const previous = buildMonthlyData(chartData.quoteMonthlyRecapPreviousYear);
 
-        const buildMonthlyData = (items) =>
-            Array.from({ length: 12 }, (_, i) => {
-                const found = (items ?? []).find(d => d.month === i + 1);
-                return found ? parseFloat(found.quoteSum) : 0;
-            });
+    // Layout
+    const W = 560, H = 260;
+    const PAD = { top: 16, right: 16, bottom: 36, left: 52 };
+    const plotW = W - PAD.left - PAD.right;
+    const plotH = H - PAD.top - PAD.bottom;
 
-        chartRef.current = new window.Chart(canvasRef.current.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: trans.quote_forecast,
-                        borderColor: 'rgba(60,141,188,0.8)',
-                        data: buildMonthlyData(chartData.quoteMonthlyRecap),
-                        fill: true,
-                        pointRadius: 5,
-                    },
-                    {
-                        label: trans.quote_last_year,
-                        borderColor: 'rgba(240,173,78,0.8)',
-                        data: buildMonthlyData(chartData.quoteMonthlyRecapPreviousYear),
-                        fill: false,
-                        pointRadius: 5,
-                    },
-                ],
-            },
-            options: {
-                maintainAspectRatio: false,
-                responsive: true,
-                legend: { display: true },
-            },
-        });
-    }, [chartData, trans]);
+    const maxVal  = niceMax(Math.max(...current, ...previous, 1));
+    const Y_TICKS = 4;
 
-    return <canvas ref={canvasRef} style={{ minHeight: 400, height: '100%', maxWidth: '100%' }} />;
+    const xPos = (i) => PAD.left + (i / 11) * plotW;
+    const yPos = (v) => PAD.top + plotH - Math.min(v / maxVal, 1) * plotH;
+
+    const linePath = (data) =>
+        data.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xPos(i).toFixed(1)} ${yPos(v).toFixed(1)}`).join(' ');
+
+    const areaPath = (data) =>
+        `${linePath(data)} L ${xPos(11).toFixed(1)} ${(PAD.top + plotH).toFixed(1)} L ${xPos(0).toFixed(1)} ${(PAD.top + plotH).toFixed(1)} Z`;
+
+    // Tooltip (SVG-native, avoids DOM positioning issues)
+    const renderTooltip = () => {
+        if (hovered === null) return null;
+        const cv   = current[hovered];
+        const pv   = previous[hovered];
+        const tipW = 92, tipH = 52;
+        const tx   = hovered > 8 ? xPos(hovered) - tipW - 8 : xPos(hovered) + 10;
+        const ty   = PAD.top + 4;
+        return (
+            <g pointerEvents="none">
+                <line x1={xPos(hovered)} y1={PAD.top} x2={xPos(hovered)} y2={PAD.top + plotH}
+                    stroke="#ccc" strokeWidth="1" strokeDasharray="4,2" />
+                <rect x={tx} y={ty} width={tipW} height={tipH} rx="4"
+                    fill="white" stroke="#ddd" strokeWidth="1"
+                    style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.12))' }} />
+                <text x={tx + 8} y={ty + 14} fontSize="10" fontWeight="700" fill="#333">
+                    {MONTHS[hovered]}
+                </text>
+                <circle cx={tx + 10} cy={ty + 28} r={4} fill={CHART_BLUE} />
+                <text x={tx + 18} y={ty + 32} fontSize="10" fill="#333">{shortAmount(cv)}</text>
+                <circle cx={tx + 10} cy={ty + 42} r={4} fill={CHART_ORANGE} />
+                <text x={tx + 18} y={ty + 46} fontSize="10" fill="#333">{shortAmount(pv)}</text>
+            </g>
+        );
+    };
+
+    return (
+        <div>
+            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
+                {/* Y-axis grid + labels */}
+                {Array.from({ length: Y_TICKS + 1 }, (_, i) => {
+                    const v = (maxVal / Y_TICKS) * i;
+                    const y = yPos(v);
+                    return (
+                        <g key={i}>
+                            <line x1={PAD.left} y1={y} x2={PAD.left + plotW} y2={y}
+                                stroke={i === 0 ? '#ccc' : '#efefef'} strokeWidth="1" />
+                            <text x={PAD.left - 6} y={y + 4} textAnchor="end" fontSize="10" fill="#999">
+                                {shortAmount(v)}
+                            </text>
+                        </g>
+                    );
+                })}
+
+                {/* Area fill — current year */}
+                <path d={areaPath(current)} fill="rgba(60,141,188,0.08)" />
+
+                {/* Lines */}
+                <path d={linePath(previous)} fill="none"
+                    stroke={CHART_ORANGE} strokeWidth="2" strokeDasharray="6,3" />
+                <path d={linePath(current)} fill="none"
+                    stroke={CHART_BLUE} strokeWidth="2.5" />
+
+                {/* X-axis labels + hit zones */}
+                {MONTHS.map((m, i) => (
+                    <g key={i}
+                        onMouseEnter={() => setHovered(i)}
+                        onMouseLeave={() => setHovered(null)}
+                        style={{ cursor: 'default' }}>
+                        <rect x={xPos(i) - plotW / 24} y={PAD.top}
+                            width={plotW / 12} height={plotH + 24}
+                            fill="transparent" />
+                        <text x={xPos(i)} y={H - 6}
+                            textAnchor="middle" fontSize="10" fill="#666">
+                            {m.substring(0, 3)}
+                        </text>
+                        {/* Dots */}
+                        <circle cx={xPos(i)} cy={yPos(current[i])}
+                            r={hovered === i ? 5 : 3}
+                            fill={CHART_BLUE} stroke="#fff" strokeWidth="1.5"
+                            style={{ transition: 'r 0.1s' }} />
+                        <circle cx={xPos(i)} cy={yPos(previous[i])}
+                            r={hovered === i ? 5 : 3}
+                            fill={CHART_ORANGE} stroke="#fff" strokeWidth="1.5"
+                            style={{ transition: 'r 0.1s' }} />
+                    </g>
+                ))}
+
+                {renderTooltip()}
+            </svg>
+
+            {/* Legend */}
+            <div className="d-flex justify-content-center mt-1" style={{ gap: '1.5rem' }}>
+                {[
+                    { color: CHART_BLUE,   dash: false, label: trans.quote_forecast },
+                    { color: CHART_ORANGE, dash: true,  label: trans.quote_last_year },
+                ].map(({ color, dash, label }) => (
+                    <div key={label} className="d-flex align-items-center" style={{ gap: '6px', fontSize: '0.78rem', color: '#555' }}>
+                        <svg width="22" height="10">
+                            <line x1="0" y1="5" x2="22" y2="5"
+                                stroke={color} strokeWidth="2"
+                                strokeDasharray={dash ? '5,3' : undefined} />
+                        </svg>
+                        {label}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 }
 
 // ---------------------------------------------------------------------------
