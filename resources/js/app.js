@@ -10,6 +10,7 @@ import NestingPage from './components/NestingPage.jsx';
 import QuotesIndex from './components/QuotesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
+import InvoicesIndex from './components/InvoicesIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
 import OrderLinesIndex from './components/OrderLinesIndex.jsx';
 import 'livewire-sortable';
@@ -188,6 +189,25 @@ function mountDeliverysIndex() {
     );
 }
 
+function mountInvoicesIndex() {
+    const element = document.getElementById('invoices-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(InvoicesIndex, {
+            kpi:         parse('kpi')         ?? {},
+            chartData:   parse('chart')       ?? {},
+            topClients:  parse('topClients')  ?? [],
+            endpoints:   parse('endpoints')   ?? {},
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
 mountKanbanBoard();
 mountDocumentTable();
 mountWhiteboard();
@@ -197,3 +217,4 @@ mountOrdersIndex();
 mountQuoteLinesIndex();
 mountOrderLinesIndex();
 mountDeliverysIndex();
+mountInvoicesIndex();

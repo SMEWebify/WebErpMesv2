@@ -132,6 +132,17 @@ class InvoiceKPIService
     }
 
     /**
+     * Retrieves the monthly summary of invoices for the previous year.
+     *
+     * @param int $year
+     * @return \Illuminate\Support\Collection
+     */
+    public function getInvoiceMonthlyRecapPreviousYear($year)
+    {
+        return $this->getInvoiceMonthlyRecap((int) $year - 1);
+    }
+
+    /**
    * Retrieves top customers by invoice amount.
      *
      * @return \Illuminate\Support\Collection
