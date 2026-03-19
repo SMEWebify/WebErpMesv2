@@ -20,6 +20,9 @@ use App\Services\ABC_MFR_CalculatorService;
 use App\Models\Products\ProductsQuantityPrice;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\UpdateProductsRequest;
+use App\Models\Methods\MethodsServices;
+use App\Models\Methods\MethodsFamilies;
+use App\Models\Methods\MethodsUnits;
 
 class ProductsController extends Controller
 {    
@@ -46,7 +49,150 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        return view('products/products-index');
+        $totalCount     = Products::count();
+        $soldCount      = Products::where('sold', 1)->count();
+        $purchasedCount = Products::where('purchased', 1)->count();
+
+        $byService = Products::join('methods_services', 'products.methods_services_id', '=', 'methods_services.id')
+            ->selectRaw('methods_services.label as service_label, COUNT(*) as count')
+            ->groupBy('methods_services.label')
+            ->orderByDesc('count')
+            ->get();
+
+        $byFamily = Products::join('methods_families', 'products.methods_families_id', '=', 'methods_families.id')
+            ->selectRaw('methods_families.label as family_label, COUNT(*) as count')
+            ->groupBy('methods_families.label')
+            ->orderByDesc('count')
+            ->take(10)
+            ->get();
+
+        $reactKpi = [
+            'totalCount'     => $totalCount,
+            'soldCount'      => $soldCount,
+            'purchasedCount' => $purchasedCount,
+            'soldRate'       => $totalCount > 0 ? round($soldCount / $totalCount * 100, 1) : 0,
+            'purchasedRate'  => $totalCount > 0 ? round($purchasedCount / $totalCount * 100, 1) : 0,
+        ];
+
+        $reactChart = [
+            'byService' => $byService,
+            'byFamily'  => $byFamily,
+        ];
+
+        $reactEndpoints = [
+            'list'       => route('products.json.list'),
+            'store'      => route('products.json.store'),
+            'selectData' => route('products.json.select-data'),
+        ];
+
+        return view('products/products-index', compact('reactKpi', 'reactChart', 'reactEndpoints'));
+    }
+
+    /**
+     * JSON endpoint — paginated product list for the React ProductsIndex component.
+     */
+    public function listJson(Request $request)
+    {
+        $search    = $request->get('search', '');
+        $sortField = $request->get('sort', 'created_at');
+        $sortAsc   = $request->boolean('asc', false);
+        $sold      = $request->get('sold');
+        $purchased = $request->get('purchased');
+
+        $allowed = ['code', 'label', 'created_at', 'sold', 'purchased'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir = $sortAsc ? 'asc' : 'desc';
+
+        $query = Products::with(['service:id,label', 'family:id,label'])
+            ->withCount('Task as task_count')
+            ->when($search, fn ($q) => $q->where(function ($q) use ($search) {
+                $q->where('label', 'like', '%'.$search.'%')
+                  ->orWhere('code', 'like', '%'.$search.'%');
+            }))
+            ->when($sold !== null && $sold !== '', fn ($q) => $q->where('sold', (int) $sold))
+            ->when($purchased !== null && $purchased !== '', fn ($q) => $q->where('purchased', (int) $purchased))
+            ->orderBy($sortField, $dir);
+
+        $products = $query->paginate(15);
+
+        return response()->json([
+            'data' => $products->map(fn ($p) => [
+                'id'         => $p->id,
+                'code'       => $p->code,
+                'label'      => $p->label,
+                'created_at' => $p->created_at?->format('d/m/Y'),
+                'sold'       => $p->sold,
+                'purchased'  => $p->purchased,
+                'service'    => $p->service?->label,
+                'family'     => $p->family?->label,
+                'task_count' => $p->task_count,
+                'url'        => route('products.show', ['id' => $p->id]),
+            ]),
+            'meta' => [
+                'total'        => $products->total(),
+                'per_page'     => $products->perPage(),
+                'current_page' => $products->currentPage(),
+                'last_page'    => $products->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
+     * JSON endpoint — create a new product.
+     */
+    public function storeJson(Request $request)
+    {
+        $validated = $request->validate([
+            'code'                => 'required|unique:products',
+            'label'               => 'required|string|max:255',
+            'methods_services_id' => 'required|exists:methods_services,id',
+            'methods_families_id' => 'required|exists:methods_families,id',
+            'methods_units_id'    => 'required|exists:methods_units,id',
+            'sold'                => 'required|in:1,2',
+            'purchased'           => 'required|in:1,2',
+            'tracability_type'    => 'required|in:1,2,3',
+            'ind'                 => 'nullable|string|max:50',
+            'material'            => 'nullable|string|max:255',
+            'finishing'           => 'nullable|string|max:255',
+            'thickness'           => 'nullable|numeric|min:0',
+            'weight'              => 'nullable|numeric|min:0',
+            'x_size'              => 'nullable|numeric|min:0',
+            'y_size'              => 'nullable|numeric|min:0',
+            'z_size'              => 'nullable|numeric|min:0',
+            'x_oversize'          => 'nullable|numeric|min:0',
+            'y_oversize'          => 'nullable|numeric|min:0',
+            'z_oversize'          => 'nullable|numeric|min:0',
+            'diameter'            => 'nullable|numeric|min:0',
+            'diameter_oversize'   => 'nullable|numeric|min:0',
+            'section_size'        => 'nullable|numeric|min:0',
+            'qty_eco_min'         => 'nullable|numeric|min:0',
+            'qty_eco_max'         => 'nullable|numeric|min:0',
+            'purchased_price'     => 'nullable|numeric|min:0',
+            'selling_price'       => 'nullable|numeric|min:0',
+            'comment'             => 'nullable|string',
+        ]);
+
+        $product = Products::create($validated);
+
+        return response()->json([
+            'id'  => $product->id,
+            'url' => route('products.show', ['id' => $product->id]),
+        ], 201);
+    }
+
+    /**
+     * JSON endpoint — select data for the create product modal.
+     */
+    public function selectDataJson()
+    {
+        return response()->json([
+            'services' => MethodsServices::select('id', 'label')->orderBy('ordre')->get(),
+            'families' => MethodsFamilies::select('id', 'label')->orderBy('label')->get(),
+            'units'    => MethodsUnits::select('id', 'label', 'type')->orderBy('label')->get(),
+        ]);
     }
 
     /**

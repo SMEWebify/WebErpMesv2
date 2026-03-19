@@ -53,21 +53,23 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 
-    Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'check.factory'])->name('dashboard');
-    Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::get('/pending-role', fn () => view('pending-role'))->middleware(['auth', 'verified'])->name('pending.role');
+
+    Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('dashboard');
+    Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');
         Route::get('/whiteboards/{whiteboard}', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.show');
     });
 
 
-    Route::get('/reports', 'App\\Http\\Controllers\\ReportsController@index')->middleware(['auth', 'check.factory'])->name('reports');
-    Route::get('/reports/accounting', 'App\\Http\\Controllers\\ReportsController@accounting')->middleware(['auth', 'check.factory'])->name('reports.accounting');
+    Route::get('/reports', 'App\\Http\\Controllers\\ReportsController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('reports');
+    Route::get('/reports/accounting', 'App\\Http\\Controllers\\ReportsController@accounting')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('reports.accounting');
 
     Route::get('/documents', [DocumentController::class, 'index'])
-        ->middleware(['auth', 'check.factory'])
+        ->middleware(['auth', 'verified', 'has.role', 'check.factory'])
         ->name('documents.index');
 
-    Route::group(['prefix' => 'spreadsheet', 'middleware' => ['auth', 'check.factory', 'permission:spreadsheet-menu']], function () {
+    Route::group(['prefix' => 'spreadsheet', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'permission:spreadsheet-menu']], function () {
         Route::get('/', [SpreadsheetController::class, 'index'])->name('spreadsheet.index');
         Route::get('/create', [SpreadsheetController::class, 'create'])->name('spreadsheet.create');
         Route::post('/', [SpreadsheetController::class, 'store'])->name('spreadsheet.store');
@@ -77,9 +79,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{spreadsheet}/save', [SpreadsheetController::class, 'save'])->name('spreadsheet.save');
     });
 
-    Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'check.factory']], function () {
-        Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'check.factory'])->name('workshop');
-        Route::get('/Task/Lines', 'App\Http\Controllers\Workshop\WorkshopController@taskLines')->middleware(['auth', 'check.factory'])->name('workshop.task.lines');
+    Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop');
+        Route::get('/Task/Lines', 'App\Http\Controllers\Workshop\WorkshopController@taskLines')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop.task.lines');
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
         Route::get('/Stock/Detail/{id}', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail.id');
@@ -97,7 +99,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
     
 
-    Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->name('companies');
 
          // addresses routes
@@ -117,7 +119,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('companies.ratings.store');
     });
 
-    $contactMiddleware = app()->environment('testing') ? [] : ['auth', 'check.factory'];
+    $contactMiddleware = app()->environment('testing') ? [] : ['auth', 'verified', 'has.role', 'check.factory'];
 
     Route::group(['prefix' => 'companies/contacts', 'middleware' => $contactMiddleware], function () {
         Route::post('/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->name('contacts.store');
@@ -125,7 +127,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->name('contacts.edit');
     });
 
-    Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         //leads
         Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->name('leads');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show'); 
@@ -133,7 +135,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/store/opportunity/{id}', 'App\Http\Controllers\Workflow\LeadsController@storeOpportunity')->name('leads.store.opportunity');
     });
 
-    Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\OpportunitiesController@index')->name('opportunities');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->name('opportunities.update');
@@ -152,7 +154,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         //quote
         Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes');
         Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines');
@@ -180,7 +182,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
     
 
-    Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         //order
         Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders');
         Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines');
@@ -211,7 +213,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{order}/site/{site}/implantation/{implantation}', 'App\Http\Controllers\Workflow\OrderSiteController@destroyImplantation')->name('orders.site.implantation.destroy');
     });
 
-    Route::group(['prefix' => 'pre-orders', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'pre-orders', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\PreOrdersController@index')->name('pre-orders.index');
         Route::post('/upload', 'App\Http\Controllers\Workflow\PreOrdersController@upload')->name('pre-orders.upload');
         Route::get('/pdf/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@pdf')->name('pre-orders.pdf');
@@ -223,7 +225,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{preOrder}/convert', 'App\Http\Controllers\Workflow\PreOrdersController@convert')->name('pre-orders.convert');
     });
 
-    Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys');
         Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
@@ -234,12 +236,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->name('deliverys.show');
     });
 
-    Route::group(['prefix' => 'returns', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'returns', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\\Http\\Controllers\\Workflow\\ReturnsController@index')->name('returns');
         Route::get('/{return}', 'App\\Http\\Controllers\\Workflow\\ReturnsController@show')->name('returns.show');
     });
 
-    Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices');
         Route::get('/store/delevery/{id}', 'App\Http\Controllers\Workflow\InvoicesController@storeFromDelevery')->name('invoices.store.from.delivery');
         Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->name('invoices-request');
@@ -249,14 +251,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
     });
 
-    Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\CreditNoteController@index')->name('credit-notes');
         Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice'); 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@show')->name('credit.notes.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@update')->name('credit.notes.update');
     });
 
-    Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         
         Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesRFQController@request')->name('purchases.request'); 
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesRFQController@quotation')->name('purchases.quotation'); 
@@ -287,11 +289,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/invoice/{id}', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@showInvoice')->middleware(['auth'])->name('purchase.invoices.show');
     });
 
-    Route::group(['prefix' => 'print', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'print', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/order/manufacturing/{Document}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->name('print.manufacturing.instruction');
     });
 
-    Route::group(['prefix' => 'pdf', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'pdf', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getQuotePdf')->name('pdf.quote');
         Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->name('pdf.order');
         Route::get('/order/Confirm/{Document}', 'App\Http\Controllers\PrintController@getOrderConfirmPdf')->name('pdf.orders.confirm');
@@ -305,7 +307,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/nc/{Document}', 'App\Http\Controllers\PrintController@getNCPdf')->name('pdf.nc');
     });
 
-    Route::group(['prefix' => 'accounting', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'accounting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
         Route::get('/payment-conditions', 'App\Http\Controllers\Accounting\AccountingController@paymentConditions')->name('accounting.paymentConditions');
@@ -346,7 +348,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\\Http\\Controllers\\AssetController@index')->name('assets');
         Route::get('/create', 'App\\Http\\Controllers\\AssetController@create')->name('assets.create');
         Route::post('/create', 'App\\Http\\Controllers\\AssetController@store')->name('assets.store');
@@ -356,7 +358,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{id}', 'App\\Http\\Controllers\\AssetController@destroy')->name('assets.destroy');
     });
 
-    Route::group(['prefix' => 'gmao', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'gmao', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/dashboard', 'App\\Http\\Controllers\\Maintenance\\DashboardController')->name('gmao.dashboard');
         Route::get('/work-orders', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@index')->name('gmao.work-orders.index');
         Route::get('/work-orders/create', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@create')->name('gmao.work-orders.create');
@@ -375,7 +377,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/maintenance-plans/{id}/generate-work-order', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@generateWorkOrder')->name('gmao.maintenance-plans.generate-work-order');
     });
 
-    Route::group(['prefix' => 'times', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'times', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->name('times');
     
@@ -404,7 +406,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'products', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'products', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         //index product route
         Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
 
@@ -419,6 +421,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/drawing', 'App\Http\Controllers\Products\ProductsController@StoreDrawing')->name('products.update.drawing');
         Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
         Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
+
+        // JSON API endpoints for React ProductsIndex
+        Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
+        Route::post('/json/store', 'App\Http\Controllers\Products\ProductsController@storeJson')->name('products.json.store');
+        Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
 
         Route::group(['prefix' => '{product}/customer-price-list'], function () {
             Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
@@ -473,7 +480,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->name('products.show');
     });
 
-    Route::group(['prefix' => 'task', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'task', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::put('/sync', 'App\Http\Controllers\Planning\TaskController@sync')->name('task.sync');
         Route::get('/{id_type}/{id_page}/show/{id_line}', 'App\Http\Controllers\Planning\TaskController@manage')->name('task.manage');
         Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->name('task.delete');
@@ -482,7 +489,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 
-    Route::group(['prefix' => 'production', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'production', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu');
         Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->name('production.task');
@@ -495,7 +502,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
     });
 
-    Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Planning\NestingController@index')->name('nesting.index');
         Route::get('/document', 'App\Http\Controllers\Planning\NestingController@document')->name('nesting.document');
         Route::get('/parts', 'App\Http\Controllers\Planning\NestingController@parts')->name('nesting.parts');
@@ -539,7 +546,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     });
 
-    Route::group(['prefix' => 'human-resources', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'human-resources', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Admin\HumanResourcesController@index')->name('human.resources');
         Route::get('/index', 'App\Http\Controllers\Admin\HumanResourcesController@index')->name('human.resources.index');
@@ -593,7 +600,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
         Route::get('/inspection-projects', 'App\Http\Controllers\Inspection\InspectionProjectController@indexView')->name('quality.inspection.projects');
@@ -653,7 +660,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Inspection\InspectionProjectController@index')->name('inspection.projects.index');
         Route::post('/', 'App\Http\Controllers\Inspection\InspectionProjectController@store')->name('inspection.projects.store');
         Route::get('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show')->name('inspection.projects.show');
@@ -669,7 +676,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}/export/xlsx', 'App\Http\Controllers\Inspection\InspectionProjectController@exportXlsx')->name('inspection.projects.export.xlsx');
     });
 
-    Route::group(['prefix' => 'methods', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'methods', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Methods\MethodsController@index')->name('methods');
     
@@ -736,7 +743,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'osh', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'osh', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::group(['prefix' => 'conformities'], function () {
             Route::get('/', 'App\Http\Controllers\OSH\ConformitiesController@index')->name('osh.conformities');
             Route::post('/create', 'App\Http\Controllers\OSH\ConformitiesController@store')->name('osh.conformities.create');
@@ -795,10 +802,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/production-trace/{serialNumber}', [ProductionTraceController::class, 'show'])->name('production.trace.show');
 
     Route::get('/production-trace/{serial}', 'App\Http\Controllers\ProductionTraceController@show')
-        ->middleware(['auth', 'check.factory'])
+        ->middleware(['auth', 'verified', 'has.role', 'check.factory'])
         ->name('production.trace');
 
-    Route::group(['prefix' => 'energy-consumptions', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'energy-consumptions', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', [EnergyConsumptionController::class, 'index'])->name('energy-consumptions.index');
         Route::post('/', [EnergyConsumptionController::class, 'store'])->name('energy-consumptions.store');
         Route::get('/{id}', [EnergyConsumptionController::class, 'show'])->name('energy-consumptions.show');
@@ -815,7 +822,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
 });
 
-    Route::prefix('api/spreadsheet/data')->middleware(['auth', 'check.factory', 'permission:spreadsheet-menu'])->name('spreadsheet.data.')->group(function () {
+    Route::prefix('api/spreadsheet/data')->middleware(['auth', 'verified', 'has.role', 'check.factory', 'permission:spreadsheet-menu'])->name('spreadsheet.data.')->group(function () {
         Route::get('/stock/{reference}', [SpreadsheetDataController::class, 'stock'])->name('stock');
         Route::get('/orders', [SpreadsheetDataController::class, 'orders'])->name('orders');
         Route::get('/revenue', [SpreadsheetDataController::class, 'revenue'])->name('revenue');
