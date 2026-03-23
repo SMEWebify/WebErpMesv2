@@ -10,6 +10,7 @@ use App\Models\Admin\Announcements;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Admin\CustomFieldValue;
 use App\Http\Requests\Admin\UpdateFactoryRequest;
 use App\Http\Requests\Admin\StoreCustomFieldRequest;
@@ -113,6 +114,7 @@ class FactoryController extends Controller
             $filename = 'logo_' . time() . '_' . uniqid() . '.' . $extension;
             $file->move(public_path('images/factory'), $filename);
             $Factory->picture = $filename;
+            Cache::forget('branding_factory_logo');
         }
 
         // CGV file (PDF only) with magic number verification

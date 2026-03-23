@@ -815,7 +815,7 @@ return [
                 ],
             ],
         ],
-        ['header' => 'W.E.M.'],
+        ['header' => env('APP_COMMERCIAL', false) ? 'NEST2PROD' : 'W.E.M.'],
         [
             'text' => 'licence_trans_key',
             'url'  => 'licence',
