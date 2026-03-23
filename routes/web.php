@@ -55,6 +55,19 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/pending-role', fn () => view('pending-role'))->middleware(['auth', 'verified'])->name('pending.role');
 
+    // --- Setup wizard (installation initiale) ---
+    Route::middleware(['auth'])->prefix('setup')->name('setup.')->group(function () {
+        Route::get('/',                    'App\Http\Controllers\Setup\SetupController@index')->name('index');
+        Route::post('/company',            'App\Http\Controllers\Setup\SetupController@saveCompany')->name('company');
+        Route::post('/vat',                'App\Http\Controllers\Setup\SetupController@saveVat')->name('vat');
+        Route::post('/payment-condition',  'App\Http\Controllers\Setup\SetupController@savePaymentCondition')->name('payment-condition');
+        Route::post('/payment-method',     'App\Http\Controllers\Setup\SetupController@savePaymentMethod')->name('payment-method');
+        Route::post('/delivery',           'App\Http\Controllers\Setup\SetupController@saveDelivery')->name('delivery');
+        Route::post('/unit',               'App\Http\Controllers\Setup\SetupController@saveUnit')->name('unit');
+        Route::post('/role',               'App\Http\Controllers\Setup\SetupController@saveRole')->name('role');
+        Route::post('/estimated-budget',   'App\Http\Controllers\Setup\SetupController@saveEstimatedBudget')->name('estimated-budget');
+    });
+
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('dashboard');
     Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');

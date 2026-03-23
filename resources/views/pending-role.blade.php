@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accès en attente — {{ config('app.name') }}</title>
+    <title>Accès en attente — {{ \App\Models\Admin\Factory::value('name') ?? config('branding.app_name') }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -126,7 +126,7 @@
     {{-- Topbar --}}
     <div class="topbar">
         <a href="#" class="topbar-brand">
-            <span>⚙️ {{ config('app.name') }}</span>
+            <span>⚙️ {{ \App\Models\Admin\Factory::value('name') ?? config('branding.app_name') }}</span>
         </a>
         <div class="topbar-user">
             <div class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>

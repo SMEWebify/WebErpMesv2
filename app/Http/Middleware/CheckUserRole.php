@@ -11,7 +11,7 @@ class CheckUserRole
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check() && auth()->user()->roles()->count() === 0) {
-            return redirect()->route('pending.role');
+            return redirect()->route('setup.index');
         }
 
         return $next($request);

@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Orders::observe(OrdersObserver::class);
 
         if (config('branding.commercial')) {
+            Config::set('mail.from.name', config('branding.app_name'));
             $this->overrideCommercialLogo();
         }
 

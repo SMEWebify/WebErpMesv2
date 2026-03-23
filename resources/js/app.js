@@ -15,7 +15,11 @@ import InvoicesIndex from './components/InvoicesIndex.jsx';
 import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
 import OrderLinesIndex from './components/OrderLinesIndex.jsx';
-import 'livewire-sortable';
+import SetupWizard from './components/SetupWizard.jsx';
+// livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
+document.addEventListener('livewire:init', () => {
+    import('livewire-sortable');
+});
 
 function mountKanbanBoard() {
     const element = document.getElementById('card');
@@ -249,6 +253,23 @@ function mountCompaniesIndex() {
     );
 }
 
+function mountSetupWizard() {
+    const element = document.getElementById('setup-wizard-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(SetupWizard, {
+            endpoints: parse('endpoints') ?? {},
+            initial:   parse('initial')   ?? {},
+        })
+    );
+}
+
+mountSetupWizard();
 mountKanbanBoard();
 mountDocumentTable();
 mountCompaniesIndex();

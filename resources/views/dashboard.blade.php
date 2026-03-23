@@ -324,7 +324,7 @@
             <div class="col-sm-3 col-3">
               <div class="description-block">
                 <!--<span class="description-percentage text-danger"><i class="fas fa-caret-down"></i></span>-->
-                <h5 class="description-header"> {{ $orderTotalFormattedInvoiced }}  /{{ $FormattedEstimatedBudgets }} ({{ round($orderTotaInvoiced / $EstimatedBudgets *100,2)}} %)</h5>
+                <h5 class="description-header"> {{ $orderTotalFormattedInvoiced }}  /{{ $FormattedEstimatedBudgets }} ({{ $EstimatedBudgets > 0 ? round($orderTotaInvoiced / $EstimatedBudgets * 100, 2) : 0 }} %)</h5>
                 <span class="description-text">{{ __('general_content.goal_trans_key') }}</span>
               </div>
               <!-- /.description-block -->
