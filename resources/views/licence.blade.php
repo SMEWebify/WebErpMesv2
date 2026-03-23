@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-<div class="float-right"><img src="/vendor/adminlte/dist/img/simple-logo -R.PNG" alt="WEM" class="brand-image  elevation-3"></div>
+<div class="float-right"><img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}" class="brand-image  elevation-3"></div>
 <div class="content px-20">
     <p>
         <a href="https://opensource.org/licenses/MIT">MIT license</a><br/>
@@ -36,7 +36,7 @@
     <hr/>
 
     <h3>THIRD PARTY LICENSES</h3>
-    <p><strong>WEM (Web ERP MES)</strong></p>
+    <p><strong>{{ config('branding.app_name_full') }}</strong></p>
     <p>
         This product includes software developed by third parties.<br/>
         The following libraries are used under their respective licenses.

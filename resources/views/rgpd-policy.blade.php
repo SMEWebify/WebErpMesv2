@@ -9,7 +9,7 @@
 @section('content')
 
 <div class="float-right">
-    <img src="/vendor/adminlte/dist/img/simple-logo -R.PNG" alt="WEM" class="brand-image elevation-3 ml-2">
+    <img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}" class="brand-image elevation-3 ml-2">
 </div>
 
 {{-- =====================================================================

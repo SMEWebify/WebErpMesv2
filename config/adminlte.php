@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'WEB ERP MES',
+    'title' => env('APP_COMMERCIAL', false) ? 'Nest2Prod ERP' : 'WEB ERP MES',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -46,11 +46,11 @@ return [
     */
 
     'logo' => '',
-    'logo_img' => 'vendor/adminlte/dist/img/simple-logo -R.PNG',
+    'logo_img' => env('APP_COMMERCIAL', false) ? 'img/nest2prod-logo.png' : 'vendor/adminlte/dist/img/simple-logo -R.PNG',
     'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'WEM',
+    'logo_img_alt' => env('APP_COMMERCIAL', false) ? 'Nest2Prod ERP' : 'WEM',
 
     /*
     |--------------------------------------------------------------------------
