@@ -102,7 +102,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->name('companies');
 
-         // addresses routes
+        // JSON endpoints for React
+        Route::get('/json/list', 'App\Http\Controllers\Companies\CompaniesController@listJson')->name('companies.json.list');
+        Route::post('/json/store', 'App\Http\Controllers\Companies\CompaniesController@storeJson')->name('companies.json.store');
+        Route::get('/json/select-data', 'App\Http\Controllers\Companies\CompaniesController@selectDataJson')->name('companies.json.select-data');
+
+        // addresses routes
         Route::group(['prefix' => 'addresses'], function () {
             Route::post('/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->name('addresses.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->name('addresses.update');
