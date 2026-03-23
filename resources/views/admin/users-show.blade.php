@@ -61,17 +61,13 @@
         <x-adminlte-card title="{{ __('general_content.blocked_unti_trans_key') }}" theme="warning" maximizable>
             <form method="POST" action="{{ route('human.resources.lock.user', ['id' => $User->id]) }}" enctype="multipart/form-data">
                 @csrf
-                <div class="card-body">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                        </div>
-                        <input type="date" class="form-control"   name="banned_until"  id="banned_until" value="{{ $User->banned_until }}">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     </div>
+                    <input type="date" class="form-control" name="banned_until" id="banned_until" value="{{ $User->banned_until }}">
                 </div>
-                <x-slot name="footerSlot">
-                    <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
-                </x-slot>
+                <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
             </form>
         </x-adminlte-card>
         @endif
