@@ -34,7 +34,7 @@ class WelcomeMail extends Mailable
     {
         return new Envelope(
             from: new Address(config('mail.from.address'), config('mail.from.name')),
-            subject: 'Bienvenue sur WebErpMesv2'
+            subject: 'Bienvenue sur ' . config('branding.app_name')
         );
     }
 

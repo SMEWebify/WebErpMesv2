@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérifiez votre email — {{ config('app.name') }}</title>
+    <title>Vérifiez votre email — {{ \App\Models\Admin\Factory::value('name') ?? config('branding.app_name') }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -66,7 +66,7 @@
     <div class="card">
         <div class="card-header">
             <div class="logo">⚙️</div>
-            <h1>{{ config('app.name') }}</h1>
+            <h1>{{ \App\Models\Admin\Factory::value('name') ?? config('branding.app_name') }}</h1>
             <p>ERP · MES · Industrie</p>
         </div>
         <div class="card-body">

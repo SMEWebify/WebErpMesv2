@@ -16,7 +16,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
         $verificationUrl = $this->verificationUrl($notifiable);
 
         return (new MailMessage)
-            ->subject('Confirmez votre adresse email — ' . config('app.name'))
+            ->subject('Confirmez votre adresse email — ' . config('branding.app_name'))
             ->view('emails.verify-email', [
                 'url'  => $verificationUrl,
                 'user' => $notifiable,
