@@ -1259,7 +1259,7 @@ function CreateModal({ endpoints, trans, onClose }) {
 // ListTab
 // ---------------------------------------------------------------------------
 
-function ListTab({ endpoints, trans, currency, locale }) {
+function ListTab({ endpoints, trans, currency, locale, companieId }) {
     const [orders, setOrders]       = useState([]);
     const [meta, setMeta]           = useState(null);
     const [loading, setLoading]     = useState(false);
@@ -1302,6 +1302,7 @@ function ListTab({ endpoints, trans, currency, locale }) {
 
         const params = new URLSearchParams({ search: q, sort: sf, asc: sa ? '1' : '0', page: p });
         s.forEach(id => params.append('statuses[]', id));
+        if (companieId) params.set('company_id', companieId);
 
         try {
             const data = await apiFetch(`${endpoints.list}?${params}`);
@@ -1309,7 +1310,7 @@ function ListTab({ endpoints, trans, currency, locale }) {
             setMeta(data.meta ?? null);
         } catch {}
         finally { setLoading(false); }
-    }, [endpoints.list, page, search, statuses, sortField, sortAsc]);
+    }, [endpoints.list, page, search, statuses, sortField, sortAsc, companieId]);
 
     useEffect(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -1424,8 +1425,8 @@ function ListTab({ endpoints, trans, currency, locale }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function OrdersIndex({ kpi, chartData, topCustomers, endpoints, trans }) {
-    const [activeTab, setActiveTab] = useState('dashboard');
+export default function OrdersIndex({ kpi, chartData, topCustomers, endpoints, trans, companieId = null }) {
+    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
     const currency = trans.currency ?? 'EUR';
     const locale   = trans.locale   ?? 'fr-FR';
 
@@ -1464,6 +1465,7 @@ export default function OrdersIndex({ kpi, chartData, topCustomers, endpoints, t
                         trans={trans}
                         currency={currency}
                         locale={locale}
+                        companieId={companieId}
                     />
                 )}
             </div>

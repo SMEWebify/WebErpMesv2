@@ -134,11 +134,12 @@ class DeliverysController extends Controller
 
     public function listJson(Request $request)
     {
-        $search         = $request->get('search', '');
-        $statuses       = array_filter(array_map('intval', (array) $request->get('statuses', [])));
+        $search          = $request->get('search', '');
+        $statuses        = array_filter(array_map('intval', (array) $request->get('statuses', [])));
         $invoiceStatuses = array_filter(array_map('intval', (array) $request->get('invoice_statuses', [])));
-        $sortField      = $request->get('sort', 'created_at');
-        $sortAsc        = $request->boolean('asc', false);
+        $sortField       = $request->get('sort', 'created_at');
+        $sortAsc         = $request->boolean('asc', false);
+        $companyId       = $request->get('company_id');
 
         $allowed = ['code', 'label', 'created_at', 'statu', 'companies_id', 'delivery_lines_count'];
         if (!in_array($sortField, $allowed)) {
@@ -151,7 +152,8 @@ class DeliverysController extends Controller
             ->with(['companie:id,label', 'UserManagement:id,name'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
             ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
-            ->when($invoiceStatuses, fn ($q) => $q->whereIn('invoice_status', $invoiceStatuses));
+            ->when($invoiceStatuses, fn ($q) => $q->whereIn('invoice_status', $invoiceStatuses))
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
 
         match ($sortField) {
             'delivery_lines_count' => $query->orderBy('delivery_lines_count', $dir),

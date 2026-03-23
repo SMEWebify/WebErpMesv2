@@ -6,6 +6,166 @@
   <x-Content-header-previous-button  h1="{{ $Companie->label }}" previous="{{ $previousUrl }}" list="{{ route('companies') }}" next="{{ $nextUrl }}"/>
 @stop
 
+@php
+  $reactQuotesEndpoints = [
+    'list'         => route('quotes.json.list'),
+    'store'        => route('quotes.json.store'),
+    'selectData'   => route('quotes.json.select-data'),
+    'addresses'    => route('quotes.json.addresses',    ['companyId' => '__ID__']),
+    'contacts'     => route('quotes.json.contacts',     ['companyId' => '__ID__']),
+    'storeAddress' => route('quotes.json.address.store'),
+    'storeContact' => route('quotes.json.contact.store'),
+  ];
+  $reactQuotesTrans = [
+    'dashboard'             => __('general_content.dashboard_trans_key'),
+    'quotes_list'           => __('general_content.quotes_list_trans_key'),
+    'open'                  => __('general_content.open_trans_key'),
+    'send'                  => __('general_content.send_trans_key'),
+    'win'                   => __('general_content.win_trans_key'),
+    'lost'                  => __('general_content.lost_trans_key'),
+    'closed'                => __('general_content.closed_trans_key'),
+    'obsolete'              => __('general_content.obsolete_trans_key'),
+    'new_quote'             => __('general_content.new_quote_trans_key'),
+    'search'                => __('general_content.search_trans_key'),
+    'code'                  => 'Code',
+    'label'                 => __('general_content.label_trans_key'),
+    'company'               => __('general_content.name_company_trans_key'),
+    'contact'               => __('general_content.contact_trans_key'),
+    'address'               => __('general_content.new_address_trans_key'),
+    'validity_date'         => __('general_content.validity_date_trans_key'),
+    'status'                => __('general_content.status_trans_key'),
+    'lines'                 => __('general_content.quote_line_trans_key'),
+    'created_at'            => __('general_content.created_at_trans_key'),
+    'customer_reference'    => __('general_content.customer_reference_trans_key'),
+    'payment_condition'     => __('general_content.payment_conditions_trans_key'),
+    'payment_method'        => __('general_content.payment_method_trans_key'),
+    'delivery'              => __('general_content.delivery_constraint_trans_key'),
+    'assignee'              => __('general_content.user_management_trans_key'),
+    'comment'               => __('general_content.comment_trans_key'),
+    'ordre'                 => __('general_content.ordre_trans_key'),
+    'adress_label'          => __('general_content.adress_name_trans_key'),
+    'adress'                => __('general_content.adress_trans_key'),
+    'postal_code'           => __('general_content.postal_code_trans_key'),
+    'city'                  => __('general_content.city_trans_key'),
+    'country'               => __('general_content.country_trans_key'),
+    'phone'                 => __('general_content.phone_trans_key'),
+    'email'                 => __('general_content.email_trans_key'),
+    'civility'              => __('general_content.civility_trans_key'),
+    'first_name'            => __('general_content.first_name_trans_key'),
+    'name'                  => __('general_content.name_trans_key'),
+    'function'              => __('general_content.function_trans_key'),
+    'mobile'                => __('general_content.mobile_phone_trans_key'),
+    'new_address'           => __('general_content.new_address_trans_key'),
+    'new_contact'           => __('general_content.new_companie_trans_key'),
+    'save'                  => __('general_content.save_trans_key'),
+    'saving'                => __('general_content.saving_trans_key'),
+    'cancel'                => __('general_content.cancel_trans_key'),
+    'no_results'            => __('general_content.no_results_trans_key'),
+    'total'                 => __('general_content.total_trans_key'),
+    'external_id'           => __('general_content.external_id_trans_key'),
+    'client'                => __('general_content.client_trans_key'),
+    'currency'              => app('Factory')->curency ?? 'EUR',
+    'locale'                => str_replace('_', '-', config('app.locale')),
+  ];
+
+  $reactOrdersEndpoints = [
+    'list'         => route('orders.json.list'),
+    'store'        => route('orders.json.store'),
+    'selectData'   => route('orders.json.select-data'),
+    'addresses'    => route('orders.json.addresses',    ['companyId' => '__ID__']),
+    'contacts'     => route('orders.json.contacts',     ['companyId' => '__ID__']),
+    'storeAddress' => route('orders.json.address.store'),
+    'storeContact' => route('orders.json.contact.store'),
+  ];
+  $reactOrdersTrans = [
+    'dashboard'         => __('general_content.dashboard_trans_key'),
+    'orders_list'       => __('general_content.orders_list_trans_key'),
+    'open'              => __('general_content.open_trans_key'),
+    'in_progress'       => __('general_content.in_progress_trans_key'),
+    'delivered'         => __('general_content.delivered_trans_key'),
+    'partly_delivered'  => __('general_content.partly_delivered_trans_key'),
+    'stopped'           => __('general_content.stopped_trans_key'),
+    'canceled'          => __('general_content.canceled_trans_key'),
+    'new_order'         => __('general_content.new_order_trans_key'),
+    'search'            => __('general_content.search_trans_key'),
+    'code'              => 'Code',
+    'label'             => __('general_content.label_trans_key'),
+    'company'           => __('general_content.name_company_trans_key'),
+    'contact'           => __('general_content.contact_trans_key'),
+    'address'           => __('general_content.new_address_trans_key'),
+    'validity_date'     => __('general_content.validity_date_trans_key'),
+    'status'            => __('general_content.status_trans_key'),
+    'lines'             => __('general_content.order_line_trans_key'),
+    'created_at'        => __('general_content.created_at_trans_key'),
+    'customer_reference'=> __('general_content.customer_reference_trans_key'),
+    'total_amount'      => __('general_content.total_trans_key'),
+    'payment_condition' => __('general_content.payment_conditions_trans_key'),
+    'payment_method'    => __('general_content.payment_method_trans_key'),
+    'delivery'          => __('general_content.delivery_constraint_trans_key'),
+    'assignee'          => __('general_content.user_management_trans_key'),
+    'comment'           => __('general_content.comment_trans_key'),
+    'order_type'        => __('general_content.order_type_trans_key'),
+    'customer_type'     => __('general_content.customer_type_order_trans_key'),
+    'internal_type'     => __('general_content.internal_type_order_trans_key'),
+    'orders'            => __('general_content.orders_trans_key'),
+    'page'              => 'Page',
+    'ordre'             => __('general_content.ordre_trans_key'),
+    'adress_label'      => __('general_content.adress_name_trans_key'),
+    'adress'            => __('general_content.adress_trans_key'),
+    'postal_code'       => __('general_content.postal_code_trans_key'),
+    'city'              => __('general_content.city_trans_key'),
+    'country'           => __('general_content.country_trans_key'),
+    'phone'             => __('general_content.phone_trans_key'),
+    'email'             => __('general_content.email_trans_key'),
+    'civility'          => __('general_content.civility_trans_key'),
+    'first_name'        => __('general_content.first_name_trans_key'),
+    'name'              => __('general_content.name_trans_key'),
+    'function'          => __('general_content.function_trans_key'),
+    'mobile'            => __('general_content.mobile_phone_trans_key'),
+    'new_address'       => __('general_content.new_address_trans_key'),
+    'new_contact'       => __('general_content.new_companie_trans_key'),
+    'save'              => __('general_content.save_trans_key'),
+    'saving'            => __('general_content.saving_trans_key'),
+    'cancel'            => __('general_content.cancel_trans_key'),
+    'no_results'        => __('general_content.no_results_trans_key'),
+    'total'             => __('general_content.total_trans_key'),
+    'currency'          => app('Factory')->curency ?? 'EUR',
+    'locale'            => str_replace('_', '-', config('app.locale')),
+  ];
+
+  $reactDeliverysEndpoints = [
+    'list'    => route('deliverys.json.list'),
+    'request' => route('deliverys-request'),
+  ];
+  $reactDeliverysTrans = [
+    'in_progress'     => __('general_content.in_progress_trans_key'),
+    'send'            => __('general_content.send_trans_key'),
+    'chargeable'      => __('general_content.chargeable_trans_key'),
+    'not_chargeable'  => __('general_content.not_chargeable_trans_key'),
+    'partly_invoiced' => __('general_content.partly_invoiced_trans_key'),
+    'invoiced'        => __('general_content.invoiced_trans_key'),
+    'total'           => __('general_content.total_trans_key'),
+    'code'            => __('general_content.id_trans_key'),
+    'label'           => __('general_content.label_trans_key'),
+    'company'         => __('general_content.customer_trans_key'),
+    'lines'           => __('general_content.lines_count_trans_key'),
+    'status'          => __('general_content.status_trans_key'),
+    'invoice_status'  => __('general_content.invoice_status_trans_key'),
+    'user'            => __('general_content.user_trans_key'),
+    'created_at'      => __('general_content.created_at_trans_key'),
+    'action'          => __('general_content.action_trans_key'),
+    'search'          => __('general_content.search_trans_key'),
+    'new_delivery'    => __('general_content.new_trans_key'),
+    'no_results'      => __('general_content.no_data_trans_key'),
+    'statistiques'    => __('general_content.statistiques_trans_key'),
+    'monthly_recap'   => __('general_content.monthly_recap_report_trans_key'),
+    'view'            => __('general_content.view_trans_key'),
+    'columns'         => __('general_content.columns_trans_key'),
+    'currency'        => app('Factory')->curency ?? 'EUR',
+    'locale'          => str_replace('_', '-', config('app.locale')),
+  ];
+@endphp
+
 @section('content')
 <div class="card">
   <div class="card-header p-2">
@@ -905,17 +1065,32 @@
       @endcan
       @can('quotes-menu')
       <div class="tab-pane" id="quote">
-        @livewire('quotes-index' , ['idCompanie' => $Companie->id ])
+        <div
+          id="quotes-index-app"
+          data-endpoints='@json($reactQuotesEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($reactQuotesTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-companie-id="{{ $Companie->id }}">
+        </div>
       </div>
       @endcan
       @can('orders-menu')
       <div class="tab-pane" id="order">
-        @livewire('orders-index' , ['idCompanie' => $Companie->id ])
+        <div
+          id="orders-index-app"
+          data-endpoints='@json($reactOrdersEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($reactOrdersTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-companie-id="{{ $Companie->id }}">
+        </div>
       </div>
       @endcan
       @can('deliverys-menu')
       <div class="tab-pane" id="delivery">
-        @livewire('deliverys-index' , ['idCompanie' => $Companie->id ])
+        <div
+          id="deliverys-index-app"
+          data-endpoints='@json($reactDeliverysEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($reactDeliverysTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-companie-id="{{ $Companie->id }}">
+        </div>
       </div>
       @endcan
       @can('invoices-menu')
@@ -1139,6 +1314,8 @@
 @section('css')
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

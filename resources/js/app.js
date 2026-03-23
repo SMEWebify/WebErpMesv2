@@ -8,9 +8,11 @@ import KanbanBoard from './components/KanbanBoard.jsx';
 import DocumentTable from './components/DocumentTable.jsx';
 import NestingPage from './components/NestingPage.jsx';
 import QuotesIndex from './components/QuotesIndex.jsx';
+import CompaniesIndex from './components/CompaniesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
 import InvoicesIndex from './components/InvoicesIndex.jsx';
+import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
 import OrderLinesIndex from './components/OrderLinesIndex.jsx';
 import 'livewire-sortable';
@@ -120,6 +122,7 @@ function mountQuotesIndex() {
             quotesByUser:  parse('quotesByUser') ?? {},
             endpoints:     parse('endpoints')    ?? {},
             trans:         parse('trans')        ?? {},
+            companieId:    parse('companieId')   ?? null,
         })
     );
 }
@@ -139,6 +142,7 @@ function mountOrdersIndex() {
             topCustomers: parse('topCustomers') ?? [],
             endpoints:    parse('endpoints')    ?? {},
             trans:        parse('trans')        ?? {},
+            companieId:   parse('companieId')   ?? null,
         })
     );
 }
@@ -181,10 +185,11 @@ function mountDeliverysIndex() {
 
     createRoot(element).render(
         React.createElement(DeliverysIndex, {
-            kpi:       parse('kpi')       ?? {},
-            chartData: parse('chart')     ?? {},
-            endpoints: parse('endpoints') ?? {},
-            trans:     parse('trans')     ?? {},
+            kpi:        parse('kpi')        ?? {},
+            chartData:  parse('chart')      ?? {},
+            endpoints:  parse('endpoints')  ?? {},
+            trans:      parse('trans')      ?? {},
+            companieId: parse('companieId') ?? null,
         })
     );
 }
@@ -208,8 +213,45 @@ function mountInvoicesIndex() {
     );
 }
 
+function mountProductsIndex() {
+    const element = document.getElementById('products-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(ProductsIndex, {
+            kpi:       parse('kpi')       ?? {},
+            chartData: parse('chart')     ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+function mountCompaniesIndex() {
+    const element = document.getElementById('companies-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(CompaniesIndex, {
+            kpi:       parse('kpi')       ?? {},
+            chartData: parse('chart')     ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 mountKanbanBoard();
 mountDocumentTable();
+mountCompaniesIndex();
 mountWhiteboard();
 mountNestingPage();
 mountQuotesIndex();
@@ -218,3 +260,4 @@ mountQuoteLinesIndex();
 mountOrderLinesIndex();
 mountDeliverysIndex();
 mountInvoicesIndex();
+mountProductsIndex();

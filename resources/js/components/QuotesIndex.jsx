@@ -1381,7 +1381,7 @@ function saveFilters(filters) {
 // List Tab
 // ---------------------------------------------------------------------------
 
-function ListTab({ endpoints, trans }) {
+function ListTab({ endpoints, trans, companieId }) {
     const saved = loadFilters();
 
     const [quotes, setQuotes]         = useState([]);
@@ -1406,11 +1406,12 @@ function ListTab({ endpoints, trans }) {
             page:     opts.page     ?? page,
         });
         (opts.statuses ?? statuses).forEach(s => params.append('statuses[]', s));
+        if (companieId) params.set('company_id', companieId);
 
         apiFetch(`${endpoints.list}?${params}`)
             .then(data => { setQuotes(data.data); setMeta(data.meta); })
             .finally(() => setLoading(false));
-    }, [search, sortField, sortAsc, page, statuses, endpoints.list]);
+    }, [search, sortField, sortAsc, page, statuses, endpoints.list, companieId]);
 
     useEffect(() => { fetchQuotes(); }, [sortField, sortAsc, page, statuses]);
 
@@ -1521,8 +1522,8 @@ function ListTab({ endpoints, trans }) {
 // Root Component
 // ---------------------------------------------------------------------------
 
-export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser, endpoints, trans }) {
-    const [activeTab, setActiveTab] = useState('dashboard');
+export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser, endpoints, trans, companieId = null }) {
+    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
 
     return (
         <div className="card">
@@ -1559,7 +1560,7 @@ export default function QuotesIndex({ kpi, chartData, topCustomers, quotesByUser
                     />
                 )}
                 {activeTab === 'list' && (
-                    <ListTab endpoints={endpoints} trans={trans} />
+                    <ListTab endpoints={endpoints} trans={trans} companieId={companieId} />
                 )}
             </div>
         </div>

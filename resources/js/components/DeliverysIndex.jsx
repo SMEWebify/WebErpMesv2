@@ -445,7 +445,7 @@ function Pagination({ meta, onPage }) {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function DeliverysIndex({ kpi, chartData, endpoints, trans }) {
+export default function DeliverysIndex({ kpi, chartData, endpoints, trans, companieId = null }) {
     // ---- Filters (localStorage) ----
     const defaultFilters = { search: '', statuses: [], invoiceStatuses: [] };
     const [filters, setFilters] = useState(() => {
@@ -483,6 +483,7 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans }) {
             const params = new URLSearchParams({ search: f.search, sort: s.field, asc: s.asc ? '1' : '0', page: p });
             f.statuses.forEach(v        => params.append('statuses[]', v));
             f.invoiceStatuses.forEach(v => params.append('invoice_statuses[]', v));
+            if (companieId) params.set('company_id', companieId);
             const json = await apiFetch(`${endpoints.list}?${params}`);
             setRows(json.data ?? []);
             setMeta(json.meta ?? null);
@@ -491,7 +492,7 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans }) {
         } finally {
             setLoading(false);
         }
-    }, [endpoints?.list]);
+    }, [endpoints?.list, companieId]);
 
     useEffect(() => { fetchData(filters, sort, page); }, [filters, sort, page, fetchData]);
 
