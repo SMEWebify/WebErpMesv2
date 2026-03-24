@@ -11,6 +11,7 @@ import QuotesIndex from './components/QuotesIndex.jsx';
 import CompaniesIndex from './components/CompaniesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
+import DeliverysRequest from './components/DeliverysRequest.jsx';
 import InvoicesIndex from './components/InvoicesIndex.jsx';
 import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
@@ -179,6 +180,27 @@ function mountOrderLinesIndex() {
         React.createElement(OrderLinesIndex, {
             endpoints: parse('endpoints') ?? {},
             trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+function mountDeliverysRequest() {
+    const element = document.getElementById('deliverys-request-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(DeliverysRequest, {
+            initialCode:    element.dataset.code        ?? '',
+            userId:         element.dataset.userId      ? parseInt(element.dataset.userId, 10) : null,
+            users:          parse('users')              ?? [],
+            companies:      parse('companies')          ?? [],
+            canManageStock: element.dataset.canManageStock === 'true',
+            endpoints:      parse('endpoints')          ?? {},
+            trans:          parse('trans')              ?? {},
         })
     );
 }
@@ -362,5 +384,6 @@ mountOrdersIndex();
 mountQuoteLinesIndex();
 mountOrderLinesIndex();
 mountDeliverysIndex();
+mountDeliverysRequest();
 mountInvoicesIndex();
 mountProductsIndex();
