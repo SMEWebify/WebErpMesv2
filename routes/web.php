@@ -125,10 +125,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->name('addresses.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->name('addresses.update');
             Route::get('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->name('addresses.edit');
+            Route::post('/json/store', 'App\Http\Controllers\Companies\AddressesController@storeJson')->name('addresses.json.store');
+            Route::post('/json/update/{address}', 'App\Http\Controllers\Companies\AddressesController@updateJson')->name('addresses.json.update');
         });
     
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importCompanies')->name('companies.import');
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.edit.update');
+        Route::post('/json/update/{company}', 'App\Http\Controllers\Companies\CompaniesController@updateJson')->name('companies.json.update');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
 
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Companies\CompaniesController@storeQuote')->name('companies.store.quote');
@@ -143,6 +146,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->name('contacts.store');
         Route::match(['post', 'put'], '/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->name('contacts.update');
         Route::get('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->name('contacts.edit');
+        Route::post('/json/store', 'App\Http\Controllers\Companies\ContactsController@storeJson')->name('contacts.json.store');
+        Route::post('/json/update/{contact}', 'App\Http\Controllers\Companies\ContactsController@updateJson')->name('contacts.json.update');
     });
 
     Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

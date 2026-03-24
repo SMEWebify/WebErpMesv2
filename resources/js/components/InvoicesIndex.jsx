@@ -752,7 +752,7 @@ function saveFilters(filters) {
 // List Tab
 // ---------------------------------------------------------------------------
 
-function ListTab({ endpoints, trans }) {
+function ListTab({ endpoints, trans, companieId = null }) {
     const saved = loadFilters();
 
     const [invoices, setInvoices]   = useState([]);
@@ -774,6 +774,7 @@ function ListTab({ endpoints, trans }) {
             page:     params.page     ?? page,
         });
         (params.statuses ?? statuses).forEach(s => qs.append('statuses[]', s));
+        if (companieId) qs.set('company_id', companieId);
 
         setLoading(true);
         apiFetch(`${endpoints.list}?${qs}`)
@@ -848,22 +849,24 @@ function ListTab({ endpoints, trans }) {
 // Root component
 // ---------------------------------------------------------------------------
 
-export default function InvoicesIndex({ kpi, chartData, topClients, endpoints, trans }) {
-    const [activeTab, setActiveTab] = useState('dashboard');
+export default function InvoicesIndex({ kpi, chartData, topClients, endpoints, trans, companieId = null }) {
+    const [activeTab, setActiveTab] = useState(companieId ? 'list' : 'dashboard');
 
     return (
         <div className="card">
             <div className="card-header p-2">
                 <ul className="nav nav-pills">
-                    <li className="nav-item">
-                        <a
-                            className={`nav-link ${activeTab === 'dashboard' ? 'active' : ''}`}
-                            href="#"
-                            onClick={e => { e.preventDefault(); setActiveTab('dashboard'); }}
-                        >
-                            {trans.dashboard}
-                        </a>
-                    </li>
+                    {!companieId && (
+                        <li className="nav-item">
+                            <a
+                                className={`nav-link ${activeTab === 'dashboard' ? 'active' : ''}`}
+                                href="#"
+                                onClick={e => { e.preventDefault(); setActiveTab('dashboard'); }}
+                            >
+                                {trans.dashboard}
+                            </a>
+                        </li>
+                    )}
                     <li className="nav-item">
                         <a
                             className={`nav-link ${activeTab === 'list' ? 'active' : ''}`}
@@ -881,7 +884,7 @@ export default function InvoicesIndex({ kpi, chartData, topClients, endpoints, t
                     <DashboardTab kpi={kpi} chartData={chartData} topClients={topClients} trans={trans} />
                 )}
                 {activeTab === 'list' && (
-                    <ListTab endpoints={endpoints} trans={trans} />
+                    <ListTab endpoints={endpoints} trans={trans} companieId={companieId} />
                 )}
             </div>
         </div>

@@ -441,6 +441,7 @@ return [
     'view_all_trans_key'                       => 'View All',
     'submit_trans_key'                         => 'Submit',
     'update_trans_key'                         => 'Update',
+    'success_update_trans_key'                 => 'Record updated successfully.',
     'upload_trans_key'                         => 'Upload',
     'refresh_trans_key'                        => 'Refresh Page',
     'close_trans_key'                          => 'Close',

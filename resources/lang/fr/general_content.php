@@ -441,6 +441,7 @@ return [
     'view_all_trans_key'                       => 'Tout voir',
     'submit_trans_key'                         => 'Soumettre',
     'update_trans_key'                         => 'Mettre à jours',
+    'success_update_trans_key'                 => 'Fiche mise à jour avec succès.',
     'upload_trans_key'                         => 'Télécharger',
     'refresh_trans_key'                        => 'Rafraichir la page',
     'close_trans_key'                          => 'Fermer',

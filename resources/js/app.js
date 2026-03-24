@@ -16,6 +16,10 @@ import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
 import OrderLinesIndex from './components/OrderLinesIndex.jsx';
 import SetupWizard from './components/SetupWizard.jsx';
+import CompanyDashboard from './components/CompanyDashboard.jsx';
+import CompanyForm from './components/CompanyForm.jsx';
+import CompanyAddresses from './components/CompanyAddresses.jsx';
+import CompanyContacts from './components/CompanyContacts.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -208,11 +212,12 @@ function mountInvoicesIndex() {
 
     createRoot(element).render(
         React.createElement(InvoicesIndex, {
-            kpi:         parse('kpi')         ?? {},
-            chartData:   parse('chart')       ?? {},
-            topClients:  parse('topClients')  ?? [],
-            endpoints:   parse('endpoints')   ?? {},
-            trans:       parse('trans')       ?? {},
+            kpi:        parse('kpi')        ?? {},
+            chartData:  parse('chart')      ?? {},
+            topClients: parse('topClients') ?? [],
+            endpoints:  parse('endpoints')  ?? {},
+            trans:      parse('trans')      ?? {},
+            companieId: element.dataset.companieId ? parseInt(element.dataset.companieId, 10) : null,
         })
     );
 }
@@ -253,6 +258,79 @@ function mountCompaniesIndex() {
     );
 }
 
+function mountCompanyForm() {
+    const element = document.getElementById('company-form-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(CompanyForm, {
+            company:  parse('company')  ?? {},
+            users:    parse('users')    ?? [],
+            endpoint: element.dataset.endpoint ?? '',
+            trans:    parse('trans')    ?? {},
+        })
+    );
+}
+
+function mountCompanyDashboard() {
+    const element = document.getElementById('company-dashboard-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(CompanyDashboard, {
+            kpi:    parse('kpi')    ?? {},
+            charts: parse('charts') ?? {},
+            trans:  parse('trans')  ?? {},
+        })
+    );
+}
+
+function mountCompanyAddresses() {
+    const element = document.getElementById('company-addresses-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(CompanyAddresses, {
+            initialAddresses: parse('addresses') ?? [],
+            storeUrl:         element.dataset.storeUrl      ?? '',
+            updateBaseUrl:    element.dataset.updateBaseUrl ?? '',
+            companieId:       element.dataset.companieId ? parseInt(element.dataset.companieId, 10) : null,
+            trans:            parse('trans') ?? {},
+        })
+    );
+}
+
+function mountCompanyContacts() {
+    const element = document.getElementById('company-contacts-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(CompanyContacts, {
+            initialContacts: parse('contacts') ?? [],
+            storeUrl:        element.dataset.storeUrl      ?? '',
+            updateBaseUrl:   element.dataset.updateBaseUrl ?? '',
+            companieId:      element.dataset.companieId ? parseInt(element.dataset.companieId, 10) : null,
+            trans:           parse('trans') ?? {},
+        })
+    );
+}
+
 function mountSetupWizard() {
     const element = document.getElementById('setup-wizard-app');
     if (!element) return;
@@ -270,6 +348,10 @@ function mountSetupWizard() {
 }
 
 mountSetupWizard();
+mountCompanyDashboard();
+mountCompanyForm();
+mountCompanyAddresses();
+mountCompanyContacts();
 mountKanbanBoard();
 mountDocumentTable();
 mountCompaniesIndex();

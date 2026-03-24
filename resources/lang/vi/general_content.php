@@ -332,4 +332,5 @@ return [
     'service_updated_success_trans_key' => 'Successfully updated service.',
     'tool_created_success_trans_key' => 'Successfully created tool.',
     'tool_updated_success_trans_key' => 'Successfully updated tool.',
+    'success_update_trans_key'       => 'Cập nhật hồ sơ thành công.',
 ];

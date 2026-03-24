@@ -381,6 +381,7 @@ return [
     'view_all_trans_key'                       => 'Ver todo',
     'submit_trans_key'                         => 'Enviar',
     'update_trans_key'                         => 'Actualizar',
+    'success_update_trans_key'                 => 'Registro actualizado con éxito.',
     'upload_trans_key'                         => 'Subir',
     'refresh_trans_key'                        => 'Actualizar página',
     'close_trans_key'                          => 'Cerrar',

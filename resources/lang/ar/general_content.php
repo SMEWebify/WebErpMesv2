@@ -384,6 +384,7 @@ return [
     'view_all_trans_key'                => 'عرض الكل',
     'submit_trans_key'                  => 'إرسال',
     'update_trans_key'                  => 'تحديث',
+    'success_update_trans_key'          => 'تم تحديث السجل بنجاح.',
     'upload_trans_key'                  => 'رفع',
     'refresh_trans_key'                 => 'تحديث الصفحة',
     'close_trans_key'                   => 'إغلاق',

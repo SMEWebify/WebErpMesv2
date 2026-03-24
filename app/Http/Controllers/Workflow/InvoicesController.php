@@ -105,6 +105,7 @@ class InvoicesController extends Controller
         $statuses  = array_filter(array_map('intval', (array) $request->get('statuses', [])));
         $sortField = $request->get('sort', 'created_at');
         $sortAsc   = $request->boolean('asc', false);
+        $companyId = $request->get('company_id');
 
         $allowed = ['code', 'label', 'created_at', 'due_date', 'statu', 'companie', 'contact', 'invoice_lines_count', 'total_amount'];
         if (!in_array($sortField, $allowed)) {
@@ -118,7 +119,8 @@ class InvoicesController extends Controller
             ->selectRaw("invoices.*, {$totalSub} as total_amount")
             ->with(['companie:id,label,code', 'contact:id,first_name,name'])
             ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
-            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses));
+            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
 
         match ($sortField) {
             'companie'            => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = invoices.companies_id) {$dir}"),

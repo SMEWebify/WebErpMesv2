@@ -26,6 +26,7 @@ use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
+use App\Http\Requests\Companies\UpdateCompanieJsonRequest;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Carbon\Carbon;
 use App\Models\Methods\MethodsServices;
@@ -316,6 +317,38 @@ class CompaniesController extends Controller
                                                         'nextReviewSoon',
                                                         'daysUntilNextReview',
                                                         'purchasesForEvaluation',));
+    }
+
+    /**
+     * AJAX update — returns JSON, no redirect.
+     */
+    public function updateJson(UpdateCompanieJsonRequest $request, Companies $company)
+    {
+        $vatNumber = $request->input('intra_community_vat');
+        $vatWarning = null;
+
+        if ($vatNumber) {
+            $countryCode = substr($vatNumber, 0, 2);
+            $vatCode     = substr($vatNumber, 2);
+            try {
+                $isValid = $this->companyService->validateVatNumber($countryCode, $vatCode);
+                if (!$isValid) {
+                    $vatWarning = 'Le numéro de TVA est invalide, mais les autres informations ont été mises à jour.';
+                }
+            } catch (\Exception $e) {
+                $vatWarning = 'Le service de validation de la TVA est indisponible. La fiche a été mise à jour sans validation du numéro de TVA.';
+            }
+        }
+
+        $company->update($request->validated());
+        $company->active               = $request->boolean('active');
+        $company->quoted_delivery_note = $request->boolean('quoted_delivery_note');
+        $company->save();
+
+        return response()->json([
+            'success' => true,
+            'warning' => $vatWarning,
+        ]);
     }
 
     /**

@@ -431,6 +431,7 @@ return [
     'view_all_trans_key'                       => '查看全部',
     'submit_trans_key'                         => '提交',
     'update_trans_key'                         => '更新',
+    'success_update_trans_key'                 => '记录更新成功。',
     'upload_trans_key'                         => '上传',
     'refresh_trans_key'                        => '刷新页面',
     'close_trans_key'                          => '关闭',
