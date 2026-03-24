@@ -271,6 +271,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices');
         Route::get('/store/delevery/{id}', 'App\Http\Controllers\Workflow\InvoicesController@storeFromDelevery')->name('invoices.store.from.delivery');
         Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->name('invoices-request');
+        // JSON API for React InvoicesRequest
+        Route::get('/request/lines', 'App\Http\Controllers\Workflow\InvoicesController@requestLines')->name('invoices-request.lines');
+        Route::post('/request/store', 'App\Http\Controllers\Workflow\InvoicesController@storeInvoiceApi')->name('invoices-request.store');
+        Route::post('/request/generate-all', 'App\Http\Controllers\Workflow\InvoicesController@generateInvoicesForCompanyApi')->name('invoices-request.generate-all');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');

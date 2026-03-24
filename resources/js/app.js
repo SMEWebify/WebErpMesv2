@@ -12,6 +12,7 @@ import CompaniesIndex from './components/CompaniesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
 import DeliverysRequest from './components/DeliverysRequest.jsx';
+import InvoicesRequest from './components/InvoicesRequest.jsx';
 import InvoicesIndex from './components/InvoicesIndex.jsx';
 import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
@@ -205,6 +206,26 @@ function mountDeliverysRequest() {
     );
 }
 
+function mountInvoicesRequest() {
+    const element = document.getElementById('invoices-request-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(InvoicesRequest, {
+            initialCode: element.dataset.code   ?? '',
+            userId:      element.dataset.userId ? parseInt(element.dataset.userId, 10) : null,
+            users:       parse('users')         ?? [],
+            companies:   parse('companies')     ?? [],
+            endpoints:   parse('endpoints')     ?? {},
+            trans:       parse('trans')         ?? {},
+        })
+    );
+}
+
 function mountDeliverysIndex() {
     const element = document.getElementById('deliverys-index-app');
     if (!element) return;
@@ -385,5 +406,6 @@ mountQuoteLinesIndex();
 mountOrderLinesIndex();
 mountDeliverysIndex();
 mountDeliverysRequest();
+mountInvoicesRequest();
 mountInvoicesIndex();
 mountProductsIndex();
