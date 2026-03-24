@@ -251,6 +251,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys');
         Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request');
+        // JSON API for React DeliverysRequest
+        Route::get('/request/company-data', 'App\Http\Controllers\Workflow\DeliverysController@requestCompanyData')->name('deliverys-request.company-data');
+        Route::post('/request/store', 'App\Http\Controllers\Workflow\DeliverysController@storeDeliveryNoteApi')->name('deliverys-request.store');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
         // JSON API for React DeliverysIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');

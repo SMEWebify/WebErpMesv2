@@ -6,11 +6,19 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Packaging;
 use App\Services\SelectDataService;
+use App\Services\DeliveryService;
+use App\Services\DeliveryLineService;
+use App\Services\DeliveryDataService;
+use App\Services\StockService;
+use App\Services\DocumentCodeGenerator;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\DeliveryKPIService;
+use App\Events\OrderLineUpdated;
+use App\Models\Products\StockLocationProducts;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Workflow\StorePackagingRequest;
 use App\Http\Requests\Workflow\UpdateDeliveryRequest;
@@ -22,14 +30,30 @@ class DeliverysController extends Controller
     protected $SelectDataService;
     protected $deliveryKPIService;
     protected $customFieldService;
+    protected $deliveryService;
+    protected $deliveryLineService;
+    protected $deliveryDataService;
+    protected $stockService;
+    protected $documentCodeGenerator;
 
-    public function __construct(SelectDataService $SelectDataService,
-                                DeliveryKPIService $deliveryKPIService,
-                                CustomFieldService $customFieldService
-                    ){
-        $this->SelectDataService = $SelectDataService;
-        $this->deliveryKPIService = $deliveryKPIService;
-        $this->customFieldService = $customFieldService;
+    public function __construct(
+        SelectDataService    $SelectDataService,
+        DeliveryKPIService   $deliveryKPIService,
+        CustomFieldService   $customFieldService,
+        DeliveryService      $deliveryService,
+        DeliveryLineService  $deliveryLineService,
+        DeliveryDataService  $deliveryDataService,
+        StockService         $stockService,
+        DocumentCodeGenerator $documentCodeGenerator,
+    ){
+        $this->SelectDataService     = $SelectDataService;
+        $this->deliveryKPIService    = $deliveryKPIService;
+        $this->customFieldService    = $customFieldService;
+        $this->deliveryService       = $deliveryService;
+        $this->deliveryLineService   = $deliveryLineService;
+        $this->deliveryDataService   = $deliveryDataService;
+        $this->stockService          = $stockService;
+        $this->documentCodeGenerator = $documentCodeGenerator;
     }
 
     /**
@@ -48,8 +72,202 @@ class DeliverysController extends Controller
      * @return \Illuminate\Contracts\View\View
      */
     public function request()
-    {    
-        return view('workflow/deliverys-request');
+    {
+        $lastDelivery = Deliverys::latest()->first();
+        $deliveryId   = $lastDelivery ? $lastDelivery->id : 0;
+
+        $companyIds = $this->deliveryDataService->getUniqueCompanyIdsWithOpenOrderLines();
+
+        $reactProps = [
+            'code'           => $this->documentCodeGenerator->generateDocumentCode('delivery', $deliveryId),
+            'userId'         => Auth::id(),
+            'users'          => $this->SelectDataService->getUsers(),
+            'companies'      => $this->SelectDataService->getCompanies($companyIds),
+            'canManageStock' => auth()->user()->can('stock-lot-serial-management'),
+        ];
+
+        $reactEndpoints = [
+            'companyData' => route('deliverys-request.company-data'),
+            'store'       => route('deliverys-request.store'),
+        ];
+
+        $reactTrans = [
+            'company'        => __('general_content.sort_companie_trans_key'),
+            'external_id'    => __('general_content.external_id_trans_key'),
+            'label'          => __('general_content.label_trans_key'),
+            'user'           => __('general_content.user_management_trans_key'),
+            'address'        => __('general_content.adress_name_trans_key'),
+            'contact'        => __('general_content.contact_name_trans_key'),
+            'remove_stock'   => __('general_content.remove_component_lines_stock_trans_key'),
+            'create_serial'  => __('general_content.create_serial_number_trans_key'),
+            'new_delivery'   => __('general_content.new_delivery_note_trans_key'),
+            'order'          => __('general_content.order_trans_key'),
+            'customer'       => __('general_content.customer_trans_key'),
+            'task_status'    => __('general_content.tasks_status_trans_key'),
+            'qty'            => __('general_content.qty_trans_key'),
+            'scum_qty'       => __('general_content.scum_qty_trans_key'),
+            'unit'           => __('general_content.unit_trans_key'),
+            'price'          => __('general_content.price_trans_key'),
+            'discount'       => __('general_content.discount_trans_key'),
+            'vat'            => __('general_content.vat_trans_key'),
+            'delivery_date'  => __('general_content.delivery_date_trans_key'),
+            'action'         => __('general_content.action_trans_key'),
+            'select_all'     => __('general_content.select_all_lines_trans_key'),
+            'deselect_all'   => __('general_content.deselect_all_lines_trans_key'),
+            'no_task'        => __('general_content.no_task_trans_key'),
+            'created'        => __('general_content.created_trans_key'),
+            'in_progress'    => __('general_content.in_progress_trans_key'),
+            'finished'       => __('general_content.finished_task_trans_key'),
+            'internal_order' => __('general_content.internal_order_trans_key'),
+            'no_data'        => __('general_content.no_data_trans_key'),
+            'select_company' => __('general_content.select_company_trans_key'),
+            'select_user'    => __('general_content.select_user_management_trans_key'),
+            'select_address' => __('general_content.select_address_trans_key'),
+            'select_contact' => __('general_content.select_contact_trans_key'),
+            'no_company'     => __('general_content.no_select_company_trans_key'),
+            'no_address'     => __('general_content.no_address_trans_key'),
+            'no_contact'     => __('general_content.no_contact_trans_key'),
+            'no_lines'       => 'No lines selected',
+            'add_to_note'    => 'Add',
+        ];
+
+        return view('workflow/deliverys-request', [
+            'reactProps'     => $reactProps,
+            'reactEndpoints' => $reactEndpoints,
+            'reactTrans'     => $reactTrans,
+        ]);
+    }
+
+    /**
+     * Returns addresses, contacts and open order lines for a given company.
+     */
+    public function requestCompanyData(Request $request)
+    {
+        $companyId = $request->get('company_id') ? (int) $request->get('company_id') : null;
+
+        $addresses = $this->SelectDataService->getAddress($companyId);
+        $contacts  = $this->SelectDataService->getContact($companyId);
+        $lines     = $this->deliveryDataService->getDeliveryRequestsLines($companyId, 'label', true);
+
+        $lines->load(['order.companie:id,label', 'Unit:id,label', 'VAT:id,label']);
+
+        return response()->json([
+            'addresses' => $addresses->map(fn($a) => [
+                'id'     => $a->id,
+                'label'  => $a->label,
+                'adress' => $a->adress,
+            ]),
+            'contacts' => $contacts->map(fn($c) => [
+                'id'         => $c->id,
+                'first_name' => $c->first_name,
+                'name'       => $c->name,
+            ]),
+            'lines' => $lines->map(fn($l) => [
+                'id'                      => $l->id,
+                'code'                    => $l->code,
+                'label'                   => $l->label,
+                'tasks_status'            => $l->tasks_status,
+                'delivered_remaining_qty' => $l->delivered_remaining_qty,
+                'selling_price'           => $l->selling_price,
+                'discount'                => $l->discount,
+                'delivery_date'           => $l->delivery_date,
+                'unit_label'              => $l->Unit?->label,
+                'vat_label'               => $l->VAT?->label,
+                'order_id'                => $l->order?->id,
+                'order_code'              => $l->order?->code,
+                'order_type'              => $l->order?->type,
+                'order_url'               => $l->order ? route('orders.show', ['id' => $l->order->id]) : null,
+                'companie_id'             => $l->order?->companies_id,
+                'companie_label'          => $l->order?->companie?->label,
+                'companie_url'            => $l->order?->companies_id ? route('companies.show', ['id' => $l->order->companies_id]) : null,
+            ]),
+        ]);
+    }
+
+    /**
+     * Creates a delivery note from the React form submission.
+     */
+    public function storeDeliveryNoteApi(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'code'                   => 'required|unique:deliverys',
+            'label'                  => 'required',
+            'companies_id'           => 'required|integer',
+            'companies_addresses_id' => 'required|integer',
+            'companies_contacts_id'  => 'required|integer',
+            'user_id'                => 'required|integer',
+            'lines'                  => 'required|array|min:1',
+            'lines.*.order_line_id'  => 'required|integer',
+            'lines.*.qty'            => 'required|numeric|min:0.01',
+            'remove_from_stock'      => 'boolean',
+            'create_serial_number'   => 'boolean',
+        ]);
+
+        $delivery = $this->deliveryService->createDelivery(
+            $validated['code'],
+            $validated['label'],
+            $validated['companies_id'],
+            $validated['companies_addresses_id'],
+            $validated['companies_contacts_id'],
+            $validated['user_id'],
+        );
+
+        $ordre = 10;
+        foreach ($validated['lines'] as $line) {
+            $orderLineId = $line['order_line_id'];
+            $qty         = $line['qty'];
+
+            $this->deliveryLineService->createDeliveryLine($delivery, $orderLineId, $ordre, $qty);
+            $this->updateOrderLineAfterDelivery($orderLineId, $qty);
+            $this->applyStockMovement($orderLineId, $qty, $validated['remove_from_stock'] ?? false);
+
+            $ordre += 10;
+        }
+
+        return response()->json([
+            'redirect' => route('deliverys.show', ['id' => $delivery->id]),
+        ]);
+    }
+
+    private function updateOrderLineAfterDelivery(int $orderLineId, float $qty): void
+    {
+        $orderLine = OrderLines::find($orderLineId);
+        $orderLine->delivered_qty           += $qty;
+        $orderLine->delivered_remaining_qty -= $qty;
+        $orderLine->delivery_status          = ($orderLine->delivered_remaining_qty <= 0) ? 3 : 2;
+        $orderLine->save();
+        event(new OrderLineUpdated($orderLine));
+    }
+
+    private function applyStockMovement(int $orderLineId, float $qty, bool $removeFromStock): void
+    {
+        if (!$removeFromStock) return;
+
+        $orderLine = OrderLines::find($orderLineId);
+
+        if (!$orderLine->product_id || $orderLine->Task()->exists()) return;
+
+        $quantityRemaining    = $qty;
+        $stockLocationProducts = StockLocationProducts::where('products_id', $orderLine->product_id)->get();
+
+        foreach ($stockLocationProducts as $stock) {
+            $quantityToWithdraw = min($stock->getCurrentStockMove(), $quantityRemaining);
+
+            if ($quantityToWithdraw != 0) {
+                $this->stockService->createStockMove([
+                    'user_id'                    => Auth::id(),
+                    'qty'                        => $quantityToWithdraw,
+                    'stock_location_products_id' => $stock->id,
+                    'order_line_id'              => $orderLine->id,
+                    'typ_move'                   => 9,
+                ]);
+            }
+
+            $quantityRemaining -= $quantityToWithdraw;
+            if ($quantityRemaining <= 0) break;
+        }
     }
 
     /**
