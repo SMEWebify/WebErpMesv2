@@ -4,164 +4,87 @@
 
 @section('content_header')
   <div class="row mb-2">
-      <h1>{{ __('general_content.opportunities_trans_key')}}</h1>
+      <h1>{{ __('general_content.opportunities_trans_key') }}</h1>
   </div>
 @stop
 
-@section('right-sidebar')
-
 @section('content')
-<div class="card">
-  <div class="card-header p-2">
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li> 
-      <li class="nav-item"><a class="nav-link" href="#List" data-toggle="tab">{{ __('general_content.opportunities_list_trans_key') }}</a></li> 
-    </ul>
-  </div>
-  <!-- /.card-header -->
-  <div class="tab-content p-3">
-    <div class="tab-pane active" id="Dashboard">
-      <div class="row">
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-            <canvas id="donutChart" width="400" height="400"></canvas>
-          </x-adminlte-card>
-        </div>
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.logs_activity_trans_key') }}" theme="primary" maximizable>
-            <table class="table">
-              <thead>
-                  <tr>
-                      <th>{{__('general_content.label_trans_key') }}</th>
-                      <th>{{__('general_content.created_at_trans_key') }}</th>
-                      <th>{{__('general_content.opportunity_trans_key') }}</th>
-                  </tr>
-              </thead>
-              <tbody>
-                @forelse ($recentActivities as $activity)
-                  <tr>
-                      <td>{{ $activity->label }}</td>
-                      <td>{{ $activity->GetPrettyCreatedAttribute() }}</td>
-                      <td><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $activity->opportunities_id])}}" /></td>
-                  </tr>
-                @empty
-                  <x-EmptyDataLine col="2" text="{{ __('general_content.no_data_trans_key') }}"  />
-                @endforelse
-              </tbody>
-            </table>
-          </x-adminlte-card>
-          <x-adminlte-small-box title="{{ __('general_content.total_amount_won_trans_key') }}" text="{{ $totalQuotesWon }}" icon="fas fa-shopping-cart text-white"
-            theme="danger"/>
-          <x-adminlte-small-box title="{{ __('general_content.total_amount_lost_trans_key') }}" text="{{ $totalQuotesLost }}" icon="fas fa-times-circle "
-              theme="warning"/>
-        </div>
 
-        <div class="col-md-3">
-          <x-adminlte-small-box title="{{ __('general_content.opportunities_count_trans_key') }}" text="{{ $opportunitiesCount }}" icon="fas fa-chart-bar text-white"
-            theme="teal"/>
-            
-            <x-adminlte-card title="{{ __('general_content.opportunities_by_company_trans_key') }}" theme="secondary" maximizable>
-              <table class="table">
-                  <thead>
-                      <tr>
-                          <th>{{ __('general_content.companie_name_trans_key') }}</th>
-                          <th>{{ __('general_content.opportunities_count_trans_key') }}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      @forelse ($opportunitiesByCompany as $opportunity)
-                          <tr>
-                              <td><x-CompanieButton id="{{ $opportunity->companies_id }}" label="{{ $opportunity->companie->label }}"  /></td>
-                              <td>{{ $opportunity->count }}</td>
-                          </tr>
-                        @empty
-                          <x-EmptyDataLine col="2" text="{{ __('general_content.no_data_trans_key') }}"  />
-                        @endforelse
-                  </tbody>
-              </table>
-            </x-adminlte-card>
-        </div>
+@php
+$trans = [
+    // statuses
+    'new'           => __('general_content.new_trans_key'),
+    'quote_made'    => __('general_content.quote_made_trans_key'),
+    'negotiation'   => __('general_content.negotiation_trans_key'),
+    'closed_won'    => __('general_content.closed_won_trans_key'),
+    'closed_lost'   => __('general_content.closed_lost_trans_key'),
+    'informational' => __('general_content.informational_trans_key'),
+    // dashboard
+    'statistics'        => __('general_content.statistiques_trans_key'),
+    'recent_activities' => __('general_content.logs_activity_trans_key'),
+    'by_company'        => __('general_content.opportunities_by_company_trans_key'),
+    'by_amount'         => __('general_content.opportunities_by_probability_trans_key'),
+    'total_won'         => __('general_content.total_amount_won_trans_key'),
+    'total_lost'        => __('general_content.total_amount_lost_trans_key'),
+    'count'             => __('general_content.opportunities_count_trans_key'),
+    // table
+    'label'               => __('general_content.label_trans_key'),
+    'company'             => __('general_content.companie_trans_key'),
+    'company_name'        => __('general_content.companie_name_trans_key'),
+    'status'              => __('general_content.status_trans_key'),
+    'user'                => __('general_content.user_trans_key'),
+    'created_at'          => __('general_content.created_at_trans_key'),
+    'probability'         => __('general_content.probality_trans_key'),
+    'budget'              => __('general_content.budget_trans_key'),
+    'amount'              => __('general_content.amount_trans_key'),
+    'action'              => __('general_content.action_trans_key'),
+    'opportunities_count' => __('general_content.opportunities_count_trans_key'),
+    // form
+    'opportunity_name' => __('general_content.name_opportunity_trans_key'),
+    'address_select'   => __('general_content.select_address_trans_key'),
+    'contact_select'   => __('general_content.select_contact_trans_key'),
+    'comment'          => __('general_content.comment_trans_key'),
+    'close'            => __('general_content.close_trans_key'),
+    'submit'           => __('general_content.submit_trans_key'),
+    'new_opportunity'  => __('general_content.new_opportunities_trans_key'),
+    // misc
+    'dashboard' => __('general_content.dashboard_trans_key'),
+    'list'      => __('general_content.opportunities_list_trans_key'),
+    'no_data'   => __('general_content.no_data_trans_key'),
+    'search'    => __('general_content.search_trans_key'),
+    'page'      => 'Page',
+    'currency'  => app('Factory')->curency ?? 'EUR',
+    'locale'    => str_replace('_', '-', config('app.locale')),
+];
 
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.opportunities_by_probability_trans_key') }}" theme="dark" maximizable>
-            <table class="table">
-              <thead>
-                  <tr>
-                      <th>{{ __('general_content.probality_trans_key') }}</th>
-                      <th>{{ __('general_content.amount_trans_key') }}</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  @foreach ($opportunitiesByAmount as $opportunity)
-                      <tr>
-                          <td>{{ $opportunity->probality }} %</td>
-                          <td>{{ number_format($opportunity->total_amount, 2, '.', ',') }}  {{ $Factory->curency }}</td>
-                      </tr>
-                  @endforeach
-              </tbody>
-            </table>
-          </x-adminlte-card>
-        </div>
-      </div>
-    </div>
-    <div class="tab-pane" id="List">
-      @livewire('opportunities-index')
-    </div>
-  <!-- /.card -->
-  </div>
-</div>
+$endpoints = [
+    'list'       => route('opportunities.json.list'),
+    'kanban'     => route('opportunities.json.kanban'),
+    'kanbanMove' => route('opportunities.json.kanban-move', ['id' => '__ID__']),
+    'store'      => route('opportunities.json.store'),
+    'selectData' => route('opportunities.json.select-data'),
+    'addresses'  => route('opportunities.json.addresses', ['companyId' => '__ID__']),
+    'contacts'   => route('opportunities.json.contacts',  ['companyId' => '__ID__']),
+];
+@endphp
+
+<div
+  id="opportunities-index-app"
+  data-kpi='@json($kpi, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-chart='@json($chart, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-activities='@json($activities, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-by-company='@json($byCompany, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-by-amount='@json($byAmount, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-endpoints='@json($endpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-trans='@json($trans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+></div>
+
 @stop
 
 @section('css')
 @stop
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v1.x.x/dist/livewire-sortable.js"></script>
-
-<script>
-//-------------
-//- PIE CHART -
-//-------------
-  var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
-  var donutData        = {
-      labels: [
-        @foreach ($data['opportunitiesDataRate'] as $item)
-              @if(1 == $item->statu )  "{{ __('general_content.new_trans_key') }}", @endif
-              @if(2 == $item->statu )  "{{ __('general_content.quote_made_trans_key') }}", @endif
-              @if(3 == $item->statu )  "{{ __('general_content.negotiation_trans_key') }}", @endif
-              @if(4 == $item->statu )  "{{ __('general_content.closed_won_trans_key') }}", @endif
-              @if(5 == $item->statu )  "{{ __('general_content.closed_lost_trans_key') }}", @endif
-              @if(6 == $item->statu ) "{{ __('general_content.informational_trans_key') }}", @endif
-        @endforeach
-      ],
-      datasets: [
-        {
-          data: [
-                @foreach ($data['opportunitiesDataRate'] as $item)
-                "{{ $item->OpportunitiesCountRate }}",
-                @endforeach
-              ], 
-              backgroundColor: [
-                  'rgba(23, 162, 184, 1)',
-                  'rgba(255, 193, 7, 1)',
-                  'rgba(40, 167, 69, 1)',
-                  'rgba(220, 53, 69, 1)',
-                  'rgba(108, 117, 125, 1)',
-                  'rgba(0, 123, 255, 1)',
-              ],
-        }
-      ]
-    }
-    var donutOptions     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    new Chart(donutChartCanvas, {
-      type: 'pie',
-      data: donutData,
-      options: donutOptions
-    })
-  </script>
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop

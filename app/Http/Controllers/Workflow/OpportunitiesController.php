@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Workflow;
 use Illuminate\Support\Str;
 use App\Events\QuoteCreated;
 use App\Models\Admin\Factory;
+use App\Models\User;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Traits\NextPreviousTrait;
@@ -13,6 +14,7 @@ use App\Models\Workflow\OrderLines;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
 use App\Models\Workflow\DeliveryLines;
@@ -25,6 +27,9 @@ use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Workflow\OpportunitiesActivitiesLogs;
 use App\Models\Accounting\AccountingPaymentConditions;
 use App\Http\Requests\Workflow\UpdateOpportunityRequest;
+use App\Models\Companies\Companies;
+use App\Models\Companies\CompaniesAddresses;
+use App\Models\Companies\CompaniesContacts;
 
 class OpportunitiesController extends Controller
 { 
@@ -51,20 +56,170 @@ class OpportunitiesController extends Controller
      */
     public function index()
     {
-        // Using the OpportunitiesKPIService to retrieve KPI data
-        $data['opportunitiesDataRate'] = $this->opportunitiesKPIService->getOpportunitiesDataRate();
-        $recentActivities = $this->opportunitiesKPIService->getRecentActivities();
-        $opportunitiesByAmount = $this->opportunitiesKPIService->getOpportunitiesByAmount();
-        $opportunitiesByCloseDate = $this->opportunitiesKPIService->getOpportunitiesByCloseDate();
-        $opportunitiesByCompany = $this->opportunitiesKPIService->getOpportunitiesByCompany();
-        $opportunitiesCount = $this->opportunitiesKPIService->getOpportunitiesCount();
+        $dataRate      = $this->opportunitiesKPIService->getOpportunitiesDataRate();
+        $activities    = $this->opportunitiesKPIService->getRecentActivities();
+        $byAmount      = $this->opportunitiesKPIService->getOpportunitiesByAmount();
+        $byCompany     = $this->opportunitiesKPIService->getOpportunitiesByCompany();
+        $count         = $this->opportunitiesKPIService->getOpportunitiesCount();
         $quotesSummary = $this->opportunitiesKPIService->getQuotesSummary();
 
-        return view('workflow/opportunities-index', array_merge(
-            compact('recentActivities', 'opportunitiesByAmount', 'opportunitiesByCloseDate', 
-                    'opportunitiesByCompany', 'opportunitiesCount'), 
-            $quotesSummary
-        ))->with('data', $data);
+        return view('workflow/opportunities-index', [
+            'kpi' => [
+                'count'     => $count,
+                'totalWon'  => $quotesSummary['totalQuotesWon'],
+                'totalLost' => $quotesSummary['totalQuotesLost'],
+            ],
+            'chart' => $dataRate->map(fn ($i) => [
+                'statu' => $i->statu,
+                'count' => $i->OpportunitiesCountRate,
+            ])->values()->all(),
+            'activities' => $activities->map(fn ($a) => [
+                'id'               => $a->id,
+                'label'            => $a->label,
+                'created_pretty'   => $a->GetPrettyCreatedAttribute(),
+                'opportunities_id' => $a->opportunities_id,
+                'url'              => route('opportunities.show', ['id' => $a->opportunities_id]),
+            ])->values()->all(),
+            'byCompany' => $byCompany->map(fn ($o) => [
+                'company_label' => $o->companie?->label ?? '—',
+                'company_url'   => route('companies.show', ['id' => $o->companies_id]),
+                'count'         => $o->count,
+            ])->values()->all(),
+            'byAmount' => $byAmount->map(fn ($o) => [
+                'probality'    => $o->probality,
+                'total_amount' => round((float) $o->total_amount, 2),
+            ])->values()->all(),
+        ]);
+    }
+
+    // -------------------------------------------------------------------------
+    // JSON endpoints for the React OpportunitiesIndex component
+    // -------------------------------------------------------------------------
+
+    public function listJson(Request $request)
+    {
+        $search    = $request->get('search', '');
+        $statuses  = array_filter(array_map('intval', (array) $request->get('statuses', [])));
+        $sortField = $request->get('sort', 'created_at');
+        $sortAsc   = $request->boolean('asc', false);
+        $companyId = $request->get('company_id');
+
+        $allowed = ['label', 'budget', 'probality', 'statu', 'created_at', 'companie'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir   = $sortAsc ? 'asc' : 'desc';
+        $query = Opportunities::with(['companie:id,label,code', 'UserManagement:id,name'])
+            ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
+            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses))
+            ->when($companyId, fn ($q) => $q->where('companies_id', $companyId));
+
+        match ($sortField) {
+            'companie' => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = opportunities.companies_id) {$dir}"),
+            default    => $query->orderBy($sortField, $dir),
+        };
+
+        $items = $query->paginate(15);
+
+        return response()->json([
+            'data' => $items->map(fn ($o) => [
+                'id'         => $o->id,
+                'label'      => $o->label,
+                'budget'     => round((float) $o->budget, 2),
+                'probality'  => $o->probality,
+                'statu'      => $o->statu,
+                'close_date' => $o->close_date,
+                'created_at' => $o->created_at?->format('d/m/Y'),
+                'companie'   => $o->companie   ? ['id' => $o->companie->id,   'label' => $o->companie->label] : null,
+                'user'       => $o->UserManagement ? ['id' => $o->UserManagement->id, 'name' => $o->UserManagement->name] : null,
+                'url'        => route('opportunities.show', ['id' => $o->id]),
+            ]),
+            'meta' => [
+                'total'        => $items->total(),
+                'per_page'     => $items->perPage(),
+                'current_page' => $items->currentPage(),
+                'last_page'    => $items->lastPage(),
+            ],
+        ]);
+    }
+
+    public function kanbanJson()
+    {
+        $items = Opportunities::with(['companie:id,label', 'UserManagement:id,name'])->get();
+
+        return response()->json($items->map(fn ($o) => [
+            'id'        => $o->id,
+            'label'     => $o->label,
+            'budget'    => round((float) $o->budget, 2),
+            'probality' => $o->probality,
+            'statu'     => $o->statu,
+            'companie'  => $o->companie   ? ['id' => $o->companie->id,   'label' => $o->companie->label] : null,
+            'user'      => $o->UserManagement ? ['id' => $o->UserManagement->id, 'name' => $o->UserManagement->name] : null,
+            'url'       => route('opportunities.show', ['id' => $o->id]),
+        ]));
+    }
+
+    public function kanbanMoveJson(Request $request, int $id)
+    {
+        abort_unless(auth()->check(), 403);
+        $validated   = $request->validate(['statu' => 'required|integer|between:1,6']);
+        $opportunity = Opportunities::findOrFail($id);
+        $opportunity->update(['statu' => $validated['statu']]);
+        return response()->json(['ok' => true]);
+    }
+
+    public function storeJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'companies_id'           => 'required|integer',
+            'companies_contacts_id'  => 'required|integer',
+            'companies_addresses_id' => 'required|integer',
+            'user_id'                => 'required|integer',
+            'label'                  => 'required|string|max:255',
+            'budget'                 => 'required|numeric|min:0',
+            'probality'              => 'required|integer|min:0|max:100',
+            'comment'                => 'nullable|string',
+        ]);
+
+        $opportunity = Opportunities::create(array_merge($validated, ['uuid' => Str::uuid()]));
+
+        return response()->json([
+            'redirect' => route('opportunities.show', ['id' => $opportunity->id]),
+        ], 201);
+    }
+
+    public function selectDataJson()
+    {
+        return response()->json([
+            'companies' => $this->SelectDataService->getCompanies()->map(fn ($c) => [
+                'id'    => $c->id,
+                'label' => $c->label ?? $c->last_name,
+                'code'  => $c->code,
+            ]),
+            'users' => User::select('id', 'name')->get(),
+        ]);
+    }
+
+    public function addressesJson(int $companyId)
+    {
+        return response()->json(
+            CompaniesAddresses::select('id', 'label', 'adress')
+                ->where('companies_id', $companyId)
+                ->get()
+        );
+    }
+
+    public function contactsJson(int $companyId)
+    {
+        return response()->json(
+            CompaniesContacts::select('id', 'first_name', 'name')
+                ->where('companies_id', $companyId)
+                ->get()
+                ->map(fn ($c) => ['id' => $c->id, 'name' => trim($c->first_name.' '.$c->name)])
+        );
     }
 
     /**

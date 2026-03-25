@@ -151,25 +151,44 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
-        //leads
         Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->name('leads');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show'); 
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\LeadsController@update')->name('leads.update');
         Route::get('/store/opportunity/{id}', 'App\Http\Controllers\Workflow\LeadsController@storeOpportunity')->name('leads.store.opportunity');
+
+        // JSON endpoints for React LeadsIndex
+        Route::get('/json/list',                  'App\Http\Controllers\Workflow\LeadsController@listJson')->name('leads.json.list');
+        Route::get('/json/kanban',                'App\Http\Controllers\Workflow\LeadsController@kanbanJson')->name('leads.json.kanban');
+        Route::put('/json/kanban/{id}/move',      'App\Http\Controllers\Workflow\LeadsController@kanbanMoveJson')->name('leads.json.kanban-move');
+        Route::post('/json/store',                'App\Http\Controllers\Workflow\LeadsController@storeJson')->name('leads.json.store');
+        Route::get('/json/select-data',           'App\Http\Controllers\Workflow\LeadsController@selectDataJson')->name('leads.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\LeadsController@addressesJson')->name('leads.json.addresses');
+        Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\LeadsController@contactsJson')->name('leads.json.contacts');
+
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show');
     });
 
     Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\OpportunitiesController@index')->name('opportunities');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->name('opportunities.update');
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@storeQuote')->name('opportunities.store.quote');
-    
-         // store routes
+
+        // JSON endpoints for React OpportunitiesIndex
+        Route::get('/json/list',                  'App\Http\Controllers\Workflow\OpportunitiesController@listJson')->name('opportunities.json.list');
+        Route::get('/json/kanban',                'App\Http\Controllers\Workflow\OpportunitiesController@kanbanJson')->name('opportunities.json.kanban');
+        Route::put('/json/kanban/{id}/move',      'App\Http\Controllers\Workflow\OpportunitiesController@kanbanMoveJson')->name('opportunities.json.kanban-move');
+        Route::post('/json/store',                'App\Http\Controllers\Workflow\OpportunitiesController@storeJson')->name('opportunities.json.store');
+        Route::get('/json/select-data',           'App\Http\Controllers\Workflow\OpportunitiesController@selectDataJson')->name('opportunities.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\OpportunitiesController@addressesJson')->name('opportunities.json.addresses');
+        Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\OpportunitiesController@contactsJson')->name('opportunities.json.contacts');
+
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
+
+        // store routes
         Route::group(['prefix' => 'store'], function () {
             Route::post('/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@store')->name('opportunities.store.activity');
             Route::post('/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@store')->name('opportunities.store.event');
         });
-    
+
         // update routes
         Route::group(['prefix' => 'update'], function () {
             Route::post('/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@update')->name('opportunities.update.activity');
