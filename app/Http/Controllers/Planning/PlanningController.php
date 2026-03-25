@@ -183,4 +183,39 @@ class PlanningController extends Controller
 
         return $possibleDates;
     }
+
+    public function dataJson(Request $request)
+    {
+        $startDate = $request->input('start_date', Carbon::now()->format('Y-m-d'));
+        $endDate   = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d'));
+
+        if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
+            return response()->json(['error' => 'The start date must be before or equal to the end date.'], 422);
+        }
+
+        $taches   = $this->getTasks($startDate, $endDate);
+        $services = $this->getServices();
+
+        [$hoursWorkedPerServiceDay, $tasksPerServiceDay] = $this->calculateHoursAndTasks($taches);
+        $rateChargePerServiceDay = $this->calculateLoadRates($hoursWorkedPerServiceDay);
+        $structureRateLoad       = $this->createLoadRateStructure($rateChargePerServiceDay);
+        $possibleDates           = $this->generatePossibleDates($startDate, $endDate);
+
+        $bankHolidays = TimesBanckHoliday::all()->mapWithKeys(function ($holiday) {
+            if ($holiday->fixed) {
+                return [Carbon::parse($holiday->date)->format('m-d') => $holiday->label];
+            }
+            return [Carbon::parse($holiday->date)->toDateString() => $holiday->label];
+        })->toArray();
+
+        return response()->json([
+            'services'             => $services->map(fn ($s) => ['id' => $s->id, 'label' => $s->label, 'picture' => $s->picture])->values(),
+            'possibleDates'        => $possibleDates,
+            'structureRateLoad'    => $structureRateLoad,
+            'tasksPerServiceDay'   => $tasksPerServiceDay,
+            'bankHolidays'         => $bankHolidays,
+            'countTaskNullDate'    => $this->countTaskNullDate(),
+            'countTaskNullRessource' => $this->countTaskNullRessource(),
+        ]);
+    }
 }

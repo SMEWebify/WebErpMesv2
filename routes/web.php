@@ -215,6 +215,18 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');
         Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->name('quotes.update.detail.picture');
         Route::post('/{idQuote}/lines/import', 'App\Http\Controllers\Workflow\QuoteLinesController@import')->name('quotes.lines.import');
+        // JSON API for React QuoteLinesPage
+        Route::get('/{quoteId}/lines/json', 'App\Http\Controllers\Workflow\QuoteLinesController@linesForQuoteJson')->name('quotes.lines.json.for-quote');
+        Route::get('/{quoteId}/lines/json/select-data', 'App\Http\Controllers\Workflow\QuoteLinesController@selectDataForQuoteJson')->name('quotes.lines.json.select-data');
+        Route::get('/{quoteId}/lines/json/price-list/{productId}', 'App\Http\Controllers\Workflow\QuoteLinesController@priceListForProductJson')->name('quotes.lines.json.price-list');
+        Route::post('/{quoteId}/lines/json/store', 'App\Http\Controllers\Workflow\QuoteLinesController@storeLineJson')->name('quotes.lines.json.store');
+        Route::post('/{quoteId}/lines/json/price-increase', 'App\Http\Controllers\Workflow\QuoteLinesController@priceIncreaseJson')->name('quotes.lines.json.price-increase');
+        Route::put('/{quoteId}/lines/json/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@updateLineJson')->name('quotes.lines.json.update');
+        Route::delete('/{quoteId}/lines/json/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@destroyLineJson')->name('quotes.lines.json.destroy');
+        Route::post('/{quoteId}/lines/json/{id}/duplicate', 'App\Http\Controllers\Workflow\QuoteLinesController@duplicateLineJson')->name('quotes.lines.json.duplicate');
+        Route::post('/{quoteId}/lines/json/{id}/move', 'App\Http\Controllers\Workflow\QuoteLinesController@moveLineJson')->name('quotes.lines.json.move');
+        Route::post('/{quoteId}/lines/json/reorder', 'App\Http\Controllers\Workflow\QuoteLinesController@reorderJson')->name('quotes.lines.json.reorder');
+        Route::get('/{idQuote}/lines/{id}/detail-edit', 'App\Http\Controllers\Workflow\QuoteLinesController@detailEdit')->name('quotes.lines.detail.edit');
         Route::post('/{id}/delivery-simulation', 'App\Http\Controllers\Workflow\QuotesController@simulateDelivery')->name('quotes.delivery.simulation');
         //Project estimate
         Route::post('project-estimate/save/{id}', 'App\Http\Controllers\Workflow\QuotesController@saveProjectEstimate')->name('quotes.project.estimates');
@@ -549,6 +561,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
         
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
+        Route::get('/load-planning/data', 'App\Http\Controllers\Planning\PlanningController@dataJson')->name('production.load.planning.data');
     });
 
     Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
