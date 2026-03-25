@@ -8,6 +8,8 @@ import KanbanBoard from './components/KanbanBoard.jsx';
 import DocumentTable from './components/DocumentTable.jsx';
 import NestingPage from './components/NestingPage.jsx';
 import QuotesIndex from './components/QuotesIndex.jsx';
+import OpportunitiesIndex from './components/OpportunitiesIndex.jsx';
+import LeadsIndex from './components/LeadsIndex.jsx';
 import CompaniesIndex from './components/CompaniesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
@@ -133,6 +135,50 @@ function mountQuotesIndex() {
             endpoints:     parse('endpoints')    ?? {},
             trans:         parse('trans')        ?? {},
             companieId:    parse('companieId')   ?? null,
+        })
+    );
+}
+
+function mountLeadsIndex() {
+    const element = document.getElementById('leads-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(LeadsIndex, {
+            kpi:        parse('kpi')        ?? {},
+            chart:      parse('chart')      ?? [],
+            byCompany:  parse('byCompany')  ?? [],
+            byPriority: parse('byPriority') ?? [],
+            byUser:     parse('byUser')     ?? [],
+            endpoints:  parse('endpoints')  ?? {},
+            trans:      parse('trans')      ?? {},
+            companieId: parse('companieId') ?? null,
+        })
+    );
+}
+
+function mountOpportunitiesIndex() {
+    const element = document.getElementById('opportunities-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(OpportunitiesIndex, {
+            kpi:        parse('kpi')        ?? {},
+            chart:      parse('chart')      ?? [],
+            activities: parse('activities') ?? [],
+            byCompany:  parse('byCompany')  ?? [],
+            byAmount:   parse('byAmount')   ?? [],
+            endpoints:  parse('endpoints')  ?? {},
+            trans:      parse('trans')      ?? {},
+            companieId: parse('companieId') ?? null,
         })
     );
 }
@@ -401,6 +447,8 @@ mountCompaniesIndex();
 mountWhiteboard();
 mountNestingPage();
 mountQuotesIndex();
+mountLeadsIndex();
+mountOpportunitiesIndex();
 mountOrdersIndex();
 mountQuoteLinesIndex();
 mountOrderLinesIndex();
