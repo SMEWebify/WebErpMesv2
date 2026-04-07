@@ -14,9 +14,31 @@ class QontoClientSyncService
     {
         $mappedWem = [];
         $mappedQonto = [];
+        $existingMappingsByWem = QontoClientMapping::query()
+            ->where('tenant_id', $tenantId)
+            ->whereNotNull('qonto_client_id')
+            ->pluck('qonto_client_id', 'wem_client_id')
+            ->map(fn ($qontoClientId) => (string) $qontoClientId)
+            ->all();
+        $reservedQontoIds = array_values(array_unique(array_values($existingMappingsByWem)));
 
         foreach ($wemClients as $wemClient) {
-            $match = $this->findBestMatch($wemClient, $qontoClients);
+            $wemClientId = (int) ($wemClient['id'] ?? 0);
+            $currentQontoId = $existingMappingsByWem[$wemClientId] ?? null;
+            $qontoCandidates = array_values(array_filter($qontoClients, function (array $qontoClient) use ($reservedQontoIds, $currentQontoId) {
+                $qontoClientId = (string) ($qontoClient['id'] ?? '');
+
+                if ($qontoClientId === '') {
+                    return false;
+                }
+
+                if ($currentQontoId !== null && $qontoClientId === $currentQontoId) {
+                    return true;
+                }
+
+                return ! in_array($qontoClientId, $reservedQontoIds, true);
+            }));
+            $match = $this->findBestMatch($wemClient, $qontoCandidates);
 
             if ($match['status'] === 'review_required') {
                 QontoSyncReview::updateOrCreate(
@@ -54,6 +76,10 @@ class QontoClientSyncService
 
                 $mappedWem[] = $wemClient['id'];
                 $mappedQonto[] = $qontoClientId;
+                $existingMappingsByWem[$wemClientId] = $qontoClientId;
+                if (! in_array($qontoClientId, $reservedQontoIds, true)) {
+                    $reservedQontoIds[] = $qontoClientId;
+                }
             }
         }
 

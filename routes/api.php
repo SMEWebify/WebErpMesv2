@@ -28,6 +28,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->group(function () {
+    Route::get('/callback', [QontoIntegrationController::class, 'callback'])->name('callback');
+});
+
 Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('companies', CompanyController::class)->names('api.companies');
@@ -57,7 +61,6 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->group(function () {
         Route::get('/connect', [QontoIntegrationController::class, 'connect'])->name('connect');
-        Route::get('/callback', [QontoIntegrationController::class, 'callback'])->name('callback');
         Route::post('/clients/sync', [QontoIntegrationController::class, 'sync'])->name('clients.sync');
         Route::post('/clients/reconcile', [QontoIntegrationController::class, 'reconcile'])->name('clients.reconcile');
         Route::post('/clients/{wemClientId}/push', [QontoIntegrationController::class, 'push'])->name('clients.push');
