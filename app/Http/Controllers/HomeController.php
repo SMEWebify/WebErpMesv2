@@ -142,10 +142,10 @@ class HomeController extends Controller
         //Quote data for chart
         $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear);
 
-        //5 last Quotes add 
-        $LastQuotes = Quotes::orderBy('id', 'desc')->take(5)->get();
-        //5 lastest Orders add 
-        $LastOrders = Orders::orderBy('id', 'desc')->take(5)->get();
+        //5 last Quotes add
+        $LastQuotes = Quotes::with('companie')->orderBy('id', 'desc')->take(5)->get();
+        //5 lastest Orders add
+        $LastOrders = Orders::with('companie')->orderBy('id', 'desc')->take(5)->get();
 
         //use for liste of tasks
         $ServiceGoals = MethodsServices::withCount(['Tasks', 'Tasks' => function ($query) {

@@ -26,7 +26,7 @@
                                                 {{ __('Priority') }} : {{ $task->priority_label }}
                                             </span>
                                         </div>
-                                        <div class="text-right">
+                                        <div class="text-end">
                                             @if($task->due_date)
                                                 <span class="badge badge-info">{{ $task->due_date->format('d/m/Y') }}</span>
                                                 @if($task->due_date->isPast())

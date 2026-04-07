@@ -112,6 +112,8 @@ class InvoicesRequest extends Component
 
     public function storeInvoice()
     {
+        abort_unless(auth()->check(), 403);
+
         // Validate the request
         $this->validate();
 
@@ -249,7 +251,7 @@ class InvoicesRequest extends Component
     {
         $deliveryLine->invoice_status = 4;
         $deliveryLine->save();
-        event(new DeliveryLineUpdated($deliveryLine->id));
+        event(new DeliveryLineUpdated($deliveryLine));
     }
 
     private function updateOrderLineInfo($deliveryLine)

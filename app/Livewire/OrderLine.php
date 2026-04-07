@@ -295,6 +295,7 @@ class OrderLine extends Component
 
     public function applyPriceIncreaseToAllLines(): void
     {
+        abort_unless(auth()->check(), 403);
         if ((int) $this->order_Statu === 6 || (int) $this->OrderType === 2) {
             session()->flash('error', __('general_content.order_canceled_no_document_trans_key'));
             return;
@@ -395,7 +396,7 @@ class OrderLine extends Component
     }
 
     public function edit($id){
-        
+        abort_unless(OrderLines::where('id', $id)->where('orders_id', $this->OrderId)->exists(), 403);
         $Line = Orderlines::findOrFail($id);
         $this->order_lines_id = $id;
         $this->ordre = $Line->ordre;
@@ -419,12 +420,14 @@ class OrderLine extends Component
 
     public function enableCalculatedPrice($idline)
     {
+        abort_unless(OrderLines::where('id', $idline)->where('orders_id', $this->OrderId)->exists(), 403);
         OrderLines::find($idline)->update(['use_calculated_price' => 1]);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function disableCalculatedPrice($idline)
     {
+        abort_unless(OrderLines::where('id', $idline)->where('orders_id', $this->OrderId)->exists(), 403);
         OrderLines::find($idline)->update(['use_calculated_price' => 0]);
         session()->flash('success','Line Updated Successfully');
     }
@@ -473,6 +476,7 @@ class OrderLine extends Component
 
     public function duplicateLine($id)
     {
+        abort_unless(OrderLines::where('id', $id)->where('orders_id', $this->OrderId)->exists(), 403);
         // Duplicate the order line
         $newOrderline = $this->duplicateOrderLine($id);
 
@@ -1070,7 +1074,7 @@ class OrderLine extends Component
         $OrderLineData->delivered_remaining_qty = 0;
         $OrderLineData->delivery_status = $OrderLineData->delivered_remaining_qty == 0 ? 3 : 2;
         $OrderLineData->save();
-        event(new OrderLineUpdated($OrderLineData->id));
+        event(new OrderLineUpdated($OrderLineData));
     }
 
     // Helper method to update order line info
@@ -1080,7 +1084,7 @@ class OrderLine extends Component
         $OrderLineData->invoiced_remaining_qty = 0;
         $OrderLineData->invoice_status  = $OrderLineData->invoiced_remaining_qty == 0 ? 3 : 2;
         $OrderLineData->save();
-        event(new OrderLineUpdated($OrderLineData->id));
+        event(new OrderLineUpdated($OrderLineData));
     }
     
 

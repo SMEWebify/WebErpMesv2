@@ -5,10 +5,9 @@ namespace App\Listeners;
 use App\Models\Workflow\Orders;
 use App\Events\OrderLineUpdated;
 use App\Models\Workflow\OrderLines;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CheckOrderDeliveredStatus
+class CheckOrderDeliveredStatus implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -24,7 +23,7 @@ class CheckOrderDeliveredStatus
     public function handle(OrderLineUpdated $event)
     {
 
-        $orderLine = OrderLines::find($event->orderLineId);
+        $orderLine = $event->orderLine;
         $orderId = $orderLine->orders_id;
         
         #1 = Not delivered
@@ -33,17 +32,14 @@ class CheckOrderDeliveredStatus
         $allLinesDelivered = OrderLines::where('orders_id', $orderId)
             ->where('delivery_status', '<>', 3) // Non livré
             ->doesntExist();
-        
+
         #1 = Open
         #2 = In progress
         #3 = Delivered
         #4 = Partly delivered
-        if ($allLinesDelivered) {
-            Orders::where('id', $orderId)->update(['statu' => 3]);
-        }
-        else{
-            
-            Orders::where('id',$orderId)->update(['statu'=> 4]);
-        }
+        $newStatus = $allLinesDelivered ? 3 : 4;
+
+        // Use Eloquent instance so OrdersObserver fires (cache invalidation)
+        Orders::find($orderId)?->update(['statu' => $newStatus]);
     }
 }

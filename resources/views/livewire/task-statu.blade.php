@@ -162,29 +162,29 @@
               <div class="text-muted">
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.statu_trans_key') }}  
+                    <p class="small">{{ __('general_content.statu_trans_key') }}
                       <b class="d-block">{{ $Task->status['title'] }}</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.qty_trans_key') }}  
+                    <p class="small">{{ __('general_content.qty_trans_key') }}  
                       <b class="d-block">{{ $Task->GetOrderQtyLine() }}</b>
                     </p>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.cost_trans_key') }}
+                    <p class="small">{{ __('general_content.cost_trans_key') }}
                       <b class="d-block">{{ $Task->formatted_unit_cost }}</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.margin_trans_key') }}  
+                    <p class="small">{{ __('general_content.margin_trans_key') }}  
                       <b class="d-block">{{ $Task->margin() }} %</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.price_trans_key') }}
+                    <p class="small">{{ __('general_content.price_trans_key') }}
                       <b class="d-block">{{ $Task->formatted_unit_price }}</b>
                     </p>
                   </div>
@@ -192,29 +192,29 @@
                 @if($Task->service->type == 1)
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.setting_time_trans_key') }}
+                    <p class="small">{{ __('general_content.setting_time_trans_key') }}
                       <b class="d-block">{{ $Task->seting_time }} s</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.unit_time_trans_key') }}
+                    <p class="small">{{ __('general_content.unit_time_trans_key') }}
                       <b class="d-block">{{ $Task->unit_time }} s</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.total_time_trans_key') }}
+                    <p class="small">{{ __('general_content.total_time_trans_key') }}
                       <b class="d-block">{{ $Task->TotalTime() }} h</b>
                     </p>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.trs_trans_key') }}
+                    <p class="small">{{ __('general_content.trs_trans_key') }}
                       <b class="d-block">{{ $Task->getTotalLogTime()  }}</b>
                     </p>
                   </div>
                   <div class="col-4">
-                    <p class="text-sm">{{ __('general_content.trs_trans_key') }}
+                    <p class="small">{{ __('general_content.trs_trans_key') }}
                       <b class="d-block">{{ $Task->getTRSAttribute()  }} %</b>
                     </p>
                   </div>
@@ -225,7 +225,7 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <p class="text-sm">{{ __('general_content.progress_trans_key') }}
+                  <p class="small">{{ __('general_content.progress_trans_key') }}
                     <b class="d-block">{{ $Task->progress() }} %</b>
                   </p>
                   
@@ -339,7 +339,7 @@
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-times"></i></span>
                           </div>
-                          <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.live="addGoodQt">
+                          <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.lazy="addGoodQt">
                           <span class="input-group-append">
                             <button type="submit" class="btn btn-info btn-flat">Set</button>
                           </span>
@@ -376,7 +376,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-times"></i></span>
                             </div>
-                            <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.live="addGoodQt">
+                            <input type="number" class="form-control @error('addGoodQt') is-invalid @enderror" id="addGoodQt" placeholder="{{ __('general_content.good_rejected_trans_key') }}" min="0" wire:model.lazy="addGoodQt">
                             <span class="input-group-append">
                               <button type="submit" class="btn btn-info btn-flat">Set</button>
                             </span>
@@ -412,7 +412,7 @@
                           <div class="input-group-prepend">
                               <span class="input-group-text"><i class="fas fa-times"></i></span>
                           </div>
-                          <input type="number" class="form-control @error('addBadQt') is-invalid @enderror" id="addBadQt" placeholder="{{ __('general_content.quantity_rejected_trans_key') }}" min="0" wire:model.live="addBadQt">
+                          <input type="number" class="form-control @error('addBadQt') is-invalid @enderror" id="addBadQt" placeholder="{{ __('general_content.quantity_rejected_trans_key') }}" min="0" wire:model.lazy="addBadQt">
                           <span class="input-group-append">
                             <button type="submit" class="btn btn-info btn-flat">Set</button>
                           </span>
@@ -427,14 +427,14 @@
                   <x-adminlte-card theme="info" theme-mode="outline">
                     <div class="row">
                       <div class="col-md-2 text-muted">
-                        <p class="text-sm">{{ __('general_content.end_date_trans_key') }}  
+                        <p class="small">{{ __('general_content.end_date_trans_key') }}  
                           <b class="d-block">{{ $Task->getFormattedEndDateAttribute() }}</b>
                         </p>
                       </div>
                       <div class="col-md-2 text-muted">
                         <div class="form-group">
                           <label for="not_recalculate">Not Recalculate</label>
-                          <input type="checkbox" id="not_recalculate" wire:model.live="not_recalculate" style=" display:flex; align-items:center;">
+                          <input type="checkbox" id="not_recalculate" wire:model.lazy="not_recalculate" style=" display:flex; align-items:center;">
                         </div>
                       </div>
                       <div class="col-md-8 text-muted">
@@ -444,7 +444,7 @@
                               <div class="input-group-prepend">
                                   <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                               </div>
-                              <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" id="end_date"  wire:model.live="end_date">
+                              <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" id="end_date"  wire:model.lazy="end_date">
                               <span class="input-group-append">
                                 <button type="submit" class="btn btn-info btn-flat">Set</button>
                               </span>
@@ -463,7 +463,7 @@
                       <div class="col-md-4 text-muted">
                         <div class="form-group">
                           <label for="userforced_ressource">{{ __('general_content.user_choise_trans_key') }}</label>
-                          <input type="checkbox" id="userforced_ressource" wire:model.live="userforced_ressource" style=" display:flex; align-items:center;">
+                          <input type="checkbox" id="userforced_ressource" wire:model.lazy="userforced_ressource" style=" display:flex; align-items:center;">
                         </div>
                       </div>
                       <div class="col-md-8">

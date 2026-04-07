@@ -28,7 +28,7 @@ class EmailTemplateController extends Controller
 
         EmailTemplate::create($request->all());
 
-        return redirect()->back()->with('success', 'Modèle de mail créé avec succès !');
+        return redirect()->back()->with('success', __('general_content.email_template_created_success_trans_key'));
     }
 
     public function update(Request $request, EmailTemplate $emailTemplate)
@@ -40,14 +40,14 @@ class EmailTemplateController extends Controller
 
         $emailTemplate->update($request->all());
 
-        return redirect()->back()->with('success', 'Modèle de mail mis à jour !');
+        return redirect()->back()->with('success', __('general_content.email_template_updated_success_trans_key'));
     }
 
     public function destroy(EmailTemplate $emailTemplate)
     {
         $emailTemplate->delete();
 
-        return redirect()->back()->with('success', 'Modèle supprimé avec succès !');
+        return redirect()->back()->with('success', __('general_content.email_template_deleted_success_trans_key'));
     }
 
     private function availableDocumentTypes(): array

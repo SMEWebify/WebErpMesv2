@@ -7,12 +7,13 @@ use App\Models\Purchases\PurchaseLines;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Quality\QualityNonConformity;
 use App\Models\Products\StockLocationProducts;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
 
 class PurchaseReceiptLines extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
     protected $fillable= [

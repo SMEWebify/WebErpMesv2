@@ -9,14 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Methods\MethodsRessources;
 use App\Models\Planning\Task;
 use App\Models\Quality\QualityControlDevice;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MethodsServices extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['code','ordre', 'label','type', 'hourly_rate','margin', 'color','picture', 'companies_id'];
+    protected $fillable = ['code', 'ordre', 'label', 'type', 'hourly_rate', 'margin', 'color', 'picture', 'companies_id', 'is_nesting'];
+
+    protected $casts = ['is_nesting' => 'boolean'];
 
     public function Families()
     {

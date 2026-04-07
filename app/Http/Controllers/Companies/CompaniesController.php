@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Companies;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Events\QuoteCreated;
 use Illuminate\Support\Number;
+use App\Models\User;
 use App\Models\Workflow\Quotes;
 use App\Services\CompanyService;
 use App\Services\OrderKPIService;
@@ -13,15 +15,18 @@ use App\Traits\NextPreviousTrait;
 use App\Models\Companies\Companies;
 use App\Services\InvoiceKPIService;
 use App\Services\SelectDataService;
+use App\Services\DocumentCodeGenerator;
 use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
 use Illuminate\Support\Facades\Session;
 use App\Notifications\QuoteNotification;
+use App\Notifications\CompanieNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
+use App\Http\Requests\Companies\UpdateCompanieJsonRequest;
 use App\Models\Accounting\AccountingPaymentConditions;
 use Carbon\Carbon;
 use App\Models\Methods\MethodsServices;
@@ -35,14 +40,16 @@ class CompaniesController extends Controller
     protected $quoteKPIService;
     protected $invoiceKPIService;
     protected $companyService;
+    protected $documentCodeGenerator;
 
     public function __construct(
         NotificationService $notificationService,
         InvoiceKPIService $invoiceKPIService,
-        SelectDataService $SelectDataService, 
+        SelectDataService $SelectDataService,
         OrderKPIService $orderKPIService,
         QuoteKPIService $quoteKPIService,
         CompanyService $companyService,
+        DocumentCodeGenerator $documentCodeGenerator,
     )
     {
         $this->notificationService = $notificationService;
@@ -51,6 +58,7 @@ class CompaniesController extends Controller
         $this->quoteKPIService = $quoteKPIService;
         $this->invoiceKPIService = $invoiceKPIService;
         $this->companyService = $companyService;
+        $this->documentCodeGenerator = $documentCodeGenerator;
     }
 
     protected function getCompanyCounts() 
@@ -67,11 +75,161 @@ class CompaniesController extends Controller
      */
     public function index()
     {
-        //Quote data for chart
-        $data = $this->getCompanyCounts();
-        //5 lastest Companies add 
-        $LastComapnies = Companies::orderBy('id', 'desc')->take(5)->get();
-        return view('companies/companies-index', compact('data', 'LastComapnies'));
+        $data  = $this->getCompanyCounts();
+        $total = Companies::count();
+
+        $monthlyNew = Companies::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', now()->year)
+            ->groupBy('month')
+            ->get()
+            ->mapWithKeys(fn($r) => [$r->month => $r->count]);
+
+        $reactKpi = [
+            'total'           => $total,
+            'clients'         => $data['ClientCountRate'] + $data['ClientSupplierCountRate'],
+            'prospects'       => $data['ProspectCountRate'],
+            'suppliers'       => $data['SupplierCountRate'] + $data['ClientSupplierCountRate'],
+        ];
+
+        $reactChart = [
+            'clients'         => $data['ClientCountRate'],
+            'prospects'       => $data['ProspectCountRate'],
+            'suppliers'       => $data['SupplierCountRate'],
+            'clientSuppliers' => $data['ClientSupplierCountRate'],
+            'monthlyNew'      => $monthlyNew,
+        ];
+
+        $reactEndpoints = [
+            'list'       => route('companies.json.list'),
+            'store'      => route('companies.json.store'),
+            'selectData' => route('companies.json.select-data'),
+        ];
+
+        $reactTrans = [
+            'dashboard'        => __('general_content.dashboard_trans_key'),
+            'companies_list'   => __('general_content.companies_list_trans_key'),
+            'statistiques'     => __('general_content.statistiques_trans_key'),
+            'monthly_new'      => 'Nouvelles entreprises',
+            'client'           => __('general_content.client_trans_key'),
+            'prospect'         => __('general_content.prospect_trans_key'),
+            'supplier'         => __('general_content.suppliers_trans_key'),
+            'client_supplier'  => __('general_content.suppliers_client_trans_key'),
+            'total'            => __('general_content.total_trans_key'),
+            'new_company'      => __('general_content.new_companie_trans_key'),
+            'search'           => __('general_content.search_trans_key'),
+            'external_id'      => __('general_content.external_id_trans_key'),
+            'label'            => __('general_content.label_trans_key'),
+            'active'           => __('general_content.active_trans_key'),
+            'status_client'    => __('general_content.status_client_trans_key'),
+            'status_supplier'  => __('general_content.status_supplier_trans_key'),
+            'created_at'       => __('general_content.created_at_trans_key'),
+            'action'           => __('general_content.action_trans_key'),
+            'customer_type'    => __('general_content.customer_type_trans_key'),
+            'legal_entity'     => __('general_content.legal_entity_trans_key'),
+            'individual'       => __('general_content.individual_trans_key'),
+            'user_management'  => __('general_content.user_management_trans_key'),
+            'comment'          => __('general_content.comment_trans_key'),
+            'civility'         => __('general_content.civility_trans_key'),
+            'first_name'       => __('general_content.first_name_trans_key'),
+            'contact_name'     => __('general_content.contact_name_trans_key'),
+            'name_company'     => __('general_content.name_company_trans_key'),
+            'no_results'       => __('general_content.no_results_trans_key'),
+            'save'             => __('general_content.save_trans_key'),
+            'saving'           => __('general_content.saving_trans_key'),
+            'cancel'           => __('general_content.cancel_trans_key'),
+            'view_all'         => __('general_content.view_all_trans_key'),
+            'code'             => __('general_content.id_trans_key'),
+            'jan' => 'Jan', 'feb' => 'Fév', 'mar' => 'Mar',
+            'apr' => 'Avr', 'may' => 'Mai', 'jun' => 'Jun',
+            'jul' => 'Jul', 'aug' => 'Aoû', 'sep' => 'Sep',
+            'oct' => 'Oct', 'nov' => 'Nov', 'dec' => 'Déc',
+        ];
+
+        return view('companies/companies-index', compact('reactKpi', 'reactChart', 'reactEndpoints', 'reactTrans'));
+    }
+
+    public function listJson(Request $request)
+    {
+        $search       = $request->get('search', '');
+        $statusFilter = $request->get('status', 'all');
+        $sortField    = $request->get('sort', 'created_at');
+        $sortAsc      = $request->boolean('asc', false);
+
+        $allowed = ['code', 'label', 'created_at', 'active', 'statu_customer', 'statu_supplier'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir   = $sortAsc ? 'asc' : 'desc';
+        $query = Companies::when($search, fn($q) => $q->where('label', 'like', '%'.$search.'%'));
+
+        switch ($statusFilter) {
+            case 'client':
+                $query->where('statu_customer', 2)->where('statu_supplier', '!=', 2);
+                break;
+            case 'prospect':
+                $query->where('statu_customer', 3);
+                break;
+            case 'supplier':
+                $query->where('statu_supplier', 2)->where('statu_customer', '!=', 2);
+                break;
+            case 'client_supplier':
+                $query->where('statu_customer', 2)->where('statu_supplier', 2);
+                break;
+        }
+
+        $companies = $query->orderBy($sortField, $dir)->paginate(15);
+
+        return response()->json([
+            'data' => $companies->map(fn($c) => [
+                'id'             => $c->id,
+                'code'           => $c->code,
+                'label'          => $c->label,
+                'created_at'     => $c->created_at?->format('d/m/Y'),
+                'active'         => $c->active,
+                'statu_customer' => $c->statu_customer,
+                'statu_supplier' => $c->statu_supplier,
+                'url'            => route('companies.show', ['id' => $c->id]),
+            ]),
+            'meta' => [
+                'total'        => $companies->total(),
+                'per_page'     => $companies->perPage(),
+                'current_page' => $companies->currentPage(),
+                'last_page'    => $companies->lastPage(),
+            ],
+        ]);
+    }
+
+    public function storeJson(Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $validated = $request->validate([
+            'code'        => 'required|unique:companies',
+            'label'       => 'required|string|max:255',
+            'client_type' => 'required|integer|in:1,2',
+            'civility'    => 'nullable|string|max:50|required_if:client_type,2',
+            'last_name'   => 'nullable|string|max:255|required_if:client_type,2',
+            'user_id'     => 'required|exists:users,id',
+            'comment'     => 'nullable|string',
+        ]);
+
+        $company = Companies::create(array_merge($validated, ['uuid' => Str::uuid()]));
+
+        $this->notificationService->sendNotification(CompanieNotification::class, $company, 'companies_notification');
+
+        return response()->json(['redirect' => route('companies.show', ['id' => $company->id])], 201);
+    }
+
+    public function selectDataJson()
+    {
+        $lastCompany = Companies::orderBy('id', 'desc')->first();
+        $nextCode    = $this->documentCodeGenerator->generateDocumentCode('company', $lastCompany?->id ?? 0);
+
+        return response()->json([
+            'next_code' => $nextCode,
+            'users'     => User::select('id', 'name')->get(),
+        ]);
     }
 
     /**
@@ -159,6 +317,38 @@ class CompaniesController extends Controller
                                                         'nextReviewSoon',
                                                         'daysUntilNextReview',
                                                         'purchasesForEvaluation',));
+    }
+
+    /**
+     * AJAX update — returns JSON, no redirect.
+     */
+    public function updateJson(UpdateCompanieJsonRequest $request, Companies $company)
+    {
+        $vatNumber = $request->input('intra_community_vat');
+        $vatWarning = null;
+
+        if ($vatNumber) {
+            $countryCode = substr($vatNumber, 0, 2);
+            $vatCode     = substr($vatNumber, 2);
+            try {
+                $isValid = $this->companyService->validateVatNumber($countryCode, $vatCode);
+                if (!$isValid) {
+                    $vatWarning = 'Le numéro de TVA est invalide, mais les autres informations ont été mises à jour.';
+                }
+            } catch (\Exception $e) {
+                $vatWarning = 'Le service de validation de la TVA est indisponible. La fiche a été mise à jour sans validation du numéro de TVA.';
+            }
+        }
+
+        $company->update($request->validated());
+        $company->active               = $request->boolean('active');
+        $company->quoted_delivery_note = $request->boolean('quoted_delivery_note');
+        $company->save();
+
+        return response()->json([
+            'success' => true,
+            'warning' => $vatWarning,
+        ]);
     }
 
     /**

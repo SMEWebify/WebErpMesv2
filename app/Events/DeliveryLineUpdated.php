@@ -2,39 +2,18 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use App\Models\Workflow\DeliveryLines;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Queue\SerializesModels;
 
 class DeliveryLineUpdated
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, SerializesModels;
 
-    public $deliveryLineId;
+    public $deliveryLine;
 
-
-    /**
-     * Create a new event instance.
-     */
-    public function __construct($deliveryLineId)
+    public function __construct(DeliveryLines $deliveryLine)
     {
-        $this->deliveryLineId = $deliveryLineId;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
+        $this->deliveryLine = $deliveryLine;
     }
 }

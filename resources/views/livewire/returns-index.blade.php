@@ -133,7 +133,7 @@
                     </button>
                 </div>
 
-                <div class="text-right">
+                <div class="text-end">
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-save"></i> {{ __('returns.fields.save') }}
                     </button>

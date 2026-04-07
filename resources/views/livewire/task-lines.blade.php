@@ -44,7 +44,7 @@
                                 <div class="form-control overflow-auto" style="max-height: 200px;">
                                     @forelse ($StatusSelect as $item)
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $item->id }}" id="status-{{ $item->id }}" wire:model.live="selectedStatuses">
+                                            <input class="form-check-input" type="checkbox" value="{{ $item->id }}" id="status-{{ $item->id }}" wire:model.lazy="selectedStatuses">
                                             <label class="form-check-label" for="status-{{ $item->id }}">
                                                 {{ $item->title }}
                                             </label>
@@ -80,7 +80,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="ShowGenericTask">{{ __('general_content.show_generic_task_trans_key') }}</label>
-                            <input type="checkbox" id="ShowGenericTask" wire:model.live="ShowGenericTask" style=" display:flex; align-items:center;">
+                            <input type="checkbox" id="ShowGenericTask" wire:model.lazy="ShowGenericTask" style=" display:flex; align-items:center;">
                         </div>
                     </div>
                 </div>

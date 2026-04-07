@@ -45,7 +45,7 @@ class FamiliesController extends Controller
      */
     public function store(StoreFamilyRequest $request)
     {
-        $Family = MethodsFamilies::create($request->only('code', 'label','methods_services_id'));
+        $Family = MethodsFamilies::create($request->only('code', 'label', 'methods_services_id', 'nest_type'));
         return redirect()->route('methods.family')->with('success', 'Successfully created family.');
     }
 
@@ -58,7 +58,7 @@ class FamiliesController extends Controller
     public function update(UpdateFamilyRequest $request)
     {
         $family = MethodsFamilies::findOrFail($request->id);
-        $family->update($request->only(['label', 'methods_services_id']));
+        $family->update($request->only(['label', 'methods_services_id', 'nest_type']));
         return redirect()->route('methods.family')->with('success', 'Successfully updated Family.');
     }
 }

@@ -24,6 +24,7 @@ class StoreDocumentCodeTemplateRequest extends FormRequest
         return [
             'document_type' => 'required|string|max:255|unique:document_code_templates,document_type',
             'template' => 'required|string|max:255',
+            'reset_period' => 'required|in:none,daily,weekly,monthly',
         ];
     }
 }

@@ -5,11 +5,19 @@ namespace App\Observers;
 use App\Jobs\PushOrderToN2P;
 use App\Models\Workflow\Orders;
 use App\Services\Settings\SettingsService;
+use Illuminate\Support\Facades\Cache;
 
 class OrdersObserver
 {
+    private const MENU_ORDERS_NOT_FINISH_CACHE_KEY = 'menu_orders_not_finish';
+
     public function __construct(private SettingsService $settings)
     {
+    }
+
+    public function created(Orders $order): void
+    {
+        Cache::forget(self::MENU_ORDERS_NOT_FINISH_CACHE_KEY);
     }
 
     public function updated(Orders $order): void
@@ -17,6 +25,8 @@ class OrdersObserver
         if (!$order->isDirty('statu')) {
             return;
         }
+
+        Cache::forget(self::MENU_ORDERS_NOT_FINISH_CACHE_KEY);
 
         $config = $this->settings->getMany([
             'n2p_enabled',

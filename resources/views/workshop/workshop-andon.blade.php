@@ -82,7 +82,7 @@
         });
     </script>
 
-    <script src="{{ mix('js/app.js') }}"></script>
+    @vite('resources/sass/app.scss')
     <script>
         Echo.channel('AndonAlert')
         .listen('.andon.alert.triggered', function(data) {

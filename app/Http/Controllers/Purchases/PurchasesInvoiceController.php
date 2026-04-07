@@ -81,7 +81,7 @@ class PurchasesInvoiceController extends Controller
         $PurchaseInvoice->comment=$request->comment;
         $PurchaseInvoice->save();
         
-        return redirect()->route('purchase.invoices.show', ['id' =>  $PurchaseInvoice->id])->with('success', 'Successfully updated reciept');
+        return redirect()->route('purchase.invoices.show', ['id' =>  $PurchaseInvoice->id])->with('success', __('general_content.purchase_receipt_updated_success_trans_key'));
     }
 
     /**

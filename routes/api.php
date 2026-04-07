@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Collaboration\WhiteboardController as ApiWhiteboard
 use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
+use App\Http\Controllers\SpreadsheetDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,9 @@ Route::middleware('auth:api')->group(function () {
         ->names('api.energy-consumptions');
 
     Route::get('/exports/sales-orders', ExportSalesOrderController::class);
+
+
+
 
     Route::prefix('collaboration/whiteboards')->name('api.collaboration.whiteboards.')->group(function () {
         Route::get('/', [ApiWhiteboardController::class, 'index'])->name('index');

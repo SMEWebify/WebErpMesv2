@@ -1,278 +1,226 @@
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
-
-    {{-- Base Meta Tags --}}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Custom Meta Tags --}}
-    @yield('meta_tags')
+    <title>{{ __('general_content.quote_trans_key') }} #{{ $Quote->code }} — {{ $Factory->name ?? config('app.name') }}</title>
 
-    {{-- Title --}}
-    <title>
-        @yield('title_prefix', config('adminlte.title_prefix', ''))
-        @yield('title', config('adminlte.title', 'AdminLTE 3'))
-        @yield('title_postfix', config('adminlte.title_postfix', ''))
-    </title>
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
+    @vite('resources/sass/app.scss')
 
-    {{-- Base Stylesheets --}}
-    @if(!config('adminlte.enabled_laravel_mix'))
-        <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('vendor/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
-
-        @if(config('adminlte.google_fonts.allowed', true))
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-        @endif
-    @else
-        <link rel="stylesheet" href="{{ mix(config('adminlte.laravel_mix_css_path', 'css/app.css')) }}">
-    @endif
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-
-    {{-- Favicon --}}
-    @if(config('adminlte.use_ico_only'))
-        <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
-    @elseif(config('adminlte.use_full_favicon'))
-        <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
-        <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('favicons/apple-icon-57x57.png') }}">
-        <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('favicons/apple-icon-60x60.png') }}">
-        <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('favicons/apple-icon-72x72.png') }}">
-        <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('favicons/apple-icon-76x76.png') }}">
-        <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('favicons/apple-icon-114x114.png') }}">
-        <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('favicons/apple-icon-120x120.png') }}">
-        <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('favicons/apple-icon-144x144.png') }}">
-        <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('favicons/apple-icon-152x152.png') }}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicons/apple-icon-180x180.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicons/favicon-16x16.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicons/favicon-32x32.png') }}">
-        <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicons/favicon-96x96.png') }}">
-        <link rel="icon" type="image/png" sizes="192x192"  href="{{ asset('favicons/android-icon-192x192.png') }}">
-        <link rel="manifest" crossorigin="use-credentials" href="{{ asset('favicons/manifest.json') }}">
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="{{ asset('favicon/ms-icon-144x144.png') }}">
-    @endif
-
+    <style>
+        body { background: #f4f6f9; }
+        .guest-card { border: none; border-radius: .75rem; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+        .guest-navbar { background: #fff; border-bottom: 1px solid #e3e6ea; }
+    </style>
 </head>
-    <body>
-        <style>
-            body{
-                background:#eee;
-            }
-            .card {
-                box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
-            }
-            .card {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 0 solid rgba(0,0,0,.125);
-                border-radius: 1rem;
-            }
-            .text-reset {
-                --bs-text-opacity: 1;
-                color: inherit!important;
-            }
-            a {
-                color: #5465ff;
-                text-decoration: none;
-            }
-        </style>
+<body>
 
-        <div class="container-fluid">
-            <div class="container">
-                <!-- Title -->
-                <div class="d-flex justify-content-between align-items-center py-3">
-                    <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> {{__('general_content.quote_trans_key') }} #{{ $Quote->code }}</h2>
+    {{-- Navbar --}}
+    <nav class="guest-navbar py-2 mb-4">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    @if($Factory->picture)
+                        <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="{{ $Factory->name }}" height="36">
+                    @endif
+                    <span class="fw-semibold text-dark">{{ $Factory->name ?? config('app.name') }}</span>
                 </div>
-                
-                <!-- Main content -->
-                <div class="row">
-                    <div class="col-lg-8">
-                        <!-- Details -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div class="mb-3 d-flex justify-content-between">
-                                    <div>
-                                        <span class="me-3">{{ $Quote->GetshortCreatedAttribute() }}</span>
-                                        <span class="me-3">#{{ $Quote->code }}</span>
-                                        <span class="me-3"></span>
-                                        @if(1 == $Quote->statu )   <span class="badge badge-info"> {{ __('general_content.open_trans_key') }}</span>@endif
-                                        @if(2 == $Quote->statu )  <span class="badge badge-warning">{{ __('general_content.send_trans_key') }}</span>@endif
-                                        @if(3 == $Quote->statu )  <span class="badge badge-success">{{ __('general_content.win_trans_key') }}</span>@endif
-                                        @if(4 == $Quote->statu )  <span class="badge badge-danger">{{ __('general_content.lost_trans_key') }}</span>@endif
-                                        @if(5 == $Quote->statu )  <span class="badge badge-secondary">{{ __('general_content.closed_trans_key') }}</span>@endif
-                                        @if(6 == $Quote->statu )   <span class="badge badge-secondary">{{ __('general_content.obsolete_trans_key') }}</span>@endif
-                                    </div>
-                                </div>
-                                <table class="table table-borderless">
-                                    <tbody>
-                                        <thead>
-                                            <tr>
-                                                <th>{{ __('general_content.description_trans_key') }}</th>
-                                                <th >{{ __('general_content.qty_trans_key') }}</th>
-                                                <th>{{ __('general_content.price_trans_key') }}</th>
-                                                <th>{{ __('general_content.discount_trans_key') }}</th>
-                                                <th>{{ __('general_content.vat_trans_key') }}</th>
-                                            </tr>
-                                        </thead>
-                                        @forelse($Quote->QuoteLines as $DocumentLine)
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex mb-2">
-                                                    <!--<div class="flex-shrink-0">
-                                                        <img src="" alt="" width="35" class="img-fluid">
-                                                    </div>-->
-                                                    <div class="flex-lg-grow-1 ms-3">
-                                                        <h6 class="small mb-0">{{ $DocumentLine->label }}</h6>
-                                                        <span style="color: #6c757d">{{ $DocumentLine->code }}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>{{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</td>
-                                            <td class="text-end">{{ number_format((float) $DocumentLine->selling_price, 2, '.', '') }} {{ $Factory->curency }}</td>
-                                            <td>{{ $DocumentLine->discount }} %</td>
-                                            <td>{{ $DocumentLine->VAT['rate'] }} %</td>
-                                        </tr>
-                                        @empty
-                                        <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
-                                        @endforelse
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="3"></td>
-                                            <td colspan="2" class="text-end"><hr></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3">{{ __('general_content.sub_total_trans_key') }}</td>
-                                            <td colspan="2" class="text-end">{{ number_format((float) $subPrice, 2, '.', '') }} {{ $Factory->curency }}</td>
-                                        </tr>
-                                        @forelse($vatPrice as $key => $value)
-                                        <tr>
-                                            <td colspan="3">{{ __('general_content.tax_trans_key') }} <?= number_format((float) $vatPrice[$key][0], 2, '.', '') ?> %</td> 
-                                            <td colspan="2" class="text-end"><?= number_format((float) $vatPrice[$key][1], 2, '.', '') ?> {{ $Factory->curency }}</td>
-                                        </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="3">{{ __('general_content.no_tax_trans_key') }}</td> 
-                                            <td colspan="2" class="text-end"> </td>
-                                        </tr>
-                                        @endforelse
-                                        <tr class="fw-bold">
-                                            <td colspan="3">{{ __('general_content.total_trans_key') }}</td>
-                                            <td colspan="2" class="text-end">{{ number_format((float) $totalPrices, 2, '.', '') }} {{ $Factory->curency }}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                                </div>
-                            </div>
-                            <!-- Payment -->
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <h3 class="h6">{{ __('general_content.payment_methods_trans_key') }}</h3>
-                                            <p>{{ $Quote->payment_method['label'] }}</p>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <h3 class="h6">{{ __('general_content.payment_conditions_trans_key') }}</h3>
-                                            <p>{{ $Quote->payment_condition['label'] }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Factory -->
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <h3 class="h6">{{ $Factory->name }}</h3>
-                                            @if($Factory->picture)
-                                            <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="Logo" width="64" class="logo"/>
-                                            @endif
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <h3 class="h6">{{ __('general_content.adress_trans_key') }}</h3>
-                                            <address>
-                                                {{ $Factory->address }}<br/>
-                                                {{ $Factory->zipcode }} {{ $Factory->city }}<br/>
-                                                {{ __('general_content.phone_trans_key') }} : {{ $Factory->phone_number }}<br/>
-                                                {{ __('general_content.email_trans_key') }} : {{ $Factory->mail }}<br/>
-                                            </address>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <span class="text-muted small">
+                    {{ __('general_content.quote_trans_key') }} #{{ $Quote->code }}
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+
+        {{-- Header --}}
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <h1 class="h4 mb-0">{{ __('general_content.quote_trans_key') }} #{{ $Quote->code }}</h1>
+            <span class="text-muted small">{{ $Quote->GetshortCreatedAttribute() }}</span>
+            @if(1 == $Quote->statu) <span class="badge bg-info">{{ __('general_content.open_trans_key') }}</span> @endif
+            @if(2 == $Quote->statu) <span class="badge bg-warning text-dark">{{ __('general_content.send_trans_key') }}</span> @endif
+            @if(3 == $Quote->statu) <span class="badge bg-success">{{ __('general_content.win_trans_key') }}</span> @endif
+            @if(4 == $Quote->statu) <span class="badge bg-danger">{{ __('general_content.lost_trans_key') }}</span> @endif
+            @if(5 == $Quote->statu) <span class="badge bg-secondary">{{ __('general_content.closed_trans_key') }}</span> @endif
+            @if(6 == $Quote->statu) <span class="badge bg-secondary">{{ __('general_content.obsolete_trans_key') }}</span> @endif
+        </div>
+
+        <div class="row g-4">
+
+            {{-- Main column --}}
+            <div class="col-lg-8">
+
+                {{-- Quote lines --}}
+                <div class="card guest-card mb-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>{{ __('general_content.description_trans_key') }}</th>
+                                        <th class="text-center">{{ __('general_content.qty_trans_key') }}</th>
+                                        <th class="text-end">{{ __('general_content.price_trans_key') }}</th>
+                                        <th class="text-center">{{ __('general_content.discount_trans_key') }}</th>
+                                        <th class="text-center">{{ __('general_content.vat_trans_key') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($Quote->QuoteLines as $DocumentLine)
+                                    <tr>
+                                        <td>
+                                            <div class="fw-medium">{{ $DocumentLine->label }}</div>
+                                            <div class="small text-muted">{{ $DocumentLine->code }}</div>
+                                        </td>
+                                        <td class="text-center">{{ $DocumentLine->qty }} {{ $DocumentLine->Unit['label'] }}</td>
+                                        <td class="text-end">{{ number_format((float) $DocumentLine->selling_price, 2, '.', '') }} {{ $Factory->curency }}</td>
+                                        <td class="text-center">{{ $DocumentLine->discount }} %</td>
+                                        <td class="text-center">{{ $DocumentLine->VAT['rate'] }} %</td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">{{ __('general_content.no_data_trans_key') }}</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="3" class="text-end text-muted">{{ __('general_content.sub_total_trans_key') }}</td>
+                                        <td colspan="2" class="text-end fw-medium">{{ number_format((float) $subPrice, 2, '.', '') }} {{ $Factory->curency }}</td>
+                                    </tr>
+                                    @forelse($vatPrice as $key => $value)
+                                    <tr>
+                                        <td colspan="3" class="text-end text-muted">{{ __('general_content.tax_trans_key') }} {{ number_format((float) $vatPrice[$key][0], 2, '.', '') }} %</td>
+                                        <td colspan="2" class="text-end">{{ number_format((float) $vatPrice[$key][1], 2, '.', '') }} {{ $Factory->curency }}</td>
+                                    </tr>
+                                    @empty
+                                    @endforelse
+                                    <tr>
+                                        <td colspan="3" class="text-end fw-bold">{{ __('general_content.total_trans_key') }}</td>
+                                        <td colspan="2" class="text-end fw-bold">{{ number_format((float) $totalPrices, 2, '.', '') }} {{ $Factory->curency }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
-                        <div class="col-lg-4">
-                        @if ($Quote->comment)
-                        <!-- Customer Notes -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h3 class="h6">{{ __('general_content.comment_trans_key') }}</h3>
-                                <p>{{  $Quote->comment }}</p>
+                    </div>
+                </div>
+
+                {{-- Payment --}}
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">{{ __('general_content.payment_methods_trans_key') }}</h6>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="small text-muted mb-1">{{ __('general_content.payment_methods_trans_key') }}</div>
+                                <div>{{ $Quote->payment_method['label'] }}</div>
                             </div>
-                        </div>
-                        @endif
-                        @if ($Quote->customer_reference)
-                        <!-- Customer Notes -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h3 class="h6">{{ __('general_content.identifier_trans_key') }}</h3>
-                                <p>{{ $Quote->customer_reference }}</p>
-                            </div>
-                        </div>
-                        @endif
-                        <div class="card mb-4">
-                            <!-- Shipping information -->
-                            <div class="card-body">
-                                <h3 class="h6">{{ __('general_content.delevery_method_trans_key') }}</h3>
-                                <strong>{{ $Quote->delevery_method['label'] }}</strong>
-                                <hr>
-                                <h3 class="h6">{{ __('general_content.adress_trans_key') }}</h3>
-                                <address>
-                                    <strong>{{ $Quote->companie['label'] }}</strong><br>
-                                    {{ $Quote->contact['civility'] }} {{ $Quote->contact['first_name'] }} {{ $Quote->contact['name'] }}<br>
-                                    {{ $Quote->adresse['adress'] }}<br>
-                                    {{ $Quote->adresse['zipcode'] }} {{ $Quote->adresse['city'] }} {{ $Quote->adresse['province'] ?? '' }}<br>
-                                    {{ $Quote->adresse['country'] }}<br>
-                                </address>
-                            </div>
-                        </div>
-                        @if ( $Factory->cgv_file && $Factory->public_link_cgv != 2)
-                        <!-- CGV Notes -->
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h3 class="h6">{{ __('general_content.cgv_trans_key') }}</h3>
-                                <a class="btn btn-info btn-sm " href="{{ asset('/cgv/factory/'. $Factory->cgv_file) }}" target="_blank">Show SGV</a>
-                            </div>
-                        </div>
-                        @endif
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                @livewire('ChatLive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
+                            <div class="col-sm-6">
+                                <div class="small text-muted mb-1">{{ __('general_content.payment_conditions_trans_key') }}</div>
+                                <div>{{ $Quote->payment_condition['label'] }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                @if ( $Factory->cgv_file && $Factory->add_cgv_to_pdf != 2)
-                <div class="row">
-                    <h1>{{ __('general_content.cgv_trans_key') }}</h1>
-                    <object data="{{ asset('/cgv/factory/'. $Factory->cgv_file) }}" type="application/pdf" width="100%" height="1000px"></object>
+
+                {{-- Factory --}}
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">{{ $Factory->name }}</h6>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                @if($Factory->picture)
+                                    <img src="data:image/png;base64,{{ $Factory->getImageFactoryPath() }}" alt="Logo" height="48">
+                                @endif
+                            </div>
+                            <div class="col-sm-8">
+                                <address class="small mb-0">
+                                    {{ $Factory->address }}<br>
+                                    {{ $Factory->zipcode }} {{ $Factory->city }}<br>
+                                    <i class="fas fa-phone fa-fw text-muted"></i> {{ $Factory->phone_number }}<br>
+                                    <i class="fas fa-envelope fa-fw text-muted"></i> {{ $Factory->mail }}
+                                </address>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- CGV embedded --}}
+                @if($Factory->cgv_file && $Factory->add_cgv_to_pdf != 2)
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">{{ __('general_content.cgv_trans_key') }}</h6>
+                        <object data="{{ asset('/cgv/factory/'.$Factory->cgv_file) }}" type="application/pdf" width="100%" height="600px" class="rounded"></object>
+                    </div>
                 </div>
                 @endif
-            </div>
-        </div>
-    </body>
+
+            </div>{{-- /col-lg-8 --}}
+
+            {{-- Sidebar --}}
+            <div class="col-lg-4">
+
+                {{-- Delivery & address --}}
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-2">{{ __('general_content.delevery_method_trans_key') }}</h6>
+                        <div class="fw-medium mb-3">{{ $Quote->delevery_method['label'] }}</div>
+                        <hr class="my-2">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-2">{{ __('general_content.adress_trans_key') }}</h6>
+                        <address class="small mb-0">
+                            <strong>{{ $Quote->companie['label'] }}</strong><br>
+                            {{ $Quote->contact['civility'] }} {{ $Quote->contact['first_name'] }} {{ $Quote->contact['name'] }}<br>
+                            {{ $Quote->adresse['adress'] }}<br>
+                            {{ $Quote->adresse['zipcode'] }} {{ $Quote->adresse['city'] }} {{ $Quote->adresse['province'] ?? '' }}<br>
+                            {{ $Quote->adresse['country'] }}
+                        </address>
+                    </div>
+                </div>
+
+                @if($Quote->customer_reference)
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <div class="small text-muted mb-1">{{ __('general_content.identifier_trans_key') }}</div>
+                        <div class="fw-medium">{{ $Quote->customer_reference }}</div>
+                    </div>
+                </div>
+                @endif
+
+                @if($Quote->comment)
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-2">{{ __('general_content.comment_trans_key') }}</h6>
+                        <p class="small mb-0">{{ $Quote->comment }}</p>
+                    </div>
+                </div>
+                @endif
+
+                @if($Factory->cgv_file && $Factory->public_link_cgv != 2)
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-2">{{ __('general_content.cgv_trans_key') }}</h6>
+                        <a class="btn btn-outline-primary btn-sm" href="{{ asset('/cgv/factory/'.$Factory->cgv_file) }}" target="_blank">
+                            <i class="fas fa-file-pdf me-1"></i>{{ __('general_content.cgv_trans_key') }}
+                        </a>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Chat --}}
+                <div class="card guest-card mb-4">
+                    <div class="card-body">
+                        @livewire('ChatLive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
+                    </div>
+                </div>
+
+            </div>{{-- /col-lg-4 --}}
+        </div>{{-- /row --}}
+    </div>{{-- /container --}}
+
+    @vite('resources/js/guest.js')
+    @livewireScripts
+</body>
 </html>

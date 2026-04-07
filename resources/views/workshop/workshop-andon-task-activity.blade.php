@@ -69,7 +69,7 @@
         });
     </script>
 
-    <script src="{{ mix('js/app.js') }}"></script>
+    @vite('resources/sass/app.scss')
     <script>
         Echo.channel('TaskActivity')
         .listen('.task.activity.triggered', function(data) {

@@ -7,17 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentCodeTemplate extends Model
 {
     // Allow mass assignment for these columns
-    protected $fillable = ['document_type', 'template'];
+    protected $fillable = ['document_type', 'template', 'reset_period'];
     
     /**
      *Allows to retrieve a default template if none is found
      */
-    public static function getTemplateForDocument(string $documentType): string
+    public static function getTemplateForDocument(string $documentType): ?self
     {
         // Search the database for a template matching the document type
-        $template = self::where('document_type', $documentType)->first();
-
-        // If no template is found, we return a default template
-        return $template ? $template->template : '{type}-{id}';
+        return self::where('document_type', $documentType)->first();
     }
 }

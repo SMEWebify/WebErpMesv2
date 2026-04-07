@@ -10,7 +10,7 @@
 </style>
 
 <article>
-    <img src="/vendor/adminlte/dist/img/simple-logo -R.PNG" alt="WEM">
+    <img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}">
     <h1>Oops, wrong address</h1>
     <div>
         <p>Sorry for the inconvenience, it seems that the link you are trying seems incorrect. If you need to you can always go to <a href="https://github.com/SMEWebify/WebErpMesv2">GIT</a> !</p>

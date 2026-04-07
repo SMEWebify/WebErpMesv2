@@ -10,7 +10,7 @@
 </style>
 
 <article>
-    <img src="/vendor/adminlte/dist/img/simple-logo -R.PNG" alt="WEM">
+    <img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}">
     <h1>We&rsquo;ll be back soon!</h1>
     <div>
         <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always go to <a href="https://github.com/SMEWebify/WebErpMesv2">GIT</a>, otherwise we&rsquo;ll be back online shortly!</p>

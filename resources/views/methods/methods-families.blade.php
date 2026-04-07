@@ -22,6 +22,7 @@
                 <th>{{ __('general_content.external_id_trans_key') }}</th>
                 <th>{{ __('general_content.description_trans_key') }}</th>
                 <th>{{ __('general_content.service_trans_key') }}</th>
+                <th>Nesting</th>
                 <th></th>
               </tr>
             </thead>
@@ -31,6 +32,15 @@
                 <td>{{ $MethodsFamilie->code }}</td>
                 <td>{{ $MethodsFamilie->label }}</td>
                 <td>{{ $MethodsFamilie->service['label'] }}</td>
+                <td>
+                  @if($MethodsFamilie->nest_type == 'sheet')
+                    <span class="badge badge-info">Tôle 2D</span>
+                  @elseif($MethodsFamilie->nest_type == 'bar')
+                    <span class="badge badge-warning">Barre 1D</span>
+                  @else
+                    <span class="text-muted">—</span>
+                  @endif
+                </td>
                 <td class=" py-0 align-middle">
                   <!-- Button Modal -->
                   <x-ButtonTextEdit :modalTarget="'MethodsFamilie' . $MethodsFamilie->id" />
@@ -63,6 +73,19 @@
                             </select>
                           </div>
                         </div>
+                        <div class="form-group">
+                          <label for="nest_type_{{ $MethodsFamilie->id }}">Moyen de débit (nesting)</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-th"></i></span>
+                            </div>
+                            <select class="form-control" name="nest_type" id="nest_type_{{ $MethodsFamilie->id }}">
+                              <option value="">— Aucun —</option>
+                              <option value="sheet" @if($MethodsFamilie->nest_type == 'sheet') selected @endif>Tôle (2D)</option>
+                              <option value="bar" @if($MethodsFamilie->nest_type == 'bar') selected @endif>Barre (1D)</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
                       <div class="card-footer">
                         <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -72,7 +95,7 @@
                 </td>
               </tr>
               @empty
-              <x-EmptyDataLine col="4" text="{{ __('general_content.no_data_trans_key') }}"  />
+              <x-EmptyDataLine col="5" text="{{ __('general_content.no_data_trans_key') }}"  />
               @endforelse
             </tbody>
             <tfoot>
@@ -80,6 +103,7 @@
                 <th>{{ __('general_content.external_id_trans_key') }}</th>
                 <th>{{ __('general_content.description_trans_key') }}</th>
                 <th>{{ __('general_content.service_trans_key') }}</th>
+                <th>Nesting</th>
                 <th></th>
               </tr>
             </tfoot>
@@ -112,6 +136,19 @@
           </div>
           <div class="form-group">
             @include('include.form.form-select-service',['serviceId' => null  ])
+          </div>
+          <div class="form-group">
+            <label for="nest_type">Moyen de débit (nesting)</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-th"></i></span>
+              </div>
+              <select class="form-control" name="nest_type" id="nest_type">
+                <option value="">— Aucun —</option>
+                <option value="sheet">Tôle (2D)</option>
+                <option value="bar">Barre (1D)</option>
+              </select>
+            </div>
           </div>
           <div class="card-footer">
             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>

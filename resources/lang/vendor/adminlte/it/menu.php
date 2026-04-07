@@ -18,4 +18,5 @@ return [
     'information'                   => 'Informazione',
     'inspection_trans_key'                 => 'Inspection',
     'methods_overview_trans_key'               => 'Methods overview',
+    'assets_trans_key'                         => 'Assets',
 ];

@@ -24,6 +24,7 @@ use App\Models\Quality\QualityNonConformity;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+use Illuminate\Support\Facades\Cache;
 
 class SelectDataService
 {
@@ -34,10 +35,12 @@ class SelectDataService
      */
     public function getUsers()
     {
-        return User::select('id', 'name')->get();
+        return Cache::remember('select_data_users', now()->addMinutes(30), fn() =>
+            User::select('id', 'name')->get()
+        );
     }
 
-    
+
     /**
      * Retrieve a list of active companies with specific customer statuses,
      * optionally filtered by provided company IDs.
@@ -89,7 +92,7 @@ class SelectDataService
     public function getAddress($companiesId = null)
     {
         $query = CompaniesAddresses::select('id', 'label', 'adress');
-        
+
         if ($companiesId) {
             $query->where('companies_id', $companiesId);
         }
@@ -101,7 +104,7 @@ class SelectDataService
      * Retrieve contact information for a given company.
      *
      * This function fetches the contact details including 'id', 'first_name', and 'name'
-     * from the CompaniesContacts model. If a company ID is provided, it filters the 
+     * from the CompaniesContacts model. If a company ID is provided, it filters the
      * contacts to only include those associated with the specified company.
      *
      * @param int|null $companiesId The ID of the company to filter contacts by. If null, all contacts are retrieved.
@@ -110,11 +113,11 @@ class SelectDataService
     public function getContact($companiesId = null)
     {
         $query = CompaniesContacts::select('id', 'first_name', 'name');
-        
+
         if ($companiesId) {
             $query->where('companies_id', $companiesId);
         }
-    
+
         return $query->get();
     }
 
@@ -128,7 +131,9 @@ class SelectDataService
      */
     public function getAccountingPaymentConditions()
     {
-        return AccountingPaymentConditions::select('id', 'code','label')->get();
+        return Cache::rememberForever('select_data_payment_conditions', fn() =>
+            AccountingPaymentConditions::select('id', 'code', 'label')->get()
+        );
     }
 
     /**
@@ -141,7 +146,9 @@ class SelectDataService
      */
     public function getAccountingPaymentMethod()
     {
-        return AccountingPaymentMethod::select('id', 'code','label')->get();
+        return Cache::rememberForever('select_data_payment_methods', fn() =>
+            AccountingPaymentMethod::select('id', 'code', 'label')->get()
+        );
     }
 
     /**
@@ -154,7 +161,9 @@ class SelectDataService
      */
     public function getAccountingDelivery()
     {
-        return AccountingDelivery::select('id', 'code','label')->get();
+        return Cache::rememberForever('select_data_accounting_deliveries', fn() =>
+            AccountingDelivery::select('id', 'code', 'label')->get()
+        );
     }
 
     /**
@@ -167,7 +176,9 @@ class SelectDataService
      */
     public function getVATSelect()
     {
-        return AccountingVat::select('id', 'label')->orderBy('rate')->get();
+        return Cache::rememberForever('select_data_vat', fn() =>
+            AccountingVat::select('id', 'label')->orderBy('rate')->get()
+        );
     }
 
     /**
@@ -180,7 +191,9 @@ class SelectDataService
      */
     public function getProductsSelect()
     {
-        return Products::select('id', 'label', 'code', 'methods_services_id')->orderBy('code')->get();
+        return Cache::remember('select_data_products', now()->addMinutes(30), fn() =>
+            Products::select('id', 'label', 'code', 'methods_services_id')->orderBy('code')->get()
+        );
     }
 
     /**
@@ -193,7 +206,9 @@ class SelectDataService
      */
     public function getUnitsSelect()
     {
-        return MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get();
+        return Cache::rememberForever('select_data_units', fn() =>
+            MethodsUnits::select('id', 'label', 'code')->orderBy('label')->get()
+        );
     }
 
     /**
@@ -206,7 +221,9 @@ class SelectDataService
      */
     public function getServices()
     {
-        return MethodsServices::select('id', 'label')->orderBy('ordre')->get();
+        return Cache::rememberForever('select_data_services', fn() =>
+            MethodsServices::select('id', 'label')->orderBy('ordre')->get()
+        );
     }
 
     /**
@@ -216,7 +233,9 @@ class SelectDataService
      */
     public function getMethodsLocations()
     {
-        return MethodsLocation::select('id', 'label')->orderBy('label')->get();
+        return Cache::rememberForever('select_data_locations', fn() =>
+            MethodsLocation::select('id', 'label')->orderBy('label')->get()
+        );
     }
 
     /**
@@ -229,7 +248,13 @@ class SelectDataService
      */
     public function getTechServices()
     {
-        return MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 1)->orWhere('type', '=', 7)->orderBy('ordre')->get();
+        return Cache::rememberForever('select_data_tech_services', fn() =>
+            MethodsServices::select('id', 'code', 'label', 'type')
+                ->where('type', '=', 1)
+                ->orWhere('type', '=', 7)
+                ->orderBy('ordre')
+                ->get()
+        );
     }
 
     /**
@@ -242,13 +267,12 @@ class SelectDataService
      */
     public function getBOMServices()
     {
-        return MethodsServices::select('id', 'code','label', 'type')->where('type', '=', 2)
-                                ->orWhere('type', '=', 3)
-                                ->orWhere('type', '=', 4)
-                                ->orWhere('type', '=', 5)
-                                ->orWhere('type', '=', 6)
-                                ->orWhere('type', '=', 8)
-                                ->orderBy('ordre')->get();
+        return Cache::rememberForever('select_data_bom_services', fn() =>
+            MethodsServices::select('id', 'code', 'label', 'type')
+                ->whereIn('type', [2, 3, 4, 5, 6, 8])
+                ->orderBy('ordre')
+                ->get()
+        );
     }
 
     /**
@@ -261,9 +285,11 @@ class SelectDataService
      */
     public function getSection()
     {
-        return MethodsSection::select('id', 'label')->orderBy('ordre')->get();
+        return Cache::rememberForever('select_data_sections', fn() =>
+            MethodsSection::select('id', 'label')->orderBy('ordre')->get()
+        );
     }
-    
+
     /**
      * Retrieve a list of families.
      *
@@ -274,7 +300,9 @@ class SelectDataService
      */
     public function getFamilies()
     {
-        return MethodsFamilies::select('id', 'label')->orderBy('label')->get();
+        return Cache::rememberForever('select_data_families', fn() =>
+            MethodsFamilies::select('id', 'label')->orderBy('label')->get()
+        );
     }
 
     /**
@@ -287,7 +315,9 @@ class SelectDataService
      */
     public function getRessources()
     {
-        return MethodsRessources::select('id', 'label')->orderBy('ordre')->get();
+        return Cache::rememberForever('select_data_ressources', fn() =>
+            MethodsRessources::select('id', 'label')->orderBy('ordre')->get()
+        );
     }
 
     /**
@@ -301,7 +331,9 @@ class SelectDataService
      */
     public function getQualityCause()
     {
-        return QualityCause::select('id', 'label')->orderBy('label')->get();
+        return Cache::rememberForever('select_data_quality_cause', fn() =>
+            QualityCause::select('id', 'label')->orderBy('label')->get()
+        );
     }
 
     /**
@@ -315,7 +347,9 @@ class SelectDataService
      */
     public function getQualityFailure()
     {
-        return QualityFailure::select('id', 'label')->orderBy('label')->get();
+        return Cache::rememberForever('select_data_quality_failure', fn() =>
+            QualityFailure::select('id', 'label')->orderBy('label')->get()
+        );
     }
 
     /**
@@ -329,9 +363,11 @@ class SelectDataService
      */
     public function getQualityCorrection()
     {
-        return QualityCorrection::select('id', 'label')->orderBy('label')->get();
+        return Cache::rememberForever('select_data_quality_correction', fn() =>
+            QualityCorrection::select('id', 'label')->orderBy('label')->get()
+        );
     }
-    
+
     /**
      * Retrieve a list of quality non-conformities.
      *
@@ -342,7 +378,9 @@ class SelectDataService
      */
     public function getQualityNonConformity()
     {
-        return QualityNonConformity::select('id', 'code')->orderBy('code')->get();
+        return Cache::rememberForever('select_data_quality_non_conformity', fn() =>
+            QualityNonConformity::select('id', 'code')->orderBy('code')->get()
+        );
     }
 
     /**

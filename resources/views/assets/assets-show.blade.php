@@ -15,7 +15,7 @@
                         <i class="fas fa-layer-group"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-sm">Category</div>
+                        <div class="text-muted small">Category</div>
                         <div class="h6 mb-0">{{ $asset->category }}</div>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                         <i class="fas fa-link"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-sm">{{ __('general_content.ressource_trans_key') }}</div>
+                        <div class="text-muted small">{{ __('general_content.ressource_trans_key') }}</div>
                         <div class="h6 mb-0">{{ $asset->methodsRessource?->label ?? __('general_content.no_data_trans_key') }}</div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                         <i class="fas fa-dollar-sign"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-sm">Acquisition value</div>
+                        <div class="text-muted small">Acquisition value</div>
                         <div class="h6 mb-0">{{ $asset->acquisition_value }}</div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         <i class="fas fa-calendar-alt"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-sm">Acquisition date</div>
+                        <div class="text-muted small">Acquisition date</div>
                         <div class="h6 mb-0">{{ $asset->acquisition_date->format('Y-m-d') }}</div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         <i class="fas fa-hourglass-half"></i>
                     </div>
                     <div>
-                        <div class="text-muted text-sm">Depreciation duration</div>
+                        <div class="text-muted small">Depreciation duration</div>
                         <div class="h6 mb-0">{{ $asset->depreciation_duration }} months</div>
                     </div>
                 </div>

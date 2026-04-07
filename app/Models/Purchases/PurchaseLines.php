@@ -13,11 +13,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Accounting\AccountingVat;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Purchases\PurchaseReceiptLines;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PurchaseLines extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
     protected $fillable= ['purchases_id', 

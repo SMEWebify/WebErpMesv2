@@ -25,6 +25,7 @@ use App\Models\Methods\MethodsServices;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Workflow\OrderLineDetails;
 use App\Models\Workflow\QuoteLineDetails;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class QuoteLine extends Component
@@ -257,6 +258,8 @@ class QuoteLine extends Component
 
     public function applyPriceIncreaseToAllLines(): void
     {
+        // Authorization check: user must be authenticated
+        abort_unless(auth()->check(), 403);
         if ((int) $this->quote_Statu !== 1) {
             session()->flash('error', __('general_content.quote_not_open_trans_key'));
             return;
@@ -307,6 +310,8 @@ class QuoteLine extends Component
     }
 
     public function storeQuoteLine(){
+        // Ownership check: prevent creating a line on a different quote by tampering the property
+        abort_unless((int) $this->quotes_id === (int) $this->QuoteId, 403);
         $this->validate();
         // Create Line
         
@@ -349,6 +354,7 @@ class QuoteLine extends Component
     }
 
     public function editQuoteLine($id){
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         $Line = Quotelines::findOrFail($id);
         $this->quote_lines_id = $id;
         $this->ordre = $Line->ordre;
@@ -371,6 +377,8 @@ class QuoteLine extends Component
     }
 
     public function updateQuoteLine(){
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $this->quote_lines_id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         // Validate request
         $this->validate();
         // Update line
@@ -392,12 +400,14 @@ class QuoteLine extends Component
 
     public function enableCalculatedPrice($idline)
     {
+        abort_unless(Quotelines::where('id', $idline)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idline)->update(['use_calculated_price' => 1]);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function disableCalculatedPrice($idline)
     {
+        abort_unless(Quotelines::where('id', $idline)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idline)->update(['use_calculated_price' => 0]);
         session()->flash('success','Line Updated Successfully');
     }
@@ -446,6 +456,7 @@ class QuoteLine extends Component
 
     public function duplicateLine($id)
     {
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         // Duplicate the quote line
         $newQuoteLine = $this->duplicateQuoteLine($id);
     
@@ -510,6 +521,7 @@ class QuoteLine extends Component
     
     public function createProduct($id)
     {
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         $serviceComponent = MethodsServices::where('type', 8)->first();
         $familyComponent = MethodsFamilies::where('methods_services_id', $serviceComponent->id)->first();
     
@@ -887,6 +899,8 @@ class QuoteLine extends Component
     }
     
     public function breakDown($id){
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         $Quoteline = Quotelines::findOrFail($id);
         $TaskLine = Task::where('products_id', $Quoteline->product_id)->get();
         foreach ($TaskLine as $Task) 
@@ -914,18 +928,22 @@ class QuoteLine extends Component
     }
 
     public function upQuoteLine($idStatu){
-        // Update line
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $idStatu)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idStatu)->increment('ordre',1);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function downQuoteLine($idStatu){
-        // Update line
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $idStatu)->where('quotes_id', $this->QuoteId)->exists(), 403);
         Quotelines::find($idStatu)->decrement('ordre',1);
         session()->flash('success','Line Updated Successfully');
     }
 
     public function destroyQuoteLine($id){
+        // Ownership check: line must belong to the current quote
+        abort_unless(Quotelines::where('id', $id)->where('quotes_id', $this->QuoteId)->exists(), 403);
         try{
             Quotelines::find($id)->delete();
             Task::where('quote_lines_id',$id)->delete();
@@ -936,6 +954,8 @@ class QuoteLine extends Component
     }
 
     public function storeOrder($quoteId){
+        // Ownership check: the quote must be the current one
+        abort_unless((int) $quoteId === (int) $this->QuoteId, 403);
 
         //check if line exist
         $i = 0;
@@ -948,131 +968,141 @@ class QuoteLine extends Component
         }
 
         if($i>0){
+            $OrdersCreated = DB::transaction(function() use ($quoteId) {
 
-            //get data to dulicate for new order
-            $QuoteData = Quotes::find($quoteId);
+                //get data to dulicate for new order
+                $QuoteData = Quotes::find($quoteId);
 
-            // Generate new order code
-            $lastOrder = Orders::latest('id')->first();
-            $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
-            
-
-             // Create order
-            $user = Auth::user();
-            $OrdersCreated = $this->orderService->createOrder(
-                $orderCode,
-                $QuoteData->label,
-                $QuoteData->customer_reference,
-                $QuoteData->companies_id,
-                $QuoteData->companies_contacts_id,
-                $QuoteData->companies_addresses_id,
-                $QuoteData->validity_date,
-                1,
-                $user->id,
-                $QuoteData->accounting_payment_conditions_id,
-                $QuoteData->accounting_payment_methods_id,
-                $QuoteData->accounting_deliveries_id,
-                $QuoteData->comment,
-                1,
-                $QuoteData->id,
-                null
-            );
-
-           // Trigger the event
-            event(new OrderCreated($OrdersCreated));
-
-            if($OrdersCreated){
-                // Create lines
-                foreach ($this->data as $key => $item) {
-
-                    //get data to dulicate for new order
-                    $QuoteLineData = Quotelines::find($key);
-
-                    $date = date_create($QuoteLineData->delivery_date);
-                    $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
-                    
-                    $newOrderline = Orderlines::create([
-                        'orders_id'=>$OrdersCreated->id,
-                        'ordre'=>$QuoteLineData->ordre,
-                        'code'=>$QuoteLineData->code,
-                        'product_id'=>$QuoteLineData->product_id,
-                        'label'=>$QuoteLineData->label,
-                        'qty'=>$QuoteLineData->qty,
-                        'delivered_remaining_qty'=>$QuoteLineData->qty,
-                        'invoiced_remaining_qty'=>$QuoteLineData->qty,
-                        'methods_units_id'=>$QuoteLineData->methods_units_id,
-                        'selling_price'=>$QuoteLineData->selling_price,
-                        'discount'=>$QuoteLineData->discount,
-                        'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
-                        'internal_delay'=>$internalDelay,
-                        'delivery_date'=>$QuoteLineData->delivery_date,
-                    ]);
-
-                    //add line detail
-                    $QuoteLineDetailData = QuoteLineDetails::where('quote_lines_id', $key)->first();
-                    $newOrderLineDetail = OrderLineDetails::create([
-                        'order_lines_id'=>$newOrderline->id,
-                        'x_size'=>$QuoteLineDetailData->x_size,
-                        'y_size'=>$QuoteLineDetailData->y_size,
-                        'z_size'=>$QuoteLineDetailData->z_size,
-                        'x_oversize'=>$QuoteLineDetailData->x_oversize,
-                        'y_oversize'=>$QuoteLineDetailData->y_oversize,
-                        'z_oversize'=>$QuoteLineDetailData->z_oversize,
-                        'diameter'=>$QuoteLineDetailData->diameter,
-                        'diameter_oversize'=>$QuoteLineDetailData->diameter_oversize,
-                        'material'=>$QuoteLineDetailData->material,
-                        'thickness'=>$QuoteLineDetailData->thickness,
-                        'finishing'=>$QuoteLineDetailData->finishing,
-                        'weight'=>$QuoteLineDetailData->weight,
-                        'bend_count'=>$QuoteLineDetailData->bend_count,
-                        'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
-                        'cad_file'=>$QuoteLineDetailData->cad_file,
-                        'cam_file'=>$QuoteLineDetailData->cam_file,
-                        'cad_file_path'=>$QuoteLineDetailData->cad_file_path,
-                        'cam_file_path'=>$QuoteLineDetailData->cam_file_path,
-                        'internal_comment'=>$QuoteLineDetailData->internal_comment,
-                        'external_comment'=>$QuoteLineDetailData->external_comment,
-                    ]);
-
-                    $Tasks = Task::where('quote_lines_id', $key)->get();
-                    foreach ($Tasks as $Task) 
-                    {
-                        $newTask = $Task->replicate();
-                        $newTask->order_lines_id = $newOrderline->id;
-                        $newTask->quote_lines_id = null;
-                        $newTask->origin = "6";
-                        $newTask->save();
-
-                        //update info that order line as task
-                        $OrderLine = OrderLines::find($newOrderline->id);
-                        $OrderLine->tasks_status = 2;
-                        $OrderLine->save();
-                        
-                    }
-                    
-                    $SubAssemblyLine = SubAssembly::where('quote_lines_id', $key)->get();
-                    foreach ($SubAssemblyLine as $SubAssembly) 
-                    {
-                        $newSubAssembly = $SubAssembly->replicate();
-                        $newSubAssembly->order_lines_id = $newOrderline->id;
-                        $newSubAssembly->quote_lines_id = null;
-                        $newSubAssembly->save();
-                    }
-
-                    //update quote lines statu
-                    Quotelines::where('id',$QuoteLineData->id)->update(['statu'=>3]);
-                }
-                //update quote statu
-                Quotes::where('id',$quoteId)->update(['statu'=>3]);
+                // Generate new order code
+                $lastOrder = Orders::latest('id')->first();
+                $orderCode = $lastOrder ? 'OR-' . ($lastOrder->id + 1) : 'OR-1';
                 
-            }
-            else{
-                return redirect()->back()->with('error', 'Something went wrong');
-            }
+
+                 // Create order
+                $user = Auth::user();
+                $OrdersCreated = $this->orderService->createOrder(
+                    $orderCode,
+                    $QuoteData->label,
+                    $QuoteData->customer_reference,
+                    $QuoteData->companies_id,
+                    $QuoteData->companies_contacts_id,
+                    $QuoteData->companies_addresses_id,
+                    $QuoteData->validity_date,
+                    1,
+                    $user->id,
+                    $QuoteData->accounting_payment_conditions_id,
+                    $QuoteData->accounting_payment_methods_id,
+                    $QuoteData->accounting_deliveries_id,
+                    $QuoteData->comment,
+                    1,
+                    $QuoteData->id,
+                    null
+                );
+                if($OrdersCreated){
+                    // Batch-load all selected quote lines with their relations to avoid N+1
+                    $selectedIds = array_keys($this->data);
+                    $quoteLineMap = Quotelines::with(['QuoteLineDetails', 'Task', 'SubAssembly'])
+                        ->whereIn('id', $selectedIds)
+                        ->get()
+                        ->keyBy('id');
+
+                    // Create lines
+                    foreach ($this->data as $key => $item) {
+
+                        //get data to dulicate for new order
+                        $QuoteLineData = $quoteLineMap->get($key);
+
+                        if (!$QuoteLineData) {
+                            continue;
+                        }
+
+                        $date = date_create($QuoteLineData->delivery_date);
+                        $internalDelay = date_format(date_sub($date , date_interval_create_from_date_string($this->Factory->add_delivery_delay_order. " days")), 'Y-m-d');
+
+                        $newOrderline = Orderlines::create([
+                            'orders_id'=>$OrdersCreated->id,
+                            'ordre'=>$QuoteLineData->ordre,
+                            'code'=>$QuoteLineData->code,
+                            'product_id'=>$QuoteLineData->product_id,
+                            'label'=>$QuoteLineData->label,
+                            'qty'=>$QuoteLineData->qty,
+                            'delivered_remaining_qty'=>$QuoteLineData->qty,
+                            'invoiced_remaining_qty'=>$QuoteLineData->qty,
+                            'methods_units_id'=>$QuoteLineData->methods_units_id,
+                            'selling_price'=>$QuoteLineData->selling_price,
+                            'discount'=>$QuoteLineData->discount,
+                            'accounting_vats_id'=>$QuoteLineData->accounting_vats_id,
+                            'internal_delay'=>$internalDelay,
+                            'delivery_date'=>$QuoteLineData->delivery_date,
+                        ]);
+
+                        //add line detail
+                        $QuoteLineDetailData = $QuoteLineData->QuoteLineDetails;
+                        $newOrderLineDetail = OrderLineDetails::create([
+                            'order_lines_id'=>$newOrderline->id,
+                            'x_size'=>$QuoteLineDetailData->x_size,
+                            'y_size'=>$QuoteLineDetailData->y_size,
+                            'z_size'=>$QuoteLineDetailData->z_size,
+                            'x_oversize'=>$QuoteLineDetailData->x_oversize,
+                            'y_oversize'=>$QuoteLineDetailData->y_oversize,
+                            'z_oversize'=>$QuoteLineDetailData->z_oversize,
+                            'diameter'=>$QuoteLineDetailData->diameter,
+                            'diameter_oversize'=>$QuoteLineDetailData->diameter_oversize,
+                            'material'=>$QuoteLineDetailData->material,
+                            'thickness'=>$QuoteLineDetailData->thickness,
+                            'finishing'=>$QuoteLineDetailData->finishing,
+                            'weight'=>$QuoteLineDetailData->weight,
+                            'bend_count'=>$QuoteLineDetailData->bend_count,
+                            'material_loss_rate'=>$QuoteLineDetailData->material_loss_rate,
+                            'cad_file'=>$QuoteLineDetailData->cad_file,
+                            'cam_file'=>$QuoteLineDetailData->cam_file,
+                            'cad_file_path'=>$QuoteLineDetailData->cad_file_path,
+                            'cam_file_path'=>$QuoteLineDetailData->cam_file_path,
+                            'internal_comment'=>$QuoteLineDetailData->internal_comment,
+                            'external_comment'=>$QuoteLineDetailData->external_comment,
+                        ]);
+
+                        foreach ($QuoteLineData->Task as $Task)
+                        {
+                            $newTask = $Task->replicate();
+                            $newTask->order_lines_id = $newOrderline->id;
+                            $newTask->quote_lines_id = null;
+                            $newTask->origin = "6";
+                            $newTask->save();
+                        }
+
+                        // update tasks_status once after all tasks are saved
+                        if ($QuoteLineData->Task->isNotEmpty()) {
+                            $newOrderline->tasks_status = 2;
+                            $newOrderline->save();
+                        }
+
+                        foreach ($QuoteLineData->SubAssembly as $SubAssembly)
+                        {
+                            $newSubAssembly = $SubAssembly->replicate();
+                            $newSubAssembly->order_lines_id = $newOrderline->id;
+                            $newSubAssembly->quote_lines_id = null;
+                            $newSubAssembly->save();
+                        }
+
+                        //update quote lines statu
+                        Quotelines::where('id', $QuoteLineData->id)->update(['statu' => 3]);
+                    }
+                    //update quote statu
+                    Quotes::where('id',$quoteId)->update(['statu'=>3]);
+                    
+                }
+                else{
+                    return redirect()->back()->with('error', 'Something went wrong');
+                }
+
+                return $OrdersCreated;
+            });
+
+            event(new OrderCreated($OrdersCreated));
 
             // Reset Form Fields After Creating line
             return redirect()->route('orders.show', ['id' => $OrdersCreated->id])->with('success', 'Successfully created new order');
-
         }
         else{
             $errors = $this->getErrorBag();

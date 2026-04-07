@@ -8,7 +8,7 @@ use App\Models\Workflow\DeliveryLines;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateDeliveryStatus
+class UpdateDeliveryStatus implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -23,7 +23,7 @@ class UpdateDeliveryStatus
      */
     public function handle(DeliveryLineUpdated $event)
     {
-        $deliveryLine = DeliveryLines::find($event->deliveryLineId);
+        $deliveryLine = $event->deliveryLine;
         $deliveryId = $deliveryLine->deliverys_id;
 
         #1 = Chargeable

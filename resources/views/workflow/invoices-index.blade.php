@@ -3,177 +3,61 @@
 @section('title', __('general_content.invoices_list_trans_key'))
 
 @section('content_header')
+  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
   <h1>{{ __('general_content.invoices_list_trans_key') }}</h1>
 @stop
 
-@section('right-sidebar')
+@php
+  $reactTrans = [
+    'dashboard'          => __('general_content.dashboard_trans_key'),
+    'invoices_list'      => __('general_content.invoices_list_trans_key'),
+    'in_progress'        => __('general_content.in_progress_trans_key'),
+    'send'               => __('general_content.send_trans_key'),
+    'pending'            => __('general_content.pending_trans_key'),
+    'unpaid'             => __('general_content.unpaid_trans_key'),
+    'paid'               => __('general_content.paid_trans_key'),
+    'statistiques'       => __('general_content.statistiques_trans_key'),
+    'monthly_recap'      => __('general_content.monthly_recap_report_trans_key'),
+    'invoices_label'     => __('general_content.invoices_list_trans_key'),
+    'total_invoiced'     => __('general_content.amount_of_invoice_trans_key'),
+    'payment_rate'       => __('general_content.bills_paid_trans_key'),
+    'unpaid_invoices'    => __('general_content.bills_unpaid_trans_key'),
+    'late'               => __('general_content.late_payment_time_trans_key'),
+    'invoice_forecast'   => __('general_content.invoices_list_trans_key'),
+    'invoice_last_year'  => 'N-1',
+    'jan' => 'January',  'feb' => 'February', 'mar' => 'March',
+    'apr' => 'April',    'may' => 'May',       'jun' => 'June',
+    'jul' => 'July',     'aug' => 'August',    'sep' => 'September',
+    'oct' => 'October',  'nov' => 'November',  'dec' => 'December',
+    'search'     => __('general_content.search_trans_key'),
+    'code'       => 'Code',
+    'client'     => __('general_content.customer_trans_key'),
+    'label'      => __('general_content.label_trans_key'),
+    'contact'    => __('general_content.contact_trans_key'),
+    'due_date'   => __('general_content.due_date_trans_key'),
+    'status'     => __('general_content.status_trans_key'),
+    'lines'      => __('general_content.lines_count_trans_key'),
+    'created_at' => __('general_content.created_at_trans_key'),
+    'total'      => __('general_content.total_price_trans_key'),
+    'no_results' => __('general_content.no_data_trans_key'),
+    'view'       => __('general_content.view_trans_key'),
+    'currency'   => app('Factory')->curency ?? 'EUR',
+    'locale'     => str_replace('_', '-', config('app.locale')),
+  ];
+@endphp
 
 @section('content')
-<div class="card">
-  <div class="card-header p-2">
-    <ul class="nav nav-pills">
-      <li class="nav-item"><a class="nav-link active" href="#Dashboard" data-toggle="tab">{{ __('general_content.dashboard_trans_key') }}</a></li> 
-      <li class="nav-item"><a class="nav-link" href="#List" data-toggle="tab">{{ __('general_content.invoices_list_trans_key') }}</a></li> 
-    </ul>
-  </div>
-  <!-- /.card-header -->
-  <div class="tab-content p-3">
-    <div class="tab-pane active" id="Dashboard">
-      <div class="row">
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-            <canvas id="donutChart" width="400" height="400"></canvas>
-          </x-adminlte-card>
-        </div>
-
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="success" maximizable>
-            <p class="card-text">{{ __('general_content.number_of_invoice_trans_key') }} : {{ $totalInvoices }}</p>
-            <p class="card-text">{{ __('general_content.amount_of_invoice_trans_key') }} : {{$totalInvoiceAmount }}</p>
-            <p class="card-text">{{ __('general_content.payments_received_of_invoice_trans_key') }} : {{ $totalPaymentsReceived }} <span class="badge badge-warning right">Soon</span></p> 
-          </x-adminlte-card>
-
-          
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="warning" maximizable>
-            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-          </x-adminlte-card>
-        </div>
-        
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="primary" maximizable>
-            <p class="card-text">{{ __('general_content.bills_paid_trans_key') }} : {{ $paidInvoices }}</p>
-            <p class="card-text">{{ __('general_content.bills_unpaid_trans_key') }}  : {{ $unpaidInvoices }}</p>
-            <p class="card-text">{{ __('general_content.average_payment_time_trans_key') }} : {{ round($averagePaymentDelay, 2) }} jours <span class="badge badge-warning right">Soon</span></p> 
-            <p class="card-text">{{ __('general_content.late_payment_time_trans_key') }} : {{ round($latePaymentRate, 2) }} % <span class="badge badge-warning right">Soon</span></p> 
-          </x-adminlte-card>
-        </div>
-      
-  
-        <div class="col-md-3">
-          <x-adminlte-card title="{{ __('general_content.top_customers_trans_key') }}" theme="secondary" maximizable>
-            <ul class="list-group list-group-flush">
-                @foreach($topClients as $client)
-                    <li class="list-group-item">
-                        <strong>{{ $client->companie->label }}</strong>  {{ number_format($client->total_amount, 2) }} {{ $Factory->curency }}
-                    </li>
-                @endforeach
-            </ul>
-          </x-adminlte-card>
-          
-          <x-adminlte-card title="{{ __('general_content.statistiques_trans_key') }}" theme="dark" maximizable>
-            <ul class="list-group list-group-flush">
-                @foreach($topProducts as $product)
-                    <li class="list-group-item">
-                        {{ $product->orderLine->Product->label ?? 'Produit inconnu' }} - {{ $product->total_quantity }}
-                    </li>
-                @endforeach
-            </ul>
-          </x-adminlte-card>
-        </div>
-      </div>
-    </div>
-    <div class="tab-pane" id="List">
-      @livewire('invoices-index')
-    </div>
-  </div>
-<!-- /.card -->
+<div
+  id="invoices-index-app"
+  data-kpi='@json($reactKpi, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-chart='@json($reactChart, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-top-clients='@json($reactTopClients, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-endpoints='@json($reactEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+  data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
 </div>
 @stop
 
 @section('css')
-@stop
-
-@section('js')
-<script>
-  //-------------
-  //- PIE CHART -
-  //-------------
-    var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
-    var donutData        = {
-        labels: [
-          @foreach ($data['invoicesDataRate'] as $item)
-                @if(1 == $item->statu )  "{{__('general_content.in_progress_trans_key') }}", @endif
-                @if(2 == $item->statu )  "{{__('general_content.send_trans_key') }}", @endif
-                @if(3 == $item->statu )  "{{__('general_content.pending_trans_key') }}", @endif
-                @if(4 == $item->statu )  "{{__('general_content.unpaid_trans_key') }}", @endif
-                @if(4 == $item->statu )  "{{__('general_content.paid_trans_key') }}", @endif
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($data['invoicesDataRate'] as $item)
-                  "{{ $item->InvoiceCountRate }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  'rgba(23, 162, 184, 1)',
-                  'rgba(255, 193, 7, 1)',
-                  'rgba(40, 167, 69, 1)',
-                  'rgba(220, 53, 69, 1)',
-                  'rgba(108, 117, 125, 1)',
-                ],
-          }
-        ]
-      }
-      var donutOptions     = {
-        maintainAspectRatio : false,
-        responsive : true,
-      }
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      new Chart(donutChartCanvas, {
-        type: 'pie',
-        data: donutData,
-        options: donutOptions
-      })
-  
-   //-------------
-      //- BAR CHART -
-      //-------------
-      var barChartCanvas = $('#barChart').get(0).getContext('2d')
-      var barChartData =  {
-        labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August','September','October','September','December ' ],
-        datasets: [
-          {
-            label               : 'Total invoiced',
-            backgroundColor     : 'rgba(60,141,188,0.9)',
-            borderColor         : 'rgba(60,141,188,0.8)',
-            pointRadius          : false,
-            pointColor          : '#3b8bba',
-            pointStrokeColor    : 'rgba(60,141,188,1)',
-            pointHighlightFill  : '#fff',
-            pointHighlightStroke: 'rgba(60,141,188,1)',
-            data                : [
-                                @php ($j = 1)
-                                @for($iM =1;$iM<=12;$iM++)
-                                  @foreach ($data['invoiceMonthlyRecap'] as $key => $item)
-                                  @php ($j = 1)
-                                    @if($iM  == $item->month) 
-                                    "{{ $item->orderSum }}",
-                                      @php ($j = 2)
-                                      @break
-                                    @endif
-                                  @endforeach
-                                  @if($j == 1) 
-                                    0,
-                                    @php ($j = 1)
-                                  @endif
-                                @endfor ]
-          },
-        ]
-      }
-  
-      var barChartOptions = {
-        responsive              : true,
-        maintainAspectRatio     : false,
-        datasetFill             : false
-      }
-  
-      new Chart(barChartCanvas, {
-        type: 'bar',
-        data: barChartData,
-        options: barChartOptions
-      })
-    </script>
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop

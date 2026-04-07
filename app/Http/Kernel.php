@@ -43,7 +43,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            'auth:sanctum', 
+            'auth:api',
         ],
     ];
 
@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
         'localeCookieRedirect'    => \Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect::class,
         'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class,
         'check.factory'           => \App\Http\Middleware\CheckFactory::class,
+        'has.role'                => \App\Http\Middleware\CheckUserRole::class,
         'check.task.status'       => \App\Http\Middleware\CheckTaskStatus::class,
         'customer'                => \App\Http\Middleware\EnsureCustomerIsAuthenticated::class,
         'permission'              => \Spatie\Permission\Middleware\PermissionMiddleware::class,

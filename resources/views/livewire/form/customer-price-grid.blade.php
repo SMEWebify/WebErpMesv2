@@ -4,7 +4,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="card-title mb-0">{{ __('general_content.customer_price_grid_trans_key') }}</h3>
             <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="usePriceListSwitch-{{ $priceListToggleKey }}" wire:model.live="usePriceList" @if(!$product_id) disabled @endif>
+                <input type="checkbox" class="custom-control-input" id="usePriceListSwitch-{{ $priceListToggleKey }}" wire:model.lazy="usePriceList" @if(!$product_id) disabled @endif>
                 <label class="custom-control-label" for="usePriceListSwitch-{{ $priceListToggleKey }}">{{ __('general_content.automatic_pricing_trans_key') }}</label>
             </div>
         </div>
@@ -23,7 +23,7 @@
                                 <th>{{ __('general_content.quantite_min_trans_key') }}</th>
                                 <th>{{ __('general_content.quantite_max_trans_key') }}</th>
                                 <th>{{ __('general_content.price_trans_key') }}</th>
-                                <th class="text-right">{{ __('general_content.action_trans_key') }}</th>
+                                <th class="text-end">{{ __('general_content.action_trans_key') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,7 +47,7 @@
                                         @endif
                                     </td>
                                     <td>{{ $entry['formatted_price'] }}</td>
-                                    <td class="text-right">
+                                    <td class="text-end">
                                         <button type="button" class="btn btn-xs btn-outline-primary" wire:click="applyPriceFromList({{ $entry['id'] }})" @if(!$usePriceList && $appliedPriceListId === $entry['id']) disabled @endif>
                                             {{ __('general_content.use_price_trans_key') }}
                                         </button>

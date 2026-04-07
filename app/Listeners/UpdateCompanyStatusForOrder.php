@@ -7,7 +7,7 @@ use App\Models\Companies\Companies;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateCompanyStatusForOrder
+class UpdateCompanyStatusForOrder implements ShouldQueue
 {
     /**
      * Create the event listener.

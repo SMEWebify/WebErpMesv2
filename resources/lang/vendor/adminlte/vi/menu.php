@@ -62,4 +62,5 @@ return [
     'release_note_trans_key'                   => 'Ghi chú phát hành',
     'inspection_trans_key'                 => 'Inspection',
     'methods_overview_trans_key'               => 'Tổng quan phương pháp',
+    'assets_trans_key'                         => 'Tài sản',
 ];

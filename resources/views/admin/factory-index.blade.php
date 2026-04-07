@@ -734,6 +734,7 @@
                                         <tr>
                                             <th>{{ __('general_content.entity_type_trans_key') }}</th>
                                             <th>{{ __('general_content.template_trans_key') }}</th>
+                                            <th>Reset</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -742,6 +743,7 @@
                                             <tr>
                                                 <td>{{ $template->document_type }}</td>
                                                 <td>{{ $template->template }}</td>
+                                                <td>{{ $template->reset_period ?? 'none' }}</td>
                                                 <td class=" py-0 align-middle">
                                                     <!-- Button Modal -->
                                                     <x-ButtonTextEdit :modalTarget="'Template' . $template->id" />
@@ -759,6 +761,15 @@
                                                                         <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{day}-{id}" value="{{ $template->template }}" required>
                                                                     </div>
                                                                 </div>
+                                                                <div class="form-group">
+                                                                    <label for="reset_period_{{ $template->id }}">Reset :</label>
+                                                                    <select class="form-control" id="reset_period_{{ $template->id }}" name="reset_period" required>
+                                                                        <option value="none" {{ ($template->reset_period ?? 'none') === 'none' ? 'selected' : '' }}>None</option>
+                                                                        <option value="daily" {{ ($template->reset_period ?? 'none') === 'daily' ? 'selected' : '' }}>Daily</option>
+                                                                        <option value="weekly" {{ ($template->reset_period ?? 'none') === 'weekly' ? 'selected' : '' }}>Weekly</option>
+                                                                        <option value="monthly" {{ ($template->reset_period ?? 'none') === 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
                                                             <div class="card-footer">
                                                                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
@@ -775,6 +786,7 @@
                                         <tr>
                                             <th>{{ __('general_content.entity_type_trans_key') }}</th>
                                             <th>{{ __('general_content.template_trans_key') }}</th>
+                                            <th>Reset</th>
                                             <th></th>
                                         </tr>
                                     </tfoot>
@@ -819,6 +831,20 @@
                                             <span class="input-group-text"><i class="fas fa-code"></i></span>
                                         </div>
                                         <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{day}-{id}" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reset_period">Reset :</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-redo"></i></span>
+                                        </div>
+                                        <select class="form-control" id="reset_period" name="reset_period" required>
+                                            <option value="none">None</option>
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly">Monthly</option>
+                                        </select>
                                     </div>
                                 </div>
             

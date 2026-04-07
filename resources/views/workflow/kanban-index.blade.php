@@ -27,15 +27,12 @@
         <button type="submit" class="btn btn-primary">Filter</button>
     </form>
 
-    <div id="card">
-        <kanban-board :initial-data="{{ $tasks }}"></kanban-board>
+    <div id="card"
+         data-initial-data='@json($tasks, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
     </div>
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/app.css">
-@stop
-
-@section('js')
-    <script src="/js/app.js"></script>
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop

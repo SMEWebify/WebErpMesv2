@@ -10,7 +10,6 @@ use App\Events\OrderLineUpdated;
 use App\Events\QuoteStatusChanged;
 use App\Events\DeliveryLineUpdated;
 use App\Listeners\SendWelcomeEmail;
-use Illuminate\Support\Facades\Event;
 use App\Events\PurchaseReceiptCreated;
 use App\Listeners\UpdateCompanyStatus;
 use Illuminate\Auth\Events\Registered;
@@ -34,6 +33,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+            SendWelcomeEmail::class,
         ],
         OrderLineUpdated::class => [
             CheckOrderDeliveredStatus::class,
@@ -58,9 +58,6 @@ class EventServiceProvider extends ServiceProvider
         ],
         PurchaseReceiptCreated::class => [
             UpdatePurchaseStatus::class,
-        ],
-        Registered::class => [
-            SendWelcomeEmail::class,
         ],
     ];
 

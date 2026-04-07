@@ -25,9 +25,10 @@ class StoreFamilyRequest extends FormRequest
     {
         return [
             //
-            'code' =>'required|unique:methods_families',
-            'label'=>'required',
-            'methods_services_id'=>'required',
+            'code'               => 'required|unique:methods_families',
+            'label'              => 'required',
+            'methods_services_id'=> 'required',
+            'nest_type'          => 'nullable|in:sheet,bar',
         ];
     }
 }

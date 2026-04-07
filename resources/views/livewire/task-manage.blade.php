@@ -34,7 +34,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <select class="form-control" wire:click.prevent="ChangeTaskType()" wire:model.live="TaskType" name="TaskType" id="TaskType">
+                            <select class="form-control" wire:click.prevent="ChangeTaskType()" wire:model.lazy="TaskType" name="TaskType" id="TaskType">
                                 <option value="">{{ __('general_content.select_task_type_trans_key') }}</option>
                                 <option value="TechCut">{{__('general_content.technical_cut_trans_key') }}</option>
                                 <option value="BOM">{{__('general_content.bom_trans_key') }}</option>
@@ -48,7 +48,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                             </div>
-                            <input type="number" class="form-control @error('ordre') is-invalid @enderror" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model.live="ordre">
+                            <input type="number" class="form-control @error('ordre') is-invalid @enderror" name="ordre" id="ordre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model.lazy="ordre">
                             
                             <input type="hidden" name="{{ $idType }}" value="{{ $Line->id   }}">
                         </div>
@@ -60,7 +60,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-list"></i></span>
                             </div>
-                            <select class="form-control @error('methods_services_id') is-invalid @enderror" wire:click.prevent="ChangeCodelabel()" name="methods_services_id" id="methods_services_id" wire:change="changeInputValues" wire:model.live="methods_services_id" required>
+                            <select class="form-control @error('methods_services_id') is-invalid @enderror" wire:click.prevent="ChangeCodelabel()" name="methods_services_id" id="methods_services_id" wire:change="changeInputValues" wire:model.lazy="methods_services_id" required>
                             <option>{{ __('general_content.select_service_trans_key') }}</option>
                                 @foreach ($ServicesSelect as $item)
                                 <option value="{{ $item->id }}-{{ $item->type }}" data-txt="{{ $item->label }}">{{ $item->code }}</option>
@@ -75,7 +75,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control @error('label') is-invalid @enderror"  name="label"  id="LABEL_TechnicalCut" placeholder="{{__('general_content.label_trans_key') }}" wire:model.live="label">
+                            <input type="text" class="form-control @error('label') is-invalid @enderror"  name="label"  id="LABEL_TechnicalCut" placeholder="{{__('general_content.label_trans_key') }}" wire:model.lazy="label">
                         </div>
                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -85,7 +85,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tools"></i></span>
                             </div>
-                            <select class="form-control @error('methods_tools_id') is-invalid @enderror" name="methods_tools_id" id="methods_tools_id" wire:model.live="methods_tools_id">
+                            <select class="form-control @error('methods_tools_id') is-invalid @enderror" name="methods_tools_id" id="methods_tools_id" wire:model.lazy="methods_tools_id">
                                 <option value="">{{ __('general_content.select_trans_key') }}</option>
                                 @foreach ($ToolsSelect as $tool)
                                 <option value="{{ $tool->id }}">{{ $tool->code }} - {{ $tool->label }}</option>
@@ -101,7 +101,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                             </div>
-                            <select class="form-control @error('component_id') is-invalid @enderror" name="component_id" id="component_id"  wire:change="componentCost" wire:model.live="component_id" >
+                            <select class="form-control @error('component_id') is-invalid @enderror" name="component_id" id="component_id"  wire:change="componentCost" wire:model.lazy="component_id" >
                                 <option>{{ __('general_content.select_component_trans_key') }}</option>
                                 @foreach ($ProductSelect as $item)
                                 <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->code }}</option>
@@ -120,7 +120,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tools"></i></span>
                             </div>
-                            <select class="form-control" name="methods_tools_id" id="methods_tools_id" wire:model.live="methods_tools_id">
+                            <select class="form-control" name="methods_tools_id" id="methods_tools_id" wire:model.lazy="methods_tools_id">
                                 <option value="">{{ __('general_content.select_tool_trans_key') }}</option>
                                 @foreach ($ToolsSelect as $tool)
                                 <option value="{{ $tool->id }}">{{ $tool->code }} - {{ $tool->label }}</option>
@@ -145,7 +145,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-times"></i></span>
                             </div>
-                            <input type="number" class="form-control @error('qty') is-invalid @enderror" name="qty"  id="qty" value="{{ $Line->qty  }}" placeholder="{{ __('general_content.qty_trans_key') }}" step=".001"  min="0" wire:model.live="qty">
+                            <input type="number" class="form-control @error('qty') is-invalid @enderror" name="qty"  id="qty" value="{{ $Line->qty  }}" placeholder="{{ __('general_content.qty_trans_key') }}" step=".001"  min="0" wire:model.lazy="qty">
                         </div>
                         @error('qty') <span class="text-danger">{{ $message }}<br/></span>@enderror
                         @endif
@@ -168,7 +168,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                             </div>
-                            <input type="datetime-local" class="form-control @error('start_date') is-invalid @enderror" name="start_date" id="start_date" wire:model.live="start_date">
+                            <input type="datetime-local" class="form-control @error('start_date') is-invalid @enderror" name="start_date" id="start_date" wire:model.lazy="start_date">
                         </div>
                         @error('start_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -178,7 +178,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
                             </div>
-                            <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" name="end_date" id="end_date" wire:model.live="end_date">
+                            <input type="datetime-local" class="form-control @error('end_date') is-invalid @enderror" name="end_date" id="end_date" wire:model.lazy="end_date">
                         </div>
                         @error('end_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -198,7 +198,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price"  id="unit_price" placeholder="{{ __('general_content.unit_time_trans_key') }}" value="0" step=".001" min="0" wire:model.live="unit_price">
+                            <input type="number" class="form-control @error('unit_price') is-invalid @enderror" name="unit_price"  id="unit_price" placeholder="{{ __('general_content.unit_time_trans_key') }}" value="0" step=".001" min="0" wire:model.lazy="unit_price">
                         </div>
                         <p>{{ $unit_cost  }} {{ $Factory->curency }} x {{ $methods_services_margin }} %  = {{ round( (float)$unit_cost*(1+((float)$methods_services_margin/100)),2) }}</p>
                         @error('unit_price') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -208,7 +208,7 @@
                             @if($updateLines)
                             <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                             @else
-                            <x-adminlte-button class="btn-flat" type="submit" label="Add Task" theme="success" icon="fas fa-lg fa-save"/>
+                            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.add_trans_key') }} {{ __('general_content.task_trans_key') }}" theme="success" icon="fas fa-lg fa-save"/>
                             @endif
                         @endif
                     </div>
@@ -240,6 +240,8 @@
         @endif
     @endif
 
+    @php($showStatusColumn = $idType == 'order_lines_id')
+
     @if($Line->id ?? null)
         <x-adminlte-card title="{{ __('general_content.technical_cut_trans_key') }}" theme="primary" maximizable>
             <div class="table-responsive p-0">
@@ -260,7 +262,9 @@
                             <th>{{ __('general_content.cost_trans_key') }}</th>
                             <th>{{ __('general_content.margin_trans_key') }}</th>
                             <th>{{ __('general_content.price_trans_key') }}</th>
-                            <th>{{__('general_content.status_trans_key') }}</th>
+                            @if($showStatusColumn)
+                                <th>{{__('general_content.status_trans_key') }}</th>
+                            @endif
                             <th>{{__('general_content.action_trans_key') }}</th>
                             <th>{{__('general_content.end_date_trans_key') }}</th>
                         </tr>
@@ -304,13 +308,15 @@
                             <td>{{ $TechLine->formatted_unit_cost }}</td>
                             <td>{{ $TechLine->Margin() }} %</td>
                             <td>{{ $TechLine->formatted_unit_price }}</td>
-                            <td>
-                            @if($TechLine->order_lines_id)
-                                {{ $TechLine->status['title'] }}
-                            @else
-                                {{__('general_content.not_this_page_trans_key') }}
+                            @if($showStatusColumn)
+                                <td>
+                                    @if($TechLine->order_lines_id)
+                                        {{ $TechLine->status['title'] }}
+                                    @else
+                                        {{ __('general_content.not_available_trans_key') }}
+                                    @endif
+                                </td>
                             @endif
-                            </td>
                             <td class=" py-0 align-middle">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -332,14 +338,16 @@
                             @endif 
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="16" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="{{ $showStatusColumn ? 16 : 15 }}" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
                             <th></th>
                             <th>{{ __('general_content.total_trans_key') }} :</th>
-                            <th></th>
+                            @if($showStatusColumn)
+                                <th></th>
+                            @endif
                             <th></th>
                             <th></th>
                             <th>{{ $Line->getTechnicalCutTotalSettingTimeAttribute() }} h</th>
@@ -376,7 +384,9 @@
                             <th>{{ __('general_content.cost_trans_key') }}</th>
                             <th>{{ __('general_content.margin_trans_key') }}</th>
                             <th>{{ __('general_content.price_trans_key') }}</th>
-                            <th>{{ __('general_content.status_trans_key') }}</th>
+                            @if($showStatusColumn)
+                                <th>{{ __('general_content.status_trans_key') }}</th>
+                            @endif
                             <th>{{ __('general_content.action_trans_key') }}</th>
                         </tr>
                     </thead>
@@ -422,13 +432,15 @@
                             <td>{{ $BOMline->formatted_unit_cost }}</td>
                             <td>{{ $BOMline->Margin() }} %</td>
                             <td>{{ $BOMline->formatted_unit_price }}</td>
-                            <td>
-                                @if($BOMline->order_lines_id)
-                                {{ $BOMline->status['title'] }}
-                                @else
-                                {{__('general_content.not_this_page_trans_key') }}
-                                @endif
-                            </td>
+                            @if($showStatusColumn)
+                                <td>
+                                    @if($BOMline->order_lines_id)
+                                        {{ $BOMline->status['title'] }}
+                                    @else
+                                        {{ __('general_content.not_available_trans_key') }}
+                                    @endif
+                                </td>
+                            @endif
                             <td class=" py-0 align-middle">
                                 <div class="input-group-prepend">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -441,14 +453,16 @@
                             </td>
                         </tr>
                         @empty
-                        <x-EmptyDataLine col="13" text="{{ __('general_content.no_data_trans_key') }}"  />
+                        <x-EmptyDataLine col="{{ $showStatusColumn ? 13 : 12 }}" text="{{ __('general_content.no_data_trans_key') }}"  />
                         @endforelse
                     </tbody>
                     <tfoot>
                         <tr>
                             <th></th>
                             <th>{{ __('general_content.total_trans_key') }} :</th>
-                            <th></th>
+                            @if($showStatusColumn)
+                                <th></th>
+                            @endif
                             <th></th>
                             <th></th>
                             <th></th>
@@ -480,7 +494,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
                             </div>
-                            <input type="number" class="form-control @error('subAssemblyOrdre') is-invalid @enderror" name="subAssemblyOrdre" id="subAssemblyOrdre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model.live="subAssemblyOrdre">
+                            <input type="number" class="form-control @error('subAssemblyOrdre') is-invalid @enderror" name="subAssemblyOrdre" id="subAssemblyOrdre" placeholder="{{ __('general_content.sort_trans_key') }}" min="0" wire:model.lazy="subAssemblyOrdre">
                             
                         </div>
                         @error('subAssemblyOrdre') <span class="text-danger">{{ $message }}<br/></span>@enderror
@@ -492,7 +506,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                             </div>
-                            <select class="form-control @error('subAssemblyComponentId') is-invalid @enderror" name="subAssemblyComponentId" id="subAssemblyComponentId"  wire:click.prevent="ChangeSubAssemblyCodelabel()" wire:model.live="subAssemblyComponentId" >
+                            <select class="form-control @error('subAssemblyComponentId') is-invalid @enderror" name="subAssemblyComponentId" id="subAssemblyComponentId"  wire:click.prevent="ChangeSubAssemblyCodelabel()" wire:model.lazy="subAssemblyComponentId" >
                                 <option>{{ __('general_content.select_component_trans_key') }}</option>
                                 @foreach ($ComponentSelect as $item)
                                 <option value="{{ $item->id }}" class="{{ $item->methods_services_id }}">{{ $item->code }}</option>
@@ -507,7 +521,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-tags"></i></span>
                             </div>
-                            <input type="text" class="form-control @error('subAssemblylabel') is-invalid @enderror"  name="subAssemblylabel"  id="subAssemblylabel" placeholder="{{__('general_content.label_trans_key') }}" wire:model.live="subAssemblylabel" disabled>
+                            <input type="text" class="form-control @error('subAssemblylabel') is-invalid @enderror"  name="subAssemblylabel"  id="subAssemblylabel" placeholder="{{__('general_content.label_trans_key') }}" wire:model.lazy="subAssemblylabel" disabled>
                         </div>
                         @error('subAssemblylabel') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -517,7 +531,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-times"></i></span>
                             </div>
-                            <input type="number" class="form-control @error('subAssemblyQty') is-invalid @enderror" name="subAssemblyQty"  id="subAssemblyQty" value="1" placeholder="{{ __('general_content.qty_trans_key') }}" step="1"  min="0" wire:model.live="subAssemblyQty">
+                            <input type="number" class="form-control @error('subAssemblyQty') is-invalid @enderror" name="subAssemblyQty"  id="subAssemblyQty" value="1" placeholder="{{ __('general_content.qty_trans_key') }}" step="1"  min="0" wire:model.lazy="subAssemblyQty">
                         </div>
                         @error('subAssemblyQty') <span class="text-danger">{{ $message }}<br/></span>@enderror
                     </div>
@@ -527,7 +541,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">{{ $Factory->curency }}</span>
                             </div>
-                            <input type="number" class="form-control @error('subAssemblyUnit_price') is-invalid @enderror" name="subAssemblyUnit_price"  id="subAssemblyUnit_price" placeholder="{{ __('general_content.price_trans_key') }}" value="0" step=".001" min="0" wire:model.live="subAssemblyUnit_price">
+                            <input type="number" class="form-control @error('subAssemblyUnit_price') is-invalid @enderror" name="subAssemblyUnit_price"  id="subAssemblyUnit_price" placeholder="{{ __('general_content.price_trans_key') }}" value="0" step=".001" min="0" wire:model.lazy="subAssemblyUnit_price">
                         </div>
                     </div>
                     <div class="form-group col-md-2">

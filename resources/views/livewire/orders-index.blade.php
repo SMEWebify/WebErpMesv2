@@ -26,7 +26,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
+                                        <input type="text" class="form-control" wire:model.lazy="code" name="code" id="code" placeholder="{{ __('general_content.external_id_trans_key') }}">
                                     </div>
                                     @error('code') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -36,7 +36,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-tags"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="label" name="label"  id="label" placeholder="{{ __('general_content.name_order_trans_key') }}" required>
+                                        <input type="text" class="form-control" wire:model.lazy="label" name="label"  id="label" placeholder="{{ __('general_content.name_order_trans_key') }}" required>
                                         @error('label') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                     </div>
                                 </div>
@@ -46,7 +46,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="user_id" name="user_id" id="user_id">
+                                        <select class="form-control" wire:model.lazy="user_id" name="user_id" id="user_id">
                                             <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                                         @foreach ($userSelect as $item)
                                             <option value="{{ $item->id }}" >{{ $item->name }}</option>
@@ -61,7 +61,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control" wire:click.prevent="changeLabel()" wire:model.live="type" name="type" id="type">)
+                                        <select class="form-control" wire:click.prevent="changeLabel()" wire:model.lazy="type" name="type" id="type">)
                                             <option value="1" >{{ __('general_content.customer_type_order_trans_key') }}</option>
                                             <option value="2" >{{ __('general_content.internal_type_order_trans_key') }}</option>
                                         </select>
@@ -82,7 +82,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-building"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="companies_id" name="companies_id" id="companies_id" @if($type == 2) disabled @endif>
+                                        <select class="form-control" wire:model.lazy="companies_id" name="companies_id" id="companies_id" @if($type == 2) disabled @endif>
                                             <option value="">{{ __('general_content.select_company_trans_key') }}</option>
                                         @forelse ($CompanieSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -99,7 +99,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" wire:model.live="customer_reference"  name="customer_reference"  id="customer_reference" placeholder="{{ __('general_content.customer_reference_trans_key') }}" @if($type == 2) disabled @endif>
+                                        <input type="text" class="form-control" wire:model.lazy="customer_reference"  name="customer_reference"  id="customer_reference" placeholder="{{ __('general_content.customer_reference_trans_key') }}" @if($type == 2) disabled @endif>
                                         @error('customer_reference') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id" @if($type == 2) disabled @endif>
+                                        <select class="form-control" wire:model.lazy="companies_addresses_id" name="companies_addresses_id" id="companies_addresses_id" @if($type == 2) disabled @endif>
                                         <option value="">{{ __('general_content.select_address_trans_key') }}</option>
                                         @forelse ($AddressSelect as $item)
                                             <option value="{{ $item->id }}" >{{ $item->label }} - {{ $item->adress }}</option>
@@ -128,7 +128,7 @@
                                         <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id" @if($type == 2) disabled @endif>
+                                        <select class="form-control" wire:model.lazy="companies_contacts_id" name="companies_contacts_id" id="companies_contacts_id" @if($type == 2) disabled @endif>
                                             <option value="">{{ __('general_content.select_contact_trans_key') }}</option>
                                         @forelse ($ContactSelect as $item)
                                             <option value="{{ $item->id }}" >{{ $item->first_name }} - {{ $item->name }}</option>
@@ -149,7 +149,7 @@
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="accounting_payment_conditions_id">{{ __('general_content.payment_conditions_trans_key') }}</label>
-                                    <select class="form-control" wire:model.live="accounting_payment_conditions_id"  name="accounting_payment_conditions_id" id="accounting_payment_conditions_id" @if($type == 2) disabled @endif>
+                                    <select class="form-control" wire:model.lazy="accounting_payment_conditions_id"  name="accounting_payment_conditions_id" id="accounting_payment_conditions_id" @if($type == 2) disabled @endif>
                                         <option value="">{{ __('general_content.select_payement_condition_trans_key') }}</option>
                                     @forelse ($AccountingConditionSelect as $item)
                                         <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -161,7 +161,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="accounting_payment_methods_id">{{ __('general_content.select_payement_methods_trans_key') }}</label>
-                                    <select class="form-control" wire:model.live="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id" @if($type == 2) disabled @endif>
+                                    <select class="form-control" wire:model.lazy="accounting_payment_methods_id" name="accounting_payment_methods_id" id="accounting_payment_methods_id" @if($type == 2) disabled @endif>
                                         <option value="">{{ __('general_content.select_payement_methods_trans_key') }}</option>
                                     @forelse ($AccountingMethodsSelect as $item)
                                         <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -179,7 +179,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-truck"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id" @if($type == 2) disabled @endif>
+                                        <select class="form-control" wire:model.lazy="accounting_deliveries_id" name="accounting_deliveries_id" id="accounting_deliveries_id" @if($type == 2) disabled @endif>
                                             <option value="">{{ __('general_content.select_delivery_trans_key') }}</option>
                                         @forelse ($AccountingDeleveriesSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
@@ -192,7 +192,7 @@
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="label">{{ __('general_content.delivery_date_trans_key') }}</label>
-                                    <input type="date" class="form-control" wire:model.live="validity_date"  name="validity_date"  id="validity_date">
+                                    <input type="date" class="form-control" wire:model.lazy="validity_date"  name="validity_date"  id="validity_date">
                                     @error('validity_date') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>
@@ -201,7 +201,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <label>{{ __('general_content.comment_trans_key') }}</label>
-                                    <textarea class="form-control" rows="3" wire:model.live="comment" name="comment"  placeholder=" ..."></textarea>
+                                    <textarea class="form-control" rows="3" wire:model.lazy="comment" name="comment"  placeholder=" ..."></textarea>
                                     @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>

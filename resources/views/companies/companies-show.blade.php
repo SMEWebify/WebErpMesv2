@@ -6,6 +6,350 @@
   <x-Content-header-previous-button  h1="{{ $Companie->label }}" previous="{{ $previousUrl }}" list="{{ route('companies') }}" next="{{ $nextUrl }}"/>
 @stop
 
+@php
+  $reactQuotesEndpoints = [
+    'list'         => route('quotes.json.list'),
+    'store'        => route('quotes.json.store'),
+    'selectData'   => route('quotes.json.select-data'),
+    'addresses'    => route('quotes.json.addresses',    ['companyId' => '__ID__']),
+    'contacts'     => route('quotes.json.contacts',     ['companyId' => '__ID__']),
+    'storeAddress' => route('quotes.json.address.store'),
+    'storeContact' => route('quotes.json.contact.store'),
+  ];
+  $reactQuotesTrans = [
+    'dashboard'             => __('general_content.dashboard_trans_key'),
+    'quotes_list'           => __('general_content.quotes_list_trans_key'),
+    'open'                  => __('general_content.open_trans_key'),
+    'send'                  => __('general_content.send_trans_key'),
+    'win'                   => __('general_content.win_trans_key'),
+    'lost'                  => __('general_content.lost_trans_key'),
+    'closed'                => __('general_content.closed_trans_key'),
+    'obsolete'              => __('general_content.obsolete_trans_key'),
+    'new_quote'             => __('general_content.new_quote_trans_key'),
+    'search'                => __('general_content.search_trans_key'),
+    'code'                  => 'Code',
+    'label'                 => __('general_content.label_trans_key'),
+    'company'               => __('general_content.name_company_trans_key'),
+    'contact'               => __('general_content.contact_trans_key'),
+    'address'               => __('general_content.new_address_trans_key'),
+    'validity_date'         => __('general_content.validity_date_trans_key'),
+    'status'                => __('general_content.status_trans_key'),
+    'lines'                 => __('general_content.quote_line_trans_key'),
+    'created_at'            => __('general_content.created_at_trans_key'),
+    'customer_reference'    => __('general_content.customer_reference_trans_key'),
+    'payment_condition'     => __('general_content.payment_conditions_trans_key'),
+    'payment_method'        => __('general_content.payment_method_trans_key'),
+    'delivery'              => __('general_content.delivery_constraint_trans_key'),
+    'assignee'              => __('general_content.user_management_trans_key'),
+    'comment'               => __('general_content.comment_trans_key'),
+    'ordre'                 => __('general_content.ordre_trans_key'),
+    'adress_label'          => __('general_content.adress_name_trans_key'),
+    'adress'                => __('general_content.adress_trans_key'),
+    'postal_code'           => __('general_content.postal_code_trans_key'),
+    'city'                  => __('general_content.city_trans_key'),
+    'country'               => __('general_content.country_trans_key'),
+    'phone'                 => __('general_content.phone_trans_key'),
+    'email'                 => __('general_content.email_trans_key'),
+    'civility'              => __('general_content.civility_trans_key'),
+    'first_name'            => __('general_content.first_name_trans_key'),
+    'name'                  => __('general_content.name_trans_key'),
+    'function'              => __('general_content.function_trans_key'),
+    'mobile'                => __('general_content.mobile_phone_trans_key'),
+    'new_address'           => __('general_content.new_address_trans_key'),
+    'new_contact'           => __('general_content.new_companie_trans_key'),
+    'save'                  => __('general_content.save_trans_key'),
+    'saving'                => __('general_content.saving_trans_key'),
+    'cancel'                => __('general_content.cancel_trans_key'),
+    'no_results'            => __('general_content.no_results_trans_key'),
+    'total'                 => __('general_content.total_trans_key'),
+    'external_id'           => __('general_content.external_id_trans_key'),
+    'client'                => __('general_content.client_trans_key'),
+    'currency'              => app('Factory')->curency ?? 'EUR',
+    'locale'                => str_replace('_', '-', config('app.locale')),
+  ];
+
+  $reactOrdersEndpoints = [
+    'list'         => route('orders.json.list'),
+    'store'        => route('orders.json.store'),
+    'selectData'   => route('orders.json.select-data'),
+    'addresses'    => route('orders.json.addresses',    ['companyId' => '__ID__']),
+    'contacts'     => route('orders.json.contacts',     ['companyId' => '__ID__']),
+    'storeAddress' => route('orders.json.address.store'),
+    'storeContact' => route('orders.json.contact.store'),
+  ];
+  $reactOrdersTrans = [
+    'dashboard'         => __('general_content.dashboard_trans_key'),
+    'orders_list'       => __('general_content.orders_list_trans_key'),
+    'open'              => __('general_content.open_trans_key'),
+    'in_progress'       => __('general_content.in_progress_trans_key'),
+    'delivered'         => __('general_content.delivered_trans_key'),
+    'partly_delivered'  => __('general_content.partly_delivered_trans_key'),
+    'stopped'           => __('general_content.stopped_trans_key'),
+    'canceled'          => __('general_content.canceled_trans_key'),
+    'new_order'         => __('general_content.new_order_trans_key'),
+    'search'            => __('general_content.search_trans_key'),
+    'code'              => 'Code',
+    'label'             => __('general_content.label_trans_key'),
+    'company'           => __('general_content.name_company_trans_key'),
+    'contact'           => __('general_content.contact_trans_key'),
+    'address'           => __('general_content.new_address_trans_key'),
+    'validity_date'     => __('general_content.validity_date_trans_key'),
+    'status'            => __('general_content.status_trans_key'),
+    'lines'             => __('general_content.order_line_trans_key'),
+    'created_at'        => __('general_content.created_at_trans_key'),
+    'customer_reference'=> __('general_content.customer_reference_trans_key'),
+    'total_amount'      => __('general_content.total_trans_key'),
+    'payment_condition' => __('general_content.payment_conditions_trans_key'),
+    'payment_method'    => __('general_content.payment_method_trans_key'),
+    'delivery'          => __('general_content.delivery_constraint_trans_key'),
+    'assignee'          => __('general_content.user_management_trans_key'),
+    'comment'           => __('general_content.comment_trans_key'),
+    'order_type'        => __('general_content.order_type_trans_key'),
+    'customer_type'     => __('general_content.customer_type_order_trans_key'),
+    'internal_type'     => __('general_content.internal_type_order_trans_key'),
+    'orders'            => __('general_content.orders_trans_key'),
+    'page'              => 'Page',
+    'ordre'             => __('general_content.ordre_trans_key'),
+    'adress_label'      => __('general_content.adress_name_trans_key'),
+    'adress'            => __('general_content.adress_trans_key'),
+    'postal_code'       => __('general_content.postal_code_trans_key'),
+    'city'              => __('general_content.city_trans_key'),
+    'country'           => __('general_content.country_trans_key'),
+    'phone'             => __('general_content.phone_trans_key'),
+    'email'             => __('general_content.email_trans_key'),
+    'civility'          => __('general_content.civility_trans_key'),
+    'first_name'        => __('general_content.first_name_trans_key'),
+    'name'              => __('general_content.name_trans_key'),
+    'function'          => __('general_content.function_trans_key'),
+    'mobile'            => __('general_content.mobile_phone_trans_key'),
+    'new_address'       => __('general_content.new_address_trans_key'),
+    'new_contact'       => __('general_content.new_companie_trans_key'),
+    'save'              => __('general_content.save_trans_key'),
+    'saving'            => __('general_content.saving_trans_key'),
+    'cancel'            => __('general_content.cancel_trans_key'),
+    'no_results'        => __('general_content.no_results_trans_key'),
+    'total'             => __('general_content.total_trans_key'),
+    'currency'          => app('Factory')->curency ?? 'EUR',
+    'locale'            => str_replace('_', '-', config('app.locale')),
+  ];
+
+  $companyFormData = [
+    'id'                        => $Companie->id,
+    'code'                      => $Companie->code,
+    'label'                     => $Companie->label,
+    'active'                    => (bool) $Companie->active,
+    'client_type'               => $Companie->client_type,
+    'civility'                  => $Companie->civility,
+    'last_name'                 => $Companie->last_name,
+    'user_id'                   => $Companie->user_id,
+    'website'                   => $Companie->website,
+    'fbsite'                    => $Companie->fbsite,
+    'twittersite'               => $Companie->twittersite,
+    'lkdsite'                   => $Companie->lkdsite,
+    'siren'                     => $Companie->siren,
+    'naf_code'                  => $Companie->naf_code,
+    'intra_community_vat'       => $Companie->intra_community_vat,
+    'statu_customer'            => $Companie->statu_customer,
+    'discount'                  => $Companie->discount,
+    'account_general_customer'  => $Companie->account_general_customer,
+    'account_auxiliary_customer'=> $Companie->account_auxiliary_customer,
+    'statu_supplier'            => $Companie->statu_supplier,
+    'recept_controle'           => $Companie->recept_controle,
+    'account_general_supplier'  => $Companie->account_general_supplier,
+    'account_auxiliary_supplier'=> $Companie->account_auxiliary_supplier,
+    'latitude'                  => $Companie->latitude,
+    'longitude'                 => $Companie->longitude,
+    'delivery_constraint'       => $Companie->delivery_constraint,
+    'tolerance_days'            => $Companie->tolerance_days,
+    'quoted_delivery_note'      => (bool) $Companie->quoted_delivery_note,
+    'comment'                   => $Companie->comment,
+    'barcode_value'             => $Companie->barcode_value,
+  ];
+
+  $companyFormUsers = $userSelect->map(fn($u) => ['id' => $u->id, 'name' => $u->name])->values();
+
+  $companyFormTrans = [
+    'general_information'    => __('general_content.general_information_trans_key'),
+    'external_id'            => __('general_content.external_id_trans_key'),
+    'active'                 => __('general_content.active_trans_key'),
+    'name_company'           => __('general_content.name_company_trans_key'),
+    'civility'               => __('general_content.civility_trans_key'),
+    'first_name'             => __('general_content.first_name_trans_key'),
+    'contact_name'           => __('general_content.contact_name_trans_key'),
+    'user_management'        => __('general_content.user_management_trans_key'),
+    'select_user'            => __('general_content.select_user_management_trans_key'),
+    'site_link'              => __('general_content.site_link_trans_key'),
+    'administrative_information' => __('general_content.administrative_information_trans_key'),
+    'reg_number'             => __('general_content.reg_number_trans_key'),
+    'naf_code'               => __('general_content.naf_code_trans_key'),
+    'vat_number'             => __('general_content.vat_number_trans_key'),
+    'status_client'          => __('general_content.status_client_trans_key'),
+    'select_status'          => __('general_content.select_status_trans_key'),
+    'inactive'               => __('general_content.inactive_trans_key'),
+    'prospect'               => __('general_content.prospect_trans_key'),
+    'discount'               => __('general_content.discount_trans_key'),
+    'general_account'        => __('general_content.general_account_trans_key'),
+    'auxiliary_account'      => __('general_content.auxiliary_account_trans_key'),
+    'status_supplier'        => __('general_content.status_supplier_trans_key'),
+    'reception_control'      => __('general_content.reception_control_trans_key'),
+    'select_control'         => __('general_content.select_controle_trans_key'),
+    'yes'                    => __('general_content.yes_trans_key'),
+    'no'                     => __('general_content.no_trans_key'),
+    'latitude'               => __('general_content.latitude_trans_key'),
+    'longitude'              => __('general_content.longitude_trans_key'),
+    'delivery_constraint'    => __('general_content.delivery_constraint_trans_key'),
+    'no_constraints'         => __('general_content.no_constraints_trans_key'),
+    'no_tolerance'           => __('general_content.no_tolerance_trans_key'),
+    'tolerance_in_days'      => __('general_content.tolerance_in_days_trans_key'),
+    'tolerance_days'         => __('general_content.tolerance_days_trans_key'),
+    'quoted_delivery_note'   => __('general_content.quoted_delivery_note_trans_key'),
+    'comment'                => __('general_content.comment_trans_key'),
+    'update'                 => __('general_content.update_trans_key'),
+    'saving'                 => __('general_content.saving_trans_key'),
+    'save_success'           => __('general_content.success_update_trans_key'),
+  ];
+
+  $reactInvoicesEndpoints = [
+    'list' => route('invoices.json.list'),
+  ];
+  $reactInvoicesTrans = [
+    'dashboard'        => __('general_content.dashboard_trans_key'),
+    'invoices_list'    => __('general_content.invoices_list_trans_key'),
+    'in_progress'      => __('general_content.in_progress_trans_key'),
+    'send'             => __('general_content.send_trans_key'),
+    'pending'          => __('general_content.pending_trans_key'),
+    'unpaid'           => __('general_content.unpaid_trans_key'),
+    'paid'             => __('general_content.paid_trans_key'),
+    'search'           => __('general_content.search_trans_key'),
+    'code'             => 'Code',
+    'client'           => __('general_content.customer_trans_key'),
+    'label'            => __('general_content.label_trans_key'),
+    'contact'          => __('general_content.contact_trans_key'),
+    'due_date'         => __('general_content.due_date_trans_key'),
+    'status'           => __('general_content.status_trans_key'),
+    'lines'            => __('general_content.lines_count_trans_key'),
+    'created_at'       => __('general_content.created_at_trans_key'),
+    'total'            => __('general_content.total_price_trans_key'),
+    'no_results'       => __('general_content.no_data_trans_key'),
+    'view'             => __('general_content.view_trans_key'),
+    'currency'         => app('Factory')->curency ?? 'EUR',
+    'locale'           => str_replace('_', '-', config('app.locale')),
+  ];
+
+  $reactDeliverysEndpoints = [
+    'list'    => route('deliverys.json.list'),
+    'request' => route('deliverys-request'),
+  ];
+  $reactDeliverysTrans = [
+    'in_progress'     => __('general_content.in_progress_trans_key'),
+    'send'            => __('general_content.send_trans_key'),
+    'chargeable'      => __('general_content.chargeable_trans_key'),
+    'not_chargeable'  => __('general_content.not_chargeable_trans_key'),
+    'partly_invoiced' => __('general_content.partly_invoiced_trans_key'),
+    'invoiced'        => __('general_content.invoiced_trans_key'),
+    'total'           => __('general_content.total_trans_key'),
+    'code'            => __('general_content.id_trans_key'),
+    'label'           => __('general_content.label_trans_key'),
+    'company'         => __('general_content.customer_trans_key'),
+    'lines'           => __('general_content.lines_count_trans_key'),
+    'status'          => __('general_content.status_trans_key'),
+    'invoice_status'  => __('general_content.invoice_status_trans_key'),
+    'user'            => __('general_content.user_trans_key'),
+    'created_at'      => __('general_content.created_at_trans_key'),
+    'action'          => __('general_content.action_trans_key'),
+    'search'          => __('general_content.search_trans_key'),
+    'new_delivery'    => __('general_content.new_trans_key'),
+    'no_results'      => __('general_content.no_data_trans_key'),
+    'statistiques'    => __('general_content.statistiques_trans_key'),
+    'monthly_recap'   => __('general_content.monthly_recap_report_trans_key'),
+    'view'            => __('general_content.view_trans_key'),
+    'columns'         => __('general_content.columns_trans_key'),
+    'currency'        => app('Factory')->curency ?? 'EUR',
+    'locale'          => str_replace('_', '-', config('app.locale')),
+  ];
+
+  $addressesTrans = [
+    'addresses'   => __('general_content.adress_trans_key'),
+    'new_address' => __('general_content.new_address_trans_key'),
+    'sort'        => __('general_content.sort_trans_key'),
+    'label'       => __('general_content.label_trans_key'),
+    'adress'      => __('general_content.adress_name_trans_key'),
+    'zipcode'     => __('general_content.postal_code_trans_key'),
+    'city'        => __('general_content.city_trans_key'),
+    'province'    => __('general_content.province_trans_key'),
+    'country'     => __('general_content.country_trans_key'),
+    'phone'       => __('general_content.phone_trans_key'),
+    'email'       => __('general_content.email_trans_key'),
+    'by_default'  => __('general_content.by_default_trans_key'),
+    'edit'        => __('general_content.edit_trans_key'),
+    'save'        => __('general_content.save_trans_key'),
+    'saving'      => __('general_content.saving_trans_key'),
+    'no_data'     => __('general_content.no_data_trans_key'),
+  ];
+
+  $contactsTrans = [
+    'contacts'    => __('general_content.contacts_trans_key'),
+    'new_contact' => __('general_content.new_contact_trans_key'),
+    'sort'        => __('general_content.sort_trans_key'),
+    'civility'    => __('general_content.civility_trans_key'),
+    'first_name'  => __('general_content.first_name_trans_key'),
+    'name'        => __('general_content.name_trans_key'),
+    'function'    => __('general_content.function_trans_key'),
+    'phone'       => __('general_content.phone_trans_key'),
+    'mobile'      => __('general_content.mobile_phone_trans_key'),
+    'email'       => __('general_content.email_trans_key'),
+    'by_default'  => __('general_content.by_default_trans_key'),
+    'edit'        => __('general_content.edit_trans_key'),
+    'save'        => __('general_content.save_trans_key'),
+    'saving'      => __('general_content.saving_trans_key'),
+    'no_data'     => __('general_content.no_data_trans_key'),
+  ];
+@endphp
+
+@php
+  $dashboardKpi = [
+    'orderAverage'           => $data['orderAverage'],
+    'remainingInvoiceOrder'  => $remainingInvoiceOrder,
+    'pendingOrdersCount'     => $pendingOrdersCount,
+    'customerProcessingCost' => $customerProcessingCost,
+    'serviceRate'            => $serviceRate,
+    'paidInvoices'           => $paidInvoices,
+    'unpaidInvoices'         => $unpaidInvoices,
+    'since'                  => $Companie->GetPrettyCreatedAttribute(),
+  ];
+
+  $dashboardCharts = [
+    'quotesDataRate'    => $data['quotesDataRate'],
+    'orderMonthlyRecap' => $data['orderMonthlyRecap'],
+  ];
+
+  $dashboardTrans = [
+    'order_average'            => __('general_content.order_average_note_trans_key'),
+    'remaining_invoice'        => __('general_content.remaining_invoice_month_trans_key'),
+    'pending_orders'           => __('general_content.pending_orders_trans_key'),
+    'customer_processing_cost' => __('general_content.customer_processing_cost_trans_key'),
+    'service_rate'             => __('general_content.service_rate_trans_key'),
+    'bills_paid'               => __('general_content.bills_paid_trans_key'),
+    'bills_unpaid'             => __('general_content.bills_unpaid_trans_key'),
+    'quote_transformation'     => __('general_content.quote_transformation_trans_key'),
+    'monthly_recap'            => __('general_content.monthly_recap_report_trans_key'),
+    'sales_period'             => __('general_content.sales_period_trans_key', ['year' => now()->year]),
+    'total'                    => __('general_content.total_trans_key'),
+    'open'                     => __('general_content.open_trans_key'),
+    'send'                     => __('general_content.send_trans_key'),
+    'win'                      => __('general_content.win_trans_key'),
+    'lost'                     => __('general_content.lost_trans_key'),
+    'closed'                   => __('general_content.closed_trans_key'),
+    'obsolete'                 => __('general_content.obsolete_trans_key'),
+    'currency'                 => app('Factory')->curency ?? 'EUR',
+    'locale'                   => str_replace('_', '-', config('app.locale')),
+    'jan' => 'Jan', 'feb' => 'Fév', 'mar' => 'Mar',
+    'apr' => 'Avr', 'may' => 'Mai', 'jun' => 'Jun',
+    'jul' => 'Jul', 'aug' => 'Aoû', 'sep' => 'Sep',
+    'oct' => 'Oct', 'nov' => 'Nov', 'dec' => 'Déc',
+  ];
+@endphp
+
 @section('content')
 <div class="card">
   <div class="card-header p-2">
@@ -42,93 +386,25 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Dashboard">
-        <div class="row">
-
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-small-box title="{{ $data['orderAverage'] }}" 
-              text="{{ __('general_content.order_average_note_trans_key') }}" 
-              icon="icon fas fa-info"
-              theme="orange" />
-          </div>
-
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-small-box title="{{ $remainingInvoiceOrder }}"
-              text="{{ __('general_content.remaining_invoice_month_trans_key') }}"
-              icon="icon fas fa-info"
-              theme="info" />
-          </div>
-
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-small-box title="{{ $pendingOrdersCount }}"
-              text="{{ __('general_content.pending_orders_trans_key') }}"
-              icon="icon fas fa-box-open"
-              theme="warning" />
-          </div>
-
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-small-box title="{{ $customerProcessingCost }}"
-              text="{{ __('general_content.customer_processing_cost_trans_key') }}"
-              icon="icon fas fa-info"
-              theme="teal" />
-          </div>
-
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-small-box title="{{ $serviceRate }}%"
-              text="{{ __('general_content.service_rate_trans_key') }}"
-              icon="icon fas fa-chart-line"
-              theme="primary" />
-          </div>
-
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-card  theme="primary" theme-mode="outline">
-              <p class="card-text">{{ __('general_content.bills_paid_trans_key') }} : {{ $paidInvoices }}</p>
-              <p class="card-text">{{ __('general_content.bills_unpaid_trans_key') }}  : {{ $unpaidInvoices }}</p>
-            </x-adminlte-card>
-          </div>
-
-          
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-small-box title="Since " 
-              text="{{ $Companie->GetPrettyCreatedAttribute() }}" 
-              icon="icon fas fa-info"
-              theme="warning" />
-          </div>
+        <div
+          id="company-dashboard-app"
+          data-kpi='@json($dashboardKpi, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-charts='@json($dashboardCharts, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($dashboardTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
         </div>
-
-        <div class="row">
-          <div class="col-lg-3 col-md-3">
-            <x-adminlte-card title="{{ __('general_content.quote_transformation_trans_key') }}" theme="teal" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-              <canvas id="donutChart" width="400" height="400"></canvas>
-            </x-adminlte-card>
-          </div>
-
-          <!-- CHART: TOTAL OVERVIEW -->
-          <div class="col-lg-9 col-md-9">
-            <x-adminlte-card title="{{ __('general_content.monthly_recap_report_trans_key') }}" theme="purple" icon="fas fa-chart-bar text-white" collapsible removable maximizable>
-              <div class="row">
-                <div class="col-md-12">
-                  <p class="text-center">
-                    <strong>{{ __('general_content.sales_period_trans_key', ['year' => now()->year]) }}</strong>
-                  </p>
-                  <div class="chart">
-                    <!-- Sales Chart Canvas -->
-                      <canvas id="lineChart" style="min-height: 400px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
-                  </div>
-                  <!-- /.chart-responsive -->
-                </div>
-                <!-- /.col -->
-              </div>
-              <!-- ./card-body -->
-            </x-adminlte-card>
-          </div>
-        </div>
-
       </div>
       <div class="tab-pane" id="Company">
         <div class="row">
           <div class="col-md-9">
-            @include('include.alert-result')
-            <form method="POST" action="{{ route('companies.edit.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
+            <div
+              id="company-form-app"
+              data-company='@json($companyFormData, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+              data-users='@json($companyFormUsers, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+              data-endpoint='{{ route('companies.json.update', $Companie->id) }}'
+              data-trans='@json($companyFormTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+            </div>
+            {{-- Ancien formulaire Blade conservé commenté au cas où --}}
+            {{-- <form method="POST" action="{{ route('companies.edit.update', ['id' => $Companie->id]) }}" enctype="multipart/form-data">
               @csrf
               <x-adminlte-card title="{{ __('general_content.general_information_trans_key') }}" theme="primary" maximizable>
                 <div class="row">
@@ -430,7 +706,7 @@
               <div class="card-footer">
                 <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
               </div>
-            </form>
+            </form> --}}
           </div>
 
           <div class="col-md-3">
@@ -460,6 +736,17 @@
         </div>
       </div>  
       <div class="tab-pane " id="Adresses">
+        <div
+          id="company-addresses-app"
+          data-addresses='@json($Companie->Addresses->toArray())'
+          data-store-url="{{ route('addresses.json.store') }}"
+          data-update-base-url="{{ route('addresses.json.update', ['address' => '__ID__']) }}"
+          data-companie-id="{{ $Companie->id }}"
+          data-trans='@json($addressesTrans)'
+        ></div>
+      </div>
+      {{-- OLD BLADE ADDRESSES (replaced by React) --}}
+      {{-- <div class="tab-pane " id="Adresses-old">
         <div class="row">
           <div class="form-group col-md-8">
             <x-adminlte-card title="{{ __('general_content.adress_trans_key') }}" theme="primary" maximizable>
@@ -573,7 +860,7 @@
                                 </div>
                               </div>
                               <div class="row">
-                                <div class="col-4 text-left"><label for="defaultAddress{{ $Address->id }}" class="col-form-label">{{ __('general_content.by_default_trans_key') }}</label></div>
+                                <div class="col-4 text-start"><label for="defaultAddress{{ $Address->id }}" class="col-form-label">{{ __('general_content.by_default_trans_key') }}</label></div>
                                 <div class="col-8">
                                     @if($Address->default == 1)  
                                     <x-adminlte-input-switch id="defaultAddress{{ $Address->id }}" name="defaultAdress_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
@@ -693,8 +980,19 @@
           </div>
         </div>
       <!-- /.row -->
-      </div>    
+      </div> --}}
       <div class="tab-pane " id="Contact">
+        <div
+          id="company-contacts-app"
+          data-contacts='@json($Companie->Contacts->toArray())'
+          data-store-url="{{ route('contacts.json.store') }}"
+          data-update-base-url="{{ route('contacts.json.update', ['contact' => '__ID__']) }}"
+          data-companie-id="{{ $Companie->id }}"
+          data-trans='@json($contactsTrans)'
+        ></div>
+      </div>
+      {{-- OLD BLADE CONTACTS (replaced by React) --}}
+      {{-- <div class="tab-pane " id="Contact-old">
         <div class="row">
           <div class="col-md-8">
             <x-adminlte-card title="{{ __('general_content.contacts_trans_key') }}" theme="primary" maximizable>
@@ -790,7 +1088,7 @@
                                 <input type="email" class="form-control" name="mail"  id="mail" placeholder="{{ __('general_content.email_trans_key') }}"  value="{{ $Contact->mail }}">
                               </div>
                               <div class="row">
-                                <div class="col-4 text-left"><label for="defaultContact{{ $Contact->id }}" class="col-form-label">{{ __('general_content.by_default_trans_key') }}</label></div>
+                                <div class="col-4 text-start"><label for="defaultContact{{ $Contact->id }}" class="col-form-label">{{ __('general_content.by_default_trans_key') }}</label></div>
                                 <div class="col-8">
                                     @if($Contact->default == 1)  
                                     <x-adminlte-input-switch id="defaultContact{{ $Contact->id }}" name="defaultContact_update" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
@@ -896,8 +1194,8 @@
             </form>
           </div>
         <!-- /.row -->
-        </div> 
-      </div>
+        </div>
+      </div> --}}
       @can('leads-menu')
       <div class="tab-pane" id="lead">
         @livewire('leads-index' , ['idCompanie' => $Companie->id ])
@@ -905,22 +1203,42 @@
       @endcan
       @can('quotes-menu')
       <div class="tab-pane" id="quote">
-        @livewire('quotes-index' , ['idCompanie' => $Companie->id ])
+        <div
+          id="quotes-index-app"
+          data-endpoints='@json($reactQuotesEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($reactQuotesTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-companie-id="{{ $Companie->id }}">
+        </div>
       </div>
       @endcan
       @can('orders-menu')
       <div class="tab-pane" id="order">
-        @livewire('orders-index' , ['idCompanie' => $Companie->id ])
+        <div
+          id="orders-index-app"
+          data-endpoints='@json($reactOrdersEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($reactOrdersTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-companie-id="{{ $Companie->id }}">
+        </div>
       </div>
       @endcan
       @can('deliverys-menu')
       <div class="tab-pane" id="delivery">
-        @livewire('deliverys-index' , ['idCompanie' => $Companie->id ])
+        <div
+          id="deliverys-index-app"
+          data-endpoints='@json($reactDeliverysEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($reactDeliverysTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-companie-id="{{ $Companie->id }}">
+        </div>
       </div>
       @endcan
       @can('invoices-menu')
       <div class="tab-pane" id="invoice">
-        @livewire('invoices-index' , ['idCompanie' => $Companie->id ])
+        <div
+          id="invoices-index-app"
+          data-endpoints='@json($reactInvoicesEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($reactInvoicesTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-companie-id="{{ $Companie->id }}">
+        </div>
       </div>
       @endcan
       @can('purchases-menu')
@@ -1139,6 +1457,8 @@
 @section('css')
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')
@@ -1162,129 +1482,5 @@
   L.marker([latitude, longitude]).addTo(map)
       .bindPopup('{{ $Companie->label }}')
       .openPopup();
-</script>
-
-<script>
-  //-------------
-//- PIE CHART -
-//-------------
-  var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
-  var donutData        = {
-      labels: [
-        @foreach ($data['quotesDataRate'] as $item)
-              @if(1 == $item->statu )  "Open", @endif
-              @if(2 == $item->statu )  "Send", @endif
-              @if(3 == $item->statu )  "Win", @endif
-              @if(4 == $item->statu )  "Lost", @endif
-              @if(5 == $item->statu )  "{{__('general_content.closed_trans_key') }}", @endif
-              @if(6 == $item->statu )  "Obsolete", @endif
-        @endforeach
-      ],
-      datasets: [
-        {
-          data: [
-                @foreach ($data['quotesDataRate'] as $item)
-                "{{ $item->QuoteCountRate }}",
-                @endforeach
-              ], 
-              backgroundColor: [
-                  'rgba(23, 162, 184, 1)',
-                  'rgba(255, 193, 7, 1)',
-                  'rgba(40, 167, 69, 1)',
-                  'rgba(220, 53, 69, 1)',
-                  'rgba(108, 117, 125, 1)',
-                  'rgba(0, 123, 255, 1)',
-              ],
-        }
-      ]
-    }
-    var donutOptions     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    new Chart(donutChartCanvas, {
-      type: 'pie',
-      data: donutData,
-      options: donutOptions
-    })
-
-  //--------------
-  //- LINE CHART -
-  //--------------
-  // Get context with jQuery - using jQuery's .get() method.
-  var areaChartCanvas = $('#lineChart').get(0).getContext('2d')
-  var areaChartData = {
-      labels  : @json(__('general_content.chart_months_trans_key')),
-      datasets: [
-        {
-          label               : @json(__('general_content.chart_order_forecast_trans_key')),
-          borderColor         : 'rgba(60,141,188,0.5)',
-          pointRadius          : 5,
-          pointColor          : '#3b8bba',
-          pointStrokeColor    : 'rgba(60,141,188,1)',
-          pointHighlightFill  : '#fff',
-          pointHighlightStroke: 'rgba(60,141,188,1)',
-          data                : [
-                              @php ($j = 1)
-                              @for($iM =1;$iM<=12;$iM++)
-                                @foreach ($data['orderMonthlyRecap'] as $key => $item)
-                                @php ($j = 1)
-                                  @if($iM  == $item->month) 
-                                  "{{ $item->orderSum }}",
-                                    @php ($j = 2)
-                                    @break
-                                  @endif
-                                @endforeach
-                                @if($j == 1) 
-                                  0,
-                                  @php ($j = 1)
-                                @endif
-                              @endfor ]
-        },
-      ]
-    }
-    var areaChartOptions = {
-      maintainAspectRatio : false,
-      responsive : true,
-      legend: {
-        display: true,
-      },
-      scales: {
-        xAxes: [{
-          gridLines : {
-            color:'rgba(0,0,0,0.4)',
-            display : true,
-          }
-        }],
-        yAxes: [{
-          gridLines : {
-            color:'rgba(0,0,0,0.4)',
-            display : true,
-          }
-        }]
-      }
-    }
-
-    // This will get the first returned node in the jQuery collection.
-    new Chart(areaChartCanvas, {
-      type: 'line',
-      data: areaChartData,
-      options: areaChartOptions
-    })
-
-    var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
-    var lineChartOptions = $.extend(true, {}, areaChartOptions)
-    var lineChartData = $.extend(true, {}, areaChartData)
-    lineChartData.datasets[0].fill = true;
-    lineChartData.datasets[1].fill = false;
-    lineChartOptions.datasetFill = false
-
-    var lineChart = new Chart(lineChartCanvas, {
-      type: 'line',
-      data: lineChartData,
-      options: lineChartOptions
-    })
 </script>
 @stop

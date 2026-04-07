@@ -117,7 +117,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control @error('source') is-invalid @enderror" wire:model.live="source"  name="source" id="source" placeholder="{{ __('general_content.source_trans_key') }}" >
+                                        <input type="text" class="form-control @error('source') is-invalid @enderror" wire:model.lazy="source"  name="source" id="source" placeholder="{{ __('general_content.source_trans_key') }}" >
                                     </div>
                                     @error('source') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -127,7 +127,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-external-link-square-alt"></i></span>
                                         </div>
-                                        <input type="text" class="form-control @error('campaign') is-invalid @enderror" wire:model.live="campaign"  name="campaign" id="campaign" placeholder="{{ __('general_content.campaign_trans_key') }}" >
+                                        <input type="text" class="form-control @error('campaign') is-invalid @enderror" wire:model.lazy="campaign"  name="campaign" id="campaign" placeholder="{{ __('general_content.campaign_trans_key') }}" >
                                     </div>
                                     @error('campaign') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
@@ -142,7 +142,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         </div>
-                                        <select class="form-control" wire:model.live="user_id" name="user_id" id="user_id">
+                                        <select class="form-control" wire:model.lazy="user_id" name="user_id" id="user_id">
                                             <option value="">{{ __('general_content.select_user_management_trans_key') }}</option>
                                         @foreach ($userSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -157,7 +157,7 @@
                                         <div class="input-group-text bg-gradient-success">
                                             <i class="fas fa-exclamation"></i>
                                         </div>
-                                        <select class="form-control" wire:model.live="priority" name="priority" id="priority">
+                                        <select class="form-control" wire:model.lazy="priority" name="priority" id="priority">
                                             <option value="1" >{{ __('general_content.burning_trans_key') }}</option>
                                             <option value="2" >{{ __('general_content.hot_trans_key') }}</option>
                                             <option value="3" >{{ __('general_content.lukewarm_trans_key') }}</option>
@@ -172,7 +172,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <label>{{ __('general_content.comment_trans_key') }}</label>
-                                    <textarea class="form-control" rows="3" wire:model.live="comment" name="comment"  placeholder="..."></textarea>
+                                    <textarea class="form-control" rows="3" wire:model.lazy="comment" name="comment"  placeholder="..."></textarea>
                                     @error('comment') <span class="text-danger">{{ $message }}<br/></span>@enderror
                                 </div>
                             </div>

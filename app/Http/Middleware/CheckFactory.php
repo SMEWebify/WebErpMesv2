@@ -5,6 +5,11 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\Admin\Factory;
+use App\Models\Accounting\AccountingVat;
+use App\Models\Accounting\AccountingPaymentConditions;
+use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Accounting\AccountingDelivery;
+use App\Models\Methods\MethodsUnits;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckFactory
@@ -16,10 +21,15 @@ class CheckFactory
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $factory = Factory::first();
-
-        if (!$factory) {
-            return redirect()->route('admin.factory')->with('error', 'Please check factory information');
+        if (
+            !Factory::exists()
+            || !AccountingVat::exists()
+            || !AccountingPaymentConditions::exists()
+            || !AccountingPaymentMethod::exists()
+            || !AccountingDelivery::exists()
+            || !MethodsUnits::exists()
+        ) {
+            return redirect()->route('setup.index');
         }
 
         return $next($request);

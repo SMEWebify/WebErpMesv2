@@ -198,6 +198,7 @@
               @include('include.sub-total-price')
             </x-adminlte-card>
 
+            @can('scheduling-menu')
             <x-adminlte-card title="{{ __('general_content.delivery_simulation_trans_key') }}" theme="info" collapsible maximizable>
               <form action="{{ route('quotes.delivery.simulation', ['id' => $Quote->id]) }}" method="POST">
                 @csrf
@@ -242,9 +243,9 @@
                     <thead>
                       <tr>
                         <th>{{ __('general_content.simulation_service_trans_key') }}</th>
-                        <th class="text-right">{{ __('general_content.simulation_required_hours_trans_key') }}</th>
+                        <th class="text-end">{{ __('general_content.simulation_required_hours_trans_key') }}</th>
                         @if(!$simulation['is_possible'])
-                          <th class="text-right">{{ __('general_content.simulation_remaining_hours_trans_key') }}</th>
+                          <th class="text-end">{{ __('general_content.simulation_remaining_hours_trans_key') }}</th>
                         @endif
                       </tr>
                     </thead>
@@ -252,9 +253,9 @@
                       @foreach($simulation['required_by_service'] as $serviceId => $requiredHours)
                         <tr>
                           <td>{{ $simulation['service_labels'][$serviceId] ?? $serviceId }}</td>
-                          <td class="text-right">{{ $requiredHours }}</td>
+                          <td class="text-end">{{ $requiredHours }}</td>
                           @if(!$simulation['is_possible'])
-                            <td class="text-right">{{ $simulation['missing_by_service'][$serviceId] ?? 0 }}</td>
+                            <td class="text-end">{{ $simulation['missing_by_service'][$serviceId] ?? 0 }}</td>
                           @endif
                         </tr>
                       @endforeach
@@ -263,19 +264,20 @@
                 </div>
               @endif
             </x-adminlte-card>
+            @endcan
 
             @if($Quote->opportunities_id)
               <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info"  collapsible="collapsed" maximizable>
                 <div class="text-muted">
                   <h3>{{__('general_content.opportunity_trans_key')}} #{{ $Quote->opportunities->label }} </h3><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Quote->opportunities_id])}}" />
                   
-                  <p class="text-sm">{{ __('general_content.user_trans_key') }}
+                  <p class="small">{{ __('general_content.user_trans_key') }}
                     <b class="d-block">{{ $Quote->opportunities->UserManagement['name'] }}</b>
                   </p>
-                  <p class="text-sm">{{ __('general_content.probality_trans_key') }}
+                  <p class="small">{{ __('general_content.probality_trans_key') }}
                     <b class="d-block">{{ $Quote->opportunities->probality }} %</b> 
                   </p>
-                  <p class="text-sm">{{ __('general_content.budget_trans_key') }}
+                  <p class="small">{{ __('general_content.budget_trans_key') }}
                     <b class="d-block">{{ $Quote->opportunities->budget }}</b>
                   </p>
                 </div>
@@ -550,7 +552,7 @@
               </div>
               <div class="card-body">
                   <div class="row">
-                      <div class="col-4 text-right"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
+                      <div class="col-4 text-end"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
                       <div class="col-8">
                           <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
                       </div>
@@ -569,7 +571,7 @@
 
                   @foreach ($fields as $field)
                   <div class="row">
-                      <div class="col-4 text-right">
+                      <div class="col-4 text-end">
                           <label class="col-form-label">{{ $field['label'] }}</label>
                       </div>
                       <div class="col-8">

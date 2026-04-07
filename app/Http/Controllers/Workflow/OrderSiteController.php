@@ -27,7 +27,7 @@ class OrderSiteController extends Controller
 
         $order->OrderSite()->create($data);
 
-        return back()->with('success', 'Site created');
+        return back()->with('success', __('general_content.site_created_success_trans_key'));
     }
 
     /**
@@ -46,7 +46,7 @@ class OrderSiteController extends Controller
 
         $site->update($data);
 
-        return back()->with('success', 'Site updated');
+        return back()->with('success', __('general_content.site_updated_success_trans_key'));
     }
 
     /**
@@ -56,7 +56,7 @@ class OrderSiteController extends Controller
     {
         $site->delete();
 
-        return back()->with('success', 'Site deleted');
+        return back()->with('success', __('general_content.site_deleted_success_trans_key'));
     }
 
     /**

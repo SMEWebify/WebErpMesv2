@@ -22,15 +22,15 @@ use App\Models\Companies\CompaniesAddresses;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Orders extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['id',
-                            'uuid',
+    protected $fillable= ['uuid',
                             'code',
                             'label',
                             'customer_reference',
@@ -57,6 +57,7 @@ class Orders extends Model
                             'n2p_last_push_status',
                             'n2p_last_push_error',
                         ];
+    // NOTE: 'id' removed from fillable (was present before) — mass-assigning PK is always wrong.
 
     protected $casts = [
         'reviewed_at' => 'datetime',

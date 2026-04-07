@@ -6,10 +6,10 @@ use App\Models\Planning\Task;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
 use App\Models\Workflow\OrderLines;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Cache;
 
-class CheckOrderLineTaskStatus
+class CheckOrderLineTaskStatus implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -28,7 +28,9 @@ class CheckOrderLineTaskStatus
         $orderLineId = $task->order_lines_id;
     
         // Trouvez l'ID du statut "Finished"
-        $finishedStatusId = Status::where('title', 'Finished')->value('id');
+        $finishedStatusId = Cache::rememberForever('status_finished_id', function() {
+            return Status::where('title', 'Finished')->value('id');
+        });
         
         $allLinesOderLine = Task::where('order_lines_id', $orderLineId)
             ->where('status_id', '<>', $finishedStatusId) 
@@ -38,12 +40,9 @@ class CheckOrderLineTaskStatus
         #2 = Created
         #3 = In progress
         #4 = Finished (all the tasks are finished)
-        if ($allLinesOderLine) {
-            OrderLines::where('id', $orderLineId)->update(['tasks_status' => 4]);
-        }
-        else{
-            
-            OrderLines::where('id',$orderLineId)->update(['tasks_status'=> 3]);
-        }
+        $newStatus = $allLinesOderLine ? 4 : 3;
+
+        // Use Eloquent instance so any future observer on OrderLines fires correctly
+        OrderLines::find($orderLineId)?->update(['tasks_status' => $newStatus]);
     }
 }

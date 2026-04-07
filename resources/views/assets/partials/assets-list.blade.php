@@ -21,7 +21,7 @@
                         <td>{{ $asset->acquisition_value }}</td>
                         <td>{{ $asset->acquisition_date->format('Y-m-d') }}</td>
                         <td>{{ $asset->depreciation_duration }}</td>
-                        <td class="text-right">
+                        <td class="text-end">
                             <a href="{{ route('assets.edit', $asset->id) }}" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
                                 <i class="fa fa-lg fa-fw fa-pen"></i>
                             </a>

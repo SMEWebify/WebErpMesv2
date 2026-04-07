@@ -8,7 +8,7 @@ use App\Models\Workflow\Opportunities;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateOpportunityStatus
+class UpdateOpportunityStatus implements ShouldQueue
 {
     /**
      * Create the event listener.

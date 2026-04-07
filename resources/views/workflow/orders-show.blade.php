@@ -22,8 +22,9 @@
       <li class="nav-item"><a class="nav-link" href="#Site" data-toggle="tab">{{ __('general_content.construction_site_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Charts" data-toggle="tab">{{ __('general_content.charts_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Bilan" data-toggle="tab">{{ __('general_content.business_Review_trans_key') }}</a></li>
+      @can('purchases-menu')
       <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Order->purchase_lines_count }})</a></li>
-      
+      @endcan
       <!--<a class="nav-link" href="#Views" data-toggle="tab">{{ __('general_content.guest_page_trans_key') }}</a></li>-->
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
@@ -483,6 +484,7 @@
       </div> 
       <div class="tab-pane " id="Views">
       </div>
+      @can('purchases-menu')
       <div class="tab-pane" id="purchase">
         <div class="table-responsive p-0">
           <table class="table table-hover">
@@ -572,6 +574,7 @@
           </table>
         </div>
       </div>
+      @endcan
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">
         @include('include.custom-fields-form', ['id' => $Order->id, 'type' => 'order'])
@@ -597,7 +600,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-4 text-right"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
+                    <div class="col-4 text-end"><label class="col-form-label"> {{ __('general_content.header_line_ask_trans_key') }}</label></div>
                     <div class="col-8">
                         <x-adminlte-input-switch name="header" data-on-text="{{ __('general_content.yes_trans_key') }}" data-off-text="{{ __('general_content.no_trans_key') }}" data-on-color="teal" is-checked="true" />
                     </div>
@@ -616,7 +619,7 @@
 
                 @foreach ($fields as $field)
                 <div class="row">
-                    <div class="col-4 text-right">
+                    <div class="col-4 text-end">
                         <label class="col-form-label">{{ $field['label'] }}</label>
                     </div>
                     <div class="col-8">

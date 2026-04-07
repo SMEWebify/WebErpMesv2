@@ -52,9 +52,10 @@ class ImportLdapUsers extends Command
             if (!$user) {
                 // Create the user in Laravel if it does not exist
                 User::create([
-                    'name' => $firstName,
-                    'email' => $email,
-                    'password' => bcrypt('password'), // Generate a temporary password
+                    'name'              => $firstName,
+                    'email'             => $email,
+                    'password'          => bcrypt('password'),
+                    'email_verified_at' => now(),
                 ]);
     
                 $this->info("User {$firstName} imported successfully.");

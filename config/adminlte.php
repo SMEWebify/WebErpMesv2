@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'WEB ERP MES',
+    'title' => env('APP_COMMERCIAL', false) ? 'Nest2Prod ERP' : 'WEB ERP MES',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -45,12 +45,12 @@ return [
     |
     */
 
-    'logo' => 'v1.19',
-    'logo_img' => 'vendor/adminlte/dist/img/simple-logo.PNG',
+    'logo' => '',
+    'logo_img' => env('APP_COMMERCIAL', false) ? 'img/nest2prod-logo.png' : 'vendor/adminlte/dist/img/simple-logo -R.PNG',
     'logo_img_class' => 'brand-image  elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'WEM',
+    'logo_img_alt' => env('APP_COMMERCIAL', false) ? 'Nest2Prod ERP' : 'WEM',
 
     /*
     |--------------------------------------------------------------------------
@@ -741,6 +741,14 @@ return [
                 ],
             ],
         ],
+
+        [
+            'text' => 'Tableurs',
+            'icon' => 'nav-icon fas fa-table',
+            'url'  => 'spreadsheet',
+            'active' => ['spreadsheet*'],
+            'can'  => ['spreadsheet-menu'],
+        ],
         [
             'text' => 'Reports',
             'icon' => 'fas fa-chart-pie',
@@ -807,7 +815,7 @@ return [
                 ],
             ],
         ],
-        ['header' => 'W.E.M.'],
+        ['header' => env('APP_COMMERCIAL', false) ? 'NEST2PROD' : 'W.E.M.'],
         [
             'text' => 'licence_trans_key',
             'url'  => 'licence',
@@ -1000,6 +1008,16 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/bootstrap-switch/js/bootstrap-switch.min.js',
+                ],
+            ],
+        ],
+        'BsCustomFileInput' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js',
                 ],
             ],
         ],

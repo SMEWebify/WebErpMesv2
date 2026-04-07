@@ -1,13 +1,15 @@
 <?php
 
-use Livewire\Livewire;
-use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use App\Http\Controllers\AttendanceController;
-use Illuminate\Support\Facades\Route;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use App\Http\Controllers\ProductionTraceController;
-use App\Http\Controllers\EnergyConsumptionController;
+use App\Http\Controllers\Collaboration\WhiteboardController as CollaborationWhiteboardController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EnergyConsumptionController;
+use App\Http\Controllers\ProductionTraceController;
+use App\Http\Controllers\SpreadsheetController;
+use App\Http\Controllers\SpreadsheetDataController;
+use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +25,13 @@ use App\Http\Controllers\DocumentController;
 Route::group(['prefix' => LaravelLocalization::setLocale(),
                             'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]], function(){
 
-    Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->name('guest.quote.show');
-    Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->name('guest.order.show');
-    Route::get('/guest/delivery/{uuid}', 'App\Http\Controllers\GuestController@ShowDeliveryDocument')->name('guest.delivery.show');
-    Route::get('/guest/nonConformitie/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
-    Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
+    Route::middleware(['throttle:60,1'])->group(function () {
+        Route::get('/guest/quote/{uuid}', 'App\Http\Controllers\GuestController@ShowQuoteDocument')->name('guest.quote.show');
+        Route::get('/guest/order/{uuid}', 'App\Http\Controllers\GuestController@ShowOrderDocument')->name('guest.order.show');
+        Route::get('/guest/delivery/{uuid}', 'App\Http\Controllers\GuestController@ShowDeliveryDocument')->name('guest.delivery.show');
+        Route::get('/guest/nonConformitie/{uuid}/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
+        Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
+    });
     Route::get('/pointage', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/pointage', [AttendanceController::class, 'store'])->name('attendance.store');
     //Rating
@@ -49,23 +53,48 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 
-    Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'check.factory'])->name('dashboard');
-    Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::get('/pending-role', fn () => view('pending-role'))->middleware(['auth', 'verified'])->name('pending.role');
+
+    // --- Setup wizard (installation initiale) ---
+    Route::middleware(['auth'])->prefix('setup')->name('setup.')->group(function () {
+        Route::get('/',                    'App\Http\Controllers\Setup\SetupController@index')->name('index');
+        Route::post('/company',            'App\Http\Controllers\Setup\SetupController@saveCompany')->name('company');
+        Route::post('/vat',                'App\Http\Controllers\Setup\SetupController@saveVat')->name('vat');
+        Route::post('/payment-condition',  'App\Http\Controllers\Setup\SetupController@savePaymentCondition')->name('payment-condition');
+        Route::post('/payment-method',     'App\Http\Controllers\Setup\SetupController@savePaymentMethod')->name('payment-method');
+        Route::post('/delivery',           'App\Http\Controllers\Setup\SetupController@saveDelivery')->name('delivery');
+        Route::post('/unit',               'App\Http\Controllers\Setup\SetupController@saveUnit')->name('unit');
+        Route::post('/role',               'App\Http\Controllers\Setup\SetupController@saveRole')->name('role');
+        Route::post('/estimated-budget',   'App\Http\Controllers\Setup\SetupController@saveEstimatedBudget')->name('estimated-budget');
+    });
+
+    Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('dashboard');
+    Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');
         Route::get('/whiteboards/{whiteboard}', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.show');
     });
 
 
-    Route::get('/reports', 'App\\Http\\Controllers\\ReportsController@index')->middleware(['auth', 'check.factory'])->name('reports');
-    Route::get('/reports/accounting', 'App\\Http\\Controllers\\ReportsController@accounting')->middleware(['auth', 'check.factory'])->name('reports.accounting');
+    Route::get('/reports', 'App\\Http\\Controllers\\ReportsController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('reports');
+    Route::get('/reports/accounting', 'App\\Http\\Controllers\\ReportsController@accounting')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('reports.accounting');
 
     Route::get('/documents', [DocumentController::class, 'index'])
-        ->middleware(['auth', 'check.factory'])
+        ->middleware(['auth', 'verified', 'has.role', 'check.factory'])
         ->name('documents.index');
 
-    Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'check.factory']], function () {
-        Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'check.factory'])->name('workshop');
-        Route::get('/Task/Lines', 'App\Http\Controllers\Workshop\WorkshopController@taskLines')->middleware(['auth', 'check.factory'])->name('workshop.task.lines');
+    Route::group(['prefix' => 'spreadsheet', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'permission:spreadsheet-menu']], function () {
+        Route::get('/', [SpreadsheetController::class, 'index'])->name('spreadsheet.index');
+        Route::get('/create', [SpreadsheetController::class, 'create'])->name('spreadsheet.create');
+        Route::post('/', [SpreadsheetController::class, 'store'])->name('spreadsheet.store');
+        Route::get('/{spreadsheet}/edit', [SpreadsheetController::class, 'edit'])->name('spreadsheet.edit');
+        Route::put('/{spreadsheet}', [SpreadsheetController::class, 'update'])->name('spreadsheet.update');
+        Route::delete('/{spreadsheet}', [SpreadsheetController::class, 'destroy'])->name('spreadsheet.destroy');
+        Route::post('/{spreadsheet}/save', [SpreadsheetController::class, 'save'])->name('spreadsheet.save');
+    });
+
+    Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop');
+        Route::get('/Task/Lines', 'App\Http\Controllers\Workshop\WorkshopController@taskLines')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop.task.lines');
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
         Route::get('/Stock/Detail/{id}', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail.id');
@@ -83,18 +112,26 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
     
 
-    Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Companies\CompaniesController@index')->name('companies');
 
-         // addresses routes
+        // JSON endpoints for React
+        Route::get('/json/list', 'App\Http\Controllers\Companies\CompaniesController@listJson')->name('companies.json.list');
+        Route::post('/json/store', 'App\Http\Controllers\Companies\CompaniesController@storeJson')->name('companies.json.store');
+        Route::get('/json/select-data', 'App\Http\Controllers\Companies\CompaniesController@selectDataJson')->name('companies.json.select-data');
+
+        // addresses routes
         Route::group(['prefix' => 'addresses'], function () {
             Route::post('/create/{id}', 'App\Http\Controllers\Companies\AddressesController@store')->name('addresses.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@update')->name('addresses.update');
             Route::get('/edit/{id}', 'App\Http\Controllers\Companies\AddressesController@edit')->name('addresses.edit');
+            Route::post('/json/store', 'App\Http\Controllers\Companies\AddressesController@storeJson')->name('addresses.json.store');
+            Route::post('/json/update/{address}', 'App\Http\Controllers\Companies\AddressesController@updateJson')->name('addresses.json.update');
         });
     
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importCompanies')->name('companies.import');
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.edit.update');
+        Route::post('/json/update/{company}', 'App\Http\Controllers\Companies\CompaniesController@updateJson')->name('companies.json.update');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
 
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Companies\CompaniesController@storeQuote')->name('companies.store.quote');
@@ -103,34 +140,55 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/supplier/ratings', 'App\Http\Controllers\Companies\SupplierRatingController@store')->name('companies.ratings.store');
     });
 
-    $contactMiddleware = app()->environment('testing') ? [] : ['auth', 'check.factory'];
+    $contactMiddleware = app()->environment('testing') ? [] : ['auth', 'verified', 'has.role', 'check.factory'];
 
     Route::group(['prefix' => 'companies/contacts', 'middleware' => $contactMiddleware], function () {
         Route::post('/create/{id}', 'App\Http\Controllers\Companies\ContactsController@store')->name('contacts.store');
         Route::match(['post', 'put'], '/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@update')->name('contacts.update');
         Route::get('/edit/{id}', 'App\Http\Controllers\Companies\ContactsController@edit')->name('contacts.edit');
+        Route::post('/json/store', 'App\Http\Controllers\Companies\ContactsController@storeJson')->name('contacts.json.store');
+        Route::post('/json/update/{contact}', 'App\Http\Controllers\Companies\ContactsController@updateJson')->name('contacts.json.update');
     });
 
-    Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'check.factory']], function () {
-        //leads
+    Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->name('leads');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show'); 
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\LeadsController@update')->name('leads.update');
         Route::get('/store/opportunity/{id}', 'App\Http\Controllers\Workflow\LeadsController@storeOpportunity')->name('leads.store.opportunity');
+
+        // JSON endpoints for React LeadsIndex
+        Route::get('/json/list',                  'App\Http\Controllers\Workflow\LeadsController@listJson')->name('leads.json.list');
+        Route::get('/json/kanban',                'App\Http\Controllers\Workflow\LeadsController@kanbanJson')->name('leads.json.kanban');
+        Route::put('/json/kanban/{id}/move',      'App\Http\Controllers\Workflow\LeadsController@kanbanMoveJson')->name('leads.json.kanban-move');
+        Route::post('/json/store',                'App\Http\Controllers\Workflow\LeadsController@storeJson')->name('leads.json.store');
+        Route::get('/json/select-data',           'App\Http\Controllers\Workflow\LeadsController@selectDataJson')->name('leads.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\LeadsController@addressesJson')->name('leads.json.addresses');
+        Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\LeadsController@contactsJson')->name('leads.json.contacts');
+
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show');
     });
 
-    Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\OpportunitiesController@index')->name('opportunities');
-        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@update')->name('opportunities.update');
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@storeQuote')->name('opportunities.store.quote');
-    
-         // store routes
+
+        // JSON endpoints for React OpportunitiesIndex
+        Route::get('/json/list',                  'App\Http\Controllers\Workflow\OpportunitiesController@listJson')->name('opportunities.json.list');
+        Route::get('/json/kanban',                'App\Http\Controllers\Workflow\OpportunitiesController@kanbanJson')->name('opportunities.json.kanban');
+        Route::put('/json/kanban/{id}/move',      'App\Http\Controllers\Workflow\OpportunitiesController@kanbanMoveJson')->name('opportunities.json.kanban-move');
+        Route::post('/json/store',                'App\Http\Controllers\Workflow\OpportunitiesController@storeJson')->name('opportunities.json.store');
+        Route::get('/json/select-data',           'App\Http\Controllers\Workflow\OpportunitiesController@selectDataJson')->name('opportunities.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\OpportunitiesController@addressesJson')->name('opportunities.json.addresses');
+        Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\OpportunitiesController@contactsJson')->name('opportunities.json.contacts');
+
+        Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
+
+        // store routes
         Route::group(['prefix' => 'store'], function () {
             Route::post('/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@store')->name('opportunities.store.activity');
             Route::post('/event/{id}', 'App\Http\Controllers\Workflow\OpportunityEventsController@store')->name('opportunities.store.event');
         });
-    
+
         // update routes
         Route::group(['prefix' => 'update'], function () {
             Route::post('/activity/{id}', 'App\Http\Controllers\Workflow\OpportunityActivitiesController@update')->name('opportunities.update.activity');
@@ -138,11 +196,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'quotes', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         //quote
-        Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes'); 
-        Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\QuotesController@index')->name('quotes');
+        Route::get('/lines', 'App\Http\Controllers\Workflow\QuoteLinesController@index')->name('quotes-lines');
+        Route::get('/lines/json', 'App\Http\Controllers\Workflow\QuoteLinesController@listJson')->name('quote-lines.json.list');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\QuotesController@update')->name('quotes.update');
+        // JSON API for React QuotesIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\QuotesController@listJson')->name('quotes.json.list');
+        Route::post('/json/store', 'App\Http\Controllers\Workflow\QuotesController@storeJson')->name('quotes.json.store');
+        Route::get('/json/select-data', 'App\Http\Controllers\Workflow\QuotesController@selectDataJson')->name('quotes.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\QuotesController@addressesJson')->name('quotes.json.addresses');
+        Route::get('/json/contacts/{companyId}', 'App\Http\Controllers\Workflow\QuotesController@contactsJson')->name('quotes.json.contacts');
+        Route::post('/json/address', 'App\Http\Controllers\Workflow\QuotesController@storeAddressJson')->name('quotes.json.address.store');
+        Route::post('/json/contact', 'App\Http\Controllers\Workflow\QuotesController@storeContactJson')->name('quotes.json.contact.store');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->name('quotes.show');
         //quote line
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');
@@ -157,11 +224,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
     
 
-    Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'orders', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         //order
-        Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders'); 
-        Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines'); 
+        Route::get('/', 'App\Http\Controllers\Workflow\OrdersController@index')->name('orders');
+        Route::get('/lines', 'App\Http\Controllers\Workflow\OrderLinesController@index')->name('orders-lines');
+        Route::get('/lines/json', 'App\Http\Controllers\Workflow\OrderLinesController@listJson')->name('order-lines.json.list');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\OrdersController@update')->name('orders.update');
+        // JSON endpoints for React OrdersIndex
+        Route::get('/json/list',                  'App\Http\Controllers\Workflow\OrdersController@listJson')->name('orders.json.list');
+        Route::post('/json/store',                'App\Http\Controllers\Workflow\OrdersController@storeJson')->name('orders.json.store');
+        Route::get('/json/select-data',           'App\Http\Controllers\Workflow\OrdersController@selectDataJson')->name('orders.json.select-data');
+        Route::get('/json/addresses/{companyId}', 'App\Http\Controllers\Workflow\OrdersController@addressesJson')->name('orders.json.addresses');
+        Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\OrdersController@contactsJson')->name('orders.json.contacts');
+        Route::post('/json/address/store',        'App\Http\Controllers\Workflow\OrdersController@storeAddressJson')->name('orders.json.address.store');
+        Route::post('/json/contact/store',        'App\Http\Controllers\Workflow\OrdersController@storeContactJson')->name('orders.json.contact.store');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->name('orders.show');
         Route::post('/{order}/calculate-task-dates', 'App\Http\Controllers\Workflow\OrdersController@calculateTaskDates')->name('orders.calculate.task.dates');
         //order line
@@ -179,7 +255,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{order}/site/{site}/implantation/{implantation}', 'App\Http\Controllers\Workflow\OrderSiteController@destroyImplantation')->name('orders.site.implantation.destroy');
     });
 
-    Route::group(['prefix' => 'pre-orders', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'pre-orders', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\PreOrdersController@index')->name('pre-orders.index');
         Route::post('/upload', 'App\Http\Controllers\Workflow\PreOrdersController@upload')->name('pre-orders.upload');
         Route::get('/pdf/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@pdf')->name('pre-orders.pdf');
@@ -191,36 +267,47 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{preOrder}/convert', 'App\Http\Controllers\Workflow\PreOrdersController@convert')->name('pre-orders.convert');
     });
 
-    Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'check.factory']], function () {
-        Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys'); 
-        Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request'); 
+    Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\DeliverysController@index')->name('deliverys');
+        Route::get('/request', 'App\Http\Controllers\Workflow\DeliverysController@request')->name('deliverys-request');
+        // JSON API for React DeliverysRequest
+        Route::get('/request/company-data', 'App\Http\Controllers\Workflow\DeliverysController@requestCompanyData')->name('deliverys-request.company-data');
+        Route::post('/request/store', 'App\Http\Controllers\Workflow\DeliverysController@storeDeliveryNoteApi')->name('deliverys-request.store');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
+        // JSON API for React DeliverysIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
         Route::post('{id}/packaging/store/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsStore')->name('deliverys.packagings.store');
         Route::post('{id}/packaging/update/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsUpdate')->name('deliverys.packagings.update');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->name('deliverys.show');
     });
 
-    Route::group(['prefix' => 'returns', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'returns', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\\Http\\Controllers\\Workflow\\ReturnsController@index')->name('returns');
         Route::get('/{return}', 'App\\Http\\Controllers\\Workflow\\ReturnsController@show')->name('returns.show');
     });
 
-    Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'check.factory']], function () {
-        Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices'); 
-        Route::get('/store/delevery/{id}', 'App\Http\Controllers\Workflow\InvoicesController@storeFromDelevery')->name('invoices.store.from.delivery'); 
-        Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->name('invoices-request'); 
+    Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Workflow\InvoicesController@index')->name('invoices');
+        Route::get('/store/delevery/{id}', 'App\Http\Controllers\Workflow\InvoicesController@storeFromDelevery')->name('invoices.store.from.delivery');
+        Route::get('/request', 'App\Http\Controllers\Workflow\InvoicesController@request')->name('invoices-request');
+        // JSON API for React InvoicesRequest
+        Route::get('/request/lines', 'App\Http\Controllers\Workflow\InvoicesController@requestLines')->name('invoices-request.lines');
+        Route::post('/request/store', 'App\Http\Controllers\Workflow\InvoicesController@storeInvoiceApi')->name('invoices-request.store');
+        Route::post('/request/generate-all', 'App\Http\Controllers\Workflow\InvoicesController@generateInvoicesForCompanyApi')->name('invoices-request.generate-all');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
+        // JSON endpoint for React InvoicesIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
     });
 
-    Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\CreditNoteController@index')->name('credit-notes');
         Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice'); 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@show')->name('credit.notes.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@update')->name('credit.notes.update');
     });
 
-    Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         
         Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesRFQController@request')->name('purchases.request'); 
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesRFQController@quotation')->name('purchases.quotation'); 
@@ -251,11 +338,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/invoice/{id}', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@showInvoice')->middleware(['auth'])->name('purchase.invoices.show');
     });
 
-    Route::group(['prefix' => 'print', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'print', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/order/manufacturing/{Document}', 'App\Http\Controllers\PrintController@printOrderManufacturingInstruction')->name('print.manufacturing.instruction');
     });
 
-    Route::group(['prefix' => 'pdf', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'pdf', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/quote/{Document}', 'App\Http\Controllers\PrintController@getQuotePdf')->name('pdf.quote');
         Route::get('/order/{Document}', 'App\Http\Controllers\PrintController@getOrderPdf')->name('pdf.order');
         Route::get('/order/Confirm/{Document}', 'App\Http\Controllers\PrintController@getOrderConfirmPdf')->name('pdf.orders.confirm');
@@ -269,7 +356,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/nc/{Document}', 'App\Http\Controllers\PrintController@getNCPdf')->name('pdf.nc');
     });
 
-    Route::group(['prefix' => 'accounting', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'accounting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Accounting\AccountingController@index')->middleware(['auth'])->name('accounting');
         Route::get('/payment-conditions', 'App\Http\Controllers\Accounting\AccountingController@paymentConditions')->name('accounting.paymentConditions');
@@ -310,7 +397,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\\Http\\Controllers\\AssetController@index')->name('assets');
         Route::get('/create', 'App\\Http\\Controllers\\AssetController@create')->name('assets.create');
         Route::post('/create', 'App\\Http\\Controllers\\AssetController@store')->name('assets.store');
@@ -320,7 +407,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/{id}', 'App\\Http\\Controllers\\AssetController@destroy')->name('assets.destroy');
     });
 
-    Route::group(['prefix' => 'gmao', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'gmao', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/dashboard', 'App\\Http\\Controllers\\Maintenance\\DashboardController')->name('gmao.dashboard');
         Route::get('/work-orders', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@index')->name('gmao.work-orders.index');
         Route::get('/work-orders/create', 'App\\Http\\Controllers\\Maintenance\\WorkOrderController@create')->name('gmao.work-orders.create');
@@ -339,7 +426,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/maintenance-plans/{id}/generate-work-order', 'App\\Http\\Controllers\\Maintenance\\MaintenancePlanController@generateWorkOrder')->name('gmao.maintenance-plans.generate-work-order');
     });
 
-    Route::group(['prefix' => 'times', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'times', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Times\TimesController@index')->name('times');
     
@@ -368,7 +455,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'products', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'products', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         //index product route
         Route::get('/', 'App\Http\Controllers\Products\ProductsController@index')->name('products');
 
@@ -383,6 +470,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/drawing', 'App\Http\Controllers\Products\ProductsController@StoreDrawing')->name('products.update.drawing');
         Route::post('/stl', 'App\Http\Controllers\Products\ProductsController@StoreStl')->name('products.update.stl');
         Route::post('/svg', 'App\Http\Controllers\Products\ProductsController@StoreSVG')->name('products.update.svg');
+
+        // JSON API endpoints for React ProductsIndex
+        Route::get('/json/list', 'App\Http\Controllers\Products\ProductsController@listJson')->name('products.json.list');
+        Route::post('/json/store', 'App\Http\Controllers\Products\ProductsController@storeJson')->name('products.json.store');
+        Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
 
         Route::group(['prefix' => '{product}/customer-price-list'], function () {
             Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
@@ -437,7 +529,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->name('products.show');
     });
 
-    Route::group(['prefix' => 'task', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'task', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::put('/sync', 'App\Http\Controllers\Planning\TaskController@sync')->name('task.sync');
         Route::get('/{id_type}/{id_page}/show/{id_line}', 'App\Http\Controllers\Planning\TaskController@manage')->name('task.manage');
         Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->name('task.delete');
@@ -446,7 +538,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 
-    Route::group(['prefix' => 'production', 'middleware' => ['auth', 'check.factory', 'check.task.status']], function () {
+    Route::group(['prefix' => 'production', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu');
         Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->name('production.task');
@@ -457,6 +549,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
         
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
+    });
+
+    Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::get('/', 'App\Http\Controllers\Planning\NestingController@index')->name('nesting.index');
+        Route::get('/document', 'App\Http\Controllers\Planning\NestingController@document')->name('nesting.document');
+        Route::get('/parts', 'App\Http\Controllers\Planning\NestingController@parts')->name('nesting.parts');
     });
 
     Route::group(['prefix' => 'admin'], function () {
@@ -497,7 +595,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     });
 
-    Route::group(['prefix' => 'human-resources', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'human-resources', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Admin\HumanResourcesController@index')->name('human.resources');
         Route::get('/index', 'App\Http\Controllers\Admin\HumanResourcesController@index')->name('human.resources.index');
@@ -551,7 +649,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'quality', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
         Route::get('/inspection-projects', 'App\Http\Controllers\Inspection\InspectionProjectController@indexView')->name('quality.inspection.projects');
@@ -611,7 +709,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Inspection\InspectionProjectController@index')->name('inspection.projects.index');
         Route::post('/', 'App\Http\Controllers\Inspection\InspectionProjectController@store')->name('inspection.projects.store');
         Route::get('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show')->name('inspection.projects.show');
@@ -627,7 +725,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}/export/xlsx', 'App\Http\Controllers\Inspection\InspectionProjectController@exportXlsx')->name('inspection.projects.export.xlsx');
     });
 
-    Route::group(['prefix' => 'methods', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'methods', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         // Index route
         Route::get('/', 'App\Http\Controllers\Methods\MethodsController@index')->name('methods');
     
@@ -694,7 +792,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         });
     });
 
-    Route::group(['prefix' => 'osh', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'osh', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::group(['prefix' => 'conformities'], function () {
             Route::get('/', 'App\Http\Controllers\OSH\ConformitiesController@index')->name('osh.conformities');
             Route::post('/create', 'App\Http\Controllers\OSH\ConformitiesController@store')->name('osh.conformities.create');
@@ -753,10 +851,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::get('/production-trace/{serialNumber}', [ProductionTraceController::class, 'show'])->name('production.trace.show');
 
     Route::get('/production-trace/{serial}', 'App\Http\Controllers\ProductionTraceController@show')
-        ->middleware(['auth', 'check.factory'])
+        ->middleware(['auth', 'verified', 'has.role', 'check.factory'])
         ->name('production.trace');
 
-    Route::group(['prefix' => 'energy-consumptions', 'middleware' => ['auth', 'check.factory']], function () {
+    Route::group(['prefix' => 'energy-consumptions', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', [EnergyConsumptionController::class, 'index'])->name('energy-consumptions.index');
         Route::post('/', [EnergyConsumptionController::class, 'store'])->name('energy-consumptions.store');
         Route::get('/{id}', [EnergyConsumptionController::class, 'show'])->name('energy-consumptions.show');
@@ -772,3 +870,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 });
+
+    Route::prefix('api/spreadsheet/data')->middleware(['auth', 'verified', 'has.role', 'check.factory', 'permission:spreadsheet-menu'])->name('spreadsheet.data.')->group(function () {
+        Route::get('/stock/{reference}', [SpreadsheetDataController::class, 'stock'])->name('stock');
+        Route::get('/orders', [SpreadsheetDataController::class, 'orders'])->name('orders');
+        Route::get('/revenue', [SpreadsheetDataController::class, 'revenue'])->name('revenue');
+        Route::get('/production/kpis', [SpreadsheetDataController::class, 'productionKpis'])->name('productionKpis');
+        Route::get('/orders/late', [SpreadsheetDataController::class, 'lateOrders'])->name('lateOrders');
+        Route::get('/orders/summary', [SpreadsheetDataController::class, 'ordersSummary'])->name('ordersSummary');
+        Route::get('/context', [SpreadsheetDataController::class, 'context'])->name('context');
+        Route::get('/customers', [SpreadsheetDataController::class, 'customers'])->name('customers');
+        Route::get('/products', [SpreadsheetDataController::class, 'products'])->name('products');
+    });
