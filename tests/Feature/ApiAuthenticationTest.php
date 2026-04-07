@@ -25,6 +25,8 @@ class ApiAuthenticationTest extends TestCase
             ['GET', '/api/companies'],
             ['GET', '/api/exports/sales-orders'],
             ['GET', '/api/collaboration/whiteboards'],
+            ['GET', '/api/integrations/qonto/connect'],
+            ['POST', '/api/integrations/qonto/settings'],
         ];
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ExportSalesOrderController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardController as ApiWhiteboardController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
+use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,18 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/{whiteboard}/files', [WhiteboardFileController::class, 'index'])->name('files.index');
         Route::post('/{whiteboard}/files', [WhiteboardFileController::class, 'store'])->name('files.store');
+    });
+
+
+    Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->group(function () {
+        Route::get('/connect', [QontoIntegrationController::class, 'connect'])->name('connect');
+        Route::get('/callback', [QontoIntegrationController::class, 'callback'])->name('callback');
+        Route::post('/clients/sync', [QontoIntegrationController::class, 'sync'])->name('clients.sync');
+        Route::post('/clients/reconcile', [QontoIntegrationController::class, 'reconcile'])->name('clients.reconcile');
+        Route::post('/clients/{wemClientId}/push', [QontoIntegrationController::class, 'push'])->name('clients.push');
+        Route::post('/clients/{reviewId}/resolve', [QontoIntegrationController::class, 'resolve'])->name('clients.resolve');
+        Route::post('/settings', [QontoIntegrationController::class, 'settings'])->name('settings');
+        Route::post('/disconnect', [QontoIntegrationController::class, 'disconnect'])->name('disconnect');
     });
 
     // inspection...
