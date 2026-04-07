@@ -313,7 +313,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesRFQController@quotation')->name('purchases.quotation'); 
         Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->name('purchases'); 
         
-        Route::post('/', 'App\Http\Controllers\Purchases\PurchasesController@storeBankPurchase')->name('purchases.store'); 
+        Route::post('/', 'App\Http\Controllers\Purchases\PurchasesController@storeBankPurchase')->name('purchases.store');
+
+        // JSON endpoints for React PurchasesIndex
+        Route::get('/json/list',                'App\Http\Controllers\Purchases\PurchasesController@listJson')->name('purchases.json.list');
+        Route::post('/json/store',              'App\Http\Controllers\Purchases\PurchasesController@storeJson')->name('purchases.json.store');
+        Route::get('/json/select-data',         'App\Http\Controllers\Purchases\PurchasesController@selectDataJson')->name('purchases.json.select-data');
+        Route::get('/json/addresses/{companyId}','App\Http\Controllers\Purchases\PurchasesController@addressesJson')->name('purchases.json.addresses');
+        Route::get('/json/contacts/{companyId}', 'App\Http\Controllers\Purchases\PurchasesController@contactsJson')->name('purchases.json.contacts');
+        Route::post('/json/address',            'App\Http\Controllers\Purchases\PurchasesController@storeAddressJson')->name('purchases.json.address.store');
+        Route::post('/json/contact',            'App\Http\Controllers\Purchases\PurchasesController@storeContactJson')->name('purchases.json.contact.store');
+
         Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@waintingReceipt')->name('purchases.wainting.receipt'); 
         Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receipt')->name('purchases.receipt'); 
         Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@waintingInvoice')->name('purchases.wainting.invoice'); 

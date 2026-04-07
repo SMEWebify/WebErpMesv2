@@ -12,6 +12,7 @@ import OpportunitiesIndex from './components/OpportunitiesIndex.jsx';
 import LeadsIndex from './components/LeadsIndex.jsx';
 import CompaniesIndex from './components/CompaniesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
+import PurchasesIndex from './components/PurchasesIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
 import DeliverysRequest from './components/DeliverysRequest.jsx';
 import InvoicesRequest from './components/InvoicesRequest.jsx';
@@ -199,6 +200,31 @@ function mountOrdersIndex() {
             endpoints:    parse('endpoints')    ?? {},
             trans:        parse('trans')        ?? {},
             companieId:   parse('companieId')   ?? null,
+        })
+    );
+}
+
+function mountPurchasesIndex() {
+    const element = document.getElementById('purchases-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesIndex, {
+            kpi:                   parse('kpi')                   ?? {},
+            chartData:             parse('chart')                 ?? {},
+            topSuppliers:          parse('topSuppliers')          ?? [],
+            fastestSuppliers:      parse('fastestSuppliers')      ?? [],
+            slowestSuppliers:      parse('slowestSuppliers')      ?? [],
+            compositeIndicators:   parse('compositeIndicators')   ?? [],
+            suppliersToRequalify:  parse('suppliersToRequalify')  ?? [],
+            topProducts:           parse('topProducts')           ?? [],
+            endpoints:             parse('endpoints')             ?? {},
+            trans:                 parse('trans')                 ?? {},
+            companieId:            parse('companieId')            ?? null,
         })
     );
 }
@@ -450,6 +476,7 @@ mountQuotesIndex();
 mountLeadsIndex();
 mountOpportunitiesIndex();
 mountOrdersIndex();
+mountPurchasesIndex();
 mountQuoteLinesIndex();
 mountOrderLinesIndex();
 mountDeliverysIndex();
