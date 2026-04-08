@@ -23,6 +23,7 @@ use App\Notifications\QuoteNotification;
 use App\Notifications\CompanieNotification;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Companies\CompaniesAddresses;
+use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Http\Requests\Companies\UpdateCompanieRequest;
@@ -299,6 +300,8 @@ class CompaniesController extends Controller
             ->take(20)
             ->get();
 
+        $documentDefaults = CompanyDocumentDefault::forCompany($id->id);
+
         return view('companies/companies-show', compact('Companie',
                                                         'userSelect',
                                                         'previousUrl',
@@ -316,7 +319,8 @@ class CompaniesController extends Controller
                                                         'needsRequalification',
                                                         'nextReviewSoon',
                                                         'daysUntilNextReview',
-                                                        'purchasesForEvaluation',));
+                                                        'purchasesForEvaluation',
+                                                        'documentDefaults',));
     }
 
     /**

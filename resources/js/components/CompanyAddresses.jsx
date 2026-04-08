@@ -21,6 +21,37 @@ async function apiFetch(url, body) {
 }
 
 // ---------------------------------------------------------------------------
+// Document-type badge config
+// ---------------------------------------------------------------------------
+
+const DOC_TYPES = [
+    { key: 'quote',    label: 'DEV', color: '#007bff' },
+    { key: 'order',    label: 'CMD', color: '#28a745' },
+    { key: 'delivery', label: 'BL',  color: '#fd7e14' },
+    { key: 'invoice',  label: 'FAC', color: '#dc3545' },
+];
+
+function DocBadge({ type, active }) {
+    const cfg = DOC_TYPES.find(d => d.key === type);
+    if (!cfg) return null;
+    return (
+        <span style={{
+            display: 'inline-block',
+            padding: '1px 5px',
+            borderRadius: '3px',
+            fontSize: '0.7rem',
+            fontWeight: 700,
+            marginRight: '2px',
+            backgroundColor: active ? cfg.color : '#e9ecef',
+            color: active ? '#fff' : '#adb5bd',
+            border: `1px solid ${active ? cfg.color : '#dee2e6'}`,
+        }}>
+            {cfg.label}
+        </span>
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Modal overlay — rendered via portal to avoid AdminLTE overflow clipping
 // ---------------------------------------------------------------------------
 
@@ -93,12 +124,22 @@ function Modal({ title, icon, onClose, children }) {
 const EMPTY = {
     ordre: '', label: '', adress: '', zipcode: '',
     city: '', province: '', country: '', number: '', mail: '', default: false,
+    docTypes: [],
 };
 
 function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
     const [form, setForm] = useState({ ...EMPTY, ...initial });
 
     const set = field => e => setForm(f => ({ ...f, [field]: e.target.value }));
+
+    const toggleDocType = key => {
+        setForm(f => ({
+            ...f,
+            docTypes: f.docTypes.includes(key)
+                ? f.docTypes.filter(t => t !== key)
+                : [...f.docTypes, key],
+        }));
+    };
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -189,12 +230,45 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
                     </div>
                 </div>
             </div>
+
+            <hr />
+
+            {/* Global default */}
             <div className="custom-control custom-switch mb-3">
                 <input type="checkbox" className="custom-control-input" id={`addr-default-${formId}`}
                     checked={!!form.default}
                     onChange={e => setForm(f => ({ ...f, default: e.target.checked }))} />
                 <label className="custom-control-label" htmlFor={`addr-default-${formId}`}>{trans.by_default}</label>
             </div>
+
+            {/* Per-document-type defaults */}
+            <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '0.4rem' }}>{trans.default_by_doc ?? 'Adresse par défaut pour :'}</label>
+                <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                    {DOC_TYPES.map(({ key, label, color }) => {
+                        const checked = form.docTypes.includes(key);
+                        return (
+                            <div key={key} className="custom-control custom-switch">
+                                <input
+                                    type="checkbox"
+                                    className="custom-control-input"
+                                    id={`addr-doc-${key}-${formId}`}
+                                    checked={checked}
+                                    onChange={() => toggleDocType(key)}
+                                />
+                                <label
+                                    className="custom-control-label"
+                                    htmlFor={`addr-doc-${key}-${formId}`}
+                                    style={{ fontWeight: checked ? 600 : 400, color: checked ? color : undefined }}
+                                >
+                                    {label}
+                                </label>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             <button type="submit" className="btn btn-info btn-flat" disabled={saving}>
                 <i className={`fas ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-1`} />
                 {saving ? trans.saving : trans.save}
@@ -204,26 +278,66 @@ function AddressForm({ initial, onSubmit, saving, errors, trans, formId }) {
 }
 
 // ---------------------------------------------------------------------------
+// Derive which doc types an address is default for, from the global defaults map
+// ---------------------------------------------------------------------------
+
+function docTypesForAddress(addressId, docDefaults) {
+    return DOC_TYPES
+        .filter(({ key }) => docDefaults[key]?.address_id === addressId)
+        .map(({ key }) => key);
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function CompanyAddresses({ initialAddresses, storeUrl, updateBaseUrl, companieId, trans }) {
-    const [addresses, setAddresses]   = useState(initialAddresses ?? []);
-    const [editItem, setEditItem]     = useState(null);
+export default function CompanyAddresses({
+    initialAddresses, storeUrl, updateBaseUrl, companieId, trans,
+    initialDocDefaults, syncAddressBaseUrl,
+}) {
+    const [addresses, setAddresses]       = useState(initialAddresses ?? []);
+    const [docDefaults, setDocDefaults]   = useState(initialDocDefaults ?? {});
+    const [editItem, setEditItem]         = useState(null);
     const [createErrors, setCreateErrors] = useState({});
     const [editErrors, setEditErrors]     = useState({});
-    const [creating, setCreating]     = useState(false);
-    const [updating, setUpdating]     = useState(false);
+    const [creating, setCreating]         = useState(false);
+    const [updating, setUpdating]         = useState(false);
+
+    const openEdit = (a) => {
+        setEditItem({ ...a, docTypes: docTypesForAddress(a.id, docDefaults) });
+        setEditErrors({});
+    };
+
+    const syncDocTypes = async (addressId, docTypes) => {
+        if (!syncAddressBaseUrl) return;
+        const url = syncAddressBaseUrl.replace('__ID__', addressId);
+        await apiFetch(url, { document_types: docTypes });
+
+        setDocDefaults(prev => {
+            const next = { ...prev };
+            for (const { key } of DOC_TYPES) {
+                next[key] = {
+                    ...next[key],
+                    address_id: docTypes.includes(key) ? addressId : (next[key]?.address_id === addressId ? null : next[key]?.address_id),
+                };
+            }
+            return next;
+        });
+    };
 
     const handleCreate = async (form) => {
         setCreating(true);
         setCreateErrors({});
         try {
-            const created = await apiFetch(storeUrl, { ...form, companies_id: companieId });
+            const { docTypes, ...addressData } = form;
+            const created = await apiFetch(storeUrl, { ...addressData, companies_id: companieId });
             setAddresses(a => {
                 const base = created.default ? a.map(x => ({ ...x, default: false })) : a;
                 return [...base, created];
             });
+            if (docTypes.length > 0) {
+                await syncDocTypes(created.id, docTypes);
+            }
         } catch (err) {
             if (err.errors) setCreateErrors(err.errors);
         } finally {
@@ -235,11 +349,13 @@ export default function CompanyAddresses({ initialAddresses, storeUrl, updateBas
         setUpdating(true);
         setEditErrors({});
         try {
-            const updated = await apiFetch(updateBaseUrl.replace('__ID__', editItem.id), form);
+            const { docTypes, ...addressData } = form;
+            const updated = await apiFetch(updateBaseUrl.replace('__ID__', editItem.id), addressData);
             setAddresses(a => a.map(x => {
                 if (x.id === updated.id) return updated;
                 return updated.default ? { ...x, default: false } : x;
             }));
+            await syncDocTypes(updated.id, docTypes);
             setEditItem(null);
         } catch (err) {
             if (err.errors) setEditErrors(err.errors);
@@ -271,40 +387,45 @@ export default function CompanyAddresses({ initialAddresses, storeUrl, updateBas
                                         <th style={thStyle}>{trans.country}</th>
                                         <th style={thStyle}>{trans.phone}</th>
                                         <th style={thStyle}>{trans.email}</th>
-                                        <th style={{ ...thStyle, width: '1px' }}>{trans.by_default}</th>
+                                        <th style={{ ...thStyle, minWidth: '100px' }}>{trans.by_default}</th>
                                         <th style={{ ...thStyle, width: '1px' }}></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {addresses.length === 0 ? (
                                         <tr><td colSpan="10" className="text-center text-muted py-3">{trans.no_data}</td></tr>
-                                    ) : addresses.map(a => (
-                                        <tr key={a.id}>
-                                            <td className="align-middle">{a.ordre}</td>
-                                            <td className="align-middle">{a.label}</td>
-                                            <td className="align-middle">{a.adress}</td>
-                                            <td className="align-middle">{a.zipcode}</td>
-                                            <td className="align-middle">{a.city}</td>
-                                            <td className="align-middle">{a.country}</td>
-                                            <td className="align-middle">{a.number}</td>
-                                            <td className="align-middle">{a.mail}</td>
-                                            <td className="align-middle text-center">
-                                                {!!a.default
-                                                    ? <i className="fas fa-check-circle text-success" />
-                                                    : <i className="fas fa-times-circle text-muted" />
-                                                }
-                                            </td>
-                                            <td className="py-1 align-middle" style={{ whiteSpace: 'nowrap' }}>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-xs btn-info"
-                                                    onClick={() => { setEditItem(a); setEditErrors({}); }}
-                                                >
-                                                    <i className="fas fa-pen" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    ) : addresses.map(a => {
+                                        const activeTypes = docTypesForAddress(a.id, docDefaults);
+                                        return (
+                                            <tr key={a.id}>
+                                                <td className="align-middle">{a.ordre}</td>
+                                                <td className="align-middle">{a.label}</td>
+                                                <td className="align-middle">{a.adress}</td>
+                                                <td className="align-middle">{a.zipcode}</td>
+                                                <td className="align-middle">{a.city}</td>
+                                                <td className="align-middle">{a.country}</td>
+                                                <td className="align-middle">{a.number}</td>
+                                                <td className="align-middle">{a.mail}</td>
+                                                <td className="align-middle">
+                                                    {!!a.default && (
+                                                        <i className="fas fa-check-circle text-success mr-1" title={trans.by_default} />
+                                                    )}
+                                                    {DOC_TYPES.map(({ key }) => (
+                                                        <DocBadge key={key} type={key} active={activeTypes.includes(key)} />
+                                                    ))}
+                                                </td>
+                                                <td className="py-1 align-middle" style={{ whiteSpace: 'nowrap' }}>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-xs btn-info"
+                                                        onClick={() => openEdit(a)}
+                                                    >
+                                                        <i className="fas fa-pen" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
