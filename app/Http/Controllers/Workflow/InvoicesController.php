@@ -440,9 +440,9 @@ class InvoicesController extends Controller
     public function storeFromDelevery($id)
     {
         $LastInvoice = Invoices::latest()->first();
-        $nextInvoiceId = $LastInvoice ? $LastInvoice->id + 1 : 0;
-        $code = "IN-" . $nextInvoiceId;
-        $label = "IN-" . $nextInvoiceId;
+        $invoiceId = $LastInvoice ? $LastInvoice->id : 0;
+        $code = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
+        $label = $code;
 
         $DeliveryData = Deliverys::find($id);
 

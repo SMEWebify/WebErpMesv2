@@ -29,25 +29,31 @@ class DocumentCodeGenerator
         $template = $templateModel?->template ?? $this->defaultTemplate;
         $resetPeriod = $templateModel?->reset_period ?? 'none';
 
-        $id = $this->resolveNextSequence($documentType, $resetPeriod, $lastId);
+        $resetMonth = (int) ($templateModel?->yearly_reset_month ?? 1);
+        $resetDay   = (int) ($templateModel?->yearly_reset_day ?? 1);
+        $idPadding  = (int) ($templateModel?->id_padding ?? 0);
+
+        $id = $this->resolveNextSequence($documentType, $resetPeriod, $lastId, $resetMonth, $resetDay);
+
+        $formattedId = $idPadding > 0 ? str_pad((string) $id, $idPadding, '0', STR_PAD_LEFT) : (string) $id;
 
         // Replace placeholders with dynamic values
         $code = str_replace('{year}', Carbon::now()->format('Y'), $template);
         $code = str_replace('{month}', Carbon::now()->format('m'), $code);
         $code = str_replace('{day}', Carbon::now()->format('d'), $code);
-        $code = str_replace('{id}', $id, $code);
+        $code = str_replace('{id}', $formattedId, $code);
         $code = str_replace('{type}', strtoupper($documentType), $code);
 
         return $code;
     }
 
-    protected function resolveNextSequence(string $documentType, string $resetPeriod, ?int $lastId): int
+    protected function resolveNextSequence(string $documentType, string $resetPeriod, ?int $lastId, int $resetMonth = 1, int $resetDay = 1): int
     {
-        if (!in_array($resetPeriod, ['daily', 'weekly', 'monthly', 'none'], true)) {
+        if (!\in_array($resetPeriod, ['daily', 'weekly', 'monthly', 'yearly', 'none'], true)) {
             $resetPeriod = 'none';
         }
 
-        $periodKey = $this->buildPeriodKey($resetPeriod);
+        $periodKey = $this->buildPeriodKey($resetPeriod, $resetMonth, $resetDay);
 
         return DB::transaction(function () use ($documentType, $periodKey, $lastId, $resetPeriod) {
             $counter = DB::table('document_code_counters')
@@ -87,15 +93,27 @@ class DocumentCodeGenerator
         });
     }
 
-    protected function buildPeriodKey(string $resetPeriod): string
+    protected function buildPeriodKey(string $resetPeriod, int $resetMonth = 1, int $resetDay = 1): string
     {
         $now = Carbon::now();
 
         return match ($resetPeriod) {
-            'daily' => $now->format('Y-m-d'),
-            'weekly' => sprintf('%s-W%02d', $now->isoWeekYear, $now->isoWeek),
+            'daily'   => $now->format('Y-m-d'),
+            'weekly'  => \sprintf('%s-W%02d', $now->isoWeekYear, $now->isoWeek),
             'monthly' => $now->format('Y-m'),
-            default => 'global',
+            'yearly'  => $this->buildFiscalYearKey($now, $resetMonth, $resetDay),
+            default   => 'global',
         };
+    }
+
+    protected function buildFiscalYearKey(Carbon $now, int $month, int $day): string
+    {
+        $fiscalStart = Carbon::create($now->year, $month, $day, 0, 0, 0);
+
+        if ($now->lt($fiscalStart)) {
+            $fiscalStart->subYear();
+        }
+
+        return $fiscalStart->format('Y-m-d');
     }
 }
