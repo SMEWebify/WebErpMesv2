@@ -5,6 +5,6 @@
         </div>
     </x-slot>
     @foreach ($AccountingConditionSelect as $item)
-        <option value="{{ $item->id }}" @if($item->id == $accountingPaymentConditionsId ) Selected @endif >{{ $item->code }} - {{ $item->label }}</option>
+        <option value="{{ $item->id }}" @if($item->id == $accountingPaymentConditionsId ) Selected @endif >{{ $item->label }}</option>
     @endforeach
 </x-adminlte-select>

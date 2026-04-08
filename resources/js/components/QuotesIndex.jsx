@@ -1276,7 +1276,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                                 <select className="form-control" value={form.accounting_payment_conditions_id} onChange={set('accounting_payment_conditions_id')}>
                                                     <option value="">—</option>
                                                     {selectData.payment_conditions.map(x => (
-                                                        <option key={x.id} value={x.id}>{x.code} — {x.label}</option>
+                                                        <option key={x.id} value={x.id}>{x.label}</option>
                                                     ))}
                                                 </select>
                                                 {fieldError('accounting_payment_conditions_id')}
@@ -1286,7 +1286,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                                 <select className="form-control" value={form.accounting_payment_methods_id} onChange={set('accounting_payment_methods_id')}>
                                                     <option value="">—</option>
                                                     {selectData.payment_methods.map(x => (
-                                                        <option key={x.id} value={x.id}>{x.code} — {x.label}</option>
+                                                        <option key={x.id} value={x.id}>{x.label}</option>
                                                     ))}
                                                 </select>
                                                 {fieldError('accounting_payment_methods_id')}
@@ -1296,7 +1296,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                                 <select className="form-control" value={form.accounting_deliveries_id} onChange={set('accounting_deliveries_id')}>
                                                     <option value="">—</option>
                                                     {selectData.deliveries.map(x => (
-                                                        <option key={x.id} value={x.id}>{x.code} — {x.label}</option>
+                                                        <option key={x.id} value={x.id}>{x.label}</option>
                                                     ))}
                                                 </select>
                                                 {fieldError('accounting_deliveries_id')}
