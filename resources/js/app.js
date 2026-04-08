@@ -15,6 +15,7 @@ import OrdersIndex from './components/OrdersIndex.jsx';
 import PurchasesIndex from './components/PurchasesIndex.jsx';
 import QualityIndex from './components/QualityIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
+import CreditNotesIndex from './components/CreditNotesIndex.jsx';
 import DeliverysRequest from './components/DeliverysRequest.jsx';
 import InvoicesRequest from './components/InvoicesRequest.jsx';
 import InvoicesIndex from './components/InvoicesIndex.jsx';
@@ -318,6 +319,23 @@ function mountDeliverysIndex() {
     );
 }
 
+function mountCreditNotesIndex() {
+    const element = document.getElementById('credit-notes-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(CreditNotesIndex, {
+            chartData: parse('chart')     ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 function mountInvoicesIndex() {
     const element = document.getElementById('invoices-index-app');
     if (!element) return;
@@ -505,6 +523,7 @@ mountPurchasesIndex();
 mountQuoteLinesIndex();
 mountOrderLinesIndex();
 mountDeliverysIndex();
+mountCreditNotesIndex();
 mountDeliverysRequest();
 mountInvoicesRequest();
 mountInvoicesIndex();

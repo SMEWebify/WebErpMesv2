@@ -302,7 +302,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\CreditNoteController@index')->name('credit-notes');
-        Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice'); 
+        Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice');
+        // JSON API for React CreditNotesIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\CreditNoteController@listJson')->name('credit-notes.json.list');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@show')->name('credit.notes.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@update')->name('credit.notes.update');
     });
