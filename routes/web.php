@@ -226,6 +226,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{quoteId}/lines/json/{id}/duplicate', 'App\Http\Controllers\Workflow\QuoteLinesController@duplicateLineJson')->name('quotes.lines.json.duplicate');
         Route::post('/{quoteId}/lines/json/{id}/move', 'App\Http\Controllers\Workflow\QuoteLinesController@moveLineJson')->name('quotes.lines.json.move');
         Route::post('/{quoteId}/lines/json/reorder', 'App\Http\Controllers\Workflow\QuoteLinesController@reorderJson')->name('quotes.lines.json.reorder');
+        Route::post('/{quoteId}/lines/json/store-order', 'App\Http\Controllers\Workflow\QuoteLinesController@storeOrderJson')->name('quotes.lines.json.store-order');
+        Route::post('/{quoteId}/lines/json/{id}/create-product', 'App\Http\Controllers\Workflow\QuoteLinesController@createProductJson')->name('quotes.lines.json.create-product');
+        Route::get('/{quoteId}/lines/json/{id}/tasks', 'App\Http\Controllers\Workflow\QuoteLinesController@tasksForLineJson')->name('quotes.lines.json.tasks');
+        Route::patch('/{quoteId}/lines/json/{id}/calculated-price', 'App\Http\Controllers\Workflow\QuoteLinesController@toggleCalculatedPriceJson')->name('quotes.lines.json.calculated-price');
         Route::get('/{idQuote}/lines/{id}/detail-edit', 'App\Http\Controllers\Workflow\QuoteLinesController@detailEdit')->name('quotes.lines.detail.edit');
         Route::post('/{id}/delivery-simulation', 'App\Http\Controllers\Workflow\QuotesController@simulateDelivery')->name('quotes.delivery.simulation');
         //Project estimate
