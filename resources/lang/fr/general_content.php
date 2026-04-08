@@ -10,7 +10,7 @@ return [
     'win_trans_key'                            => 'Gagné',
     'lost_trans_key'                           => 'Perdue',
     'closed_trans_key'                         => 'Fermée',
-    'obsolete_trans_key'                       => 'Obselète',
+    'obsolete_trans_key'                       => 'Obsolète',
     'started_trans_key'                        => 'Démarer',
     'planned_trans_key'                        => 'Prévue',
     'in_progress_trans_key'                    => 'En cours',
