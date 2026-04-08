@@ -332,6 +332,22 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
         })
         .slice(0, 30);
 
+    const resetFormForCreate = (nextOrdre) => {
+        const defaultUnit = selectData.units?.find((u) => u.default) ?? selectData.units?.[0];
+        const defaultVat  = selectData.vats?.find((v)  => v.default) ?? selectData.vats?.[0];
+        setForm({
+            ...EMPTY_FORM,
+            ordre:              nextOrdre,
+            methods_units_id:   defaultUnit?.id              ?? '',
+            accounting_vats_id: defaultVat?.id               ?? '',
+            discount:           selectData.customer_discount ?? 0,
+            delivery_date:      selectData.default_delivery  ?? '',
+        });
+        setProductSearch('');
+        setErrors({});
+        setPriceList([]);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isReadOnly) return;
@@ -346,7 +362,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             const data = await res.json();
             if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
             onSaved(data.line, isEdit);
-            onClose();
+            if (isEdit) {
+                onClose();
+            } else {
+                resetFormForCreate((data.line.ordre ?? form.ordre) + 1);
+            }
         } catch {
             setErrors({ _global: 'Erreur réseau' });
         } finally {
@@ -611,9 +631,13 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </button>
                         {!isReadOnly && (
                             <button type="submit" form="line-drawer-form" className="btn btn-sm btn-success" disabled={saving}>
-                                {saving
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</>
-                                    : <><i className="fas fa-save mr-1" />Enregistrer</>}
+                                {editingLine
+                                    ? saving
+                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</>
+                                        : <><i className="fas fa-save mr-1" />Enregistrer</>
+                                    : saving
+                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Ajout…</>
+                                        : <><i className="fas fa-plus mr-1" />Ajouter</>}
                             </button>
                         )}
                     </div>
