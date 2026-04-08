@@ -586,3 +586,7 @@ mountDeliverysRequest();
 mountInvoicesRequest();
 mountInvoicesIndex();
 mountProductsIndex();
+mountQualityIndex();
+mountQuoteLinesPage();
+mountLoadPlanningIndex();
+mountConstructionSitePage();
