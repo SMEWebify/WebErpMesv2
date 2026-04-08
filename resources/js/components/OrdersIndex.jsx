@@ -995,7 +995,7 @@ function CreateModal({ endpoints, trans, onClose }) {
                 setForm(f => ({
                     ...f,
                     code:   data.next_code_external ?? '',
-                    label:  data.next_code_external ?? '',
+                    label:  '-',
                     user_id: String(data.users?.[0]?.id ?? ''),
                     accounting_payment_conditions_id: String(data.payment_conditions?.find(c => c.default)?.id ?? data.payment_conditions?.[0]?.id ?? ''),
                     accounting_payment_methods_id:    String(data.payment_methods?.find(m => m.default)?.id    ?? data.payment_methods?.[0]?.id    ?? ''),
@@ -1009,7 +1009,7 @@ function CreateModal({ endpoints, trans, onClose }) {
     useEffect(() => {
         if (!selectData) return;
         const code = type === 1 ? (selectData.next_code_external ?? '') : (selectData.next_code_internal ?? '');
-        setForm(f => ({ ...f, code, label: code }));
+        setForm(f => ({ ...f, code, label: '-' }));
     }, [type, selectData]);
 
     useEffect(() => {

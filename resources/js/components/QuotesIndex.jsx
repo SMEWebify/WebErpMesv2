@@ -1132,7 +1132,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
             setForm(f => ({
                 ...f,
                 code:                             data.next_code ?? '',
-                label:                            data.next_code ?? '',
+                label:                            '-',
                 accounting_payment_conditions_id: data.payment_conditions.find(x => x.default)?.id ?? '',
                 accounting_payment_methods_id:    data.payment_methods.find(x => x.default)?.id ?? '',
                 accounting_deliveries_id:         data.deliveries.find(x => x.default)?.id ?? '',
@@ -1207,7 +1207,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                     <div className="card card-body">
                                         <div className="form-row">
                                             <div className="form-group col-md-4">
-                                                <label>{trans.external_id}</label>
+                                                <label>{trans.code}</label>
                                                 <input className="form-control" value={form.code} onChange={set('code')} />
                                                 {fieldError('code')}
                                             </div>
