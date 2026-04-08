@@ -331,6 +331,9 @@ return [
     'quote_info_trans_key'                     => 'Information du devis',
     'quote_line_trans_key'                     => 'Ligne du devis',
     'construction_site_trans_key'              => 'Chantier/agencement',
+    'modules_trans_key'                        => 'Modules',
+    'enable_trans_key'                         => 'Activer',
+    'construction_site_enable_help_trans_key'  => 'Affiche l\'onglet Chantier/agencement sur les devis.',
     'guest_page_trans_key'                     => 'Page publique',
     'lines_import_trans_key'                   => 'Importation de lignes',
 

@@ -36,7 +36,8 @@ class Factory extends Model
                             'add_delivery_delay_order', 
                             'public_link_cgv',
                             'add_cgv_to_pdf',
-                            'cgv_file'];
+                            'cgv_file',
+                            'enable_construction_site'];
 
 
     public function VAT()

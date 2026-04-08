@@ -545,6 +545,25 @@
                         </div>
                     </x-adminlte-card>
                     
+                    <x-adminlte-card title="{{ __('general_content.modules_trans_key') }}" theme="dark" collapsible maximizable>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ __('general_content.construction_site_trans_key') }}</label>
+                                    <div>
+                                        <input type="hidden" name="enable_construction_site" value="0">
+                                        <input type="checkbox" name="enable_construction_site" id="enable_construction_site" value="1" class="mr-2"
+                                            @if($Factory->enable_construction_site) checked @endif>
+                                        <label for="enable_construction_site" class="mb-0">
+                                            {{ __('general_content.enable_trans_key') }}
+                                        </label>
+                                        <small class="form-text text-muted">{{ __('general_content.construction_site_enable_help_trans_key') }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </x-adminlte-card>
+
                     <div class="modal-footer">
                         <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                     </div>

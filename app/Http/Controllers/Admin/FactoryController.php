@@ -100,6 +100,7 @@ class FactoryController extends Controller
         $Factory->task_barre_code =  $request->task_barre_code;
         $Factory->public_link_cgv =  $request->public_link_cgv;
         $Factory->add_cgv_to_pdf =  $request->add_cgv_to_pdf;
+        $Factory->enable_construction_site = $request->boolean('enable_construction_site');
 
         // Secure file validation https://github.com/SMEWebify/WebErpMesv2/issues/654
         $request->validate([

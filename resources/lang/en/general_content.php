@@ -331,6 +331,9 @@ return [
     'quote_info_trans_key'                     => 'Quote info',
     'quote_line_trans_key'                     => 'Quote lines',
     'construction_site_trans_key'              => 'Construction site/layout',
+    'modules_trans_key'                        => 'Modules',
+    'enable_trans_key'                         => 'Enable',
+    'construction_site_enable_help_trans_key'  => 'Shows the Construction site/layout tab on quotes.',
     'guest_page_trans_key'                     => 'Guest page',
     'lines_import_trans_key'                   => 'Lines Import',
 

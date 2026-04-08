@@ -322,6 +322,9 @@ return [
     'quote_info_trans_key'                     => '报价信息',
     'quote_line_trans_key'                     => '报价行',
     'construction_site_trans_key'              => '工地/布局',
+    'modules_trans_key'                        => '模块',
+    'enable_trans_key'                         => '启用',
+    'construction_site_enable_help_trans_key'  => '在报价单上显示工地/布局标签页。',
     'guest_page_trans_key'                     => '公开页面',
     'lines_import_trans_key'                   => '行导入',
 
