@@ -15,7 +15,8 @@ class PasswordResetLinkController extends Controller
      */
     public function create()
     {
-        return view('auth.forgot-password');
+        $view = config('branding.commercial') ? 'auth.commercial-forgot-password' : 'auth.forgot-password';
+        return view($view);
     }
 
     /**

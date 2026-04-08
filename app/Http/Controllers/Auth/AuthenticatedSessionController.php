@@ -17,7 +17,8 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
-        return view('auth.login');
+        $view = config('branding.commercial') ? 'auth.commercial-login' : 'auth.login';
+        return view($view);
     }
 
     /**

@@ -53,7 +53,8 @@ class RegisteredUserController extends Controller
      */
     public function create()
     {
-        return view('auth.register');
+        $view = config('branding.commercial') ? 'auth.commercial-register' : 'auth.register';
+        return view($view);
     }
 
     /**
