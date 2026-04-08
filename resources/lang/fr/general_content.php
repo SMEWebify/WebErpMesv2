@@ -1412,4 +1412,22 @@ return [
     'service_updated_success_trans_key' => 'Service mis à jour avec succès.',
     'tool_created_success_trans_key' => 'Outil créé avec succès.',
     'tool_updated_success_trans_key' => 'Outil mis à jour avec succès.',
+
+    /* ERROR PAGES */
+    'error_back_dashboard_trans_key'    => 'Retour au tableau de bord',
+    'error_404_title_trans_key'         => 'Page introuvable',
+    'error_404_heading_trans_key'       => 'Oups ! Page introuvable.',
+    'error_404_message_trans_key'       => 'La page que vous recherchez est introuvable. Vous pouvez <a href=":url">retourner au tableau de bord</a>.',
+    'error_403_title_trans_key'         => 'Accès refusé',
+    'error_403_heading_trans_key'       => 'Oups ! Accès refusé.',
+    'error_403_message_trans_key'       => 'Vous n\'avez pas les droits nécessaires pour accéder à cette page. Vous pouvez <a href=":url">retourner au tableau de bord</a>.',
+    'error_419_title_trans_key'         => 'Session expirée',
+    'error_419_heading_trans_key'       => 'Oups ! Session expirée.',
+    'error_419_message_trans_key'       => 'Votre session a expiré. Veuillez rafraîchir la page ou <a href=":url">retourner au tableau de bord</a>.',
+    'error_500_title_trans_key'         => 'Erreur serveur',
+    'error_500_heading_trans_key'       => 'Oups ! Erreur interne du serveur.',
+    'error_500_message_trans_key'       => 'Une erreur inattendue s\'est produite. Nous travaillons à la résoudre. En attendant, vous pouvez <a href=":url">retourner au tableau de bord</a>.',
+    'error_503_title_trans_key'         => 'Maintenance en cours',
+    'error_503_heading_trans_key'       => 'Nous revenons bientôt !',
+    'error_503_message_trans_key'       => 'Désolé pour la gêne occasionnée, nous effectuons une maintenance. Nous serons de retour en ligne très prochainement.',
 ];

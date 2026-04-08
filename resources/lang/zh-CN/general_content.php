@@ -1346,4 +1346,22 @@ return [
     'service_updated_success_trans_key' => 'Successfully updated service.',
     'tool_created_success_trans_key' => 'Successfully created tool.',
     'tool_updated_success_trans_key' => 'Successfully updated tool.',
+
+    /* ERROR PAGES */
+    'error_back_dashboard_trans_key'    => '返回仪表板',
+    'error_404_title_trans_key'         => '页面未找到',
+    'error_404_heading_trans_key'       => '哎呀！页面未找到。',
+    'error_404_message_trans_key'       => '我们找不到您要查找的页面。您可以<a href=":url">返回仪表板</a>。',
+    'error_403_title_trans_key'         => '访问被拒绝',
+    'error_403_heading_trans_key'       => '哎呀！访问被拒绝。',
+    'error_403_message_trans_key'       => '您没有访问此页面的权限。您可以<a href=":url">返回仪表板</a>。',
+    'error_419_title_trans_key'         => '会话已过期',
+    'error_419_heading_trans_key'       => '哎呀！会话已过期。',
+    'error_419_message_trans_key'       => '您的会话已过期。请刷新页面或<a href=":url">返回仪表板</a>。',
+    'error_500_title_trans_key'         => '服务器错误',
+    'error_500_heading_trans_key'       => '哎呀！内部服务器错误。',
+    'error_500_message_trans_key'       => '发生了意外错误。我们正在修复中。与此同时，您可以<a href=":url">返回仪表板</a>。',
+    'error_503_title_trans_key'         => '维护中',
+    'error_503_heading_trans_key'       => '我们很快就会回来！',
+    'error_503_message_trans_key'       => '抱歉给您带来不便，我们目前正在进行维护。我们很快就会恢复在线。',
 ];

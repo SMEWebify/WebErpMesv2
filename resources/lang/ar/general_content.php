@@ -1163,4 +1163,22 @@ return [
     'service_updated_success_trans_key' => 'Successfully updated service.',
     'tool_created_success_trans_key' => 'Successfully created tool.',
     'tool_updated_success_trans_key' => 'Successfully updated tool.',
+
+    /* ERROR PAGES */
+    'error_back_dashboard_trans_key'    => 'العودة إلى لوحة التحكم',
+    'error_404_title_trans_key'         => 'الصفحة غير موجودة',
+    'error_404_heading_trans_key'       => 'عذراً! الصفحة غير موجودة.',
+    'error_404_message_trans_key'       => 'لم نتمكن من العثور على الصفحة التي تبحث عنها. يمكنك <a href=":url">العودة إلى لوحة التحكم</a>.',
+    'error_403_title_trans_key'         => 'الوصول مرفوض',
+    'error_403_heading_trans_key'       => 'عذراً! الوصول مرفوض.',
+    'error_403_message_trans_key'       => 'ليس لديك صلاحية للوصول إلى هذه الصفحة. يمكنك <a href=":url">العودة إلى لوحة التحكم</a>.',
+    'error_419_title_trans_key'         => 'انتهت صلاحية الجلسة',
+    'error_419_heading_trans_key'       => 'عذراً! انتهت صلاحية الجلسة.',
+    'error_419_message_trans_key'       => 'انتهت صلاحية جلستك. يرجى تحديث الصفحة أو <a href=":url">العودة إلى لوحة التحكم</a>.',
+    'error_500_title_trans_key'         => 'خطأ في الخادم',
+    'error_500_heading_trans_key'       => 'عذراً! خطأ داخلي في الخادم.',
+    'error_500_message_trans_key'       => 'حدث خطأ غير متوقع. نعمل على إصلاحه. في هذه الأثناء، يمكنك <a href=":url">العودة إلى لوحة التحكم</a>.',
+    'error_503_title_trans_key'         => 'صيانة',
+    'error_503_heading_trans_key'       => 'سنعود قريباً!',
+    'error_503_message_trans_key'       => 'نعتذر عن الإزعاج، نحن نجري بعض أعمال الصيانة حالياً. سنعود للعمل قريباً.',
 ];

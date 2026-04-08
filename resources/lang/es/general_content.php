@@ -1164,4 +1164,22 @@ return [
     'service_updated_success_trans_key' => 'Successfully updated service.',
     'tool_created_success_trans_key' => 'Successfully created tool.',
     'tool_updated_success_trans_key' => 'Successfully updated tool.',
+
+    /* ERROR PAGES */
+    'error_back_dashboard_trans_key'    => 'Volver al panel',
+    'error_404_title_trans_key'         => 'Página no encontrada',
+    'error_404_heading_trans_key'       => '¡Vaya! Página no encontrada.',
+    'error_404_message_trans_key'       => 'No pudimos encontrar la página que buscaba. Puede <a href=":url">volver al panel</a>.',
+    'error_403_title_trans_key'         => 'Acceso denegado',
+    'error_403_heading_trans_key'       => '¡Vaya! Acceso denegado.',
+    'error_403_message_trans_key'       => 'No tiene permiso para acceder a esta página. Puede <a href=":url">volver al panel</a>.',
+    'error_419_title_trans_key'         => 'Sesión expirada',
+    'error_419_heading_trans_key'       => '¡Vaya! Sesión expirada.',
+    'error_419_message_trans_key'       => 'Su sesión ha expirado. Por favor actualice la página o <a href=":url">vuelva al panel</a>.',
+    'error_500_title_trans_key'         => 'Error del servidor',
+    'error_500_heading_trans_key'       => '¡Vaya! Error interno del servidor.',
+    'error_500_message_trans_key'       => 'Ha ocurrido un error inesperado. Trabajamos para resolverlo. Mientras tanto, puede <a href=":url">volver al panel</a>.',
+    'error_503_title_trans_key'         => 'Mantenimiento',
+    'error_503_heading_trans_key'       => '¡Volvemos pronto!',
+    'error_503_message_trans_key'       => 'Disculpe las molestias, estamos realizando tareas de mantenimiento. Estaremos de nuevo en línea en breve.',
 ];
