@@ -717,6 +717,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->name('quality.correction.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@update')->name('quality.correction.update');
         });
+
+        // JSON API routes for React component
+        Route::prefix('json')->group(function () {
+            Route::get('/devices',              'App\Http\Controllers\Quality\QualityControlDeviceController@jsonList')->name('quality.json.devices');
+            Route::post('/devices/create',      'App\Http\Controllers\Quality\QualityControlDeviceController@jsonStore')->name('quality.json.devices.create');
+            Route::post('/devices/update/{id}', 'App\Http\Controllers\Quality\QualityControlDeviceController@jsonUpdate')->name('quality.json.devices.update');
+            Route::get('/select-data',          'App\Http\Controllers\Quality\QualityController@jsonSelectData')->name('quality.json.select-data');
+            Route::post('/failure/create',      'App\Http\Controllers\Quality\QualityFailureController@jsonStore')->name('quality.json.failure.create');
+            Route::post('/failure/update/{id}', 'App\Http\Controllers\Quality\QualityFailureController@jsonUpdate')->name('quality.json.failure.update');
+            Route::post('/cause/create',        'App\Http\Controllers\Quality\QualityCauseController@jsonStore')->name('quality.json.cause.create');
+            Route::post('/cause/update/{id}',   'App\Http\Controllers\Quality\QualityCauseController@jsonUpdate')->name('quality.json.cause.update');
+            Route::post('/correction/create',      'App\Http\Controllers\Quality\QualityCorrectionController@jsonStore')->name('quality.json.correction.create');
+            Route::post('/correction/update/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@jsonUpdate')->name('quality.json.correction.update');
+        });
     });
 
     Route::group(['prefix' => 'inspection-projects', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

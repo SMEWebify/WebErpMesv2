@@ -13,6 +13,7 @@ import LeadsIndex from './components/LeadsIndex.jsx';
 import CompaniesIndex from './components/CompaniesIndex.jsx';
 import OrdersIndex from './components/OrdersIndex.jsx';
 import PurchasesIndex from './components/PurchasesIndex.jsx';
+import QualityIndex from './components/QualityIndex.jsx';
 import DeliverysIndex from './components/DeliverysIndex.jsx';
 import DeliverysRequest from './components/DeliverysRequest.jsx';
 import InvoicesRequest from './components/InvoicesRequest.jsx';
@@ -462,6 +463,30 @@ function mountSetupWizard() {
     );
 }
 
+function mountQualityIndex() {
+    const element = document.getElementById('quality-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QualityIndex, {
+            kpi:                  parse('kpi')                 ?? {},
+            rates:                parse('rates')               ?? {},
+            statusCounts:         parse('statusCounts')        ?? {},
+            topGenerators:        parse('topGenerators')       ?? {},
+            calibrationAlerts:    parse('calibrationAlerts')   ?? {},
+            initialFailures:      parse('initialFailures')     ?? [],
+            initialCauses:        parse('initialCauses')       ?? [],
+            initialCorrections:   parse('initialCorrections')  ?? [],
+            endpoints:            parse('endpoints')           ?? {},
+            trans:                parse('trans')               ?? {},
+        })
+    );
+}
+
 mountSetupWizard();
 mountCompanyDashboard();
 mountCompanyForm();
@@ -484,3 +509,4 @@ mountDeliverysRequest();
 mountInvoicesRequest();
 mountInvoicesIndex();
 mountProductsIndex();
+mountQualityIndex();
