@@ -686,7 +686,7 @@ function LineRow({
             <td style={{ width: 32 }}>
                 <input type="checkbox" checked={selected}
                     onChange={() => onToggleSelect(line.id)}
-                    disabled={quoteStatu !== 1} />
+                    disabled={quoteStatu !== 1 && quoteStatu !== 2} />
             </td>
 
             {/* Code */}
@@ -941,12 +941,16 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         const ids = [...selected];
         if (ids.length === 0) return;
         if (!confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
-        const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids }) });
-        const data = await res.json();
-        if (res.ok && data.redirect) {
-            window.location.href = data.redirect;
-        } else {
-            showFlash('danger', data.error ?? 'Erreur lors de la création de la commande');
+        try {
+            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids }) });
+            const data = await res.json();
+            if (res.ok && data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                showFlash('danger', data.error ?? 'Erreur lors de la création de la commande');
+            }
+        } catch {
+            showFlash('danger', 'Erreur lors de la création de la commande');
         }
     };
 
@@ -1018,7 +1022,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
 
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>
-                {quoteStatu === 1 && selected.size > 0 && (
+                {(quoteStatu === 1 || quoteStatu === 2) && selected.size > 0 && (
                     <button className="btn btn-primary btn-sm" onClick={handleStoreOrder}>
                         <i className="fas fa-folder mr-1" />
                         Créer une commande ({selected.size})
@@ -1071,7 +1075,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                             </th>
                             <th style={{ width: 32 }}>
                                 <input type="checkbox" checked={allSelected} onChange={handleToggleAll}
-                                    disabled={quoteStatu !== 1 || filteredLines.length === 0} />
+                                    disabled={(quoteStatu !== 1 && quoteStatu !== 2) || filteredLines.length === 0} />
                             </th>
                             <th>Réf. ext.</th>
                             <th style={{ width: 36 }} />
