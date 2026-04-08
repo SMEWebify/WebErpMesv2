@@ -318,7 +318,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'credit-notes', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\CreditNoteController@index')->name('credit-notes');
-        Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice'); 
+        Route::post('/store/credit-notes', 'App\Http\Controllers\Workflow\CreditNoteController@CreateCreditNotes')->name('credit-notes.store.from.invoice');
+        // JSON API for React CreditNotesIndex
+        Route::get('/json/list', 'App\Http\Controllers\Workflow\CreditNoteController@listJson')->name('credit-notes.json.list');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@show')->name('credit.notes.show');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\CreditNoteController@update')->name('credit.notes.update');
     });
@@ -329,7 +331,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesRFQController@quotation')->name('purchases.quotation'); 
         Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->name('purchases'); 
         
-        Route::post('/', 'App\Http\Controllers\Purchases\PurchasesController@storeBankPurchase')->name('purchases.store'); 
+        Route::post('/', 'App\Http\Controllers\Purchases\PurchasesController@storeBankPurchase')->name('purchases.store');
+
+        // JSON endpoints for React PurchasesIndex
+        Route::get('/json/list',                'App\Http\Controllers\Purchases\PurchasesController@listJson')->name('purchases.json.list');
+        Route::post('/json/store',              'App\Http\Controllers\Purchases\PurchasesController@storeJson')->name('purchases.json.store');
+        Route::get('/json/select-data',         'App\Http\Controllers\Purchases\PurchasesController@selectDataJson')->name('purchases.json.select-data');
+        Route::get('/json/addresses/{companyId}','App\Http\Controllers\Purchases\PurchasesController@addressesJson')->name('purchases.json.addresses');
+        Route::get('/json/contacts/{companyId}', 'App\Http\Controllers\Purchases\PurchasesController@contactsJson')->name('purchases.json.contacts');
+        Route::post('/json/address',            'App\Http\Controllers\Purchases\PurchasesController@storeAddressJson')->name('purchases.json.address.store');
+        Route::post('/json/contact',            'App\Http\Controllers\Purchases\PurchasesController@storeContactJson')->name('purchases.json.contact.store');
+
         Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@waintingReceipt')->name('purchases.wainting.receipt'); 
         Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receipt')->name('purchases.receipt'); 
         Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@waintingInvoice')->name('purchases.wainting.invoice'); 
@@ -723,6 +735,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::group(['prefix' => 'correction'], function () {
             Route::post('/create', 'App\Http\Controllers\Quality\QualityCorrectionController@store')->name('quality.correction.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@update')->name('quality.correction.update');
+        });
+
+        // JSON API routes for React component
+        Route::prefix('json')->group(function () {
+            Route::get('/devices',              'App\Http\Controllers\Quality\QualityControlDeviceController@jsonList')->name('quality.json.devices');
+            Route::post('/devices/create',      'App\Http\Controllers\Quality\QualityControlDeviceController@jsonStore')->name('quality.json.devices.create');
+            Route::post('/devices/update/{id}', 'App\Http\Controllers\Quality\QualityControlDeviceController@jsonUpdate')->name('quality.json.devices.update');
+            Route::get('/select-data',          'App\Http\Controllers\Quality\QualityController@jsonSelectData')->name('quality.json.select-data');
+            Route::post('/failure/create',      'App\Http\Controllers\Quality\QualityFailureController@jsonStore')->name('quality.json.failure.create');
+            Route::post('/failure/update/{id}', 'App\Http\Controllers\Quality\QualityFailureController@jsonUpdate')->name('quality.json.failure.update');
+            Route::post('/cause/create',        'App\Http\Controllers\Quality\QualityCauseController@jsonStore')->name('quality.json.cause.create');
+            Route::post('/cause/update/{id}',   'App\Http\Controllers\Quality\QualityCauseController@jsonUpdate')->name('quality.json.cause.update');
+            Route::post('/correction/create',      'App\Http\Controllers\Quality\QualityCorrectionController@jsonStore')->name('quality.json.correction.create');
+            Route::post('/correction/update/{id}', 'App\Http\Controllers\Quality\QualityCorrectionController@jsonUpdate')->name('quality.json.correction.update');
         });
     });
 

@@ -15,6 +15,7 @@ use App\Services\DocumentCodeGenerator;
 use App\Models\Workflow\CreditNoteLines;
 use App\Services\CreditNoteCalculatorService;
 use App\Http\Requests\Workflow\UpdateCreditNoteRequest;
+use Illuminate\Support\Facades\App;
 
 class CreditNoteController extends Controller
 {
@@ -123,7 +124,66 @@ class CreditNoteController extends Controller
         ]);
     }
 
-        /**
+        // -------------------------------------------------------------------------
+    // JSON endpoint for the React CreditNotesIndex component
+    // -------------------------------------------------------------------------
+
+    public function listJson(Request $request)
+    {
+        $search    = $request->get('search', '');
+        $statuses  = array_filter(array_map('intval', (array) $request->get('statuses', [])));
+        $sortField = $request->get('sort', 'created_at');
+        $sortAsc   = $request->boolean('asc', false);
+
+        $allowed = ['code', 'label', 'created_at', 'statu', 'companies_id', 'lines_count'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir = $sortAsc ? 'asc' : 'desc';
+
+        $query = CreditNotes::withCount('creditNotelines as lines_count')
+            ->with(['companie:id,label', 'UserManagement:id,name'])
+            ->when($search, fn ($q) => $q->where('label', 'like', '%'.$search.'%'))
+            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses));
+
+        match ($sortField) {
+            'lines_count'  => $query->orderBy('lines_count', $dir),
+            'companies_id' => $query->orderByRaw("(SELECT label FROM companies WHERE companies.id = credit_notes.companies_id) {$dir}"),
+            default        => $query->orderBy($sortField, $dir),
+        };
+
+        $creditNotes = $query->paginate(15);
+
+        $creditNotes->load(['creditNotelines.orderLine.VAT']);
+
+        $factory  = app('Factory');
+        $currency = $factory->curency ?? 'EUR';
+        $locale   = config('app.locale');
+
+        return response()->json([
+            'data' => $creditNotes->map(fn ($cn) => [
+                'id'          => $cn->id,
+                'code'        => $cn->code,
+                'label'       => $cn->label,
+                'statu'       => $cn->statu,
+                'lines_count' => $cn->lines_count,
+                'total_price' => (new CreditNoteCalculatorService($cn))->getTotalPrice(),
+                'companie'    => $cn->companie ? ['id' => $cn->companie->id, 'label' => $cn->companie->label] : null,
+                'user'        => $cn->UserManagement ? ['name' => $cn->UserManagement->name] : null,
+                'created_at'  => $cn->created_at?->format('d/m/Y'),
+                'url'         => route('credit.notes.show', ['id' => $cn->id]),
+            ]),
+            'meta' => [
+                'total'        => $creditNotes->total(),
+                'per_page'     => $creditNotes->perPage(),
+                'current_page' => $creditNotes->currentPage(),
+                'last_page'    => $creditNotes->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
