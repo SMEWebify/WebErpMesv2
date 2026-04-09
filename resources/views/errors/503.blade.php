@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Site Maintenance</title>
+<title>{{ __('general_content.error_503_title_trans_key') }}</title>
 <style>
     body { text-align: center; padding: 150px; }
     h1 { font-size: 50px; }
@@ -11,9 +11,9 @@
 
 <article>
     <img src="/{{ config('branding.logo_img') }}" alt="{{ config('branding.logo_alt') }}">
-    <h1>We&rsquo;ll be back soon!</h1>
+    <h1>{{ __('general_content.error_503_heading_trans_key') }}</h1>
     <div>
-        <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always go to <a href="https://github.com/SMEWebify/WebErpMesv2">GIT</a>, otherwise we&rsquo;ll be back online shortly!</p>
+        <p>{{ __('general_content.error_503_message_trans_key') }}</p>
         <p>&mdash; The Team</p>
     </div>
 </article>

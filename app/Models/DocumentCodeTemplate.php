@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentCodeTemplate extends Model
 {
     // Allow mass assignment for these columns
-    protected $fillable = ['document_type', 'template', 'reset_period'];
+    protected $fillable = ['document_type', 'template', 'reset_period', 'yearly_reset_month', 'yearly_reset_day', 'id_padding'];
     
     /**
      *Allows to retrieve a default template if none is found

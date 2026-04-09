@@ -166,6 +166,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/update/{contact}', 'App\Http\Controllers\Companies\ContactsController@updateJson')->name('contacts.json.update');
     });
 
+    Route::group(['prefix' => 'companies', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
+        Route::post('/{company}/document-defaults/sync-contact/{contact}', 'App\Http\Controllers\Companies\CompanyDocumentDefaultsController@syncContact')->name('companies.document-defaults.sync-contact');
+        Route::post('/{company}/document-defaults/sync-address/{address}', 'App\Http\Controllers\Companies\CompanyDocumentDefaultsController@syncAddress')->name('companies.document-defaults.sync-address');
+    });
+
     Route::group(['prefix' => 'leads', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workflow\LeadsController@index')->name('leads');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\LeadsController@update')->name('leads.update');

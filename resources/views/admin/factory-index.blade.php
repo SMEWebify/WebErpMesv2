@@ -754,6 +754,8 @@
                                             <th>{{ __('general_content.entity_type_trans_key') }}</th>
                                             <th>{{ __('general_content.template_trans_key') }}</th>
                                             <th>Reset</th>
+                                            <th>Début exercice</th>
+                                            <th>Padding ID</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -761,8 +763,24 @@
                                         @forelse ($DocumentCodeTemplates as $template)
                                             <tr>
                                                 <td>{{ $template->document_type }}</td>
-                                                <td>{{ $template->template }}</td>
+                                                <td><code>{{ $template->template }}</code></td>
                                                 <td>{{ $template->reset_period ?? 'none' }}</td>
+                                                <td>
+                                                    @if(($template->reset_period ?? 'none') === 'yearly')
+                                                        {{ \Carbon\Carbon::create()->month($template->yearly_reset_month ?? 1)->translatedFormat('F') }}
+                                                        {{ $template->yearly_reset_day ?? 1 }}
+                                                    @else
+                                                        —
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if(($template->id_padding ?? 0) > 0)
+                                                        {{ $template->id_padding }} digits
+                                                        <small class="text-muted">(ex: {{ str_pad('1', $template->id_padding, '0', STR_PAD_LEFT) }})</small>
+                                                    @else
+                                                        —
+                                                    @endif
+                                                </td>
                                                 <td class=" py-0 align-middle">
                                                     <!-- Button Modal -->
                                                     <x-ButtonTextEdit :modalTarget="'Template' . $template->id" />
@@ -780,14 +798,35 @@
                                                                         <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{day}-{id}" value="{{ $template->template }}" required>
                                                                     </div>
                                                                 </div>
-                                                                <div class="form-group">
+                                                                <div class="form-group" x-data="{ period: '{{ $template->reset_period ?? 'none' }}' }">
                                                                     <label for="reset_period_{{ $template->id }}">Reset :</label>
-                                                                    <select class="form-control" id="reset_period_{{ $template->id }}" name="reset_period" required>
-                                                                        <option value="none" {{ ($template->reset_period ?? 'none') === 'none' ? 'selected' : '' }}>None</option>
-                                                                        <option value="daily" {{ ($template->reset_period ?? 'none') === 'daily' ? 'selected' : '' }}>Daily</option>
-                                                                        <option value="weekly" {{ ($template->reset_period ?? 'none') === 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                                                        <option value="monthly" {{ ($template->reset_period ?? 'none') === 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                                                    <select class="form-control" id="reset_period_{{ $template->id }}" name="reset_period" x-model="period" required>
+                                                                        <option value="none">None</option>
+                                                                        <option value="daily">Daily</option>
+                                                                        <option value="weekly">Weekly</option>
+                                                                        <option value="monthly">Monthly</option>
+                                                                        <option value="yearly">Yearly</option>
                                                                     </select>
+                                                                    <div x-show="period === 'yearly'" class="row mt-2">
+                                                                        <div class="col-6">
+                                                                            <label>Mois de début d'exercice</label>
+                                                                            <select class="form-control" name="yearly_reset_month">
+                                                                                @foreach(range(1,12) as $m)
+                                                                                    <option value="{{ $m }}" {{ (int)($template->yearly_reset_month ?? 1) === $m ? 'selected' : '' }}>
+                                                                                        {{ Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-6">
+                                                                            <label>Jour</label>
+                                                                            <input type="number" class="form-control" name="yearly_reset_day" min="1" max="31" value="{{ $template->yearly_reset_day ?? 1 }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group mt-2">
+                                                                    <label>Nombre de digits pour l'ID (0 = sans padding)</label>
+                                                                    <input type="number" class="form-control" name="id_padding" min="0" max="10" value="{{ $template->id_padding ?? 0 }}" placeholder="ex: 4 → 0001">
                                                                 </div>
                                                             </div>
                                                             <div class="card-footer">
@@ -852,21 +891,42 @@
                                         <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{day}-{id}" required>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" x-data="{ period: 'none' }">
                                     <label for="reset_period">Reset :</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-redo"></i></span>
                                         </div>
-                                        <select class="form-control" id="reset_period" name="reset_period" required>
+                                        <select class="form-control" id="reset_period" name="reset_period" x-model="period" required>
                                             <option value="none">None</option>
                                             <option value="daily">Daily</option>
                                             <option value="weekly">Weekly</option>
                                             <option value="monthly">Monthly</option>
+                                            <option value="yearly">Yearly</option>
                                         </select>
                                     </div>
+                                    <div x-show="period === 'yearly'" class="row mt-2">
+                                        <div class="col-6">
+                                            <label>Mois de début d'exercice</label>
+                                            <select class="form-control" name="yearly_reset_month">
+                                                @foreach(range(1,12) as $m)
+                                                    <option value="{{ $m }}">
+                                                        {{ Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label>Jour</label>
+                                            <input type="number" class="form-control" name="yearly_reset_day" min="1" max="31" value="1">
+                                        </div>
+                                    </div>
                                 </div>
-            
+                                <div class="form-group">
+                                    <label>Nombre de digits pour l'ID (0 = sans padding)</label>
+                                    <input type="number" class="form-control" name="id_padding" min="0" max="10" value="0" placeholder="ex: 4 → 0001">
+                                </div>
+
                                 <div class="card-footer">
                                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="danger" icon="fas fa-lg fa-save"/>
                                 </div>

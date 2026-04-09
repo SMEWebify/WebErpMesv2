@@ -549,7 +549,7 @@ class QuoteLinesController extends Controller
         }
 
         $quote = Quotes::findOrFail($quoteId);
-        abort_unless($quote->users_id === Auth::id() || Auth::user()->hasRole(['admin','manager']), 403);
+        abort_unless($quote->user_id === Auth::id() || Auth::user()->hasRole(['admin','manager']), 403);
 
         $factory = Factory::first();
 

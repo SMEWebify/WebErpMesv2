@@ -743,6 +743,8 @@
           data-update-base-url="{{ route('addresses.json.update', ['address' => '__ID__']) }}"
           data-companie-id="{{ $Companie->id }}"
           data-trans='@json($addressesTrans)'
+          data-document-defaults='@json($documentDefaults)'
+          data-sync-address-base-url="{{ route('companies.document-defaults.sync-address', ['company' => $Companie->id, 'address' => '__ID__']) }}"
         ></div>
       </div>
       {{-- OLD BLADE ADDRESSES (replaced by React) --}}
@@ -989,6 +991,8 @@
           data-update-base-url="{{ route('contacts.json.update', ['contact' => '__ID__']) }}"
           data-companie-id="{{ $Companie->id }}"
           data-trans='@json($contactsTrans)'
+          data-document-defaults='@json($documentDefaults)'
+          data-sync-contact-base-url="{{ route('companies.document-defaults.sync-contact', ['company' => $Companie->id, 'contact' => '__ID__']) }}"
         ></div>
       </div>
       {{-- OLD BLADE CONTACTS (replaced by React) --}}

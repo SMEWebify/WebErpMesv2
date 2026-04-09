@@ -1412,4 +1412,22 @@ return [
     'service_updated_success_trans_key' => 'Successfully updated service.',
     'tool_created_success_trans_key' => 'Successfully created tool.',
     'tool_updated_success_trans_key' => 'Successfully updated tool.',
+
+    /* ERROR PAGES */
+    'error_back_dashboard_trans_key'    => 'Back to dashboard',
+    'error_404_title_trans_key'         => 'Page not found',
+    'error_404_heading_trans_key'       => 'Oops! Page not found.',
+    'error_404_message_trans_key'       => 'We could not find the page you were looking for. You may <a href=":url">return to dashboard</a>.',
+    'error_403_title_trans_key'         => 'Access denied',
+    'error_403_heading_trans_key'       => 'Oops! Access denied.',
+    'error_403_message_trans_key'       => 'You do not have permission to access this page. You may <a href=":url">return to dashboard</a>.',
+    'error_419_title_trans_key'         => 'Session expired',
+    'error_419_heading_trans_key'       => 'Oops! Session expired.',
+    'error_419_message_trans_key'       => 'Your session has expired. Please refresh the page or <a href=":url">return to dashboard</a>.',
+    'error_500_title_trans_key'         => 'Server error',
+    'error_500_heading_trans_key'       => 'Oops! Internal server error.',
+    'error_500_message_trans_key'       => 'An unexpected error occurred. We will work on fixing that right away. Meanwhile, you may <a href=":url">return to dashboard</a>.',
+    'error_503_title_trans_key'         => 'Maintenance',
+    'error_503_heading_trans_key'       => 'We\'ll be back soon!',
+    'error_503_message_trans_key'       => 'Sorry for the inconvenience but we\'re performing some maintenance. We\'ll be back online shortly.',
 ];

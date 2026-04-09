@@ -332,6 +332,22 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
         })
         .slice(0, 30);
 
+    const resetFormForCreate = (nextOrdre) => {
+        const defaultUnit = selectData.units?.find((u) => u.default) ?? selectData.units?.[0];
+        const defaultVat  = selectData.vats?.find((v)  => v.default) ?? selectData.vats?.[0];
+        setForm({
+            ...EMPTY_FORM,
+            ordre:              nextOrdre,
+            methods_units_id:   defaultUnit?.id              ?? '',
+            accounting_vats_id: defaultVat?.id               ?? '',
+            discount:           selectData.customer_discount ?? 0,
+            delivery_date:      selectData.default_delivery  ?? '',
+        });
+        setProductSearch('');
+        setErrors({});
+        setPriceList([]);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (isReadOnly) return;
@@ -346,7 +362,11 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
             const data = await res.json();
             if (!res.ok) { setErrors(data.errors ?? { _global: data.message ?? 'Erreur' }); return; }
             onSaved(data.line, isEdit);
-            onClose();
+            if (isEdit) {
+                onClose();
+            } else {
+                resetFormForCreate((data.line.ordre ?? form.ordre) + 1);
+            }
         } catch {
             setErrors({ _global: 'Erreur réseau' });
         } finally {
@@ -611,9 +631,13 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
                         </button>
                         {!isReadOnly && (
                             <button type="submit" form="line-drawer-form" className="btn btn-sm btn-success" disabled={saving}>
-                                {saving
-                                    ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</>
-                                    : <><i className="fas fa-save mr-1" />Enregistrer</>}
+                                {editingLine
+                                    ? saving
+                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Enregistrement…</>
+                                        : <><i className="fas fa-save mr-1" />Enregistrer</>
+                                    : saving
+                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Ajout…</>
+                                        : <><i className="fas fa-plus mr-1" />Ajouter</>}
                             </button>
                         )}
                     </div>
@@ -686,7 +710,7 @@ function LineRow({
             <td style={{ width: 32 }}>
                 <input type="checkbox" checked={selected}
                     onChange={() => onToggleSelect(line.id)}
-                    disabled={quoteStatu !== 1} />
+                    disabled={quoteStatu !== 1 && quoteStatu !== 2} />
             </td>
 
             {/* Code */}
@@ -941,12 +965,16 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         const ids = [...selected];
         if (ids.length === 0) return;
         if (!confirm(`Créer une commande à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
-        const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids }) });
-        const data = await res.json();
-        if (res.ok && data.redirect) {
-            window.location.href = data.redirect;
-        } else {
-            showFlash('danger', data.error ?? 'Erreur lors de la création de la commande');
+        try {
+            const res  = await apiFetch(endpoints.storeOrder, { method: 'POST', body: JSON.stringify({ line_ids: ids }) });
+            const data = await res.json();
+            if (res.ok && data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                showFlash('danger', data.error ?? 'Erreur lors de la création de la commande');
+            }
+        } catch {
+            showFlash('danger', 'Erreur lors de la création de la commande');
         }
     };
 
@@ -1018,7 +1046,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
 
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>
-                {quoteStatu === 1 && selected.size > 0 && (
+                {(quoteStatu === 1 || quoteStatu === 2) && selected.size > 0 && (
                     <button className="btn btn-primary btn-sm" onClick={handleStoreOrder}>
                         <i className="fas fa-folder mr-1" />
                         Créer une commande ({selected.size})
@@ -1071,7 +1099,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                             </th>
                             <th style={{ width: 32 }}>
                                 <input type="checkbox" checked={allSelected} onChange={handleToggleAll}
-                                    disabled={quoteStatu !== 1 || filteredLines.length === 0} />
+                                    disabled={(quoteStatu !== 1 && quoteStatu !== 2) || filteredLines.length === 0} />
                             </th>
                             <th>Réf. ext.</th>
                             <th style={{ width: 36 }} />

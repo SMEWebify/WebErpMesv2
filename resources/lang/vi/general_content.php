@@ -333,4 +333,22 @@ return [
     'tool_created_success_trans_key' => 'Successfully created tool.',
     'tool_updated_success_trans_key' => 'Successfully updated tool.',
     'success_update_trans_key'       => 'Cập nhật hồ sơ thành công.',
+
+    /* ERROR PAGES */
+    'error_back_dashboard_trans_key'    => 'Quay lại bảng điều khiển',
+    'error_404_title_trans_key'         => 'Không tìm thấy trang',
+    'error_404_heading_trans_key'       => 'Ôi! Không tìm thấy trang.',
+    'error_404_message_trans_key'       => 'Chúng tôi không thể tìm thấy trang bạn đang tìm kiếm. Bạn có thể <a href=":url">quay lại bảng điều khiển</a>.',
+    'error_403_title_trans_key'         => 'Truy cập bị từ chối',
+    'error_403_heading_trans_key'       => 'Ôi! Truy cập bị từ chối.',
+    'error_403_message_trans_key'       => 'Bạn không có quyền truy cập trang này. Bạn có thể <a href=":url">quay lại bảng điều khiển</a>.',
+    'error_419_title_trans_key'         => 'Phiên đã hết hạn',
+    'error_419_heading_trans_key'       => 'Ôi! Phiên đã hết hạn.',
+    'error_419_message_trans_key'       => 'Phiên của bạn đã hết hạn. Vui lòng làm mới trang hoặc <a href=":url">quay lại bảng điều khiển</a>.',
+    'error_500_title_trans_key'         => 'Lỗi máy chủ',
+    'error_500_heading_trans_key'       => 'Ôi! Lỗi máy chủ nội bộ.',
+    'error_500_message_trans_key'       => 'Đã xảy ra lỗi không mong muốn. Chúng tôi đang khắc phục. Trong thời gian đó, bạn có thể <a href=":url">quay lại bảng điều khiển</a>.',
+    'error_503_title_trans_key'         => 'Bảo trì',
+    'error_503_heading_trans_key'       => 'Chúng tôi sẽ quay lại sớm!',
+    'error_503_message_trans_key'       => 'Xin lỗi vì sự bất tiện, chúng tôi đang thực hiện bảo trì. Chúng tôi sẽ trực tuyến trở lại trong thời gian ngắn.',
 ];
