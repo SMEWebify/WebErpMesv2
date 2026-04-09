@@ -31,6 +31,10 @@ import LoadPlanningIndex from './components/LoadPlanningIndex.jsx';
 import QuoteLinesPage from './components/QuoteLinesPage.jsx';
 import ConstructionSitePage from './components/ConstructionSitePage.jsx';
 import HomeDashboard from './components/HomeDashboard.jsx';
+import PurchaseReceiptIndex from './components/PurchaseReceiptIndex.jsx';
+import PurchaseInvoicesIndex from './components/PurchaseInvoicesIndex.jsx';
+import TasksIndex from './components/TasksIndex.jsx';
+import SerialNumbersIndex from './components/SerialNumbersIndex.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -231,6 +235,22 @@ function mountPurchasesIndex() {
             endpoints:             parse('endpoints')             ?? {},
             trans:                 parse('trans')                 ?? {},
             companieId:            parse('companieId')            ?? null,
+        })
+    );
+}
+
+function mountPurchaseInvoicesIndex() {
+    const element = document.getElementById('purchase-invoices-index-app');
+    if (!element) return;
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+    createRoot(element).render(
+        React.createElement(PurchaseInvoicesIndex, {
+            kpi:       parse('kpi')       ?? {},
+            chartData: parse('chart')     ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
         })
     );
 }
@@ -558,6 +578,44 @@ function mountHomeDashboard() {
     createRoot(element).render(React.createElement(HomeDashboard, props));
 }
 
+function mountTasksIndex() {
+    const element = document.getElementById('tasks-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(TasksIndex, {
+            tasks:            parse('tasks')           ?? [],
+            services:         parse('services')        ?? [],
+            statuses:         parse('statuses')        ?? [],
+            resources:        parse('resources')       ?? [],
+            defaultStatusIds: parse('defaultStatusIds') ?? [],
+            trans:            parse('trans')            ?? {},
+        })
+    );
+}
+
+function mountPurchaseReceiptIndex() {
+    const element = document.getElementById('purchase-receipt-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchaseReceiptIndex, {
+            kpi:       parse('kpi')       ?? {},
+            chartData: parse('chart')     ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 function mountConstructionSitePage() {
     const element = document.getElementById('construction-site-app');
     if (!element) return;
@@ -572,6 +630,23 @@ function mountConstructionSitePage() {
             saveUrl:     element.dataset.saveUrl ?? '',
             currency:    element.dataset.currency ?? 'EUR',
             initialData: parse('initialData') ?? null,
+        })
+    );
+}
+
+function mountSerialNumbersIndex() {
+    const element = document.getElementById('serial-numbers-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(SerialNumbersIndex, {
+            kpi:       parse('kpi')       ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
         })
     );
 }
@@ -591,6 +666,7 @@ mountLeadsIndex();
 mountOpportunitiesIndex();
 mountOrdersIndex();
 mountPurchasesIndex();
+mountPurchaseInvoicesIndex();
 mountQuoteLinesIndex();
 mountOrderLinesIndex();
 mountDeliverysIndex();
@@ -604,3 +680,6 @@ mountQuoteLinesPage();
 mountLoadPlanningIndex();
 mountConstructionSitePage();
 mountHomeDashboard();
+mountTasksIndex();
+mountPurchaseReceiptIndex();
+mountSerialNumbersIndex();
