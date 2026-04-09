@@ -35,6 +35,7 @@ import PurchaseReceiptIndex from './components/PurchaseReceiptIndex.jsx';
 import PurchaseInvoicesIndex from './components/PurchaseInvoicesIndex.jsx';
 import TasksIndex from './components/TasksIndex.jsx';
 import SerialNumbersIndex from './components/SerialNumbersIndex.jsx';
+import MethodsOverview from './components/MethodsOverview.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -651,6 +652,23 @@ function mountSerialNumbersIndex() {
     );
 }
 
+function mountMethodsOverview() {
+    const element = document.getElementById('methods-overview-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(MethodsOverview, {
+            sections: parse('sections') ?? [],
+            services: parse('services') ?? [],
+            trans:    parse('trans')    ?? {},
+        })
+    );
+}
+
 mountSetupWizard();
 mountCompanyDashboard();
 mountCompanyForm();
@@ -683,3 +701,4 @@ mountHomeDashboard();
 mountTasksIndex();
 mountPurchaseReceiptIndex();
 mountSerialNumbersIndex();
+mountMethodsOverview();
