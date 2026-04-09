@@ -10,9 +10,14 @@ use App\Services\DeliveryKPIService;
 use App\Services\InvoiceKPIService;
 use App\Services\PurchaseKPIService;
 use App\Services\OrderLinesService;
+use App\Services\QualityKPIService;
+use App\Models\Workflow\OrderLines;
 use App\Models\Admin\EstimatedBudgets;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
+use App\Models\Workflow\Invoices;
+use App\Models\Workflow\Deliverys;
+use App\Models\Purchases\Purchases;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -169,6 +174,148 @@ class KpiController extends Controller
                                 ? $purchases->getPurchaseMonthlyRecap($year)
                                 : null,
             'target'     => $target,
+        ]);
+    }
+
+    /**
+     * GET /kpi/recent/invoices?limit=8
+     */
+    public function recentInvoices(Request $request)
+    {
+        $limit = min($request->integer('limit', 8), 20);
+
+        return response()->json(
+            Invoices::with('companie:id,label')
+                ->orderByDesc('id')
+                ->take($limit)
+                ->get()
+                ->map(fn ($i) => [
+                    'id'                    => $i->id,
+                    'code'                  => $i->code,
+                    'statu'                 => $i->statu,
+                    'companies_id'          => $i->companies_id,
+                    'companie_label'        => $i->companie?->label,
+                    'formatted_total_price' => $i->formatted_total_price,
+                    'created_at_human'      => $i->GetPrettyCreatedAttribute(),
+                ])
+        );
+    }
+
+    /**
+     * GET /kpi/recent/deliveries?limit=8
+     */
+    public function recentDeliveries(Request $request)
+    {
+        $limit = min($request->integer('limit', 8), 20);
+
+        return response()->json(
+            Deliverys::with('companie:id,label')
+                ->orderByDesc('id')
+                ->take($limit)
+                ->get()
+                ->map(fn ($d) => [
+                    'id'                    => $d->id,
+                    'code'                  => $d->code,
+                    'statu'                 => $d->statu,
+                    'companies_id'          => $d->companies_id,
+                    'companie_label'        => $d->companie?->label,
+                    'formatted_total_price' => $d->formatted_total_price,
+                    'created_at_human'      => $d->GetPrettyCreatedAttribute(),
+                ])
+        );
+    }
+
+    /**
+     * GET /kpi/recent/purchases?limit=8
+     * Retourne les commandes d'achat en attente de réception (statu 1, 2, 3)
+     */
+    public function recentPurchases(Request $request)
+    {
+        abort_unless(Gate::allows('purchases-menu'), 403);
+
+        $limit = min($request->integer('limit', 8), 20);
+
+        return response()->json(
+            Purchases::with('companie:id,label')
+                ->whereIn('statu', [1, 2, 3])
+                ->orderByDesc('id')
+                ->take($limit)
+                ->get()
+                ->map(fn ($p) => [
+                    'id'                    => $p->id,
+                    'code'                  => $p->code,
+                    'statu'                 => $p->statu,
+                    'companies_id'          => $p->companies_id,
+                    'companie_label'        => $p->companie?->label,
+                    'formatted_total_price' => $p->formatted_total_price,
+                    'created_at_human'      => $p->GetPrettyCreatedAttribute(),
+                ])
+        );
+    }
+
+    /**
+     * GET /kpi/top-clients
+     * Top 5 clients par CA facturé (toutes années confondues)
+     */
+    public function topClients(InvoiceKPIService $service)
+    {
+        $clients = $service->getTopClients()->load('companie:id,label');
+
+        return response()->json(
+            $clients->map(fn ($c) => [
+                'companies_id' => $c->companies_id,
+                'total_amount' => (float) $c->total_amount,
+                'companie'     => $c->companie ? ['label' => $c->companie->label] : null,
+            ])
+        );
+    }
+
+    /**
+     * GET /kpi/nc-stats
+     * Statistiques qualité : NC ouvertes, actions ouvertes, dérogations + taux interne/externe
+     */
+    public function ncStats(QualityKPIService $service)
+    {
+        $stats = $service->getGeneralStatistics();
+        $rates = $service->getInternalExternalRates();
+
+        return response()->json(array_merge($stats, [
+            'internalNonConformityRate' => round($rates['internalNonConformityRate'], 1),
+            'externalNonConformityRate' => round($rates['externalNonConformityRate'], 1),
+        ]));
+    }
+
+    /**
+     * GET /kpi/supplier-delays
+     * Délai moyen de réception par fournisseur (trié par délai croissant)
+     */
+    public function supplierDelays(PurchaseKPIService $service)
+    {
+        abort_unless(Gate::allows('purchases-menu'), 403);
+
+        return response()->json(
+            $service->getAverageReceptionDelayBySupplier()->values()
+        );
+    }
+
+    /**
+     * GET /kpi/otd
+     * Taux de service OTD (On-Time Delivery) — livraisons à l'heure vs total livré
+     */
+    public function otd(OrderKPIService $service)
+    {
+        $total  = OrderLines::where('delivery_status', 3)->count();
+        $onTime = OrderLines::where('delivery_status', 3)
+            ->whereHas('DeliveryLines', function ($q) {
+                $q->whereColumn('delivery_lines.created_at', '<=', 'order_lines.delivery_date');
+            })->count();
+
+        $rate = $total > 0 ? round(($onTime / $total) * 100, 2) : 0;
+
+        return response()->json([
+            'rate'   => $rate,
+            'onTime' => $onTime,
+            'total'  => $total,
         ]);
     }
 }

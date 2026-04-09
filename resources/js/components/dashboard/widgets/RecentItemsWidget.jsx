@@ -21,6 +21,27 @@ const QUOTE_STATUS = {
     6: { badge: 'badge-secondary', labelKey: 'obsolete' },
 };
 
+const INVOICE_STATUS = {
+    1: { badge: 'badge-info',      labelKey: 'open'      },
+    2: { badge: 'badge-warning',   labelKey: 'send'      },
+    3: { badge: 'badge-success',   labelKey: 'paid'      },
+    4: { badge: 'badge-danger',    labelKey: 'canceled'  },
+};
+
+const DELIVERY_STATUS = {
+    1: { badge: 'badge-info',      labelKey: 'open'      },
+    2: { badge: 'badge-success',   labelKey: 'delivered' },
+    3: { badge: 'badge-danger',    labelKey: 'canceled'  },
+};
+
+const PURCHASE_STATUS = {
+    1: { badge: 'badge-info',      labelKey: 'in_progress'    },
+    2: { badge: 'badge-warning',   labelKey: 'ordered'        },
+    3: { badge: 'badge-primary',   labelKey: 'partly_received'},
+    4: { badge: 'badge-success',   labelKey: 'received'       },
+    5: { badge: 'badge-dark',      labelKey: 'canceled'       },
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDate(dateStr) {
@@ -59,9 +80,21 @@ function StatusBadge({ statu, statusConfig, trans }) {
 
 // ─── Table ────────────────────────────────────────────────────────────────────
 
+function getStatusConfig(mode) {
+    switch (mode) {
+        case 'quotes':    return QUOTE_STATUS;
+        case 'invoices':  return INVOICE_STATUS;
+        case 'deliveries': return DELIVERY_STATUS;
+        case 'purchases': return PURCHASE_STATUS;
+        default:          return ORDER_STATUS;
+    }
+}
+
 function ItemRow({ item, mode, trans, urlShow, urlCompany }) {
-    const statusConfig = mode === 'quotes' ? QUOTE_STATUS : ORDER_STATUS;
-    const dateValue    = mode === 'quotes' ? item.created_at_human : formatDate(item.validity_date);
+    const statusConfig = getStatusConfig(mode);
+    const dateValue    = (mode === 'quotes' || mode === 'invoices' || mode === 'purchases')
+        ? item.created_at_human
+        : formatDate(item.validity_date);
     const isInternal   = mode === 'orders' && item.type !== 1;
 
     return (
@@ -182,26 +215,26 @@ export default function RecentItemsWidget({
         if (initialData) setItems(normalize(initialData));
     }, [initialData]);
 
-    const isOrders = mode === 'orders';
     const isEmpty  = !loading && !error && (!items || items.length === 0);
 
-    const title = isOrders
-        ? (trans.latest_orders ?? 'Dernières commandes')
-        : (trans.latest_quotes ?? 'Derniers devis');
-
-    const emptyText = isOrders
-        ? (trans.no_order ?? 'Aucune commande')
-        : (trans.no_quote ?? 'Aucun devis');
+    const MODE_CONFIG = {
+        orders:     { title: trans.latest_orders    ?? 'Dernières commandes',       empty: trans.no_order    ?? 'Aucune commande',    icon: 'fa-shopping-cart', theme: 'info'    },
+        quotes:     { title: trans.latest_quotes    ?? 'Derniers devis',            empty: trans.no_quote    ?? 'Aucun devis',        icon: 'fa-calculator',    theme: 'success' },
+        invoices:   { title: trans.latest_invoices  ?? 'Dernières factures',        empty: trans.no_invoice  ?? 'Aucune facture',     icon: 'fa-file-invoice',  theme: 'warning' },
+        deliveries: { title: trans.latest_deliveries ?? 'Derniers bons de livraison', empty: trans.no_delivery ?? 'Aucun BL',         icon: 'fa-truck',         theme: 'teal'    },
+        purchases:  { title: trans.latest_purchases  ?? 'Commandes achat en attente', empty: trans.no_purchase ?? 'Aucune commande achat', icon: 'fa-box',      theme: 'primary' },
+    };
+    const cfg = MODE_CONFIG[mode] ?? MODE_CONFIG.orders;
 
     return (
         <WidgetCard
-            title={title}
-            icon={isOrders ? 'fa-shopping-cart' : 'fa-calculator'}
-            theme={isOrders ? 'info' : 'success'}
+            title={cfg.title}
+            icon={cfg.icon}
+            theme={cfg.theme}
             loading={loading}
             error={error}
             empty={isEmpty}
-            emptyText={emptyText}
+            emptyText={cfg.empty}
             editMode={editMode}
             onRemove={onRemove}
         >

@@ -76,7 +76,14 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/orders/monthly', 'App\Http\Controllers\Api\KpiController@ordersMonthly')->name('orders.monthly');
         Route::get('/delivery/board', 'App\Http\Controllers\Api\KpiController@deliveryBoard')->name('delivery.board');
         Route::get('/recent/orders',  'App\Http\Controllers\Api\KpiController@recentOrders')->name('recent.orders');
-        Route::get('/recent/quotes',  'App\Http\Controllers\Api\KpiController@recentQuotes')->name('recent.quotes');
+        Route::get('/recent/quotes',     'App\Http\Controllers\Api\KpiController@recentQuotes')->name('recent.quotes');
+        Route::get('/recent/invoices',   'App\Http\Controllers\Api\KpiController@recentInvoices')->name('recent.invoices');
+        Route::get('/recent/deliveries', 'App\Http\Controllers\Api\KpiController@recentDeliveries')->name('recent.deliveries');
+        Route::get('/recent/purchases',  'App\Http\Controllers\Api\KpiController@recentPurchases')->name('recent.purchases');
+        Route::get('/top-clients',       'App\Http\Controllers\Api\KpiController@topClients')->name('top.clients');
+        Route::get('/nc-stats',          'App\Http\Controllers\Api\KpiController@ncStats')->name('nc.stats');
+        Route::get('/supplier-delays',   'App\Http\Controllers\Api\KpiController@supplierDelays')->name('supplier.delays');
+        Route::get('/otd',               'App\Http\Controllers\Api\KpiController@otd')->name('otd');
     });
 
     // Dashboard config (personnalisation par utilisateur)

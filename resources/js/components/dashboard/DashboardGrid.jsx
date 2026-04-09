@@ -25,6 +25,17 @@ async function saveLayout(endpoint, layout) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
+// ─── Permission check ────────────────────────────────────────────────────────
+
+/**
+ * permissions : { canPurchases: bool, ... }
+ */
+function canSeeWidget(widgetDef, permissions = {}) {
+    if (!widgetDef.permission) return true;
+    if (widgetDef.permission === 'purchases') return !!permissions.canPurchases;
+    return true;
+}
+
 // ─── Hook largeur conteneur ───────────────────────────────────────────────────
 
 function useContainerWidth(ref) {
@@ -40,8 +51,10 @@ function useContainerWidth(ref) {
 
 // ─── AddWidgetPanel ───────────────────────────────────────────────────────────
 
-function AddWidgetPanel({ activeIds, onAdd, onClose }) {
-    const available = REGISTRY.filter(w => !activeIds.includes(w.i ?? w.id));
+function AddWidgetPanel({ activeIds, onAdd, onClose, permissions }) {
+    const available = REGISTRY.filter(w =>
+        !activeIds.includes(w.id) && canSeeWidget(w, permissions)
+    );
     return (
         <div
             style={{
@@ -86,6 +99,7 @@ function AddWidgetPanel({ activeIds, onAdd, onClose }) {
  *   configEndpoint   string  — GET/PUT /dashboard/config
  */
 export default function DashboardGrid({ dashProps, configEndpoint }) {
+    const permissions = { canPurchases: !!dashProps?.canPurchases };
     const [layout,   setLayout]   = useState(null);   // null = en cours de chargement
     const [editMode, setEditMode] = useState(false);
     const [showAdd,  setShowAdd]  = useState(false);
@@ -207,6 +221,7 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
                 {layout.map(item => {
                     const def = WIDGET_MAP[item.i];
                     if (!def) return null;
+                    if (!canSeeWidget(def, permissions)) return null;
                     const WidgetComponent = def.component;
                     const widgetProps = def.getProps(dashProps);
                     return (
@@ -243,6 +258,7 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
                     activeIds={layout.map(l => l.i)}
                     onAdd={addWidget}
                     onClose={() => setShowAdd(false)}
+                    permissions={permissions}
                 />
             )}
         </div>

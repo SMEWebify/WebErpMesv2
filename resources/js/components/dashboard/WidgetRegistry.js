@@ -6,6 +6,10 @@ import GoalWidget          from './widgets/GoalWidget.jsx';
 import KpiStatsWidget      from './widgets/KpiStatsWidget.jsx';
 import MonthlyStatsWidget  from './widgets/MonthlyStatsWidget.jsx';
 import AnnouncementWidget  from './widgets/AnnouncementWidget.jsx';
+import TopClientsWidget    from './widgets/TopClientsWidget.jsx';
+import NcStatsWidget       from './widgets/NcStatsWidget.jsx';
+import SupplierDelayWidget from './widgets/SupplierDelayWidget.jsx';
+import OtdWidget           from './widgets/OtdWidget.jsx';
 
 const REGISTRY = [
     {
@@ -116,6 +120,102 @@ const REGISTRY = [
             target:   p.kpi.target_raw,
             currency: p.currency,
             locale:   p.locale,
+            trans:    p.trans,
+        }),
+    },
+    {
+        id: 'recent_invoices',
+        label: 'Dernières factures',
+        icon: 'fa-file-invoice',
+        defaultW: 4, defaultH: 5,
+        minW: 3,     minH: 3,
+        component: RecentItemsWidget,
+        getProps: (p) => ({
+            mode:     'invoices',
+            endpoint: p.endpoints?.recent_invoices,
+            trans:    p.trans,
+            urls:     { show: p.urls.invoices_show, company: p.urls.companies_show, all: p.urls.invoices },
+        }),
+    },
+    {
+        id: 'recent_deliveries',
+        label: 'Derniers bons de livraison',
+        icon: 'fa-truck',
+        defaultW: 4, defaultH: 5,
+        minW: 3,     minH: 3,
+        component: RecentItemsWidget,
+        getProps: (p) => ({
+            mode:     'deliveries',
+            endpoint: p.endpoints?.recent_deliveries,
+            trans:    p.trans,
+            urls:     { show: p.urls.deliveries_show, company: p.urls.companies_show, all: p.urls.deliveries },
+        }),
+    },
+    {
+        id: 'recent_purchases',
+        label: 'Commandes achat en attente',
+        icon: 'fa-box',
+        permission: 'purchases',
+        defaultW: 4, defaultH: 5,
+        minW: 3,     minH: 3,
+        component: RecentItemsWidget,
+        getProps: (p) => ({
+            mode:     'purchases',
+            endpoint: p.endpoints?.recent_purchases,
+            trans:    p.trans,
+            urls:     { show: p.urls.purchases_show, company: p.urls.companies_show, all: p.urls.purchases },
+        }),
+    },
+    {
+        id: 'top_clients',
+        label: 'Top clients (CA)',
+        icon: 'fa-trophy',
+        defaultW: 4, defaultH: 5,
+        minW: 3,     minH: 3,
+        component: TopClientsWidget,
+        getProps: (p) => ({
+            endpoint: p.endpoints?.top_clients,
+            currency: p.currency,
+            locale:   p.locale,
+            trans:    p.trans,
+            urls:     { companies_show: p.urls.companies_show },
+        }),
+    },
+    {
+        id: 'nc_stats',
+        label: 'Qualité — NC ouvertes',
+        icon: 'fa-exclamation-triangle',
+        defaultW: 4, defaultH: 4,
+        minW: 3,     minH: 3,
+        component: NcStatsWidget,
+        getProps: (p) => ({
+            endpoint: p.endpoints?.nc_stats,
+            trans:    p.trans,
+            urls:     { quality: p.urls.quality },
+        }),
+    },
+    {
+        id: 'supplier_delays',
+        label: 'Délai moyen fournisseurs',
+        icon: 'fa-shipping-fast',
+        permission: 'purchases',
+        defaultW: 4, defaultH: 5,
+        minW: 3,     minH: 3,
+        component: SupplierDelayWidget,
+        getProps: (p) => ({
+            endpoint: p.endpoints?.supplier_delays,
+            trans:    p.trans,
+        }),
+    },
+    {
+        id: 'otd',
+        label: 'Taux de service (OTD)',
+        icon: 'fa-clock',
+        defaultW: 4, defaultH: 4,
+        minW: 3,     minH: 3,
+        component: OtdWidget,
+        getProps: (p) => ({
+            endpoint: p.endpoints?.otd,
             trans:    p.trans,
         }),
     },
