@@ -159,15 +159,128 @@ class PurchasesReceiptController extends Controller
     }
 
     /**
-     * Display the receipt view with data.
+     * Display the receipt index view with React data.
      *
      * @return \Illuminate\Contracts\View\View
      */
     public function receipt()
     {
-        $data['PurchaseReciepCountDataRate'] = $this->purchaseKPIService->getPurchaseReciepCountDataRate();
-        $data['purchaseReceiptMonthlyRecap'] = $this->purchaseKPIService->getPurchaseReceiptMonthlyRecap();
-        return view('purchases/purchases-receipt')->with('data',$data);
+        $countData   = $this->purchaseKPIService->getPurchaseReciepCountDataRate();
+        $monthlyData = $this->purchaseKPIService->getPurchaseReceiptMonthlyRecap();
+
+        $total      = $countData->sum('PurchaseReciepCountRate');
+        $inProgress = $countData->where('statu', 1)->first()?->PurchaseReciepCountRate ?? 0;
+        $stock      = $countData->where('statu', 2)->first()?->PurchaseReciepCountRate ?? 0;
+
+        $reactKpi = [
+            'total'       => (int) $total,
+            'in_progress' => (int) $inProgress,
+            'stock'       => (int) $stock,
+        ];
+
+        $reactChart = [
+            'statusRate'   => $countData->map(fn ($item) => [
+                'statu'                  => $item->statu,
+                'PurchaseReciepCountRate' => $item->PurchaseReciepCountRate,
+            ])->values(),
+            'monthlyRecap' => $monthlyData->map(fn ($item) => [
+                'month'        => $item->month,
+                'receiptCount' => $item->receiptCount,
+            ])->values(),
+        ];
+
+        $reactEndpoints = [
+            'list' => route('purchases.receipt.json.list'),
+        ];
+
+        $reactTrans = [
+            'total_receipts' => __('general_content.po_receipt_trans_key'),
+            'in_progress'    => __('general_content.in_progress_trans_key'),
+            'stock'          => __('general_content.stock_trans_key'),
+            'search'         => __('general_content.search_trans_key'),
+            'code'           => __('general_content.id_trans_key'),
+            'label'          => __('general_content.label_trans_key'),
+            'company'        => __('general_content.customer_trans_key'),
+            'lines_count'    => __('general_content.lines_count_trans_key'),
+            'receipt_note'   => __('general_content.po_receipt_note_trans_key'),
+            'status'         => __('general_content.status_trans_key'),
+            'created_at'     => __('general_content.created_at_trans_key'),
+            'action'         => __('general_content.action_trans_key'),
+            'no_data'        => __('general_content.no_data_trans_key'),
+            'yes'            => __('general_content.yes_trans_key'),
+            'no'             => __('general_content.no_trans_key'),
+            'dashboard'      => __('general_content.dashboard_trans_key'),
+            'receipt_list'   => __('general_content.po_receipt_trans_key'),
+            'statistics'     => __('general_content.statistiques_trans_key'),
+            'monthly_recap'  => __('general_content.monthly_recap_report_trans_key'),
+            'view'           => __('general_content.view_trans_key'),
+            'jan' => 'January',  'feb' => 'February', 'mar' => 'March',
+            'apr' => 'April',    'may' => 'May',       'jun' => 'June',
+            'jul' => 'July',     'aug' => 'August',    'sep' => 'September',
+            'oct' => 'October',  'nov' => 'November',  'dec' => 'December',
+            'locale'         => str_replace('_', '-', config('app.locale')),
+            'currency'       => 'EUR',
+        ];
+
+        return view('purchases/purchases-receipt', compact('reactKpi', 'reactChart', 'reactEndpoints', 'reactTrans'));
+    }
+
+    /**
+     * Return a paginated JSON list of purchase receipts for the React index.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listJson(Request $request)
+    {
+        $search    = $request->get('search', '');
+        $statuses  = array_filter(array_map('intval', (array) $request->get('statuses', [])));
+        $sortField = $request->get('sort', 'created_at');
+        $sortAsc   = $request->boolean('asc', false);
+
+        $allowed = ['code', 'label', 'companies_id', 'created_at', 'statu'];
+        if (!in_array($sortField, $allowed)) {
+            $sortField = 'created_at';
+        }
+
+        $dir = $sortAsc ? 'asc' : 'desc';
+
+        $query = PurchaseReceipt::withCount('PurchaseReceiptLines')
+            ->with('companie:id,label,recept_controle')
+            ->when($search, fn ($q) => $q->where('label', 'like', "%{$search}%"))
+            ->when($statuses, fn ($q) => $q->whereIn('statu', $statuses));
+
+        if ($sortField === 'companies_id') {
+            $query->leftJoin('companies', 'purchase_receipts.companies_id', '=', 'companies.id')
+                  ->orderBy('companies.label', $dir)
+                  ->select('purchase_receipts.*');
+        } else {
+            $query->orderBy($sortField, $dir);
+        }
+
+        $items = $query->paginate(15);
+
+        return response()->json([
+            'data' => $items->map(fn ($receipt) => [
+                'id'                   => $receipt->id,
+                'code'                 => $receipt->code,
+                'label'                => $receipt->label,
+                'companie_label'       => $receipt->companie?->label ?? '—',
+                'recept_controle'      => $receipt->companie?->recept_controle ?? 0,
+                'lines_count'          => $receipt->purchase_receipt_lines_count,
+                'reception_controlled' => $receipt->reception_controlled,
+                'statu'                => $receipt->statu,
+                'created_at'           => $receipt->created_at?->format('Y-m-d'),
+                'url'                  => route('purchase.receipts.show', ['id' => $receipt->id]),
+                'pdf_url'              => route('pdf.receipt', ['Document' => $receipt->id]),
+            ]),
+            'meta' => [
+                'total'        => $items->total(),
+                'per_page'     => $items->perPage(),
+                'current_page' => $items->currentPage(),
+                'last_page'    => $items->lastPage(),
+            ],
+        ]);
     }
 
     /**

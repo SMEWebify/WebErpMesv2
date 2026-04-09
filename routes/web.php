@@ -370,10 +370,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/address',            'App\Http\Controllers\Purchases\PurchasesController@storeAddressJson')->name('purchases.json.address.store');
         Route::post('/json/contact',            'App\Http\Controllers\Purchases\PurchasesController@storeContactJson')->name('purchases.json.contact.store');
 
-        Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@waintingReceipt')->name('purchases.wainting.receipt'); 
-        Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receipt')->name('purchases.receipt'); 
+        Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@waintingReceipt')->name('purchases.wainting.receipt');
+        Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receipt')->name('purchases.receipt');
+        Route::get('/receipt/json/list', 'App\Http\Controllers\Purchases\PurchasesReceiptController@listJson')->name('purchases.receipt.json.list');
         Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@waintingInvoice')->name('purchases.wainting.invoice'); 
-        Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@invoice')->name('purchases.invoice'); 
+        Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@invoice')->name('purchases.invoice');
+        Route::get('/invoice/json/list', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@listJson')->name('purchases.invoice.json.list');
 
         //only for quote request to purchase order
         Route::post('/Purchase/Order/Create/{id}', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrderFromRFQ')->middleware(['auth'])->name('purchases.orders.store');
@@ -544,6 +546,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Serial numbers routes
         Route::group(['prefix' => 'serial-numbers', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::get('/', 'App\Http\Controllers\Products\SerialNumbersController@index')->name('products.serialNumbers');
+            Route::get('/json/list', 'App\Http\Controllers\Products\SerialNumbersController@listJson')->name('products.serialNumbers.json.list');
         });
 
         Route::group(['prefix' => 'batches', 'middleware' => ['permission:stock-lot-serial-management']], function () {
