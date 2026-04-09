@@ -45,6 +45,24 @@ class QontoIntegrationController extends Controller
         ]);
     }
 
+    public function status(Request $request): JsonResponse
+    {
+        $tenantId = $request->user()->id;
+        $connection = QontoConnection::where('tenant_id', $tenantId)->first();
+
+        $clientId = (string) config('services.qonto.client_id', '');
+        $clientSecret = (string) config('services.qonto.client_secret', '');
+        $featureEnabled = $clientId !== '' && $clientSecret !== '';
+
+        return response()->json([
+            'feature_enabled' => $featureEnabled,
+            'connected' => $connection !== null,
+            'last_sync_at' => $connection?->last_sync_at?->toISOString(),
+            'import_bidirectionnel' => (bool) ($connection?->import_bidirectionnel ?? false),
+            'scope' => $connection?->scope,
+        ]);
+    }
+
     public function callback(Request $request): JsonResponse
     {
         $tenantId = $request->user()->id;

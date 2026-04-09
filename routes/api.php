@@ -64,6 +64,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->group(function () {
+        Route::get('/status', [QontoIntegrationController::class, 'status'])->name('status');
         Route::get('/connect', [QontoIntegrationController::class, 'connect'])->name('connect');
         Route::post('/clients/sync', [QontoIntegrationController::class, 'sync'])->name('clients.sync');
         Route::post('/clients/reconcile', [QontoIntegrationController::class, 'reconcile'])->name('clients.reconcile');

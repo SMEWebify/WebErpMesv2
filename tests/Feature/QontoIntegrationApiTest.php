@@ -18,6 +18,52 @@ class QontoIntegrationApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_status_reports_feature_disabled_when_missing_credentials(): void
+    {
+        config()->set('services.qonto.client_id', null);
+        config()->set('services.qonto.client_secret', null);
+
+        $this->authenticateApiUser();
+
+        $response = $this->getJson('/api/integrations/qonto/status');
+
+        $response->assertOk()->assertJson([
+            'feature_enabled' => false,
+            'connected' => false,
+            'import_bidirectionnel' => false,
+        ]);
+        $this->assertNull($response->json('last_sync_at'));
+    }
+
+    public function test_status_reports_connection_metadata_when_connected(): void
+    {
+        config()->set('services.qonto.client_id', 'qonto-client-id');
+        config()->set('services.qonto.client_secret', 'qonto-client-secret');
+
+        $user = $this->authenticateApiUser();
+        $lastSyncAt = now()->subHour()->startOfSecond();
+
+        QontoConnection::create([
+            'tenant_id' => $user->id,
+            'access_token' => Crypt::encryptString('token'),
+            'refresh_token' => Crypt::encryptString('refresh'),
+            'access_token_expires_at' => now()->addHour(),
+            'import_bidirectionnel' => true,
+            'last_sync_at' => $lastSyncAt,
+            'scope' => 'offline_access client.read client.write',
+        ]);
+
+        $response = $this->getJson('/api/integrations/qonto/status');
+
+        $response->assertOk()->assertJson([
+            'feature_enabled' => true,
+            'connected' => true,
+            'import_bidirectionnel' => true,
+            'scope' => 'offline_access client.read client.write',
+        ]);
+        $this->assertSame($lastSyncAt->toISOString(), $response->json('last_sync_at'));
+    }
+
     public function test_connect_returns_authorization_url_and_state(): void
     {
         config()->set('services.qonto.client_id', 'qonto-client-id');
