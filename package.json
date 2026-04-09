@@ -7,7 +7,7 @@
     },
     "devDependencies": {
         "@vitejs/plugin-react": "^4.4.1",
-    "@vitejs/plugin-vue": "^6.0.5",
+        "@vitejs/plugin-vue": "^6.0.5",
         "alpinejs": "^2.7.3",
         "autoprefixer": "^10.4.17",
         "axios": "^1.8.2",
@@ -24,6 +24,9 @@
         "vue": "^3.5.11"
     },
     "dependencies": {
+        "@dnd-kit/core": "^6.3.1",
+        "@dnd-kit/sortable": "^9.0.0",
+        "@dnd-kit/utilities": "^3.2.2",
         "@fortawesome/fontawesome-free": "^5.15.4",
         "@popperjs/core": "^2.11.8",
         "@univerjs/core": "^0.17.0",
@@ -43,11 +46,9 @@
         "cross-env": "^7.0.3",
         "flag-icon-css": "^4.1.7",
         "livewire-sortable": "^1.0.0",
-        "@dnd-kit/core": "^6.3.1",
-        "@dnd-kit/sortable": "^9.0.0",
-        "@dnd-kit/utilities": "^3.2.2",
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
+        "react-grid-layout": "^2.2.3",
         "rxjs": "^7.8.2",
         "socket.io-client": "^4.8.0",
         "three": "^0.157.0",

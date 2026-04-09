@@ -16,6 +16,7 @@
 /public/pdf
 /public/sgv
 /public/stl
+/public/build
 /storage/*.key
 /output/done
 /vendor

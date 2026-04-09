@@ -69,6 +69,22 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('dashboard');
+
+    // KPI JSON endpoints (session auth, consommés par les widgets React)
+    Route::prefix('kpi')->name('kpi.')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
+        Route::get('/quotes/rate',    'App\Http\Controllers\Api\KpiController@quoteRate')->name('quotes.rate');
+        Route::get('/orders/monthly', 'App\Http\Controllers\Api\KpiController@ordersMonthly')->name('orders.monthly');
+        Route::get('/delivery/board', 'App\Http\Controllers\Api\KpiController@deliveryBoard')->name('delivery.board');
+        Route::get('/recent/orders',  'App\Http\Controllers\Api\KpiController@recentOrders')->name('recent.orders');
+        Route::get('/recent/quotes',  'App\Http\Controllers\Api\KpiController@recentQuotes')->name('recent.quotes');
+    });
+
+    // Dashboard config (personnalisation par utilisateur)
+    Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
+        Route::get('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@show')->name('dashboard.config.show');
+        Route::put('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@update')->name('dashboard.config.update');
+    });
+
     Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');
         Route::get('/whiteboards/{whiteboard}', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.show');

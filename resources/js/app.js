@@ -30,6 +30,7 @@ import CompanyContacts from './components/CompanyContacts.jsx';
 import LoadPlanningIndex from './components/LoadPlanningIndex.jsx';
 import QuoteLinesPage from './components/QuoteLinesPage.jsx';
 import ConstructionSitePage from './components/ConstructionSitePage.jsx';
+import HomeDashboard from './components/HomeDashboard.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -545,6 +546,18 @@ function mountLoadPlanningIndex() {
     );
 }
 
+function mountHomeDashboard() {
+    const element = document.getElementById('home-dashboard-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    const props = parse('props') ?? {};
+    createRoot(element).render(React.createElement(HomeDashboard, props));
+}
+
 function mountConstructionSitePage() {
     const element = document.getElementById('construction-site-app');
     if (!element) return;
@@ -590,3 +603,4 @@ mountQualityIndex();
 mountQuoteLinesPage();
 mountLoadPlanningIndex();
 mountConstructionSitePage();
+mountHomeDashboard();
