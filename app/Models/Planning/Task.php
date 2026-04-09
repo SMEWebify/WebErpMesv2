@@ -444,7 +444,7 @@ class Task extends Model
      */
     public function TotalTime()
     {
-        return $this->ProductTime()+$this->seting_time;
+        return round($this->ProductTime() + $this->seting_time, 2);
     }
 
     /**

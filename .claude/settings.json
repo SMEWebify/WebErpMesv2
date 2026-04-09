@@ -10,7 +10,8 @@
       "Bash(sed -n '150,165p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/InvoiceKPIService.php)",
       "Bash(sed -n '32,60p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/QualityKPIService.php)",
       "Bash(sed -n '106,140p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/PurchaseKPIService.php)",
-      "Bash(sed -n '450,485p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/OrderKPIService.php)"
+      "Bash(sed -n '450,485p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/OrderKPIService.php)",
+      "Bash(grep -E \"\\\\.\\(js|jsx|ts|tsx\\)$\")"
     ]
   }
 }
