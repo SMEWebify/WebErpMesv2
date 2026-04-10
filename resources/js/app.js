@@ -34,9 +34,12 @@ import HomeDashboard from './components/HomeDashboard.jsx';
 import PurchaseReceiptIndex from './components/PurchaseReceiptIndex.jsx';
 import PurchaseInvoicesIndex from './components/PurchaseInvoicesIndex.jsx';
 import TasksIndex from './components/TasksIndex.jsx';
+import TaskStatuApp from './components/TaskStatuApp.jsx';
 import SerialNumbersIndex from './components/SerialNumbersIndex.jsx';
 import MethodsOverview from './components/MethodsOverview.jsx';
 import GanttChart from './components/GanttChart.jsx';
+import NonConformitiesIndex from './components/NonConformitiesIndex.jsx';
+import GmaoDashboard from './components/GmaoDashboard.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -721,4 +724,78 @@ function mountGanttChart() {
     );
 }
 
+function mountTaskStatuApp() {
+    const element = document.getElementById('task-statu-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    const taskId = element.dataset.taskId ? parseInt(element.dataset.taskId, 10) : null;
+
+    createRoot(element).render(
+        React.createElement(TaskStatuApp, {
+            kpi:                  parse('kpi')              ?? {},
+            userProductivity:     parse('userProductivity') ?? [],
+            resourceHours:        parse('resourceHours')    ?? [],
+            initialTaskId:        Number.isNaN(taskId) ? null : taskId,
+            baseStatuUrl:         element.dataset.baseStatuUrl         ?? '',
+            apiBaseUrl:           element.dataset.apiBaseUrl           ?? '',
+            andonStoreUrl:        element.dataset.andonStoreUrl        ?? '',
+            purchasesRequestUrl:  element.dataset.purchasesRequestUrl  ?? '',
+            trans:                parse('trans')            ?? {},
+        })
+    );
+}
+
+mountTaskStatuApp();
 mountGanttChart();
+
+function mountNonConformitiesIndex() {
+    const element = document.getElementById('non-conformities-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(NonConformitiesIndex, {
+            endpoints:   parse('endpoints')   ?? {},
+            nextCode:    element.dataset.nextCode ?? '',
+            users:       parse('users')       ?? [],
+            services:    parse('services')    ?? [],
+            companies:   parse('companies')   ?? [],
+            failures:    parse('failures')    ?? [],
+            causes:      parse('causes')      ?? [],
+            corrections: parse('corrections') ?? [],
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+mountNonConformitiesIndex();
+
+function mountGmaoDashboard() {
+    const element = document.getElementById('gmao-dashboard-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(GmaoDashboard, {
+            kpis:                  parse('kpis')               ?? [],
+            workOrdersCount:       parse('workOrdersCount')    ?? {},
+            recentWorkOrders:      parse('recentWorkOrders')   ?? [],
+            maintenancePlansCount: element.dataset.maintenancePlansCount
+                                   ? parseInt(element.dataset.maintenancePlansCount, 10)
+                                   : 0,
+            endpoints:             parse('endpoints')          ?? {},
+        })
+    );
+}
+
+mountGmaoDashboard();
