@@ -15,7 +15,8 @@
       "Bash(php -r \"echo json_encode\\(new DateTime\\('2024-01-01'\\)\\);\")",
       "Bash(grep -r \"QONTO_\" c:\\\\laragon\\\\www\\\\WebErpMesv2\\\\WebErpMesv2\\\\.env*)",
       "Bash(find \"c:/laragon/www/WebErpMesv2/WebErpMesv2\" -type f \\\\\\( -name \"*.js\" -o -name \"*.vue\" -o -name \"*.jsx\" -o -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec grep -l -i \"qonto\" {} \\\\;)",
-      "Bash(php -r ':*)"
+      "Bash(php -r ':*)",
+      "Bash(npx vite:*)"
     ]
   }
 }

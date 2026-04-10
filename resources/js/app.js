@@ -40,6 +40,7 @@ import MethodsOverview from './components/MethodsOverview.jsx';
 import GanttChart from './components/GanttChart.jsx';
 import NonConformitiesIndex from './components/NonConformitiesIndex.jsx';
 import GmaoDashboard from './components/GmaoDashboard.jsx';
+import InspectionProjectsApp from './components/InspectionProjectsApp.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -799,3 +800,20 @@ function mountGmaoDashboard() {
 }
 
 mountGmaoDashboard();
+
+function mountInspectionProjectsApp() {
+    const element = document.getElementById('inspection-projects-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(InspectionProjectsApp, {
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+mountInspectionProjectsApp();

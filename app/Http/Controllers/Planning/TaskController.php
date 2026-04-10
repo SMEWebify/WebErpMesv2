@@ -252,29 +252,77 @@ class TaskController extends Controller
      */
     public function statu(Request $request)
     {
-        $tasksOpen = $this->taskKPIService->getOpenTasksCount();
-        $tasksInProgress = $this->taskKPIService->getInProgressTasksCount();
-        $tasksPending = $this->taskKPIService->getPendingTasksCount();
-        $tasksOngoing = $this->taskKPIService->getSuppliedTasksCount();
-        $tasksCompleted = $this->taskKPIService->getFinishedTasksCount();
-        $averageProcessingTime = $this->taskKPIService->getAverageProcessingTime();
-        $userProductivity = $this->taskKPIService->getUserProductivity();
-        $totalResourcesAllocated = $this->taskKPIService->getTotalResourcesAllocated();
-        $resourceHours = $this->taskKPIService->getResourceHours();
-        $totalProducedHours = $this->taskKPIService->getTotalProducedHoursCurrentMonth();
-        $averageTRS = $this->taskKPIService->getMonthlyAverageTRS();
-        return view('workflow/task-statu', compact(
-                                            'tasksOpen',
-                                            'tasksInProgress',
-                                            'tasksPending',
-                                            'tasksOngoing',
-                                            'tasksCompleted',
-                                            'averageProcessingTime',
-                                            'userProductivity',
-                                            'totalResourcesAllocated',
-                                            'resourceHours',
-                                            'totalProducedHours',
-                                            'averageTRS'
-                                            ), ['TaskId' => $request->id]);
+        $rawResourceHours = $this->taskKPIService->getResourceHours();
+
+        $kpi = [
+            'tasksOpen'             => $this->taskKPIService->getOpenTasksCount(),
+            'tasksInProgress'       => $this->taskKPIService->getInProgressTasksCount(),
+            'tasksPending'          => $this->taskKPIService->getPendingTasksCount(),
+            'tasksOngoing'          => $this->taskKPIService->getSuppliedTasksCount(),
+            'tasksCompleted'        => $this->taskKPIService->getFinishedTasksCount(),
+            'averageProcessingTime' => $this->taskKPIService->getAverageProcessingTime(),
+            'totalProducedHours'    => $this->taskKPIService->getTotalProducedHoursCurrentMonth(),
+            'averageTRS'            => $this->taskKPIService->getMonthlyAverageTRS(),
+        ];
+
+        $userProductivity = $this->taskKPIService->getUserProductivity()->values();
+
+        $resourceHours = collect($rawResourceHours)
+            ->map(fn ($hours, $name) => ['name' => $name, 'hours' => round($hours, 2)])
+            ->values();
+
+        $trans = [
+            'search_task_trans_key'              => __('general_content.search_task_trans_key'),
+            'current_count_task_trans_key'       => __('general_content.current_count_task_trans_key'),
+            'total_hours_per_month_trans_key'    => __('general_content.total_hours_per_month_trans_key'),
+            'goal_task_trans_key'                => __('general_content.goal_task_trans_key'),
+            'open_trans_key'                     => __('general_content.open_trans_key'),
+            'suspended_trans_key'                => __('general_content.suspended_trans_key'),
+            'supplied_trans_key'                 => __('general_content.supplied_trans_key'),
+            'finished_trans_key'                 => __('general_content.finished_trans_key'),
+            'average_time_task_trans_key'        => __('general_content.average_time_task_trans_key'),
+            'trs_per_month_trans_key'            => __('general_content.trs_per_month_trans_key'),
+            'user_productivity_trans_key'        => __('general_content.user_productivity_trans_key'),
+            'user_trans_key'                     => __('general_content.user_trans_key'),
+            'task_count_trans_key'               => __('general_content.task_count_trans_key'),
+            'total_hours_per_resource_trans_key' => __('general_content.total_hours_per_resource_trans_key'),
+            'ressource_trans_key'                => __('general_content.ressource_trans_key'),
+            'total_time_trans_key'               => __('general_content.total_time_trans_key'),
+            // task detail
+            'quote_task_trans_key'               => __('general_content.quote_task_trans_key'),
+            'task_detail_trans_key'              => __('general_content.task_detail_trans_key'),
+            'informations_trans_key'             => __('general_content.informations_trans_key'),
+            'line_trans_key'                     => __('general_content.line_trans_key'),
+            'finish_part_qty_trans_key'          => __('general_content.finish_part_qty_trans_key'),
+            'bad_part_qty_trans_key'             => __('general_content.bad_part_qty_trans_key'),
+            'net_production_qty_trans_key'       => __('general_content.net_production_qty_trans_key'),
+            'statu_trans_key'                    => __('general_content.statu_trans_key'),
+            'qty_trans_key'                      => __('general_content.qty_trans_key'),
+            'cost_trans_key'                     => __('general_content.cost_trans_key'),
+            'margin_trans_key'                   => __('general_content.margin_trans_key'),
+            'price_trans_key'                    => __('general_content.price_trans_key'),
+            'setting_time_trans_key'             => __('general_content.setting_time_trans_key'),
+            'unit_time_trans_key'                => __('general_content.unit_time_trans_key'),
+            'trs_trans_key'                      => __('general_content.trs_trans_key'),
+            'progress_trans_key'                 => __('general_content.progress_trans_key'),
+            'logs_activity_trans_key'            => __('general_content.logs_activity_trans_key'),
+            'task_trans_key'                     => __('general_content.task_trans_key'),
+            'component_trans_key'                => __('general_content.component_trans_key'),
+            'play_trans_key'                     => __('general_content.play_trans_key'),
+            'pause_trans_key'                    => __('general_content.pause_trans_key'),
+            'end_trans_key'                      => __('general_content.end_trans_key'),
+            'new_purchase_document_trans_key'    => __('general_content.new_purchase_document_trans_key'),
+            'remove_from_stock_trans_key'        => __('general_content.remove_from_stock_trans_key'),
+            'good_rejected_trans_key'            => __('general_content.good_rejected_trans_key'),
+            'quantity_rejected_trans_key'        => __('general_content.quantity_rejected_trans_key'),
+            'end_date_trans_key'                 => __('general_content.end_date_trans_key'),
+            'select_ressource_trans_key'         => __('general_content.select_ressource_trans_key'),
+            'user_choise_trans_key'              => __('general_content.user_choise_trans_key'),
+            'new_non_conformitie_trans_key'      => __('general_content.new_non_conformitie_trans_key'),
+        ];
+
+        return view('workflow/task-statu', compact('kpi', 'userProductivity', 'resourceHours', 'trans'), [
+            'taskId' => $request->id,
+        ]);
     }
 }
