@@ -5,77 +5,137 @@ namespace App\Http\Controllers\Planning;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Planning\Task;
+use App\Jobs\CalculateTaskDates;
+use App\Jobs\CalculateTaskResources;
 use App\Http\Controllers\Controller;
 use App\Models\Methods\MethodsServices;
 use App\Models\Times\TimesBanckHoliday;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class PlanningController extends Controller
 {
     public function index(Request $request)
     {
-        // Retrieve start and end dates from the query
         $startDate = $request->input('start_date', Carbon::now()->format('Y-m-d'));
-        $endDate = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d')); // Default, 1 month from today
+        $endDate   = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d'));
 
-        // Retrieve the state of the display_hours_diff checkbox
         $displayHoursDiff = $request->input('display_hours_diff', false);
 
-        // Check that the start date is not greater than the end date
         if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
             return redirect()->route('production.load.planning')->withErrors(['The start date must be before or equal to the end date.']);
         }
 
-        // Retrieve tasks and services
-        $taches = $this->getTasks($startDate, $endDate);
+        $taches   = $this->getTasks($startDate, $endDate);
         $services = $this->getServices();
 
-        // Check if there are no tasks
         if ($taches->isEmpty() && $this->countTaskNullRessource() < 1) {
             return redirect()->route('production.task')->with('error', 'No task in planning');
         }
 
-        // Calculate hours worked and tasks per service per day
-        [$hoursWorkedPerServiceDay, $tasksPerServiceDay] = $this->calculateHoursAndTasks($taches);
+        [$hoursPerServiceDay, $tasksPerServiceDay] = $this->calculateHoursAndTasks($taches);
 
-        // Calculate load rates per service per day
-        $rateChargePerServiceDay = $this->calculateLoadRates($hoursWorkedPerServiceDay);
+        $possibleDates          = $this->generatePossibleDates($startDate, $endDate);
+        $countTaskNullDate      = $this->countTaskNullDate();
+        $countTaskNullRessource = $this->countTaskNullRessource();
+        $bankHolidays           = $this->getBankHolidays();
 
-        // Create a data structure for load rates
-        $structureRateLoad = $this->createLoadRateStructure($rateChargePerServiceDay);
+        return view('workflow/planning-index', compact(
+            'taches',
+            'countTaskNullRessource',
+            'countTaskNullDate',
+            'tasksPerServiceDay',
+            'hoursPerServiceDay',
+            'services',
+            'possibleDates',
+            'startDate',
+            'endDate',
+            'displayHoursDiff',
+            'bankHolidays',
+        ));
+    }
 
-        // Generate all possible dates between the start and end dates
+    // -------------------------------------------------------------------------
+    // API endpoints for React
+    // -------------------------------------------------------------------------
+
+    public function dataJson(Request $request)
+    {
+        $startDate = $request->input('start_date', Carbon::now()->format('Y-m-d'));
+        $endDate   = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d'));
+
+        if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
+            return response()->json(['error' => 'The start date must be before or equal to the end date.'], 422);
+        }
+
+        $taches   = $this->getTasks($startDate, $endDate);
+        $services = $this->getServices();
+
+        [$hoursPerServiceDay, $tasksPerServiceDay] = $this->calculateHoursAndTasks($taches);
         $possibleDates = $this->generatePossibleDates($startDate, $endDate);
 
-        // Count tasks with null end date
-        $countTaskNullDate = $this->countTaskNullDate();
-
-        // Count tasks with null resources
-        $countTaskNullRessource = $this->countTaskNullRessource();
-
-        $bankHolidays = TimesBanckHoliday::all()->mapWithKeys(function ($holiday) {
-                                            // Si c'est un jour férié fixe, on ignore l'année et ne garde que le jour/mois
-                                            if ($holiday->fixed) {
-                                                return [Carbon::parse($holiday->date)->format('m-d') => $holiday->label];
-                                            }
-                                        
-                                            // Sinon, on garde la date complète
-                                            return [Carbon::parse($holiday->date)->toDateString() => $holiday->label];
-                                        })->toArray();
-
-
-        return view('workflow/planning-index', compact('taches',
-                                                                    'countTaskNullRessource',
-                                                                                'countTaskNullDate',
-                                                                                'tasksPerServiceDay',
-                                                                                'structureRateLoad',
-                                                                                'services',
-                                                                                'possibleDates',
-                                                                                'startDate',
-                                                                                'endDate',
-                                                                                'displayHoursDiff',
-                                                                                'bankHolidays'));
+        return response()->json([
+            'services'               => $this->mapServices($services),
+            'possibleDates'          => $possibleDates,
+            'hoursPerServiceDay'     => $hoursPerServiceDay,
+            'tasksPerServiceDay'     => $tasksPerServiceDay,
+            'bankHolidays'           => $this->getBankHolidays(),
+            'countTaskNullDate'      => $this->countTaskNullDate(),
+            'countTaskNullRessource' => $this->countTaskNullRessource(),
+        ]);
     }
+
+    /**
+     * POST — dispatch the date calculation job.
+     */
+    public function calculateDates()
+    {
+        Cache::forget(CalculateTaskDates::CACHE_KEY);
+        CalculateTaskDates::dispatchAfterResponse();
+
+        return response()->json(['dispatched' => true]);
+    }
+
+    /**
+     * POST — dispatch the resource assignment job.
+     */
+    public function calculateResources()
+    {
+        Cache::forget(CalculateTaskResources::CACHE_KEY);
+        CalculateTaskResources::dispatchAfterResponse();
+
+        return response()->json(['dispatched' => true]);
+    }
+
+    /**
+     * GET — return both job statuses for React polling.
+     */
+    public function calculationStatus()
+    {
+        $dateState     = Cache::get(CalculateTaskDates::CACHE_KEY, []);
+        $resourceState = Cache::get(CalculateTaskResources::CACHE_KEY, []);
+
+        return response()->json([
+            'dates' => [
+                'jobStatus'         => $dateState['status'] ?? null,
+                'progress'          => $dateState['progress'] ?? 0,
+                'count'             => $dateState['count'] ?? 0,
+                'messages'          => $dateState['messages'] ?? [],
+                'countTaskNullDate' => $this->countTaskNullDate(),
+            ],
+            'resources' => [
+                'jobStatus'              => $resourceState['status'] ?? null,
+                'progress'               => $resourceState['progress'] ?? 0,
+                'count'                  => $resourceState['count'] ?? 0,
+                'messages'               => $resourceState['messages'] ?? [],
+                'countTaskNullRessource' => $this->countTaskNullRessource(),
+            ],
+        ]);
+    }
+
+    // -------------------------------------------------------------------------
+    // Private helpers
+    // -------------------------------------------------------------------------
 
     private function getTasks($startDate, $endDate)
     {
@@ -90,10 +150,27 @@ class PlanningController extends Controller
 
     private function getServices()
     {
-        return MethodsServices::where(function (Builder $query) {
-                                    return $query->where('type', 1)
-                                                ->orWhere('type', 7);
-                                })->get();
+        return MethodsServices::with('Ressources')
+                    ->where(function (Builder $query) {
+                        return $query->where('type', 1)
+                                    ->orWhere('type', 7);
+                    })->get();
+    }
+
+    /**
+     * Map services for the frontend.
+     * capacity = sum of resource daily capacities — 0 if no resources configured.
+     * React uses this to decide whether to show a custom-capacity input.
+     */
+    private function mapServices($services): \Illuminate\Support\Collection
+    {
+        return $services->map(fn ($s) => [
+            'id'       => $s->id,
+            'label'    => $s->label,
+            'picture'  => $s->picture,
+            // capacity is stored weekly — convert to daily (÷5) for load rate display
+            'capacity' => round($s->Ressources->sum('capacity') / \App\Models\Methods\MethodsRessources::WORKING_DAYS_PER_WEEK, 2),
+        ])->values();
     }
 
     private function countTaskNullRessource()
@@ -111,111 +188,49 @@ class PlanningController extends Controller
                     })->count();
     }
 
-    private function calculateHoursAndTasks($taches)
+    /**
+     * Returns raw hours worked per service per day (not percentages).
+     * React computes load rates using the service's effective capacity.
+     */
+    private function calculateHoursAndTasks($taches): array
     {
-        $hoursWorkedPerServiceDay = [];
+        $hoursPerServiceDay = [];
         $tasksPerServiceDay = [];
 
         foreach ($taches as $tache) {
-            $serviceId = $tache['methods_services_id'];
-            $jour = (new Carbon($tache['end_date']))->format('Y-m-d'); // Convert the date to Y-m-d format
+            $serviceId = (string) $tache['methods_services_id'];
+            $jour      = (new Carbon($tache['end_date']))->format('Y-m-d');
 
-            // Calculate hours worked
-            if (!isset($hoursWorkedPerServiceDay[$serviceId])) {
-                $hoursWorkedPerServiceDay[$serviceId] = [];
-            }
-            if (!isset($hoursWorkedPerServiceDay[$serviceId][$jour])) {
-                $hoursWorkedPerServiceDay[$serviceId][$jour] = $tache->TotalTime();
-            } else {
-                $hoursWorkedPerServiceDay[$serviceId][$jour] += $tache->TotalTime();
-            }
+            $hoursPerServiceDay[$serviceId][$jour] = ($hoursPerServiceDay[$serviceId][$jour] ?? 0)
+                + $tache->TotalTime();
 
-            // Collect tasks per service per day
-            if (!isset($tasksPerServiceDay[$serviceId])) {
-                $tasksPerServiceDay[$serviceId] = [];
-            }
-            if (!isset($tasksPerServiceDay[$serviceId][$jour])) {
-                $tasksPerServiceDay[$serviceId][$jour] = [];
-            }
             $tasksPerServiceDay[$serviceId][$jour][] = $tache->id;
         }
 
-        return [$hoursWorkedPerServiceDay, $tasksPerServiceDay];
+        return [$hoursPerServiceDay, $tasksPerServiceDay];
     }
 
-    private function calculateLoadRates($hoursWorkedPerServiceDay)
+    private function generatePossibleDates($startDate, $endDate): array
     {
-        $rateChargePerServiceDay = [];
-        $capacityHebdoService = 16; // Hypothetical weekly capacity of 16 hours
-
-        foreach ($hoursWorkedPerServiceDay as $serviceId => $hoursPerDay) {
-            foreach ($hoursPerDay as $jour => $HoursWorked) {
-                $chargeRate = ($HoursWorked / $capacityHebdoService) * 100;
-                $rateChargePerServiceDay[$serviceId][$jour] = $chargeRate;
-            }
-        }
-
-        return $rateChargePerServiceDay;
-    }
-
-    private function createLoadRateStructure($rateChargePerServiceDay)
-    {
-        $structureRateLoad = [];
-
-        foreach ($rateChargePerServiceDay as $serviceId => $tauxParJour) {
-            foreach ($tauxParJour as $jour => $taux) {
-                $structureRateLoad[$jour][$serviceId] = $taux;
-            }
-        }
-
-        return $structureRateLoad;
-    }
-
-    private function generatePossibleDates($startDate, $endDate)
-    {
-        $possibleDates = [];
+        $dates       = [];
         $currentDate = $startDate;
 
         while ($currentDate <= $endDate) {
-            $possibleDates[] = $currentDate;
+            $dates[]     = $currentDate;
             $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
         }
 
-        return $possibleDates;
+        return $dates;
     }
 
-    public function dataJson(Request $request)
+    private function getBankHolidays(): array
     {
-        $startDate = $request->input('start_date', Carbon::now()->format('Y-m-d'));
-        $endDate   = $request->input('end_date', Carbon::now()->addMonths(1)->format('Y-m-d'));
-
-        if (Carbon::parse($startDate)->gt(Carbon::parse($endDate))) {
-            return response()->json(['error' => 'The start date must be before or equal to the end date.'], 422);
-        }
-
-        $taches   = $this->getTasks($startDate, $endDate);
-        $services = $this->getServices();
-
-        [$hoursWorkedPerServiceDay, $tasksPerServiceDay] = $this->calculateHoursAndTasks($taches);
-        $rateChargePerServiceDay = $this->calculateLoadRates($hoursWorkedPerServiceDay);
-        $structureRateLoad       = $this->createLoadRateStructure($rateChargePerServiceDay);
-        $possibleDates           = $this->generatePossibleDates($startDate, $endDate);
-
-        $bankHolidays = TimesBanckHoliday::all()->mapWithKeys(function ($holiday) {
+        return TimesBanckHoliday::all()->mapWithKeys(function ($holiday) {
             if ($holiday->fixed) {
                 return [Carbon::parse($holiday->date)->format('m-d') => $holiday->label];
             }
+
             return [Carbon::parse($holiday->date)->toDateString() => $holiday->label];
         })->toArray();
-
-        return response()->json([
-            'services'             => $services->map(fn ($s) => ['id' => $s->id, 'label' => $s->label, 'picture' => $s->picture])->values(),
-            'possibleDates'        => $possibleDates,
-            'structureRateLoad'    => $structureRateLoad,
-            'tasksPerServiceDay'   => $tasksPerServiceDay,
-            'bankHolidays'         => $bankHolidays,
-            'countTaskNullDate'    => $this->countTaskNullDate(),
-            'countTaskNullRessource' => $this->countTaskNullRessource(),
-        ]);
     }
 }

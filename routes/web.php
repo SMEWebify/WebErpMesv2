@@ -612,6 +612,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
         Route::get('/load-planning/data', 'App\Http\Controllers\Planning\PlanningController@dataJson')->name('production.load.planning.data');
+        Route::get('/load-planning/calculation-status', 'App\Http\Controllers\Planning\PlanningController@calculationStatus')->name('production.load.planning.calculation.status');
+        Route::post('/load-planning/calculate-dates', 'App\Http\Controllers\Planning\PlanningController@calculateDates')->name('production.load.planning.calculate.dates');
+        Route::post('/load-planning/calculate-resources', 'App\Http\Controllers\Planning\PlanningController@calculateResources')->name('production.load.planning.calculate.resources');
     });
 
     Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

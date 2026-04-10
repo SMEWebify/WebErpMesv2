@@ -39,13 +39,20 @@ class MethodsRessources extends Model
         return $this->hasMany(MethodsLocation::class, 'ressource_id');
     }
 
+    /** Number of working days per week used to convert weekly capacity to daily. */
+    public const WORKING_DAYS_PER_WEEK = 5;
+
+    /** Daily capacity in hours (capacity field is stored as weekly hours). */
+    public function dailyCapacity(): float
+    {
+        return $this->capacity / self::WORKING_DAYS_PER_WEEK;
+    }
+
     /**
      * Calculate remaining available capacity for the given day.
      *
-     * The capacity field represents the number of hours available per day
-     * for this resource. This method sums the duration of tasks already
-     * assigned on the provided date and subtracts this from the daily
-     * capacity.
+     * The capacity field is stored as weekly hours — divide by WORKING_DAYS_PER_WEEK
+     * to get the daily budget, then subtract hours already assigned that day.
      */
     public function remainingCapacity(Carbon $date): float
     {
@@ -54,7 +61,7 @@ class MethodsRessources extends Model
             ->get()
             ->sum(fn (Task $task) => $task->TotalTime());
 
-        return max(0, $this->capacity - $usedCapacity);
+        return max(0, $this->dailyCapacity() - $usedCapacity);
     }
 
     /**

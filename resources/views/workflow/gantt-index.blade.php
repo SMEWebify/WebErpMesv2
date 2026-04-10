@@ -18,8 +18,6 @@
 @section('right-sidebar')
 
 @section('content')
-	@livewire('task-calculation-date')
-
 	<x-adminlte-card theme="lime" theme-mode="outline">
 		@include('include.alert-result')
 		<form action="{{ route('production.gantt') }}" method="GET">
