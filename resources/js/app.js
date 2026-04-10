@@ -440,11 +440,13 @@ function mountCompanyAddresses() {
 
     createRoot(element).render(
         React.createElement(CompanyAddresses, {
-            initialAddresses: parse('addresses') ?? [],
-            storeUrl:         element.dataset.storeUrl      ?? '',
-            updateBaseUrl:    element.dataset.updateBaseUrl ?? '',
-            companieId:       element.dataset.companieId ? parseInt(element.dataset.companieId, 10) : null,
-            trans:            parse('trans') ?? {},
+            initialAddresses:     parse('addresses') ?? [],
+            storeUrl:             element.dataset.storeUrl          ?? '',
+            updateBaseUrl:        element.dataset.updateBaseUrl      ?? '',
+            companieId:           element.dataset.companieId ? parseInt(element.dataset.companieId, 10) : null,
+            trans:                parse('trans') ?? {},
+            initialDocDefaults:   parse('documentDefaults') ?? {},
+            syncAddressBaseUrl:   element.dataset.syncAddressBaseUrl ?? '',
         })
     );
 }
@@ -459,11 +461,13 @@ function mountCompanyContacts() {
 
     createRoot(element).render(
         React.createElement(CompanyContacts, {
-            initialContacts: parse('contacts') ?? [],
-            storeUrl:        element.dataset.storeUrl      ?? '',
-            updateBaseUrl:   element.dataset.updateBaseUrl ?? '',
-            companieId:      element.dataset.companieId ? parseInt(element.dataset.companieId, 10) : null,
-            trans:           parse('trans') ?? {},
+            initialContacts:     parse('contacts') ?? [],
+            storeUrl:            element.dataset.storeUrl           ?? '',
+            updateBaseUrl:       element.dataset.updateBaseUrl       ?? '',
+            companieId:          element.dataset.companieId ? parseInt(element.dataset.companieId, 10) : null,
+            trans:               parse('trans') ?? {},
+            initialDocDefaults:  parse('documentDefaults') ?? {},
+            syncContactBaseUrl:  element.dataset.syncContactBaseUrl ?? '',
         })
     );
 }
