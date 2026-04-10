@@ -615,6 +615,18 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/load-planning/calculation-status', 'App\Http\Controllers\Planning\PlanningController@calculationStatus')->name('production.load.planning.calculation.status');
         Route::post('/load-planning/calculate-dates', 'App\Http\Controllers\Planning\PlanningController@calculateDates')->name('production.load.planning.calculate.dates');
         Route::post('/load-planning/calculate-resources', 'App\Http\Controllers\Planning\PlanningController@calculateResources')->name('production.load.planning.calculate.resources');
+
+        // JSON API — TaskStatuApp (React)
+        Route::get('/Task/Statu/Api/{id}',               'App\Http\Controllers\Api\TaskStatuController@show')->name('production.task.statu.api.show');
+        Route::post('/Task/Statu/Api/{id}/start',        'App\Http\Controllers\Api\TaskStatuController@start')->name('production.task.statu.api.start');
+        Route::post('/Task/Statu/Api/{id}/pause',        'App\Http\Controllers\Api\TaskStatuController@pause')->name('production.task.statu.api.pause');
+        Route::post('/Task/Statu/Api/{id}/finish',       'App\Http\Controllers\Api\TaskStatuController@finish')->name('production.task.statu.api.finish');
+        Route::post('/Task/Statu/Api/{id}/good-qty',     'App\Http\Controllers\Api\TaskStatuController@goodQty')->name('production.task.statu.api.good_qty');
+        Route::post('/Task/Statu/Api/{id}/good-qty-stock','App\Http\Controllers\Api\TaskStatuController@goodQtyStock')->name('production.task.statu.api.good_qty_stock');
+        Route::post('/Task/Statu/Api/{id}/bad-qty',      'App\Http\Controllers\Api\TaskStatuController@badQty')->name('production.task.statu.api.bad_qty');
+        Route::put('/Task/Statu/Api/{id}/date',          'App\Http\Controllers\Api\TaskStatuController@updateDate')->name('production.task.statu.api.date');
+        Route::put('/Task/Statu/Api/{id}/resource',      'App\Http\Controllers\Api\TaskStatuController@updateResource')->name('production.task.statu.api.resource');
+        Route::post('/Task/Statu/Api/{id}/nc',           'App\Http\Controllers\Api\TaskStatuController@createNc')->name('production.task.statu.api.nc');
     });
 
     Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -749,6 +761,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@update')->name('quality.nonConformitie.update');
             Route::post('/close/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@closeResolutionDate')->name('quality.nonConformitie.close.resolutionDate');
             Route::post('/reopen/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@reopenResolutionDate')->name('quality.nonConformitie.reopen.resolutionDate');
+            // React API routes
+            Route::get('/api/list', 'App\Http\Controllers\Quality\QualityNonConformityController@apiList')->name('quality.nonConformitie.api.list');
+            Route::post('/api/store', 'App\Http\Controllers\Quality\QualityNonConformityController@apiStore')->name('quality.nonConformitie.api.store');
+            Route::post('/api/{id}/update', 'App\Http\Controllers\Quality\QualityNonConformityController@apiUpdate')->name('quality.nonConformitie.api.update');
+            Route::post('/api/{id}/close', 'App\Http\Controllers\Quality\QualityNonConformityController@apiClose')->name('quality.nonConformitie.api.close');
+            Route::post('/api/{id}/reopen', 'App\Http\Controllers\Quality\QualityNonConformityController@apiReopen')->name('quality.nonConformitie.api.reopen');
         });
     
         // Routes for Derogation
