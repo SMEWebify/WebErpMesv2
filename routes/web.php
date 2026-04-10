@@ -610,6 +610,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->name('task.delete');
         Route::post('/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->name('task.store');
         Route::post('/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->name('task.update');
+
+        // JSON API — React TaskManagePage
+        Route::get('/{id_type}/{id_page}/json/{id_line}',                              'App\Http\Controllers\Planning\TaskManageApiController@initialDataJson')->name('task.manage.json.initial');
+        Route::get('/{id_type}/{id_page}/json/{id_line}/select-data',                  'App\Http\Controllers\Planning\TaskManageApiController@selectDataJson')->name('task.manage.json.select-data');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/task',                        'App\Http\Controllers\Planning\TaskManageApiController@storeTaskJson')->name('task.manage.json.task.store');
+        Route::put('/{id_type}/{id_page}/json/task/{id}',                              'App\Http\Controllers\Planning\TaskManageApiController@updateTaskJson')->name('task.manage.json.task.update');
+        Route::delete('/{id_type}/{id_page}/json/task/{id}',                           'App\Http\Controllers\Planning\TaskManageApiController@destroyTaskJson')->name('task.manage.json.task.destroy');
+        Route::post('/{id_type}/{id_page}/json/task/{id}/duplicate',                   'App\Http\Controllers\Planning\TaskManageApiController@duplicateTaskJson')->name('task.manage.json.task.duplicate');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/sub-assembly',                'App\Http\Controllers\Planning\TaskManageApiController@storeSubAssemblyJson')->name('task.manage.json.subassembly.store');
+        Route::put('/{id_type}/{id_page}/json/sub-assembly/{id}',                      'App\Http\Controllers\Planning\TaskManageApiController@updateSubAssemblyJson')->name('task.manage.json.subassembly.update');
+        Route::delete('/{id_type}/{id_page}/json/sub-assembly/{id}',                   'App\Http\Controllers\Planning\TaskManageApiController@destroySubAssemblyJson')->name('task.manage.json.subassembly.destroy');
+        Route::post('/{id_type}/{id_page}/json/sub-assembly/{id}/duplicate',           'App\Http\Controllers\Planning\TaskManageApiController@duplicateSubAssemblyJson')->name('task.manage.json.subassembly.duplicate');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/import-csv',                  'App\Http\Controllers\Planning\TaskManageApiController@importCsvJson')->name('task.manage.json.import-csv');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/apply-nomenclature/{tpl_id}', 'App\Http\Controllers\Planning\TaskManageApiController@applyNomenclatureJson')->name('task.manage.json.apply-nomenclature');
     });
 
 

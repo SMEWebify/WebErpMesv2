@@ -44,6 +44,7 @@ import GanttChart from './components/GanttChart.jsx';
 import NonConformitiesIndex from './components/NonConformitiesIndex.jsx';
 import GmaoDashboard from './components/GmaoDashboard.jsx';
 import InspectionProjectsApp from './components/InspectionProjectsApp.jsx';
+import TaskManagePage from './components/TaskManagePage.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -884,3 +885,27 @@ function mountInspectionProjectsApp() {
 }
 
 mountInspectionProjectsApp();
+
+function mountTaskManagePage() {
+    const element = document.getElementById('task-manage-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(TaskManagePage, {
+            context: {
+                idType:   element.dataset.idType   ?? '',
+                idPage:   element.dataset.idPage   ?? '',
+                idLine:   element.dataset.idLine   ?? '',
+                statu:    parseInt(element.dataset.statu ?? '0', 10),
+                currency: element.dataset.currency ?? '€',
+            },
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+mountTaskManagePage();
