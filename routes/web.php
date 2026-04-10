@@ -32,6 +32,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/guest/nonConformitie/{uuid}/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
         Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
     });
+    Route::get('/integrations/qonto/callback', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'callback'])->name('admin.integrations.qonto.callback');
+
     Route::get('/pointage', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/pointage', [AttendanceController::class, 'store'])->name('attendance.store');
     //Rating
@@ -606,6 +608,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/calendar/orders', 'App\Http\Controllers\Planning\CalendarController@calendarOders')->name('production.calendar.orders');
         Route::get('/calendar/tasks', 'App\Http\Controllers\Planning\CalendarController@calendarTasks')->name('production.calendar.tasks');
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
+        Route::get('/gantt/order/{order_id}', 'App\Http\Controllers\Planning\GanttController@getTasksByOrder')->name('production.gantt.order');
         
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
         Route::get('/load-planning/data', 'App\Http\Controllers\Planning\PlanningController@dataJson')->name('production.load.planning.data');
@@ -633,6 +636,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/factory/role/permissions/store', 'App\Http\Controllers\Admin\RoleController@RolePemissionStore')->middleware(['auth'])->name('admin.factory.rolepermissions.store');
         Route::get('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'edit'])->middleware(['auth'])->name('admin.integrations.n2p');
         Route::put('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'update'])->middleware(['auth'])->name('admin.integrations.n2p.update');
+
+        Route::middleware(['auth'])->prefix('integrations/qonto')->name('admin.integrations.qonto.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'index'])->name('index');
+            Route::get('/connect', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'connect'])->name('connect');
+            Route::post('/sync', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'sync'])->name('sync');
+            Route::post('/settings', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'settings'])->name('settings');
+            Route::post('/disconnect', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'disconnect'])->name('disconnect');
+            Route::post('/reviews/{reviewId}/resolve', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'resolve'])->name('resolve');
+        });
 
         Route::post('/factory/custom-field/store', 'App\Http\Controllers\Admin\FactoryController@storeCustomField')->middleware(['auth'])->name('admin.factory.custom.field.store');
         Route::post('/factory/custom-field-value/storeOrUpdate/{id}/{type}', 'App\Http\Controllers\Admin\FactoryController@storeOrUpdateCustomField')->middleware(['auth'])->name('admin.factory.custom.field.value.store.update');
