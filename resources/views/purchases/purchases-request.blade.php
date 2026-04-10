@@ -10,22 +10,18 @@
   </div>
 @stop
 
-@section('right-sidebar')
-
 @section('content')
-@livewire('purchases-request')
-
+<div
+    id="purchases-request-app"
+    data-last-purchase-code="{{ $reactProps['lastPurchaseCode'] }}"
+    data-last-quotation-code="{{ $reactProps['lastQuotationCode'] }}"
+    data-suppliers='@json($reactProps['suppliers'], JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+    data-endpoints='@json($reactEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+    data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+</div>
 @stop
 
 @section('css')
-@stop
-
-@section('js')
-<script>
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip({
-          html:true
-      })
-  })
-</script>
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop

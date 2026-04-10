@@ -357,7 +357,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         
-        Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesRFQController@request')->name('purchases.request'); 
+        Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesRFQController@request')->name('purchases.request');
+        Route::get('/request/tasks', 'App\Http\Controllers\Purchases\PurchasesRFQController@requestTasks')->name('purchases.request.tasks');
+        Route::post('/request/store', 'App\Http\Controllers\Purchases\PurchasesRFQController@storePurchaseApi')->name('purchases.request.store');
+        Route::get('/request/export-csv', 'App\Http\Controllers\Purchases\PurchasesRFQController@exportCsvApi')->name('purchases.request.export-csv');
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesRFQController@quotation')->name('purchases.quotation'); 
         Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->name('purchases'); 
         

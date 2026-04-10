@@ -18,6 +18,7 @@ import DeliverysIndex from './components/DeliverysIndex.jsx';
 import CreditNotesIndex from './components/CreditNotesIndex.jsx';
 import DeliverysRequest from './components/DeliverysRequest.jsx';
 import InvoicesRequest from './components/InvoicesRequest.jsx';
+import PurchasesRequest from './components/PurchasesRequest.jsx';
 import InvoicesIndex from './components/InvoicesIndex.jsx';
 import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
@@ -285,6 +286,25 @@ function mountOrderLinesIndex() {
         React.createElement(OrderLinesIndex, {
             endpoints: parse('endpoints') ?? {},
             trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+function mountPurchasesRequest() {
+    const element = document.getElementById('purchases-request-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesRequest, {
+            lastPurchaseCode:  element.dataset.lastPurchaseCode  ?? '',
+            lastQuotationCode: element.dataset.lastQuotationCode ?? '',
+            suppliers:         parse('suppliers')  ?? [],
+            endpoints:         parse('endpoints')  ?? {},
+            trans:             parse('trans')       ?? {},
         })
     );
 }
@@ -700,6 +720,7 @@ mountDeliverysIndex();
 mountCreditNotesIndex();
 mountDeliverysRequest();
 mountInvoicesRequest();
+mountPurchasesRequest();
 mountInvoicesIndex();
 mountProductsIndex();
 mountQualityIndex();
