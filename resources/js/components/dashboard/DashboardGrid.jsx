@@ -4,7 +4,6 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import REGISTRY, { WIDGET_MAP, DEFAULT_LAYOUT } from './WidgetRegistry.js';
 
-
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function csrfToken() {
@@ -27,9 +26,6 @@ async function saveLayout(endpoint, layout) {
 
 // ─── Permission check ────────────────────────────────────────────────────────
 
-/**
- * permissions : { canPurchases: bool, ... }
- */
 function canSeeWidget(widgetDef, permissions = {}) {
     if (!widgetDef.permission) return true;
     if (widgetDef.permission === 'purchases') return !!permissions.canPurchases;
@@ -39,9 +35,14 @@ function canSeeWidget(widgetDef, permissions = {}) {
 // ─── Hook largeur conteneur ───────────────────────────────────────────────────
 
 function useContainerWidth(ref) {
-    const [width, setWidth] = useState(1200);
+    const [width, setWidth] = useState(() => {
+        // Initialiser avec la vraie largeur si disponible dès le départ
+        return ref?.current?.offsetWidth || window.innerWidth - 280 || 1200;
+    });
     useLayoutEffect(() => {
         if (!ref.current) return;
+        // Mesure immédiate avant le premier paint
+        setWidth(ref.current.offsetWidth);
         const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
         ro.observe(ref.current);
         return () => ro.disconnect();
@@ -49,9 +50,35 @@ function useContainerWidth(ref) {
     return width;
 }
 
+// ─── Placement intelligent ────────────────────────────────────────────────────
+
+/**
+ * Trouve la première position libre (x, y) pour un widget de taille w×h.
+ * Parcourt de haut en bas, gauche à droite.
+ */
+function findFreePosition(layout, w, h, cols = 12) {
+    const safeW = Math.min(w, cols);
+    const maxY = layout.reduce((m, item) => Math.max(m, item.y + item.h), 0);
+
+    for (let y = 0; y <= maxY; y++) {
+        for (let x = 0; x <= cols - safeW; x++) {
+            const fits = !layout.some(item => {
+                const noOverlap =
+                    item.x + item.w <= x ||
+                    item.x >= x + safeW  ||
+                    item.y + item.h <= y  ||
+                    item.y >= y + h;
+                return !noOverlap;
+            });
+            if (fits) return { x, y };
+        }
+    }
+    return { x: 0, y: maxY }; // fallback bas de page
+}
+
 // ─── AddWidgetPanel ───────────────────────────────────────────────────────────
 
-function AddWidgetPanel({ activeIds, onAdd, onClose, permissions }) {
+function AddWidgetPanel({ activeIds, onAdd, onClose, permissions, onDragStart, onDragEnd }) {
     const available = REGISTRY.filter(w =>
         !activeIds.includes(w.id) && canSeeWidget(w, permissions)
     );
@@ -72,11 +99,21 @@ function AddWidgetPanel({ activeIds, onAdd, onClose, permissions }) {
             {available.length === 0 && (
                 <p className="text-muted" style={{ fontSize: '0.85rem' }}>Tous les widgets sont déjà affichés.</p>
             )}
+            <p className="text-muted" style={{ fontSize: '0.78rem', marginBottom: '0.75rem' }}>
+                <i className="fas fa-hand-pointer mr-1" />Cliquez ou <i className="fas fa-arrows-alt mr-1" />glissez dans la grille
+            </p>
             {available.map(w => (
                 <div
                     key={w.id}
                     className="card card-body mb-2 p-2"
-                    style={{ cursor: 'pointer', fontSize: '0.85rem' }}
+                    style={{ cursor: 'grab', fontSize: '0.85rem', userSelect: 'none' }}
+                    draggable
+                    onDragStart={(e) => {
+                        e.dataTransfer.setData('widgetId', w.id);
+                        e.dataTransfer.effectAllowed = 'copy';
+                        onDragStart(w);
+                    }}
+                    onDragEnd={onDragEnd}
                     onClick={() => onAdd(w)}
                 >
                     <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
@@ -91,20 +128,14 @@ function AddWidgetPanel({ activeIds, onAdd, onClose, permissions }) {
 
 // ─── DashboardGrid ────────────────────────────────────────────────────────────
 
-/**
- * DashboardGrid — grille React-Grid-Layout personnalisable
- *
- * Props :
- *   dashProps        object  — toutes les props HomeDashboard (kpi, charts, urls, trans…)
- *   configEndpoint   string  — GET/PUT /dashboard/config
- */
 export default function DashboardGrid({ dashProps, configEndpoint }) {
     const permissions = { canPurchases: !!dashProps?.canPurchases };
-    const [layout,   setLayout]   = useState(null);   // null = en cours de chargement
-    const [editMode, setEditMode] = useState(false);
-    const [showAdd,  setShowAdd]  = useState(false);
-    const [saving,   setSaving]   = useState(false);
-    const saveTimer  = useRef(null);
+    const [layout,          setLayout]          = useState(null);
+    const [editMode,        setEditMode]        = useState(false);
+    const [showAdd,         setShowAdd]         = useState(false);
+    const [saving,          setSaving]          = useState(false);
+    const [draggingWidget,  setDraggingWidget]  = useState(null); // widget glissé depuis le panel
+    const saveTimer    = useRef(null);
     const containerRef = useRef(null);
     const containerWidth = useContainerWidth(containerRef);
 
@@ -131,7 +162,6 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
     }, [configEndpoint]);
 
     const handleLayoutChange = useCallback((newLayout) => {
-        // react-grid-layout retourne seulement {i,x,y,w,h} — on garde ça
         setLayout(newLayout);
         persistLayout(newLayout);
     }, [persistLayout]);
@@ -145,15 +175,15 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
         });
     }, [persistLayout]);
 
-    // ── Ajouter un widget ─────────────────────────────────────────────────────
+    // ── Ajouter un widget (clic depuis le panel) ──────────────────────────────
     const addWidget = useCallback((widgetDef) => {
         setLayout(prev => {
-            const maxY = prev.reduce((m, item) => Math.max(m, item.y + item.h), 0);
+            const { x, y } = findFreePosition(prev, widgetDef.defaultW, widgetDef.defaultH);
             const next = [...prev, {
                 i: widgetDef.id,
-                x: 0,
-                y: maxY,
-                w: widgetDef.defaultW,
+                x,
+                y,
+                w: Math.min(widgetDef.defaultW, 12),
                 h: widgetDef.defaultH,
             }];
             persistLayout(next);
@@ -161,6 +191,31 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
         });
         setShowAdd(false);
     }, [persistLayout]);
+
+    // ── Drop depuis le panel (drag-and-drop) ──────────────────────────────────
+    const handleDrop = useCallback((currentLayout, droppedItem, event) => {
+        const widgetId = event.dataTransfer?.getData('widgetId') || draggingWidget?.id;
+        const def = widgetId ? WIDGET_MAP[widgetId] : null;
+        if (!def) { setDraggingWidget(null); return; }
+
+        setLayout(prev => {
+            // Retirer l'item fantôme '__dropping-elem__' s'il existe, ajouter le vrai widget
+            const next = [
+                ...prev.filter(l => l.i !== '__dropping-elem__' && l.i !== def.id),
+                {
+                    i: def.id,
+                    x: droppedItem.x,
+                    y: droppedItem.y,
+                    w: droppedItem.w,
+                    h: droppedItem.h,
+                },
+            ];
+            persistLayout(next);
+            return next;
+        });
+        setDraggingWidget(null);
+        setShowAdd(false);
+    }, [draggingWidget, persistLayout]);
 
     // ── Réinitialiser le layout ───────────────────────────────────────────────
     const resetLayout = useCallback(() => {
@@ -178,7 +233,7 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
 
     // ── Rendu ─────────────────────────────────────────────────────────────────
     return (
-        <div ref={containerRef}>
+        <div ref={containerRef} style={{ width: '100%' }}>
             {/* Barre d'outils edit mode */}
             <div className="d-flex justify-content-end align-items-center mb-2" style={{ gap: '0.5rem' }}>
                 {saving && (
@@ -188,7 +243,7 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
                 )}
                 {editMode && (
                     <>
-                        <button className="btn btn-sm btn-outline-primary" onClick={() => setShowAdd(true)}>
+                        <button className="btn btn-sm btn-outline-primary" onClick={() => setShowAdd(s => !s)}>
                             <i className="fas fa-plus mr-1" />Ajouter
                         </button>
                         <button className="btn btn-sm btn-outline-secondary" onClick={resetLayout}>
@@ -198,12 +253,25 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
                 )}
                 <button
                     className={`btn btn-sm ${editMode ? 'btn-success' : 'btn-outline-secondary'}`}
-                    onClick={() => { setEditMode(e => !e); setShowAdd(false); }}
+                    onClick={() => { setEditMode(e => !e); setShowAdd(false); setDraggingWidget(null); }}
                 >
                     <i className={`fas ${editMode ? 'fa-check' : 'fa-edit'} mr-1`} />
                     {editMode ? 'Terminer' : 'Personnaliser'}
                 </button>
             </div>
+
+            {/* Zone de drop visuelle en mode édition */}
+            {editMode && draggingWidget && (
+                <div
+                    style={{
+                        position: 'absolute', inset: 0, zIndex: 1,
+                        pointerEvents: 'none',
+                        border: '2px dashed #007bff',
+                        borderRadius: 4,
+                        background: 'rgba(0, 123, 255, 0.03)',
+                    }}
+                />
+            )}
 
             {/* Grille */}
             <ResponsiveGridLayout
@@ -214,7 +282,14 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
                 rowHeight={80}
                 isDraggable={editMode}
                 isResizable={editMode}
+                isDroppable={editMode}
+                droppingItem={draggingWidget ? {
+                    i:    '__dropping-elem__',
+                    w:    Math.min(draggingWidget.defaultW, 12),
+                    h:    draggingWidget.defaultH,
+                } : undefined}
                 onLayoutChange={(current) => handleLayoutChange(current)}
+                onDrop={handleDrop}
                 draggableHandle=".widget-drag-handle"
                 margin={[12, 12]}
             >
@@ -259,6 +334,11 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
                     onAdd={addWidget}
                     onClose={() => setShowAdd(false)}
                     permissions={permissions}
+                    onDragStart={(w) => setDraggingWidget(w)}
+                    onDragEnd={() => {
+                        // Si le drop n'a pas eu lieu sur la grille, reset
+                        setTimeout(() => setDraggingWidget(d => d), 200);
+                    }}
                 />
             )}
         </div>
