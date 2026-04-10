@@ -73,10 +73,8 @@ class QontoIntegrationApiTest extends TestCase
         $response = $this->getJson('/api/integrations/qonto/connect');
 
         $response->assertOk()->assertJsonStructure(['authorization_url', 'state']);
-        $this->assertSame(
-            $response->json('state'),
-            Cache::get('qonto.oauth.state.'.$user->id)
-        );
+        $state = $response->json('state');
+        $this->assertSame($user->id, Cache::get("qonto.oauth.state.{$state}"));
     }
 
     public function test_sync_creates_review_when_matching_is_ambiguous(): void
