@@ -19,6 +19,8 @@ import CreditNotesIndex from './components/CreditNotesIndex.jsx';
 import DeliverysRequest from './components/DeliverysRequest.jsx';
 import InvoicesRequest from './components/InvoicesRequest.jsx';
 import PurchasesRequest from './components/PurchasesRequest.jsx';
+import PurchasesQuotationIndex from './components/PurchasesQuotationIndex.jsx';
+import PurchasesQuotationShow from './components/PurchasesQuotationShow.jsx';
 import InvoicesIndex from './components/InvoicesIndex.jsx';
 import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
@@ -286,6 +288,44 @@ function mountOrderLinesIndex() {
         React.createElement(OrderLinesIndex, {
             endpoints: parse('endpoints') ?? {},
             trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+function mountPurchasesQuotationIndex() {
+    const element = document.getElementById('purchases-quotation-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesQuotationIndex, {
+            endpoints:  parse('endpoints')  ?? {},
+            trans:      parse('trans')      ?? {},
+            initialKpi: parse('kpi')        ?? null,
+        })
+    );
+}
+
+function mountPurchasesQuotationShow() {
+    const element = document.getElementById('purchases-quotation-show-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesQuotationShow, {
+            initialQuotation:  parse('quotation')  ?? {},
+            suppliers:         parse('suppliers')  ?? [],
+            initialAddresses:  parse('addresses')  ?? [],
+            initialContacts:   parse('contacts')   ?? [],
+            currency:          element.dataset.currency ?? 'EUR',
+            endpoints:         parse('endpoints')  ?? {},
+            trans:             parse('trans')       ?? {},
         })
     );
 }
@@ -720,6 +760,8 @@ mountDeliverysIndex();
 mountCreditNotesIndex();
 mountDeliverysRequest();
 mountInvoicesRequest();
+mountPurchasesQuotationIndex();
+mountPurchasesQuotationShow();
 mountPurchasesRequest();
 mountInvoicesIndex();
 mountProductsIndex();

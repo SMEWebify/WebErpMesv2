@@ -366,6 +366,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         
         Route::post('/', 'App\Http\Controllers\Purchases\PurchasesController@storeBankPurchase')->name('purchases.store');
 
+        // JSON endpoints for React PurchasesQuotationIndex / PurchasesQuotationShow
+        Route::get('/quotation/api/list',           'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationList')->name('purchases.quotation.api.list');
+        Route::get('/quotation/api/kpi',            'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationKpi')->name('purchases.quotation.api.kpi');
+        Route::get('/quotation/api/products',       'App\Http\Controllers\Purchases\PurchasesRFQController@apiProducts')->name('purchases.quotation.api.products');
+        Route::get('/quotation/api/company-data',   'App\Http\Controllers\Purchases\PurchasesRFQController@apiCompanyAddresses')->name('purchases.quotation.api.company-data');
+        Route::get('/quotation/api/{quotation}',    'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationShow')->name('purchases.quotation.api.show');
+        Route::patch('/quotation/api/{quotation}',  'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdate')->name('purchases.quotation.api.update');
+        Route::patch('/quotation/api/{quotation}/statu', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdateStatu')->name('purchases.quotation.api.statu');
+        Route::post('/quotation/api/{quotation}/lines',  'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationStoreLine')->name('purchases.quotation.api.lines.store');
+        Route::patch('/quotation/api/{quotation}/lines/{line}', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdateLine')->name('purchases.quotation.api.lines.update');
+
         // JSON endpoints for React PurchasesIndex
         Route::get('/json/list',                'App\Http\Controllers\Purchases\PurchasesController@listJson')->name('purchases.json.list');
         Route::post('/json/store',              'App\Http\Controllers\Purchases\PurchasesController@storeJson')->name('purchases.json.store');
