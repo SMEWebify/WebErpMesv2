@@ -36,6 +36,7 @@ import PurchaseInvoicesIndex from './components/PurchaseInvoicesIndex.jsx';
 import TasksIndex from './components/TasksIndex.jsx';
 import SerialNumbersIndex from './components/SerialNumbersIndex.jsx';
 import MethodsOverview from './components/MethodsOverview.jsx';
+import GanttChart from './components/GanttChart.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -702,3 +703,22 @@ mountTasksIndex();
 mountPurchaseReceiptIndex();
 mountSerialNumbersIndex();
 mountMethodsOverview();
+
+function mountGanttChart() {
+    const element = document.getElementById('gantt-chart-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(GanttChart, {
+            orderId:  element.dataset.orderId ? parseInt(element.dataset.orderId, 10) : null,
+            apiBase:  element.dataset.apiBase ?? '/production/gantt/order',
+            trans:    parse('trans') ?? {},
+        })
+    );
+}
+
+mountGanttChart();

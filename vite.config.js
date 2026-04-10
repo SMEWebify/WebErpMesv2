@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/js/guest.js',
                 'resources/js/spreadsheet.js',
+                'node_modules/frappe-gantt/dist/frappe-gantt.css',
             ],
             refresh: true,
         }),

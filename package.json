@@ -45,6 +45,7 @@
         "admin-lte": "^4.0.0-beta2",
         "cross-env": "^7.0.3",
         "flag-icon-css": "^4.1.7",
+        "frappe-gantt": "^1.2.2",
         "livewire-sortable": "^1.0.0",
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
