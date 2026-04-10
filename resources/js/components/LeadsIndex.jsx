@@ -32,6 +32,8 @@ const LS_HIDDEN_COLS = 'leads_table_hidden_cols';
 const LS_FILTERS     = 'leads_list_filters';
 
 const DEFAULT_COL_ORDER = ['companie', 'contact', 'user', 'source', 'priority', 'campaign', 'statu', 'created_at'];
+const TEXT_FILTER_COLS  = new Set(['companie', 'contact', 'user', 'source', 'campaign']);
+const DATE_RANGE_COLS   = new Set(['created_at']);
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -377,17 +379,17 @@ function colDefs(trans) {
 function readSavedColOrder() {
     try {
         const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER) ?? 'null');
-        if (Array.isArray(saved) && saved.length) return saved;
+        if (Array.isArray(saved) && saved.every(c => DEFAULT_COL_ORDER.includes(c))) return saved;
     } catch {}
     return DEFAULT_COL_ORDER;
 }
 
 function readSavedHiddenCols() {
     try {
-        const saved = JSON.parse(localStorage.getItem(LS_HIDDEN_COLS) ?? 'null');
-        if (Array.isArray(saved)) return saved;
+        const saved = JSON.parse(localStorage.getItem(LS_HIDDEN_COLS));
+        if (Array.isArray(saved)) return new Set(saved.filter(c => DEFAULT_COL_ORDER.includes(c)));
     } catch {}
-    return [];
+    return new Set();
 }
 
 function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
@@ -399,10 +401,18 @@ function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
 
     const COLS = colDefs(trans);
 
-    const toggleHide = colId => {
-        const next = hiddenCols.includes(colId) ? hiddenCols.filter(c => c !== colId) : [...hiddenCols, colId];
+    const hideCol = (colId) => {
+        const next = new Set(hiddenCols);
+        next.add(colId);
         setHiddenCols(next);
-        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify(next));
+        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
+    };
+
+    const showCol = (colId) => {
+        const next = new Set(hiddenCols);
+        next.delete(colId);
+        setHiddenCols(next);
+        localStorage.setItem(LS_HIDDEN_COLS, JSON.stringify([...next]));
     };
 
     const onDragStart = colId => { dragCol.current = colId; };
@@ -412,25 +422,33 @@ function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
         const src = dragCol.current;
         if (!src || src === targetId) { setDragOver(null); return; }
         const next = [...colOrder];
-        const [removed] = next.splice(next.indexOf(src), 1);
-        next.splice(next.indexOf(targetId), 0, removed);
+        next.splice(next.indexOf(targetId), 0, next.splice(next.indexOf(src), 1)[0]);
         setColOrder(next);
         localStorage.setItem(LS_COL_ORDER, JSON.stringify(next));
         setDragOver(null);
         dragCol.current = null;
     };
 
-    const visibleCols = colOrder.filter(c => !hiddenCols.includes(c) && COLS[c]);
+    const visibleCols = colOrder.filter(c => !hiddenCols.has(c) && COLS[c]);
 
     const filtered = items.filter(l =>
-        Object.entries(colFilters).every(([col, val]) => {
+        visibleCols.every(colId => {
+            if (DATE_RANGE_COLS.has(colId)) {
+                const { from, to } = colFilters[colId] ?? {};
+                const iso = l.created_at ?? '';
+                if (!iso) return true;
+                if (from && iso < from) return false;
+                if (to   && iso > to)   return false;
+                return true;
+            }
+            const val = colFilters[colId] ?? '';
             if (!val) return true;
             const v = val.toLowerCase();
-            if (col === 'companie') return (l.companie?.label ?? '').toLowerCase().includes(v);
-            if (col === 'contact')  return (l.contact?.name  ?? '').toLowerCase().includes(v);
-            if (col === 'user')     return (l.user?.name     ?? '').toLowerCase().includes(v);
-            if (col === 'source')   return (l.source  ?? '').toLowerCase().includes(v);
-            if (col === 'campaign') return (l.campaign ?? '').toLowerCase().includes(v);
+            if (colId === 'companie') return (l.companie?.label ?? '').toLowerCase().includes(v);
+            if (colId === 'contact')  return (l.contact?.name  ?? '').toLowerCase().includes(v);
+            if (colId === 'user')     return (l.user?.name     ?? '').toLowerCase().includes(v);
+            if (colId === 'source')   return (l.source  ?? '').toLowerCase().includes(v);
+            if (colId === 'campaign') return (l.campaign ?? '').toLowerCase().includes(v);
             return true;
         })
     );
@@ -449,20 +467,27 @@ function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
         }
     };
 
+    const inputStyle = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
+
     return (
         <div>
-            {/* Column visibility toggles */}
-            <div className="d-flex flex-wrap mb-1" style={{ gap: '0.25rem' }}>
-                {DEFAULT_COL_ORDER.map(colId => (
-                    <button key={colId}
-                        className={`btn btn-xs ${hiddenCols.includes(colId) ? 'btn-outline-secondary' : 'btn-secondary'}`}
-                        style={{ fontSize: '0.7rem', padding: '1px 6px' }}
-                        onClick={() => toggleHide(colId)}
-                    >
-                        {COLS[colId]?.label ?? colId}
-                    </button>
-                ))}
-            </div>
+            {/* Hidden-column restore chips */}
+            {hiddenCols.size > 0 && (
+                <div className="mb-2 d-flex flex-wrap" style={{ gap: '4px' }}>
+                    {colOrder.filter(c => hiddenCols.has(c)).map(colId => (
+                        <button
+                            key={colId}
+                            type="button"
+                            className="btn btn-sm btn-outline-secondary"
+                            style={{ fontSize: '0.72rem', padding: '1px 8px' }}
+                            onClick={() => showCol(colId)}
+                            title="Réafficher la colonne"
+                        >
+                            + {COLS[colId]?.label ?? colId}
+                        </button>
+                    ))}
+                </div>
+            )}
 
             <div className="table-responsive">
                 <table className="table table-hover table-sm mb-0">
@@ -476,42 +501,81 @@ function LeadsTable({ items, trans, onSort, sortField, sortAsc, locale }) {
                                     <th key={colId}
                                         className={alignCls}
                                         draggable
-                                        style={{ cursor: 'pointer', borderLeft: dropping ? '2px solid #007bff' : undefined }}
+                                        style={{
+                                            cursor:     'pointer',
+                                            whiteSpace: 'nowrap',
+                                            userSelect: 'none',
+                                            borderLeft: dropping ? '3px solid #007bff' : undefined,
+                                            background: dropping ? '#e8f0fe' : undefined,
+                                        }}
                                         onDragStart={() => onDragStart(colId)}
                                         onDragOver={e => onDragOver(e, colId)}
                                         onDragLeave={onDragLeave}
                                         onDrop={() => onDrop(colId)}
+                                        onClick={() => col.sortable && onSort(colId)}
                                     >
-                                        {col.sortable ? (
-                                            <span onClick={() => onSort(colId)} style={{ userSelect: 'none' }}>
-                                                {col.label}
-                                                <SortIcon field={colId} sortField={sortField} sortAsc={sortAsc} />
-                                            </span>
-                                        ) : col.label}
+                                        <i className="fas fa-grip-vertical text-muted mr-1" style={{ fontSize: '0.65rem', opacity: 0.4 }} />
+                                        {col.label}
+                                        {col.sortable && <SortIcon field={colId} sortField={sortField} sortAsc={sortAsc} />}
+                                        <span
+                                            role="button"
+                                            aria-label="Masquer la colonne"
+                                            style={{ marginLeft: '6px', opacity: 0.4, fontSize: '0.8rem', lineHeight: 1 }}
+                                            className="text-danger"
+                                            onClick={e => { e.stopPropagation(); hideCol(colId); }}
+                                            onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                                            onMouseLeave={e => e.currentTarget.style.opacity = 0.4}
+                                        >
+                                            ×
+                                        </span>
                                     </th>
                                 );
                             })}
-                            <th></th>
+                            <th style={{ width: 36 }} />
                         </tr>
-                        {/* Per-column text filters */}
+                        {/* Per-column filters */}
                         <tr>
-                            {visibleCols.map(colId => {
-                                const filterable = ['companie', 'contact', 'user', 'source', 'campaign'].includes(colId);
-                                return (
-                                    <th key={colId} style={{ padding: '2px 4px' }}>
-                                        {filterable && (
+                            {visibleCols.map(colId => (
+                                <th key={colId} style={{ padding: '2px 4px', fontWeight: 'normal' }}>
+                                    {TEXT_FILTER_COLS.has(colId) && (
+                                        <input
+                                            type="text"
+                                            className="form-control form-control-sm"
+                                            style={inputStyle}
+                                            placeholder="⌕"
+                                            value={colFilters[colId] ?? ''}
+                                            onChange={e => setColFilters(f => ({ ...f, [colId]: e.target.value }))}
+                                        />
+                                    )}
+                                    {DATE_RANGE_COLS.has(colId) && (
+                                        <div style={{ display: 'flex', gap: '2px', minWidth: '200px' }}>
                                             <input
+                                                type="date"
                                                 className="form-control form-control-sm"
-                                                style={{ fontSize: '0.72rem', height: 22, padding: '1px 4px' }}
-                                                placeholder="…"
-                                                value={colFilters[colId] ?? ''}
-                                                onChange={e => setColFilters(f => ({ ...f, [colId]: e.target.value }))}
+                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
+                                                title="Du"
+                                                value={(colFilters[colId] ?? {}).from ?? ''}
+                                                onChange={e => setColFilters(f => ({
+                                                    ...f,
+                                                    [colId]: { ...(f[colId] ?? {}), from: e.target.value },
+                                                }))}
                                             />
-                                        )}
-                                    </th>
-                                );
-                            })}
-                            <th></th>
+                                            <input
+                                                type="date"
+                                                className="form-control form-control-sm"
+                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }}
+                                                title="Au"
+                                                value={(colFilters[colId] ?? {}).to ?? ''}
+                                                onChange={e => setColFilters(f => ({
+                                                    ...f,
+                                                    [colId]: { ...(f[colId] ?? {}), to: e.target.value },
+                                                }))}
+                                            />
+                                        </div>
+                                    )}
+                                </th>
+                            ))}
+                            <th />
                         </tr>
                     </thead>
                     <tbody>
