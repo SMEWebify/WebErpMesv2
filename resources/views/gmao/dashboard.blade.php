@@ -7,39 +7,17 @@
 @stop
 
 @section('content')
-    <div class="row">
-        @foreach($kpis as $kpi)
-            <div class="col-12 col-sm-6 col-lg-4">
-                <x-adminlte-info-box
-                    :title="$kpi['name']"
-                    :text="$kpi['description']"
-                    :number="$kpi['value']"
-                    icon="fas fa-chart-line"
-                    theme="info"
-                    icon-theme="white"
-                />
-            </div>
-        @endforeach
-    </div>
+    <div
+        id="gmao-dashboard-app"
+        data-kpis="{{ json_encode($kpis) }}"
+        data-work-orders-count="{{ json_encode($workOrdersCount) }}"
+        data-recent-work-orders="{{ json_encode($recentWorkOrders) }}"
+        data-maintenance-plans-count="{{ $maintenancePlansCount }}"
+        data-endpoints="{{ json_encode($endpoints) }}"
+    ></div>
+@stop
 
-    <x-adminlte-card title="{{ __('general_content.gmao_kpi_maintenance_card_trans_key') }}" theme="primary" maximizable>
-        <div class="card-body table-responsive p-0">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>{{ __('general_content.gmao_kpi_trans_key') }}</th>
-                        <th>{{ __('general_content.description_trans_key') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($kpis as $kpi)
-                        <tr>
-                            <td>{{ $kpi['name'] }}</td>
-                            <td>{{ $kpi['description'] }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </x-adminlte-card>
+@section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop

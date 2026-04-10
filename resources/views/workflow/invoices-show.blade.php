@@ -115,6 +115,10 @@
               </div>
             </x-adminlte-card>
 
+            @if($qontoEnabled && $Invoice->invoice_type === 1)
+            @include('integrations.partials.qonto-invoice-card', ['Invoice' => $Invoice, 'qontoMapping' => $qontoMapping])
+            @endif
+
             @include('include.file-store', ['inputName' => "invoices_id",'inputValue' => $Invoice->id,'filesList' => $Invoice->files,])
             @include('include.email-list', ['mailsList'=> $Invoice->emailLogs,])
           </div>

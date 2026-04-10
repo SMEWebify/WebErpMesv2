@@ -72,8 +72,9 @@ class CalculateTaskDates implements ShouldQueue
 
         $taskDateCalculator = app(TaskDateCalculator::class);
         $processed = 0;
+        $messages = [];
 
-        $orderLines->lazy()->each(function ($line) use ($taskDateCalculator, $countLines, &$processed) {
+        $orderLines->lazy()->each(function ($line) use ($taskDateCalculator, $countLines, &$processed, &$messages) {
             $taskEndDate = Carbon::parse($line->internal_delay);
             $taskEndDate = $taskDateCalculator->adjustForWeekendsAndHolidays($taskEndDate);
 
@@ -85,7 +86,7 @@ class CalculateTaskDates implements ShouldQueue
                 $task->end_date = $endDate;
 
                 $totalTaskHours = $task->TotalTime();
-                $secondsToSubtract = $this->calculateWorkingHours($taskDateCalculator, $endDate, $totalTaskHours);
+                $secondsToSubtract = $this->calculateSecondsForHours($taskDateCalculator, $endDate, $totalTaskHours);
 
                 $elapsedTimeInSeconds += $secondsToSubtract;
                 $startDate = $taskDateCalculator->adjustForWorkingHours(clone $taskEndDate, $elapsedTimeInSeconds);
@@ -96,13 +97,19 @@ class CalculateTaskDates implements ShouldQueue
             }
 
             $processed++;
-            $this->updateProgress($processed, $countLines);
+            $messages[] = 'OF #' . ($line->orders_id ?? '?') . ' — ' . $tasks->count() . ' tâche(s) planifiée(s)';
+
+            // Batch cache write every 10 lines
+            if ($processed % 10 === 0 || $processed === $countLines) {
+                $this->updateProgress($processed, $countLines, array_slice($messages, -20));
+                $messages = [];
+            }
         });
 
         $this->markFinished();
     }
 
-    private function calculateWorkingHours(TaskDateCalculator $taskDateCalculator, Carbon $fromDate, int $totalTaskHours): int
+    private function calculateSecondsForHours(TaskDateCalculator $taskDateCalculator, Carbon $fromDate, float $totalTaskHours): int
     {
         $startDate = WorkingTime::subtractWorkingHours($fromDate, $totalTaskHours);
 
@@ -112,18 +119,20 @@ class CalculateTaskDates implements ShouldQueue
     private function initializeProgress(): void
     {
         Cache::put($this->cacheKey, [
-            'status' => 'running',
+            'status'   => 'running',
             'progress' => 0,
-            'count' => 0,
+            'count'    => 0,
+            'messages' => [],
         ], now()->addHour());
     }
 
-    private function updateProgress(int $processed, int $total): void
+    private function updateProgress(int $processed, int $total, array $messages): void
     {
         Cache::put($this->cacheKey, [
-            'status' => 'running',
+            'status'   => 'running',
             'progress' => round(($processed / $total) * 100, 2),
-            'count' => $processed,
+            'count'    => $processed,
+            'messages' => $messages,
         ], now()->addHour());
     }
 
@@ -132,9 +141,10 @@ class CalculateTaskDates implements ShouldQueue
         $state = Cache::get($this->cacheKey, []);
 
         Cache::put($this->cacheKey, [
-            'status' => 'finished',
+            'status'   => 'finished',
             'progress' => $state['progress'] ?? 100,
-            'count' => $state['count'] ?? 0,
+            'count'    => $state['count'] ?? 0,
+            'messages' => $state['messages'] ?? [],
         ], now()->addHour());
     }
 }

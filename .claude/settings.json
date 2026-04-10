@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(node -e \"const rgl = require\\('./node_modules/react-grid-layout'\\); console.log\\(Object.keys\\(rgl\\)\\)\")",
+      "Bash(xargs grep:*)",
+      "Bash(find /c/laragon/www/WebErpMesv2/WebErpMesv2/database/migrations -name \"*order_lines*\" -exec cat {} \\\\;)",
+      "Bash(sed -n '150,165p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/InvoiceKPIService.php)",
+      "Bash(sed -n '32,60p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/QualityKPIService.php)",
+      "Bash(sed -n '106,140p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/PurchaseKPIService.php)",
+      "Bash(sed -n '450,485p' c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Services/OrderKPIService.php)",
+      "Bash(grep -E \"\\\\.\\(js|jsx|ts|tsx\\)$\")",
+      "Bash(php -r \"echo json_encode\\(new DateTime\\('2024-01-01'\\)\\);\")",
+      "Bash(grep -r \"QONTO_\" c:\\\\laragon\\\\www\\\\WebErpMesv2\\\\WebErpMesv2\\\\.env*)",
+      "Bash(find \"c:/laragon/www/WebErpMesv2/WebErpMesv2\" -type f \\\\\\( -name \"*.js\" -o -name \"*.vue\" -o -name \"*.jsx\" -o -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec grep -l -i \"qonto\" {} \\\\;)",
+      "Bash(php -r ':*)"
+    ]
+  }
+}

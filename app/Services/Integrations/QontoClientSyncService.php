@@ -40,6 +40,12 @@ class QontoClientSyncService
             }));
             $match = $this->findBestMatch($wemClient, $qontoCandidates);
 
+            // no_match : aucun candidat Qonto — sera créé dans Qonto par sync()
+            if ($match['status'] === 'no_match') {
+                continue;
+            }
+
+            // review_required : match ambigu, candidat(s) trouvé(s) mais incertitude
             if ($match['status'] === 'review_required') {
                 QontoSyncReview::updateOrCreate(
                     [
@@ -110,7 +116,7 @@ class QontoClientSyncService
                 QontoClientMapping::updateOrCreate(
                     ['tenant_id' => $tenantId, 'qonto_client_id' => $id],
                     [
-                        'wem_client_id' => $customer->id,
+                        'wem_client_id' => $company->id,  // company->id pour cohérence avec fetchWemClients
                         'sync_status' => 'imported_from_qonto',
                         'matching_score' => 100,
                         'last_sync_at' => now(),
@@ -150,11 +156,22 @@ class QontoClientSyncService
         $best = $candidates[0] ?? null;
         $second = $candidates[1] ?? null;
 
-        if (! $best || $best['score'] < 60 || ($second && $best['score'] - $second['score'] < 15)) {
+        // Aucun candidat Qonto : client inconnu, pas ambigu — à créer dans Qonto
+        if (! $best) {
+            return [
+                'status' => 'no_match',
+                'score' => 0,
+                'best_candidate' => null,
+                'candidates' => [],
+            ];
+        }
+
+        // Score trop faible ou ex æquo → révision manuelle
+        if ($best['score'] < 60 || ($second && $best['score'] - $second['score'] < 15)) {
             return [
                 'status' => 'review_required',
-                'score' => $best['score'] ?? 0,
-                'best_candidate' => $best['client'] ?? null,
+                'score' => $best['score'],
+                'best_candidate' => $best['client'],
                 'candidates' => array_slice($candidates, 0, 3),
             ];
         }
@@ -171,9 +188,14 @@ class QontoClientSyncService
     {
         $score = 0;
 
-        $keys = ['siren', 'siret', 'vat_number'];
-        foreach ($keys as $key) {
-            if (! empty($wemClient[$key]) && ! empty($qontoClient[$key]) && $wemClient[$key] === $qontoClient[$key]) {
+        // Qonto v2 retourne registration_number ; on accepte aussi siren/siret pour compatibilité
+        $idMatches = [
+            [$wemClient['siren'] ?? null,       $qontoClient['registration_number'] ?? $qontoClient['siren'] ?? null],
+            [$wemClient['siret'] ?? null,        $qontoClient['registration_number'] ?? $qontoClient['siret'] ?? null],
+            [$wemClient['vat_number'] ?? null,   $qontoClient['vat_number'] ?? null],
+        ];
+        foreach ($idMatches as [$wemVal, $qontoVal]) {
+            if (! empty($wemVal) && ! empty($qontoVal) && $wemVal === $qontoVal) {
                 $score = max($score, 100);
             }
         }

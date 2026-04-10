@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Maintenance;
 
 use App\Http\Controllers\Controller;
+use App\Models\Maintenance\MaintenancePlan;
+use App\Models\Maintenance\WorkOrder;
 
 class DashboardController extends Controller
 {
@@ -15,34 +17,68 @@ class DashboardController extends Controller
     {
         $kpis = [
             [
-                'name' => 'MTBF',
+                'name'        => 'MTBF',
                 'description' => 'Temps moyen entre pannes',
-                'value' => '—',
+                'value'       => '—',
             ],
             [
-                'name' => 'MTTR',
+                'name'        => 'MTTR',
                 'description' => 'Temps moyen de réparation',
-                'value' => '—',
+                'value'       => '—',
             ],
             [
-                'name' => 'Disponibilité',
+                'name'        => 'Disponibilité',
                 'description' => '% temps machine dispo',
-                'value' => '—',
+                'value'       => '—',
             ],
             [
-                'name' => 'Coût maintenance',
+                'name'        => 'Coût maintenance',
                 'description' => '€/machine / période',
-                'value' => '—',
+                'value'       => '—',
             ],
             [
-                'name' => '% préventif vs curatif',
+                'name'        => 'Préventif/curatif',
                 'description' => 'Qualité maintenance',
-                'value' => '—',
+                'value'       => '—',
             ],
         ];
 
+        $workOrdersCount = WorkOrder::selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        $recentWorkOrders = WorkOrder::with(['asset', 'technician'])
+            ->orderByDesc('requested_at')
+            ->limit(10)
+            ->get()
+            ->map(fn($wo) => [
+                'id'           => $wo->id,
+                'title'        => $wo->title,
+                'asset'        => $wo->asset?->name,
+                'work_type'    => $wo->work_type,
+                'priority'     => $wo->priority,
+                'status'       => $wo->status,
+                'scheduled_at' => $wo->scheduled_at,
+            ])
+            ->values()
+            ->toArray();
+
+        $maintenancePlansCount = MaintenancePlan::count();
+
+        $endpoints = [
+            'work_orders_index'       => route('gmao.work-orders.index'),
+            'work_orders_create'      => route('gmao.work-orders.create'),
+            'work_order_show'         => url('/gmao/work-orders'),
+            'maintenance_plans_index' => route('gmao.maintenance-plans.index'),
+        ];
+
         return view('gmao.dashboard', [
-            'kpis' => $kpis,
+            'kpis'                  => $kpis,
+            'workOrdersCount'       => $workOrdersCount,
+            'recentWorkOrders'      => $recentWorkOrders,
+            'maintenancePlansCount' => $maintenancePlansCount,
+            'endpoints'             => $endpoints,
         ]);
     }
 }

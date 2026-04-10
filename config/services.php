@@ -32,10 +32,11 @@ return [
 
 
     'qonto' => [
-        'client_id' => env('QONTO_CLIENT_ID'),
-        'client_secret' => env('QONTO_CLIENT_SECRET'),
+        'client_id'      => env('QONTO_CLIENT_ID'),
+        'client_secret'  => env('QONTO_CLIENT_SECRET'),
         'oauth_base_url' => env('QONTO_OAUTH_BASE_URL', 'https://oauth.qonto.com'),
-        'api_base_url' => env('QONTO_API_BASE_URL', 'https://thirdparty.qonto.com/v2'),
+        'api_base_url'   => env('QONTO_API_BASE_URL', 'https://thirdparty.qonto.com/v2'),
+        'webhook_secret' => env('QONTO_WEBHOOK_SECRET', ''),
     ],
 
 ];

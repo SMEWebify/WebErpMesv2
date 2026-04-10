@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Collaboration\WhiteboardController as ApiWhiteboard
 use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
+use App\Http\Controllers\Integrations\QontoWebhookController;
 use App\Http\Controllers\SpreadsheetDataController;
 
 /*
@@ -29,8 +30,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->group(function () {
+Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->withoutMiddleware('auth:api')->group(function () {
     Route::get('/callback', [QontoIntegrationController::class, 'callback'])->name('callback');
+    // Webhook Qonto → sans auth, signature HMAC vérifiée dans le contrôleur
+    Route::post('/webhook/invoice', [QontoWebhookController::class, 'handle'])->name('webhook.invoice');
 });
 
 Route::middleware('auth:api')->group(function () {
@@ -64,6 +67,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->group(function () {
+        Route::get('/status', [QontoIntegrationController::class, 'status'])->name('status');
         Route::get('/connect', [QontoIntegrationController::class, 'connect'])->name('connect');
         Route::post('/clients/sync', [QontoIntegrationController::class, 'sync'])->name('clients.sync');
         Route::post('/clients/reconcile', [QontoIntegrationController::class, 'reconcile'])->name('clients.reconcile');
@@ -71,6 +75,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/clients/{reviewId}/resolve', [QontoIntegrationController::class, 'resolve'])->name('clients.resolve');
         Route::post('/settings', [QontoIntegrationController::class, 'settings'])->name('settings');
         Route::post('/disconnect', [QontoIntegrationController::class, 'disconnect'])->name('disconnect');
+        Route::post('/invoices/{invoiceId}/submit', [QontoIntegrationController::class, 'submitInvoice'])->name('invoices.submit');
+        Route::post('/invoices/{invoiceId}/poll', [QontoIntegrationController::class, 'pollInvoice'])->name('invoices.poll');
     });
 
     // inspection...

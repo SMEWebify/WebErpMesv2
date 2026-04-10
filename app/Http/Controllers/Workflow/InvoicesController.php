@@ -15,7 +15,9 @@ use App\Events\DeliveryLineUpdated;
 use App\Models\Workflow\OrderLines;
 use App\Services\InvoiceKPIService;
 use App\Http\Controllers\Controller;
+use App\Models\Integrations\QontoInvoiceMapping;
 use App\Services\CustomFieldService;
+use App\Services\Integrations\QontoConnectionService;
 use App\Services\InvoiceLineService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -144,7 +146,19 @@ class InvoicesController extends Controller
 
         $invoices = $query->paginate(15);
 
+        $qontoEnabled = QontoConnectionService::isEnabled();
+
+        // Charger les mappings Qonto en une seule requête si intégration active
+        $qontoMappings = [];
+        if ($qontoEnabled) {
+            $ids = $invoices->pluck('id');
+            $qontoMappings = QontoInvoiceMapping::whereIn('invoice_id', $ids)
+                ->pluck('lifecycle_status', 'invoice_id')
+                ->all();
+        }
+
         return response()->json([
+            'qonto_enabled' => $qontoEnabled,
             'data' => $invoices->map(fn ($inv) => [
                 'id'                  => $inv->id,
                 'code'                => $inv->code,
@@ -159,6 +173,7 @@ class InvoicesController extends Controller
                 'url'                 => route('invoices.show', ['id' => $inv->id]),
                 'url_pdf'             => route('pdf.invoice', ['Document' => $inv->id]),
                 'url_facturex'        => route('pdf.facturex', ['Document' => $inv->id]),
+                'qonto_status'        => $qontoEnabled ? ($qontoMappings[$inv->id] ?? null) : null,
             ]),
             'meta' => [
                 'total'        => $invoices->total(),
@@ -488,14 +503,21 @@ class InvoicesController extends Controller
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Invoices(), $id->id);
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('invoice', $id->id);
 
+        $qontoEnabled = QontoConnectionService::isEnabled();
+        $qontoMapping = $qontoEnabled
+            ? QontoInvoiceMapping::where('invoice_id', $id->id)->first()
+            : null;
+
         return view('workflow/invoices-show', [
-            'Invoice' => $id,
-            'totalPrices' => $totalPrice,
-            'subPrice' => $subPrice,
-            'vatPrice' => $vatPrice,
-            'previousUrl' =>  $previousUrl,
-            'nextUrl' =>  $nextUrl,
+            'Invoice'      => $id,
+            'totalPrices'  => $totalPrice,
+            'subPrice'     => $subPrice,
+            'vatPrice'     => $vatPrice,
+            'previousUrl'  => $previousUrl,
+            'nextUrl'      => $nextUrl,
             'CustomFields' => $CustomFields,
+            'qontoEnabled' => $qontoEnabled,
+            'qontoMapping' => $qontoMapping,
         ]);
     }
 

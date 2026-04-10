@@ -32,6 +32,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/guest/nonConformitie/{uuid}/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
         Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
     });
+    Route::get('/integrations/qonto/callback', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'callback'])->name('admin.integrations.qonto.callback');
+
     Route::get('/pointage', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/pointage', [AttendanceController::class, 'store'])->name('attendance.store');
     //Rating
@@ -69,6 +71,29 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('dashboard');
+
+    // KPI JSON endpoints (session auth, consommés par les widgets React)
+    Route::prefix('kpi')->name('kpi.')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
+        Route::get('/quotes/rate',    'App\Http\Controllers\Api\KpiController@quoteRate')->name('quotes.rate');
+        Route::get('/orders/monthly', 'App\Http\Controllers\Api\KpiController@ordersMonthly')->name('orders.monthly');
+        Route::get('/delivery/board', 'App\Http\Controllers\Api\KpiController@deliveryBoard')->name('delivery.board');
+        Route::get('/recent/orders',  'App\Http\Controllers\Api\KpiController@recentOrders')->name('recent.orders');
+        Route::get('/recent/quotes',     'App\Http\Controllers\Api\KpiController@recentQuotes')->name('recent.quotes');
+        Route::get('/recent/invoices',   'App\Http\Controllers\Api\KpiController@recentInvoices')->name('recent.invoices');
+        Route::get('/recent/deliveries', 'App\Http\Controllers\Api\KpiController@recentDeliveries')->name('recent.deliveries');
+        Route::get('/recent/purchases',  'App\Http\Controllers\Api\KpiController@recentPurchases')->name('recent.purchases');
+        Route::get('/top-clients',       'App\Http\Controllers\Api\KpiController@topClients')->name('top.clients');
+        Route::get('/nc-stats',          'App\Http\Controllers\Api\KpiController@ncStats')->name('nc.stats');
+        Route::get('/supplier-delays',   'App\Http\Controllers\Api\KpiController@supplierDelays')->name('supplier.delays');
+        Route::get('/otd',               'App\Http\Controllers\Api\KpiController@otd')->name('otd');
+    });
+
+    // Dashboard config (personnalisation par utilisateur)
+    Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
+        Route::get('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@show')->name('dashboard.config.show');
+        Route::put('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@update')->name('dashboard.config.update');
+    });
+
     Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');
         Route::get('/whiteboards/{whiteboard}', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.show');
@@ -347,10 +372,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/address',            'App\Http\Controllers\Purchases\PurchasesController@storeAddressJson')->name('purchases.json.address.store');
         Route::post('/json/contact',            'App\Http\Controllers\Purchases\PurchasesController@storeContactJson')->name('purchases.json.contact.store');
 
-        Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@waintingReceipt')->name('purchases.wainting.receipt'); 
-        Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receipt')->name('purchases.receipt'); 
+        Route::get('/waiting/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@waintingReceipt')->name('purchases.wainting.receipt');
+        Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receipt')->name('purchases.receipt');
+        Route::get('/receipt/json/list', 'App\Http\Controllers\Purchases\PurchasesReceiptController@listJson')->name('purchases.receipt.json.list');
         Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@waintingInvoice')->name('purchases.wainting.invoice'); 
-        Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@invoice')->name('purchases.invoice'); 
+        Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@invoice')->name('purchases.invoice');
+        Route::get('/invoice/json/list', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@listJson')->name('purchases.invoice.json.list');
 
         //only for quote request to purchase order
         Route::post('/Purchase/Order/Create/{id}', 'App\Http\Controllers\Purchases\PurchasesController@storePurchaseOrderFromRFQ')->middleware(['auth'])->name('purchases.orders.store');
@@ -521,6 +548,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Serial numbers routes
         Route::group(['prefix' => 'serial-numbers', 'middleware' => ['permission:stock-lot-serial-management']], function () {
             Route::get('/', 'App\Http\Controllers\Products\SerialNumbersController@index')->name('products.serialNumbers');
+            Route::get('/json/list', 'App\Http\Controllers\Products\SerialNumbersController@listJson')->name('products.serialNumbers.json.list');
         });
 
         Route::group(['prefix' => 'batches', 'middleware' => ['permission:stock-lot-serial-management']], function () {
@@ -580,9 +608,25 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/calendar/orders', 'App\Http\Controllers\Planning\CalendarController@calendarOders')->name('production.calendar.orders');
         Route::get('/calendar/tasks', 'App\Http\Controllers\Planning\CalendarController@calendarTasks')->name('production.calendar.tasks');
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
+        Route::get('/gantt/order/{order_id}', 'App\Http\Controllers\Planning\GanttController@getTasksByOrder')->name('production.gantt.order');
         
         Route::get('/load-planning', 'App\Http\Controllers\Planning\PlanningController@index')->name('production.load.planning');
         Route::get('/load-planning/data', 'App\Http\Controllers\Planning\PlanningController@dataJson')->name('production.load.planning.data');
+        Route::get('/load-planning/calculation-status', 'App\Http\Controllers\Planning\PlanningController@calculationStatus')->name('production.load.planning.calculation.status');
+        Route::post('/load-planning/calculate-dates', 'App\Http\Controllers\Planning\PlanningController@calculateDates')->name('production.load.planning.calculate.dates');
+        Route::post('/load-planning/calculate-resources', 'App\Http\Controllers\Planning\PlanningController@calculateResources')->name('production.load.planning.calculate.resources');
+
+        // JSON API — TaskStatuApp (React)
+        Route::get('/Task/Statu/Api/{id}',               'App\Http\Controllers\Api\TaskStatuController@show')->name('production.task.statu.api.show');
+        Route::post('/Task/Statu/Api/{id}/start',        'App\Http\Controllers\Api\TaskStatuController@start')->name('production.task.statu.api.start');
+        Route::post('/Task/Statu/Api/{id}/pause',        'App\Http\Controllers\Api\TaskStatuController@pause')->name('production.task.statu.api.pause');
+        Route::post('/Task/Statu/Api/{id}/finish',       'App\Http\Controllers\Api\TaskStatuController@finish')->name('production.task.statu.api.finish');
+        Route::post('/Task/Statu/Api/{id}/good-qty',     'App\Http\Controllers\Api\TaskStatuController@goodQty')->name('production.task.statu.api.good_qty');
+        Route::post('/Task/Statu/Api/{id}/good-qty-stock','App\Http\Controllers\Api\TaskStatuController@goodQtyStock')->name('production.task.statu.api.good_qty_stock');
+        Route::post('/Task/Statu/Api/{id}/bad-qty',      'App\Http\Controllers\Api\TaskStatuController@badQty')->name('production.task.statu.api.bad_qty');
+        Route::put('/Task/Statu/Api/{id}/date',          'App\Http\Controllers\Api\TaskStatuController@updateDate')->name('production.task.statu.api.date');
+        Route::put('/Task/Statu/Api/{id}/resource',      'App\Http\Controllers\Api\TaskStatuController@updateResource')->name('production.task.statu.api.resource');
+        Route::post('/Task/Statu/Api/{id}/nc',           'App\Http\Controllers\Api\TaskStatuController@createNc')->name('production.task.statu.api.nc');
     });
 
     Route::group(['prefix' => 'nesting', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -607,6 +651,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/factory/role/permissions/store', 'App\Http\Controllers\Admin\RoleController@RolePemissionStore')->middleware(['auth'])->name('admin.factory.rolepermissions.store');
         Route::get('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'edit'])->middleware(['auth'])->name('admin.integrations.n2p');
         Route::put('/integrations/n2p', [\App\Http\Controllers\Integrations\N2PSettingsController::class, 'update'])->middleware(['auth'])->name('admin.integrations.n2p.update');
+
+        Route::middleware(['auth'])->prefix('integrations/qonto')->name('admin.integrations.qonto.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'index'])->name('index');
+            Route::get('/connect', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'connect'])->name('connect');
+            Route::post('/sync', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'sync'])->name('sync');
+            Route::post('/settings', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'settings'])->name('settings');
+            Route::post('/disconnect', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'disconnect'])->name('disconnect');
+            Route::post('/reviews/{reviewId}/resolve', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'resolve'])->name('resolve');
+        });
 
         Route::post('/factory/custom-field/store', 'App\Http\Controllers\Admin\FactoryController@storeCustomField')->middleware(['auth'])->name('admin.factory.custom.field.store');
         Route::post('/factory/custom-field-value/storeOrUpdate/{id}/{type}', 'App\Http\Controllers\Admin\FactoryController@storeOrUpdateCustomField')->middleware(['auth'])->name('admin.factory.custom.field.value.store.update');
@@ -708,6 +761,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/edit/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@update')->name('quality.nonConformitie.update');
             Route::post('/close/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@closeResolutionDate')->name('quality.nonConformitie.close.resolutionDate');
             Route::post('/reopen/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@reopenResolutionDate')->name('quality.nonConformitie.reopen.resolutionDate');
+            // React API routes
+            Route::get('/api/list', 'App\Http\Controllers\Quality\QualityNonConformityController@apiList')->name('quality.nonConformitie.api.list');
+            Route::post('/api/store', 'App\Http\Controllers\Quality\QualityNonConformityController@apiStore')->name('quality.nonConformitie.api.store');
+            Route::post('/api/{id}/update', 'App\Http\Controllers\Quality\QualityNonConformityController@apiUpdate')->name('quality.nonConformitie.api.update');
+            Route::post('/api/{id}/close', 'App\Http\Controllers\Quality\QualityNonConformityController@apiClose')->name('quality.nonConformitie.api.close');
+            Route::post('/api/{id}/reopen', 'App\Http\Controllers\Quality\QualityNonConformityController@apiReopen')->name('quality.nonConformitie.api.reopen');
         });
     
         // Routes for Derogation

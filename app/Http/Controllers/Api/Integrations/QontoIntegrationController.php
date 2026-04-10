@@ -9,7 +9,11 @@ use App\Models\Customer\Customer;
 use App\Models\Integrations\QontoClientMapping;
 use App\Models\Integrations\QontoConnection;
 use App\Models\Integrations\QontoSyncReview;
+use App\Models\Integrations\QontoInvoiceMapping;
+use App\Models\Workflow\Invoices;
 use App\Services\Integrations\QontoClientSyncService;
+use App\Services\Integrations\QontoConnectionService;
+use App\Services\Integrations\QontoInvoiceSyncService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -20,16 +24,19 @@ use Illuminate\Support\Str;
 
 class QontoIntegrationController extends Controller
 {
-    public function __construct(private QontoClientSyncService $syncService)
-    {
-    }
+    public function __construct(
+        private QontoClientSyncService  $syncService,
+        private QontoConnectionService  $connectionService,
+        private QontoInvoiceSyncService $invoiceSyncService,
+    ) {}
+
 
     public function connect(Request $request): JsonResponse
     {
         $tenantId = $request->user()->id;
         $state = Str::random(40);
 
-        Cache::put($this->stateCacheKey($tenantId), $state, now()->addMinutes(10));
+        Cache::put("qonto.oauth.state.{$state}", $tenantId, now()->addMinutes(10));
 
         $query = http_build_query([
             'client_id' => config('services.qonto.client_id'),
@@ -45,23 +52,42 @@ class QontoIntegrationController extends Controller
         ]);
     }
 
-    public function callback(Request $request): JsonResponse
+    public function status(Request $request): JsonResponse
     {
         $tenantId = $request->user()->id;
-        $validated = $request->validate([
-            'code' => ['required', 'string'],
-            'state' => ['required', 'string'],
-        ]);
+        $connection = QontoConnection::where('tenant_id', $tenantId)->first();
 
-        $cachedState = Cache::pull($this->stateCacheKey($tenantId));
-        abort_if(! $cachedState || ! hash_equals($cachedState, $validated['state']), 422, 'Invalid OAuth state.');
+        $clientId = (string) config('services.qonto.client_id', '');
+        $clientSecret = (string) config('services.qonto.client_secret', '');
+        $featureEnabled = $clientId !== '' && $clientSecret !== '';
+
+        return response()->json([
+            'feature_enabled' => $featureEnabled,
+            'connected' => $connection !== null,
+            'last_sync_at' => $connection?->last_sync_at?->toISOString(),
+            'import_bidirectionnel' => (bool) ($connection?->import_bidirectionnel ?? false),
+            'scope' => $connection?->scope,
+        ]);
+    }
+
+    public function callback(Request $request)
+    {
+        $code = $request->query('code');
+        $state = $request->query('state');
+
+        abort_if(! $code || ! $state, 422, 'Missing OAuth parameters.');
+
+        $tenantId = Cache::pull("qonto.oauth.state.{$state}");
+        abort_if(! $tenantId, 422, 'Invalid or expired OAuth state.');
+
+        $tenantId = (int) $tenantId;
 
         $tokenResponse = Http::asForm()->post(rtrim(config('services.qonto.oauth_base_url', 'https://oauth.qonto.com'), '/').'/oauth2/token', [
             'grant_type' => 'authorization_code',
             'client_id' => config('services.qonto.client_id'),
             'client_secret' => config('services.qonto.client_secret'),
             'redirect_uri' => route('api.integrations.qonto.callback', absolute: true),
-            'code' => $validated['code'],
+            'code' => $code,
         ])->throw()->json();
 
         QontoConnection::updateOrCreate(
@@ -74,7 +100,7 @@ class QontoIntegrationController extends Controller
             ]
         );
 
-        return response()->json(['connected' => true]);
+        return redirect()->route('admin.integrations.qonto')->with('success', 'Connexion Qonto établie.');
     }
 
     public function sync(Request $request): JsonResponse
@@ -234,51 +260,69 @@ class QontoIntegrationController extends Controller
         return response()->json(['disconnected' => true]);
     }
 
+    public function submitInvoice(Request $request, int $invoiceId): JsonResponse
+    {
+        $tenantId = $request->user()->id;
+        $invoice  = Invoices::where('user_id', $tenantId)->findOrFail($invoiceId);
+
+        abort_if(
+            $invoice->invoice_type !== 1,
+            422,
+            'Seules les factures (type 1) peuvent être soumises à Qonto.'
+        );
+
+        $mapping = $this->invoiceSyncService->submit($invoice);
+
+        return response()->json(['mapping' => $mapping]);
+    }
+
+    public function pollInvoice(Request $request, int $invoiceId): JsonResponse
+    {
+        $tenantId = $request->user()->id;
+        $mapping  = QontoInvoiceMapping::where('tenant_id', $tenantId)
+            ->where('invoice_id', $invoiceId)
+            ->firstOrFail();
+
+        $mapping = $this->invoiceSyncService->poll($mapping);
+
+        return response()->json(['mapping' => $mapping]);
+    }
+
     private function getValidConnection(int $tenantId): QontoConnection
     {
-        $connection = QontoConnection::where('tenant_id', $tenantId)->firstOrFail();
-
-        if (! $connection->access_token_expires_at || $connection->access_token_expires_at->isFuture()) {
-            return $connection;
-        }
-
-        $refreshResponse = Http::asForm()->post(rtrim(config('services.qonto.oauth_base_url', 'https://oauth.qonto.com'), '/').'/oauth2/token', [
-            'grant_type' => 'refresh_token',
-            'client_id' => config('services.qonto.client_id'),
-            'client_secret' => config('services.qonto.client_secret'),
-            'refresh_token' => Crypt::decryptString($connection->refresh_token),
-        ])->throw()->json();
-
-        $connection->forceFill([
-            'access_token' => Crypt::encryptString($refreshResponse['access_token']),
-            'refresh_token' => Crypt::encryptString($refreshResponse['refresh_token'] ?? Crypt::decryptString($connection->refresh_token)),
-            'access_token_expires_at' => now()->addSeconds((int) ($refreshResponse['expires_in'] ?? 3600)),
-            'scope' => $refreshResponse['scope'] ?? $connection->scope,
-        ])->save();
-
-        return $connection->fresh();
+        return $this->connectionService->getValidConnection($tenantId);
     }
 
     private function fetchQontoClients(QontoConnection $connection): array
     {
-        $response = Http::withToken(Crypt::decryptString($connection->access_token))
-            ->get(rtrim(config('services.qonto.api_base_url', 'https://thirdparty.qonto.com/v2'), '/').'/clients')
-            ->throw()
-            ->json();
+        $token   = Crypt::decryptString($connection->access_token);
+        $baseUrl = rtrim(config('services.qonto.api_base_url', 'https://thirdparty.qonto.com/v2'), '/');
+        $clients = [];
+        $nextPage = 1;
 
-        return $response['clients'] ?? $response['data'] ?? [];
+        do {
+            $response = Http::withToken($token)
+                ->get("{$baseUrl}/clients", ['page' => $nextPage, 'per_page' => 100])
+                ->throw()
+                ->json();
+
+            $clients  = array_merge($clients, $response['clients'] ?? $response['data'] ?? []);
+            $nextPage = $response['meta']['next_page'] ?? null;
+        } while ($nextPage !== null);
+
+        return $clients;
     }
 
     private function createQontoClient(QontoConnection $connection, array $wemClient): array
     {
         $response = Http::withToken(Crypt::decryptString($connection->access_token))
             ->post(rtrim(config('services.qonto.api_base_url', 'https://thirdparty.qonto.com/v2'), '/').'/clients', [
-                'name' => $wemClient['name'],
-                'email' => $wemClient['email'] ?? null,
-                'siren' => $wemClient['siren'] ?? null,
-                'vat_number' => $wemClient['vat_number'] ?? null,
-                'postal_code' => $wemClient['postal_code'] ?? null,
-                'city' => $wemClient['city'] ?? null,
+                'name'                => $wemClient['name'],
+                'email'               => $wemClient['email'] ?? null,
+                'registration_number' => $wemClient['siren'] ?? null,  // Qonto v2 : registration_number
+                'vat_number'          => $wemClient['vat_number'] ?? null,
+                'postal_code'         => $wemClient['postal_code'] ?? null,
+                'city'                => $wemClient['city'] ?? null,
             ])
             ->throw()
             ->json();
@@ -288,14 +332,12 @@ class QontoIntegrationController extends Controller
 
     private function fetchWemClients(int $tenantId): array
     {
+        // unique('companies_id') : une entrée par entreprise même si plusieurs contacts
         $contacts = Customer::query()
-            ->whereHas('companie', function ($query) use ($tenantId) {
-                $query->where('user_id', $tenantId)->where('statu_customer', 1);
-            })
-            ->with(['companie', 'companie.Addresses' => function ($query) {
-                $query->where('default', 1);
-            }])
-            ->get();
+            ->whereHas('companie', fn ($q) => $q->where('user_id', $tenantId)->where('statu_customer', 1))
+            ->with(['companie', 'companie.Addresses' => fn ($q) => $q->where('default', 1)->limit(1)])
+            ->get()
+            ->unique('companies_id');
 
         return $contacts->map(function (Customer $contact) {
             /** @var Companies|null $company */
@@ -304,20 +346,16 @@ class QontoIntegrationController extends Controller
             $address = $company?->Addresses?->first();
 
             return [
-                'id' => $contact->id,
-                'name' => $company?->label ?? $contact->name,
-                'email' => $contact->mail,
-                'siren' => $company?->siren,
-                'siret' => null,
-                'vat_number' => $company?->intra_community_vat,
+                'id'          => $company->id,
+                'name'        => $company->label,
+                'email'       => $contact->mail,
+                'siren'       => $company->siren,
+                'siret'       => null,
+                'vat_number'  => $company->intra_community_vat,
                 'postal_code' => $address?->zipcode,
-                'city' => $address?->city,
+                'city'        => $address?->city,
             ];
-        })->all();
+        })->values()->all();
     }
 
-    private function stateCacheKey(int $tenantId): string
-    {
-        return "qonto.oauth.state.{$tenantId}";
-    }
 }

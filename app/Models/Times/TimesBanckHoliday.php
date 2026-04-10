@@ -13,33 +13,54 @@ class TimesBanckHoliday extends Model
     // Fillable attributes for mass assignment
     protected $fillable= ['fixed',  'date',  'label'];
 
+    /** In-memory cache: ['fixed' => ['mm-dd' => true], 'variable' => ['Y-m-d' => true]] */
+    private static ?array $holidayCache = null;
+
     /**
-     * Checks if a date is a holiday.
+     * Clear the in-memory cache (call after seeding or mutating the holidays table).
+     */
+    public static function clearCache(): void
+    {
+        self::$holidayCache = null;
+    }
+
+    /**
+     * Load all holidays once into a static cache.
+     * Eliminates N+1 SQL queries in WorkingTime loops.
+     */
+    private static function loadCache(): void
+    {
+        if (self::$holidayCache !== null) {
+            return;
+        }
+
+        self::$holidayCache = ['fixed' => [], 'variable' => []];
+
+        foreach (self::all() as $holiday) {
+            $d = Carbon::parse($holiday->date);
+            if ($holiday->fixed) {
+                self::$holidayCache['fixed'][$d->format('m-d')] = true;
+            } else {
+                self::$holidayCache['variable'][$d->toDateString()] = true;
+            }
+        }
+    }
+
+    /**
+     * Checks if a date is a bank holiday.
+     * Uses a static in-memory cache — safe to call in tight loops.
      *
      * @param Carbon $date
      * @return bool
      */
     public static function isBankHoliday(Carbon $date): bool
     {
-        $driver = self::query()->getConnection()->getDriverName();
+        self::loadCache();
 
-        return self::where(function ($query) use ($date, $driver) {
-                // 1 Check fixed holidays (base only on day + month)
-                $query->where('fixed', true)
-                    ->when($driver === 'sqlite', function ($sqliteQuery) use ($date) {
-                        $sqliteQuery->whereRaw("strftime('%m', date) = ?", [sprintf('%02d', $date->month)])
-                            ->whereRaw("strftime('%d', date) = ?", [sprintf('%02d', $date->day)]);
-                    }, function ($defaultQuery) use ($date) {
-                        $defaultQuery->whereRaw('MONTH(date) = ?', [$date->month])
-                            ->whereRaw('DAY(date) = ?', [$date->day]);
-                    });
+        if (isset(self::$holidayCache['fixed'][$date->format('m-d')])) {
+            return true;
+        }
 
-                // Check for non-fixed holidays (take into account the whole year)
-                $query->orWhere(function ($subQuery) use ($date) {
-                    $subQuery->where('fixed', false)
-                            ->whereDate('date', $date->toDateString());
-                });
-            })
-            ->exists();
+        return isset(self::$holidayCache['variable'][$date->toDateString()]);
     }
 }

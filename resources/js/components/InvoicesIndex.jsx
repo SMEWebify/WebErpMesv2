@@ -446,7 +446,8 @@ function StatusFilter({ selected, onChange, trans }) {
 
 const LS_COL_ORDER    = 'invoices_table_col_order';
 const LS_HIDDEN_COLS  = 'invoices_table_hidden_cols';
-const DEFAULT_COL_ORDER = ['code', 'label', 'client', 'contact', 'due_date', 'status', 'lines', 'created_at', 'total'];
+const DEFAULT_COL_ORDER         = ['code', 'label', 'client', 'contact', 'due_date', 'status', 'lines', 'created_at', 'total'];
+const DEFAULT_COL_ORDER_QONTO   = ['code', 'label', 'client', 'contact', 'due_date', 'status', 'lines', 'created_at', 'total', 'qonto'];
 const TEXT_FILTER_COLS  = new Set(['code', 'label', 'client', 'contact']);
 const DATE_RANGE_COLS   = new Set(['due_date', 'created_at']);
 
@@ -461,8 +462,24 @@ function SortIcon({ field, sortField, sortAsc }) {
     return <i className={`fas fa-sort-${sortAsc ? 'up' : 'down'} ml-1`} />;
 }
 
-function colDefs(trans) {
-    return {
+const QONTO_LIFECYCLE_CONFIG = {
+    pending:      { badge: 'badge-secondary', label: 'Non soumise' },
+    submitted:    { badge: 'badge-info',      label: 'Déposée' },
+    acknowledged: { badge: 'badge-primary',   label: 'Accusé reçu' },
+    rejected:     { badge: 'badge-danger',    label: 'Rejetée' },
+    refused:      { badge: 'badge-danger',    label: 'Refusée' },
+    accepted:     { badge: 'badge-success',   label: 'Acceptée' },
+    paid:         { badge: 'badge-success',   label: 'Payée' },
+};
+
+function QontoStatusBadge({ status }) {
+    if (!status) return <span className="text-muted small">—</span>;
+    const cfg = QONTO_LIFECYCLE_CONFIG[status] ?? { badge: 'badge-secondary', label: status };
+    return <span className={`badge ${cfg.badge}`} title="Statut facturation électronique Qonto">{cfg.label}</span>;
+}
+
+function colDefs(trans, qontoEnabled) {
+    const defs = {
         code:       { label: trans.code,       sortField: 'code',                align: '',       render: inv => <code>{inv.code}</code> },
         label:      { label: trans.label,      sortField: 'label',               align: '',       render: inv => inv.label },
         client:     { label: trans.client,     sortField: 'companie',            align: '',       render: inv => inv.companie?.label ?? '—' },
@@ -476,6 +493,17 @@ function colDefs(trans) {
                           ? formatCurrency(inv.total_amount, trans.currency, trans.locale)
                           : <span className="text-muted">—</span> },
     };
+
+    if (qontoEnabled) {
+        defs.qonto = {
+            label: 'Qonto',
+            sortField: null,
+            align: 'center',
+            render: inv => <QontoStatusBadge status={inv.qonto_status} />,
+        };
+    }
+
+    return defs;
 }
 
 function matchesColFilter(inv, colId, value) {
@@ -498,12 +526,13 @@ function matchesColFilter(inv, colId, value) {
     }
 }
 
-function readSavedColOrder() {
+function readSavedColOrder(qontoEnabled) {
+    const baseOrder = qontoEnabled ? DEFAULT_COL_ORDER_QONTO : DEFAULT_COL_ORDER;
     try {
         const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
-        if (Array.isArray(saved) && saved.every(c => DEFAULT_COL_ORDER.includes(c))) return saved;
+        if (Array.isArray(saved) && saved.every(c => baseOrder.includes(c))) return saved;
     } catch {}
-    return DEFAULT_COL_ORDER;
+    return baseOrder;
 }
 
 function readSavedHiddenCols() {
@@ -514,15 +543,15 @@ function readSavedHiddenCols() {
     return new Set();
 }
 
-function InvoicesTable({ invoices, sortField, sortAsc, onSort, trans }) {
-    const [colOrder,   setColOrder]   = useState(readSavedColOrder);
+function InvoicesTable({ invoices, sortField, sortAsc, onSort, trans, qontoEnabled }) {
+    const [colOrder,   setColOrder]   = useState(() => readSavedColOrder(qontoEnabled));
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
     const [colFilters, setColFilters] = useState({});
     const [dragOver,   setDragOver]   = useState(null);
     const dragCol = useRef(null);
 
-    const COLS        = colDefs(trans);
-    const visibleCols = colOrder.filter(c => !hiddenCols.has(c));
+    const COLS        = colDefs(trans, qontoEnabled);
+    const visibleCols = colOrder.filter(c => !hiddenCols.has(c) && COLS[c]);
 
     const hideCol = (colId) => {
         const next = new Set(hiddenCols);
@@ -758,6 +787,7 @@ function ListTab({ endpoints, trans, companieId = null }) {
     const [invoices, setInvoices]   = useState([]);
     const [meta, setMeta]           = useState(null);
     const [loading, setLoading]     = useState(false);
+    const [qontoEnabled, setQontoEnabled] = useState(false);
     const [search, setSearch]       = useState(saved?.search   ?? '');
     const [statuses, setStatuses]   = useState(saved?.statuses ?? ALL_STATUSES);
     const [sortField, setSortField] = useState(saved?.sortField ?? 'created_at');
@@ -778,7 +808,13 @@ function ListTab({ endpoints, trans, companieId = null }) {
 
         setLoading(true);
         apiFetch(`${endpoints.list}?${qs}`)
-            .then(res => { setInvoices(res.data); setMeta(res.meta); })
+            .then(res => {
+                setInvoices(res.data);
+                setMeta(res.meta);
+                if (typeof res.qonto_enabled !== 'undefined') {
+                    setQontoEnabled(res.qonto_enabled);
+                }
+            })
             .finally(() => setLoading(false));
     };
 
@@ -838,6 +874,7 @@ function ListTab({ endpoints, trans, companieId = null }) {
                 sortAsc={sortAsc}
                 onSort={handleSort}
                 trans={trans}
+                qontoEnabled={qontoEnabled}
             />
 
             <Pagination meta={meta} onPageChange={(p) => setPage(p)} />
