@@ -53,6 +53,8 @@ class SerialNumbersController extends Controller
             $sortField = 'created_at';
         }
 
+        $productId = $request->get('product_id');
+
         $query = SerialNumbers::with([
                 'Product:id,label',
                 'OrderLine:id,label,order_id',
@@ -61,6 +63,7 @@ class SerialNumbersController extends Controller
                 'purchaseReceiptLines:id,purchase_receipt_id',
                 'purchaseReceiptLines.purchaseReceipt:id,code',
             ])
+            ->when($productId, fn ($q) => $q->where('products_id', $productId))
             ->when($search, fn ($q) => $q->where('serial_number', 'like', '%'.$search.'%'))
             ->when(!empty($statuses), fn ($q) => $q->whereIn('status', $statuses))
             ->orderBy($sortField, $sortAsc ? 'asc' : 'desc');

@@ -322,8 +322,8 @@ function saveFilters(f) {
     try { localStorage.setItem(LS_KEY, JSON.stringify(f)); } catch {}
 }
 
-function ListTab({ endpoints, trans }) {
-    const saved = loadFilters();
+function ListTab({ endpoints, trans, productId = null }) {
+    const saved = productId ? null : loadFilters();
 
     const [items, setItems]       = useState([]);
     const [meta, setMeta]         = useState(null);
@@ -345,6 +345,7 @@ function ListTab({ endpoints, trans }) {
             page:   String(opts.page ?? page),
         });
         (opts.statuses ?? statuses).forEach(s => params.append('statuses[]', s));
+        if (productId) params.set('product_id', productId);
 
         apiFetch(`${endpoints.list}?${params}`)
             .then(data => { setItems(data.data); setMeta(data.meta); })
@@ -425,8 +426,14 @@ function ListTab({ endpoints, trans }) {
 // Root Component
 // ---------------------------------------------------------------------------
 
-export default function SerialNumbersIndex({ kpi, endpoints, trans }) {
+export default function SerialNumbersIndex({ kpi, endpoints, trans, productId = null }) {
     const [activeTab, setActiveTab] = useState('dashboard');
+
+    if (productId) {
+        return (
+            <ListTab endpoints={endpoints} trans={trans} productId={productId} />
+        );
+    }
 
     return (
         <div className="card">

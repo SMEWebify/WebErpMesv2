@@ -746,6 +746,24 @@ function mountSerialNumbersIndex() {
     );
 }
 
+function mountSerialNumbersEmbedded() {
+    const element = document.getElementById('serial-numbers-embedded-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(SerialNumbersIndex, {
+            kpi:       {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+            productId: element.dataset.productId ?? null,
+        })
+    );
+}
+
 function mountMethodsOverview() {
     const element = document.getElementById('methods-overview-app');
     if (!element) return;
@@ -799,6 +817,7 @@ mountHomeDashboard();
 mountTasksIndex();
 mountPurchaseReceiptIndex();
 mountSerialNumbersIndex();
+mountSerialNumbersEmbedded();
 mountMethodsOverview();
 
 function mountGanttChart() {
