@@ -17,7 +17,8 @@
       "Bash(find \"c:/laragon/www/WebErpMesv2/WebErpMesv2\" -type f \\\\\\( -name \"*.js\" -o -name \"*.vue\" -o -name \"*.jsx\" -o -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec grep -l -i \"qonto\" {} \\\\;)",
       "Bash(php -r ':*)",
       "Bash(npx vite:*)",
-      "Bash(php -l app/Http/Controllers/Planning/TaskManageApiController.php)"
+      "Bash(php -l app/Http/Controllers/Planning/TaskManageApiController.php)",
+      "Bash(find /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Http/Controllers/Workflow -type f -name \"*QuoteLinesController*\" -exec wc -l {} \\\\;)"
     ]
   }
 }

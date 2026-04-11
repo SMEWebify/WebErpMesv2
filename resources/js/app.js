@@ -32,6 +32,7 @@ import CompanyAddresses from './components/CompanyAddresses.jsx';
 import CompanyContacts from './components/CompanyContacts.jsx';
 import LoadPlanningIndex from './components/LoadPlanningIndex.jsx';
 import QuoteLinesPage from './components/QuoteLinesPage.jsx';
+import OrderLinesPage from './components/OrderLinesPage.jsx';
 import ConstructionSitePage from './components/ConstructionSitePage.jsx';
 import HomeDashboard from './components/HomeDashboard.jsx';
 import PurchaseReceiptIndex from './components/PurchaseReceiptIndex.jsx';
@@ -617,6 +618,25 @@ function mountQuoteLinesPage() {
     );
 }
 
+function mountOrderLinesPage() {
+    const element = document.getElementById('order-lines-page-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(OrderLinesPage, {
+            orderId:        parseInt(element.dataset.orderId, 10),
+            orderStatu:     parseInt(element.dataset.orderStatu, 10),
+            orderType:      parseInt(element.dataset.orderType, 10),
+            canManageStock: element.dataset.canManageStock === 'true',
+            endpoints:      parse('endpoints') ?? {},
+        })
+    );
+}
+
 function mountLoadPlanningIndex() {
     const element = document.getElementById('load-planning-app');
     if (!element) return;
@@ -768,6 +788,7 @@ mountInvoicesIndex();
 mountProductsIndex();
 mountQualityIndex();
 mountQuoteLinesPage();
+mountOrderLinesPage();
 mountLoadPlanningIndex();
 mountConstructionSitePage();
 mountHomeDashboard();

@@ -290,6 +290,23 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');
         Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->name('orders.update.detail.picture');
         Route::post('/{idOrder}/lines/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.lines.import');
+        // JSON API — React OrderLinesPage
+        Route::get('/{orderId}/lines/json',                             'App\Http\Controllers\Workflow\OrderLinesController@linesForOrderJson')->name('orders.lines.json.for-order');
+        Route::get('/{orderId}/lines/json/select-data',                 'App\Http\Controllers\Workflow\OrderLinesController@selectDataForOrderJson')->name('orders.lines.json.select-data');
+        Route::get('/{orderId}/lines/json/price-list/{productId}',      'App\Http\Controllers\Workflow\OrderLinesController@priceListForProductJson')->name('orders.lines.json.price-list');
+        Route::post('/{orderId}/lines/json/store',                      'App\Http\Controllers\Workflow\OrderLinesController@storeLineJson')->name('orders.lines.json.store');
+        Route::put('/{orderId}/lines/json/{id}',                        'App\Http\Controllers\Workflow\OrderLinesController@updateLineJson')->name('orders.lines.json.update');
+        Route::delete('/{orderId}/lines/json/{id}',                     'App\Http\Controllers\Workflow\OrderLinesController@destroyLineJson')->name('orders.lines.json.destroy');
+        Route::post('/{orderId}/lines/json/{id}/duplicate',             'App\Http\Controllers\Workflow\OrderLinesController@duplicateLineJson')->name('orders.lines.json.duplicate');
+        Route::post('/{orderId}/lines/json/{id}/move',                  'App\Http\Controllers\Workflow\OrderLinesController@moveLineJson')->name('orders.lines.json.move');
+        Route::post('/{orderId}/lines/json/reorder',                    'App\Http\Controllers\Workflow\OrderLinesController@reorderJson')->name('orders.lines.json.reorder');
+        Route::post('/{orderId}/lines/json/price-increase',             'App\Http\Controllers\Workflow\OrderLinesController@priceIncreaseJson')->name('orders.lines.json.price-increase');
+        Route::get('/{idOrder}/lines/{id}/detail-edit',                 'App\Http\Controllers\Workflow\OrderLinesController@detailEdit')->name('orders.lines.detail.edit');
+        Route::get('/{orderId}/lines/json/{id}/tasks',                  'App\Http\Controllers\Workflow\OrderLinesController@tasksForLineJson')->name('orders.lines.json.tasks');
+        Route::patch('/{orderId}/lines/json/{id}/calculated-price',     'App\Http\Controllers\Workflow\OrderLinesController@toggleCalculatedPriceJson')->name('orders.lines.json.calculated-price');
+        Route::post('/{orderId}/lines/json/store-delivery',             'App\Http\Controllers\Workflow\OrderLinesController@storeDeliveryJson')->name('orders.lines.json.store-delivery');
+        Route::post('/{orderId}/lines/json/store-invoice',              'App\Http\Controllers\Workflow\OrderLinesController@storeInvoiceJson')->name('orders.lines.json.store-invoice');
+        Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->name('orders.lines.json.create-products');
         //import
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importOrders')->name('orders.import');
         //construction site
