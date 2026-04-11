@@ -18,7 +18,10 @@
       "Bash(php -r ':*)",
       "Bash(npx vite:*)",
       "Bash(php -l app/Http/Controllers/Planning/TaskManageApiController.php)",
-      "Bash(find /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Http/Controllers/Workflow -type f -name \"*QuoteLinesController*\" -exec wc -l {} \\\\;)"
+      "Bash(find /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Http/Controllers/Workflow -type f -name \"*QuoteLinesController*\" -exec wc -l {} \\\\;)",
+      "Bash(grep -n \"quote_lines\\\\|quotelines\" database/migrations/*.php)",
+      "Bash(grep -n \"quote_lines\\\\|quotes_id\\\\|quote_id\" database/migrations/*order_lines*)",
+      "Bash(grep -n \"quotes_id\\\\|quote_id\" database/migrations/*create_orders*)"
     ]
   }
 }

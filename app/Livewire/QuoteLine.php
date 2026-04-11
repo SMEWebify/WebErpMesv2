@@ -150,7 +150,7 @@ class QuoteLine extends Component
 
     public function render()
     {
-        $QuoteLineslist = $this->QuoteLineslist = Quotelines::with('QuoteLineDetails')
+        $QuoteLineslist = $this->QuoteLineslist = Quotelines::with(['QuoteLineDetails', 'orderLine.order'])
                                                             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                                                             ->where('quotes_id', '=', $this->quotes_id)
                                                             ->where('label','like', '%'.$this->search.'%')->get();
@@ -1021,6 +1021,7 @@ class QuoteLine extends Component
 
                         $newOrderline = Orderlines::create([
                             'orders_id'=>$OrdersCreated->id,
+                            'quote_lines_id'=>$QuoteLineData->id,
                             'ordre'=>$QuoteLineData->ordre,
                             'code'=>$QuoteLineData->code,
                             'product_id'=>$QuoteLineData->product_id,

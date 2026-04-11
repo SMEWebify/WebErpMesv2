@@ -225,6 +225,8 @@ class QuoteLinesController extends Controller
                 'VAT:id,label,rate',
                 'Product:id,code,label,drawing_file',
                 'QuoteLineDetails:id,quote_lines_id',
+                'orderLine:id,quote_lines_id,orders_id',
+                'orderLine.order:id,code',
             ])
             ->withCount(['Task', 'SubAssembly'])
             ->where('quotes_id', $quoteId)
@@ -538,6 +540,8 @@ class QuoteLinesController extends Controller
             'detail_id'            => $l->QuoteLineDetails?->id,
             'task_url'             => route('task.manage', ['id_type' => 'quote_lines_id', 'id_page' => $l->quotes_id, 'id_line' => $l->id]),
             'detail_url'           => route('quotes.lines.detail.edit', ['idQuote' => $l->quotes_id, 'id' => $l->id]),
+            'order_code'           => $l->orderLine?->order?->code,
+            'order_url'            => $l->orderLine?->order ? route('orders.show', ['id' => $l->orderLine->orders_id]) : null,
         ];
     }
 
@@ -593,6 +597,7 @@ class QuoteLinesController extends Controller
 
                 $newOrderLine = OrderLines::create([
                     'orders_id'                 => $newOrder->id,
+                    'quote_lines_id'            => $quoteLine->id,
                     'ordre'                     => $quoteLine->ordre,
                     'code'                      => $quoteLine->code,
                     'product_id'                => $quoteLine->product_id,

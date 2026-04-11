@@ -750,7 +750,14 @@ function LineRow({
             <td className="small" style={{ whiteSpace: 'nowrap' }}>{formatDate(line.delivery_date)}</td>
 
             {/* Status */}
-            <td><span className={`badge ${cfg.badge}`}>{cfg.label}</span></td>
+            <td>
+                <span className={`badge ${cfg.badge}`}>{cfg.label}</span>
+                {line.statu === 3 && line.order_url && (
+                    <a href={line.order_url} className="badge badge-primary ml-1" target="_blank" rel="noreferrer">
+                        <i className="fas fa-file-alt" /> {line.order_code}
+                    </a>
+                )}
+            </td>
 
             {/* Actions */}
             <td>

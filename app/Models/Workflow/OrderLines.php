@@ -5,6 +5,7 @@ namespace App\Models\Workflow;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Orders;
+use App\Models\Workflow\QuoteLines;
 use App\Models\Products\Products;
 use App\Models\Products\StockMove;
 use Spatie\Activitylog\LogOptions;
@@ -27,8 +28,9 @@ class OrderLines extends Model
     use HasFactory, SoftDeletes, LogsActivity;
 
     // Fillable attributes for mass assignment
-    protected $fillable= ['orders_id', 
-                            'ordre', 
+    protected $fillable= ['orders_id',
+                            'quote_lines_id',
+                            'ordre',
                             'code',
                             'product_id',
                             'label',
@@ -52,6 +54,11 @@ class OrderLines extends Model
     public function order()
     {
         return $this->belongsTo(Orders::class, 'orders_id');
+    }
+
+    public function quoteLine()
+    {
+        return $this->belongsTo(QuoteLines::class, 'quote_lines_id');
     }
 
     public function Product()

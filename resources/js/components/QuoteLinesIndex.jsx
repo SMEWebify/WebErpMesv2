@@ -167,7 +167,16 @@ function QuoteLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSo
             case 'statu': {
                 const cfg = STATUS_CONFIG[line.statu];
                 if (!cfg) return '—';
-                return <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>;
+                return (
+                    <>
+                        <span className={`badge ${cfg.badge}`}>{trans[cfg.label] ?? cfg.label}</span>
+                        {line.statu === 3 && line.order_url && (
+                            <a href={line.order_url} className="badge badge-primary ml-1" target="_blank" rel="noreferrer">
+                                <i className="fas fa-file-alt" /> {line.order_code}
+                            </a>
+                        )}
+                    </>
+                );
             }
             case 'actions':
                 return (
