@@ -18,7 +18,9 @@ use App\Models\Workflow\Quotes;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\Deliverys;
 use App\Models\Purchases\Purchases;
+use App\Models\Mood;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class KpiController extends Controller
@@ -296,6 +298,68 @@ class KpiController extends Controller
         return response()->json(
             $service->getAverageReceptionDelayBySupplier()->values()
         );
+    }
+
+    /**
+     * GET /kpi/mood
+     * Humeurs du jour : mon humeur + résumé équipe
+     *
+     * Shape: {
+     *   myMood: 'happy'|'neutral'|'sad'|null,
+     *   date:   '2026-04-11',
+     *   team:   [{ user_id, name, mood }],
+     *   counts: { happy: int, neutral: int, sad: int },
+     * }
+     */
+    public function mood()
+    {
+        $date = now()->toDateString();
+
+        $teamMoods = Mood::where('date', $date)
+            ->with('user:id,name')
+            ->get();
+
+        $myMood = $teamMoods->firstWhere('user_id', Auth::id());
+
+        $counts = [
+            'happy'   => $teamMoods->where('mood', 'happy')->count(),
+            'neutral' => $teamMoods->where('mood', 'neutral')->count(),
+            'sad'     => $teamMoods->where('mood', 'sad')->count(),
+        ];
+
+        return response()->json([
+            'myMood' => $myMood?->mood,
+            'date'   => $date,
+            'team'   => $teamMoods->map(fn ($m) => [
+                'user_id' => $m->user_id,
+                'name'    => $m->user?->name ?? '?',
+                'mood'    => $m->mood,
+            ])->values(),
+            'counts' => $counts,
+        ]);
+    }
+
+    /**
+     * POST /kpi/mood
+     * Enregistre ou met à jour l'humeur de l'utilisateur connecté pour aujourd'hui
+     *
+     * Body: { "mood": "happy"|"neutral"|"sad" }
+     * Returns: same shape as GET /kpi/mood
+     */
+    public function setMood(Request $request)
+    {
+        $request->validate([
+            'mood' => ['required', 'in:happy,neutral,sad'],
+        ]);
+
+        $date = now()->toDateString();
+
+        Mood::updateOrCreate(
+            ['user_id' => Auth::id(), 'date' => $date],
+            ['mood' => $request->input('mood')]
+        );
+
+        return $this->mood();
     }
 
     /**

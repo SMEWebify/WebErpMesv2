@@ -86,6 +86,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/nc-stats',          'App\Http\Controllers\Api\KpiController@ncStats')->name('nc.stats');
         Route::get('/supplier-delays',   'App\Http\Controllers\Api\KpiController@supplierDelays')->name('supplier.delays');
         Route::get('/otd',               'App\Http\Controllers\Api\KpiController@otd')->name('otd');
+        Route::get('/mood',              'App\Http\Controllers\Api\KpiController@mood')->name('mood');
+        Route::post('/mood',             'App\Http\Controllers\Api\KpiController@setMood')->name('mood.set');
     });
 
     // Dashboard config (personnalisation par utilisateur)
@@ -992,6 +994,15 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
         Route::get('/Profile/{id}', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');
         Route::get('/Profile/Update', 'App\Http\Controllers\UsersController@update')->middleware(['auth'])->name('user.profile.update');
+
+        // JSON API — React UserProfilePage
+        Route::prefix('profile/json')->middleware('auth')->group(function () {
+            Route::put('/account',                    'App\Http\Controllers\UserProfileApiController@updateAccount')->name('profile.json.account.update');
+            Route::put('/information',                'App\Http\Controllers\UserProfileApiController@updateInformation')->name('profile.json.information.update');
+            Route::post('/notifications/{id}/read',   'App\Http\Controllers\UserProfileApiController@readNotification')->name('profile.json.notification.read');
+            Route::post('/notifications/read-all',    'App\Http\Controllers\UserProfileApiController@readAllNotifications')->name('profile.json.notification.read-all');
+            Route::put('/auto-email-reports',         'App\Http\Controllers\UserProfileApiController@saveAutoEmailReports')->name('profile.json.auto-email-reports.save');
+        });
     });
 
     Route::match(

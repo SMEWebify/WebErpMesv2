@@ -47,6 +47,9 @@ import GmaoDashboard from './components/GmaoDashboard.jsx';
 import InspectionProjectsApp from './components/InspectionProjectsApp.jsx';
 import TaskManagePage from './components/TaskManagePage.jsx';
 import QuoteChartsTab from './components/QuoteChartsTab.jsx';
+import UserProfilePage from './components/UserProfilePage.jsx';
+import NotificationLinePage from './components/NotificationLinePage.jsx';
+import UserAutoEmailReportsPage from './components/UserAutoEmailReportsPage.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -974,3 +977,47 @@ function mountOrderChartsTab() {
 
 mountQuoteChartsTab();
 mountOrderChartsTab();
+
+function mountUserProfilePage() {
+    const el = document.getElementById('user-profile-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(UserProfilePage, {
+            initial:   parse('initial')   ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+function mountNotificationLinePage() {
+    const el = document.getElementById('notification-line-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(NotificationLinePage, {
+            initialNotifications: parse('notifications') ?? [],
+            endpoints:            parse('endpoints')     ?? {},
+            trans:                parse('trans')         ?? {},
+        })
+    );
+}
+
+function mountUserAutoEmailReportsPage() {
+    const el = document.getElementById('user-auto-email-reports-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(UserAutoEmailReportsPage, {
+            initialReports: parse('reports')     ?? {},
+            reportTypes:    parse('reportTypes') ?? {},
+            endpoints:      parse('endpoints')   ?? {},
+            trans:          parse('trans')       ?? {},
+        })
+    );
+}
+
+mountUserProfilePage();
+mountNotificationLinePage();
+mountUserAutoEmailReportsPage();

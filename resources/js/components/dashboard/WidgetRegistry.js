@@ -1,3 +1,4 @@
+import MoodTrackerWidget   from './widgets/MoodTrackerWidget.jsx';
 import QuoteRateWidget     from './widgets/QuoteRateWidget.jsx';
 import OrdersMonthlyWidget from './widgets/OrdersMonthlyWidget.jsx';
 import DeliveryBoardWidget from './widgets/DeliveryBoardWidget.jsx';
@@ -229,6 +230,18 @@ const REGISTRY = [
         getProps: (p) => ({
             announcement: p.announcement,
             trans:        p.trans,
+        }),
+    },
+    {
+        id: 'mood_tracker',
+        label: 'Niko Niko',
+        icon: 'fa-smile',
+        defaultW: 4, defaultH: 4,
+        minW: 3,     minH: 3,
+        component: MoodTrackerWidget,
+        getProps: (p) => ({
+            endpoint: p.endpoints?.mood,
+            trans:    p.trans,
         }),
     },
 ];

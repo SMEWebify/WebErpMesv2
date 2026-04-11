@@ -276,6 +276,7 @@ class HomeController extends Controller
                 'nc_stats'           => route('kpi.nc.stats'),
                 'supplier_delays'    => route('kpi.supplier.delays'),
                 'otd'                => route('kpi.otd'),
+                'mood'               => route('kpi.mood'),
                 'dashboard_config'   => route('dashboard.config.show'),
             ],
 
@@ -342,6 +343,14 @@ class HomeController extends Controller
                     // annonce
                     'announcement'     => __('general_content.announcement_trans_key'),
                     'no_announcement'  => 'No announcement',
+                    // mood tracker
+                    'mood_title'   => __('general_content.mood_tracker_trans_key'),
+                    'my_mood'      => __('general_content.my_mood_trans_key'),
+                    'team_mood'    => __('general_content.team_mood_trans_key'),
+                    'no_mood_yet'  => __('general_content.no_mood_yet_trans_key'),
+                    'mood_happy'   => __('general_content.mood_happy_trans_key'),
+                    'mood_neutral' => __('general_content.mood_neutral_trans_key'),
+                    'mood_sad'     => __('general_content.mood_sad_trans_key'),
                 ]
             ),
         ];
