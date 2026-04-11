@@ -21,7 +21,9 @@
       "Bash(find /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Http/Controllers/Workflow -type f -name \"*QuoteLinesController*\" -exec wc -l {} \\\\;)",
       "Bash(grep -n \"quote_lines\\\\|quotelines\" database/migrations/*.php)",
       "Bash(grep -n \"quote_lines\\\\|quotes_id\\\\|quote_id\" database/migrations/*order_lines*)",
-      "Bash(grep -n \"quotes_id\\\\|quote_id\" database/migrations/*create_orders*)"
+      "Bash(grep -n \"quotes_id\\\\|quote_id\" database/migrations/*create_orders*)",
+      "Bash(rm \"c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Livewire/CompaniesLines.php\" \"c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Livewire/PurchasesQuotationIndex.php\" \"c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Livewire/PurchasesReceiptIndex.php\" \"c:/laragon/www/WebErpMesv2/WebErpMesv2/app/Livewire/PurchasesInvoiceIndex.php\")",
+      "Bash(rm \"c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/views/livewire/companies-lines.blade.php\" \"c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/views/livewire/purchases-quotation-index.blade.php\" \"c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/views/livewire/purchases-receipt-index.blade.php\" \"c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/views/livewire/purchases-invoice-index.blade.php\")"
     ]
   }
 }

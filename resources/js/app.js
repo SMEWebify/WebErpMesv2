@@ -46,6 +46,7 @@ import NonConformitiesIndex from './components/NonConformitiesIndex.jsx';
 import GmaoDashboard from './components/GmaoDashboard.jsx';
 import InspectionProjectsApp from './components/InspectionProjectsApp.jsx';
 import TaskManagePage from './components/TaskManagePage.jsx';
+import QuoteChartsTab from './components/QuoteChartsTab.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -930,3 +931,46 @@ function mountTaskManagePage() {
 }
 
 mountTaskManagePage();
+
+function mountQuoteChartsTab() {
+    const element = document.getElementById('quote-charts-tab-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QuoteChartsTab, {
+            productTime: parse('productTime') ?? {},
+            settingTime: parse('settingTime') ?? {},
+            cost:        parse('cost')        ?? {},
+            price:       parse('price')       ?? {},
+            currency:    element.dataset.currency ?? '€',
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+function mountOrderChartsTab() {
+    const element = document.getElementById('order-charts-tab-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QuoteChartsTab, {
+            productTime: parse('productTime') ?? {},
+            settingTime: parse('settingTime') ?? {},
+            cost:        parse('cost')        ?? {},
+            price:       parse('price')       ?? {},
+            currency:    element.dataset.currency ?? '€',
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+mountQuoteChartsTab();
+mountOrderChartsTab();

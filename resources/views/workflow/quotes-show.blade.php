@@ -371,28 +371,20 @@
       </div>
       @endif
       <div class="tab-pane" id="Charts">
-        <div class="row">
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_product_time_by_service') }}" theme="secondary" maximizable>
-              <canvas id="productDonutChart" width="400" height="400"></canvas>
-            </x-adminlte-card>
-          </div>
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_setting_time_by_service') }}" theme="secondary" maximizable>
-              <canvas id="settingDonutChart" width="400" height="400"></canvas>
-            </x-adminlte-card>
-          </div>
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_cost_by_service') }}" theme="secondary" maximizable>
-              <canvas id="CostDonutChart" width="400" height="400"></canvas>
-            </x-adminlte-card>
-          </div>
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_price_by_service') }}" theme="secondary" maximizable>
-                <canvas id="PriceDonutChart" width="400" height="400"></canvas>
-              </x-adminlte-card>
-          </div>
-        </div>
+        <div
+          id="quote-charts-tab-app"
+          data-product-time="{{ json_encode(array_values($TotalServiceProductTime)) }}"
+          data-setting-time="{{ json_encode(array_values($TotalServiceSettingTime)) }}"
+          data-cost="{{ json_encode(array_values($TotalServiceCost)) }}"
+          data-price="{{ json_encode(array_values($TotalServicePrice)) }}"
+          data-currency="{{ $Factory->curency }}"
+          data-trans="{{ json_encode([
+            'productTime' => __('general_content.total_product_time_by_service'),
+            'settingTime' => __('general_content.total_setting_time_by_service'),
+            'cost'        => __('general_content.total_cost_by_service'),
+            'price'       => __('general_content.total_price_by_service'),
+          ]) }}"
+        ></div>
       </div>  
       <div class="tab-pane " id="Views">
         <x-adminlte-card title="{{ __('general_content.view_count_trans_key') }}" theme="primary" maximizable>
@@ -587,164 +579,6 @@
 @stop
 
 @section('js')
-  <script type="text/javascript">
-  $('a[href="#Charts"]').on('shown.bs.tab', function () {
-    //-------------
-    //- PIE CHART 1 -
-    //-------------
-    var productDonutChartCanvas  = $('#productDonutChart').get(0).getContext('2d')
-    var productDonutData         = {
-        labels: [
-          @foreach ($TotalServiceProductTime as $item)
-          "{{ $item[0] }} - {{ $item[1] }}h",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServiceProductTime as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServiceProductTime as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var productDonutChart = new Chart(productDonutChartCanvas , {
-        type: 'pie',
-        data: productDonutData ,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-    //-------------
-    //- PIE CHART 2 -
-    //-------------
-    var settingDonutChartCanvas  = $('#settingDonutChart').get(0).getContext('2d')
-    var settingDonutData         = {
-        labels: [
-          @foreach ($TotalServiceSettingTime as $item)
-          "{{ $item[0] }} - {{ $item[1] }}h",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServiceSettingTime as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServiceSettingTime as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var settingDonutChart = new Chart(settingDonutChartCanvas , {
-        type: 'pie',
-        data: settingDonutData ,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-    //-------------
-    //- PIE CHART 3 -
-    //-------------
-    var costDonutChartCanvas  = $('#CostDonutChart').get(0).getContext('2d')
-    var costDonutData         = {
-        labels: [
-          @foreach ($TotalServiceCost as $item)
-          "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServiceCost as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServiceCost as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var costDonutChart = new Chart(costDonutChartCanvas , {
-        type: 'pie',
-        data: costDonutData ,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-    //-------------
-    //- PIE CHART 4 -
-    //-------------
-    var priceDonutChartCanvas  = $('#PriceDonutChart').get(0).getContext('2d')
-    var priceDonutData        = {
-        labels: [
-          @foreach ($TotalServicePrice as $item)
-          "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServicePrice as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServicePrice as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var priceDonutChart = new Chart(priceDonutChartCanvas , {
-        type: 'pie',
-        data: priceDonutData,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-      $('a[href="#Charts"]').on('shown.bs.tab', function () {
-          productDonutChart.update();
-          settingDonutChart.update();
-          costDonutChart.update();
-          priceDonutChart.update();
-      });
-    });
-  </script>
 
   <script type="text/javascript">
     $('.custom-file-input').on('change',function(){
