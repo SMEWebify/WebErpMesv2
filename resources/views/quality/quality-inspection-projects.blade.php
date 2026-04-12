@@ -14,7 +14,8 @@
 
     <div
         id="inspection-projects-app"
-        data-endpoints='@json($endpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+        data-endpoints='@json($endpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+        data-can-approve='@json($canApprove)'>
     </div>
 @stop
 

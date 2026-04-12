@@ -232,13 +232,36 @@ function ProjectsTable({ projects, onSelect, selectedId }) {
 // Documents Section
 // ---------------------------------------------------------------------------
 
-function DocumentsSection({ documents, projectId, endpoints, onRefresh }) {
+const DOC_STATUS_BADGE = {
+    draft:            'badge-secondary',
+    pending_approval: 'badge-warning',
+    approved:         'badge-success',
+    obsolete:         'badge-dark',
+};
+
+const DOC_STATUS_LABEL = {
+    draft:            'Brouillon',
+    pending_approval: 'En attente',
+    approved:         'Approuvé',
+    obsolete:         'Obsolète',
+};
+
+function DocumentStatusBadge({ status }) {
+    return (
+        <span className={`badge ${DOC_STATUS_BADGE[status] ?? 'badge-secondary'}`}>
+            {DOC_STATUS_LABEL[status] ?? status}
+        </span>
+    );
+}
+
+function DocumentsSection({ documents, projectId, endpoints, onRefresh, canApprove }) {
     const [type, setType] = useState('plan');
     const [version, setVersion] = useState('');
     const [loading, setLoading] = useState(false);
+    const [actionLoading, setActionLoading] = useState(null);
     const fileRef = useRef(null);
 
-    const handleSubmit = async (e) => {
+    const handleUpload = async (e) => {
         e.preventDefault();
         if (!projectId) { alert('Sélectionnez un projet.'); return; }
         setLoading(true);
@@ -260,10 +283,21 @@ function DocumentsSection({ documents, projectId, endpoints, onRefresh }) {
         }
     };
 
+    const handleAction = async (docId, action) => {
+        const endpointKey = { submit: 'documentSubmit', approve: 'documentApprove', obsolete: 'documentObsolete' }[action];
+        setActionLoading(docId + action);
+        try {
+            await apiFetch(url(endpoints[endpointKey], docId), { method: 'POST' });
+            await onRefresh();
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     return (
         <div>
             <h5>Documents</h5>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleUpload}>
                 <Field label="Fichier">
                     <input ref={fileRef} className="form-control" type="file" accept=".pdf,.png,.jpg,.jpeg" required />
                 </Field>
@@ -273,8 +307,8 @@ function DocumentsSection({ documents, projectId, endpoints, onRefresh }) {
                         value={type}
                         onChange={setType}
                         options={[
-                            { value: 'plan', label: 'Plan' },
-                            { value: 'spec', label: 'Spécification' },
+                            { value: 'plan',  label: 'Plan' },
+                            { value: 'spec',  label: 'Spécification' },
                             { value: 'photo', label: 'Photo' },
                             { value: 'other', label: 'Autre' },
                         ]}
@@ -287,11 +321,62 @@ function DocumentsSection({ documents, projectId, endpoints, onRefresh }) {
                     {loading ? '...' : 'Ajouter document'}
                 </button>
             </form>
+
             <ul className="list-group mt-3">
-                {documents.map((doc, i) => (
-                    <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-                        <span>{doc.file_name ?? doc.file_path}</span>
-                        <span className="badge badge-secondary">{doc.type ?? ''}</span>
+                {documents.length === 0 && (
+                    <li className="list-group-item text-muted">Aucun document</li>
+                )}
+                {documents.map(doc => (
+                    <li key={doc.id} className="list-group-item">
+                        <div className="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span className="font-weight-bold">{doc.file_name ?? doc.file_path}</span>
+                                {doc.version_label && (
+                                    <span className="text-muted small ml-2">v{doc.version_label}</span>
+                                )}
+                                <div className="mt-1">
+                                    <span className="badge badge-light mr-1">{doc.type ?? ''}</span>
+                                    <DocumentStatusBadge status={doc.status} />
+                                    {doc.approved_at && (
+                                        <span className="text-muted small ml-2">
+                                            par {doc.approver?.name ?? '—'} le {fmt(doc.approved_at)}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="btn-group btn-group-sm ml-2">
+                                {doc.status === 'draft' && (
+                                    <button
+                                        className="btn btn-outline-warning"
+                                        disabled={actionLoading === doc.id + 'submit'}
+                                        onClick={() => handleAction(doc.id, 'submit')}
+                                        title="Soumettre pour approbation"
+                                    >
+                                        <i className="fas fa-paper-plane" />
+                                    </button>
+                                )}
+                                {doc.status === 'pending_approval' && canApprove && (
+                                    <button
+                                        className="btn btn-outline-success"
+                                        disabled={actionLoading === doc.id + 'approve'}
+                                        onClick={() => handleAction(doc.id, 'approve')}
+                                        title="Approuver"
+                                    >
+                                        <i className="fas fa-check" />
+                                    </button>
+                                )}
+                                {doc.status === 'approved' && canApprove && (
+                                    <button
+                                        className="btn btn-outline-dark"
+                                        disabled={actionLoading === doc.id + 'obsolete'}
+                                        onClick={() => handleAction(doc.id, 'obsolete')}
+                                        title="Rendre obsolète"
+                                    >
+                                        <i className="fas fa-archive" />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
                     </li>
                 ))}
             </ul>
@@ -581,7 +666,7 @@ function ControlPointsSection({ points, projectId, endpoints, onRefresh }) {
 // Project Details Panel
 // ---------------------------------------------------------------------------
 
-function ProjectDetails({ project, endpoints, onRefresh }) {
+function ProjectDetails({ project, endpoints, onRefresh, canApprove }) {
     if (!project) {
         return (
             <div className="card card-secondary card-outline">
@@ -635,6 +720,7 @@ function ProjectDetails({ project, endpoints, onRefresh }) {
                             projectId={project.id}
                             endpoints={endpoints}
                             onRefresh={onRefresh}
+                            canApprove={canApprove}
                         />
                     </div>
                     <div className="col-lg-6">
@@ -664,7 +750,7 @@ function ProjectDetails({ project, endpoints, onRefresh }) {
 // Root App
 // ---------------------------------------------------------------------------
 
-export default function InspectionProjectsApp({ endpoints }) {
+export default function InspectionProjectsApp({ endpoints, canApprove }) {
     const [projects, setProjects] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
     const [createLoading, setCreateLoading] = useState(false);
@@ -804,6 +890,7 @@ export default function InspectionProjectsApp({ endpoints }) {
                         project={selectedProject}
                         endpoints={endpoints}
                         onRefresh={handleRefreshDetails}
+                        canApprove={canApprove}
                     />
                 </div>
             </div>

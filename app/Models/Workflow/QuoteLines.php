@@ -5,6 +5,7 @@ namespace App\Models\Workflow;
 use App\Models\Planning\Task;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Quotes;
+use App\Models\Workflow\OrderLines;
 use App\Models\Products\Products;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Methods\MethodsUnits;
@@ -40,6 +41,11 @@ class QuoteLines extends Model
     public function quote()
     {
         return $this->belongsTo(Quotes::class, 'quotes_id');
+    }
+
+    public function orderLine()
+    {
+        return $this->hasOne(OrderLines::class, 'quote_lines_id');
     }
 
     public function Product()

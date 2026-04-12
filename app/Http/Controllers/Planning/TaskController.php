@@ -14,6 +14,7 @@ use App\Models\Products\Products;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\QuoteLines;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Factory;
 use App\Models\Planning\SubAssembly;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsRessources;
@@ -181,7 +182,9 @@ class TaskController extends Controller
             return back()->withInput()->withErrors(['msg' => 'Error, Something goes wrong ']);
         }
 
-        return view('workflow/task-manage', compact('Document','LineInfo', 'id_type', 'id_page', 'id_line'));
+        $Factory = Factory::first();
+
+        return view('workflow/task-manage', compact('Document','LineInfo', 'id_type', 'id_page', 'id_line', 'Factory'));
     }
 
     /**

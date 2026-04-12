@@ -224,7 +224,9 @@ class QuoteLinesController extends Controller
                 'Unit:id,label,code',
                 'VAT:id,label,rate',
                 'Product:id,code,label,drawing_file',
-                'QuoteLineDetails:id,quote_lines_id',
+                'QuoteLineDetails:id,quote_lines_id,picture',
+                'orderLine:id,quote_lines_id,orders_id',
+                'orderLine.order:id,code',
             ])
             ->withCount(['Task', 'SubAssembly'])
             ->where('quotes_id', $quoteId)
@@ -349,7 +351,7 @@ class QuoteLinesController extends Controller
         }
         QuoteLineDetails::create($detailData);
 
-        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id']);
+        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
         $factory  = Factory::first();
@@ -378,7 +380,7 @@ class QuoteLinesController extends Controller
         ]);
 
         $line->update($validated);
-        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id']);
+        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
 
         $factory  = Factory::first();
@@ -395,6 +397,39 @@ class QuoteLinesController extends Controller
         Task::where('quote_lines_id', $id)->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function breakDownLineJson($quoteId, $id)
+    {
+        abort_unless(auth()->check(), 403);
+        $line = QuoteLines::where('id', $id)->where('quotes_id', $quoteId)->firstOrFail();
+
+        abort_if(!$line->product_id, 422);
+
+        $firstStatus = \App\Models\Planning\Status::select('id')->orderBy('order')->first();
+        $statusId    = $firstStatus?->id;
+
+        Task::where('products_id', $line->product_id)->get()->each(function ($task) use ($id, $statusId) {
+            $new                  = $task->replicate();
+            $new->quote_lines_id  = $id;
+            $new->products_id     = null;
+            $new->status_id       = $statusId;
+            $new->origin          = '3';
+            $new->save();
+        });
+
+        SubAssembly::where('products_id', $line->product_id)->get()->each(function ($sub) use ($id) {
+            $new                  = $sub->replicate();
+            $new->quote_lines_id  = $id;
+            $new->products_id     = null;
+            $new->save();
+        });
+
+        $line->loadCount(['Task', 'SubAssembly']);
+        $factory  = Factory::first();
+        $currency = $factory->curency ?? 'EUR';
+
+        return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
     }
 
     public function duplicateLineJson($quoteId, $id)
@@ -430,7 +465,7 @@ class QuoteLinesController extends Controller
             $ns->save();
         });
 
-        $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id']);
+        $newLine->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $newLine->loadCount(['Task', 'SubAssembly']);
 
         $factory  = Factory::first();
@@ -536,8 +571,11 @@ class QuoteLinesController extends Controller
             'task_count'           => $l->task_count,
             'sub_assembly_count'   => $l->sub_assembly_count,
             'detail_id'            => $l->QuoteLineDetails?->id,
+            'picture'              => $l->QuoteLineDetails?->picture,
             'task_url'             => route('task.manage', ['id_type' => 'quote_lines_id', 'id_page' => $l->quotes_id, 'id_line' => $l->id]),
             'detail_url'           => route('quotes.lines.detail.edit', ['idQuote' => $l->quotes_id, 'id' => $l->id]),
+            'order_code'           => $l->orderLine?->order?->code,
+            'order_url'            => $l->orderLine?->order ? route('orders.show', ['id' => $l->orderLine->orders_id]) : null,
         ];
     }
 
@@ -593,6 +631,7 @@ class QuoteLinesController extends Controller
 
                 $newOrderLine = OrderLines::create([
                     'orders_id'                 => $newOrder->id,
+                    'quote_lines_id'            => $quoteLine->id,
                     'ordre'                     => $quoteLine->ordre,
                     'code'                      => $quoteLine->code,
                     'product_id'                => $quoteLine->product_id,
@@ -714,7 +753,7 @@ class QuoteLinesController extends Controller
         $enable = (bool) $request->input('enable');
         $line->update(['use_calculated_price' => $enable ? 1 : 0]);
 
-        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label', 'QuoteLineDetails:id,quote_lines_id']);
+        $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label', 'QuoteLineDetails:id,quote_lines_id,picture']);
         $line->loadCount(['Task', 'SubAssembly']);
         $factory  = Factory::first();
         $currency = $factory->curency ?? 'EUR';
@@ -819,5 +858,195 @@ class QuoteLinesController extends Controller
             'cad_file_path'     => $product->cad_file_path,
             'cam_file_path'     => $product->cam_file_path,
         ];
+    }
+
+    // -------------------------------------------------------------------------
+    // RADAN .sym import
+    // -------------------------------------------------------------------------
+
+    public function importSymJson(Request $request, int $quoteId)
+    {
+        abort_unless(auth()->check(), 403);
+
+        if (! env('RADAN_SYM_IMPORT', false)) {
+            return response()->json(['error' => 'Import RADAN désactivé'], 403);
+        }
+
+        $quote = Quotes::findOrFail($quoteId);
+        abort_if($quote->statu != 1, 403);
+        abort_unless($quote->user_id === Auth::id() || Auth::user()->hasRole(['admin', 'manager']), 403);
+
+        $request->validate([
+            'files'   => 'required|array|min:1',
+            'files.*' => 'required|file|max:10240',
+        ]);
+
+        $defaultVat  = AccountingVat::getDefault();
+        $defaultUnit = MethodsUnits::getDefault();
+
+        if (! $defaultVat || ! $defaultUnit) {
+            return response()->json(['error' => 'Aucune TVA ou unité par défaut configurée'], 422);
+        }
+
+        $factory  = Factory::first();
+        $currency = $factory->curency ?? 'EUR';
+        $locale   = config('app.locale');
+
+        $nextOrdre    = (QuoteLines::where('quotes_id', $quoteId)->max('ordre') ?? 0) + 1;
+        $createdLines = [];
+        $errors       = [];
+
+        foreach ($request->file('files') as $file) {
+            try {
+                $data = $this->parseSymFile($file);
+
+                $line = QuoteLines::create([
+                    'quotes_id'          => $quoteId,
+                    'ordre'              => $nextOrdre++,
+                    'code'               => $data['code'],
+                    'label'              => $data['label'],
+                    'qty'                => 1,
+                    'methods_units_id'   => $defaultUnit->id,
+                    'selling_price'      => 0,
+                    'discount'           => 0,
+                    'accounting_vats_id' => $defaultVat->id,
+                ]);
+
+                QuoteLineDetails::create([
+                    'quote_lines_id'      => $line->id,
+                    'material'            => $data['material'],
+                    'thickness'           => $data['thickness'],
+                    'x_size'              => $data['x_size'],
+                    'y_size'              => $data['y_size'],
+                    'weight'              => $data['weight'],
+                    'cad_file'            => $data['code'],
+                    'picture'             => $data['picture'],
+                    'custom_requirements' => ! empty($data['extra']) ? $data['extra'] : null,
+                ]);
+
+                $line->load(['Unit:id,label,code', 'VAT:id,label,rate', 'Product:id,code,label,drawing_file', 'QuoteLineDetails:id,quote_lines_id,picture']);
+                $line->loadCount(['Task', 'SubAssembly']);
+
+                $createdLines[] = $this->formatLineJson($line, $currency, $locale);
+            } catch (\Exception $e) {
+                $errors[] = $file->getClientOriginalName() . ' : ' . $e->getMessage();
+            }
+        }
+
+        return response()->json(['lines' => $createdLines, 'errors' => $errors], 201);
+    }
+
+    private function parseSymFile(\Illuminate\Http\UploadedFile $file): array
+    {
+        $content = $file->get();
+
+        // Strip namespace so SimpleXML can find elements without prefix
+        $content = preg_replace('/\sxmlns="[^"]+"/', '', $content);
+
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($content);
+        if ($xml === false) {
+            throw new \RuntimeException('Fichier XML invalide');
+        }
+
+        // Index all Attr elements by their num attribute
+        $attrs = [];
+        foreach ($xml->RadanAttributes->Group ?? [] as $group) {
+            foreach ($group->Attr ?? [] as $attr) {
+                $num = (int) $attr['num'];
+                $attrs[$num] = isset($attr['value']) ? (string) $attr['value'] : null;
+            }
+        }
+
+        $get = fn (int $num) => $attrs[$num] ?? null;
+
+        $filename  = $get(110) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $material  = $get(119);
+        $thickness = $get(120) !== null ? (float) $get(120) : null;
+        $thickUnit = $get(121) ?? 'mm';
+        $xSize     = $get(165) !== null ? (float) $get(165) : null;
+        $ySize     = $get(166) !== null ? (float) $get(166) : null;
+        $weight    = $get(164) !== null ? round((float) $get(164), 3) : null;
+        $perimExt  = $get(167) !== null ? (float) $get(167) : null;
+        $perimTot  = $get(168) !== null ? (float) $get(168) : null;
+        $surface   = $get(162) !== null ? (float) $get(162) : null;
+        $surfExt   = $get(163) !== null ? (float) $get(163) : null;
+        $geoUnit   = $get(169) ?? 'mm';
+        $laserCut  = $get(510) !== null ? (float) $get(510) : null;
+        $laserPiercing = $get(512) !== null ? (int) $get(512) : null;
+        $bendCount = $get(500) !== null ? (int) $get(500) : null;
+
+        // Build label: "CODE - MATERIAU Xmm (XxYmm)"
+        $labelParts = [$filename];
+        if ($material) {
+            $thickStr     = $thickness !== null ? " {$thickness}{$thickUnit}" : '';
+            $labelParts[] = $material . $thickStr;
+        }
+        if ($xSize !== null && $ySize !== null) {
+            $labelParts[] = "{$xSize}x{$ySize}{$geoUnit}";
+        }
+
+        // Extract thumbnail
+        $picture = null;
+        if (isset($xml->Thumbnail)) {
+            $b64 = trim((string) $xml->Thumbnail);
+            if ($b64 !== '') {
+                $picture = $this->saveThumbnailFromSym($b64);
+            }
+        }
+
+        // Extra RADAN metadata stored in custom_requirements JSON
+        $extra = array_filter([
+            'perimetre_ext'    => $perimExt,
+            'perimetre_total'  => $perimTot,
+            'surface'          => $surface,
+            'surface_ext'      => $surfExt,
+            'geo_unit'         => $geoUnit,
+            'laser_cut_length' => $laserCut,
+            'laser_piercings'  => $laserPiercing,
+            'bend_count'       => $bendCount,
+            'radan_source'     => true,
+        ], fn ($v) => $v !== null && $v !== false);
+
+        return [
+            'code'      => $filename,
+            'label'     => implode(' - ', $labelParts),
+            'material'  => $material,
+            'thickness' => $thickness,
+            'x_size'    => $xSize,
+            'y_size'    => $ySize,
+            'weight'    => $weight,
+            'picture'   => $picture,
+            'extra'     => $extra ?: null,
+        ];
+    }
+
+    private function saveThumbnailFromSym(string $base64): ?string
+    {
+        $binary = base64_decode(preg_replace('/\s+/', '', $base64));
+        if ($binary === false || strlen($binary) < 10) {
+            return null;
+        }
+
+        $dir = public_path('images/quote-lines');
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        // Convert BMP → PNG via GD (PHP 8.x GD supports BMP)
+        if (function_exists('imagecreatefromstring')) {
+            $image = @imagecreatefromstring($binary);
+            if ($image !== false) {
+                $filename = time() . '_' . uniqid() . '.png';
+                imagepng($image, $dir . '/' . $filename);
+                imagedestroy($image);
+                return $filename;
+            }
+        }
+
+        // Fallback: save raw BMP
+        $filename = time() . '_' . uniqid() . '.bmp';
+        file_put_contents($dir . '/' . $filename, $binary);
+        return $filename;
     }
 }

@@ -3,7 +3,7 @@
 ## Stack technique actuelle
 - **Backend** : Laravel 12 (PHP 8.2+), architecture MVC classique
 - **Frontend** : Blade (rendu serveur dominant), Livewire (composants interactifs),
-  Vue.js (1.2% — déprécié), React (spreadsheet)
+  Vue.js (1.2% — déprécié), React (composants riches : spreadsheet, NikoNiko, ChartJS, SerialNumber, UserProfile, Notifications)
 - **CSS** : Bootstrap 4 via AdminLTE (Tailwind supprimé)
 - **JS utilitaire** : Alpine.js (micro-interactions)
 - **Bundler** : Vite
@@ -15,7 +15,7 @@
 - `app/Http/Controllers` — Contrôleurs web et API
 - `app/Livewire` — Composants Livewire (QuoteLine, OrderLine, etc.)
 - `app/Models` — Modèles Eloquent
-- `resources/js` — Vue (déprécié) + React (spreadsheet)
+- `resources/js` — Vue (déprécié) + React (composants riches en migration progressive depuis Livewire)
 - `resources/views` — Templates Blade + vues Livewire
 - `database/migrations` — Schéma ERP/MES
 
@@ -127,6 +127,7 @@
 - wire:model.lazy sur formulaires
 - wire:model.live restauré sur chat et filtres
 - event(OrderCreated) hors transaction
+- Migration Livewire → React : NikoNiko, ChartJS, SerialNumber, UserProfile, NotificationLine, UserAutoEmailReports
 
 ### RGPD
 - SoftDeletes : companies, contacts, addresses, users

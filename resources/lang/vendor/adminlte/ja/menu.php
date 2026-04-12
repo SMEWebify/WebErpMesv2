@@ -16,7 +16,9 @@ return [
     'important'                     => '重要',
     'warning'                       => '警告',
     'information'                   => 'インフォメーション',
+    'process_diagrams_trans_key' => 'Process Map',
     'inspection_trans_key'                 => 'Inspection',
+    'internal_audits_trans_key'                => 'Internal Audits',
     'methods_overview_trans_key'               => 'Methods overview',
     'assets_trans_key'                         => 'Assets',
 ];

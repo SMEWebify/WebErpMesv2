@@ -8,6 +8,11 @@ use App\Events\QuoteCreated;
 use Illuminate\Support\Number;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
+use App\Models\Workflow\Leads;
+use App\Models\Workflow\Orders;
+use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\Invoices;
+use App\Models\Purchases\Purchases;
 use App\Services\CompanyService;
 use App\Services\OrderKPIService;
 use App\Services\QuoteKPIService;
@@ -436,5 +441,126 @@ class CompaniesController extends Controller
         event(new QuoteCreated($quotesCreated));
 
         return redirect()->route('quotes.show', ['id' => $quotesCreated->id])->with('success', 'Successfully created new quote');
+    }
+
+    /**
+     * Returns a unified chronological timeline of all documents linked to a company.
+     */
+    public function timelineJson(Companies $id): \Illuminate\Http\JsonResponse
+    {
+        $companyId = $id->id;
+        $items = collect();
+
+        if (auth()->user()->can('leads-menu')) {
+            Leads::where('companies_id', $companyId)
+                ->select('id', 'statu', 'created_at', 'source', 'priority')
+                ->get()
+                ->each(function ($lead) use (&$items) {
+                    $items->push([
+                        'type'   => 'lead',
+                        'id'     => $lead->id,
+                        'code'   => null,
+                        'label'  => $lead->source ?? '—',
+                        'statu'  => $lead->statu,
+                        'amount' => null,
+                        'date'   => $lead->created_at?->toDateString(),
+                        'url'    => route('leads.show', $lead->id),
+                    ]);
+                });
+        }
+
+        if (auth()->user()->can('quotes-menu')) {
+            Quotes::where('companies_id', $companyId)
+                ->select('id', 'code', 'label', 'statu', 'created_at')
+                ->get()
+                ->each(function ($quote) use (&$items) {
+                    $items->push([
+                        'type'   => 'quote',
+                        'id'     => $quote->id,
+                        'code'   => $quote->code,
+                        'label'  => $quote->label,
+                        'statu'  => $quote->statu,
+                        'amount' => null,
+                        'date'   => $quote->created_at?->toDateString(),
+                        'url'    => route('quotes.show', $quote->id),
+                    ]);
+                });
+        }
+
+        if (auth()->user()->can('orders-menu')) {
+            Orders::where('companies_id', $companyId)
+                ->select('id', 'code', 'label', 'statu', 'created_at')
+                ->get()
+                ->each(function ($order) use (&$items) {
+                    $items->push([
+                        'type'   => 'order',
+                        'id'     => $order->id,
+                        'code'   => $order->code,
+                        'label'  => $order->label,
+                        'statu'  => $order->statu,
+                        'amount' => null,
+                        'date'   => $order->created_at?->toDateString(),
+                        'url'    => route('orders.show', $order->id),
+                    ]);
+                });
+        }
+
+        if (auth()->user()->can('deliverys-menu')) {
+            Deliverys::where('companies_id', $companyId)
+                ->select('id', 'code', 'label', 'statu', 'created_at')
+                ->get()
+                ->each(function ($delivery) use (&$items) {
+                    $items->push([
+                        'type'   => 'delivery',
+                        'id'     => $delivery->id,
+                        'code'   => $delivery->code,
+                        'label'  => $delivery->label,
+                        'statu'  => $delivery->statu,
+                        'amount' => null,
+                        'date'   => $delivery->created_at?->toDateString(),
+                        'url'    => route('deliverys.show', $delivery->id),
+                    ]);
+                });
+        }
+
+        if (auth()->user()->can('invoices-menu')) {
+            Invoices::where('companies_id', $companyId)
+                ->select('id', 'code', 'label', 'statu', 'created_at')
+                ->get()
+                ->each(function ($invoice) use (&$items) {
+                    $items->push([
+                        'type'   => 'invoice',
+                        'id'     => $invoice->id,
+                        'code'   => $invoice->code,
+                        'label'  => $invoice->label,
+                        'statu'  => $invoice->statu,
+                        'amount' => null,
+                        'date'   => $invoice->created_at?->toDateString(),
+                        'url'    => route('invoices.show', $invoice->id),
+                    ]);
+                });
+        }
+
+        if (auth()->user()->can('purchases-menu')) {
+            Purchases::where('companies_id', $companyId)
+                ->select('id', 'code', 'label', 'statu', 'created_at')
+                ->get()
+                ->each(function ($purchase) use (&$items) {
+                    $items->push([
+                        'type'   => 'purchase',
+                        'id'     => $purchase->id,
+                        'code'   => $purchase->code,
+                        'label'  => $purchase->label,
+                        'statu'  => $purchase->statu,
+                        'amount' => null,
+                        'date'   => $purchase->created_at?->toDateString(),
+                        'url'    => route('purchases.show', $purchase->id),
+                    ]);
+                });
+        }
+
+        return response()->json(
+            $items->sortByDesc('date')->values()
+        );
     }
 }

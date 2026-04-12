@@ -70,7 +70,7 @@ export default function DonutChart({ data = [], centerLabel = '', size = 220, sh
                 })}
                 {/* Centre */}
                 <text x={cx} y={cy - 6} textAnchor="middle" fontSize={size * 0.09} fontWeight="700" fill="#343a40">
-                    {hov ? hov.value : total}
+                    {(hov ? hov.value : total).toFixed(2)}
                 </text>
                 <text x={cx} y={cy + size * 0.055} textAnchor="middle" fontSize={size * 0.042} fill="#6c757d">
                     {hov ? hov.label : centerLabel}
@@ -95,7 +95,7 @@ export default function DonutChart({ data = [], centerLabel = '', size = 220, sh
                             <span style={{ width: 10, height: 10, borderRadius: 2, background: s.color, flexShrink: 0 }} />
                             <span style={{ fontSize: '0.78rem', flex: 1 }}>{s.label}</span>
                             <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>
-                                {s.value}{' '}
+                                {s.value.toFixed(2)}{' '}
                                 <span style={{ color: '#aaa', fontWeight: 400 }}>
                                     ({Math.round((s.value / total) * 100)}%)
                                 </span>

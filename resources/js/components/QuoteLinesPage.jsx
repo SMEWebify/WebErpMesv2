@@ -1,6 +1,124 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // ---------------------------------------------------------------------------
+// SymDropzone — RADAN .sym drag-and-drop import
+// ---------------------------------------------------------------------------
+
+function SymDropzone({ endpoint, quoteStatu, onImported }) {
+    const [dragging, setDragging] = useState(false);
+    const [status,   setStatus]   = useState(null); // null | 'uploading' | 'done' | 'error'
+    const [results,  setResults]  = useState([]);
+    const inputRef = useRef(null);
+
+    if (!endpoint || quoteStatu !== 1) return null;
+
+    const upload = async (files) => {
+        const symFiles = Array.from(files).filter((f) => f.name.toLowerCase().endsWith('.sym'));
+        if (symFiles.length === 0) {
+            setStatus('error');
+            setResults([{ ok: false, name: '—', msg: 'Aucun fichier .sym détecté.' }]);
+            return;
+        }
+
+        setStatus('uploading');
+        setResults([]);
+
+        const fd = new FormData();
+        symFiles.forEach((f) => fd.append('files[]', f));
+
+        try {
+            const res  = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                    Accept: 'application/json',
+                },
+                body: fd,
+            });
+
+            const data = await res.json();
+
+            const ok  = (data.lines  ?? []).map((l) => ({ ok: true,  name: l.code ?? l.label, msg: l.label }));
+            const err = (data.errors ?? []).map((e) => ({ ok: false, name: e, msg: e }));
+
+            setStatus(err.length > 0 && ok.length === 0 ? 'error' : 'done');
+            setResults([...ok, ...err]);
+
+            if (ok.length > 0) {
+                onImported(data.lines);
+            }
+        } catch {
+            setStatus('error');
+            setResults([{ ok: false, name: '—', msg: 'Erreur réseau lors de l\'envoi.' }]);
+        }
+    };
+
+    const onDrop = (e) => {
+        e.preventDefault();
+        setDragging(false);
+        upload(e.dataTransfer.files);
+    };
+
+    const borderColor = dragging  ? '#007bff'
+        : status === 'done'       ? '#28a745'
+        : status === 'error'      ? '#dc3545'
+        : '#adb5bd';
+
+    return (
+        <div className="mt-3">
+            <div
+                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={onDrop}
+                onClick={() => inputRef.current?.click()}
+                style={{
+                    border: `2px dashed ${borderColor}`,
+                    borderRadius: 6,
+                    padding: '1.25rem',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    background: dragging ? '#e8f0fe' : '#f8f9fa',
+                    transition: 'border-color .2s, background .2s',
+                    userSelect: 'none',
+                }}
+            >
+                <input
+                    ref={inputRef}
+                    type="file"
+                    accept=".sym"
+                    multiple
+                    style={{ display: 'none' }}
+                    onChange={(e) => upload(e.target.files)}
+                />
+                {status === 'uploading' ? (
+                    <span className="text-muted">
+                        <i className="fas fa-spinner fa-spin mr-2" />
+                        Import en cours…
+                    </span>
+                ) : (
+                    <span className="text-muted small">
+                        <i className="fas fa-file-import mr-2 text-primary" />
+                        Déposer des fichiers <strong>.sym</strong> RADAN ici pour créer les lignes automatiquement
+                        &nbsp;—&nbsp;ou cliquer pour sélectionner
+                    </span>
+                )}
+            </div>
+
+            {results.length > 0 && (
+                <ul className="list-group list-group-flush mt-2" style={{ fontSize: '0.85rem' }}>
+                    {results.map((r, i) => (
+                        <li key={i} className={`list-group-item py-1 px-2 ${r.ok ? 'list-group-item-success' : 'list-group-item-danger'}`}>
+                            <i className={`fas ${r.ok ? 'fa-check' : 'fa-times'} mr-2`} />
+                            {r.msg}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
@@ -652,7 +770,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 // ---------------------------------------------------------------------------
 
 function LineRow({
-    line, quoteStatu, onEdit, onDelete, onDuplicate, onCreateProduct, onOpenTaskModal, onToggleSelect, selected,
+    line, quoteStatu, onEdit, onDelete, onDuplicate, onBreakDown, onCreateProduct, onOpenTaskModal, onToggleSelect, selected,
     // drag props
     onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
 }) {
@@ -674,8 +792,8 @@ function LineRow({
             const menuH   = 220; // estimated height
             const openUp  = rect.bottom + menuH > window.innerHeight;
             setMenuStyle(openUp
-                ? { position: 'fixed', bottom: window.innerHeight - rect.top, top: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 140, maxWidth: 180, zIndex: 1060 }
-                : { position: 'fixed', top: rect.bottom, bottom: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 140, maxWidth: 180, zIndex: 1060 }
+                ? { position: 'fixed', bottom: window.innerHeight - rect.top, top: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 180, maxWidth: 220, zIndex: 1060 }
+                : { position: 'fixed', top: rect.bottom, bottom: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 180, maxWidth: 220, zIndex: 1060 }
             );
         }
         setMenuOpen((v) => !v);
@@ -700,10 +818,25 @@ function LineRow({
             onDragOver={canDrag ? (e) => e.preventDefault() : undefined}
             style={rowStyle}
         >
-            {/* Drag handle + ordre */}
-            <td style={{ width: 48, cursor: canDrag ? 'grab' : 'default', userSelect: 'none', color: '#aaa' }}>
-                <i className="fas fa-grip-vertical mr-1" />
-                <span className="text-muted small">{line.ordre}</span>
+            {/* Drag handle + thumbnail ou ordre */}
+            <td style={{ width: 52, cursor: canDrag ? 'grab' : 'default', userSelect: 'none', padding: '2px 4px', verticalAlign: 'middle' }}>
+                {line.picture ? (
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <img
+                            src={`/images/quote-lines/${line.picture}`}
+                            alt=""
+                            style={{ width: 42, height: 42, objectFit: 'contain', background: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: 3, display: 'block' }}
+                        />
+                        <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '0.6rem', padding: '0 3px', borderRadius: '3px 0 3px 0', lineHeight: '1.5' }}>
+                            {line.ordre}
+                        </span>
+                    </div>
+                ) : (
+                    <>
+                        <i className="fas fa-grip-vertical mr-1" style={{ color: '#aaa' }} />
+                        <span className="text-muted small">{line.ordre}</span>
+                    </>
+                )}
             </td>
 
             {/* Select */}
@@ -750,7 +883,14 @@ function LineRow({
             <td className="small" style={{ whiteSpace: 'nowrap' }}>{formatDate(line.delivery_date)}</td>
 
             {/* Status */}
-            <td><span className={`badge ${cfg.badge}`}>{cfg.label}</span></td>
+            <td>
+                <span className={`badge ${cfg.badge}`}>{cfg.label}</span>
+                {line.statu === 3 && line.order_url && (
+                    <a href={line.order_url} className="badge badge-primary ml-1" target="_blank" rel="noreferrer">
+                        <i className="fas fa-file-alt" /> {line.order_code}
+                    </a>
+                )}
+            </td>
 
             {/* Actions */}
             <td>
@@ -797,6 +937,12 @@ function LineRow({
                             <a className="dropdown-item" href={line.detail_url} target="_blank" rel="noreferrer">
                                 <i className="fas fa-info-circle fa-fw mr-2 text-teal" />Détails techniques
                             </a>
+                            {quoteStatu === 1 && line.product_id && (
+                                <button className="dropdown-item"
+                                    onClick={() => { onBreakDown(line.id); setMenuOpen(false); }}>
+                                    <i className="fas fa-sitemap fa-fw mr-2 text-secondary" />Découpage technique
+                                </button>
+                            )}
                             <button className="dropdown-item"
                                 onClick={() => { onOpenTaskModal(line); setMenuOpen(false); }}>
                                 <i className="fas fa-list fa-fw mr-2 text-warning" />Tâches ({line.task_count})
@@ -961,6 +1107,18 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         }
     };
 
+    const handleBreakDown = async (id) => {
+        if (!confirm('Appliquer le découpage technique du produit sur cette ligne ?')) return;
+        const res  = await apiFetch(endpoints.breakdown.replace('__ID__', id), { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+            setLines((prev) => prev.map((l) => l.id === id ? data.line : l));
+            showFlash('success', 'Découpage technique appliqué');
+        } else {
+            showFlash('danger', 'Erreur lors du découpage technique');
+        }
+    };
+
     const handleStoreOrder = async () => {
         const ids = [...selected];
         if (ids.length === 0) return;
@@ -994,6 +1152,15 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         } else {
             showFlash('danger', data.error ?? 'Erreur lors de la création du produit');
         }
+    };
+
+    const handleSymImported = (newLines) => {
+        setLines((prev) => {
+            const updated = [...prev, ...newLines];
+            refreshNextOrdre(updated);
+            return updated;
+        });
+        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''} depuis RADAN`);
     };
 
     const handlePriceIncrease = async () => {
@@ -1140,6 +1307,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
                                 onDuplicate={handleDuplicate}
+                                onBreakDown={handleBreakDown}
                                 onCreateProduct={handleCreateProduct}
                                 onOpenTaskModal={setTaskModalLine}
                                 onToggleSelect={handleToggleSelect}
@@ -1154,6 +1322,13 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                     </tbody>
                 </table>
             </div>
+
+            {/* RADAN .sym import dropzone */}
+            <SymDropzone
+                endpoint={endpoints.importSym}
+                quoteStatu={quoteStatu}
+                onImported={handleSymImported}
+            />
 
             {/* Drawer */}
             <LineDrawer

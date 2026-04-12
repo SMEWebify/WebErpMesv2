@@ -563,9 +563,21 @@ return [
                     'icon_color' => 'info',
                 ],
                 [
+                    'text' => 'process_diagrams_trans_key',
+                    'url'  => 'quality/process-diagrams',
+                    'icon_color' => 'purple',
+                ],
+                [
                     'text' => 'amdec_trans_key',
                     'url'  => 'quality/amdec',
                     'icon_color' => 'teal',
+                ],
+                [
+                    'text' => 'internal_audits_trans_key',
+                    'url'  => 'audit',
+                    'icon' => 'fas fa-clipboard-check',
+                    'icon_color' => 'success',
+                    'can'  => ['audit-menu'],
                 ],
             ],
         ],

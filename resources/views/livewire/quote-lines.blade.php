@@ -103,7 +103,14 @@
                             <td>
                                 @if(1 == $QuoteLine->statu )   <span class="badge badge-info">{{__('general_content.open_trans_key') }}</span>@endif
                                 @if(2 == $QuoteLine->statu )  <span class="badge badge-warning">{{__('general_content.send_trans_key') }}</span>@endif
-                                @if(3 == $QuoteLine->statu )  <span class="badge badge-success">{{__('general_content.win_trans_key') }}</span>@endif
+                                @if(3 == $QuoteLine->statu )
+                                    <span class="badge badge-success">{{__('general_content.win_trans_key') }}</span>
+                                    @if($QuoteLine->orderLine && $QuoteLine->orderLine->order)
+                                        <a href="{{ route('orders.show', ['id' => $QuoteLine->orderLine->orders_id]) }}" class="badge badge-primary ml-1" target="_blank">
+                                            <i class="fas fa-file-alt"></i> {{ $QuoteLine->orderLine->order->code }}
+                                        </a>
+                                    @endif
+                                @endif
                                 @if(4 == $QuoteLine->statu )  <span class="badge badge-danger">{{__('general_content.lost_trans_key') }}</span>@endif
                                 @if(5 == $QuoteLine->statu )  <span class="badge badge-secondary">{{__('general_content.closed_trans_key') }}</span>@endif
                                 @if(6 == $QuoteLine->statu )   <span class="badge badge-secondary">{{__('general_content.obsolete_trans_key') }}</span>@endif

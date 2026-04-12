@@ -358,24 +358,21 @@
       <li class="nav-item"><a class="nav-link" href="#Company" data-toggle="tab">{{ __('general_content.detail_trans_key') }}</a></li>
       <li class="nav-item"><a class="nav-link" href="#Adresses" data-toggle="tab">{{ __('general_content.adress_trans_key') }} ({{ $Companie->getAddressesCountAttribute() }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Contact" data-toggle="tab">{{ __('general_content.contacts_trans_key') }} ({{ $Companie->getContactsCountAttribute() }})</a></li>
-      @can('leads-menu')
-      <li class="nav-item"><a class="nav-link" href="#lead" data-toggle="tab">{{ __('general_content.leads_trans_key') }} ({{ $Companie->getLeadsCountAttribute() }})</a></li>
-      @endcan
-      @can('quotes-menu')
-      <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab">{{ __('general_content.quotes_list_trans_key') }} ({{ $Companie->getQuotesCountAttribute() }})</a></li>
-      @endcan
-      @can('orders-menu')
-      <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab">{{ __('general_content.orders_list_trans_key') }} ({{ $Companie->getOrdersCountAttribute() }})</a></li>
-      @endcan
-      @can('deliverys-menu')
-      <li class="nav-item"><a class="nav-link" href="#delivery" data-toggle="tab">{{ __('general_content.deliverys_notes_list_trans_key') }} ({{ $Companie->getDeliverysCountAttribute() }})</a></li>
-      @endcan
-      @can('invoices-menu')
-      <li class="nav-item"><a class="nav-link" href="#invoice" data-toggle="tab">{{ __('general_content.invoices_list_trans_key') }} ({{ $Companie->getInvoicesCountAttribute() }})</a></li>
-      @endcan
-      @can('purchases-menu')
-      <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab">{{ __('general_content.purchase_list_trans_key') }} ({{ $Companie->getPurchasesCountAttribute() }})</a></li>
-      @endcan
+      <li class="nav-item">
+        <a class="nav-link" href="#timeline" data-toggle="tab">
+          <i class="fas fa-stream mr-1"></i>
+          Historique
+          @php
+            $timelineCount = $Companie->getLeadsCountAttribute()
+                           + $Companie->getQuotesCountAttribute()
+                           + $Companie->getOrdersCountAttribute()
+                           + $Companie->getDeliverysCountAttribute()
+                           + $Companie->getInvoicesCountAttribute()
+                           + $Companie->getPurchasesCountAttribute();
+          @endphp
+          ({{ $timelineCount }})
+        </a>
+      </li>
       
       @if($Companie->statu_supplier == 2 )
       <li class="nav-item"><a class="nav-link" href="#evaluation" data-toggle="tab">{{ __('general_content.supplier_evaluations_trans_key') }}</a></li>
@@ -1200,56 +1197,12 @@
         <!-- /.row -->
         </div>
       </div> --}}
-      @can('leads-menu')
-      <div class="tab-pane" id="lead">
-        @livewire('leads-index' , ['idCompanie' => $Companie->id ])
-      </div>
-      @endcan
-      @can('quotes-menu')
-      <div class="tab-pane" id="quote">
+      <div class="tab-pane" id="timeline">
         <div
-          id="quotes-index-app"
-          data-endpoints='@json($reactQuotesEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-trans='@json($reactQuotesTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-companie-id="{{ $Companie->id }}">
+          id="company-timeline-app"
+          data-endpoint="{{ route('companies.json.timeline', $Companie->id) }}">
         </div>
       </div>
-      @endcan
-      @can('orders-menu')
-      <div class="tab-pane" id="order">
-        <div
-          id="orders-index-app"
-          data-endpoints='@json($reactOrdersEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-trans='@json($reactOrdersTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-companie-id="{{ $Companie->id }}">
-        </div>
-      </div>
-      @endcan
-      @can('deliverys-menu')
-      <div class="tab-pane" id="delivery">
-        <div
-          id="deliverys-index-app"
-          data-endpoints='@json($reactDeliverysEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-trans='@json($reactDeliverysTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-companie-id="{{ $Companie->id }}">
-        </div>
-      </div>
-      @endcan
-      @can('invoices-menu')
-      <div class="tab-pane" id="invoice">
-        <div
-          id="invoices-index-app"
-          data-endpoints='@json($reactInvoicesEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-trans='@json($reactInvoicesTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
-          data-companie-id="{{ $Companie->id }}">
-        </div>
-      </div>
-      @endcan
-      @can('purchases-menu')
-      <div class="tab-pane" id="purchase">
-        @livewire('purchases-index' , ['idCompanie' => $Companie->id ])
-      </div>
-      @endcan
       <div class="tab-pane" id="evaluation">
         @php
           $newEvaluationLabel = trans('general_content.new_supplier_evaluation_trans_key');

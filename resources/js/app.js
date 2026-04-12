@@ -18,6 +18,9 @@ import DeliverysIndex from './components/DeliverysIndex.jsx';
 import CreditNotesIndex from './components/CreditNotesIndex.jsx';
 import DeliverysRequest from './components/DeliverysRequest.jsx';
 import InvoicesRequest from './components/InvoicesRequest.jsx';
+import PurchasesRequest from './components/PurchasesRequest.jsx';
+import PurchasesQuotationIndex from './components/PurchasesQuotationIndex.jsx';
+import PurchasesQuotationShow from './components/PurchasesQuotationShow.jsx';
 import InvoicesIndex from './components/InvoicesIndex.jsx';
 import ProductsIndex from './components/ProductsIndex.jsx';
 import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
@@ -29,6 +32,7 @@ import CompanyAddresses from './components/CompanyAddresses.jsx';
 import CompanyContacts from './components/CompanyContacts.jsx';
 import LoadPlanningIndex from './components/LoadPlanningIndex.jsx';
 import QuoteLinesPage from './components/QuoteLinesPage.jsx';
+import OrderLinesPage from './components/OrderLinesPage.jsx';
 import ConstructionSitePage from './components/ConstructionSitePage.jsx';
 import HomeDashboard from './components/HomeDashboard.jsx';
 import PurchaseReceiptIndex from './components/PurchaseReceiptIndex.jsx';
@@ -41,6 +45,14 @@ import GanttChart from './components/GanttChart.jsx';
 import NonConformitiesIndex from './components/NonConformitiesIndex.jsx';
 import GmaoDashboard from './components/GmaoDashboard.jsx';
 import InspectionProjectsApp from './components/InspectionProjectsApp.jsx';
+import ProcessDiagramApp from './components/ProcessDiagramApp.jsx';
+import TaskManagePage from './components/TaskManagePage.jsx';
+import QuoteChartsTab from './components/QuoteChartsTab.jsx';
+import UserProfilePage from './components/UserProfilePage.jsx';
+import NotificationLinePage from './components/NotificationLinePage.jsx';
+import UserAutoEmailReportsPage from './components/UserAutoEmailReportsPage.jsx';
+import AuditPlannerApp from './components/AuditPlannerApp.jsx';
+import CompanyTimeline from './components/CompanyTimeline.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -289,6 +301,63 @@ function mountOrderLinesIndex() {
     );
 }
 
+function mountPurchasesQuotationIndex() {
+    const element = document.getElementById('purchases-quotation-index-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesQuotationIndex, {
+            endpoints:  parse('endpoints')  ?? {},
+            trans:      parse('trans')      ?? {},
+            initialKpi: parse('kpi')        ?? null,
+        })
+    );
+}
+
+function mountPurchasesQuotationShow() {
+    const element = document.getElementById('purchases-quotation-show-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesQuotationShow, {
+            initialQuotation:  parse('quotation')  ?? {},
+            suppliers:         parse('suppliers')  ?? [],
+            initialAddresses:  parse('addresses')  ?? [],
+            initialContacts:   parse('contacts')   ?? [],
+            currency:          element.dataset.currency ?? 'EUR',
+            endpoints:         parse('endpoints')  ?? {},
+            trans:             parse('trans')       ?? {},
+        })
+    );
+}
+
+function mountPurchasesRequest() {
+    const element = document.getElementById('purchases-request-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesRequest, {
+            lastPurchaseCode:  element.dataset.lastPurchaseCode  ?? '',
+            lastQuotationCode: element.dataset.lastQuotationCode ?? '',
+            suppliers:         parse('suppliers')  ?? [],
+            endpoints:         parse('endpoints')  ?? {},
+            trans:             parse('trans')       ?? {},
+        })
+    );
+}
+
 function mountDeliverysRequest() {
     const element = document.getElementById('deliverys-request-app');
     if (!element) return;
@@ -499,6 +568,17 @@ function mountCompanyContacts() {
     );
 }
 
+function mountCompanyTimeline() {
+    const element = document.getElementById('company-timeline-app');
+    if (!element) return;
+
+    createRoot(element).render(
+        React.createElement(CompanyTimeline, {
+            endpoint: element.dataset.endpoint ?? '',
+        })
+    );
+}
+
 function mountSetupWizard() {
     const element = document.getElementById('setup-wizard-app');
     if (!element) return;
@@ -552,6 +632,25 @@ function mountQuoteLinesPage() {
             quoteId:    parseInt(element.dataset.quoteId, 10),
             quoteStatu: parseInt(element.dataset.quoteStatu, 10),
             endpoints:  parse('endpoints') ?? {},
+        })
+    );
+}
+
+function mountOrderLinesPage() {
+    const element = document.getElementById('order-lines-page-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(OrderLinesPage, {
+            orderId:        parseInt(element.dataset.orderId, 10),
+            orderStatu:     parseInt(element.dataset.orderStatu, 10),
+            orderType:      parseInt(element.dataset.orderType, 10),
+            canManageStock: element.dataset.canManageStock === 'true',
+            endpoints:      parse('endpoints') ?? {},
         })
     );
 }
@@ -661,6 +760,24 @@ function mountSerialNumbersIndex() {
     );
 }
 
+function mountSerialNumbersEmbedded() {
+    const element = document.getElementById('serial-numbers-embedded-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(SerialNumbersIndex, {
+            kpi:       {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+            productId: element.dataset.productId ?? null,
+        })
+    );
+}
+
 function mountMethodsOverview() {
     const element = document.getElementById('methods-overview-app');
     if (!element) return;
@@ -683,6 +800,7 @@ mountCompanyDashboard();
 mountCompanyForm();
 mountCompanyAddresses();
 mountCompanyContacts();
+mountCompanyTimeline();
 mountKanbanBoard();
 mountDocumentTable();
 mountCompaniesIndex();
@@ -700,16 +818,21 @@ mountDeliverysIndex();
 mountCreditNotesIndex();
 mountDeliverysRequest();
 mountInvoicesRequest();
+mountPurchasesQuotationIndex();
+mountPurchasesQuotationShow();
+mountPurchasesRequest();
 mountInvoicesIndex();
 mountProductsIndex();
 mountQualityIndex();
 mountQuoteLinesPage();
+mountOrderLinesPage();
 mountLoadPlanningIndex();
 mountConstructionSitePage();
 mountHomeDashboard();
 mountTasksIndex();
 mountPurchaseReceiptIndex();
 mountSerialNumbersIndex();
+mountSerialNumbersEmbedded();
 mountMethodsOverview();
 
 function mountGanttChart() {
@@ -815,9 +938,156 @@ function mountInspectionProjectsApp() {
 
     createRoot(element).render(
         React.createElement(InspectionProjectsApp, {
-            endpoints: parse('endpoints') ?? {},
+            endpoints:  parse('endpoints') ?? {},
+            canApprove: parse('canApprove') ?? false,
         })
     );
 }
 
 mountInspectionProjectsApp();
+
+function mountTaskManagePage() {
+    const element = document.getElementById('task-manage-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(TaskManagePage, {
+            context: {
+                idType:   element.dataset.idType   ?? '',
+                idPage:   element.dataset.idPage   ?? '',
+                idLine:   element.dataset.idLine   ?? '',
+                statu:    parseInt(element.dataset.statu ?? '0', 10),
+                currency: element.dataset.currency ?? '€',
+            },
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+mountTaskManagePage();
+
+function mountProcessDiagramApp() {
+    const element = document.getElementById('process-diagram-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(ProcessDiagramApp, {
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+mountProcessDiagramApp();
+
+function mountQuoteChartsTab() {
+    const element = document.getElementById('quote-charts-tab-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QuoteChartsTab, {
+            productTime: parse('productTime') ?? {},
+            settingTime: parse('settingTime') ?? {},
+            cost:        parse('cost')        ?? {},
+            price:       parse('price')       ?? {},
+            currency:    element.dataset.currency ?? '€',
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+function mountOrderChartsTab() {
+    const element = document.getElementById('order-charts-tab-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QuoteChartsTab, {
+            productTime: parse('productTime') ?? {},
+            settingTime: parse('settingTime') ?? {},
+            cost:        parse('cost')        ?? {},
+            price:       parse('price')       ?? {},
+            currency:    element.dataset.currency ?? '€',
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+mountQuoteChartsTab();
+mountOrderChartsTab();
+
+function mountUserProfilePage() {
+    const el = document.getElementById('user-profile-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(UserProfilePage, {
+            initial:   parse('initial')   ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+function mountNotificationLinePage() {
+    const el = document.getElementById('notification-line-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(NotificationLinePage, {
+            initialNotifications: parse('notifications') ?? [],
+            endpoints:            parse('endpoints')     ?? {},
+            trans:                parse('trans')         ?? {},
+        })
+    );
+}
+
+function mountUserAutoEmailReportsPage() {
+    const el = document.getElementById('user-auto-email-reports-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(UserAutoEmailReportsPage, {
+            initialReports: parse('reports')     ?? {},
+            reportTypes:    parse('reportTypes') ?? {},
+            endpoints:      parse('endpoints')   ?? {},
+            trans:          parse('trans')       ?? {},
+        })
+    );
+}
+
+mountUserProfilePage();
+mountNotificationLinePage();
+mountUserAutoEmailReportsPage();
+
+function mountAuditPlannerApp() {
+    const el = document.getElementById('audit-planner-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(AuditPlannerApp, {
+            endpoints:  parse('endpoints')  ?? {},
+            users:      parse('users')      ?? [],
+            processes:  parse('processes')  ?? [],
+            checklists: parse('checklists') ?? [],
+            kpi:        parse('kpi')        ?? {},
+            canAdmin:   parse('canAdmin')   ?? false,
+        })
+    );
+}
+
+mountAuditPlannerApp();

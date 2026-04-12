@@ -87,12 +87,19 @@ class User extends Authenticatable implements MustVerifyEmail
         'statu',
          /** end add for WebErpMesv2/issues/142 */
         'companies_notification',
+        'companies_email_notification',
         'users_notification',
+        'users_email_notification',
         'quotes_notification',
+        'quotes_email_notification',
         'orders_notification',
+        'orders_email_notification',
         'non_conformity_notification',
+        'non_conformity_email_notification',
         'return_notification',
+        'return_email_notification',
         'pre_order_notification',
+        'pre_order_email_notification',
         'banned_until',
     ];
 

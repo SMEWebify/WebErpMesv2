@@ -36,6 +36,7 @@
     <div class="tab-content">
       <div class="tab-pane " id="Quote">
         @livewire('arrow-steps.arrow-quote', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu])
+        <x-relational-breadcrumb :entity="$Quote" />
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -268,23 +269,6 @@
             </x-adminlte-card>
             @endcan
 
-            @if($Quote->opportunities_id)
-              <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info"  collapsible="collapsed" maximizable>
-                <div class="text-muted">
-                  <h3>{{__('general_content.opportunity_trans_key')}} #{{ $Quote->opportunities->label }} </h3><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Quote->opportunities_id])}}" />
-                  
-                  <p class="small">{{ __('general_content.user_trans_key') }}
-                    <b class="d-block">{{ $Quote->opportunities->UserManagement['name'] }}</b>
-                  </p>
-                  <p class="small">{{ __('general_content.probality_trans_key') }}
-                    <b class="d-block">{{ $Quote->opportunities->probality }} %</b> 
-                  </p>
-                  <p class="small">{{ __('general_content.budget_trans_key') }}
-                    <b class="d-block">{{ $Quote->opportunities->budget }}</b>
-                  </p>
-                </div>
-              </x-adminlte-card>
-            @endif
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
               <table class="table table-hover">
@@ -329,28 +313,35 @@
         </div>
       </div>   
       <div class="tab-pane " id="Lines">
+        @php
+          $quoteLineEndpoints = [
+            'lines'           => route('quotes.lines.json.for-quote',       ['quoteId' => $Quote->id]),
+            'selectData'      => route('quotes.lines.json.select-data',     ['quoteId' => $Quote->id]),
+            'priceList'       => route('quotes.lines.json.price-list',      ['quoteId' => $Quote->id, 'productId' => '__PRODUCT__']),
+            'store'           => route('quotes.lines.json.store',           ['quoteId' => $Quote->id]),
+            'update'          => route('quotes.lines.json.update',          ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'destroy'         => route('quotes.lines.json.destroy',         ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'duplicate'       => route('quotes.lines.json.duplicate',       ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'breakdown'       => route('quotes.lines.json.breakdown',       ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'move'            => route('quotes.lines.json.move',            ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'reorder'         => route('quotes.lines.json.reorder',         ['quoteId' => $Quote->id]),
+            'createProduct'   => route('quotes.lines.json.create-product',  ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'tasks'           => route('quotes.lines.json.tasks',           ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'calculatedPrice' => route('quotes.lines.json.calculated-price',['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),
+            'priceIncrease'   => route('quotes.lines.json.price-increase',  ['quoteId' => $Quote->id]),
+          ];
+          if (env('RADAN_SYM_IMPORT', false)) {
+            $quoteLineEndpoints['importSym'] = route('quotes.lines.json.import-sym', ['quoteId' => $Quote->id]);
+          }
+        @endphp
         <div class="card">
           <div class="card-body">
             <div
               id="quote-lines-page-app"
               data-quote-id="{{ $Quote->id }}"
               data-quote-statu="{{ $Quote->statu }}"
-              data-endpoints="{{ json_encode([
-                'lines'         => route('quotes.lines.json.for-quote', ['quoteId' => $Quote->id]),
-                'selectData'    => route('quotes.lines.json.select-data', ['quoteId' => $Quote->id]),
-                'priceList'     => route('quotes.lines.json.price-list', ['quoteId' => $Quote->id, 'productId' => '__PRODUCT__']),
-                'store'         => route('quotes.lines.json.store', ['quoteId' => $Quote->id]),
-                'update'        => route('quotes.lines.json.update', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'destroy'       => route('quotes.lines.json.destroy', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'duplicate'     => route('quotes.lines.json.duplicate', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'move'          => route('quotes.lines.json.move', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'reorder'          => route('quotes.lines.json.reorder', ['quoteId' => $Quote->id]),
-                'createProduct'       => route('quotes.lines.json.create-product', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'tasks'               => route('quotes.lines.json.tasks', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'calculatedPrice'     => route('quotes.lines.json.calculated-price', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'storeOrder'    => route('quotes.lines.json.store-order', ['quoteId' => $Quote->id]),
-                'priceIncrease' => route('quotes.lines.json.price-increase', ['quoteId' => $Quote->id]),
-              ]) }}"
+              data-endpoints="{{ json_encode($quoteLineEndpoints) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin mr-2"></i> Chargement des lignes...
@@ -371,28 +362,20 @@
       </div>
       @endif
       <div class="tab-pane" id="Charts">
-        <div class="row">
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_product_time_by_service') }}" theme="secondary" maximizable>
-              <canvas id="productDonutChart" width="400" height="400"></canvas>
-            </x-adminlte-card>
-          </div>
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_setting_time_by_service') }}" theme="secondary" maximizable>
-              <canvas id="settingDonutChart" width="400" height="400"></canvas>
-            </x-adminlte-card>
-          </div>
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_cost_by_service') }}" theme="secondary" maximizable>
-              <canvas id="CostDonutChart" width="400" height="400"></canvas>
-            </x-adminlte-card>
-          </div>
-          <div class="col-md-6">
-            <x-adminlte-card title="{{ __('general_content.total_price_by_service') }}" theme="secondary" maximizable>
-                <canvas id="PriceDonutChart" width="400" height="400"></canvas>
-              </x-adminlte-card>
-          </div>
-        </div>
+        <div
+          id="quote-charts-tab-app"
+          data-product-time="{{ json_encode(array_values($TotalServiceProductTime)) }}"
+          data-setting-time="{{ json_encode(array_values($TotalServiceSettingTime)) }}"
+          data-cost="{{ json_encode(array_values($TotalServiceCost)) }}"
+          data-price="{{ json_encode(array_values($TotalServicePrice)) }}"
+          data-currency="{{ $Factory->curency }}"
+          data-trans="{{ json_encode([
+            'productTime' => __('general_content.total_product_time_by_service'),
+            'settingTime' => __('general_content.total_setting_time_by_service'),
+            'cost'        => __('general_content.total_cost_by_service'),
+            'price'       => __('general_content.total_price_by_service'),
+          ]) }}"
+        ></div>
       </div>  
       <div class="tab-pane " id="Views">
         <x-adminlte-card title="{{ __('general_content.view_count_trans_key') }}" theme="primary" maximizable>
@@ -587,164 +570,6 @@
 @stop
 
 @section('js')
-  <script type="text/javascript">
-  $('a[href="#Charts"]').on('shown.bs.tab', function () {
-    //-------------
-    //- PIE CHART 1 -
-    //-------------
-    var productDonutChartCanvas  = $('#productDonutChart').get(0).getContext('2d')
-    var productDonutData         = {
-        labels: [
-          @foreach ($TotalServiceProductTime as $item)
-          "{{ $item[0] }} - {{ $item[1] }}h",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServiceProductTime as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServiceProductTime as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var productDonutChart = new Chart(productDonutChartCanvas , {
-        type: 'pie',
-        data: productDonutData ,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-    //-------------
-    //- PIE CHART 2 -
-    //-------------
-    var settingDonutChartCanvas  = $('#settingDonutChart').get(0).getContext('2d')
-    var settingDonutData         = {
-        labels: [
-          @foreach ($TotalServiceSettingTime as $item)
-          "{{ $item[0] }} - {{ $item[1] }}h",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServiceSettingTime as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServiceSettingTime as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var settingDonutChart = new Chart(settingDonutChartCanvas , {
-        type: 'pie',
-        data: settingDonutData ,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-    //-------------
-    //- PIE CHART 3 -
-    //-------------
-    var costDonutChartCanvas  = $('#CostDonutChart').get(0).getContext('2d')
-    var costDonutData         = {
-        labels: [
-          @foreach ($TotalServiceCost as $item)
-          "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServiceCost as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServiceCost as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var costDonutChart = new Chart(costDonutChartCanvas , {
-        type: 'pie',
-        data: costDonutData ,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-    //-------------
-    //- PIE CHART 4 -
-    //-------------
-    var priceDonutChartCanvas  = $('#PriceDonutChart').get(0).getContext('2d')
-    var priceDonutData        = {
-        labels: [
-          @foreach ($TotalServicePrice as $item)
-          "{{ $item[0] }} - {{ $item[1] }}{{ $Factory->curency }}",
-          @endforeach
-        ],
-        datasets: [
-          {
-            data: [
-                  @foreach ($TotalServicePrice as $item)
-                  "{{ $item[1] }}",
-                  @endforeach
-                ], 
-                backgroundColor: [
-                  @foreach ($TotalServicePrice as $item)
-                  "{{ $item[2] }}",
-                  @endforeach
-                ],
-          }
-        ]
-      }
-
-      //Create pie or douhnut chart
-      // You can switch between pie and douhnut using the method below.
-      var priceDonutChart = new Chart(priceDonutChartCanvas , {
-        type: 'pie',
-        data: priceDonutData,
-        options: {
-                    maintainAspectRatio : false,
-                    responsive : true, 
-                }
-      })
-
-      $('a[href="#Charts"]').on('shown.bs.tab', function () {
-          productDonutChart.update();
-          settingDonutChart.update();
-          costDonutChart.update();
-          priceDonutChart.update();
-      });
-    });
-  </script>
 
   <script type="text/javascript">
     $('.custom-file-input').on('change',function(){

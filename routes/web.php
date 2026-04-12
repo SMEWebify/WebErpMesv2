@@ -86,12 +86,26 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/nc-stats',          'App\Http\Controllers\Api\KpiController@ncStats')->name('nc.stats');
         Route::get('/supplier-delays',   'App\Http\Controllers\Api\KpiController@supplierDelays')->name('supplier.delays');
         Route::get('/otd',               'App\Http\Controllers\Api\KpiController@otd')->name('otd');
+        Route::get('/mood',              'App\Http\Controllers\Api\KpiController@mood')->name('mood');
+        Route::post('/mood',             'App\Http\Controllers\Api\KpiController@setMood')->name('mood.set');
     });
 
     // Dashboard config (personnalisation par utilisateur)
     Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
         Route::get('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@show')->name('dashboard.config.show');
         Route::put('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@update')->name('dashboard.config.update');
+    });
+
+    // Vue du jour
+    Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->prefix('today')->group(function () {
+        Route::get('/config',              'App\Http\Controllers\TodayController@configShow')->name('today.config.show');
+        Route::put('/config',              'App\Http\Controllers\TodayController@configUpdate')->name('today.config.update');
+        Route::get('/invoices-overdue',    'App\Http\Controllers\TodayController@invoicesOverdue')->name('today.invoices.overdue');
+        Route::get('/orders-late',         'App\Http\Controllers\TodayController@ordersLate')->name('today.orders.late');
+        Route::get('/orders-due-week',     'App\Http\Controllers\TodayController@ordersDueWeek')->name('today.orders.due.week');
+        Route::get('/quotes-expiring',     'App\Http\Controllers\TodayController@quotesExpiring')->name('today.quotes.expiring');
+        Route::get('/leads-pending',       'App\Http\Controllers\TodayController@leadsPending')->name('today.leads.pending');
+        Route::get('/recent-activity',     'App\Http\Controllers\TodayController@recentActivity')->name('today.recent.activity');
     });
 
     Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -158,6 +172,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.edit.update');
         Route::post('/json/update/{company}', 'App\Http\Controllers\Companies\CompaniesController@updateJson')->name('companies.json.update');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
+        Route::get('/{id}/json/timeline', 'App\Http\Controllers\Companies\CompaniesController@timelineJson')->name('companies.json.timeline');
 
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Companies\CompaniesController@storeQuote')->name('companies.store.quote');
 
@@ -254,9 +269,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/{quoteId}/lines/json/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@updateLineJson')->name('quotes.lines.json.update');
         Route::delete('/{quoteId}/lines/json/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@destroyLineJson')->name('quotes.lines.json.destroy');
         Route::post('/{quoteId}/lines/json/{id}/duplicate', 'App\Http\Controllers\Workflow\QuoteLinesController@duplicateLineJson')->name('quotes.lines.json.duplicate');
+        Route::post('/{quoteId}/lines/json/{id}/breakdown', 'App\Http\Controllers\Workflow\QuoteLinesController@breakDownLineJson')->name('quotes.lines.json.breakdown');
         Route::post('/{quoteId}/lines/json/{id}/move', 'App\Http\Controllers\Workflow\QuoteLinesController@moveLineJson')->name('quotes.lines.json.move');
         Route::post('/{quoteId}/lines/json/reorder', 'App\Http\Controllers\Workflow\QuoteLinesController@reorderJson')->name('quotes.lines.json.reorder');
         Route::post('/{quoteId}/lines/json/store-order', 'App\Http\Controllers\Workflow\QuoteLinesController@storeOrderJson')->name('quotes.lines.json.store-order');
+        Route::post('/{quoteId}/lines/json/import-sym', 'App\Http\Controllers\Workflow\QuoteLinesController@importSymJson')->name('quotes.lines.json.import-sym');
         Route::post('/{quoteId}/lines/json/{id}/create-product', 'App\Http\Controllers\Workflow\QuoteLinesController@createProductJson')->name('quotes.lines.json.create-product');
         Route::get('/{quoteId}/lines/json/{id}/tasks', 'App\Http\Controllers\Workflow\QuoteLinesController@tasksForLineJson')->name('quotes.lines.json.tasks');
         Route::patch('/{quoteId}/lines/json/{id}/calculated-price', 'App\Http\Controllers\Workflow\QuoteLinesController@toggleCalculatedPriceJson')->name('quotes.lines.json.calculated-price');
@@ -290,6 +307,25 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');
         Route::post('/{idOrder}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\OrderLinesController@StoreImage')->name('orders.update.detail.picture');
         Route::post('/{idOrder}/lines/import', 'App\Http\Controllers\Workflow\OrderLinesController@import')->name('orders.lines.import');
+        // JSON API — React OrderLinesPage
+        Route::get('/{orderId}/lines/json',                             'App\Http\Controllers\Workflow\OrderLinesController@linesForOrderJson')->name('orders.lines.json.for-order');
+        Route::get('/{orderId}/lines/json/select-data',                 'App\Http\Controllers\Workflow\OrderLinesController@selectDataForOrderJson')->name('orders.lines.json.select-data');
+        Route::get('/{orderId}/lines/json/price-list/{productId}',      'App\Http\Controllers\Workflow\OrderLinesController@priceListForProductJson')->name('orders.lines.json.price-list');
+        Route::post('/{orderId}/lines/json/store',                      'App\Http\Controllers\Workflow\OrderLinesController@storeLineJson')->name('orders.lines.json.store');
+        Route::put('/{orderId}/lines/json/{id}',                        'App\Http\Controllers\Workflow\OrderLinesController@updateLineJson')->name('orders.lines.json.update');
+        Route::delete('/{orderId}/lines/json/{id}',                     'App\Http\Controllers\Workflow\OrderLinesController@destroyLineJson')->name('orders.lines.json.destroy');
+        Route::post('/{orderId}/lines/json/{id}/duplicate',             'App\Http\Controllers\Workflow\OrderLinesController@duplicateLineJson')->name('orders.lines.json.duplicate');
+        Route::post('/{orderId}/lines/json/{id}/breakdown',             'App\Http\Controllers\Workflow\OrderLinesController@breakDownLineJson')->name('orders.lines.json.breakdown');
+        Route::post('/{orderId}/lines/json/{id}/move',                  'App\Http\Controllers\Workflow\OrderLinesController@moveLineJson')->name('orders.lines.json.move');
+        Route::post('/{orderId}/lines/json/reorder',                    'App\Http\Controllers\Workflow\OrderLinesController@reorderJson')->name('orders.lines.json.reorder');
+        Route::post('/{orderId}/lines/json/price-increase',             'App\Http\Controllers\Workflow\OrderLinesController@priceIncreaseJson')->name('orders.lines.json.price-increase');
+        Route::get('/{idOrder}/lines/{id}/detail-edit',                 'App\Http\Controllers\Workflow\OrderLinesController@detailEdit')->name('orders.lines.detail.edit');
+        Route::get('/{orderId}/lines/json/{id}/tasks',                  'App\Http\Controllers\Workflow\OrderLinesController@tasksForLineJson')->name('orders.lines.json.tasks');
+        Route::patch('/{orderId}/lines/json/{id}/calculated-price',     'App\Http\Controllers\Workflow\OrderLinesController@toggleCalculatedPriceJson')->name('orders.lines.json.calculated-price');
+        Route::post('/{orderId}/lines/json/store-delivery',             'App\Http\Controllers\Workflow\OrderLinesController@storeDeliveryJson')->name('orders.lines.json.store-delivery');
+        Route::post('/{orderId}/lines/json/store-invoice',              'App\Http\Controllers\Workflow\OrderLinesController@storeInvoiceJson')->name('orders.lines.json.store-invoice');
+        Route::post('/{orderId}/lines/json/create-products',            'App\Http\Controllers\Workflow\OrderLinesController@createProductsFromLinesJson')->name('orders.lines.json.create-products');
+        Route::post('/{orderId}/lines/json/import-sym',                 'App\Http\Controllers\Workflow\OrderLinesController@importSymJson')->name('orders.lines.json.import-sym');
         //import
         Route::post('/import', 'App\Http\Controllers\Admin\ImportsExportsController@importOrders')->name('orders.import');
         //construction site
@@ -357,11 +393,25 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'purchases', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'check.task.status']], function () {
         
-        Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesRFQController@request')->name('purchases.request'); 
+        Route::get('/request', 'App\Http\Controllers\Purchases\PurchasesRFQController@request')->name('purchases.request');
+        Route::get('/request/tasks', 'App\Http\Controllers\Purchases\PurchasesRFQController@requestTasks')->name('purchases.request.tasks');
+        Route::post('/request/store', 'App\Http\Controllers\Purchases\PurchasesRFQController@storePurchaseApi')->name('purchases.request.store');
+        Route::get('/request/export-csv', 'App\Http\Controllers\Purchases\PurchasesRFQController@exportCsvApi')->name('purchases.request.export-csv');
         Route::get('/quotation', 'App\Http\Controllers\Purchases\PurchasesRFQController@quotation')->name('purchases.quotation'); 
         Route::get('/', 'App\Http\Controllers\Purchases\PurchasesController@purchase')->name('purchases'); 
         
         Route::post('/', 'App\Http\Controllers\Purchases\PurchasesController@storeBankPurchase')->name('purchases.store');
+
+        // JSON endpoints for React PurchasesQuotationIndex / PurchasesQuotationShow
+        Route::get('/quotation/api/list',           'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationList')->name('purchases.quotation.api.list');
+        Route::get('/quotation/api/kpi',            'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationKpi')->name('purchases.quotation.api.kpi');
+        Route::get('/quotation/api/products',       'App\Http\Controllers\Purchases\PurchasesRFQController@apiProducts')->name('purchases.quotation.api.products');
+        Route::get('/quotation/api/company-data',   'App\Http\Controllers\Purchases\PurchasesRFQController@apiCompanyAddresses')->name('purchases.quotation.api.company-data');
+        Route::get('/quotation/api/{quotation}',    'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationShow')->name('purchases.quotation.api.show');
+        Route::patch('/quotation/api/{quotation}',  'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdate')->name('purchases.quotation.api.update');
+        Route::patch('/quotation/api/{quotation}/statu', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdateStatu')->name('purchases.quotation.api.statu');
+        Route::post('/quotation/api/{quotation}/lines',  'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationStoreLine')->name('purchases.quotation.api.lines.store');
+        Route::patch('/quotation/api/{quotation}/lines/{line}', 'App\Http\Controllers\Purchases\PurchasesRFQController@apiQuotationUpdateLine')->name('purchases.quotation.api.lines.update');
 
         // JSON endpoints for React PurchasesIndex
         Route::get('/json/list',                'App\Http\Controllers\Purchases\PurchasesController@listJson')->name('purchases.json.list');
@@ -596,6 +646,20 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id_type}/{id_page}/delete/{id_task}', 'App\Http\Controllers\Planning\TaskController@delete')->name('task.delete');
         Route::post('/create/{id}', 'App\Http\Controllers\Planning\TaskController@store')->name('task.store');
         Route::post('/update/{id}', 'App\Http\Controllers\Planning\TaskController@update')->name('task.update');
+
+        // JSON API — React TaskManagePage
+        Route::get('/{id_type}/{id_page}/json/{id_line}',                              'App\Http\Controllers\Planning\TaskManageApiController@initialDataJson')->name('task.manage.json.initial');
+        Route::get('/{id_type}/{id_page}/json/{id_line}/select-data',                  'App\Http\Controllers\Planning\TaskManageApiController@selectDataJson')->name('task.manage.json.select-data');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/task',                        'App\Http\Controllers\Planning\TaskManageApiController@storeTaskJson')->name('task.manage.json.task.store');
+        Route::put('/{id_type}/{id_page}/json/task/{id}',                              'App\Http\Controllers\Planning\TaskManageApiController@updateTaskJson')->name('task.manage.json.task.update');
+        Route::delete('/{id_type}/{id_page}/json/task/{id}',                           'App\Http\Controllers\Planning\TaskManageApiController@destroyTaskJson')->name('task.manage.json.task.destroy');
+        Route::post('/{id_type}/{id_page}/json/task/{id}/duplicate',                   'App\Http\Controllers\Planning\TaskManageApiController@duplicateTaskJson')->name('task.manage.json.task.duplicate');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/sub-assembly',                'App\Http\Controllers\Planning\TaskManageApiController@storeSubAssemblyJson')->name('task.manage.json.subassembly.store');
+        Route::put('/{id_type}/{id_page}/json/sub-assembly/{id}',                      'App\Http\Controllers\Planning\TaskManageApiController@updateSubAssemblyJson')->name('task.manage.json.subassembly.update');
+        Route::delete('/{id_type}/{id_page}/json/sub-assembly/{id}',                   'App\Http\Controllers\Planning\TaskManageApiController@destroySubAssemblyJson')->name('task.manage.json.subassembly.destroy');
+        Route::post('/{id_type}/{id_page}/json/sub-assembly/{id}/duplicate',           'App\Http\Controllers\Planning\TaskManageApiController@duplicateSubAssemblyJson')->name('task.manage.json.subassembly.duplicate');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/import-csv',                  'App\Http\Controllers\Planning\TaskManageApiController@importCsvJson')->name('task.manage.json.import-csv');
+        Route::post('/{id_type}/{id_page}/json/{id_line}/apply-nomenclature/{tpl_id}', 'App\Http\Controllers\Planning\TaskManageApiController@applyNomenclatureJson')->name('task.manage.json.apply-nomenclature');
     });
 
 
@@ -740,7 +804,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
         Route::get('/inspection-projects', 'App\Http\Controllers\Inspection\InspectionProjectController@indexView')->name('quality.inspection.projects');
-    
+
+        // Routes for Process Diagrams
+        Route::get('/process-diagrams', 'App\Http\Controllers\Quality\ProcessDiagramController@indexView')->name('quality.process-diagrams');
+        Route::group(['prefix' => 'process-diagrams'], function () {
+            Route::get('/list',    'App\Http\Controllers\Quality\ProcessDiagramController@index')->name('quality.process-diagrams.index');
+            Route::post('/list',   'App\Http\Controllers\Quality\ProcessDiagramController@store')->name('quality.process-diagrams.store');
+            Route::get('/{id}',    'App\Http\Controllers\Quality\ProcessDiagramController@show')->name('quality.process-diagrams.show');
+            Route::put('/{id}',    'App\Http\Controllers\Quality\ProcessDiagramController@update')->name('quality.process-diagrams.update');
+            Route::delete('/{id}', 'App\Http\Controllers\Quality\ProcessDiagramController@delete')->name('quality.process-diagrams.delete');
+        });
+
         // Routes for Action
         Route::group(['prefix' => 'action'], function () {
             Route::get('/', 'App\Http\Controllers\Quality\QualityActionController@index')->name('quality.action');
@@ -822,6 +896,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show')->name('inspection.projects.show');
         Route::put('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@update')->name('inspection.projects.update');
         Route::post('/{id}/documents', 'App\Http\Controllers\Inspection\InspectionDocumentController@store')->name('inspection.projects.documents.store');
+        Route::post('/documents/{id}/submit', 'App\Http\Controllers\Inspection\InspectionDocumentController@submit')->name('inspection.documents.submit');
+        Route::post('/documents/{id}/approve', 'App\Http\Controllers\Inspection\InspectionDocumentController@approve')->name('inspection.documents.approve');
+        Route::post('/documents/{id}/obsolete', 'App\Http\Controllers\Inspection\InspectionDocumentController@obsolete')->name('inspection.documents.obsolete');
         Route::post('/{id}/control-points', 'App\Http\Controllers\Inspection\InspectionControlPointController@store')->name('inspection.projects.points.store');
         Route::put('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@update')->name('inspection.points.update');
         Route::delete('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@destroy')->name('inspection.points.destroy');
@@ -947,6 +1024,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\Http\Controllers\UsersController@List')->middleware(['auth'])->name('users');
         Route::get('/Profile/{id}', 'App\Http\Controllers\UsersController@profile')->middleware(['auth'])->name('user.profile');
         Route::get('/Profile/Update', 'App\Http\Controllers\UsersController@update')->middleware(['auth'])->name('user.profile.update');
+
+        // JSON API — React UserProfilePage
+        Route::prefix('profile/json')->middleware('auth')->group(function () {
+            Route::put('/account',                    'App\Http\Controllers\UserProfileApiController@updateAccount')->name('profile.json.account.update');
+            Route::put('/information',                'App\Http\Controllers\UserProfileApiController@updateInformation')->name('profile.json.information.update');
+            Route::post('/notifications/{id}/read',   'App\Http\Controllers\UserProfileApiController@readNotification')->name('profile.json.notification.read');
+            Route::post('/notifications/read-all',    'App\Http\Controllers\UserProfileApiController@readAllNotifications')->name('profile.json.notification.read-all');
+            Route::get('/notifications/history',      'App\Http\Controllers\UserProfileApiController@getNotificationHistory')->name('profile.json.notification.history');
+            Route::put('/auto-email-reports',         'App\Http\Controllers\UserProfileApiController@saveAutoEmailReports')->name('profile.json.auto-email-reports.save');
+        });
     });
 
     Route::match(
@@ -977,6 +1064,46 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 });
+
+    // ─── AUDITS INTERNES ISO 9001 ──────────────────────────────────────────────
+    Route::group(['prefix' => 'audit', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'permission:audit-menu']], function () {
+        Route::get('/', 'App\Http\Controllers\Audit\AuditController@index')->name('audit.index');
+
+        // Plans
+        Route::get('/api/plans',        'App\Http\Controllers\Audit\AuditController@plansIndex')->name('audit.api.plans.index');
+        Route::post('/api/plans',       'App\Http\Controllers\Audit\AuditController@plansStore')->name('audit.api.plans.store');
+        Route::put('/api/plans/{id}',   'App\Http\Controllers\Audit\AuditController@plansUpdate')->name('audit.api.plans.update');
+        Route::delete('/api/plans/{id}','App\Http\Controllers\Audit\AuditController@plansDestroy')->name('audit.api.plans.destroy');
+
+        // Processes
+        Route::get('/api/processes',         'App\Http\Controllers\Audit\AuditController@processesIndex')->name('audit.api.processes.index');
+        Route::post('/api/processes',        'App\Http\Controllers\Audit\AuditController@processesStore')->name('audit.api.processes.store');
+        Route::put('/api/processes/{id}',    'App\Http\Controllers\Audit\AuditController@processesUpdate')->name('audit.api.processes.update');
+        Route::delete('/api/processes/{id}', 'App\Http\Controllers\Audit\AuditController@processesDestroy')->name('audit.api.processes.destroy');
+
+        // Schedules
+        Route::get('/api/schedules',         'App\Http\Controllers\Audit\AuditController@schedulesIndex')->name('audit.api.schedules.index');
+        Route::post('/api/schedules',        'App\Http\Controllers\Audit\AuditController@schedulesStore')->name('audit.api.schedules.store');
+        Route::put('/api/schedules/{id}',    'App\Http\Controllers\Audit\AuditController@schedulesUpdate')->name('audit.api.schedules.update');
+        Route::delete('/api/schedules/{id}', 'App\Http\Controllers\Audit\AuditController@schedulesDestroy')->name('audit.api.schedules.destroy');
+
+        // Checklists (read-only — seeded from ISO 9001)
+        Route::get('/api/checklists', 'App\Http\Controllers\Audit\AuditController@checklistsIndex')->name('audit.api.checklists.index');
+
+        // Executions
+        Route::post('/api/executions',           'App\Http\Controllers\Audit\AuditController@executionsStore')->name('audit.api.executions.store');
+        Route::get('/api/executions/{id}',       'App\Http\Controllers\Audit\AuditController@executionsShow')->name('audit.api.executions.show');
+        Route::put('/api/executions/{id}',       'App\Http\Controllers\Audit\AuditController@executionsUpdate')->name('audit.api.executions.update');
+        Route::post('/api/executions/{id}/close','App\Http\Controllers\Audit\AuditController@executionsClose')->name('audit.api.executions.close');
+
+        // Findings
+        Route::post('/api/findings',        'App\Http\Controllers\Audit\AuditController@findingsStore')->name('audit.api.findings.store');
+        Route::put('/api/findings/{id}',    'App\Http\Controllers\Audit\AuditController@findingsUpdate')->name('audit.api.findings.update');
+        Route::delete('/api/findings/{id}', 'App\Http\Controllers\Audit\AuditController@findingsDestroy')->name('audit.api.findings.destroy');
+
+        // Dashboard KPI
+        Route::get('/api/dashboard', 'App\Http\Controllers\Audit\AuditController@apiDashboard')->name('audit.api.dashboard');
+    });
 
     Route::prefix('api/spreadsheet/data')->middleware(['auth', 'verified', 'has.role', 'check.factory', 'permission:spreadsheet-menu'])->name('spreadsheet.data.')->group(function () {
         Route::get('/stock/{reference}', [SpreadsheetDataController::class, 'stock'])->name('stock');
