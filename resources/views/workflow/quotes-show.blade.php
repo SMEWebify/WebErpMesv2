@@ -338,6 +338,7 @@
             'update'          => route('quotes.lines.json.update',          ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'destroy'         => route('quotes.lines.json.destroy',         ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'duplicate'       => route('quotes.lines.json.duplicate',       ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'breakdown'       => route('quotes.lines.json.breakdown',       ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'move'            => route('quotes.lines.json.move',            ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'reorder'         => route('quotes.lines.json.reorder',         ['quoteId' => $Quote->id]),
             'createProduct'   => route('quotes.lines.json.create-product',  ['quoteId' => $Quote->id, 'id' => '__ID__']),

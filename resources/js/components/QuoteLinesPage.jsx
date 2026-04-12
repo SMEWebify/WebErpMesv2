@@ -770,7 +770,7 @@ function LineDrawer({ open, onClose, onOpenCreate, editingLine, selectData, endp
 // ---------------------------------------------------------------------------
 
 function LineRow({
-    line, quoteStatu, onEdit, onDelete, onDuplicate, onCreateProduct, onOpenTaskModal, onToggleSelect, selected,
+    line, quoteStatu, onEdit, onDelete, onDuplicate, onBreakDown, onCreateProduct, onOpenTaskModal, onToggleSelect, selected,
     // drag props
     onDragStart, onDragEnter, onDragEnd, isDragOver, isDragging,
 }) {
@@ -792,8 +792,8 @@ function LineRow({
             const menuH   = 220; // estimated height
             const openUp  = rect.bottom + menuH > window.innerHeight;
             setMenuStyle(openUp
-                ? { position: 'fixed', bottom: window.innerHeight - rect.top, top: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 140, maxWidth: 180, zIndex: 1060 }
-                : { position: 'fixed', top: rect.bottom, bottom: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 140, maxWidth: 180, zIndex: 1060 }
+                ? { position: 'fixed', bottom: window.innerHeight - rect.top, top: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 180, maxWidth: 220, zIndex: 1060 }
+                : { position: 'fixed', top: rect.bottom, bottom: 'auto', left: 'auto', right: window.innerWidth - rect.right, width: 'auto', minWidth: 180, maxWidth: 220, zIndex: 1060 }
             );
         }
         setMenuOpen((v) => !v);
@@ -937,6 +937,12 @@ function LineRow({
                             <a className="dropdown-item" href={line.detail_url} target="_blank" rel="noreferrer">
                                 <i className="fas fa-info-circle fa-fw mr-2 text-teal" />Détails techniques
                             </a>
+                            {quoteStatu === 1 && line.product_id && (
+                                <button className="dropdown-item"
+                                    onClick={() => { onBreakDown(line.id); setMenuOpen(false); }}>
+                                    <i className="fas fa-sitemap fa-fw mr-2 text-secondary" />Découpage technique
+                                </button>
+                            )}
                             <button className="dropdown-item"
                                 onClick={() => { onOpenTaskModal(line); setMenuOpen(false); }}>
                                 <i className="fas fa-list fa-fw mr-2 text-warning" />Tâches ({line.task_count})
@@ -1098,6 +1104,18 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
             showFlash('success', 'Ligne dupliquée');
         } else {
             showFlash('danger', 'Erreur lors de la duplication');
+        }
+    };
+
+    const handleBreakDown = async (id) => {
+        if (!confirm('Appliquer le découpage technique du produit sur cette ligne ?')) return;
+        const res  = await apiFetch(endpoints.breakdown.replace('__ID__', id), { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+            setLines((prev) => prev.map((l) => l.id === id ? data.line : l));
+            showFlash('success', 'Découpage technique appliqué');
+        } else {
+            showFlash('danger', 'Erreur lors du découpage technique');
         }
     };
 
@@ -1289,6 +1307,7 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
                                 onDuplicate={handleDuplicate}
+                                onBreakDown={handleBreakDown}
                                 onCreateProduct={handleCreateProduct}
                                 onOpenTaskModal={setTaskModalLine}
                                 onToggleSelect={handleToggleSelect}

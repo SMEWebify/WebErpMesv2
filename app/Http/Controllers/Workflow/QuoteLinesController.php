@@ -399,6 +399,39 @@ class QuoteLinesController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function breakDownLineJson($quoteId, $id)
+    {
+        abort_unless(auth()->check(), 403);
+        $line = QuoteLines::where('id', $id)->where('quotes_id', $quoteId)->firstOrFail();
+
+        abort_if(!$line->product_id, 422);
+
+        $firstStatus = \App\Models\Planning\Status::select('id')->orderBy('order')->first();
+        $statusId    = $firstStatus?->id;
+
+        Task::where('products_id', $line->product_id)->get()->each(function ($task) use ($id, $statusId) {
+            $new                  = $task->replicate();
+            $new->quote_lines_id  = $id;
+            $new->products_id     = null;
+            $new->status_id       = $statusId;
+            $new->origin          = '3';
+            $new->save();
+        });
+
+        SubAssembly::where('products_id', $line->product_id)->get()->each(function ($sub) use ($id) {
+            $new                  = $sub->replicate();
+            $new->quote_lines_id  = $id;
+            $new->products_id     = null;
+            $new->save();
+        });
+
+        $line->loadCount(['Task', 'SubAssembly']);
+        $factory  = Factory::first();
+        $currency = $factory->curency ?? 'EUR';
+
+        return response()->json(['line' => $this->formatLineJson($line, $currency, config('app.locale'))]);
+    }
+
     public function duplicateLineJson($quoteId, $id)
     {
         abort_unless(auth()->check(), 403);

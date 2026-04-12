@@ -342,6 +342,7 @@
           'update'          => route('orders.lines.json.update',           ['orderId' => $Order->id, 'id' => '__ID__']),
           'destroy'         => route('orders.lines.json.destroy',          ['orderId' => $Order->id, 'id' => '__ID__']),
           'duplicate'       => route('orders.lines.json.duplicate',        ['orderId' => $Order->id, 'id' => '__ID__']),
+          'breakdown'       => route('orders.lines.json.breakdown',        ['orderId' => $Order->id, 'id' => '__ID__']),
           'move'            => route('orders.lines.json.move',             ['orderId' => $Order->id, 'id' => '__ID__']),
           'reorder'         => route('orders.lines.json.reorder',          ['orderId' => $Order->id]),
           'tasks'           => route('orders.lines.json.tasks',            ['orderId' => $Order->id, 'id' => '__ID__']),

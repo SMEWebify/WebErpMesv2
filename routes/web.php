@@ -256,6 +256,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/{quoteId}/lines/json/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@updateLineJson')->name('quotes.lines.json.update');
         Route::delete('/{quoteId}/lines/json/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@destroyLineJson')->name('quotes.lines.json.destroy');
         Route::post('/{quoteId}/lines/json/{id}/duplicate', 'App\Http\Controllers\Workflow\QuoteLinesController@duplicateLineJson')->name('quotes.lines.json.duplicate');
+        Route::post('/{quoteId}/lines/json/{id}/breakdown', 'App\Http\Controllers\Workflow\QuoteLinesController@breakDownLineJson')->name('quotes.lines.json.breakdown');
         Route::post('/{quoteId}/lines/json/{id}/move', 'App\Http\Controllers\Workflow\QuoteLinesController@moveLineJson')->name('quotes.lines.json.move');
         Route::post('/{quoteId}/lines/json/reorder', 'App\Http\Controllers\Workflow\QuoteLinesController@reorderJson')->name('quotes.lines.json.reorder');
         Route::post('/{quoteId}/lines/json/store-order', 'App\Http\Controllers\Workflow\QuoteLinesController@storeOrderJson')->name('quotes.lines.json.store-order');
@@ -301,6 +302,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/{orderId}/lines/json/{id}',                        'App\Http\Controllers\Workflow\OrderLinesController@updateLineJson')->name('orders.lines.json.update');
         Route::delete('/{orderId}/lines/json/{id}',                     'App\Http\Controllers\Workflow\OrderLinesController@destroyLineJson')->name('orders.lines.json.destroy');
         Route::post('/{orderId}/lines/json/{id}/duplicate',             'App\Http\Controllers\Workflow\OrderLinesController@duplicateLineJson')->name('orders.lines.json.duplicate');
+        Route::post('/{orderId}/lines/json/{id}/breakdown',             'App\Http\Controllers\Workflow\OrderLinesController@breakDownLineJson')->name('orders.lines.json.breakdown');
         Route::post('/{orderId}/lines/json/{id}/move',                  'App\Http\Controllers\Workflow\OrderLinesController@moveLineJson')->name('orders.lines.json.move');
         Route::post('/{orderId}/lines/json/reorder',                    'App\Http\Controllers\Workflow\OrderLinesController@reorderJson')->name('orders.lines.json.reorder');
         Route::post('/{orderId}/lines/json/price-increase',             'App\Http\Controllers\Workflow\OrderLinesController@priceIncreaseJson')->name('orders.lines.json.price-increase');
