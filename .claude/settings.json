@@ -39,7 +39,11 @@
       "Bash(grep -l \"hasRole\\\\|can\\(\" /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Http/Controllers/**/*.php)",
       "Bash(ls -la /c/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/*.jsx)",
       "Bash(ls /c/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/*.jsx)",
-      "Bash(awk -F: '{print $1}')"
+      "Bash(awk -F: '{print $1}')",
+      "Bash(grep -n \"statu\\\\b\" c:/laragon/www/WebErpMesv2/WebErpMesv2/database/migrations/*orders* c:/laragon/www/WebErpMesv2/WebErpMesv2/database/migrations/*quotes* c:/laragon/www/WebErpMesv2/WebErpMesv2/database/migrations/*invoices*)",
+      "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/OrdersIndex.jsx)",
+      "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/InvoicesIndex.jsx)",
+      "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/QuotesIndex.jsx)"
     ]
   }
 }

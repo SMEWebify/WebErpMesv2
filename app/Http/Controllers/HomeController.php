@@ -277,7 +277,15 @@ class HomeController extends Controller
                 'supplier_delays'    => route('kpi.supplier.delays'),
                 'otd'                => route('kpi.otd'),
                 'mood'               => route('kpi.mood'),
-                'dashboard_config'   => route('dashboard.config.show'),
+                'dashboard_config'      => route('dashboard.config.show'),
+                'today_config'         => route('today.config.show'),
+                'today_config_update'  => route('today.config.update'),
+                'today_invoices_overdue' => route('today.invoices.overdue'),
+                'today_orders_late'      => route('today.orders.late'),
+                'today_orders_due_week'  => route('today.orders.due.week'),
+                'today_quotes_expiring'  => route('today.quotes.expiring'),
+                'today_leads_pending'    => route('today.leads.pending'),
+                'today_recent_activity'  => route('today.recent.activity'),
             ],
 
             'trans' => array_merge(

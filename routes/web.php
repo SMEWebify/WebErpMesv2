@@ -96,6 +96,18 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@update')->name('dashboard.config.update');
     });
 
+    // Vue du jour
+    Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->prefix('today')->group(function () {
+        Route::get('/config',              'App\Http\Controllers\TodayController@configShow')->name('today.config.show');
+        Route::put('/config',              'App\Http\Controllers\TodayController@configUpdate')->name('today.config.update');
+        Route::get('/invoices-overdue',    'App\Http\Controllers\TodayController@invoicesOverdue')->name('today.invoices.overdue');
+        Route::get('/orders-late',         'App\Http\Controllers\TodayController@ordersLate')->name('today.orders.late');
+        Route::get('/orders-due-week',     'App\Http\Controllers\TodayController@ordersDueWeek')->name('today.orders.due.week');
+        Route::get('/quotes-expiring',     'App\Http\Controllers\TodayController@quotesExpiring')->name('today.quotes.expiring');
+        Route::get('/leads-pending',       'App\Http\Controllers\TodayController@leadsPending')->name('today.leads.pending');
+        Route::get('/recent-activity',     'App\Http\Controllers\TodayController@recentActivity')->name('today.recent.activity');
+    });
+
     Route::group(['prefix' => 'collaboration', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/whiteboards', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.index');
         Route::get('/whiteboards/{whiteboard}', [CollaborationWhiteboardController::class, 'show'])->name('collaboration.whiteboards.show');
