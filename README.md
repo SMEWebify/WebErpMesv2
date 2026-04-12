@@ -183,15 +183,16 @@ WebErpMesv2/
 ├── database/
 │   └── migrations/          # Database schemas (BOMs, routings, stock movements)
 ├── resources/
-│   ├── js/                  # Vue.js frontend
+│   ├── js/                  # React components
 │   └── views/               # Blade templates
 ├── tests/                   # Test suite
 └── docker/                  # Docker configuration
 ```
 
 **Key Technologies**:
-- **Backend**: Laravel 11, PHP 8.2
-- **Frontend**: Vue.js 3, Tailwind CSS
+- **Backend**: Laravel 12, PHP 8.2
+- **Frontend**: Blade + Livewire (CRUD), React (rich components), Alpine.js (micro-interactions)
+- **CSS**: Bootstrap 4 / AdminLTE
 - **Database**: MySQL/PostgreSQL
 - **Cache**: Redis
 - **DevOps**: Docker, Nginx
@@ -393,7 +394,7 @@ You are free to:
 Thanks to:
 - All our [contributors](https://github.com/SMEWebify/WebErpMesv2/graphs/contributors)
 - The workshops that test and provide feedback
-- The Laravel and Vue.js communities
+- The Laravel and React communities
 - Everyone who starred ⭐ the project
 
 ---
