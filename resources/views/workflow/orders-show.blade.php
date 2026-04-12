@@ -40,6 +40,7 @@
     <div class="tab-content">
       <div class="tab-pane" id="Order">
         @livewire('arrow-steps.arrow-order', ['OrderId' => $Order->id, 'OrderType' => $Order->type, 'OrderStatu' => $Order->statu])
+        <x-relational-breadcrumb :entity="$Order" />
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -257,11 +258,6 @@
               @endif  
             </x-adminlte-card>
 
-            @if($Order->quotes_id)
-            <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info" collapsible="collapsed" maximizable>
-              {{ __('general_content.order_create_from_trans_key') }} <x-QuoteButton id="{{ $Order->quotes_id }}" code="{{ $Order->Quote->code }}"  />
-            </x-adminlte-card>
-            @endif
             
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
               <div class="table-responsive p-0">

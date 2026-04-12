@@ -36,6 +36,7 @@
     <div class="tab-content">
       <div class="tab-pane " id="Quote">
         @livewire('arrow-steps.arrow-quote', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu])
+        <x-relational-breadcrumb :entity="$Quote" />
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -268,23 +269,6 @@
             </x-adminlte-card>
             @endcan
 
-            @if($Quote->opportunities_id)
-              <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info"  collapsible="collapsed" maximizable>
-                <div class="text-muted">
-                  <h3>{{__('general_content.opportunity_trans_key')}} #{{ $Quote->opportunities->label }} </h3><x-ButtonTextView route="{{ route('opportunities.show', ['id' => $Quote->opportunities_id])}}" />
-                  
-                  <p class="small">{{ __('general_content.user_trans_key') }}
-                    <b class="d-block">{{ $Quote->opportunities->UserManagement['name'] }}</b>
-                  </p>
-                  <p class="small">{{ __('general_content.probality_trans_key') }}
-                    <b class="d-block">{{ $Quote->opportunities->probality }} %</b> 
-                  </p>
-                  <p class="small">{{ __('general_content.budget_trans_key') }}
-                    <b class="d-block">{{ $Quote->opportunities->budget }}</b>
-                  </p>
-                </div>
-              </x-adminlte-card>
-            @endif
 
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
               <table class="table table-hover">

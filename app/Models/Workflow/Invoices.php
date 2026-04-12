@@ -10,6 +10,7 @@ use Illuminate\Support\Number;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\Orders;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\InvoiceCalculatorService;
 use App\Models\Companies\CompaniesContacts;
@@ -75,6 +76,11 @@ class Invoices extends Model
     public function UserManagement()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Orders::class, 'order_id');
     }
 
     public function invoiceLines()

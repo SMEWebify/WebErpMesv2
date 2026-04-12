@@ -43,7 +43,8 @@
       "Bash(grep -n \"statu\\\\b\" c:/laragon/www/WebErpMesv2/WebErpMesv2/database/migrations/*orders* c:/laragon/www/WebErpMesv2/WebErpMesv2/database/migrations/*quotes* c:/laragon/www/WebErpMesv2/WebErpMesv2/database/migrations/*invoices*)",
       "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/OrdersIndex.jsx)",
       "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/InvoicesIndex.jsx)",
-      "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/QuotesIndex.jsx)"
+      "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/QuotesIndex.jsx)",
+      "Bash(grep -r \"order_line_id\\\\|delivery_line_id\" database/migrations/*.php)"
     ]
   }
 }

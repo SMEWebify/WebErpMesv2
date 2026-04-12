@@ -28,6 +28,7 @@
     <div class="tab-content">
       <div class="tab-pane active" id="Opportunity">
         @livewire('arrow-steps.arrow-opportunity', ['OpportunityId' => $Opportunity->id, 'OpportunityStatu' => $Opportunity->statu])
+        <x-relational-breadcrumb :entity="$Opportunity" />
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')
@@ -125,22 +126,6 @@
             </form>
           </div>
           <div class="col-md-3">
-            @if($Opportunity->leads_id)
-            <x-adminlte-card title="{{ __('general_content.historical_trans_key') }}" theme="info" maximizable>
-              <div class="text-muted">
-                <h3>Lead #{{ $Opportunity->leads_id }} </h3>
-                <p class="text-sm">{{ __('general_content.user_trans_key') }}
-                  <b class="d-block">{{ $Opportunity->lead->UserManagement['name'] }}</b>
-                </p>
-                <p class="text-sm">{{ __('general_content.source_trans_key') }}
-                  <b class="d-block">{{ $Opportunity->lead->source }}</b>
-                </p>
-                <p class="text-sm">{{ __('general_content.campaign_trans_key') }}
-                  <b class="d-block">{{ $Opportunity->lead->campaign }}</b>
-                </p>
-              </div>
-            </x-adminlte-card>
-            @endif
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
               <p>
                 <a class="btn btn-success btn-sm" href="{{ route('opportunities.store.quote', ['id' => $Opportunity->id ]) }}">

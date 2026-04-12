@@ -9,6 +9,8 @@ use App\Models\EmailLog;
 use App\Models\GuestVisits;
 use Illuminate\Support\Number;
 use App\Models\Workflow\Quotes;
+use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\Invoices;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\OrderLines;
@@ -154,6 +156,16 @@ class Orders extends Model
     public function OrderSite()
     {
         return $this->hasOne(OrderSite::class, 'order_id', 'id');
+    }
+
+    public function Deliverys()
+    {
+        return $this->hasMany(Deliverys::class, 'order_id');
+    }
+
+    public function Invoices()
+    {
+        return $this->hasMany(Invoices::class, 'order_id');
     }
     
     public function getPurchaseLinesCountAttribute()

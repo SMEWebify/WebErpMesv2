@@ -11,6 +11,7 @@
 
 @section('content')
 @livewire('arrow-steps.arrow-lead', ['LeadId' => $Lead->id, 'LeadStatu' => $Lead->statu])
+<x-relational-breadcrumb :entity="$Lead" />
 <div class="row">
   <div class="col-md-9">
     @include('include.alert-result')
