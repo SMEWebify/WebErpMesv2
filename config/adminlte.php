@@ -563,6 +563,11 @@ return [
                     'icon_color' => 'info',
                 ],
                 [
+                    'text' => 'process_diagrams_trans_key',
+                    'url'  => 'quality/process-diagrams',
+                    'icon_color' => 'purple',
+                ],
+                [
                     'text' => 'amdec_trans_key',
                     'url'  => 'quality/amdec',
                     'icon_color' => 'teal',

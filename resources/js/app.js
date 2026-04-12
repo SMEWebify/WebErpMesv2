@@ -45,6 +45,7 @@ import GanttChart from './components/GanttChart.jsx';
 import NonConformitiesIndex from './components/NonConformitiesIndex.jsx';
 import GmaoDashboard from './components/GmaoDashboard.jsx';
 import InspectionProjectsApp from './components/InspectionProjectsApp.jsx';
+import ProcessDiagramApp from './components/ProcessDiagramApp.jsx';
 import TaskManagePage from './components/TaskManagePage.jsx';
 import QuoteChartsTab from './components/QuoteChartsTab.jsx';
 import UserProfilePage from './components/UserProfilePage.jsx';
@@ -955,6 +956,23 @@ function mountTaskManagePage() {
 }
 
 mountTaskManagePage();
+
+function mountProcessDiagramApp() {
+    const element = document.getElementById('process-diagram-app');
+    if (!element) return;
+
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(ProcessDiagramApp, {
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+mountProcessDiagramApp();
 
 function mountQuoteChartsTab() {
     const element = document.getElementById('quote-charts-tab-app');

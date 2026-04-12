@@ -54,6 +54,7 @@ return [
     'derogations_trans_key'                    => '特批',
     'non_conformities_trans_key'               => '不合格',
     'amdec_trans_key'                          => '失效模式分析 (AMDEC)',
+    'process_diagrams_trans_key' => 'Process Map',
     'inspection_trans_key'                 => 'Inspection',
     'internal_audits_trans_key'                => 'Internal Audits',
     'settings_trans_key'                       => '设置',

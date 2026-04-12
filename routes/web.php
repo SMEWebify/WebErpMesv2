@@ -791,7 +791,17 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         // Index route
         Route::get('/', 'App\Http\Controllers\Quality\QualityController@index')->name('quality');
         Route::get('/inspection-projects', 'App\Http\Controllers\Inspection\InspectionProjectController@indexView')->name('quality.inspection.projects');
-    
+
+        // Routes for Process Diagrams
+        Route::get('/process-diagrams', 'App\Http\Controllers\Quality\ProcessDiagramController@indexView')->name('quality.process-diagrams');
+        Route::group(['prefix' => 'process-diagrams'], function () {
+            Route::get('/list',    'App\Http\Controllers\Quality\ProcessDiagramController@index')->name('quality.process-diagrams.index');
+            Route::post('/list',   'App\Http\Controllers\Quality\ProcessDiagramController@store')->name('quality.process-diagrams.store');
+            Route::get('/{id}',    'App\Http\Controllers\Quality\ProcessDiagramController@show')->name('quality.process-diagrams.show');
+            Route::put('/{id}',    'App\Http\Controllers\Quality\ProcessDiagramController@update')->name('quality.process-diagrams.update');
+            Route::delete('/{id}', 'App\Http\Controllers\Quality\ProcessDiagramController@delete')->name('quality.process-diagrams.delete');
+        });
+
         // Routes for Action
         Route::group(['prefix' => 'action'], function () {
             Route::get('/', 'App\Http\Controllers\Quality\QualityActionController@index')->name('quality.action');

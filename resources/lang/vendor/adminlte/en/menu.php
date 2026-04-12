@@ -54,6 +54,7 @@ return [
     'derogations_trans_key'                    => 'Derogations',
     'non_conformities_trans_key'               => 'Non conformities',
     'amdec_trans_key'                          => 'FMEA',
+    'process_diagrams_trans_key' => 'Cartographie processus',
     'inspection_trans_key'                 => 'Inspection',
     'internal_audits_trans_key'            => 'Internal Audits',
     'settings_trans_key'                       => 'Settings',
