@@ -1,6 +1,107 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // ---------------------------------------------------------------------------
+// SymDropzone — RADAN .sym drag-and-drop import
+// ---------------------------------------------------------------------------
+
+function SymDropzone({ endpoint, isReadOnly, onImported }) {
+    const [dragging, setDragging] = useState(false);
+    const [status,   setStatus]   = useState(null);
+    const [results,  setResults]  = useState([]);
+    const inputRef = useRef(null);
+
+    if (!endpoint || isReadOnly) return null;
+
+    const upload = async (files) => {
+        const symFiles = Array.from(files).filter((f) => f.name.toLowerCase().endsWith('.sym'));
+        if (symFiles.length === 0) {
+            setStatus('error');
+            setResults([{ ok: false, msg: 'Aucun fichier .sym détecté.' }]);
+            return;
+        }
+
+        setStatus('uploading');
+        setResults([]);
+
+        const fd = new FormData();
+        symFiles.forEach((f) => fd.append('files[]', f));
+
+        try {
+            const res  = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                    Accept: 'application/json',
+                },
+                body: fd,
+            });
+
+            const data = await res.json();
+
+            const ok  = (data.lines  ?? []).map((l) => ({ ok: true,  msg: l.label }));
+            const err = (data.errors ?? []).map((e) => ({ ok: false, msg: e }));
+
+            setStatus(err.length > 0 && ok.length === 0 ? 'error' : 'done');
+            setResults([...ok, ...err]);
+
+            if (ok.length > 0) onImported(data.lines);
+        } catch {
+            setStatus('error');
+            setResults([{ ok: false, msg: 'Erreur réseau lors de l\'envoi.' }]);
+        }
+    };
+
+    const borderColor = dragging        ? '#007bff'
+        : status === 'done'             ? '#28a745'
+        : status === 'error'            ? '#dc3545'
+        : '#adb5bd';
+
+    return (
+        <div className="mt-3">
+            <div
+                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={(e) => { e.preventDefault(); setDragging(false); upload(e.dataTransfer.files); }}
+                onClick={() => inputRef.current?.click()}
+                style={{
+                    border: `2px dashed ${borderColor}`,
+                    borderRadius: 6,
+                    padding: '1.25rem',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    background: dragging ? '#e8f0fe' : '#f8f9fa',
+                    transition: 'border-color .2s, background .2s',
+                    userSelect: 'none',
+                }}
+            >
+                <input ref={inputRef} type="file" accept=".sym" multiple style={{ display: 'none' }}
+                    onChange={(e) => upload(e.target.files)} />
+                {status === 'uploading' ? (
+                    <span className="text-muted">
+                        <i className="fas fa-spinner fa-spin mr-2" />Import en cours…
+                    </span>
+                ) : (
+                    <span className="text-muted small">
+                        <i className="fas fa-file-import mr-2 text-primary" />
+                        Déposer des fichiers <strong>.sym</strong> RADAN ici pour créer les lignes automatiquement
+                        &nbsp;—&nbsp;ou cliquer pour sélectionner
+                    </span>
+                )}
+            </div>
+            {results.length > 0 && (
+                <ul className="list-group list-group-flush mt-2" style={{ fontSize: '0.85rem' }}>
+                    {results.map((r, i) => (
+                        <li key={i} className={`list-group-item py-1 px-2 ${r.ok ? 'list-group-item-success' : 'list-group-item-danger'}`}>
+                            <i className={`fas ${r.ok ? 'fa-check' : 'fa-times'} mr-2`} />{r.msg}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
@@ -740,10 +841,25 @@ function LineRow({
             onDragOver={!isReadOnly ? (e) => e.preventDefault() : undefined}
             style={rowStyle}
         >
-            {/* Drag + ordre */}
-            <td style={{ width: 48, cursor: !isReadOnly ? 'grab' : 'default', userSelect: 'none', color: '#aaa' }}>
-                <i className="fas fa-grip-vertical mr-1" />
-                <span className="text-muted small">{line.ordre}</span>
+            {/* Drag handle + thumbnail ou ordre */}
+            <td style={{ width: 52, cursor: !isReadOnly ? 'grab' : 'default', userSelect: 'none', padding: '2px 4px', verticalAlign: 'middle' }}>
+                {line.picture ? (
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <img
+                            src={`/images/quote-lines/${line.picture}`}
+                            alt=""
+                            style={{ width: 42, height: 42, objectFit: 'contain', background: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: 3, display: 'block' }}
+                        />
+                        <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '0.6rem', padding: '0 3px', borderRadius: '3px 0 3px 0', lineHeight: '1.5' }}>
+                            {line.ordre}
+                        </span>
+                    </div>
+                ) : (
+                    <>
+                        <i className="fas fa-grip-vertical mr-1" style={{ color: '#aaa' }} />
+                        <span className="text-muted small">{line.ordre}</span>
+                    </>
+                )}
             </td>
 
             {/* Select */}
@@ -1013,6 +1129,15 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
         }
     };
 
+    const handleSymImported = (newLines) => {
+        setLines((prev) => {
+            const updated = [...prev, ...newLines];
+            refreshNextOrdre(updated);
+            return updated;
+        });
+        showFlash('success', `${newLines.length} ligne${newLines.length > 1 ? 's' : ''} importée${newLines.length > 1 ? 's' : ''} depuis RADAN`);
+    };
+
     const handlePriceIncrease = async () => {
         const amt = parseFloat(priceIncAmt);
         if (!amt || amt <= 0) return;
@@ -1277,6 +1402,13 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
                     </tbody>
                 </table>
             </div>
+
+            {/* RADAN .sym import dropzone */}
+            <SymDropzone
+                endpoint={endpoints.importSym}
+                isReadOnly={isReadOnly}
+                onImported={handleSymImported}
+            />
 
             {/* Drawer */}
             <LineDrawer

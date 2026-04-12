@@ -32,7 +32,8 @@
       "Bash(git -C /c/laragon/www/WebErpMesv2/WebErpMesv2 diff HEAD app/Http/Controllers/UsersController.php)",
       "Bash(git -C /c/laragon/www/WebErpMesv2/WebErpMesv2 show HEAD:resources/views/livewire/notification-line.blade.php)",
       "Bash(git -C /c/laragon/www/WebErpMesv2/WebErpMesv2 log --oneline -20)",
-      "Bash(grep -n \"class UserAutoEmailReport\" /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Models/*.php)"
+      "Bash(grep -n \"class UserAutoEmailReport\" /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Models/*.php)",
+      "Read(//c/Users/Kevin/Desktop/A0502395 Pack de fabrication fallback/TwoD/**)"
     ]
   }
 }

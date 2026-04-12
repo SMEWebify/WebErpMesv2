@@ -329,28 +329,34 @@
         </div>
       </div>   
       <div class="tab-pane " id="Lines">
+        @php
+          $quoteLineEndpoints = [
+            'lines'           => route('quotes.lines.json.for-quote',       ['quoteId' => $Quote->id]),
+            'selectData'      => route('quotes.lines.json.select-data',     ['quoteId' => $Quote->id]),
+            'priceList'       => route('quotes.lines.json.price-list',      ['quoteId' => $Quote->id, 'productId' => '__PRODUCT__']),
+            'store'           => route('quotes.lines.json.store',           ['quoteId' => $Quote->id]),
+            'update'          => route('quotes.lines.json.update',          ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'destroy'         => route('quotes.lines.json.destroy',         ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'duplicate'       => route('quotes.lines.json.duplicate',       ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'move'            => route('quotes.lines.json.move',            ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'reorder'         => route('quotes.lines.json.reorder',         ['quoteId' => $Quote->id]),
+            'createProduct'   => route('quotes.lines.json.create-product',  ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'tasks'           => route('quotes.lines.json.tasks',           ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'calculatedPrice' => route('quotes.lines.json.calculated-price',['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),
+            'priceIncrease'   => route('quotes.lines.json.price-increase',  ['quoteId' => $Quote->id]),
+          ];
+          if (env('RADAN_SYM_IMPORT', false)) {
+            $quoteLineEndpoints['importSym'] = route('quotes.lines.json.import-sym', ['quoteId' => $Quote->id]);
+          }
+        @endphp
         <div class="card">
           <div class="card-body">
             <div
               id="quote-lines-page-app"
               data-quote-id="{{ $Quote->id }}"
               data-quote-statu="{{ $Quote->statu }}"
-              data-endpoints="{{ json_encode([
-                'lines'         => route('quotes.lines.json.for-quote', ['quoteId' => $Quote->id]),
-                'selectData'    => route('quotes.lines.json.select-data', ['quoteId' => $Quote->id]),
-                'priceList'     => route('quotes.lines.json.price-list', ['quoteId' => $Quote->id, 'productId' => '__PRODUCT__']),
-                'store'         => route('quotes.lines.json.store', ['quoteId' => $Quote->id]),
-                'update'        => route('quotes.lines.json.update', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'destroy'       => route('quotes.lines.json.destroy', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'duplicate'     => route('quotes.lines.json.duplicate', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'move'          => route('quotes.lines.json.move', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'reorder'          => route('quotes.lines.json.reorder', ['quoteId' => $Quote->id]),
-                'createProduct'       => route('quotes.lines.json.create-product', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'tasks'               => route('quotes.lines.json.tasks', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'calculatedPrice'     => route('quotes.lines.json.calculated-price', ['quoteId' => $Quote->id, 'id' => '__ID__']),
-                'storeOrder'    => route('quotes.lines.json.store-order', ['quoteId' => $Quote->id]),
-                'priceIncrease' => route('quotes.lines.json.price-increase', ['quoteId' => $Quote->id]),
-              ]) }}"
+              data-endpoints="{{ json_encode($quoteLineEndpoints) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin mr-2"></i> Chargement des lignes...

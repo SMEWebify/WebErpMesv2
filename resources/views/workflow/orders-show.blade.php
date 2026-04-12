@@ -333,6 +333,28 @@
           </div>
         </div>
       </div>   
+      @php
+        $orderLineEndpoints = [
+          'lines'           => route('orders.lines.json.for-order',        ['orderId' => $Order->id]),
+          'selectData'      => route('orders.lines.json.select-data',      ['orderId' => $Order->id]),
+          'priceList'       => route('orders.lines.json.price-list',       ['orderId' => $Order->id, 'productId' => '__PRODUCT__']),
+          'store'           => route('orders.lines.json.store',            ['orderId' => $Order->id]),
+          'update'          => route('orders.lines.json.update',           ['orderId' => $Order->id, 'id' => '__ID__']),
+          'destroy'         => route('orders.lines.json.destroy',          ['orderId' => $Order->id, 'id' => '__ID__']),
+          'duplicate'       => route('orders.lines.json.duplicate',        ['orderId' => $Order->id, 'id' => '__ID__']),
+          'move'            => route('orders.lines.json.move',             ['orderId' => $Order->id, 'id' => '__ID__']),
+          'reorder'         => route('orders.lines.json.reorder',          ['orderId' => $Order->id]),
+          'tasks'           => route('orders.lines.json.tasks',            ['orderId' => $Order->id, 'id' => '__ID__']),
+          'calculatedPrice' => route('orders.lines.json.calculated-price', ['orderId' => $Order->id, 'id' => '__ID__']),
+          'priceIncrease'   => route('orders.lines.json.price-increase',   ['orderId' => $Order->id]),
+          'storeDelivery'   => route('orders.lines.json.store-delivery',   ['orderId' => $Order->id]),
+          'storeInvoice'    => route('orders.lines.json.store-invoice',    ['orderId' => $Order->id]),
+          'createProducts'  => route('orders.lines.json.create-products',  ['orderId' => $Order->id]),
+        ];
+        if (env('RADAN_SYM_IMPORT', false)) {
+          $orderLineEndpoints['importSym'] = route('orders.lines.json.import-sym', ['orderId' => $Order->id]);
+        }
+      @endphp
       <div class="tab-pane " id="Lines">
         <div class="card">
           <div class="card-body">
@@ -342,23 +364,7 @@
               data-order-statu="{{ $Order->statu }}"
               data-order-type="{{ $Order->type }}"
               data-can-manage-stock="{{ Auth::user()->can('stock-lot-serial-management') ? 'true' : 'false' }}"
-              data-endpoints="{{ json_encode([
-                'lines'          => route('orders.lines.json.for-order',   ['orderId' => $Order->id]),
-                'selectData'     => route('orders.lines.json.select-data', ['orderId' => $Order->id]),
-                'priceList'      => route('orders.lines.json.price-list',  ['orderId' => $Order->id, 'productId' => '__PRODUCT__']),
-                'store'          => route('orders.lines.json.store',       ['orderId' => $Order->id]),
-                'update'         => route('orders.lines.json.update',      ['orderId' => $Order->id, 'id' => '__ID__']),
-                'destroy'        => route('orders.lines.json.destroy',     ['orderId' => $Order->id, 'id' => '__ID__']),
-                'duplicate'      => route('orders.lines.json.duplicate',   ['orderId' => $Order->id, 'id' => '__ID__']),
-                'move'           => route('orders.lines.json.move',        ['orderId' => $Order->id, 'id' => '__ID__']),
-                'reorder'        => route('orders.lines.json.reorder',     ['orderId' => $Order->id]),
-                'tasks'          => route('orders.lines.json.tasks',       ['orderId' => $Order->id, 'id' => '__ID__']),
-                'calculatedPrice'=> route('orders.lines.json.calculated-price', ['orderId' => $Order->id, 'id' => '__ID__']),
-                'priceIncrease'  => route('orders.lines.json.price-increase',   ['orderId' => $Order->id]),
-                'storeDelivery'  => route('orders.lines.json.store-delivery',   ['orderId' => $Order->id]),
-                'storeInvoice'   => route('orders.lines.json.store-invoice',    ['orderId' => $Order->id]),
-                'createProducts' => route('orders.lines.json.create-products',  ['orderId' => $Order->id]),
-              ]) }}"
+              data-endpoints="{{ json_encode($orderLineEndpoints) }}"
             >
               <div class="text-center py-4 text-muted">
                 <i class="fas fa-spinner fa-spin mr-2"></i> Chargement des lignes...
