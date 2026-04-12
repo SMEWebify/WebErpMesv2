@@ -52,6 +52,7 @@ import UserProfilePage from './components/UserProfilePage.jsx';
 import NotificationLinePage from './components/NotificationLinePage.jsx';
 import UserAutoEmailReportsPage from './components/UserAutoEmailReportsPage.jsx';
 import AuditPlannerApp from './components/AuditPlannerApp.jsx';
+import CompanyTimeline from './components/CompanyTimeline.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -567,6 +568,17 @@ function mountCompanyContacts() {
     );
 }
 
+function mountCompanyTimeline() {
+    const element = document.getElementById('company-timeline-app');
+    if (!element) return;
+
+    createRoot(element).render(
+        React.createElement(CompanyTimeline, {
+            endpoint: element.dataset.endpoint ?? '',
+        })
+    );
+}
+
 function mountSetupWizard() {
     const element = document.getElementById('setup-wizard-app');
     if (!element) return;
@@ -788,6 +800,7 @@ mountCompanyDashboard();
 mountCompanyForm();
 mountCompanyAddresses();
 mountCompanyContacts();
+mountCompanyTimeline();
 mountKanbanBoard();
 mountDocumentTable();
 mountCompaniesIndex();

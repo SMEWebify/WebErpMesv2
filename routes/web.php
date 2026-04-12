@@ -160,6 +160,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/edit/{id}', 'App\Http\Controllers\Companies\CompaniesController@update')->name('companies.edit.update');
         Route::post('/json/update/{company}', 'App\Http\Controllers\Companies\CompaniesController@updateJson')->name('companies.json.update');
         Route::get('/{id}', 'App\Http\Controllers\Companies\CompaniesController@show')->name('companies.show');
+        Route::get('/{id}/json/timeline', 'App\Http\Controllers\Companies\CompaniesController@timelineJson')->name('companies.json.timeline');
 
         Route::get('/store/quote/{id}', 'App\Http\Controllers\Companies\CompaniesController@storeQuote')->name('companies.store.quote');
 
