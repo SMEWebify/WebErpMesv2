@@ -85,9 +85,10 @@ class UserProfileApiController extends Controller
         if ($n->type === 'App\Notifications\OrderNotification')         { $icon = 'fas fa-shopping-cart'; $route = $id ? route('orders.show',   ['id' => $id]) : url('/'); }
         if ($n->type === 'App\Notifications\CompanieNotification')      { $icon = 'far fa-building';      $route = $id ? route('companies.show', ['id' => $id]) : url('/'); }
         if ($n->type === 'App\Notifications\NonConformityNotification') { $icon = 'fas fa-exclamation';   $route = route('quality.nonConformitie'); }
-        if ($n->type === 'App\Notifications\ReturnNotification')        { $icon = 'fas fa-undo';          $route = $id ? route('returns.show',  ['id' => $id]) : url('/'); }
-        if ($n->type === 'App\Notifications\PreOrderNotification')      { $icon = 'fas fa-file-import';   $route = url('/pre-orders'); }
-        if ($n->type === 'App\Notifications\LeadNotification')          { $icon = 'fas fa-user-tag';      $route = url('/'); }
+        if ($n->type === 'App\Notifications\ReturnNotification')                    { $icon = 'fas fa-undo';        $route = $id ? route('returns.show',  ['id' => $id]) : url('/'); }
+        if ($n->type === 'App\Notifications\PreOrderNotification')                  { $icon = 'fas fa-file-import'; $route = url('/pre-orders'); }
+        if ($n->type === 'App\Notifications\LeadNotification')                      { $icon = 'fas fa-user-tag';    $route = url('/'); }
+        if ($n->type === 'App\Notifications\InspectionDocumentApprovalNotification') { $icon = 'fas fa-file-alt';   $route = route('quality.inspection.projects'); }
 
         $originUser = $n->data['user_id'] ? User::find($n->data['user_id']) : null;
 

@@ -73,8 +73,9 @@ class UsersController extends Controller
             if ($n->type === 'App\Notifications\QuoteNotification')         { $icon = 'fas fa-calculator';   $route = route('quotes.show',  ['id' => $id]); }
             if ($n->type === 'App\Notifications\OrderNotification')         { $icon = 'fas fa-shopping-cart'; $route = route('orders.show',  ['id' => $id]); }
             if ($n->type === 'App\Notifications\CompanieNotification')      { $icon = 'far fa-building';      $route = route('companies.show', ['id' => $id]); }
-            if ($n->type === 'App\Notifications\NonConformityNotification') { $icon = 'fas fa-exclamation';   $route = route('quality.nonConformitie'); }
-            if ($n->type === 'App\Notifications\ReturnNotification')        { $icon = 'fas fa-undo';          $route = route('returns.show', ['id' => $id]); }
+            if ($n->type === 'App\Notifications\NonConformityNotification')              { $icon = 'fas fa-exclamation';   $route = route('quality.nonConformitie'); }
+            if ($n->type === 'App\Notifications\ReturnNotification')                    { $icon = 'fas fa-undo';          $route = route('returns.show', ['id' => $id]); }
+            if ($n->type === 'App\Notifications\InspectionDocumentApprovalNotification') { $icon = 'fas fa-file-alt';     $route = route('quality.inspection.projects'); }
 
             $originUser = User::find($n->data['user_id'] ?? null);
             $notifications[] = [

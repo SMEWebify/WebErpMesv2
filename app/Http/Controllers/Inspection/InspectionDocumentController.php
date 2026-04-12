@@ -5,22 +5,22 @@ namespace App\Http\Controllers\Inspection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use App\Models\Inspection\InspectionDocument;
 use App\Models\Inspection\InspectionProject;
+use App\Models\User;
+use App\Notifications\InspectionDocumentApprovalNotification;
 
 class InspectionDocumentController extends Controller
 {
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(Request $request, $projectId)
     {
         $project = InspectionProject::findOrFail($projectId);
 
         $validated = $request->validate([
-            'file' => ['required', 'file', 'mimes:pdf,png,jpg,jpeg'],
-            'type' => ['nullable', 'in:plan,spec,photo,other'],
+            'file'          => ['required', 'file', 'mimes:pdf,png,jpg,jpeg'],
+            'type'          => ['nullable', 'in:plan,spec,photo,other'],
             'version_label' => ['nullable', 'string', 'max:50'],
         ]);
 
@@ -37,15 +37,64 @@ class InspectionDocumentController extends Controller
 
         $file->move($directory, $fileName);
 
+        // Obsolète les documents approuvés du même projet/type avant d'en créer un nouveau
+        InspectionDocument::where('inspection_project_id', $project->id)
+            ->where('type', $validated['type'] ?? 'plan')
+            ->where('status', InspectionDocument::STATUS_APPROVED)
+            ->each(fn ($doc) => $doc->makeObsolete());
+
         $document = InspectionDocument::create([
             'inspection_project_id' => $project->id,
-            'type' => $validated['type'] ?? 'plan',
-            'file_path' => 'inspection-documents/' . $fileName,
-            'file_name' => $originalName,
-            'mime' => $mime,
-            'version_label' => $validated['version_label'] ?? null,
+            'type'                  => $validated['type'] ?? 'plan',
+            'file_path'             => 'inspection-documents/' . $fileName,
+            'file_name'             => $originalName,
+            'mime'                  => $mime,
+            'version_label'         => $validated['version_label'] ?? null,
+            'status'                => InspectionDocument::STATUS_DRAFT,
         ]);
 
         return response()->json($document, 201);
+    }
+
+    public function submit($documentId)
+    {
+        $document = InspectionDocument::findOrFail($documentId);
+
+        if ($document->status !== InspectionDocument::STATUS_DRAFT) {
+            return response()->json(['message' => 'Seul un document en brouillon peut être soumis.'], 422);
+        }
+
+        $document->submit();
+
+        $approvers = User::role(['admin', 'manager'])->get();
+        Notification::send($approvers, new InspectionDocumentApprovalNotification($document, Auth::id()));
+
+        return response()->json($document->fresh('Approver'));
+    }
+
+    public function approve($documentId)
+    {
+        $document = InspectionDocument::findOrFail($documentId);
+
+        if ($document->status !== InspectionDocument::STATUS_PENDING_APPROVAL) {
+            return response()->json(['message' => 'Seul un document en attente d\'approbation peut être approuvé.'], 422);
+        }
+
+        $document->approve();
+
+        return response()->json($document->fresh('Approver'));
+    }
+
+    public function obsolete($documentId)
+    {
+        $document = InspectionDocument::findOrFail($documentId);
+
+        if ($document->status !== InspectionDocument::STATUS_APPROVED) {
+            return response()->json(['message' => 'Seul un document approuvé peut être rendu obsolète.'], 422);
+        }
+
+        $document->makeObsolete();
+
+        return response()->json($document->fresh());
     }
 }

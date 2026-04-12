@@ -17,6 +17,7 @@ return [
     'warning'                       => 'ຄຳເຕືອນ',
     'information'                   => 'ຂໍ້ມູນ',
     'inspection_trans_key'                 => 'Inspection',
+    'internal_audits_trans_key'                => 'Internal Audits',
     'methods_overview_trans_key'               => 'Methods overview',
     'assets_trans_key'                         => 'Assets',
 ];

@@ -50,6 +50,7 @@ import QuoteChartsTab from './components/QuoteChartsTab.jsx';
 import UserProfilePage from './components/UserProfilePage.jsx';
 import NotificationLinePage from './components/NotificationLinePage.jsx';
 import UserAutoEmailReportsPage from './components/UserAutoEmailReportsPage.jsx';
+import AuditPlannerApp from './components/AuditPlannerApp.jsx';
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
@@ -923,7 +924,8 @@ function mountInspectionProjectsApp() {
 
     createRoot(element).render(
         React.createElement(InspectionProjectsApp, {
-            endpoints: parse('endpoints') ?? {},
+            endpoints:  parse('endpoints') ?? {},
+            canApprove: parse('canApprove') ?? false,
         })
     );
 }
@@ -1040,3 +1042,21 @@ function mountUserAutoEmailReportsPage() {
 mountUserProfilePage();
 mountNotificationLinePage();
 mountUserAutoEmailReportsPage();
+
+function mountAuditPlannerApp() {
+    const el = document.getElementById('audit-planner-app');
+    if (!el) return;
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(AuditPlannerApp, {
+            endpoints:  parse('endpoints')  ?? {},
+            users:      parse('users')      ?? [],
+            processes:  parse('processes')  ?? [],
+            checklists: parse('checklists') ?? [],
+            kpi:        parse('kpi')        ?? {},
+            canAdmin:   parse('canAdmin')   ?? false,
+        })
+    );
+}
+
+mountAuditPlannerApp();

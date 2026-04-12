@@ -56,6 +56,7 @@ return [
     'non_conformities_trans_key'               => 'Non conformités',
     'amdec_trans_key'                          => 'AMDEC',
     'inspection_trans_key'                     => 'Inspection',
+    'internal_audits_trans_key'                => 'Audits internes',
     'settings_trans_key'                       => 'Paramètres',
     'settings_time_trans_key'                  => 'Temps management',
     'methods_trans_key'                        => 'Méthodes',

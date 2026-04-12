@@ -18,6 +18,7 @@ return [
     'information'                   => 'Información',
     'whiteboard_trans_key'          => 'Pizarra',
     'inspection_trans_key'                 => 'Inspection',
+    'internal_audits_trans_key'                => 'Internal Audits',
     'methods_overview_trans_key'               => 'Resumen de métodos',
     'assets_trans_key'                         => 'Activos',
 ];

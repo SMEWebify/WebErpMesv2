@@ -33,7 +33,13 @@
       "Bash(git -C /c/laragon/www/WebErpMesv2/WebErpMesv2 show HEAD:resources/views/livewire/notification-line.blade.php)",
       "Bash(git -C /c/laragon/www/WebErpMesv2/WebErpMesv2 log --oneline -20)",
       "Bash(grep -n \"class UserAutoEmailReport\" /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Models/*.php)",
-      "Read(//c/Users/Kevin/Desktop/A0502395 Pack de fabrication fallback/TwoD/**)"
+      "Read(//c/Users/Kevin/Desktop/A0502395 Pack de fabrication fallback/TwoD/**)",
+      "Bash(xargs ls:*)",
+      "Bash(awk '{print $NF}')",
+      "Bash(grep -l \"hasRole\\\\|can\\(\" /c/laragon/www/WebErpMesv2/WebErpMesv2/app/Http/Controllers/**/*.php)",
+      "Bash(ls -la /c/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/*.jsx)",
+      "Bash(ls /c/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/*.jsx)",
+      "Bash(awk -F: '{print $1}')"
     ]
   }
 }

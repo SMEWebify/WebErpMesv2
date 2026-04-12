@@ -55,22 +55,27 @@ class InspectionProjectController extends Controller
     public function indexView()
     {
         $endpoints = [
-            'projectsIndex'       => route('inspection.projects.index'),
-            'projectStore'        => route('inspection.projects.store'),
-            'projectShow'         => route('inspection.projects.show',            ['id' => '__ID__']),
-            'projectUpdate'       => route('inspection.projects.update',          ['id' => '__ID__']),
-            'projectDocuments'    => route('inspection.projects.documents.store', ['id' => '__ID__']),
-            'projectControlPoints'=> route('inspection.projects.points.store',    ['id' => '__ID__']),
-            'controlPointUpdate'  => route('inspection.points.update',            ['id' => '__ID__']),
-            'controlPointDelete'  => route('inspection.points.destroy',           ['id' => '__ID__']),
-            'projectSessions'     => route('inspection.projects.sessions.store',  ['id' => '__ID__']),
-            'sessionSubmit'       => route('inspection.sessions.submit',          ['id' => '__ID__']),
-            'sessionClose'        => route('inspection.sessions.close',           ['id' => '__ID__']),
-            'exportPdf'           => route('inspection.projects.export.pdf',      ['id' => '__ID__']),
-            'exportXlsx'          => route('inspection.projects.export.xlsx',     ['id' => '__ID__']),
+            'projectsIndex'        => route('inspection.projects.index'),
+            'projectStore'         => route('inspection.projects.store'),
+            'projectShow'          => route('inspection.projects.show',            ['id' => '__ID__']),
+            'projectUpdate'        => route('inspection.projects.update',          ['id' => '__ID__']),
+            'projectDocuments'     => route('inspection.projects.documents.store', ['id' => '__ID__']),
+            'documentSubmit'       => route('inspection.documents.submit',         ['id' => '__ID__']),
+            'documentApprove'      => route('inspection.documents.approve',        ['id' => '__ID__']),
+            'documentObsolete'     => route('inspection.documents.obsolete',       ['id' => '__ID__']),
+            'projectControlPoints' => route('inspection.projects.points.store',    ['id' => '__ID__']),
+            'controlPointUpdate'   => route('inspection.points.update',            ['id' => '__ID__']),
+            'controlPointDelete'   => route('inspection.points.destroy',           ['id' => '__ID__']),
+            'projectSessions'      => route('inspection.projects.sessions.store',  ['id' => '__ID__']),
+            'sessionSubmit'        => route('inspection.sessions.submit',          ['id' => '__ID__']),
+            'sessionClose'         => route('inspection.sessions.close',           ['id' => '__ID__']),
+            'exportPdf'            => route('inspection.projects.export.pdf',      ['id' => '__ID__']),
+            'exportXlsx'           => route('inspection.projects.export.xlsx',     ['id' => '__ID__']),
         ];
 
-        return view('quality/quality-inspection-projects', compact('endpoints'));
+        $canApprove = auth()->user()->hasRole(['admin', 'manager']);
+
+        return view('quality/quality-inspection-projects', compact('endpoints', 'canApprove'));
     }
 
     /**

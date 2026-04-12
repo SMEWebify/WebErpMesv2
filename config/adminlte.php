@@ -567,6 +567,13 @@ return [
                     'url'  => 'quality/amdec',
                     'icon_color' => 'teal',
                 ],
+                [
+                    'text' => 'internal_audits_trans_key',
+                    'url'  => 'audit',
+                    'icon' => 'fas fa-clipboard-check',
+                    'icon_color' => 'success',
+                    'can'  => ['audit-menu'],
+                ],
             ],
         ],
         ['header' => 'settings_trans_key'],

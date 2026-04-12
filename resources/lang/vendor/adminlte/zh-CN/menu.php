@@ -55,6 +55,7 @@ return [
     'non_conformities_trans_key'               => '不合格',
     'amdec_trans_key'                          => '失效模式分析 (AMDEC)',
     'inspection_trans_key'                 => 'Inspection',
+    'internal_audits_trans_key'                => 'Internal Audits',
     'settings_trans_key'                       => '设置',
     'settings_time_trans_key'                  => '时间管理',
     'methods_trans_key'                        => '方法',

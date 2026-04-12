@@ -873,6 +873,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@show')->name('inspection.projects.show');
         Route::put('/{id}', 'App\Http\Controllers\Inspection\InspectionProjectController@update')->name('inspection.projects.update');
         Route::post('/{id}/documents', 'App\Http\Controllers\Inspection\InspectionDocumentController@store')->name('inspection.projects.documents.store');
+        Route::post('/documents/{id}/submit', 'App\Http\Controllers\Inspection\InspectionDocumentController@submit')->name('inspection.documents.submit');
+        Route::post('/documents/{id}/approve', 'App\Http\Controllers\Inspection\InspectionDocumentController@approve')->name('inspection.documents.approve');
+        Route::post('/documents/{id}/obsolete', 'App\Http\Controllers\Inspection\InspectionDocumentController@obsolete')->name('inspection.documents.obsolete');
         Route::post('/{id}/control-points', 'App\Http\Controllers\Inspection\InspectionControlPointController@store')->name('inspection.projects.points.store');
         Route::put('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@update')->name('inspection.points.update');
         Route::delete('/control-points/{id}', 'App\Http\Controllers\Inspection\InspectionControlPointController@destroy')->name('inspection.points.destroy');
@@ -1038,6 +1041,46 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     });
 
 });
+
+    // ─── AUDITS INTERNES ISO 9001 ──────────────────────────────────────────────
+    Route::group(['prefix' => 'audit', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'permission:audit-menu']], function () {
+        Route::get('/', 'App\Http\Controllers\Audit\AuditController@index')->name('audit.index');
+
+        // Plans
+        Route::get('/api/plans',        'App\Http\Controllers\Audit\AuditController@plansIndex')->name('audit.api.plans.index');
+        Route::post('/api/plans',       'App\Http\Controllers\Audit\AuditController@plansStore')->name('audit.api.plans.store');
+        Route::put('/api/plans/{id}',   'App\Http\Controllers\Audit\AuditController@plansUpdate')->name('audit.api.plans.update');
+        Route::delete('/api/plans/{id}','App\Http\Controllers\Audit\AuditController@plansDestroy')->name('audit.api.plans.destroy');
+
+        // Processes
+        Route::get('/api/processes',         'App\Http\Controllers\Audit\AuditController@processesIndex')->name('audit.api.processes.index');
+        Route::post('/api/processes',        'App\Http\Controllers\Audit\AuditController@processesStore')->name('audit.api.processes.store');
+        Route::put('/api/processes/{id}',    'App\Http\Controllers\Audit\AuditController@processesUpdate')->name('audit.api.processes.update');
+        Route::delete('/api/processes/{id}', 'App\Http\Controllers\Audit\AuditController@processesDestroy')->name('audit.api.processes.destroy');
+
+        // Schedules
+        Route::get('/api/schedules',         'App\Http\Controllers\Audit\AuditController@schedulesIndex')->name('audit.api.schedules.index');
+        Route::post('/api/schedules',        'App\Http\Controllers\Audit\AuditController@schedulesStore')->name('audit.api.schedules.store');
+        Route::put('/api/schedules/{id}',    'App\Http\Controllers\Audit\AuditController@schedulesUpdate')->name('audit.api.schedules.update');
+        Route::delete('/api/schedules/{id}', 'App\Http\Controllers\Audit\AuditController@schedulesDestroy')->name('audit.api.schedules.destroy');
+
+        // Checklists (read-only — seeded from ISO 9001)
+        Route::get('/api/checklists', 'App\Http\Controllers\Audit\AuditController@checklistsIndex')->name('audit.api.checklists.index');
+
+        // Executions
+        Route::post('/api/executions',           'App\Http\Controllers\Audit\AuditController@executionsStore')->name('audit.api.executions.store');
+        Route::get('/api/executions/{id}',       'App\Http\Controllers\Audit\AuditController@executionsShow')->name('audit.api.executions.show');
+        Route::put('/api/executions/{id}',       'App\Http\Controllers\Audit\AuditController@executionsUpdate')->name('audit.api.executions.update');
+        Route::post('/api/executions/{id}/close','App\Http\Controllers\Audit\AuditController@executionsClose')->name('audit.api.executions.close');
+
+        // Findings
+        Route::post('/api/findings',        'App\Http\Controllers\Audit\AuditController@findingsStore')->name('audit.api.findings.store');
+        Route::put('/api/findings/{id}',    'App\Http\Controllers\Audit\AuditController@findingsUpdate')->name('audit.api.findings.update');
+        Route::delete('/api/findings/{id}', 'App\Http\Controllers\Audit\AuditController@findingsDestroy')->name('audit.api.findings.destroy');
+
+        // Dashboard KPI
+        Route::get('/api/dashboard', 'App\Http\Controllers\Audit\AuditController@apiDashboard')->name('audit.api.dashboard');
+    });
 
     Route::prefix('api/spreadsheet/data')->middleware(['auth', 'verified', 'has.role', 'check.factory', 'permission:spreadsheet-menu'])->name('spreadsheet.data.')->group(function () {
         Route::get('/stock/{reference}', [SpreadsheetDataController::class, 'stock'])->name('stock');
