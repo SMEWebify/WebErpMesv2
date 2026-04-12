@@ -13,7 +13,8 @@
   <a href="https://github.com/SMEWebify/WebErpMesv2"><img src="https://img.shields.io/github/downloads/SMEWebify/WebErpMesv2/total" alt="License"></a>
 </p>
 
-![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
+<img width="1898" height="901" alt="image" src="https://github.com/user-attachments/assets/44dea89a-c85b-4779-a21c-a838bfb883ba" />
+
 
 ## 🎯 Why ΣEM for your workshop?
 
