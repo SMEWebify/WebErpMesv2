@@ -6,10 +6,11 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Notifications\Concerns\HasMailFrom;
 
 class NonConformityNotification extends Notification
 {
-    use Queueable;
+    use Queueable, HasMailFrom;
     private $data;
 
     /**
@@ -26,21 +27,29 @@ class NonConformityNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
-        return ['database'];
+        $channels = [];
+        if ($notifiable->non_conformity_notification)       $channels[] = 'database';
+        if ($notifiable->non_conformity_email_notification) $channels[] = 'mail';
+        return $channels ?: ['database'];
     }
 
-
-    /**
-     * Get the mail representation of the notification.
-     */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return $this->applyFrom(new MailMessage)
+            ->subject('Nouvelle non-conformité — ' . ($this->data['code'] ?? ''))
+            ->view('emails.notification', [
+                'notifiable'  => $notifiable,
+                'subject'     => 'Nouvelle non-conformité',
+                'icon'        => '⚠️',
+                'accentColor' => '#ef4444',
+                'entityLabel' => 'Non-conformité',
+                'line'        => 'Une nouvelle non-conformité a été enregistrée et requiert votre attention.',
+                'code'        => $this->data['code'] ?? '',
+                'actionUrl'   => route('quality.nonConformitie'),
+                'actionText'  => 'Voir les non-conformités',
+            ]);
     }
 
     /**

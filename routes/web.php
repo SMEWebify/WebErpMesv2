@@ -1001,6 +1001,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::put('/information',                'App\Http\Controllers\UserProfileApiController@updateInformation')->name('profile.json.information.update');
             Route::post('/notifications/{id}/read',   'App\Http\Controllers\UserProfileApiController@readNotification')->name('profile.json.notification.read');
             Route::post('/notifications/read-all',    'App\Http\Controllers\UserProfileApiController@readAllNotifications')->name('profile.json.notification.read-all');
+            Route::get('/notifications/history',      'App\Http\Controllers\UserProfileApiController@getNotificationHistory')->name('profile.json.notification.history');
             Route::put('/auto-email-reports',         'App\Http\Controllers\UserProfileApiController@saveAutoEmailReports')->name('profile.json.auto-email-reports.save');
         });
     });

@@ -24,7 +24,20 @@ class UpdateSettingNotificationRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'companies_notification'              => 'nullable|boolean',
+            'companies_email_notification'        => 'nullable|boolean',
+            'users_notification'                  => 'nullable|boolean',
+            'users_email_notification'            => 'nullable|boolean',
+            'quotes_notification'                 => 'nullable|boolean',
+            'quotes_email_notification'           => 'nullable|boolean',
+            'orders_notification'                 => 'nullable|boolean',
+            'orders_email_notification'           => 'nullable|boolean',
+            'non_conformity_notification'         => 'nullable|boolean',
+            'non_conformity_email_notification'   => 'nullable|boolean',
+            'return_notification'                 => 'nullable|boolean',
+            'return_email_notification'           => 'nullable|boolean',
+            'pre_order_notification'              => 'nullable|boolean',
+            'pre_order_email_notification'        => 'nullable|boolean',
         ];
     }
 }

@@ -20,10 +20,52 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body">
+        @include('include.alert-result')
         <div class="tab-content">
             <div class="tab-pane active" id="Profil">
                 <div class="row">
-                    @livewire('user-profile')
+                    <div id="user-profile-app" class="col-md-9"
+                         data-initial="{{ json_encode($profileInitial) }}"
+                         data-endpoints="{{ json_encode($profileEndpoints) }}"
+                         data-trans="{{ json_encode([
+                             'about_setup'           => __('general_content.about_setup_trans_key'),
+                             'personnal_information' => __('general_content.personnal_information_trans_key'),
+                             'name'                  => __('general_content.name_trans_key'),
+                             'email'                 => __('general_content.email_trans_key'),
+                             'personnal_phone'       => __('general_content.personnal_phone_trans_key'),
+                             'personnal_email'       => __('general_content.personnal_email_trans_key'),
+                             'born_date'             => __('general_content.born_date_trans_key'),
+                             'nationality'           => __('general_content.nationality_trans_key'),
+                             'gender'                => __('general_content.gender_trans_key'),
+                             'select_gender'         => __('general_content.select_gender_trans_key'),
+                             'male'                  => __('general_content.male_trans_key'),
+                             'female'                => __('general_content.female_trans_key'),
+                             'other'                 => __('general_content.other_trans_key'),
+                             'marital_status'        => __('general_content.marital_status_trans_key'),
+                             'select_marital_status' => __('general_content.select_marital_status_trans_key'),
+                             'married'               => __('general_content.married_trans_key'),
+                             'single'                => __('general_content.single_trans_key'),
+                             'divorced'              => __('general_content.divorced_trans_key'),
+                             'widowed'               => __('general_content.widowed_trans_key'),
+                             'driving_license'       => __('general_content.driving_license_trans_key'),
+                             'driving_license_exp_date' => __('general_content.driving_license_exp_date_trans_key'),
+                             'ssn_num'               => __('general_content.ssn_num_trans_key'),
+                             'nic_num'               => __('general_content.nic_num_trans_key'),
+                             'adress_section'        => __('general_content.adress_section_trans_key'),
+                             'adress'                => __('general_content.adress_trans_key'),
+                             'city'                  => __('general_content.city_trans_key'),
+                             'postal_code'           => __('general_content.postal_code_trans_key'),
+                             'province'              => __('general_content.province_trans_key'),
+                             'country'               => __('general_content.country_trans_key'),
+                             'custom_section'        => __('general_content.custom_section_trans_key'),
+                             'custom'                => __('general_content.custom_trans_key'),
+                             'about_you'             => __('general_content.about_you_trans_key'),
+                             'update'                => __('general_content.update_trans_key'),
+                             'saving'                => __('general_content.saving_trans_key') ?? 'Saving…',
+                             'success_account'       => 'Profile updated successfully',
+                             'success_information'   => 'Information updated successfully',
+                         ]) }}">
+                    </div>
                     <div class="col-md-3">
                         <x-adminlte-card title="{{ __('general_content.information_trans_key') }}" theme="secondary" maximizable>
                             <div class="card-body">
@@ -72,80 +114,82 @@
                 </div>
             </div>
             <div class="tab-pane" id="History">
-                @include('include.alert-result')
                 <div class="row">
-                    @livewire('notification-line')
+                    <div id="notification-line-app" class="col-md-9"
+                         data-notifications="{{ json_encode($notificationsInitial) }}"
+                         data-endpoints="{{ json_encode($notificationEndpoints) }}"
+                         data-trans="{{ json_encode([
+                             'unread_tab'      => __('general_content.notif_tab_unread_trans_key'),
+                             'history_tab'     => __('general_content.notif_tab_history_trans_key'),
+                             'unread_list'     => __('general_content.unread_list_trans_key'),
+                             'read'            => __('general_content.read_trans_key'),
+                             'all_read'        => __('general_content.all_read_trans_key'),
+                             'no_data'         => __('general_content.no_data_trans_key'),
+                             'read_success'    => __('general_content.notif_read_success_trans_key'),
+                             'all_read_success'=> __('general_content.notif_all_read_success_trans_key'),
+                             'load_more'       => __('general_content.notif_load_more_trans_key'),
+                             'loading'         => __('general_content.notif_loading_trans_key'),
+                             'history_empty'   => __('general_content.notif_history_empty_trans_key'),
+                             'badge_read'      => __('general_content.notif_badge_read_trans_key'),
+                             'badge_unread'    => __('general_content.notif_badge_unread_trans_key'),
+                         ]) }}">
+                    </div>
                     <div class="col-md-3">
                         <form method="POST" action="{{ route('notifications.setting') }}" >
                             @csrf
                             <x-adminlte-card title="{{ __('general_content.notification_choice_trans_key') }}" theme="teal" maximizable>
-                                <div class="row">
-                                    <div class="col-4 text-right"><label for="companies_notification" class="col-form-label">{{ __('general_content.new_companie_trans_key') }}</label></div>
-                                    <div class="col-8">
-                                        <x-adminlte-input-switch name="companies_notification" 
-                                                                data-on-text="{{ __('general_content.yes_trans_key') }}" 
-                                                                data-off-text="{{ __('general_content.no_trans_key') }}"
-                                                                data-on-color="teal" 
-                                                                data-off-color="danger" 
-                                                                is-checked="{{ $UserProfil->companies_notification }}" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4 text-right"><label for="users_notification" class="col-form-label">{{ __('general_content.new_user_trans_key') }}</label></div>
-                                    <div class="col-8">
-                                        <x-adminlte-input-switch name="users_notification" 
-                                                                data-on-text="{{ __('general_content.yes_trans_key') }}" 
-                                                                data-off-text="{{ __('general_content.no_trans_key') }}"
-                                                                data-on-color="teal" 
-                                                                data-off-color="danger" 
-                                                                is-checked="{{ $UserProfil->users_notification }}" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4 text-right"><label for="quotes_notification"  class="col-form-label">{{ __('general_content.new_quote_trans_key') }}</label></div>
-                                    <div class="col-8">
-                                        <x-adminlte-input-switch name="quotes_notification" 
-                                                                data-on-text="{{ __('general_content.yes_trans_key') }}" 
-                                                                data-off-text="{{ __('general_content.no_trans_key') }}"
-                                                                data-on-color="teal" 
-                                                                data-off-color="danger" 
-                                                                is-checked="{{ $UserProfil->quotes_notification }}" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4 text-right"><label for="orders_notification" class="col-form-label">{{ __('general_content.new_order_trans_key') }}</label></div>
-                                    <div class="col-8">
-                                        <x-adminlte-input-switch name="orders_notification" 
-                                                                data-on-text="{{ __('general_content.yes_trans_key') }}" 
-                                                                data-off-text="{{ __('general_content.no_trans_key') }}"
-                                                                data-on-color="teal" 
-                                                                data-off-color="danger" 
-                                                                is-checked="{{ $UserProfil->orders_notification }}" />
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4 text-right"><label for="non_conformity_notification" class="col-form-label">{{ __('general_content.new_non_conformitie_trans_key') }}</label></div>
-                                    <div class="col-8">
-                                        <x-adminlte-input-switch name="non_conformity_notification" 
-                                            data-on-text="{{ __('general_content.yes_trans_key') }}" 
-                                            data-off-text="{{ __('general_content.no_trans_key') }}"
-                                            data-on-color="teal" 
-                                            data-off-color="danger" 
-                                            is-checked="{{ $UserProfil->non_conformity_notification }}" />
-                                    </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="col-4 text-right"><label for="pre_order_notification" class="col-form-label">{{ __('general_content.new_pre_order_trans_key') }}</label></div>
-                                    <div class="col-8">
-                                        <x-adminlte-input-switch name="pre_order_notification" 
-                                            data-on-text="{{ __('general_content.yes_trans_key') }}" 
-                                            data-off-text="{{ __('general_content.no_trans_key') }}"
-                                            data-on-color="teal" 
-                                            data-off-color="danger" 
-                                            is-checked="{{ $UserProfil->pre_order_notification }}" />
-                                    </div>
-                                </div>
+                                @php
+                                $notifTypes = [
+                                    'companies'      => ['label' => __('general_content.new_companie_trans_key'),       'app' => 'companies_notification',      'email' => 'companies_email_notification'],
+                                    'users'          => ['label' => __('general_content.new_user_trans_key'),           'app' => 'users_notification',          'email' => 'users_email_notification'],
+                                    'quotes'         => ['label' => __('general_content.new_quote_trans_key'),          'app' => 'quotes_notification',         'email' => 'quotes_email_notification'],
+                                    'orders'         => ['label' => __('general_content.new_order_trans_key'),          'app' => 'orders_notification',         'email' => 'orders_email_notification'],
+                                    'non_conformity' => ['label' => __('general_content.new_non_conformitie_trans_key'),'app' => 'non_conformity_notification', 'email' => 'non_conformity_email_notification'],
+                                    'return'         => ['label' => __('general_content.new_return_trans_key'),         'app' => 'return_notification',         'email' => 'return_email_notification'],
+                                    'pre_order'      => ['label' => __('general_content.new_pre_order_trans_key'),      'app' => 'pre_order_notification',      'email' => 'pre_order_email_notification'],
+                                ];
+                                @endphp
+
+                                <table class="table table-sm mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-0" style="width:55%">{{ __('general_content.notification_type_trans_key') }}</th>
+                                            <th class="border-0 text-center" style="width:22%"><i class="fas fa-bell mr-1"></i>App</th>
+                                            <th class="border-0 text-center" style="width:23%"><i class="fas fa-envelope mr-1"></i>Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($notifTypes as $type)
+                                    <tr>
+                                        <td class="align-middle small">{{ $type['label'] }}</td>
+                                        <td class="text-center align-middle">
+                                            <div class="custom-control custom-switch d-inline-block">
+                                                <input type="checkbox"
+                                                       class="custom-control-input"
+                                                       id="{{ $type['app'] }}"
+                                                       name="{{ $type['app'] }}"
+                                                       value="1"
+                                                       {{ $UserProfil->{$type['app']} ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="{{ $type['app'] }}"></label>
+                                            </div>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <div class="custom-control custom-switch d-inline-block">
+                                                <input type="checkbox"
+                                                       class="custom-control-input"
+                                                       id="{{ $type['email'] }}"
+                                                       name="{{ $type['email'] }}"
+                                                       value="1"
+                                                       {{ $UserProfil->{$type['email']} ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="{{ $type['email'] }}"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+
                                 <x-slot name="footerSlot">
                                     <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.update_trans_key') }}" theme="info" icon="fas fa-lg fa-save"/>
                                 </x-slot>
@@ -154,7 +198,21 @@
                     </div>
                 </div>
                 <div class="row mt-3">
-                    @livewire('user-auto-email-reports')
+                    <div id="user-auto-email-reports-app" class="col-md-12"
+                         data-reports="{{ json_encode($reportsInitial) }}"
+                         data-report-types="{{ json_encode($reportTypes) }}"
+                         data-endpoints="{{ json_encode($autoEmailEndpoints) }}"
+                         data-trans="{{ json_encode([
+                             'automatic_email_reports'      => __('general_content.automatic_email_reports_trans_key'),
+                             'automatic_email_reports_help' => __('general_content.automatic_email_reports_help_trans_key'),
+                             'report'                       => __('general_content.report_trans_key'),
+                             'send_time'                    => __('general_content.send_time_trans_key'),
+                             'enabled'                      => __('general_content.enabled_trans_key'),
+                             'update'                       => __('general_content.update_trans_key'),
+                             'saving'                       => __('general_content.saving_trans_key') ?? 'Saving…',
+                             'saved'                        => __('general_content.automatic_email_reports_saved_trans_key'),
+                         ]) }}">
+                    </div>
                 </div>
             </div>
             <div class="tab-pane" id="LeaveRequest">
@@ -428,11 +486,27 @@
 <!-- /.card -->
 @stop
 
-@section('plugins.BootstrapSwitch', true)
-
-
 @section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')
+<script>
+    (function () {
+        var hash = window.location.hash;
+        if (hash) {
+            // Remove Bootstrap's default active state before it renders
+            $('.nav-pills .nav-link').removeClass('active');
+            $('.tab-pane').removeClass('active show');
+            // Activate the target tab immediately (no animation needed)
+            $('a[href="' + hash + '"]').addClass('active');
+            $(hash).addClass('active show');
+        }
+        // Keep hash in sync when switching tabs
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            history.replaceState(null, null, $(e.target).attr('href'));
+        });
+    })();
+</script>
 @stop

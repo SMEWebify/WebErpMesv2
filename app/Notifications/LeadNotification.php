@@ -53,10 +53,12 @@ class LeadNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
-            //
+            'id'      => $this->data['id'] ?? null,
+            'code'    => $this->data['code'] ?? null,
+            'user_id' => $this->data['user_id'] ?? null,
         ];
     }
 }
