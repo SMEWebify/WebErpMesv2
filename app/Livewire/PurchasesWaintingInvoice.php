@@ -184,8 +184,8 @@ class PurchasesWaintingInvoice extends Component
 
     private function updatePurchaseLineStatus($PurchaseReceiptLine)
     {
-        // Update status line of purchase order line
-        PurchaseLines::where('id', $PurchaseReceiptLine->purchase_line_id)->update(['invoiced_qty' => $PurchaseReceiptLine->receipt_qty]);
+        // Accumulate invoiced qty (supports multiple partial receipts on the same purchase line)
+        PurchaseLines::where('id', $PurchaseReceiptLine->purchase_line_id)->increment('invoiced_qty', $PurchaseReceiptLine->receipt_qty);
         
     }
 }
