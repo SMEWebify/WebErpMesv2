@@ -1,67 +1,27 @@
 import './bootstrap';
-
-import { createApp, h } from 'vue';
-import Whiteboard from './components/Whiteboard.vue';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
-import KanbanBoard from './components/KanbanBoard.jsx';
-import DocumentTable from './components/DocumentTable.jsx';
-import NestingPage from './components/NestingPage.jsx';
-import QuotesIndex from './components/QuotesIndex.jsx';
-import OpportunitiesIndex from './components/OpportunitiesIndex.jsx';
-import LeadsIndex from './components/LeadsIndex.jsx';
-import CompaniesIndex from './components/CompaniesIndex.jsx';
-import OrdersIndex from './components/OrdersIndex.jsx';
-import PurchasesIndex from './components/PurchasesIndex.jsx';
-import QualityIndex from './components/QualityIndex.jsx';
-import DeliverysIndex from './components/DeliverysIndex.jsx';
-import CreditNotesIndex from './components/CreditNotesIndex.jsx';
-import DeliverysRequest from './components/DeliverysRequest.jsx';
-import InvoicesRequest from './components/InvoicesRequest.jsx';
-import PurchasesRequest from './components/PurchasesRequest.jsx';
-import PurchasesQuotationIndex from './components/PurchasesQuotationIndex.jsx';
-import PurchasesQuotationShow from './components/PurchasesQuotationShow.jsx';
-import InvoicesIndex from './components/InvoicesIndex.jsx';
-import ProductsIndex from './components/ProductsIndex.jsx';
-import QuoteLinesIndex from './components/QuoteLinesIndex.jsx';
-import OrderLinesIndex from './components/OrderLinesIndex.jsx';
-import SetupWizard from './components/SetupWizard.jsx';
-import CompanyDashboard from './components/CompanyDashboard.jsx';
-import CompanyForm from './components/CompanyForm.jsx';
-import CompanyAddresses from './components/CompanyAddresses.jsx';
-import CompanyContacts from './components/CompanyContacts.jsx';
-import LoadPlanningIndex from './components/LoadPlanningIndex.jsx';
-import QuoteLinesPage from './components/QuoteLinesPage.jsx';
-import OrderLinesPage from './components/OrderLinesPage.jsx';
-import ConstructionSitePage from './components/ConstructionSitePage.jsx';
-import HomeDashboard from './components/HomeDashboard.jsx';
-import PurchaseReceiptIndex from './components/PurchaseReceiptIndex.jsx';
-import PurchaseInvoicesIndex from './components/PurchaseInvoicesIndex.jsx';
-import TasksIndex from './components/TasksIndex.jsx';
-import TaskStatuApp from './components/TaskStatuApp.jsx';
-import SerialNumbersIndex from './components/SerialNumbersIndex.jsx';
-import MethodsOverview from './components/MethodsOverview.jsx';
-import GanttChart from './components/GanttChart.jsx';
-import NonConformitiesIndex from './components/NonConformitiesIndex.jsx';
-import GmaoDashboard from './components/GmaoDashboard.jsx';
-import InspectionProjectsApp from './components/InspectionProjectsApp.jsx';
-import ProcessDiagramApp from './components/ProcessDiagramApp.jsx';
-import TaskManagePage from './components/TaskManagePage.jsx';
-import QuoteChartsTab from './components/QuoteChartsTab.jsx';
-import UserProfilePage from './components/UserProfilePage.jsx';
-import NotificationLinePage from './components/NotificationLinePage.jsx';
-import UserAutoEmailReportsPage from './components/UserAutoEmailReportsPage.jsx';
-import AuditPlannerApp from './components/AuditPlannerApp.jsx';
-import CompanyTimeline from './components/CompanyTimeline.jsx';
+
 // livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
 document.addEventListener('livewire:init', () => {
     import('livewire-sortable');
 });
 
-function mountKanbanBoard() {
+function parseJsonAttribute(value) {
+    if (!value) return null;
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        console.warn('Unable to parse JSON attribute', value, error);
+        return null;
+    }
+}
+
+async function mountKanbanBoard() {
     const element = document.getElementById('card');
     if (!element) return;
 
+    const { default: KanbanBoard } = await import('./components/KanbanBoard.jsx');
     const initialData = element.dataset.initialData
         ? JSON.parse(element.dataset.initialData)
         : [];
@@ -71,10 +31,11 @@ function mountKanbanBoard() {
     );
 }
 
-function mountDocumentTable() {
+async function mountDocumentTable() {
     const element = document.getElementById('document-table-app');
     if (!element) return;
 
+    const { default: DocumentTable } = await import('./components/DocumentTable.jsx');
     const initialDocuments = element.dataset.documents
         ? JSON.parse(element.dataset.documents)
         : [];
@@ -87,19 +48,14 @@ function mountDocumentTable() {
     );
 }
 
-function parseJsonAttribute(value) {
-    if (!value) return null;
-    try {
-        return JSON.parse(value);
-    } catch (error) {
-        console.warn('Unable to parse JSON attribute', value, error);
-        return null;
-    }
-}
-
-function mountWhiteboard() {
+async function mountWhiteboard() {
     const element = document.getElementById('whiteboard-app');
     if (!element) return;
+
+    const [{ createApp, h }, { default: Whiteboard }] = await Promise.all([
+        import('vue'),
+        import('./components/Whiteboard.vue'),
+    ]);
 
     const props = {};
 
@@ -140,17 +96,19 @@ function mountWhiteboard() {
     whiteboardApp.mount(element);
 }
 
-function mountNestingPage() {
+async function mountNestingPage() {
     const element = document.getElementById('nesting-app');
     if (!element) return;
 
+    const { default: NestingPage } = await import('./components/NestingPage.jsx');
     createRoot(element).render(React.createElement(NestingPage));
 }
 
-function mountQuotesIndex() {
+async function mountQuotesIndex() {
     const element = document.getElementById('quotes-index-app');
     if (!element) return;
 
+    const { default: QuotesIndex } = await import('./components/QuotesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -168,10 +126,11 @@ function mountQuotesIndex() {
     );
 }
 
-function mountLeadsIndex() {
+async function mountLeadsIndex() {
     const element = document.getElementById('leads-index-app');
     if (!element) return;
 
+    const { default: LeadsIndex } = await import('./components/LeadsIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -190,10 +149,11 @@ function mountLeadsIndex() {
     );
 }
 
-function mountOpportunitiesIndex() {
+async function mountOpportunitiesIndex() {
     const element = document.getElementById('opportunities-index-app');
     if (!element) return;
 
+    const { default: OpportunitiesIndex } = await import('./components/OpportunitiesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -212,10 +172,11 @@ function mountOpportunitiesIndex() {
     );
 }
 
-function mountOrdersIndex() {
+async function mountOrdersIndex() {
     const element = document.getElementById('orders-index-app');
     if (!element) return;
 
+    const { default: OrdersIndex } = await import('./components/OrdersIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -232,10 +193,11 @@ function mountOrdersIndex() {
     );
 }
 
-function mountPurchasesIndex() {
+async function mountPurchasesIndex() {
     const element = document.getElementById('purchases-index-app');
     if (!element) return;
 
+    const { default: PurchasesIndex } = await import('./components/PurchasesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -257,9 +219,11 @@ function mountPurchasesIndex() {
     );
 }
 
-function mountPurchaseInvoicesIndex() {
+async function mountPurchaseInvoicesIndex() {
     const element = document.getElementById('purchase-invoices-index-app');
     if (!element) return;
+
+    const { default: PurchaseInvoicesIndex } = await import('./components/PurchaseInvoicesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -273,9 +237,11 @@ function mountPurchaseInvoicesIndex() {
     );
 }
 
-function mountQuoteLinesIndex() {
+async function mountQuoteLinesIndex() {
     const element = document.getElementById('quote-lines-index-app');
     if (!element) return;
+
+    const { default: QuoteLinesIndex } = await import('./components/QuoteLinesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -287,9 +253,11 @@ function mountQuoteLinesIndex() {
     );
 }
 
-function mountOrderLinesIndex() {
+async function mountOrderLinesIndex() {
     const element = document.getElementById('order-lines-index-app');
     if (!element) return;
+
+    const { default: OrderLinesIndex } = await import('./components/OrderLinesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -301,10 +269,11 @@ function mountOrderLinesIndex() {
     );
 }
 
-function mountPurchasesQuotationIndex() {
+async function mountPurchasesQuotationIndex() {
     const element = document.getElementById('purchases-quotation-index-app');
     if (!element) return;
 
+    const { default: PurchasesQuotationIndex } = await import('./components/PurchasesQuotationIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -318,10 +287,11 @@ function mountPurchasesQuotationIndex() {
     );
 }
 
-function mountPurchasesQuotationShow() {
+async function mountPurchasesQuotationShow() {
     const element = document.getElementById('purchases-quotation-show-app');
     if (!element) return;
 
+    const { default: PurchasesQuotationShow } = await import('./components/PurchasesQuotationShow.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -339,10 +309,11 @@ function mountPurchasesQuotationShow() {
     );
 }
 
-function mountPurchasesRequest() {
+async function mountPurchasesRequest() {
     const element = document.getElementById('purchases-request-app');
     if (!element) return;
 
+    const { default: PurchasesRequest } = await import('./components/PurchasesRequest.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -358,10 +329,11 @@ function mountPurchasesRequest() {
     );
 }
 
-function mountDeliverysRequest() {
+async function mountDeliverysRequest() {
     const element = document.getElementById('deliverys-request-app');
     if (!element) return;
 
+    const { default: DeliverysRequest } = await import('./components/DeliverysRequest.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -379,10 +351,11 @@ function mountDeliverysRequest() {
     );
 }
 
-function mountInvoicesRequest() {
+async function mountInvoicesRequest() {
     const element = document.getElementById('invoices-request-app');
     if (!element) return;
 
+    const { default: InvoicesRequest } = await import('./components/InvoicesRequest.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -399,10 +372,11 @@ function mountInvoicesRequest() {
     );
 }
 
-function mountDeliverysIndex() {
+async function mountDeliverysIndex() {
     const element = document.getElementById('deliverys-index-app');
     if (!element) return;
 
+    const { default: DeliverysIndex } = await import('./components/DeliverysIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -418,10 +392,11 @@ function mountDeliverysIndex() {
     );
 }
 
-function mountCreditNotesIndex() {
+async function mountCreditNotesIndex() {
     const element = document.getElementById('credit-notes-index-app');
     if (!element) return;
 
+    const { default: CreditNotesIndex } = await import('./components/CreditNotesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -435,10 +410,11 @@ function mountCreditNotesIndex() {
     );
 }
 
-function mountInvoicesIndex() {
+async function mountInvoicesIndex() {
     const element = document.getElementById('invoices-index-app');
     if (!element) return;
 
+    const { default: InvoicesIndex } = await import('./components/InvoicesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -455,10 +431,11 @@ function mountInvoicesIndex() {
     );
 }
 
-function mountProductsIndex() {
+async function mountProductsIndex() {
     const element = document.getElementById('products-index-app');
     if (!element) return;
 
+    const { default: ProductsIndex } = await import('./components/ProductsIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -473,10 +450,11 @@ function mountProductsIndex() {
     );
 }
 
-function mountCompaniesIndex() {
+async function mountCompaniesIndex() {
     const element = document.getElementById('companies-index-app');
     if (!element) return;
 
+    const { default: CompaniesIndex } = await import('./components/CompaniesIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -491,10 +469,11 @@ function mountCompaniesIndex() {
     );
 }
 
-function mountCompanyForm() {
+async function mountCompanyForm() {
     const element = document.getElementById('company-form-app');
     if (!element) return;
 
+    const { default: CompanyForm } = await import('./components/CompanyForm.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -509,10 +488,11 @@ function mountCompanyForm() {
     );
 }
 
-function mountCompanyDashboard() {
+async function mountCompanyDashboard() {
     const element = document.getElementById('company-dashboard-app');
     if (!element) return;
 
+    const { default: CompanyDashboard } = await import('./components/CompanyDashboard.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -526,10 +506,11 @@ function mountCompanyDashboard() {
     );
 }
 
-function mountCompanyAddresses() {
+async function mountCompanyAddresses() {
     const element = document.getElementById('company-addresses-app');
     if (!element) return;
 
+    const { default: CompanyAddresses } = await import('./components/CompanyAddresses.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -547,10 +528,11 @@ function mountCompanyAddresses() {
     );
 }
 
-function mountCompanyContacts() {
+async function mountCompanyContacts() {
     const element = document.getElementById('company-contacts-app');
     if (!element) return;
 
+    const { default: CompanyContacts } = await import('./components/CompanyContacts.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -568,10 +550,11 @@ function mountCompanyContacts() {
     );
 }
 
-function mountCompanyTimeline() {
+async function mountCompanyTimeline() {
     const element = document.getElementById('company-timeline-app');
     if (!element) return;
 
+    const { default: CompanyTimeline } = await import('./components/CompanyTimeline.jsx');
     createRoot(element).render(
         React.createElement(CompanyTimeline, {
             endpoint: element.dataset.endpoint ?? '',
@@ -579,10 +562,11 @@ function mountCompanyTimeline() {
     );
 }
 
-function mountSetupWizard() {
+async function mountSetupWizard() {
     const element = document.getElementById('setup-wizard-app');
     if (!element) return;
 
+    const { default: SetupWizard } = await import('./components/SetupWizard.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -595,10 +579,11 @@ function mountSetupWizard() {
     );
 }
 
-function mountQualityIndex() {
+async function mountQualityIndex() {
     const element = document.getElementById('quality-index-app');
     if (!element) return;
 
+    const { default: QualityIndex } = await import('./components/QualityIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -619,10 +604,11 @@ function mountQualityIndex() {
     );
 }
 
-function mountQuoteLinesPage() {
+async function mountQuoteLinesPage() {
     const element = document.getElementById('quote-lines-page-app');
     if (!element) return;
 
+    const { default: QuoteLinesPage } = await import('./components/QuoteLinesPage.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -636,10 +622,11 @@ function mountQuoteLinesPage() {
     );
 }
 
-function mountOrderLinesPage() {
+async function mountOrderLinesPage() {
     const element = document.getElementById('order-lines-page-app');
     if (!element) return;
 
+    const { default: OrderLinesPage } = await import('./components/OrderLinesPage.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -655,10 +642,11 @@ function mountOrderLinesPage() {
     );
 }
 
-function mountLoadPlanningIndex() {
+async function mountLoadPlanningIndex() {
     const element = document.getElementById('load-planning-app');
     if (!element) return;
 
+    const { default: LoadPlanningIndex } = await import('./components/LoadPlanningIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -675,10 +663,11 @@ function mountLoadPlanningIndex() {
     );
 }
 
-function mountHomeDashboard() {
+async function mountHomeDashboard() {
     const element = document.getElementById('home-dashboard-app');
     if (!element) return;
 
+    const { default: HomeDashboard } = await import('./components/HomeDashboard.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -687,10 +676,11 @@ function mountHomeDashboard() {
     createRoot(element).render(React.createElement(HomeDashboard, props));
 }
 
-function mountTasksIndex() {
+async function mountTasksIndex() {
     const element = document.getElementById('tasks-index-app');
     if (!element) return;
 
+    const { default: TasksIndex } = await import('./components/TasksIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -707,10 +697,11 @@ function mountTasksIndex() {
     );
 }
 
-function mountPurchaseReceiptIndex() {
+async function mountPurchaseReceiptIndex() {
     const element = document.getElementById('purchase-receipt-index-app');
     if (!element) return;
 
+    const { default: PurchaseReceiptIndex } = await import('./components/PurchaseReceiptIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -725,10 +716,11 @@ function mountPurchaseReceiptIndex() {
     );
 }
 
-function mountConstructionSitePage() {
+async function mountConstructionSitePage() {
     const element = document.getElementById('construction-site-app');
     if (!element) return;
 
+    const { default: ConstructionSitePage } = await import('./components/ConstructionSitePage.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -743,10 +735,11 @@ function mountConstructionSitePage() {
     );
 }
 
-function mountSerialNumbersIndex() {
+async function mountSerialNumbersIndex() {
     const element = document.getElementById('serial-numbers-index-app');
     if (!element) return;
 
+    const { default: SerialNumbersIndex } = await import('./components/SerialNumbersIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -760,10 +753,11 @@ function mountSerialNumbersIndex() {
     );
 }
 
-function mountSerialNumbersEmbedded() {
+async function mountSerialNumbersEmbedded() {
     const element = document.getElementById('serial-numbers-embedded-app');
     if (!element) return;
 
+    const { default: SerialNumbersIndex } = await import('./components/SerialNumbersIndex.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -778,10 +772,11 @@ function mountSerialNumbersEmbedded() {
     );
 }
 
-function mountMethodsOverview() {
+async function mountMethodsOverview() {
     const element = document.getElementById('methods-overview-app');
     if (!element) return;
 
+    const { default: MethodsOverview } = await import('./components/MethodsOverview.jsx');
     const parse = (attr) => {
         try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
     };
@@ -795,6 +790,276 @@ function mountMethodsOverview() {
     );
 }
 
+async function mountGanttChart() {
+    const element = document.getElementById('gantt-chart-app');
+    if (!element) return;
+
+    const { default: GanttChart } = await import('./components/GanttChart.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(GanttChart, {
+            orderId:  element.dataset.orderId ? parseInt(element.dataset.orderId, 10) : null,
+            apiBase:  element.dataset.apiBase ?? '/production/gantt/order',
+            trans:    parse('trans') ?? {},
+        })
+    );
+}
+
+async function mountTaskStatuApp() {
+    const element = document.getElementById('task-statu-app');
+    if (!element) return;
+
+    const { default: TaskStatuApp } = await import('./components/TaskStatuApp.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    const taskId = element.dataset.taskId ? parseInt(element.dataset.taskId, 10) : null;
+
+    createRoot(element).render(
+        React.createElement(TaskStatuApp, {
+            kpi:                  parse('kpi')              ?? {},
+            userProductivity:     parse('userProductivity') ?? [],
+            resourceHours:        parse('resourceHours')    ?? [],
+            initialTaskId:        Number.isNaN(taskId) ? null : taskId,
+            baseStatuUrl:         element.dataset.baseStatuUrl         ?? '',
+            apiBaseUrl:           element.dataset.apiBaseUrl           ?? '',
+            andonStoreUrl:        element.dataset.andonStoreUrl        ?? '',
+            purchasesRequestUrl:  element.dataset.purchasesRequestUrl  ?? '',
+            trans:                parse('trans')            ?? {},
+        })
+    );
+}
+
+async function mountNonConformitiesIndex() {
+    const element = document.getElementById('non-conformities-index-app');
+    if (!element) return;
+
+    const { default: NonConformitiesIndex } = await import('./components/NonConformitiesIndex.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(NonConformitiesIndex, {
+            endpoints:   parse('endpoints')   ?? {},
+            nextCode:    element.dataset.nextCode ?? '',
+            users:       parse('users')       ?? [],
+            services:    parse('services')    ?? [],
+            companies:   parse('companies')   ?? [],
+            failures:    parse('failures')    ?? [],
+            causes:      parse('causes')      ?? [],
+            corrections: parse('corrections') ?? [],
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+async function mountGmaoDashboard() {
+    const element = document.getElementById('gmao-dashboard-app');
+    if (!element) return;
+
+    const { default: GmaoDashboard } = await import('./components/GmaoDashboard.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(GmaoDashboard, {
+            kpis:                  parse('kpis')               ?? [],
+            workOrdersCount:       parse('workOrdersCount')    ?? {},
+            recentWorkOrders:      parse('recentWorkOrders')   ?? [],
+            maintenancePlansCount: element.dataset.maintenancePlansCount
+                                   ? parseInt(element.dataset.maintenancePlansCount, 10)
+                                   : 0,
+            endpoints:             parse('endpoints')          ?? {},
+        })
+    );
+}
+
+async function mountInspectionProjectsApp() {
+    const element = document.getElementById('inspection-projects-app');
+    if (!element) return;
+
+    const { default: InspectionProjectsApp } = await import('./components/InspectionProjectsApp.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(InspectionProjectsApp, {
+            endpoints:  parse('endpoints') ?? {},
+            canApprove: parse('canApprove') ?? false,
+        })
+    );
+}
+
+async function mountTaskManagePage() {
+    const element = document.getElementById('task-manage-app');
+    if (!element) return;
+
+    const { default: TaskManagePage } = await import('./components/TaskManagePage.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(TaskManagePage, {
+            context: {
+                idType:   element.dataset.idType   ?? '',
+                idPage:   element.dataset.idPage   ?? '',
+                idLine:   element.dataset.idLine   ?? '',
+                statu:    parseInt(element.dataset.statu ?? '0', 10),
+                currency: element.dataset.currency ?? '€',
+            },
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+async function mountProcessDiagramApp() {
+    const element = document.getElementById('process-diagram-app');
+    if (!element) return;
+
+    const { default: ProcessDiagramApp } = await import('./components/ProcessDiagramApp.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(ProcessDiagramApp, {
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
+async function mountQuoteChartsTab() {
+    const element = document.getElementById('quote-charts-tab-app');
+    if (!element) return;
+
+    const { default: QuoteChartsTab } = await import('./components/QuoteChartsTab.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QuoteChartsTab, {
+            productTime: parse('productTime') ?? {},
+            settingTime: parse('settingTime') ?? {},
+            cost:        parse('cost')        ?? {},
+            price:       parse('price')       ?? {},
+            currency:    element.dataset.currency ?? '€',
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+async function mountOrderChartsTab() {
+    const element = document.getElementById('order-charts-tab-app');
+    if (!element) return;
+
+    const { default: QuoteChartsTab } = await import('./components/QuoteChartsTab.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(QuoteChartsTab, {
+            productTime: parse('productTime') ?? {},
+            settingTime: parse('settingTime') ?? {},
+            cost:        parse('cost')        ?? {},
+            price:       parse('price')       ?? {},
+            currency:    element.dataset.currency ?? '€',
+            trans:       parse('trans')       ?? {},
+        })
+    );
+}
+
+async function mountUserProfilePage() {
+    const el = document.getElementById('user-profile-app');
+    if (!el) return;
+
+    const { default: UserProfilePage } = await import('./components/UserProfilePage.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(UserProfilePage, {
+            initial:   parse('initial')   ?? {},
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+async function mountNotificationLinePage() {
+    const el = document.getElementById('notification-line-app');
+    if (!el) return;
+
+    const { default: NotificationLinePage } = await import('./components/NotificationLinePage.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(NotificationLinePage, {
+            initialNotifications: parse('notifications') ?? [],
+            endpoints:            parse('endpoints')     ?? {},
+            trans:                parse('trans')         ?? {},
+        })
+    );
+}
+
+async function mountUserAutoEmailReportsPage() {
+    const el = document.getElementById('user-auto-email-reports-app');
+    if (!el) return;
+
+    const { default: UserAutoEmailReportsPage } = await import('./components/UserAutoEmailReportsPage.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(UserAutoEmailReportsPage, {
+            initialReports: parse('reports')     ?? {},
+            reportTypes:    parse('reportTypes') ?? {},
+            endpoints:      parse('endpoints')   ?? {},
+            trans:          parse('trans')       ?? {},
+        })
+    );
+}
+
+async function mountAuditPlannerApp() {
+    const el = document.getElementById('audit-planner-app');
+    if (!el) return;
+
+    const { default: AuditPlannerApp } = await import('./components/AuditPlannerApp.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(AuditPlannerApp, {
+            endpoints:  parse('endpoints')  ?? {},
+            users:      parse('users')      ?? [],
+            processes:  parse('processes')  ?? [],
+            checklists: parse('checklists') ?? [],
+            kpi:        parse('kpi')        ?? {},
+            canAdmin:   parse('canAdmin')   ?? false,
+        })
+    );
+}
+
+async function mountChatWidget() {
+    // Le widget est global : il crée son propre container sur document.body
+    // et s'affiche uniquement si l'utilisateur est authentifié (présence du meta csrf-token)
+    const hasCsrf = !!document.querySelector('meta[name="csrf-token"]');
+    if (!hasCsrf) return;
+
+    // Détecte le locale depuis l'URL (/fr/..., /en/...) — mcamara/laravel-localization
+    const localeMatch = window.location.pathname.match(/^\/([a-z]{2})\//);
+    const locale = localeMatch ? localeMatch[1] : 'fr';
+
+    const { default: ChatWidget } = await import('./components/ai/ChatWidget.jsx');
+    const container = document.createElement('div');
+    container.id = 'ai-chat-widget-root';
+    document.body.appendChild(container);
+    createRoot(container).render(React.createElement(ChatWidget, { locale }));
+}
+
+// --- Bootstrap : montage de tous les composants ---
 mountSetupWizard();
 mountCompanyDashboard();
 mountCompanyForm();
@@ -834,260 +1099,17 @@ mountPurchaseReceiptIndex();
 mountSerialNumbersIndex();
 mountSerialNumbersEmbedded();
 mountMethodsOverview();
-
-function mountGanttChart() {
-    const element = document.getElementById('gantt-chart-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(GanttChart, {
-            orderId:  element.dataset.orderId ? parseInt(element.dataset.orderId, 10) : null,
-            apiBase:  element.dataset.apiBase ?? '/production/gantt/order',
-            trans:    parse('trans') ?? {},
-        })
-    );
-}
-
-function mountTaskStatuApp() {
-    const element = document.getElementById('task-statu-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    const taskId = element.dataset.taskId ? parseInt(element.dataset.taskId, 10) : null;
-
-    createRoot(element).render(
-        React.createElement(TaskStatuApp, {
-            kpi:                  parse('kpi')              ?? {},
-            userProductivity:     parse('userProductivity') ?? [],
-            resourceHours:        parse('resourceHours')    ?? [],
-            initialTaskId:        Number.isNaN(taskId) ? null : taskId,
-            baseStatuUrl:         element.dataset.baseStatuUrl         ?? '',
-            apiBaseUrl:           element.dataset.apiBaseUrl           ?? '',
-            andonStoreUrl:        element.dataset.andonStoreUrl        ?? '',
-            purchasesRequestUrl:  element.dataset.purchasesRequestUrl  ?? '',
-            trans:                parse('trans')            ?? {},
-        })
-    );
-}
-
 mountTaskStatuApp();
 mountGanttChart();
-
-function mountNonConformitiesIndex() {
-    const element = document.getElementById('non-conformities-index-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(NonConformitiesIndex, {
-            endpoints:   parse('endpoints')   ?? {},
-            nextCode:    element.dataset.nextCode ?? '',
-            users:       parse('users')       ?? [],
-            services:    parse('services')    ?? [],
-            companies:   parse('companies')   ?? [],
-            failures:    parse('failures')    ?? [],
-            causes:      parse('causes')      ?? [],
-            corrections: parse('corrections') ?? [],
-            trans:       parse('trans')       ?? {},
-        })
-    );
-}
-
 mountNonConformitiesIndex();
-
-function mountGmaoDashboard() {
-    const element = document.getElementById('gmao-dashboard-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(GmaoDashboard, {
-            kpis:                  parse('kpis')               ?? [],
-            workOrdersCount:       parse('workOrdersCount')    ?? {},
-            recentWorkOrders:      parse('recentWorkOrders')   ?? [],
-            maintenancePlansCount: element.dataset.maintenancePlansCount
-                                   ? parseInt(element.dataset.maintenancePlansCount, 10)
-                                   : 0,
-            endpoints:             parse('endpoints')          ?? {},
-        })
-    );
-}
-
 mountGmaoDashboard();
-
-function mountInspectionProjectsApp() {
-    const element = document.getElementById('inspection-projects-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(InspectionProjectsApp, {
-            endpoints:  parse('endpoints') ?? {},
-            canApprove: parse('canApprove') ?? false,
-        })
-    );
-}
-
 mountInspectionProjectsApp();
-
-function mountTaskManagePage() {
-    const element = document.getElementById('task-manage-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(TaskManagePage, {
-            context: {
-                idType:   element.dataset.idType   ?? '',
-                idPage:   element.dataset.idPage   ?? '',
-                idLine:   element.dataset.idLine   ?? '',
-                statu:    parseInt(element.dataset.statu ?? '0', 10),
-                currency: element.dataset.currency ?? '€',
-            },
-            endpoints: parse('endpoints') ?? {},
-        })
-    );
-}
-
 mountTaskManagePage();
-
-function mountProcessDiagramApp() {
-    const element = document.getElementById('process-diagram-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(ProcessDiagramApp, {
-            endpoints: parse('endpoints') ?? {},
-        })
-    );
-}
-
 mountProcessDiagramApp();
-
-function mountQuoteChartsTab() {
-    const element = document.getElementById('quote-charts-tab-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(QuoteChartsTab, {
-            productTime: parse('productTime') ?? {},
-            settingTime: parse('settingTime') ?? {},
-            cost:        parse('cost')        ?? {},
-            price:       parse('price')       ?? {},
-            currency:    element.dataset.currency ?? '€',
-            trans:       parse('trans')       ?? {},
-        })
-    );
-}
-
-function mountOrderChartsTab() {
-    const element = document.getElementById('order-charts-tab-app');
-    if (!element) return;
-
-    const parse = (attr) => {
-        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
-    };
-
-    createRoot(element).render(
-        React.createElement(QuoteChartsTab, {
-            productTime: parse('productTime') ?? {},
-            settingTime: parse('settingTime') ?? {},
-            cost:        parse('cost')        ?? {},
-            price:       parse('price')       ?? {},
-            currency:    element.dataset.currency ?? '€',
-            trans:       parse('trans')       ?? {},
-        })
-    );
-}
-
 mountQuoteChartsTab();
 mountOrderChartsTab();
-
-function mountUserProfilePage() {
-    const el = document.getElementById('user-profile-app');
-    if (!el) return;
-    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
-    createRoot(el).render(
-        React.createElement(UserProfilePage, {
-            initial:   parse('initial')   ?? {},
-            endpoints: parse('endpoints') ?? {},
-            trans:     parse('trans')     ?? {},
-        })
-    );
-}
-
-function mountNotificationLinePage() {
-    const el = document.getElementById('notification-line-app');
-    if (!el) return;
-    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
-    createRoot(el).render(
-        React.createElement(NotificationLinePage, {
-            initialNotifications: parse('notifications') ?? [],
-            endpoints:            parse('endpoints')     ?? {},
-            trans:                parse('trans')         ?? {},
-        })
-    );
-}
-
-function mountUserAutoEmailReportsPage() {
-    const el = document.getElementById('user-auto-email-reports-app');
-    if (!el) return;
-    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
-    createRoot(el).render(
-        React.createElement(UserAutoEmailReportsPage, {
-            initialReports: parse('reports')     ?? {},
-            reportTypes:    parse('reportTypes') ?? {},
-            endpoints:      parse('endpoints')   ?? {},
-            trans:          parse('trans')       ?? {},
-        })
-    );
-}
-
 mountUserProfilePage();
 mountNotificationLinePage();
 mountUserAutoEmailReportsPage();
-
-function mountAuditPlannerApp() {
-    const el = document.getElementById('audit-planner-app');
-    if (!el) return;
-    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
-    createRoot(el).render(
-        React.createElement(AuditPlannerApp, {
-            endpoints:  parse('endpoints')  ?? {},
-            users:      parse('users')      ?? [],
-            processes:  parse('processes')  ?? [],
-            checklists: parse('checklists') ?? [],
-            kpi:        parse('kpi')        ?? {},
-            canAdmin:   parse('canAdmin')   ?? false,
-        })
-    );
-}
-
 mountAuditPlannerApp();
+mountChatWidget();

@@ -44,7 +44,12 @@
       "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/OrdersIndex.jsx)",
       "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/InvoicesIndex.jsx)",
       "Bash(sed -n '7,30p' c:/laragon/www/WebErpMesv2/WebErpMesv2/resources/js/components/QuotesIndex.jsx)",
-      "Bash(grep -r \"order_line_id\\\\|delivery_line_id\" database/migrations/*.php)"
+      "Bash(grep -r \"order_line_id\\\\|delivery_line_id\" database/migrations/*.php)",
+      "Bash(grep \"dashboard$\")",
+      "Bash(php -l app/Services/AI/DTOs/AIRequest.php app/Services/AI/Providers/ToolAwareClaudeProvider.php app/Services/AI/Tools/ERPToolRegistry.php app/Services/AI/Tools/OrderQueryTool.php app/Services/AI/Tools/StockQueryTool.php app/Services/AI/Tools/InvoiceQueryTool.php app/Services/AI/Tools/QuoteQueryTool.php app/Services/AI/Modules/ERPAssistantModule.php app/Http/Controllers/AI/AssistantChatController.php app/Providers/AIServiceProvider.php)",
+      "Bash(php -l app/Services/AI/Tools/OrderQueryTool.php app/Services/AI/Tools/InvoiceQueryTool.php app/Services/AI/Tools/QuoteQueryTool.php app/Services/AI/Tools/StockQueryTool.php)",
+      "Bash(php -l app/Services/AI/Tools/StockQueryTool.php)",
+      "Bash(php -l app/Services/AI/Modules/ERPAssistantModule.php app/Http/Controllers/AI/AssistantChatController.php)"
     ]
   }
 }

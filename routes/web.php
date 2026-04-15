@@ -90,6 +90,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/mood',             'App\Http\Controllers\Api\KpiController@setMood')->name('mood.set');
     });
 
+    // Assistant IA ERP
+    Route::middleware(['auth', 'verified', 'has.role'])->prefix('ai')->name('ai.')->group(function () {
+        Route::post('/chat', [\App\Http\Controllers\AI\AssistantChatController::class, 'chat'])->name('chat');
+    });
+
     // Dashboard config (personnalisation par utilisateur)
     Route::middleware(['auth', 'verified', 'has.role', 'check.factory'])->group(function () {
         Route::get('/dashboard/config', 'App\Http\Controllers\DashboardConfigController@show')->name('dashboard.config.show');
