@@ -26,7 +26,13 @@ class ArrowQuote extends Component
     public function changeStatu($statuNumber){
         try{
             Quotes::where('id',$this->QuoteId)->update(['statu'=>$statuNumber]);
-            QuoteLines::where('quotes_id', $this->QuoteId)->update(['statu' => $statuNumber]);
+
+            // Only advance line statuses — never overwrite lines that are already
+            // at a higher status (e.g. lines converted to an order stay at statu=3
+            // even when the quote is moved back to "en cours").
+            QuoteLines::where('quotes_id', $this->QuoteId)
+                ->where('statu', '<', $statuNumber)
+                ->update(['statu' => $statuNumber]);
 
             // event for opp statu
             event(new QuoteStatusChanged($this->QuoteId, $statuNumber));
