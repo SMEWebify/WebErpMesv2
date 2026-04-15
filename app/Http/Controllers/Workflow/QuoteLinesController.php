@@ -669,8 +669,10 @@ class QuoteLinesController extends Controller
                         'cam_file'           => $detail->cam_file,
                         'cad_file_path'      => $detail->cad_file_path,
                         'cam_file_path'      => $detail->cam_file_path,
-                        'internal_comment'   => $detail->internal_comment,
-                        'external_comment'   => $detail->external_comment,
+                        'picture'             => $detail->picture,
+                        'internal_comment'    => $detail->internal_comment,
+                        'external_comment'    => $detail->external_comment,
+                        'custom_requirements' => $detail->custom_requirements,
                     ]);
                 }
 
