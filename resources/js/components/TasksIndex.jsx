@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Tooltip } from 'bootstrap';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -121,8 +122,8 @@ function colDefs(t) {
                     <span style={style}>
                         {task.service.picture ? (
                             <span
-                                data-toggle="tooltip"
-                                data-html="true"
+                                data-bs-toggle="tooltip"
+                                data-bs-html="true"
                                 title={`<img alt='Service' class='profile-user-img img-fluid img-circle' src='/images/methods/${task.service.picture}'>`}
                             >
                                 {task.service.label}
@@ -143,8 +144,8 @@ function colDefs(t) {
                         <li key={r.id}>
                             {r.picture ? (
                                 <span
-                                    data-toggle="tooltip"
-                                    data-html="true"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-html="true"
                                     title={`<img alt='Ressource' class='profile-user-img' src='/images/ressources/${r.picture}'>`}
                                 >
                                     {r.label}
@@ -166,19 +167,19 @@ function colDefs(t) {
             label:     t('setting_time_trans_key'),
             sortField: 'seting_time',
             align:     'right',
-            render:    (task) => `${parseFloat((task.seting_time ?? 0).toFixed(2))} h`,
+            render:    (task) => `${parseFloat(task.seting_time ?? 0).toFixed(2)} h`,
         },
         unit_time: {
             label:     t('unit_time_trans_key'),
             sortField: 'unit_time',
             align:     'right',
-            render:    (task) => `${parseFloat((task.unit_time ?? 0).toFixed(2))} h`,
+            render:    (task) => `${parseFloat(task.unit_time ?? 0).toFixed(2)} h`,
         },
         total_time: {
             label:     t('total_time_trans_key'),
             sortField: 'total_time',
             align:     'right',
-            render:    (task) => `${parseFloat((task.total_time ?? 0).toFixed(2))} h`,
+            render:    (task) => `${parseFloat(task.total_time ?? 0).toFixed(2)} h`,
         },
         progress: {
             label:     t('progress_trans_key'),
@@ -318,7 +319,8 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
     const [hiddenCols,  setHiddenCols]  = useState(readSavedHiddenCols);
     const [colFilters,  setColFilters]  = useState({});
     const [dragOver,    setDragOver]    = useState(null);
-    const dragCol = useRef(null);
+    const dragCol  = useRef(null);
+    const tableRef = useRef(null);
 
     const COLS        = colDefs(t);
     const visibleCols = colOrder.filter((c) => !hiddenCols.has(c));
@@ -359,8 +361,18 @@ function TasksTable({ tasks, sortField, sortAsc, onSort, t }) {
 
     const inputStyle = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
 
+    useEffect(() => {
+        if (!tableRef.current) return;
+        const instances = [];
+        tableRef.current.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+            Tooltip.getInstance(el)?.dispose();
+            instances.push(new Tooltip(el));
+        });
+        return () => instances.forEach((tip) => tip.dispose());
+    }, [filtered]);
+
     return (
-        <div>
+        <div ref={tableRef}>
             {/* ── hidden-column restore chips ── */}
             {hiddenCols.size > 0 && (
                 <div className="mb-2 d-flex flex-wrap px-3" style={{ gap: '4px' }}>

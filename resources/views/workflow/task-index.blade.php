@@ -39,10 +39,3 @@
   </style>
 @stop
 
-@section('js')
-<script>
-  $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-  });
-</script>
-@stop
