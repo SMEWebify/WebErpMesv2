@@ -7,12 +7,14 @@
 @stop
 
 @section('content')
-    <x-InfocalloutComponent note="Used for dashboard chart."  />
-    @livewire('estimated-budget')
+<div
+    id="estimated-budgets-app"
+    data-endpoints='@json($reactEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+    data-trans='@json($reactTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
+</div>
 @stop
 
 @section('css')
-@stop
-
-@section('js')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop

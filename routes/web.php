@@ -754,6 +754,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/document-code-template/update/{id}', 'App\Http\Controllers\Admin\DocumentCodeTemplateController@update')->middleware(['auth'])->name('admin.document.code.template.update');
         
         Route::get('/estimated-budgets-settings', 'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsSettingView')->middleware(['auth'])->name('admin.estimated.budgets.settings');
+        Route::get('/estimated-budgets/json/list',         'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonList')->middleware(['auth'])->name('admin.estimated.budgets.json.list');
+        Route::post('/estimated-budgets/json/store',       'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonStore')->middleware(['auth'])->name('admin.estimated.budgets.json.store');
+        Route::put('/estimated-budgets/json/update/{id}',  'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonUpdate')->middleware(['auth'])->name('admin.estimated.budgets.json.update');
+        Route::delete('/estimated-budgets/json/{id}',      'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonDestroy')->middleware(['auth'])->name('admin.estimated.budgets.json.destroy');
 
         Route::get('/kanban-settings', 'App\Http\Controllers\Admin\FactoryController@kanbanSettingView')->middleware(['auth'])->name('admin.kanban.settings');
 

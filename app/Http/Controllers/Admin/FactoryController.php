@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\DocumentCodeTemplate;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Admin\Factory;
 use App\Models\Admin\CustomField;
 use App\Models\Admin\Announcements;
+use App\Models\Admin\EstimatedBudgets;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -269,7 +271,104 @@ class FactoryController extends Controller
      */
     public function estimatedBudgetsSettingView()
     {
-        return view('admin/factory-estimated-budgets-settings');
+        $factory = Factory::first();
+
+        $reactEndpoints = [
+            'list'    => route('admin.estimated.budgets.json.list'),
+            'store'   => route('admin.estimated.budgets.json.store'),
+            'update'  => route('admin.estimated.budgets.json.update', ['id' => '__ID__']),
+            'destroy' => route('admin.estimated.budgets.json.destroy', ['id' => '__ID__']),
+        ];
+
+        $reactTrans = [
+            'title'       => __('general_content.estimated_budget_trans_key'),
+            'year'        => __('general_content.year_trans_key'),
+            'select_year' => __('general_content.select_year_trans_key'),
+            'total'       => __('general_content.total_trans_key'),
+            'action'      => __('general_content.action_trans_key'),
+            'submit'      => __('general_content.submit_trans_key'),
+            'update'      => __('general_content.update_trans_key'),
+            'cancel'      => __('general_content.cancel_trans_key'),
+            'search'      => __('general_content.search_trans_key'),
+            'no_data'     => __('general_content.no_data_trans_key'),
+            'months'      => __('general_content.chart_months_trans_key'),
+            'currency'    => $factory->curency ?? '€',
+            'note'        => 'Used for dashboard chart.',
+        ];
+
+        return view('admin/factory-estimated-budgets-settings', compact('reactEndpoints', 'reactTrans'));
+    }
+
+    public function estimatedBudgetsJsonList(Request $request)
+    {
+        $search    = $request->get('search', '');
+        $sortField = $request->get('sort', 'year');
+        $sortAsc   = $request->boolean('asc', true);
+
+        if (!in_array($sortField, ['year'])) {
+            $sortField = 'year';
+        }
+
+        $budgets = EstimatedBudgets::where('year', 'like', '%' . $search . '%')
+            ->orderBy($sortField, $sortAsc ? 'asc' : 'desc')
+            ->paginate(10);
+
+        return response()->json($budgets);
+    }
+
+    public function estimatedBudgetsJsonStore(Request $request)
+    {
+        $data = $request->validate([
+            'year'     => 'required|unique:estimated_budgets,year',
+            'amount1'  => 'required|numeric',
+            'amount2'  => 'required|numeric',
+            'amount3'  => 'required|numeric',
+            'amount4'  => 'required|numeric',
+            'amount5'  => 'required|numeric',
+            'amount6'  => 'required|numeric',
+            'amount7'  => 'required|numeric',
+            'amount8'  => 'required|numeric',
+            'amount9'  => 'required|numeric',
+            'amount10' => 'required|numeric',
+            'amount11' => 'required|numeric',
+            'amount12' => 'required|numeric',
+        ]);
+
+        $budget = EstimatedBudgets::create($data);
+
+        return response()->json($budget, 201);
+    }
+
+    public function estimatedBudgetsJsonUpdate(Request $request, $id)
+    {
+        $budget = EstimatedBudgets::findOrFail($id);
+
+        $data = $request->validate([
+            'year'     => ['required', Rule::unique('estimated_budgets', 'year')->ignore($budget->id)],
+            'amount1'  => 'required|numeric',
+            'amount2'  => 'required|numeric',
+            'amount3'  => 'required|numeric',
+            'amount4'  => 'required|numeric',
+            'amount5'  => 'required|numeric',
+            'amount6'  => 'required|numeric',
+            'amount7'  => 'required|numeric',
+            'amount8'  => 'required|numeric',
+            'amount9'  => 'required|numeric',
+            'amount10' => 'required|numeric',
+            'amount11' => 'required|numeric',
+            'amount12' => 'required|numeric',
+        ]);
+
+        $budget->fill($data)->save();
+
+        return response()->json($budget);
+    }
+
+    public function estimatedBudgetsJsonDestroy($id)
+    {
+        EstimatedBudgets::findOrFail($id)->delete();
+
+        return response()->json(['message' => 'deleted']);
     }
 
     /**
