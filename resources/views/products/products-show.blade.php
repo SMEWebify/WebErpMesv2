@@ -26,11 +26,7 @@
           @if($Product->purchased == 1 )
           <li class="nav-item"><a class="nav-link" href="#PreferredSupplier" data-toggle="tab"> <i class="fas fa-truck"></i>{{ __('general_content.preferred_supplier_trans_key') }}</a></li>
           @endif
-          <li class="nav-item"><a class="nav-link" href="#quote" data-toggle="tab"><i class="fas fa-file-invoice"></i> {{ __('general_content.quotes_list_trans_key') }}</a></li>
-          <li class="nav-item"><a class="nav-link" href="#order" data-toggle="tab"><i class="fas fa-shopping-cart"></i> {{ __('general_content.orders_list_trans_key') }}</a></li>
-          @can('purchases-menu')
-          <li class="nav-item"><a class="nav-link" href="#purchase" data-toggle="tab"><i class="fas fa-cart-arrow-down"></i> {{ __('general_content.purchase_list_trans_key') }}</a></li>
-          @endcan
+          <li class="nav-item"><a class="nav-link" href="#history" data-toggle="tab"><i class="fas fa-history"></i> {{ __('general_content.historical_trans_key') }}</a></li>
           @can('stock-lot-serial-management')
           <li class="nav-item"><a class="nav-link" href="#serialNumber" data-toggle="tab"><i class="fas fa-barcode"></i> {{ __('general_content.serial_numbers_trans_key') }}</a></li>
           @endcan
@@ -693,17 +689,41 @@
           <!-- /.row -->
         </div>
         @endif
-        <div class="tab-pane" id="quote">
-          @livewire('quotes-lines-index' , ['product_id' => $Product->id ])
+        <div class="tab-pane" id="history">
+          @php
+            $historyTrans = [
+              'search'          => __('general_content.search_trans_key'),
+              'results'         => __('general_content.results_trans_key', [], null) ?? 'résultat(s)',
+              'no_data'         => __('general_content.no_data_trans_key'),
+              'quotes'          => __('general_content.quotes_list_trans_key'),
+              'orders'          => __('general_content.orders_list_trans_key'),
+              'purchases'       => __('general_content.purchase_list_trans_key'),
+              'quote'           => __('general_content.quote_trans_key'),
+              'order'           => __('general_content.order_trans_key'),
+              'purchase'        => __('general_content.purchase_trans_key'),
+              'sort'            => __('general_content.sort_trans_key'),
+              'ref'             => __('general_content.id_trans_key'),
+              'label'           => __('general_content.label_trans_key'),
+              'qty'             => __('general_content.qty_trans_key'),
+              'qty_receipt'     => __('general_content.qty_reciept_trans_key'),
+              'unit'            => __('general_content.unit_trans_key'),
+              'price'           => __('general_content.price_trans_key'),
+              'discount'        => __('general_content.discount_trans_key'),
+              'delivery_date'   => __('general_content.delivery_date_trans_key'),
+              'status'          => __('general_content.status_trans_key'),
+              'tasks_status'    => __('general_content.tasks_status_trans_key'),
+              'delivery_status' => __('general_content.delivery_status_trans_key'),
+              'invoice_status'  => __('general_content.invoice_status_trans_key'),
+            ];
+          @endphp
+          @php $canPurchases = auth()->user()?->can('purchases-menu') ? 'true' : 'false'; @endphp
+          <div
+            id="product-history-app"
+            data-endpoint="{{ route('products.json.history', ['id' => $Product->id]) }}"
+            data-trans='@json($historyTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+            data-can-purchases="{{ $canPurchases }}"
+          ></div>
         </div>
-        <div class="tab-pane" id="order">
-          @livewire('orders-lines-index' , ['product_id' => $Product->id ])
-        </div>
-        @can('purchases-menu')
-        <div class="tab-pane" id="purchase">
-          @livewire('purchases-lines-index' , ['search_product_id' => $Product->id, 'purchase_id' => null, 'OrderStatu' => 0 ])
-        </div>
-        @endcan
         @can('stock-lot-serial-management')
         <div class="tab-pane" id="serialNumber">
           @php

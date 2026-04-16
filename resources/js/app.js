@@ -450,6 +450,24 @@ async function mountProductsIndex() {
     );
 }
 
+async function mountProductHistory() {
+    const element = document.getElementById('product-history-app');
+    if (!element) return;
+
+    const { default: ProductHistory } = await import('./components/ProductHistory.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(ProductHistory, {
+            endpoint:    element.dataset.endpoint    ?? '',
+            trans:       parse('trans')              ?? {},
+            canPurchases: element.dataset.canPurchases === 'true',
+        })
+    );
+}
+
 async function mountCompaniesIndex() {
     const element = document.getElementById('companies-index-app');
     if (!element) return;
@@ -1116,6 +1134,23 @@ async function mountAuditPlannerApp() {
     );
 }
 
+async function mountEstimatedBudgetsIndex() {
+    const element = document.getElementById('estimated-budgets-app');
+    if (!element) return;
+
+    const { default: EstimatedBudgetsIndex } = await import('./components/EstimatedBudgetsIndex.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(EstimatedBudgetsIndex, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 async function mountChatWidget() {
     // Le widget est global : il crée son propre container sur document.body
     // et s'affiche uniquement si l'utilisateur est authentifié (présence du meta csrf-token)
@@ -1190,4 +1225,6 @@ mountUserProfilePage();
 mountNotificationLinePage();
 mountUserAutoEmailReportsPage();
 mountAuditPlannerApp();
+mountEstimatedBudgetsIndex();
 mountChatWidget();
+mountProductHistory();

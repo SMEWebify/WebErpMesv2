@@ -15,6 +15,8 @@ use App\Models\Planning\SubAssembly;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Purchases\PurchaseLines;
+use App\Models\Workflow\QuoteLines;
+use App\Models\Workflow\OrderLines;
 use App\Services\StockCalculationService;
 use App\Services\ABC_MFR_CalculatorService;
 use App\Models\Products\ProductsQuantityPrice;
@@ -479,6 +481,66 @@ class ProductsController extends Controller
             $newSubAssembly->products_id = $newProductId;
             $newSubAssembly->save();
         }
+    }
+
+    /**
+     * JSON endpoint — timeline items (quote lines, order lines, purchase lines) for a product.
+     * Returns a flat array sorted by date descending, same format as CompanyTimeline.
+     */
+    public function historyJson(int $id)
+    {
+        Products::findOrFail($id);
+
+        $items = collect();
+
+        QuoteLines::where('product_id', $id)
+            ->with(['quote:id,code,statu,created_at', 'Unit:id,label'])
+            ->get()
+            ->each(function ($l) use (&$items) {
+                $items->push([
+                    'type'  => 'quote',
+                    'id'    => $l->id,
+                    'code'  => $l->quote?->code,
+                    'label' => $l->label . ($l->qty ? ' — ' . $l->qty . ($l->Unit ? ' ' . $l->Unit->label : '') : ''),
+                    'statu' => $l->quote?->statu,
+                    'date'  => $l->quote?->created_at?->format('Y-m-d'),
+                    'url'   => route('quotes.show', ['id' => $l->quotes_id]),
+                ]);
+            });
+
+        OrderLines::where('product_id', $id)
+            ->with(['order:id,code,statu,created_at', 'Unit:id,label'])
+            ->get()
+            ->each(function ($l) use (&$items) {
+                $items->push([
+                    'type'  => 'order',
+                    'id'    => $l->id,
+                    'code'  => $l->order?->code,
+                    'label' => $l->label . ($l->qty ? ' — ' . $l->qty . ($l->Unit ? ' ' . $l->Unit->label : '') : ''),
+                    'statu' => $l->order?->statu,
+                    'date'  => $l->order?->created_at?->format('Y-m-d'),
+                    'url'   => route('orders.show', ['id' => $l->orders_id]),
+                ]);
+            });
+
+        PurchaseLines::where('product_id', $id)
+            ->with(['purchase:id,code,statu,created_at', 'Unit:id,label'])
+            ->get()
+            ->each(function ($l) use (&$items) {
+                $items->push([
+                    'type'  => 'purchase',
+                    'id'    => $l->id,
+                    'code'  => $l->purchase?->code,
+                    'label' => $l->label . ($l->qty ? ' — ' . $l->qty . ($l->Unit ? ' ' . $l->Unit->label : '') : ''),
+                    'statu' => $l->purchase?->statu,
+                    'date'  => $l->purchase?->created_at?->format('Y-m-d'),
+                    'url'   => route('purchases.show', ['id' => $l->purchases_id]),
+                ]);
+            });
+
+        return response()->json(
+            $items->sortByDesc('date')->values()
+        );
     }
 
 }
