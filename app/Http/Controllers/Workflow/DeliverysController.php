@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\DeliveryKPIService;
 use App\Events\OrderLineUpdated;
+use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Workflow\StorePackagingRequest;
@@ -151,7 +152,19 @@ class DeliverysController extends Controller
 
         $lines->load(['order.companie:id,label', 'Unit:id,label', 'VAT:id,label']);
 
+        $defaults = $companyId ? CompanyDocumentDefault::forCompany($companyId)['delivery'] : ['contact_id' => null, 'address_id' => null];
+
+        $defaultAddressId = $defaults['address_id'] && $addresses->contains('id', $defaults['address_id'])
+            ? $defaults['address_id']
+            : $addresses->first()?->id;
+
+        $defaultContactId = $defaults['contact_id'] && $contacts->contains('id', $defaults['contact_id'])
+            ? $defaults['contact_id']
+            : $contacts->first()?->id;
+
         return response()->json([
+            'default_address_id' => $defaultAddressId,
+            'default_contact_id' => $defaultContactId,
             'addresses' => $addresses->map(fn($a) => [
                 'id'     => $a->id,
                 'label'  => $a->label,

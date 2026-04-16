@@ -124,6 +124,9 @@ class PurchaseOrderService
     public function createPurchaseOrderLineFromQuotationLine($purchaseOrder, $quotationLine, $accountingVat, $ordre, $purchasePrice = null)
     {
         $finalPrice = (!empty($purchasePrice)) ? $purchasePrice : $quotationLine->unit_price;
+        $deliveryDate = $quotationLine->lead_time_days
+            ? now()->addDays($quotationLine->lead_time_days)->toDateString()
+            : null;
         return PurchaseLines::create([
             'purchases_id' => $purchaseOrder,
             'tasks_id' => 0,
@@ -138,6 +141,7 @@ class PurchaseOrderService
             'total_selling_price' => $finalPrice * $quotationLine->qty_to_order,
             'methods_units_id' => null,
             'accounting_vats_id' => $accountingVat,
+            'delivery_date' => $deliveryDate,
             'statu' => 1,
         ]);
     }

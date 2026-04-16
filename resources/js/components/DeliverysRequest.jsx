@@ -92,7 +92,11 @@ export default function DeliverysRequest({
                 setContacts(data.contacts);
                 setLines(data.lines);
                 setSelections({});
-                setForm(f => ({ ...f, companiesAddressesId: '', companiesContactsId: '' }));
+                setForm(f => ({
+                    ...f,
+                    companiesAddressesId: data.default_address_id ? String(data.default_address_id) : '',
+                    companiesContactsId:  data.default_contact_id ? String(data.default_contact_id) : '',
+                }));
             })
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -231,7 +235,7 @@ export default function DeliverysRequest({
                                 >
                                     <option value="">{companies.length ? trans.select_company : trans.no_company}</option>
                                     {companies.map(c => (
-                                        <option key={c.id} value={c.id}>{c.code} - {c.label}</option>
+                                        <option key={c.id} value={c.id}>{c.label}</option>
                                     ))}
                                 </select>
                             </div>

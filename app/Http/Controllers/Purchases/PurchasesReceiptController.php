@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\DocumentCodeGenerator;
 use App\Services\PurchaseKPIService;
+use App\Services\PurchaseReceiptService;
 use App\Services\QualityNonConformityService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Products\StockLocation;
@@ -35,37 +36,186 @@ class PurchasesReceiptController extends Controller
     protected $purchaseOrderService;
     protected $qualityNonConformityService;
     protected $documentCodeGenerator;
+    protected $purchaseReceiptService;
 
-    /**
-     * Constructor to initialize services.
-     *
-     * @param SelectDataService $SelectDataService
-     * @param PurchaseKPIService $purchaseKPIService
-     * @param CustomFieldService $customFieldService
-     */
     public function __construct(
             SelectDataService $SelectDataService,
             PurchaseKPIService $purchaseKPIService,
             CustomFieldService $customFieldService,
             QualityNonConformityService $qualityNonConformityService,
             DocumentCodeGenerator $documentCodeGenerator,
+            PurchaseReceiptService $purchaseReceiptService,
         ){
         $this->SelectDataService = $SelectDataService;
         $this->purchaseKPIService = $purchaseKPIService;
         $this->customFieldService = $customFieldService;
         $this->qualityNonConformityService = $qualityNonConformityService;
         $this->documentCodeGenerator = $documentCodeGenerator;
+        $this->purchaseReceiptService = $purchaseReceiptService;
     }
     
     
     /**
-     * Display the waiting receipt view.
-     *
-     * @return \Illuminate\Contracts\View\View
+     * Display the waiting receipt view (React).
      */
     public function waintingReceipt()
-    {    
-        return view('purchases/purchases-wainting-receipt');
+    {
+        $lastReceipt = PurchaseReceipt::latest()->first();
+        $initialCode = $this->documentCodeGenerator->generateDocumentCode('purchase-receipt', $lastReceipt?->id ?? 0);
+
+        $reactEndpoints = [
+            'init'        => route('purchases.waiting.receipt.json.init'),
+            'store'       => route('purchases.waiting.receipt.json.store'),
+            'storeEmpty'  => route('purchases.waiting.receipt.json.store.empty'),
+        ];
+
+        $reactTrans = [
+            'title'                => __('general_content.waiting_to_receipt_trans_key'),
+            'sort_company'         => __('general_content.sort_companie_trans_key'),
+            'select_company'       => __('general_content.select_company_trans_key'),
+            'no_select_company'    => __('general_content.no_select_company_trans_key'),
+            'external_id'          => __('general_content.external_id_trans_key'),
+            'delivery_note_number' => __('general_content.delivery_note_number_trans_key'),
+            'user'                 => __('general_content.user_management_trans_key'),
+            'select_user'          => __('general_content.select_user_management_trans_key'),
+            'new_receipt'          => __('general_content.new_receipt_document_trans_key'),
+            'new_empty_receipt'    => __('general_content.new_empty_receipt_document_trans_key'),
+            'order'                => __('general_content.order_trans_key'),
+            'qty'                  => __('general_content.qty_trans_key'),
+            'order_label'          => __('general_content.label_trans_key'),
+            'label'                => __('general_content.label_trans_key'),
+            'product'              => __('general_content.product_trans_key'),
+            'purchase_order'       => __('general_content.purchase_order_trans_key'),
+            'supplier'             => __('general_content.supplier_trans_key'),
+            'description'          => __('general_content.description_trans_key'),
+            'delivery_date'        => __('general_content.delivery_date_trans_key'),
+            'action'               => __('general_content.action_trans_key'),
+            'add_to_document'      => __('general_content.add_to_document_trans_key'),
+            'no_data'              => __('general_content.no_data_trans_key'),
+            'generic'              => __('general_content.generic_trans_key'),
+            'view'                 => __('general_content.view_trans_key'),
+            'loading'              => __('general_content.notif_loading_trans_key'),
+            'error'                => __('general_content.error_trans_key') ?? 'Erreur',
+            'no_lines_selected'    => __('general_content.no_lines_selected_trans_key') ?? 'Aucune ligne sélectionnée',
+        ];
+
+        return view('purchases/purchases-wainting-receipt', compact('reactEndpoints', 'reactTrans', 'initialCode'));
+    }
+
+    /**
+     * JSON init — companies list, users list, initial code, waiting lines.
+     */
+    public function waitingReceiptInit(Request $request)
+    {
+        $companiesId = $request->get('companies_id', '');
+
+        $companyIds = $this->purchaseReceiptService->getUniqueCompanyIdsWithOpenPurchaseLines();
+        $companies  = $this->SelectDataService->getSupplier($companyIds);
+        $users      = $this->SelectDataService->getUsers();
+
+        $lastReceipt = PurchaseReceipt::latest()->first();
+        $initialCode = $this->documentCodeGenerator->generateDocumentCode('purchase-receipt', $lastReceipt?->id ?? 0);
+
+        $lines = $this->purchaseReceiptService->getPurchasesWaintingReceiptLines($companiesId);
+
+        $mappedLines = $lines->map(function ($line) {
+            $task      = $line->tasks;
+            $orderLine = $task?->OrderLines;
+            $order     = $orderLine?->order;
+
+            return [
+                'id'                => $line->id,
+                'code'              => $line->code,
+                'label'             => $line->label,
+                'qty'               => $line->qty,
+                'delivery_date'     => $line->delivery_date ? \Carbon\Carbon::parse($line->delivery_date)->format('Y-m-d') : null,
+                'purchases_id'      => $line->purchases_id,
+                'purchase_code'     => $line->purchase?->code,
+                'purchase_url'      => $line->purchases_id ? route('purchases.show', ['id' => $line->purchases_id]) : null,
+                'supplier_code'     => $line->purchase?->companie?->code,
+                'supplier_label'    => $line->purchase?->companie?->label,
+                'tasks_id'          => $line->tasks_id,
+                'task_id'           => $task?->id,
+                'task_label'        => $task?->label,
+                'task_url'          => $task ? route('production.task.statu.id', ['id' => $task->id]) : null,
+                'task_component_id' => $task?->component_id,
+                'component_label'   => $task?->component_id ? optional($task->Component)->label : null,
+                'product_id'        => $line->product_id,
+                'product_url'       => $task?->component_id
+                    ? route('products.show', ['id' => $task->component_id])
+                    : ($line->product_id ? route('products.show', ['id' => $line->product_id]) : null),
+                'order_id'          => $order?->id,
+                'order_code'        => $order?->code,
+                'order_url'         => $orderLine?->orders_id ? route('orders.show', ['id' => $orderLine->orders_id]) : null,
+                'order_line_qty'    => $orderLine?->qty,
+                'order_line_label'  => $orderLine?->label,
+            ];
+        });
+
+        return response()->json([
+            'companies'   => $companies->map(fn($c) => ['id' => $c->id, 'code' => $c->code, 'label' => $c->label]),
+            'users'       => $users->map(fn($u) => ['id' => $u->id, 'name' => $u->name]),
+            'initial_code' => $initialCode,
+            'lines'       => $mappedLines,
+        ]);
+    }
+
+    /**
+     * JSON store — create a receipt from selected lines.
+     */
+    public function storeReceiptJson(Request $request)
+    {
+        $validated = $request->validate([
+            'code'                 => 'required|unique:purchase_receipts',
+            'label'                => 'required|string',
+            'companies_id'         => 'required|exists:companies,id',
+            'user_id'              => 'required|exists:users,id',
+            'delivery_note_number' => 'nullable|string|max:255',
+            'line_ids'             => 'required|array|min:1',
+            'line_ids.*'           => 'integer|exists:purchase_lines,id',
+        ]);
+
+        // Transform line_ids into the format PurchaseReceiptService expects
+        $data = [];
+        foreach ($validated['line_ids'] as $id) {
+            $data[$id] = ['purchase_line_id' => $id];
+        }
+
+        $receiptData = [
+            'code'                 => $validated['code'],
+            'label'                => $validated['label'],
+            'companies_id'         => $validated['companies_id'],
+            'delivery_note_number' => $validated['delivery_note_number'] ?? null,
+            'user_id'              => $validated['user_id'],
+        ];
+
+        try {
+            $receipt = $this->purchaseReceiptService->createPurchaseReceipt($data, $receiptData);
+            return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id])]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+    }
+
+    /**
+     * JSON store-empty — create an empty receipt (no lines).
+     */
+    public function storeEmptyReceiptJson(Request $request)
+    {
+        $validated = $request->validate([
+            'code'                 => 'required|unique:purchase_receipts',
+            'label'                => 'required|string',
+            'companies_id'         => 'required|exists:companies,id',
+            'user_id'              => 'required|exists:users,id',
+            'delivery_note_number' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            $receipt = $this->purchaseReceiptService->createEmptyPurchaseReceipt($validated);
+            return response()->json(['redirect' => route('purchase.receipts.show', ['id' => $receipt->id])]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
     }
 
     /**
