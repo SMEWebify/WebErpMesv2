@@ -10,11 +10,13 @@ use App\Models\Products\StockMove;
 use App\Models\Workflow\OrderLines;
 use App\Http\Controllers\Controller;
 use App\Models\Products\StockLocation;
+use Illuminate\Support\Facades\Log;
 use App\Models\Purchases\PurchaseReceiptLines;
 use App\Services\StockCalculationService;
 use App\Models\Products\StockLocationProducts;
 use App\Http\Requests\Products\StoreStockMoveRequest;
 use App\Http\Requests\Products\StoreStockLocationProductsRequest;
+use App\Http\Requests\Products\StoreStockTransferRequest;
 use App\Http\Requests\Products\UpdateStockLocationProductsRequest;
 
 class StockLocationProductsController extends Controller
@@ -50,6 +52,10 @@ class StockLocationProductsController extends Controller
 
         $averageCost = $this->stockCalculationService->calculateWeightedAverageCost($id);
 
+        $AllStockLocations = StockLocation::where('id', '!=', $StockLocationProduct->stock_locations_id)
+                                            ->orderBy('label')
+                                            ->get();
+
         return view('products/StockLocationProduct-show', [
             'Stock' => $Stock,
             'StockLocation' => $StockLocation,
@@ -59,6 +65,7 @@ class StockLocationProductsController extends Controller
             'TaskList' => $TaskList,
             'OrderLineList' => $OrderLineList,
             'averageCost' => $averageCost,
+            'AllStockLocations' => $AllStockLocations,
         ]);
     }
 
@@ -279,6 +286,32 @@ class StockLocationProductsController extends Controller
         }
         else{
             return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('error', 'Not enough stock available for this tracability');
+        }
+    }
+
+    /**
+     * Transfer stock from the current line to another stock location.
+     */
+    public function transfer(StoreStockTransferRequest $request)
+    {
+        try {
+            $destination = $this->stockService->transfer(
+                (int) $request->source_stock_location_products_id,
+                (int) $request->destination_stock_locations_id,
+                (float) $request->qty,
+                $request->tracability ?: null,
+                (int) $request->user_id,
+            );
+
+            return redirect()
+                ->route('products.stockline.show', ['id' => $request->source_stock_location_products_id])
+                ->with('success', __('general_content.transfer_success_trans_key'));
+        } catch (\Exception $e) {
+            Log::warning('Stock transfer failed', ['error' => $e->getMessage(), 'request' => $request->all()]);
+
+            return redirect()
+                ->route('products.stockline.show', ['id' => $request->source_stock_location_products_id])
+                ->with('error', $e->getMessage());
         }
     }
 

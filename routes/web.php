@@ -656,6 +656,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/entry/internal-order', 'App\Http\Controllers\Products\StockLocationProductsController@entryFromInternalOrder')->name('products.stockline.entry.from.internal.order');
             Route::post('/entry/purchase-order', 'App\Http\Controllers\Products\StockLocationProductsController@entryFromPurchaseOrder')->name('products.stockline.entry.from.purchase.order');
             Route::post('/sorting', 'App\Http\Controllers\Products\StockLocationProductsController@sorting')->name('products.stockline.sorting');
+            Route::post('/transfer', 'App\Http\Controllers\Products\StockLocationProductsController@transfer')->name('products.stockline.transfer');
         });
         
         Route::get('/{id}', 'App\Http\Controllers\Products\ProductsController@show')->name('products.show');

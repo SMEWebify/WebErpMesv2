@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Events\OrderLineUpdated;
 use App\Models\Products\StockMove;
+use App\Models\Products\StockLocation;
+use App\Models\Products\StockLocationProducts;
 use App\Models\Workflow\OrderLines;
 use App\Models\Purchases\PurchaseReceiptLines;
 
@@ -68,6 +71,84 @@ class StockService
     {
         PurchaseReceiptLines::where('id', $purchaseReceiptLineId)
             ->update(['stock_location_products_id' => $stockLocationProductId]);
+    }
+
+    /**
+     * Transfer stock from one location to another.
+     *
+     * Creates two atomic stock moves (typ_move=4) inside a transaction:
+     * an outgoing move on the source and an incoming move on the destination.
+     * The destination StockLocationProducts is created automatically if it
+     * does not yet exist. The tracability (batch number) is preserved.
+     *
+     * @param int $sourceId The source StockLocationProducts ID.
+     * @param int $destinationLocationId The destination StockLocation ID.
+     * @param float $qty Quantity to transfer.
+     * @param string|null $tracability Batch/serial number to preserve.
+     * @param int $userId The user performing the transfer.
+     * @return StockLocationProducts The destination StockLocationProducts.
+     *
+     * @throws \Exception If not enough stock is available on the source.
+     */
+    public function transfer(int $sourceId, int $destinationLocationId, float $qty, ?string $tracability, int $userId): StockLocationProducts
+    {
+        $source = StockLocationProducts::findOrFail($sourceId);
+
+        $stockAvailable = $source->getCurrentStockMove($tracability ?: null);
+        if ($stockAvailable < $qty) {
+            throw new \Exception(__('general_content.transfer_insufficient_stock_trans_key'));
+        }
+
+        return DB::transaction(function () use ($source, $destinationLocationId, $qty, $tracability, $userId) {
+            // Outgoing move on source
+            $this->createStockMove([
+                'user_id'                    => $userId,
+                'qty'                        => $qty,
+                'stock_location_products_id' => $source->id,
+                'typ_move'                   => 4,
+                'tracability'                => $tracability,
+            ]);
+
+            // Find or create the product line on the destination location
+            $destination = StockLocationProducts::firstOrCreate(
+                [
+                    'stock_locations_id' => $destinationLocationId,
+                    'products_id'        => $source->products_id,
+                ],
+                [
+                    'code'     => $this->generateTransferCode($destinationLocationId),
+                    'user_id'  => $userId,
+                    'mini_qty' => 0,
+                ]
+            );
+
+            // Incoming move on destination (preserves tracability) — typ_move=14
+            $this->createStockMove([
+                'user_id'                    => $userId,
+                'qty'                        => $qty,
+                'stock_location_products_id' => $destination->id,
+                'typ_move'                   => 14,
+                'tracability'                => $tracability,
+            ]);
+
+            return $destination;
+        });
+    }
+
+    /**
+     * Generate a unique code for a new StockLocationProducts created during transfer.
+     */
+    private function generateTransferCode(int $stockLocationsId): string
+    {
+        $location = StockLocation::find($stockLocationsId);
+        $base     = strtoupper(substr($location->code ?? 'LOC', 0, 8)) . '-' . strtoupper(Str::random(5));
+
+        // Ensure uniqueness (extremely unlikely to collide, but safe)
+        while (StockLocationProducts::where('code', $base)->exists()) {
+            $base = strtoupper(substr($location->code ?? 'LOC', 0, 8)) . '-' . strtoupper(Str::random(5));
+        }
+
+        return $base;
     }
 
     /**

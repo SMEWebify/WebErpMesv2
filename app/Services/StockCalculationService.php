@@ -39,7 +39,7 @@ class StockCalculationService
 
         foreach ($stockMoves as $move) {
             // Only consider inputs (according to 'typ_move')
-            if (in_array($move->typ_move, [1, 3, 5, 12])) {
+            if (in_array($move->typ_move, [1, 3, 5, 12, 14])) {
                 $totalQuantity += $move->qty;
                 $totalValue += $move->qty * $move->component_price;
             }

@@ -106,6 +106,7 @@
                     @if(11 == $StockMove->typ_move ){{__('general_content.reservation_component_production_trans_key') }} @endif
                     @if(12 == $StockMove->typ_move ){{__('general_content.manufactured_component_entry_trans_key') }} @endif
                     @if(13 == $StockMove->typ_move ){{__('general_content.direct_inventory_trans_key') }} @endif
+                    @if(14 == $StockMove->typ_move ){{__('general_content.transfer_stock_entry_trans_key') }} @endif
                   </td>
                   <td>{{ $StockMove->formatted_component_price }}</td>
                   <td>
@@ -294,6 +295,56 @@
         </x-adminlte-card>
       </form>
     <!-- /.card secondary -->
+
+      <form method="POST" action="{{ route('products.stockline.transfer') }}" class="form-horizontal">
+        <x-adminlte-card title="{{ __('general_content.new_transfer_stock_trans_key') }}" theme="info" maximizable>
+          @csrf
+          <input type="hidden" name="source_stock_location_products_id" value="{{ $StockLocationProduct->id }}">
+          <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+
+          <div class="form-group">
+            <x-adminlte-select2 name="destination_stock_locations_id" id="destination_stock_locations_id"
+              label="{{ __('general_content.transfer_destination_trans_key') }}" label-class="text-info"
+              igroup-size="s" data-placeholder="{{ __('general_content.transfer_select_destination_trans_key') }}">
+              <x-slot name="prependSlot">
+                <div class="input-group-text bg-gradient-info">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+              </x-slot>
+              <option value="">{{ __('general_content.transfer_select_destination_trans_key') }}</option>
+              @foreach ($AllStockLocations as $location)
+                <option value="{{ $location->id }}">{{ $location->label }} ({{ $location->Stocks->label ?? '' }})</option>
+              @endforeach
+            </x-adminlte-select2>
+          </div>
+
+          <div class="form-group">
+            <label for="transfer_qty">{{ __('general_content.qty_trans_key') }} :</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-exchange-alt"></i></span>
+              </div>
+              <input type="number" class="form-control" name="qty" id="transfer_qty" placeholder="Ex: 10" min="0.001" step=".001">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="transfer_tracability">{{ __('general_content.tracability_trans_key') }}</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+              </div>
+              <input type="text" class="form-control" name="tracability" id="transfer_tracability"
+                placeholder="{{ __('general_content.tracability_trans_key') }}">
+            </div>
+          </div>
+
+          <x-slot name="footerSlot">
+            <x-adminlte-button class="btn-flat" type="submit" label="{{ __('general_content.submit_trans_key') }}" theme="info" icon="fas fa-lg fa-exchange-alt"/>
+          </x-slot>
+        </x-adminlte-card>
+      </form>
+
     </div>
     <!-- /.col-md-4 -->
   </div>

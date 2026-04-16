@@ -56,7 +56,8 @@ class StockLocationProducts extends Model
                                 return $query->where('typ_move', '1')
                                             ->orwhere('typ_move', '3')
                                             ->orwhere('typ_move', '5')
-                                            ->orwhere('typ_move', '12');
+                                            ->orwhere('typ_move', '12')
+                                            ->orwhere('typ_move', '14');
                             });
 
         // Filtre par traçabilité si fourni
@@ -72,6 +73,7 @@ class StockLocationProducts extends Model
         $query = StockMove::where('stock_location_products_id', $this->id)
                             ->where(function (Builder $query) {
                                                                                 return $query->where('typ_move', '2')
+                                                                            ->orwhere('typ_move', '4')
                                                                             ->orwhere('typ_move', '6')
                                                                             ->orwhere('typ_move', '9');
                                                             });
