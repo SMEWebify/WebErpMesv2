@@ -642,6 +642,24 @@ async function mountOrderLinesPage() {
     );
 }
 
+async function mountPurchaseLinesPage() {
+    const element = document.getElementById('purchase-lines-page-app');
+    if (!element) return;
+
+    const { default: PurchaseLinesPage } = await import('./components/PurchaseLinesPage.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchaseLinesPage, {
+            purchaseId:    parseInt(element.dataset.purchaseId, 10),
+            purchaseStatu: parseInt(element.dataset.purchaseStatu, 10),
+            endpoints:     parse('endpoints') ?? {},
+        })
+    );
+}
+
 async function mountLoadPlanningIndex() {
     const element = document.getElementById('load-planning-app');
     if (!element) return;
@@ -1091,6 +1109,7 @@ mountProductsIndex();
 mountQualityIndex();
 mountQuoteLinesPage();
 mountOrderLinesPage();
+mountPurchaseLinesPage();
 mountLoadPlanningIndex();
 mountConstructionSitePage();
 mountHomeDashboard();

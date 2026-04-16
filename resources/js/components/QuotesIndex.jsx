@@ -1029,6 +1029,14 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                 accounting_payment_conditions_id: data.payment_conditions.find(x => x.default)?.id ?? '',
                 accounting_payment_methods_id:    data.payment_methods.find(x => x.default)?.id ?? '',
                 accounting_deliveries_id:         data.deliveries.find(x => x.default)?.id ?? '',
+                user_id:                          data.current_user_id ? String(data.current_user_id) : '',
+                validity_date:                    (() => {
+                    const days = data.validity_days ?? 0;
+                    if (!days) return '';
+                    const d = new Date();
+                    d.setDate(d.getDate() + days);
+                    return d.toISOString().slice(0, 10);
+                })(),
             }));
         });
     }, [show]);
@@ -1036,9 +1044,29 @@ function CreateModal({ show, onClose, endpoints, trans }) {
     const reloadAddressesContacts = (companyId) => {
         const addrUrl = endpoints.addresses.replace('__ID__', companyId);
         const ctctUrl = endpoints.contacts.replace('__ID__', companyId);
-        Promise.all([apiFetch(addrUrl), apiFetch(ctctUrl)]).then(([addr, ctct]) => {
+        Promise.all([apiFetch(addrUrl), apiFetch(ctctUrl)]).then(([addrData, ctct]) => {
+            // addressesJson retourne { addresses, default_address_id, default_contact_id }
+            const addr             = addrData.addresses ?? addrData;
+            const docAddrId        = addrData.default_address_id ? String(addrData.default_address_id) : null;
+            const docCtctId        = addrData.default_contact_id ? String(addrData.default_contact_id) : null;
+
             setAddresses(addr);
             setContacts(ctct);
+
+            // Priorité : companies_document_defaults (quote) > champ default=1 > seule entrée > vide
+            const resolveId = (docId, list) => {
+                if (docId && list.some(x => String(x.id) === docId)) return docId;
+                const byDefault = list.find(x => x.default == 1);
+                if (byDefault) return String(byDefault.id);
+                if (list.length === 1) return String(list[0].id);
+                return '';
+            };
+
+            setForm(f => ({
+                ...f,
+                companies_addresses_id: resolveId(docAddrId, addr),
+                companies_contacts_id:  resolveId(docCtctId, ctct),
+            }));
         });
     };
 
@@ -1121,7 +1149,7 @@ function CreateModal({ show, onClose, endpoints, trans }) {
                                                 <select className="form-control" value={form.companies_id} onChange={e => handleCompanyChange(e.target.value)}>
                                                     <option value="">—</option>
                                                     {selectData.companies.map(c => (
-                                                        <option key={c.id} value={c.id}>{c.code} — {c.label}</option>
+                                                        <option key={c.id} value={c.id}>{c.label}</option>
                                                     ))}
                                                 </select>
                                                 {fieldError('companies_id')}

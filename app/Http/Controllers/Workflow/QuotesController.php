@@ -24,6 +24,7 @@ use App\Services\QuoteCalculatorService;
 use App\Models\Workflow\QuoteProjectEstimate;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
+use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Accounting\AccountingDelivery;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingPaymentConditions;
@@ -553,26 +554,36 @@ class QuotesController extends Controller
             'payment_conditions'  => AccountingPaymentConditions::select('id', 'code', 'label', 'default')->get(),
             'payment_methods'     => AccountingPaymentMethod::select('id', 'code', 'label', 'default')->get(),
             'deliveries'          => AccountingDelivery::select('id', 'code', 'label', 'default')->get(),
-            'users'               => User::select('id', 'name')->get(),
+            'users'                  => User::select('id', 'name')->get(),
+            'current_user_id'        => auth()->id(),
+            'validity_days'          => (int) (app('Factory')->add_day_validity_quote ?? 0),
         ]);
     }
 
     public function addressesJson(int $companyId)
     {
-        return response()->json(
-            CompaniesAddresses::select('id', 'label', 'adress')
-                ->where('companies_id', $companyId)
-                ->get()
-        );
+        $addresses = CompaniesAddresses::select('id', 'label', 'adress', 'default')
+            ->where('companies_id', $companyId)
+            ->get();
+
+        $docDefault = CompanyDocumentDefault::where('companies_id', $companyId)
+            ->where('document_type', 'quote')
+            ->first();
+
+        return response()->json([
+            'addresses'          => $addresses,
+            'default_address_id' => $docDefault?->companies_addresses_id,
+            'default_contact_id' => $docDefault?->companies_contacts_id,
+        ]);
     }
 
     public function contactsJson(int $companyId)
     {
         return response()->json(
-            CompaniesContacts::select('id', 'first_name', 'name')
+            CompaniesContacts::select('id', 'first_name', 'name', 'default')
                 ->where('companies_id', $companyId)
                 ->get()
-                ->map(fn ($c) => ['id' => $c->id, 'name' => trim($c->first_name.' '.$c->name)])
+                ->map(fn ($c) => ['id' => $c->id, 'name' => trim($c->first_name.' '.$c->name), 'default' => $c->default])
         );
     }
 
