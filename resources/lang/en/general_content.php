@@ -986,6 +986,7 @@ return [
     'deliverys_notes_list_trans_key'           => 'Deliverys notes list',
     'name_of_deliverys_notes_trans_key'        => 'Name of Delivery note',
     'new_delivery_note_trans_key'              => 'New delivery note',
+    'returns_trans_key'                        => 'Customer returns',
     'tracking_number_note_trans_key'           => 'Tracking number',
     'packaging_trans_key'                      => 'Packaging',
     'new_packaging_trans_key'                  => 'New packaging',

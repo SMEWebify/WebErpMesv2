@@ -986,6 +986,7 @@ return [
     'deliverys_notes_list_trans_key'           => 'Liste des bons de livraisons',
     'name_of_deliverys_notes_trans_key'        => 'Nom du bon de livraison',
     'new_delivery_note_trans_key'              => 'Nouveau bon de livraison',
+    'returns_trans_key'                        => 'Retours clients',
     'tracking_number_note_trans_key'           => 'Numéro de suivis',
     'packaging_trans_key'                      => 'Packaging',
     'new_packaging_trans_key'                  => 'Nouveau packaging',

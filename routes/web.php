@@ -370,6 +370,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::group(['prefix' => 'returns', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\\Http\\Controllers\\Workflow\\ReturnsController@index')->name('returns');
+        Route::get('/json/list', 'App\\Http\\Controllers\\Workflow\\ReturnsController@listJson')->name('returns.json.list');
+        Route::post('/json/store', 'App\\Http\\Controllers\\Workflow\\ReturnsController@storeJson')->name('returns.json.store');
+        Route::post('/json/{return}/diagnose', 'App\\Http\\Controllers\\Workflow\\ReturnsController@diagnoseJson')->name('returns.json.diagnose');
+        Route::post('/json/{return}/reopen', 'App\\Http\\Controllers\\Workflow\\ReturnsController@reopenJson')->name('returns.json.reopen');
+        Route::post('/json/{return}/close', 'App\\Http\\Controllers\\Workflow\\ReturnsController@closeJson')->name('returns.json.close');
         Route::get('/{return}', 'App\\Http\\Controllers\\Workflow\\ReturnsController@show')->name('returns.show');
     });
 
@@ -637,6 +642,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             // Stock detail
             Route::get('/detail/{id}', 'App\Http\Controllers\Products\StockController@detail')->name('products.stock.detail.show');
             Route::post('/detail/edit/{id}', 'App\Http\Controllers\Products\StockController@detailUpdate')->name('products.stock.detail.update');
+            Route::patch('/detail/update/{id}', 'App\Http\Controllers\Products\StockController@detailUpdateJson')->name('products.stock.detail.update.json');
         });
 
         // Stock Location routes

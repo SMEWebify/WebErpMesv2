@@ -104,7 +104,75 @@ class StockController extends Controller
      */
     public function detail(Request $request)
     {
-        return view('products/stock-detail-show', ['StockDetailId' => $request->id]);
+        $stockMove = StockMove::with([
+            'UserManagement',
+            'StockLocationProducts.product',
+            'OrderLine.order',
+            'Task',
+            'purchaseReceiptLines.purchaseReceipt',
+            'photos',
+        ])->findOrFail($request->id);
+
+        $factory = app('Factory');
+        $user = auth()->user();
+
+        $initial = [
+            'id'              => $stockMove->id,
+            'user_name'       => $stockMove->UserManagement?->name,
+            'date'            => $stockMove->GetPrettyCreatedAttribute(),
+            'qty'             => $stockMove->qty,
+            'typ_move'        => $stockMove->typ_move,
+            'formatted_price' => $stockMove->formatted_component_price,
+            'x_size'          => $stockMove->x_size,
+            'y_size'          => $stockMove->y_size,
+            'z_size'          => $stockMove->z_size,
+            'nb_part'         => $stockMove->nb_part,
+            'surface_perc'    => $stockMove->surface_perc,
+            'tracability'     => $stockMove->tracability,
+            'product_code'    => $stockMove->StockLocationProducts?->product?->code,
+            'order'           => $stockMove->order_line_id ? [
+                'id'   => $stockMove->OrderLine?->order?->id,
+                'code' => $stockMove->OrderLine?->order?->code,
+                'url'  => $user->can('orders-menu')
+                    ? route('orders.show', ['id' => $stockMove->OrderLine?->order?->id])
+                    : null,
+            ] : null,
+            'task'            => $stockMove->task_id ? [
+                'id'  => $stockMove->task_id,
+                'url' => $user->can('scheduling-menu')
+                    ? route('production.task.statu.id', ['id' => $stockMove->task_id])
+                    : null,
+            ] : null,
+            'purchase_receipt' => $stockMove->purchase_receipt_line_id ? [
+                'id'   => $stockMove->purchaseReceiptLines?->purchase_receipt_id,
+                'code' => $stockMove->purchaseReceiptLines?->purchaseReceipt?->code,
+                'url'  => $user->can('purchases-menu')
+                    ? route('purchase.receipts.show', ['id' => $stockMove->purchaseReceiptLines?->purchase_receipt_id])
+                    : null,
+            ] : null,
+            'barcode_base64' => \DNS1D::getBarcodePNG(
+                strval($stockMove->id),
+                $factory->task_barre_code ?? 'C128',
+                4, 60, [1, 1, 1], true
+            ),
+            'photos'    => $stockMove->photos->map(fn($p) => [
+                'name'               => $p->name,
+                'original_file_name' => $p->original_file_name,
+            ])->values()->toArray(),
+            'trace_url' => $stockMove->tracability
+                ? route('production.trace', ['serial' => $stockMove->tracability])
+                : null,
+        ];
+
+        $props = [
+            'initial'   => $initial,
+            'endpoints' => [
+                'update'      => route('products.stock.detail.update.json', ['id' => $stockMove->id]),
+                'photo_store' => route('photo.store'),
+            ],
+        ];
+
+        return view('products/stock-detail-show', compact('props'));
     }
 
     /**
@@ -122,5 +190,21 @@ class StockController extends Controller
         $StockDetail->tracability=$request->tracability;
         $StockDetail->save();
         return redirect()->route('products.stock.detail.show', ['id' => $StockDetail->id])->with('success', 'Successfully updated stock');
+    }
+
+    /**
+    * @param \Illuminate\Http\Request $request
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function detailUpdateJson(Request $request)
+    {
+        $StockDetail = StockMove::findOrFail($request->id);
+        $StockDetail->x_size       = $request->x_size;
+        $StockDetail->y_size       = $request->y_size;
+        $StockDetail->z_size       = $request->z_size;
+        $StockDetail->surface_perc = $request->surface_perc;
+        $StockDetail->tracability  = $request->tracability;
+        $StockDetail->save();
+        return response()->json(['success' => true]);
     }
 }

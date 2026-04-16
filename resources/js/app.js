@@ -1151,6 +1151,21 @@ async function mountEstimatedBudgetsIndex() {
     );
 }
 
+async function mountStockDetailPage() {
+    const el = document.getElementById('stock-detail-app');
+    if (!el) return;
+
+    const { default: StockDetailPage } = await import('./components/StockDetailPage.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+
+    createRoot(el).render(
+        React.createElement(StockDetailPage, {
+            initial:   parse('initial')   ?? {},
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
 async function mountChatWidget() {
     // Le widget est global : il crée son propre container sur document.body
     // et s'affiche uniquement si l'utilisateur est authentifié (présence du meta csrf-token)
@@ -1228,3 +1243,4 @@ mountAuditPlannerApp();
 mountEstimatedBudgetsIndex();
 mountChatWidget();
 mountProductHistory();
+mountStockDetailPage();

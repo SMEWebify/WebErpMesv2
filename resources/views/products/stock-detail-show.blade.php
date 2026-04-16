@@ -9,11 +9,18 @@
 @section('right-sidebar')
 
 @section('content')
-  @livewire('stock-detail', ['id' =>$StockDetailId])
+  <div
+    id="stock-detail-app"
+    data-initial="{{ json_encode($props['initial']) }}"
+    data-endpoints="{{ json_encode($props['endpoints']) }}"
+  ></div>
 @stop
 
 @section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
+
 
 @section('js')
 @stop
