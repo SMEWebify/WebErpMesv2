@@ -455,7 +455,7 @@ class PurchasesRFQController extends Controller
             'update'      => route('purchases.quotation.api.update',       ['quotation' => $id->id]),
             'updateStatu' => route('purchases.quotation.api.statu',        ['quotation' => $id->id]),
             'storeLine'   => route('purchases.quotation.api.lines.store',  ['quotation' => $id->id]),
-            'updateLine'  => route('purchases.quotation.api.lines.update', ['quotation' => $id->id, 'line' => '{line}']),
+            'updateLine'  => route('purchases.quotation.api.lines.update', ['quotation' => $id->id, 'line' => '__ID__']),
             'products'    => route('purchases.quotation.api.products'),
             'companyData' => route('purchases.quotation.api.company-data'),
             'storeOrder'  => route('purchases.orders.store', ['id' => $id->id]),

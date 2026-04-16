@@ -8,14 +8,23 @@
 
 /* Responsive Arrow Progress Bar */
 
+.arrow-steps {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    overflow-x: auto;
+}
+
 .arrow-steps .step {
-    font-size: 14px;
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 13px;
     text-align: center;
     color: #fffefe;
     cursor: default;
-    margin: 0 1px 20px 0;
-    padding: 10px 0px 7px 0px;
-    float: left;
+    margin: 0 1px 4px 0;
+    padding: 10px 6px 7px 24px;
+    float: none;
     position: relative;
     background-color: #6c757d;
     -webkit-user-select: none;

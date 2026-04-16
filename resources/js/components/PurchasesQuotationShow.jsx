@@ -431,7 +431,7 @@ function LineForm({ quotation, products, currency, endpoints, trans, onLineAdded
         };
         try {
             if (isEditing) {
-                const data = await apiFetch(endpoints.updateLine.replace('{line}', editingLine.id), {
+                const data = await apiFetch(endpoints.updateLine.replace('__ID__', editingLine.id), {
                     method: 'PATCH',
                     body: JSON.stringify(body),
                 });
@@ -605,7 +605,7 @@ function LinesTab({ quotation, products, currency, endpoints, trans }) {
     const canOrder = quotation.statu !== 6;
 
     return (
-        <div className="tab-pane" id="PurchaseQuotationLines">
+        <div id="PurchaseQuotationLines">
             <div className="row">
                 <div className="col-12">
                     <div className="card">
