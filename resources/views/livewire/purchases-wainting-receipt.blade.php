@@ -81,6 +81,7 @@
                             <th>{{ __('general_content.supplier_trans_key') }}</th>
                             <th>{{ __('general_content.description_trans_key') }}</th>
                             <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.delivery_date_trans_key') }}</th>
                             <th>{{__('general_content.action_trans_key') }}</th>
                         </tr>
                     </thead>
@@ -143,6 +144,22 @@
                             <td> {{ $PurchasesWaintingReceiptLine->code }} {{ $PurchasesWaintingReceiptLine->label }}</td>
                             <td>{{ number_format($PurchasesWaintingReceiptLine->qty, 0, '', ' ')  }}</td>
                             <td>
+                                @if($PurchasesWaintingReceiptLine->delivery_date)
+                                    @if(\Carbon\Carbon::parse($PurchasesWaintingReceiptLine->delivery_date)->isPast())
+                                        <span class="badge badge-danger" title="{{ __('general_content.delivery_date_trans_key') }}">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            {{ \Carbon\Carbon::parse($PurchasesWaintingReceiptLine->delivery_date)->format('d/m/Y') }}
+                                        </span>
+                                    @else
+                                        <span class="badge badge-success">
+                                            {{ \Carbon\Carbon::parse($PurchasesWaintingReceiptLine->delivery_date)->format('d/m/Y') }}
+                                        </span>
+                                    @endif
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td>
                                 <div class="custom-control custom-checkbox">
                                     <input class="custom-control-input" value="{{ $PurchasesWaintingReceiptLine->id }}" wire:model.lazy="data.{{ $PurchasesWaintingReceiptLine->id }}.purchase_line_id" id="data.{{ $PurchasesWaintingReceiptLine->id }}.purchase_line_id"  type="checkbox">
                                     <label for="data.{{ $PurchasesWaintingReceiptLine->id }}.purchase_line_id" class="custom-control-label">{{ __('general_content.add_to_document_trans_key') }}</label>
@@ -164,6 +181,7 @@
                             <th>{{ __('general_content.supplier_trans_key') }}</th>
                             <th>{{ __('general_content.description_trans_key') }}</th>
                             <th>{{ __('general_content.qty_trans_key') }}</th>
+                            <th>{{ __('general_content.delivery_date_trans_key') }}</th>
                             <th>{{__('general_content.action_trans_key') }}</th>
                         </tr>
                     </tfoot>

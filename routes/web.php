@@ -446,6 +446,16 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/receipt/{id}/manual-line', 'App\Http\Controllers\Purchases\PurchasesReceiptController@storeManualReceiptLine')->middleware(['auth'])->name('purchase.receipts.lines.manual');
         Route::post('/invoice/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@updatePurchaseInvoice')->middleware(['auth'])->name('invoice.update');
 
+        // JSON API — React PurchaseLinesPage
+        Route::get('/{purchaseId}/lines/json',                    'App\Http\Controllers\Purchases\PurchaseLinesController@linesForPurchaseJson')->name('purchases.lines.json.for-purchase');
+        Route::get('/{purchaseId}/lines/json/select-data',        'App\Http\Controllers\Purchases\PurchaseLinesController@selectDataForPurchaseJson')->name('purchases.lines.json.select-data');
+        Route::post('/{purchaseId}/lines/json/store',             'App\Http\Controllers\Purchases\PurchaseLinesController@storeLineJson')->name('purchases.lines.json.store');
+        Route::put('/{purchaseId}/lines/json/{id}',               'App\Http\Controllers\Purchases\PurchaseLinesController@updateLineJson')->name('purchases.lines.json.update');
+        Route::delete('/{purchaseId}/lines/json/{id}',            'App\Http\Controllers\Purchases\PurchaseLinesController@destroyLineJson')->name('purchases.lines.json.destroy');
+        Route::post('/{purchaseId}/lines/json/{id}/duplicate',    'App\Http\Controllers\Purchases\PurchaseLinesController@duplicateLineJson')->name('purchases.lines.json.duplicate');
+        Route::post('/{purchaseId}/lines/json/reorder',           'App\Http\Controllers\Purchases\PurchaseLinesController@reorderJson')->name('purchases.lines.json.reorder');
+        Route::post('/{purchaseId}/lines/json/store-receipt',     'App\Http\Controllers\Purchases\PurchaseLinesController@storeReceiptJson')->name('purchases.lines.json.store-receipt');
+
         Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchases.show');
         Route::get('/quotation/{id}', 'App\Http\Controllers\Purchases\PurchasesRFQController@showQuotation')->middleware(['auth'])->name('purchases.quotations.show');
         Route::get('/quotation/group/{group}/compare', 'App\Http\Controllers\Purchases\PurchasesRFQController@compareQuotationGroup')->middleware(['auth'])->name('purchases.quotations.compare');

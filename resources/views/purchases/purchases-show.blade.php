@@ -151,7 +151,21 @@
         </div>
       </div>    
       <div class="tab-pane " id="PurchaseLines">
-          @livewire('purchases-lines-index', ['purchase_id' => $Purchase->id, 'OrderStatu' => $Purchase->statu])
+          <div
+              id="purchase-lines-page-app"
+              data-purchase-id="{{ $Purchase->id }}"
+              data-purchase-statu="{{ $Purchase->statu }}"
+              data-endpoints="{{ json_encode([
+                  'lines'         => route('purchases.lines.json.for-purchase', ['purchaseId' => $Purchase->id]),
+                  'selectData'    => route('purchases.lines.json.select-data',  ['purchaseId' => $Purchase->id]),
+                  'store'         => route('purchases.lines.json.store',         ['purchaseId' => $Purchase->id]),
+                  'update'        => route('purchases.lines.json.update',        ['purchaseId' => $Purchase->id, 'id' => '__ID__']),
+                  'destroy'       => route('purchases.lines.json.destroy',       ['purchaseId' => $Purchase->id, 'id' => '__ID__']),
+                  'duplicate'     => route('purchases.lines.json.duplicate',     ['purchaseId' => $Purchase->id, 'id' => '__ID__']),
+                  'reorder'       => route('purchases.lines.json.reorder',       ['purchaseId' => $Purchase->id]),
+                  'storeReceipt'  => route('purchases.lines.json.store-receipt', ['purchaseId' => $Purchase->id]),
+              ]) }}"
+          ></div>
       </div>
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">
@@ -165,6 +179,8 @@
 @stop
 
 @section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

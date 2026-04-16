@@ -40,9 +40,10 @@
                                 <th>{{ __('general_content.qty_trans_key') }}</th>
                                 <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                                 <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
+                                <th>{{ __('general_content.delivery_date_trans_key') }}</th>
                                 <th>{{ __('general_content.price_trans_key') }}</th>
                                 <th>{{ __('general_content.discount_trans_key') }}</th>
-                                <th>{{ __('general_content.vat_trans_key') }}</th> 
+                                <th>{{ __('general_content.vat_trans_key') }}</th>
                                 <th>{{__('general_content.action_trans_key') }}</th>
                                 <th></th>
                             </tr>
@@ -118,6 +119,22 @@
                                     @endif
                                 </td>
                                 <td>{{ number_format($PurchaseLine->invoiced_qty, 0, '', ' ') }}</td>
+                                <td>
+                                    @if($PurchaseLine->delivery_date)
+                                        @if(\Carbon\Carbon::parse($PurchaseLine->delivery_date)->isPast())
+                                            <span class="badge badge-danger" title="{{ __('general_content.delivery_date_trans_key') }}">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                {{ \Carbon\Carbon::parse($PurchaseLine->delivery_date)->format('d/m/Y') }}
+                                            </span>
+                                        @else
+                                            <span class="badge badge-success">
+                                                {{ \Carbon\Carbon::parse($PurchaseLine->delivery_date)->format('d/m/Y') }}
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 <td>{{ $PurchaseLine->formatted_selling_price }}</td>
                                 <td>{{ $PurchaseLine->discount }} %</td>
                                 <td> 
@@ -158,6 +175,7 @@
                                 <th>{{ __('general_content.qty_trans_key') }}</th>
                                 <th>{{ __('general_content.qty_reciept_trans_key') }}</th>
                                 <th>{{ __('general_content.qty_invoice_trans_key') }}</th>
+                                <th>{{ __('general_content.delivery_date_trans_key') }}</th>
                                 <th>{{ __('general_content.price_trans_key') }}</th>
                                 <th>{{ __('general_content.discount_trans_key') }}</th>
                                 <th>{{ __('general_content.vat_trans_key') }}</th>

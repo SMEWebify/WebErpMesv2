@@ -170,6 +170,7 @@ class PurchasesLinesIndex extends Component
             'discount'=>$this->discount,
             'methods_units_id'=>$this->methods_units_id,
             'accounting_vats_id'=>$AccountingVat->id,
+            'delivery_date'=>$this->delivery_date,
         ]);
 
         // Set Flash Message
