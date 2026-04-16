@@ -4,13 +4,20 @@ namespace App\Http\Controllers\Purchases;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Traits\NextPreviousTrait;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Services\CustomFieldService;
 use App\Services\PurchaseKPIService;
 use App\Services\PurchaseOrderService;
+use App\Services\DocumentCodeGenerator;
+use App\Services\AccountingEntryService;
+use App\Services\PurchaseInvoiceService;
 use App\Models\Purchases\PurchaseInvoice;
+use App\Models\Purchases\PurchaseInvoiceLines;
+use App\Models\Purchases\PurchaseLines;
+use App\Models\Purchases\PurchaseReceiptLines;
 use App\Http\Requests\Purchases\UpdatePurchaseInvoiceRequest;
 
 class PurchasesInvoiceController extends Controller
@@ -21,86 +28,218 @@ class PurchasesInvoiceController extends Controller
     protected $purchaseKPIService;
     protected $customFieldService;
     protected $purchaseOrderService;
+    protected $purchaseInvoiceService;
+    protected $documentCodeGenerator;
+    protected $accountingEntryService;
 
-    /**
-     * Constructor to initialize services.
-     *
-     * @param SelectDataService $SelectDataService
-     * @param PurchaseKPIService $purchaseKPIService
-     * @param CustomFieldService $customFieldService
-     * @param PurchaseOrderService $purchaseOrderService
-     */
     public function __construct(
-            SelectDataService $SelectDataService, 
+            SelectDataService $SelectDataService,
             PurchaseKPIService $purchaseKPIService,
             CustomFieldService $customFieldService,
             PurchaseOrderService $purchaseOrderService,
+            PurchaseInvoiceService $purchaseInvoiceService,
+            DocumentCodeGenerator $documentCodeGenerator,
+            AccountingEntryService $accountingEntryService,
         ){
-        $this->SelectDataService = $SelectDataService;
-        $this->purchaseKPIService = $purchaseKPIService;
-        $this->customFieldService = $customFieldService;
-        $this->purchaseOrderService = $purchaseOrderService;
+        $this->SelectDataService      = $SelectDataService;
+        $this->purchaseKPIService     = $purchaseKPIService;
+        $this->customFieldService     = $customFieldService;
+        $this->purchaseOrderService   = $purchaseOrderService;
+        $this->purchaseInvoiceService = $purchaseInvoiceService;
+        $this->documentCodeGenerator  = $documentCodeGenerator;
+        $this->accountingEntryService = $accountingEntryService;
     }
 
     /**
-     * Display the waiting invoice view.
-     *
-     * @return \Illuminate\Contracts\View\View
+     * Display the waiting invoice view (React).
      */
     public function waintingInvoice()
-    {    
-        return view('purchases/purchases-wainting-invoice');
+    {
+        $lastInvoice  = PurchaseInvoice::latest()->first();
+        $initialCode  = $this->documentCodeGenerator->generateDocumentCode('purchase-invoice', $lastInvoice?->id ?? 0);
+
+        $reactEndpoints = [
+            'init'  => route('purchases.waiting.invoice.json.init'),
+            'store' => route('purchases.waiting.invoice.json.store'),
+        ];
+
+        $reactTrans = [
+            'sort_company'      => __('general_content.sort_companie_trans_key'),
+            'select_company'    => __('general_content.select_company_trans_key'),
+            'no_select_company' => __('general_content.no_select_company_trans_key'),
+            'external_id'       => __('general_content.external_id_trans_key'),
+            'user'              => __('general_content.user_management_trans_key'),
+            'select_user'       => __('general_content.select_user_management_trans_key'),
+            'new_invoice'       => __('general_content.new_invoice_document_trans_key'),
+            'order'             => __('general_content.order_trans_key'),
+            'purchase_order'    => __('general_content.purchase_order_trans_key'),
+            'purchase_receipt'  => __('general_content.purchase_receipt_trans_key'),
+            'supplier'          => __('general_content.supplier_trans_key'),
+            'description'       => __('general_content.description_trans_key'),
+            'qty'               => __('general_content.qty_reciept_trans_key'),
+            'action'            => __('general_content.action_trans_key'),
+            'add_to_document'   => __('general_content.add_to_document_trans_key'),
+            'no_data'           => __('general_content.no_data_trans_key'),
+            'generic'           => __('general_content.generic_trans_key'),
+            'view'              => __('general_content.view_trans_key'),
+            'loading'           => __('general_content.notif_loading_trans_key'),
+            'error'             => __('general_content.error_trans_key') ?? 'Erreur',
+        ];
+
+        return view('purchases/purchases-wainting-invoice', compact('reactEndpoints', 'reactTrans', 'initialCode'));
+    }
+
+    /**
+     * JSON init — companies, users, initial code, waiting invoice lines.
+     */
+    public function waitingInvoiceInit(Request $request)
+    {
+        $companiesId = $request->get('companies_id', '');
+
+        $companyIds = $this->purchaseInvoiceService->getUniqueCompanyIdsWithOpenPurchaseReceiptLines();
+        $companies  = $this->SelectDataService->getSupplier($companyIds);
+        $users      = $this->SelectDataService->getUsers();
+
+        $lastInvoice = PurchaseInvoice::latest()->first();
+        $initialCode = $this->documentCodeGenerator->generateDocumentCode('purchase-invoice', $lastInvoice?->id ?? 0);
+
+        $lines = $this->purchaseInvoiceService->getPurchasesWaintingInvoiceLines($companiesId);
+
+        $mappedLines = $lines->map(function ($line) {
+            $purchaseLine = $line->purchaseLines;
+            $task         = $purchaseLine?->tasks;
+            $orderLine    = $task?->OrderLines;
+            $order        = $orderLine?->order;
+
+            return [
+                'id'              => $line->id,
+                'receipt_qty'     => $line->receipt_qty,
+                // order
+                'order_id'        => $order?->id,
+                'order_code'      => $order?->code,
+                'order_url'       => $orderLine?->orders_id ? route('orders.show', ['id' => $orderLine->orders_id]) : null,
+                // purchase
+                'purchase_id'     => $purchaseLine?->purchase?->id,
+                'purchase_code'   => $purchaseLine?->purchase?->code,
+                'purchase_url'    => $purchaseLine?->purchase?->id ? route('purchases.show', ['id' => $purchaseLine->purchase->id]) : null,
+                // receipt
+                'receipt_id'      => $line->purchase_receipt_id,
+                'receipt_code'    => $line->purchaseReceipt?->code,
+                'receipt_url'     => $line->purchase_receipt_id ? route('purchase.receipts.show', ['id' => $line->purchase_receipt_id]) : null,
+                // supplier
+                'supplier_code'   => $line->purchaseReceipt?->companie?->code,
+                'supplier_label'  => $line->purchaseReceipt?->companie?->label,
+                // task / description
+                'tasks_id'        => $purchaseLine?->tasks_id,
+                'task_id'         => $task?->id,
+                'task_url'        => $task ? route('production.task.statu.id', ['id' => $task->id]) : null,
+                'line_code'       => $purchaseLine?->code,
+                'line_label'      => $purchaseLine?->label,
+                'component_label' => $task?->component_id ? optional($task->Component)->label : null,
+            ];
+        });
+
+        return response()->json([
+            'companies'    => $companies->map(fn($c) => ['id' => $c->id, 'code' => $c->code, 'label' => $c->label]),
+            'users'        => $users->map(fn($u) => ['id' => $u->id, 'name' => $u->name]),
+            'initial_code' => $initialCode,
+            'lines'        => $mappedLines,
+        ]);
+    }
+
+    /**
+     * JSON store — create a purchase invoice from selected receipt lines.
+     */
+    public function storeInvoiceJson(Request $request)
+    {
+        $validated = $request->validate([
+            'code'        => 'required|unique:purchase_invoices',
+            'companies_id' => 'required|exists:companies,id',
+            'user_id'     => 'required|exists:users,id',
+            'line_ids'    => 'required|array|min:1',
+            'line_ids.*'  => 'integer|exists:purchase_receipt_lines,id',
+        ]);
+
+        $invoice = PurchaseInvoice::create([
+            'code'         => $validated['code'],
+            'label'        => $validated['code'],
+            'companies_id' => $validated['companies_id'],
+            'user_id'      => $validated['user_id'],
+        ]);
+
+        foreach ($validated['line_ids'] as $receiptLineId) {
+            $receiptLine    = PurchaseReceiptLines::find($receiptLineId);
+            $accountingType = 2;
+
+            if ($receiptLine->purchaseLines->tasks_id == 0) {
+                $accountingType = 5;
+            } elseif ($receiptLine->purchaseLines->tasks?->OrderLines?->order?->type == 2) {
+                $accountingType = 5;
+            }
+
+            $allocationId = $this->accountingEntryService->getAllocationId(
+                $accountingType,
+                $receiptLine->purchaseLines->accounting_vats_id
+            );
+
+            $invoiceLine = PurchaseInvoiceLines::create([
+                'purchase_invoice_id'        => $invoice->id,
+                'purchase_receipt_line_id'   => $receiptLine->id,
+                'purchase_line_id'           => $receiptLine->purchase_line_id,
+                'accounting_allocation_id'   => $allocationId,
+            ]);
+
+            if ($allocationId !== null) {
+                $this->accountingEntryService->createPurchaseEntry($invoiceLine);
+            }
+
+            PurchaseLines::where('id', $receiptLine->purchase_line_id)
+                ->increment('invoiced_qty', $receiptLine->receipt_qty);
+        }
+
+        return response()->json(['redirect' => route('purchase.invoices.show', ['id' => $invoice->id])]);
     }
 
     /**
      * Display a specific purchase invoice.
-     *
-     * @param PurchaseInvoice $id
-     * @return \Illuminate\Contracts\View\View
      */
     public function showInvoice(PurchaseInvoice $id)
-    {   
+    {
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new PurchaseInvoice(), $id->id);
 
         return view('purchases/purchases-invoice-show', [
             'PurchaseInvoice' => $id,
-            'previousUrl' =>  $previousUrl,
-            'nextUrl' =>  $nextUrl,
+            'previousUrl'     => $previousUrl,
+            'nextUrl'         => $nextUrl,
         ]);
     }
-    
+
     /**
      * Update a purchase invoice.
-     *
-     * @param \App\Http\Requests\Purchases\UpdatePurchaseInvoiceRequest $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updatePurchaseInvoice(UpdatePurchaseInvoiceRequest $request)
     {
         $PurchaseInvoice = PurchaseInvoice::find($request->id);
-        $PurchaseInvoice->label=$request->label;
-        $PurchaseInvoice->statu=$request->statu;
-        $PurchaseInvoice->comment=$request->comment;
+        $PurchaseInvoice->label   = $request->label;
+        $PurchaseInvoice->statu   = $request->statu;
+        $PurchaseInvoice->comment = $request->comment;
         $PurchaseInvoice->save();
-        
-        return redirect()->route('purchase.invoices.show', ['id' =>  $PurchaseInvoice->id])->with('success', __('general_content.purchase_receipt_updated_success_trans_key'));
+
+        return redirect()->route('purchase.invoices.show', ['id' => $PurchaseInvoice->id])
+            ->with('success', __('general_content.purchase_receipt_updated_success_trans_key'));
     }
 
     /**
-     * Display the invoice view with data.
-     *
-     * @return \Illuminate\Contracts\View\View
+     * Display the invoice index with KPI/chart data.
      */
     public function invoice()
     {
-        $currentYear = Carbon::now()->format('Y');
-
         $purchasesDataRate           = $this->purchaseKPIService->getPurchaseInvoiceDataRate();
         $purchaseInvoiceMonthlyRecap = $this->purchaseKPIService->getPurchaseInvoiceMonthlyRecap();
 
-        $totalCount     = PurchaseInvoice::count();
+        $totalCount      = PurchaseInvoice::count();
         $toBePostedCount = PurchaseInvoice::where('statu', 2)->count();
-        $closedCount    = PurchaseInvoice::where('statu', 3)->count();
+        $closedCount     = PurchaseInvoice::where('statu', 3)->count();
 
         $reactKpi = [
             'totalCount'      => $totalCount,
@@ -109,8 +248,8 @@ class PurchasesInvoiceController extends Controller
         ];
 
         $reactChart = [
-            'purchaseInvoicesDataRate'       => $purchasesDataRate,
-            'purchaseInvoiceMonthlyRecap'    => $purchaseInvoiceMonthlyRecap,
+            'purchaseInvoicesDataRate'    => $purchasesDataRate,
+            'purchaseInvoiceMonthlyRecap' => $purchaseInvoiceMonthlyRecap,
         ];
 
         $reactEndpoints = [

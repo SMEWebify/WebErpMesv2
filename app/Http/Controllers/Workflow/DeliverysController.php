@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Workflow\StorePackagingRequest;
 use App\Http\Requests\Workflow\UpdateDeliveryRequest;
 use App\Http\Requests\Workflow\UpdatePackagingRequest;
+use App\Jobs\CreateDeliverySerialNumbersJob;
 
 class DeliverysController extends Controller
 {
@@ -237,6 +238,10 @@ class DeliverysController extends Controller
             $this->applyStockMovement($orderLineId, $qty, $validated['remove_from_stock'] ?? false);
 
             $ordre += 10;
+        }
+
+        if ($validated['create_serial_number'] ?? false) {
+            CreateDeliverySerialNumbersJob::dispatch($delivery->id);
         }
 
         return response()->json([

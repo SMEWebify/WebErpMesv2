@@ -433,7 +433,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/waiting/receipt/json/store-empty', 'App\Http\Controllers\Purchases\PurchasesReceiptController@storeEmptyReceiptJson')->name('purchases.waiting.receipt.json.store.empty');
         Route::get('/receipt', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receipt')->name('purchases.receipt');
         Route::get('/receipt/json/list', 'App\Http\Controllers\Purchases\PurchasesReceiptController@listJson')->name('purchases.receipt.json.list');
-        Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@waintingInvoice')->name('purchases.wainting.invoice'); 
+        Route::get('/waiting/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@waintingInvoice')->name('purchases.wainting.invoice');
+        Route::get('/waiting/invoice/json/init',   'App\Http\Controllers\Purchases\PurchasesInvoiceController@waitingInvoiceInit')->name('purchases.waiting.invoice.json.init');
+        Route::post('/waiting/invoice/json/store', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@storeInvoiceJson')->name('purchases.waiting.invoice.json.store');
         Route::get('/invoice', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@invoice')->name('purchases.invoice');
         Route::get('/invoice/json/list', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@listJson')->name('purchases.invoice.json.list');
 

@@ -754,6 +754,24 @@ async function mountPurchaseReceiptIndex() {
     );
 }
 
+async function mountPurchasesWaitingInvoice() {
+    const element = document.getElementById('purchases-waiting-invoice-app');
+    if (!element) return;
+
+    const { default: PurchasesWaitingInvoice } = await import('./components/PurchasesWaitingInvoice.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchasesWaitingInvoice, {
+            endpoints:   parse('endpoints')   ?? {},
+            trans:       parse('trans')       ?? {},
+            initialCode: parse('initialCode') ?? '',
+        })
+    );
+}
+
 async function mountPurchasesWaitingReceipt() {
     const element = document.getElementById('purchases-waiting-receipt-app');
     if (!element) return;
@@ -1155,6 +1173,7 @@ mountHomeDashboard();
 mountTasksIndex();
 mountPurchaseReceiptIndex();
 mountPurchasesWaitingReceipt();
+mountPurchasesWaitingInvoice();
 mountSerialNumbersIndex();
 mountSerialNumbersEmbedded();
 mountMethodsOverview();
