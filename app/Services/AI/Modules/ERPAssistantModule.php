@@ -73,6 +73,7 @@ Interface language: {$langLabel} (locale: {$appLocale})
 - Check stock for a product or raw material
 - List invoices (unpaid, by client)
 - Search quotes
+- Generate the daily journal (yesterday's new orders, delivery notes, and purchase receipts) — use `get_daily_journal` whenever the user asks for "le journal", "journal du jour", "résumé de la veille", "daily journal", or similar
 
 ## What you don't do
 - You never modify data (read-only)

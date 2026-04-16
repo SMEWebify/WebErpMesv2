@@ -3,6 +3,7 @@
 namespace App\Services\AI\Tools;
 
 use InvalidArgumentException;
+use App\Services\AI\Tools\DailyJournalTool;
 
 /**
  * Registre centralisé de tous les outils ERP exposés à Claude.
@@ -18,6 +19,7 @@ class ERPToolRegistry
         private readonly StockQueryTool   $stockTool,
         private readonly InvoiceQueryTool $invoiceTool,
         private readonly QuoteQueryTool   $quoteTool,
+        private readonly DailyJournalTool $journalTool,
     ) {}
 
     /**
@@ -30,6 +32,7 @@ class ERPToolRegistry
             StockQueryTool::definition(),
             InvoiceQueryTool::definition(),
             QuoteQueryTool::definition(),
+            DailyJournalTool::definition(),
         ];
     }
 
@@ -64,6 +67,9 @@ class ERPToolRegistry
                 code:   $input['code']   ?? null,
                 statu:  isset($input['statu']) ? (int) $input['statu'] : null,
                 limit:  (int) ($input['limit'] ?? 10),
+            ),
+            'get_daily_journal' => $this->journalTool->fetch(
+                date: $input['date'] ?? null,
             ),
             default => throw new InvalidArgumentException("Outil inconnu : {$toolName}"),
         };

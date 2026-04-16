@@ -95,8 +95,15 @@ class ToolAwareClaudeProvider implements AIProviderInterface
                 $stopReason = $data['stop_reason'] ?? 'end_turn';
                 $contentBlocks = $data['content'] ?? [];
 
-                // Ajouter la réponse de l'assistant à l'historique
-                $messages[] = ['role' => 'assistant', 'content' => $contentBlocks];
+                // Ajouter la réponse de l'assistant à l'historique.
+                // Cast (object) sur input des blocs tool_use : PHP décode {} en [],
+                // ce qui se ré-encoderait en tableau JSON [] au lieu de l'objet {} attendu par l'API.
+                $messages[] = ['role' => 'assistant', 'content' => array_map(
+                    fn ($block) => isset($block['type']) && $block['type'] === 'tool_use'
+                        ? array_merge($block, ['input' => (object) ($block['input'] ?? [])])
+                        : $block,
+                    $contentBlocks
+                )];
 
                 // Fin : Claude a terminé sans appel d'outil
                 if ($stopReason === 'end_turn') {

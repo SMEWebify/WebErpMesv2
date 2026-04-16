@@ -10,6 +10,7 @@ use App\Services\AI\Providers\ToolAwareClaudeProvider;
 use App\Services\AI\Tools\ERPToolRegistry;
 use App\Services\AI\Tools\InvoiceQueryTool;
 use App\Services\AI\Tools\OrderQueryTool;
+use App\Services\AI\Tools\DailyJournalTool;
 use App\Services\AI\Tools\QuoteQueryTool;
 use App\Services\AI\Tools\StockQueryTool;
 use Illuminate\Support\ServiceProvider;
@@ -23,12 +24,14 @@ class AIServiceProvider extends ServiceProvider
         $this->app->singleton(StockQueryTool::class);
         $this->app->singleton(InvoiceQueryTool::class);
         $this->app->singleton(QuoteQueryTool::class);
+        $this->app->singleton(DailyJournalTool::class);
 
         $this->app->singleton(ERPToolRegistry::class, fn ($app) => new ERPToolRegistry(
             $app->make(OrderQueryTool::class),
             $app->make(StockQueryTool::class),
             $app->make(InvoiceQueryTool::class),
             $app->make(QuoteQueryTool::class),
+            $app->make(DailyJournalTool::class),
         ));
 
         // Gateway avec tous les providers

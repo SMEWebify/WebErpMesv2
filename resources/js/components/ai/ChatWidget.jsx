@@ -101,6 +101,8 @@ const TRANS = {
         micStop:      "Arrêter l'écoute",
         newChat:      'Nouvelle conversation',
         noMic:        "La reconnaissance vocale n'est pas supportée par votre navigateur.",
+        journalBtn:   'Journal de la veille',
+        journalMsg:   'Génère le journal de la veille',
     },
     en: {
         title:        'ERP Assistant',
@@ -112,6 +114,8 @@ const TRANS = {
         micStop:      'Stop listening',
         newChat:      'New conversation',
         noMic:        'Speech recognition is not supported by your browser.',
+        journalBtn:   "Yesterday's journal",
+        journalMsg:   'Generate the daily journal',
     },
 };
 
@@ -123,6 +127,11 @@ function t(locale, key) {
 
 const SUGGESTION_CATEGORIES = {
     fr: [
+        {
+            id: 'journal',
+            label: '📰 Journal',
+            suggestions: ['Journal de la veille', 'Journal du jour', 'Journal du 2025-01-15'],
+        },
         {
             id: 'commande',
             label: '📦 Commande',
@@ -145,6 +154,11 @@ const SUGGESTION_CATEGORIES = {
         },
     ],
     en: [
+        {
+            id: 'journal',
+            label: '📰 Journal',
+            suggestions: ["Yesterday's journal", "Today's journal", 'Journal for 2025-01-15'],
+        },
         {
             id: 'order',
             label: '📦 Orders',
@@ -384,6 +398,12 @@ export default function ChatWidget({ locale = 'fr' }) {
                                 <div style={{ color: '#fff', fontWeight: 600, fontSize: 14 }}>{t(locale, 'title')}</div>
                                 <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>{t(locale, 'subtitle')}</div>
                             </div>
+                            <button
+                                onClick={() => submit(t(locale, 'journalMsg'))}
+                                title={t(locale, 'journalBtn')}
+                                disabled={loading}
+                                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 15, padding: 4 }}
+                            >📰</button>
                             <button
                                 onClick={clearChat}
                                 title={t(locale, 'newChat')}
