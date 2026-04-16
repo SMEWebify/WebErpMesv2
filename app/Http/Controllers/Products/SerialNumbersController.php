@@ -57,7 +57,7 @@ class SerialNumbersController extends Controller
 
         $query = SerialNumbers::with([
                 'Product:id,label',
-                'OrderLine:id,label,order_id',
+                'OrderLine:id,label,orders_id',
                 'OrderLine.order:id,code',
                 'Task:id',
                 'purchaseReceiptLines:id,purchase_receipt_id',
