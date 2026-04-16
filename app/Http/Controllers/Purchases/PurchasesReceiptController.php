@@ -239,16 +239,20 @@ class PurchasesReceiptController extends Controller
                                                     ->selectRaw('AVG(DATEDIFF(purchase_receipt_lines.created_at, purchase_lines.created_at)) AS avg_reception_delay')
                                                     ->first();
 
+        $reactEndpoints = [
+            'lines'            => route('purchases.receipt.lines.json', ['id' => $id->id]),
+            'inspection'       => route('purchase.receipts.lines.update', ['purchaseReceiptLine' => '__ID__']),
+            'manualLine'       => route('purchase.receipts.lines.manual', ['id' => $id->id]),
+            'storeNewStock'    => route('products.stockline.store.from.purchase.order'),
+            'entryExistingStock' => route('products.stockline.entry.from.purchase.order'),
+        ];
+
         return view('purchases/purchases-receipt-show', [
-            'PurchaseReceipt' => $id,
-            'previousUrl' =>  $previousUrl,
-            'nextUrl' =>  $nextUrl,
-            'StockLocationList' =>  $StockLocationList,
-            'StockLocationProductList' =>  $StockLocationProductList,
+            'PurchaseReceipt'      => $id,
+            'previousUrl'          => $previousUrl,
+            'nextUrl'              => $nextUrl,
             'averageReceptionDelay' => $averageReceptionDelay->avg_reception_delay,
-            'userSelect' => $userSelect,
-            'nonConformities' => $nonConformities,
-            'productSelect' => $productSelect,
+            'reactEndpoints'       => $reactEndpoints,
         ]);
     }
 
@@ -434,6 +438,112 @@ class PurchasesReceiptController extends Controller
     }
 
     /**
+     * JSON endpoint — return all lines of a purchase receipt with related data.
+     */
+    public function receiptLinesJson(PurchaseReceipt $id)
+    {
+        $lines = $id->PurchaseReceiptLines()
+            ->with([
+                'purchaseLines.purchase',
+                'purchaseLines.tasks.OrderLines.order',
+                'purchaseLines.tasks.Component',
+                'inspector',
+                'qualityNonConformity',
+                'StockLocationProducts',
+            ])
+            ->get();
+
+        $users           = $this->SelectDataService->getUsers();
+        $nonConformities = $this->SelectDataService->getQualityNonConformity();
+        $products        = $this->SelectDataService->getProductsSelect();
+        $stockLocations  = StockLocation::with('Stocks')->get();
+        $stockLocProds   = StockLocationProducts::with('StockLocation')->get();
+
+        return response()->json([
+            'lines'  => $lines->map(fn($l) => $this->serializeReceiptLine($l)),
+            'select' => [
+                'users'                   => $users->map(fn($u) => ['id' => $u->id, 'name' => $u->name]),
+                'non_conformities'        => $nonConformities->map(fn($nc) => ['id' => $nc->id, 'code' => $nc->code]),
+                'products'                => $products->map(fn($p) => ['id' => $p->id, 'code' => $p->code, 'label' => $p->label]),
+                'stock_locations'         => $stockLocations->map(fn($sl) => [
+                    'id'         => $sl->id,
+                    'code'       => $sl->code,
+                    'stock_code' => $sl->Stocks?->code,
+                ]),
+                'stock_location_products' => $stockLocProds->map(fn($slp) => [
+                    'id'            => $slp->id,
+                    'code'          => $slp->code,
+                    'products_id'   => $slp->products_id,
+                    'location_code' => $slp->StockLocation?->code,
+                ]),
+            ],
+        ]);
+    }
+
+    /**
+     * Serialize a PurchaseReceiptLine for JSON consumption.
+     */
+    private function serializeReceiptLine(PurchaseReceiptLines $line): array
+    {
+        $purchaseLine = $line->purchaseLines;
+        $task         = $purchaseLine->tasks;
+        $orderLine    = $task?->OrderLines;
+        $order        = $orderLine?->order;
+        $productId    = $task?->component_id ?? $purchaseLine->product_id ?? null;
+
+        return [
+            'id'                         => $line->id,
+            'ordre'                      => $line->ordre,
+            'receipt_qty'                => $line->receipt_qty,
+            'accepted_qty'               => $line->accepted_qty,
+            'rejected_qty'               => $line->rejected_qty,
+            'inspection_result'          => $line->inspection_result,
+            'inspection_date'            => $line->inspection_date?->format('Y-m-d'),
+            'inspected_by'               => $line->inspected_by,
+            'inspector_name'             => $line->inspector?->name,
+            'quality_non_conformity_id'  => $line->quality_non_conformity_id,
+            'nc_code'                    => $line->qualityNonConformity?->code,
+            'stock_location_products_id' => $line->stock_location_products_id,
+            'stock_code'                 => $line->StockLocationProducts?->code,
+            'stock_url'                  => $line->stock_location_products_id
+                ? route('products.stockline.show', ['id' => $line->stock_location_products_id])
+                : null,
+            'purchase_line_id'           => $line->purchase_line_id,
+            'purchase_line_label'        => $purchaseLine->label,
+            'purchase_line_qty'          => $purchaseLine->qty,
+            'purchase_id'                => $purchaseLine->purchases_id,
+            'purchase_code'              => $purchaseLine->purchase?->code,
+            'purchase_url'               => $purchaseLine->purchases_id
+                ? route('purchases.show', ['id' => $purchaseLine->purchases_id])
+                : null,
+            'product_id'                 => $productId,
+            'product_url'                => $productId
+                ? route('products.show', ['id' => $productId])
+                : null,
+            'selling_price'              => $purchaseLine->selling_price,
+            'tasks_id'                   => $purchaseLine->tasks_id,
+            'task_id'                    => $task?->id,
+            'task_label'                 => $task?->label,
+            'task_url'                   => $task
+                ? route('production.task.statu.id', ['id' => $task->id])
+                : null,
+            'task_component_id'          => $task?->component_id,
+            'component_label'            => $task?->component_id
+                ? optional($task->Component)->label
+                : null,
+            'quality_required'           => $task ? $task->getQualityRequiredAttribute() : null,
+            'order_id'                   => $order?->id,
+            'order_code'                 => $order?->code,
+            'order_url'                  => $orderLine?->orders_id
+                ? route('orders.show', ['id' => $orderLine->orders_id])
+                : null,
+            'order_line_qty'             => $orderLine?->qty,
+            'task_qty'                   => $task?->qty,
+            'order_line_label'           => $orderLine?->label,
+        ];
+    }
+
+    /**
      * Update inspection related data for a purchase receipt line.
      */
     public function updateLineInspection(Request $request, PurchaseReceiptLines $purchaseReceiptLine)
@@ -463,11 +573,13 @@ class PurchasesReceiptController extends Controller
         $totalInspected = $acceptedQty + $rejectedQty;
 
         if ($totalInspected > $purchaseReceiptLine->receipt_qty) {
-            return redirect()->back()->withErrors([
-                'accepted_qty' => __('general_content.inspection_qty_error_trans_key', [
-                    'receipt' => $purchaseReceiptLine->receipt_qty,
-                ]),
-            ])->withInput();
+            $error = __('general_content.inspection_qty_error_trans_key', [
+                'receipt' => $purchaseReceiptLine->receipt_qty,
+            ]);
+            if ($request->wantsJson()) {
+                return response()->json(['errors' => ['accepted_qty' => [$error]]], 422);
+            }
+            return redirect()->back()->withErrors(['accepted_qty' => $error])->withInput();
         }
 
         if ($request->boolean('create_non_conformity') && empty($validated['quality_non_conformity_id'])) {
@@ -489,6 +601,18 @@ class PurchasesReceiptController extends Controller
             'inspection_result' => $validated['inspection_result'] ?? null,
             'quality_non_conformity_id' => $validated['quality_non_conformity_id'] ?? null,
         ]);
+
+        if ($request->wantsJson()) {
+            $purchaseReceiptLine->load([
+                'purchaseLines.purchase',
+                'purchaseLines.tasks.OrderLines.order',
+                'purchaseLines.tasks.Component',
+                'inspector',
+                'qualityNonConformity',
+                'StockLocationProducts',
+            ]);
+            return response()->json(['line' => $this->serializeReceiptLine($purchaseReceiptLine)]);
+        }
 
         return redirect()->back()->with('success', __('general_content.inspection_update_success_trans_key'));
     }
@@ -547,7 +671,7 @@ class PurchasesReceiptController extends Controller
             'accounting_vats_id' => $accountingVat->id,
         ]);
 
-        PurchaseReceiptLines::create([
+        $receiptLine = PurchaseReceiptLines::create([
             'purchase_receipt_id' => $id->id,
             'purchase_line_id' => $purchaseLine->id,
             'ordre' => $nextReceiptOrdre + 10,
@@ -561,6 +685,18 @@ class PurchasesReceiptController extends Controller
 
         $purchase->statu = $allReceived ? 4 : 3;
         $purchase->save();
+
+        if ($request->wantsJson()) {
+            $receiptLine->load([
+                'purchaseLines.purchase',
+                'purchaseLines.tasks.OrderLines.order',
+                'purchaseLines.tasks.Component',
+                'inspector',
+                'qualityNonConformity',
+                'StockLocationProducts',
+            ]);
+            return response()->json(['line' => $this->serializeReceiptLine($receiptLine)]);
+        }
 
         return redirect()->back()->with('success', 'Successfully added manual receipt line');
     }

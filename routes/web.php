@@ -447,6 +447,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/receipt/control/{id}', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateReceiptControl')->middleware(['auth'])->name('purchase.receipts.reception_control');
         Route::post('/receipt/line/{purchaseReceiptLine}/inspection', 'App\Http\Controllers\Purchases\PurchasesReceiptController@updateLineInspection')->middleware(['auth'])->name('purchase.receipts.lines.update');
         Route::post('/receipt/{id}/manual-line', 'App\Http\Controllers\Purchases\PurchasesReceiptController@storeManualReceiptLine')->middleware(['auth'])->name('purchase.receipts.lines.manual');
+        Route::get('/receipt/{id}/lines/json', 'App\Http\Controllers\Purchases\PurchasesReceiptController@receiptLinesJson')->middleware(['auth'])->name('purchases.receipt.lines.json');
         Route::post('/invoice/edit/{id}', 'App\Http\Controllers\Purchases\PurchasesInvoiceController@updatePurchaseInvoice')->middleware(['auth'])->name('invoice.update');
 
         // JSON API — React PurchaseLinesPage

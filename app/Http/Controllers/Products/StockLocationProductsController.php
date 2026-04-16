@@ -188,9 +188,17 @@ class StockLocationProductsController extends Controller
         ];
 
         $this->stockService->createStockMove($data);
-    
+
         // Mise à jour de la ligne de réception de l'achat
         $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $StockLocationProduct->id);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'stock_location_products_id' => $StockLocationProduct->id,
+                'stock_code'                 => $StockLocationProduct->code,
+                'stock_url'                  => route('products.stockline.show', ['id' => $StockLocationProduct->id]),
+            ]);
+        }
 
         return redirect()->route('products.stockline.show', ['id' => $StockLocationProduct->id])->with('success', __('general_content.stock_move_created_success_trans_key'));
     }
@@ -210,6 +218,15 @@ class StockLocationProductsController extends Controller
 
         // Mise à jour de la ligne de réception de l'achat
         $this->stockService->updatePurchaseReceiptLine($request->purchase_receipt_line_id, $request->stock_location_products_id);
+
+        if ($request->wantsJson()) {
+            $slp = StockLocationProducts::find($request->stock_location_products_id);
+            return response()->json([
+                'stock_location_products_id' => (int) $request->stock_location_products_id,
+                'stock_code'                 => $slp?->code,
+                'stock_url'                  => route('products.stockline.show', ['id' => $request->stock_location_products_id]),
+            ]);
+        }
 
         return redirect()->route('products.stockline.show', ['id' => $request->stock_location_products_id])->with('success', __('general_content.stock_move_created_success_trans_key'));
    }

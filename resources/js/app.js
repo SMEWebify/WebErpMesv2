@@ -660,6 +660,26 @@ async function mountPurchaseLinesPage() {
     );
 }
 
+async function mountPurchaseReceiptLinesPage() {
+    const element = document.getElementById('purchase-receipt-lines-page-app');
+    if (!element) return;
+
+    const { default: PurchaseReceiptLinesPage } = await import('./components/PurchaseReceiptLinesPage.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(PurchaseReceiptLinesPage, {
+            receiptId:    parseInt(element.dataset.receiptId, 10),
+            receiptCode:  element.dataset.receiptCode ?? '',
+            receiptStatu: parseInt(element.dataset.receiptStatu, 10),
+            userId:       parseInt(element.dataset.userId, 10),
+            endpoints:    parse('endpoints') ?? {},
+        })
+    );
+}
+
 async function mountLoadPlanningIndex() {
     const element = document.getElementById('load-planning-app');
     if (!element) return;
@@ -1128,6 +1148,7 @@ mountQualityIndex();
 mountQuoteLinesPage();
 mountOrderLinesPage();
 mountPurchaseLinesPage();
+mountPurchaseReceiptLinesPage();
 mountLoadPlanningIndex();
 mountConstructionSitePage();
 mountHomeDashboard();
