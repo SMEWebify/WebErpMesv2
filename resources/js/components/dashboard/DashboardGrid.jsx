@@ -128,16 +128,20 @@ function AddWidgetPanel({ activeIds, onAdd, onClose, permissions, onDragStart, o
 
 // ─── DashboardGrid ────────────────────────────────────────────────────────────
 
-export default function DashboardGrid({ dashProps, configEndpoint }) {
+export default function DashboardGrid({ dashProps, configEndpoint, editMode = false, onEditModeChange }) {
     const permissions = { canPurchases: !!dashProps?.canPurchases };
     const [layout,          setLayout]          = useState(null);
-    const [editMode,        setEditMode]        = useState(false);
     const [showAdd,         setShowAdd]         = useState(false);
     const [saving,          setSaving]          = useState(false);
     const [draggingWidget,  setDraggingWidget]  = useState(null); // widget glissé depuis le panel
     const saveTimer    = useRef(null);
     const containerRef = useRef(null);
     const containerWidth = useContainerWidth(containerRef);
+
+    // ── Fermer le panel Ajouter quand on quitte le mode édition ─────────────
+    useEffect(() => {
+        if (!editMode) { setShowAdd(false); setDraggingWidget(null); }
+    }, [editMode]);
 
     // ── Chargement de la config sauvegardée ──────────────────────────────────
     useEffect(() => {
@@ -234,31 +238,28 @@ export default function DashboardGrid({ dashProps, configEndpoint }) {
     // ── Rendu ─────────────────────────────────────────────────────────────────
     return (
         <div ref={containerRef} style={{ width: '100%' }}>
-            {/* Barre d'outils edit mode */}
-            <div className="d-flex justify-content-end align-items-center mb-2" style={{ gap: '0.5rem' }}>
-                {saving && (
-                    <small className="text-muted">
-                        <i className="fas fa-spinner fa-spin mr-1" />Sauvegarde…
-                    </small>
-                )}
-                {editMode && (
-                    <>
-                        <button className="btn btn-sm btn-outline-primary" onClick={() => setShowAdd(s => !s)}>
-                            <i className="fas fa-plus mr-1" />Ajouter
-                        </button>
-                        <button className="btn btn-sm btn-outline-secondary" onClick={resetLayout}>
-                            <i className="fas fa-undo mr-1" />Réinitialiser
-                        </button>
-                    </>
-                )}
-                <button
-                    className={`btn btn-sm ${editMode ? 'btn-success' : 'btn-outline-secondary'}`}
-                    onClick={() => { setEditMode(e => !e); setShowAdd(false); setDraggingWidget(null); }}
-                >
-                    <i className={`fas ${editMode ? 'fa-check' : 'fa-edit'} mr-1`} />
-                    {editMode ? 'Terminer' : 'Personnaliser'}
-                </button>
-            </div>
+            {/* Barre d'outils — visible uniquement en mode édition */}
+            {editMode && (
+                <div className="d-flex justify-content-end align-items-center mb-2" style={{ gap: '0.5rem' }}>
+                    {saving && (
+                        <small className="text-muted">
+                            <i className="fas fa-spinner fa-spin mr-1" />Sauvegarde…
+                        </small>
+                    )}
+                    <button className="btn btn-sm btn-outline-primary" onClick={() => setShowAdd(s => !s)}>
+                        <i className="fas fa-plus mr-1" />Ajouter
+                    </button>
+                    <button className="btn btn-sm btn-outline-secondary" onClick={resetLayout}>
+                        <i className="fas fa-undo mr-1" />Réinitialiser
+                    </button>
+                    <button
+                        className="btn btn-sm btn-success"
+                        onClick={() => { onEditModeChange?.(false); setShowAdd(false); setDraggingWidget(null); }}
+                    >
+                        <i className="fas fa-check mr-1" />Terminer
+                    </button>
+                </div>
+            )}
 
             {/* Zone de drop visuelle en mode édition */}
             {editMode && draggingWidget && (

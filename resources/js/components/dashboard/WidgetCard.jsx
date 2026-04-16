@@ -60,6 +60,8 @@ export default function WidgetCard({
     empty = false,
     emptyText = 'Aucune donnée',
     children,
+    footer,
+    fillHeight = false,
     // edit mode
     editMode = false,
     onRemove,
@@ -68,7 +70,7 @@ export default function WidgetCard({
     currentType,
 }) {
     return (
-        <div className={`card card-outline card-${theme}`} style={{ height: '100%', marginBottom: 0 }}>
+        <div className={`card card-outline card-${theme}`} style={{ height: '100%', marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
             {/* Header */}
             <div className="card-header d-flex align-items-center" style={{ minHeight: 42, padding: '0.4rem 0.75rem' }}>
                 <h3 className="card-title" style={{ fontSize: '0.9rem', flex: 1, margin: 0 }}>
@@ -118,7 +120,14 @@ export default function WidgetCard({
             </div>
 
             {/* Body */}
-            <div className="card-body" style={{ padding: '0.75rem', overflow: 'auto' }}>
+            <div
+                className="card-body"
+                style={{
+                    padding: '0.75rem',
+                    overflow: fillHeight ? 'hidden' : 'auto',
+                    ...(fillHeight ? { flex: '1 1 0', minHeight: 0, display: 'flex', flexDirection: 'column' } : {}),
+                }}
+            >
                 {loading && <Skeleton />}
                 {!loading && error && (
                     <div className="alert alert-danger mb-0 py-2" style={{ fontSize: '0.82rem' }}>
@@ -134,6 +143,11 @@ export default function WidgetCard({
                 )}
                 {!loading && !error && !empty && children}
             </div>
+            {footer && (
+                <div className="card-footer" style={{ padding: '0.5rem 0.75rem', flexShrink: 0 }}>
+                    {footer}
+                </div>
+            )}
         </div>
     );
 }

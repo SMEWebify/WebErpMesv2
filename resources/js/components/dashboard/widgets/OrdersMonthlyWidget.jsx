@@ -102,7 +102,7 @@ function formatCurrency(value, currency, locale) {
     }
 }
 
-function Totals({ series, trans, currency, locale }) {
+function TotalsContent({ series, trans, currency, locale }) {
     if (!series.length) return null;
 
     const sum = (idx) => (series[idx]?.values ?? []).reduce((s, v) => s + v, 0);
@@ -122,8 +122,7 @@ function Totals({ series, trans, currency, locale }) {
         : null;
 
     return (
-        <div className="card-footer" style={{ padding: '0.5rem 0.75rem' }}>
-            <div className="row text-center">
+        <div className="row text-center">
                 <div className="col-sm-3 col-6">
                     <div className="description-block border-right">
                         <h5 className="description-header" style={{ fontSize: '0.85rem' }}>
@@ -167,7 +166,6 @@ function Totals({ series, trans, currency, locale }) {
                     </div>
                 </div>
             </div>
-        </div>
     );
 }
 
@@ -214,7 +212,6 @@ export default function OrdersMonthlyWidget({
     currency = 'EUR',
     locale   = 'fr-FR',
     showTotals = true,
-    height     = 300,
     editMode   = false,
     onRemove,
     onTypeChange,
@@ -264,41 +261,34 @@ export default function OrdersMonthlyWidget({
     const labels      = MONTH_KEYS.map(k => trans[k] ?? k);
     const isEmpty     = !loading && !error && (!series || series.length === 0);
 
-    return (
-        <div>
-            <WidgetCard
-                title={trans.monthly_recap_title ?? `CA mensuel ${currentYear}`}
-                icon="fa-chart-bar"
-                theme="purple"
-                loading={loading}
-                error={error}
-                empty={isEmpty}
-                emptyText={trans.no_data ?? 'Aucune donnée pour cette période'}
-                editMode={editMode}
-                onRemove={onRemove}
-                onTypeChange={onTypeChange}
-                availableTypes={['line', 'area', 'bar']}
-                currentType="line"
-            >
-                <LineChart
-                    labels={labels}
-                    series={series ?? []}
-                    currency={currency}
-                    locale={locale}
-                    height={height}
-                    showLegend
-                />
-            </WidgetCard>
+    const totalsFooter = showTotals && series && series.length > 0 && !loading && !error
+        ? <TotalsContent series={series} trans={trans} currency={currency} locale={locale} />
+        : null;
 
-            {/* Récap totaux hors WidgetCard pour coller au style AdminLTE card-footer */}
-            {showTotals && series && series.length > 0 && !loading && !error && (
-                <Totals
-                    series={series}
-                    trans={trans}
-                    currency={currency}
-                    locale={locale}
-                />
-            )}
-        </div>
+    return (
+        <WidgetCard
+            title={trans.monthly_recap_title ?? `CA mensuel ${currentYear}`}
+            icon="fa-chart-bar"
+            theme="purple"
+            loading={loading}
+            error={error}
+            empty={isEmpty}
+            emptyText={trans.no_data ?? 'Aucune donnée pour cette période'}
+            fillHeight
+            footer={totalsFooter}
+            editMode={editMode}
+            onRemove={onRemove}
+            onTypeChange={onTypeChange}
+            availableTypes={['line', 'area', 'bar']}
+            currentType="line"
+        >
+            <LineChart
+                labels={labels}
+                series={series ?? []}
+                currency={currency}
+                locale={locale}
+                showLegend
+            />
+        </WidgetCard>
     );
 }

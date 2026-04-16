@@ -64,7 +64,7 @@ export default function LineChart({
     }
 
     const W = 560;
-    const H = height;
+    const H = height ?? 240;
     const PAD = { top: 16, right: 16, bottom: 40, left: 52 };
     const plotW = W - PAD.left - PAD.right;
     const plotH = H - PAD.top - PAD.bottom;
@@ -76,8 +76,8 @@ export default function LineChart({
     const yPos = (v) => PAD.top + plotH - (Math.max(0, v) / maxVal) * plotH;
 
     return (
-        <div>
-            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', display: 'block' }}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', flex: 1, minHeight: 0, display: 'block' }}>
                 {/* Y grid + ticks */}
                 {Array.from({ length: yTicks + 1 }, (_, t) => {
                     const v = (maxVal / yTicks) * t;

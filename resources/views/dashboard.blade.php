@@ -3,7 +3,6 @@
 @section('title', __('general_content.dashboard_trans_key'))
 
 @section('content_header')
-    <h1>{{ __('general_content.dashboard_trans_key') }}</h1>
 @stop
 
 @section('content')
@@ -23,6 +22,7 @@
   <div
     id="home-dashboard-app"
     data-props="{{ json_encode($reactProps) }}"
+    style="margin-top: 2rem;"
   ></div>
 
 @stop

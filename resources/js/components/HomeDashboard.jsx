@@ -6,6 +6,32 @@ function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
 
+const sideBtn = {
+    base: {
+        writingMode: 'vertical-rl',
+        transform: 'rotate(180deg)',
+        padding: '14px 8px',
+        border: 'none',
+        borderRadius: '6px 0 0 6px',
+        cursor: 'pointer',
+        fontSize: '0.78rem',
+        fontWeight: 600,
+        letterSpacing: '0.04em',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        whiteSpace: 'nowrap',
+        boxShadow: '-2px 2px 6px rgba(0,0,0,0.15)',
+        transition: 'opacity 0.15s',
+    },
+    today:       { background: '#17a2b8', color: '#fff' },
+    todayActive: { background: '#138496', color: '#fff' },
+    kpi:         { background: '#007bff', color: '#fff' },
+    kpiActive:   { background: '#0056b3', color: '#fff' },
+    customize:   { background: '#6c757d', color: '#fff' },
+    customizeOn: { background: '#28a745', color: '#fff' },
+};
+
 export default function HomeDashboard({
     year,
     currency,
@@ -22,6 +48,7 @@ export default function HomeDashboard({
     endpoints,
 }) {
     const [activeView, setActiveView] = useState(null); // null = loading
+    const [editMode,   setEditMode]   = useState(false);
 
     // Charge la préférence sauvegardée
     useEffect(() => {
@@ -37,6 +64,7 @@ export default function HomeDashboard({
 
     function switchView(view) {
         setActiveView(view);
+        setEditMode(false);
         if (!endpoints?.today_config_update) return;
         fetch(endpoints.today_config_update, {
             method: 'PUT',
@@ -66,24 +94,45 @@ export default function HomeDashboard({
 
     return (
         <div>
-            {/* Toggle KPI / Vue du jour */}
-            <div className="d-flex justify-content-end mb-3">
-                <div className="btn-group btn-group-sm" role="group">
+            {/* Boutons latéraux fixes à droite */}
+            <div style={{
+                position: 'fixed',
+                right: 0,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+                zIndex: 1050,
+            }}>
+                <button
+                    style={{ ...sideBtn.base, ...(activeView === 'today' ? sideBtn.todayActive : sideBtn.today) }}
+                    onClick={() => switchView('today')}
+                    title="Vue du jour"
+                >
+                    <i className="fas fa-sun" />
+                    Vue du jour
+                </button>
+
+                <button
+                    style={{ ...sideBtn.base, ...(activeView === 'kpi' ? sideBtn.kpiActive : sideBtn.kpi) }}
+                    onClick={() => switchView('kpi')}
+                    title="Dashboard KPI"
+                >
+                    <i className="fas fa-chart-bar" />
+                    Dashboard KPI
+                </button>
+
+                {activeView === 'kpi' && (
                     <button
-                        type="button"
-                        className={`btn ${activeView === 'today' ? 'btn-primary' : 'btn-outline-secondary'}`}
-                        onClick={() => switchView('today')}
+                        style={{ ...sideBtn.base, ...(editMode ? sideBtn.customizeOn : sideBtn.customize) }}
+                        onClick={() => setEditMode(e => !e)}
+                        title={editMode ? 'Terminer la personnalisation' : 'Personnaliser'}
                     >
-                        <i className="fas fa-sun mr-1" />Vue du jour
+                        <i className={`fas ${editMode ? 'fa-check' : 'fa-edit'}`} />
+                        {editMode ? 'Terminer' : 'Personnaliser'}
                     </button>
-                    <button
-                        type="button"
-                        className={`btn ${activeView === 'kpi' ? 'btn-primary' : 'btn-outline-secondary'}`}
-                        onClick={() => switchView('kpi')}
-                    >
-                        <i className="fas fa-chart-bar mr-1" />Dashboard KPI
-                    </button>
-                </div>
+                )}
             </div>
 
             {/* Contenu */}
@@ -93,6 +142,8 @@ export default function HomeDashboard({
                 <DashboardGrid
                     dashProps={dashProps}
                     configEndpoint={endpoints?.dashboard_config ?? '/dashboard/config'}
+                    editMode={editMode}
+                    onEditModeChange={setEditMode}
                 />
             )}
         </div>
