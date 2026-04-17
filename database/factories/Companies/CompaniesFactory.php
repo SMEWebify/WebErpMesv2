@@ -23,6 +23,7 @@ class CompaniesFactory extends Factory
     public function definition()
     {
         return [
+            'uuid' => $this->faker->uuid(),
             'code' => $this->faker->regexify('[A-Z]{5}[0-4]{3}'),
 			'label' => $this->faker->unique()->name(),
 			'website'=>  $this->faker->domainName(),
