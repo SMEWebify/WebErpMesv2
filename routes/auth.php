@@ -19,7 +19,7 @@ Route::middleware('guest')->group(function () {
         ->name('login');
 
     Route::get('/', function () {
-        return redirect()->route('login');
+        return new \Illuminate\Http\RedirectResponse(route('login', [], false));
     });
 
     // Route to handle login form submission
