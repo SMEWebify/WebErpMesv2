@@ -1183,6 +1183,44 @@ async function mountChatWidget() {
     createRoot(container).render(React.createElement(ChatWidget, { locale }));
 }
 
+async function mountDeliveryLinesTab() {
+    const element = document.getElementById('delivery-lines-tab-app');
+    if (!element) return;
+
+    const { default: DeliveryLinesTab } = await import('./components/DeliveryLinesTab.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(DeliveryLinesTab, {
+            lines:            parse('lines')           ?? [],
+            deliveryId:       Number(element.dataset.deliveryId ?? 0),
+            nonConformities:  parse('nonConformities') ?? [],
+            endpoints:        parse('endpoints')       ?? {},
+            trans:            parse('trans')           ?? {},
+        })
+    );
+}
+
+async function mountReturnsIndex() {
+    const element = document.getElementById('returns-index-app');
+    if (!element) return;
+
+    const { default: ReturnsIndex } = await import('./components/ReturnsIndex.jsx');
+    const parse = (attr) => {
+        try { return JSON.parse(element.dataset[attr] ?? 'null'); } catch { return null; }
+    };
+
+    createRoot(element).render(
+        React.createElement(ReturnsIndex, {
+            endpoints: parse('endpoints') ?? {},
+            props:     parse('props')     ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
 // --- Bootstrap : montage de tous les composants ---
 mountSetupWizard();
 mountCompanyDashboard();
@@ -1244,3 +1282,5 @@ mountEstimatedBudgetsIndex();
 mountChatWidget();
 mountProductHistory();
 mountStockDetailPage();
+mountReturnsIndex();
+mountDeliveryLinesTab();

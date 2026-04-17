@@ -443,6 +443,12 @@ return [
                     'text' => 'deliverys_notes_list_trans_key',
                     'url'  => 'deliverys',
                 ],
+                [
+                    'text' => 'returns_trans_key',
+                    'url'  => 'returns',
+                    'icon_color' => 'warning',
+                    'can'  => ['returns-menu'],
+                ],
             ]
         ],
         [
@@ -578,6 +584,12 @@ return [
                     'icon' => 'fas fa-clipboard-check',
                     'icon_color' => 'success',
                     'can'  => ['audit-menu'],
+                ],
+                [
+                    'text' => 'returns_trans_key',
+                    'url'  => 'returns',
+                    'icon_color' => 'warning',
+                    'can'  => ['returns-menu'],
                 ],
             ],
         ],

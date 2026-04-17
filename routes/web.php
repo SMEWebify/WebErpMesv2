@@ -363,6 +363,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
         // JSON API for React DeliverysIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
+        Route::get('/json/{id}/lines', 'App\Http\Controllers\Workflow\DeliverysController@linesJson')->name('deliverys.json.lines');
         Route::post('{id}/packaging/store/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsStore')->name('deliverys.packagings.store');
         Route::post('{id}/packaging/update/', 'App\Http\Controllers\Workflow\DeliverysController@packagingsUpdate')->name('deliverys.packagings.update');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\DeliverysController@show')->name('deliverys.show');
@@ -372,10 +373,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/', 'App\\Http\\Controllers\\Workflow\\ReturnsController@index')->name('returns');
         Route::get('/json/list', 'App\\Http\\Controllers\\Workflow\\ReturnsController@listJson')->name('returns.json.list');
         Route::post('/json/store', 'App\\Http\\Controllers\\Workflow\\ReturnsController@storeJson')->name('returns.json.store');
-        Route::post('/json/{return}/diagnose', 'App\\Http\\Controllers\\Workflow\\ReturnsController@diagnoseJson')->name('returns.json.diagnose');
-        Route::post('/json/{return}/reopen', 'App\\Http\\Controllers\\Workflow\\ReturnsController@reopenJson')->name('returns.json.reopen');
-        Route::post('/json/{return}/close', 'App\\Http\\Controllers\\Workflow\\ReturnsController@closeJson')->name('returns.json.close');
-        Route::get('/{return}', 'App\\Http\\Controllers\\Workflow\\ReturnsController@show')->name('returns.show');
+        Route::post('/json/{id}/diagnose', 'App\\Http\\Controllers\\Workflow\\ReturnsController@diagnoseJson')->name('returns.json.diagnose');
+        Route::post('/json/{id}/reopen', 'App\\Http\\Controllers\\Workflow\\ReturnsController@reopenJson')->name('returns.json.reopen');
+        Route::post('/json/{id}/close', 'App\\Http\\Controllers\\Workflow\\ReturnsController@closeJson')->name('returns.json.close');
+        Route::get('/{id}', 'App\\Http\\Controllers\\Workflow\\ReturnsController@show')->name('returns.show');
     });
 
     Route::group(['prefix' => 'invoices', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {

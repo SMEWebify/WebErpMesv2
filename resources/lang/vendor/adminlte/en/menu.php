@@ -99,4 +99,5 @@ return [
     'release_note_trans_key'                   => 'Release notes',
     'methods_overview_trans_key'               => 'Methods overview',
     'assets_trans_key'                         => 'Assets',
+    'returns_trans_key'                        => 'Customer returns',
 ];

@@ -40,6 +40,7 @@ class PermissionTableSeeder  extends Seeder
                         'asset_manager',
                         'asset-menu',
                         'audit-menu',
+                        'returns-menu',
                         ];
     
                         foreach ($permissions as $permission) {

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
+use App\Models\Workflow\DeliveryLines;
 use App\Models\Workflow\OrderLines;
 use App\Models\Workflow\Packaging;
 use App\Services\SelectDataService;
@@ -295,8 +296,9 @@ class DeliverysController extends Controller
     public function show(Deliverys $id)
     {
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Deliverys(), $id->id);
-        
-        
+
+        $id->load(['returns.qualityNonConformity', 'QualityNonConformity']);
+
         $PruchasesSelect = $this->SelectDataService->getPurchases();
         $CustomFields = $this->customFieldService->getCustomFieldsWithValues('delivery', $id->id);
         $allDelivered = $id->DeliveryLines->every(function($line) {
@@ -310,6 +312,7 @@ class DeliverysController extends Controller
             'CustomFields' => $CustomFields,
             'allDelivered' => $allDelivered,
             'PruchasesSelect' => $PruchasesSelect,
+            'nonConformities' => \App\Models\Quality\QualityNonConformity::select('id', 'code')->orderBy('code')->get(),
         ]);
     }
     
@@ -440,6 +443,22 @@ class DeliverysController extends Controller
         ]);
 
         return redirect()->route('deliverys.show', ['id' =>  $packaging->deliverys_id])->with('success', 'Successfully update packaging');
+    }
+
+    public function linesJson(Deliverys $id)
+    {
+        $lines = DeliveryLines::with('OrderLine:id,code,label')
+            ->where('deliverys_id', $id->id)
+            ->orderBy('ordre')
+            ->get();
+
+        return response()->json([
+            'data' => $lines->map(fn ($l) => [
+                'id'    => $l->id,
+                'ordre' => $l->ordre,
+                'label' => $l->OrderLine?->label ?? $l->OrderLine?->code ?? '',
+            ]),
+        ]);
     }
 
 }

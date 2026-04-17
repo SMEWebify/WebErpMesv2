@@ -19,6 +19,8 @@
       <li class="nav-item"><a class="nav-link" href="#DeliveryLines" data-toggle="tab">{{ __('general_content.delivery_lines_trans_key') }} ({{ count($Delivery->DeliveryLines) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Photos" data-toggle="tab">{{ __('general_content.photos_trans_key') }} ({{ count($Delivery->photos) }})</a></li>
       <li class="nav-item"><a class="nav-link" href="#Packaging" data-toggle="tab">{{ __('general_content.packaging_trans_key') }} ({{ count($Delivery->packaging) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#Returns" data-toggle="tab">{{ __('general_content.returns_trans_key') }} ({{ count($Delivery->returns) }})</a></li>
+      <li class="nav-item"><a class="nav-link" href="#NonConformities" data-toggle="tab">{{ __('general_content.non_conformities_trans_key') }} ({{ count($Delivery->QualityNonConformity) }})</a></li>
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }} ({{ count($CustomFields) }})</a></li>
       @endif
@@ -161,62 +163,56 @@
         </div>
       </div>      
       <div class="tab-pane " id="DeliveryLines">
-        <!-- Table row -->
-        <div class="row">
-          <div class="col-12 table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>{{ __('general_content.order_trans_key') }}</th>
-                  <th>{{ __('general_content.external_id_trans_key') }}</th>
-                  <th>{{ __('general_content.description_trans_key') }}</th>
-                  <th>{{ __('general_content.qty_trans_key') }}</th>
-                  <th>{{ __('general_content.unit_trans_key') }}</th>
-                  <th>{{ __('general_content.delivered_qty_trans_key') }}</th>
-                  <th>{{ __('general_content.remaining_qty_trans_key') }}</th>
-                  <th>{{ __('general_content.invoice_status_trans_key') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                  @forelse($Delivery->DeliveryLines as $DeliveryLine)
-                  <tr>
-                    <td>
-                      <x-OrderButton id="{{ $DeliveryLine->OrderLine->order['id'] }}" code="{{ $DeliveryLine->OrderLine->order['code'] }}"  />
-                    </td>
-                    <td>{{ $DeliveryLine->OrderLine['code'] }}</td>
-                    <td>{{ $DeliveryLine->OrderLine['label'] }}</td>
-                    <td>{{ $DeliveryLine->OrderLine['qty'] }}</td>
-                    <td>{{ $DeliveryLine->OrderLine->Unit['label'] }}</td>
-                    <td>{{ $DeliveryLine->qty }}</td>
-                    <td>{{ $DeliveryLine->OrderLine['delivered_remaining_qty'] }}</td>
-                    <td>
-                      @if(1 == $DeliveryLine->invoice_status )  <span class="badge badge-info">{{ __('general_content.chargeable_trans_key') }}</span>@endif
-                      @if(2 == $DeliveryLine->invoice_status )  <span class="badge badge-danger">{{ __('general_content.not_chargeable_trans_key') }}</span>@endif
-                      @if(3 == $DeliveryLine->invoice_status )  <span class="badge badge-warning">{{ __('general_content.partly_invoiced_trans_key') }}</span>@endif
-                      @if(4 == $DeliveryLine->invoice_status )  <span class="badge badge-success">{{ __('general_content.invoiced_trans_key') }}</span>@endif
-                    </td>
-                  </tr>
-                  @empty
-                    <x-EmptyDataLine col="7" text="{{ __('general_content.no_data_trans_key') }}"  />
-                  @endforelse
-                <tfoot>
-                  <tr>
-                    <th>{{ __('general_content.order_trans_key') }}</th>
-                    <th>{{ __('general_content.external_id_trans_key') }}</th>
-                    <th>{{ __('general_content.description_trans_key') }}</th>
-                    <th>{{ __('general_content.qty_trans_key') }}</th>
-                    <th>{{ __('general_content.unit_trans_key') }}</th>
-                    <th>{{ __('general_content.delivered_qty_trans_key') }}</th>
-                    <th>{{ __('general_content.remaining_qty_trans_key') }}</th>
-                    <th>{{ __('general_content.invoice_status_trans_key') }}</th>
-                  </tr>
-                </tfoot>
-              </tbody>
-            </table>
-          </div>
-          <!-- /.col -->
+        @php
+          $dlLines = [];
+          foreach ($Delivery->DeliveryLines as $dl) {
+              $dlLines[] = [
+                  'id'             => $dl->id,
+                  'order_id'       => $dl->OrderLine->order['id'] ?? null,
+                  'order_code'     => $dl->OrderLine->order['code'] ?? '',
+                  'order_url'      => ($dl->OrderLine->order['id'] ?? null) ? route('orders.show', ['id' => $dl->OrderLine->order['id']]) : '#',
+                  'code'           => $dl->OrderLine['code'] ?? '',
+                  'label'          => $dl->OrderLine['label'] ?? '',
+                  'qty'            => $dl->OrderLine['qty'] ?? '',
+                  'unit'           => $dl->OrderLine->Unit['label'] ?? '',
+                  'delivered_qty'  => $dl->qty,
+                  'remaining_qty'  => $dl->OrderLine['delivered_remaining_qty'] ?? '',
+                  'invoice_status' => $dl->invoice_status,
+              ];
+          }
+          $dlNonConformities = [];
+          foreach ($nonConformities as $nc) {
+              $dlNonConformities[] = ['id' => $nc->id, 'code' => $nc->code];
+          }
+          $dlEndpoints = ['store' => route('returns.json.store')];
+          $dlTrans = [
+              'order'          => __('general_content.order_trans_key'),
+              'code'           => __('general_content.external_id_trans_key'),
+              'description'    => __('general_content.description_trans_key'),
+              'qty'            => __('general_content.qty_trans_key'),
+              'unit'           => __('general_content.unit_trans_key'),
+              'delivered_qty'  => __('general_content.delivered_qty_trans_key'),
+              'remaining_qty'  => __('general_content.remaining_qty_trans_key'),
+              'invoice_status' => __('general_content.invoice_status_trans_key'),
+              'return'         => __('returns.fields.add_return'),
+              'add_return'     => __('returns.fields.add_return'),
+              'delivery_line'  => __('returns.fields.delivery_line'),
+              'non_conformity' => __('returns.fields.non_conformity'),
+              'issue'          => __('returns.fields.issue'),
+              'choose'         => __('returns.fields.choose'),
+              'save'           => __('returns.fields.save'),
+              'cancel'         => __('general_content.cancel_trans_key'),
+              'no_data'        => __('general_content.no_data_trans_key'),
+          ];
+        @endphp
+        <div
+          id="delivery-lines-tab-app"
+          data-lines='@json($dlLines, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-delivery-id="{{ $Delivery->id }}"
+          data-non-conformities='@json($dlNonConformities, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-endpoints='@json($dlEndpoints, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'
+          data-trans='@json($dlTrans, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG)'>
         </div>
-        <!-- /.row -->
       </div>
       <div class="tab-pane" id="Photos">
         <div class="row">
@@ -534,6 +530,95 @@
           </div>
         </div>
       </div>
+      {{-- ── Retours ────────────────────────────────────────────────── --}}
+      <div class="tab-pane" id="Returns">
+        <x-adminlte-card title="{{ __('general_content.returns_trans_key') }}" theme="warning" maximizable>
+          <div class="table-responsive p-0">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>{{ __('returns.fields.code') }}</th>
+                  <th>{{ __('returns.fields.label') }}</th>
+                  <th>{{ __('returns.fields.status') }}</th>
+                  <th>{{ __('returns.fields.non_conformity') }}</th>
+                  <th>{{ __('general_content.date_trans_key') }}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($Delivery->returns as $ret)
+                <tr>
+                  <td><small>{{ $ret->code }}</small></td>
+                  <td>{{ $ret->label }}</td>
+                  <td>
+                    @php
+                      $badge = match($ret->statu) { 1 => 'badge-info', 2 => 'badge-primary', 3 => 'badge-warning', 4 => 'badge-success', default => 'badge-secondary' };
+                    @endphp
+                    <span class="badge {{ $badge }}">{{ $ret->status_label }}</span>
+                  </td>
+                  <td>
+                    @if($ret->qualityNonConformity)
+                      <span class="badge badge-light border">{{ $ret->qualityNonConformity->code }}</span>
+                    @else
+                      <span class="text-muted">—</span>
+                    @endif
+                  </td>
+                  <td><small>{{ $ret->created_at?->format('d/m/Y') }}</small></td>
+                  <td>
+                    <a href="{{ route('returns.show', ['id' => $ret->id]) }}" class="btn btn-xs btn-outline-secondary">
+                      <i class="fas fa-folder-open"></i>
+                    </a>
+                  </td>
+                </tr>
+                @empty
+                <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}" />
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </x-adminlte-card>
+      </div>
+
+      {{-- ── Non-conformités ─────────────────────────────────────────── --}}
+      <div class="tab-pane" id="NonConformities">
+        <x-adminlte-card title="{{ __('general_content.non_conformities_trans_key') }}" theme="danger" maximizable>
+          <div class="table-responsive p-0">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.label_trans_key') }}</th>
+                  <th>{{ __('general_content.type_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
+                  <th>{{ __('general_content.status_trans_key') }}</th>
+                  <th>{{ __('general_content.date_trans_key') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($Delivery->QualityNonConformity as $nc)
+                <tr>
+                  <td><small>{{ $nc->code }}</small></td>
+                  <td>{{ $nc->label }}</td>
+                  <td><small>{{ $nc->type }}</small></td>
+                  <td>{{ $nc->qty }}</td>
+                  <td>
+                    @php
+                      $ncBadge = match($nc->statu) { 1 => 'badge-danger', 3 => 'badge-success', default => 'badge-secondary' };
+                      $ncLabel = match($nc->statu) { 1 => __('general_content.in_progress_trans_key'), 3 => __('general_content.finished_task_trans_key'), default => '—' };
+                    @endphp
+                    <span class="badge {{ $ncBadge }}">{{ $ncLabel }}</span>
+                  </td>
+                  <td><small>{{ $nc->GetPrettyCreatedAttribute() }}</small></td>
+                </tr>
+                @empty
+                <x-EmptyDataLine col="6" text="{{ __('general_content.no_data_trans_key') }}" />
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </x-adminlte-card>
+      </div>
+
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">
         @include('include.custom-fields-form', ['id' => $Delivery->id, 'type' => 'delivery'])
@@ -549,10 +634,36 @@
 @stop
 
 @section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
+
 
 @section('js')
   <script>
+  // Tab switching — vanilla JS fallback (Bootstrap 4/5 coexistence)
+  document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.nav-pills a[data-toggle="tab"]').forEach(function (link) {
+          link.addEventListener('click', function (e) {
+              e.preventDefault();
+              var targetId = this.getAttribute('href');
+              var target = document.querySelector(targetId);
+              if (!target) return;
+              // Hide all panes
+              target.parentElement.querySelectorAll(':scope > .tab-pane').forEach(function (p) {
+                  p.classList.remove('active');
+              });
+              // Show target
+              target.classList.add('active');
+              // Update nav
+              this.closest('.nav').querySelectorAll('.nav-link').forEach(function (l) {
+                  l.classList.remove('active');
+              });
+              this.classList.add('active');
+          });
+      });
+  });
+
   function copyToClipboard(text) {
       // Create a temporary textarea element
       var tempTextarea = document.createElement("textarea");
