@@ -127,7 +127,8 @@ class OrdersController extends Controller
         $TotalServicePrice = $OrderCalculatorService->getTotalPriceByService();
         
         $businessBalance = $this->OrderBusinessBalanceService->getBusinessBalance($id);
-        $businessBalancetotals = $this->OrderBusinessBalanceService->getBusinessBalanceTotals($id);
+        $businessBalancetotals = $this->OrderBusinessBalanceService->getBusinessBalanceTotals($businessBalance);
+        $stockConsumptions = $this->OrderBusinessBalanceService->getStockConsumptionDetails($id);
         $invoicedAmount = $this->OrderInvoiceDataService->getInvoicingAmount($id);
         $receivedPayment = $this->OrderInvoiceDataService->getInvoicingReceivedPayment($id);
 
@@ -140,7 +141,7 @@ class OrdersController extends Controller
         }
 
         $forecastMargin = $totalPrice - $businessBalancetotals['total_cost'];
-        $currentMargin = $totalPrice - $businessBalancetotals['realized_cost'];
+        $currentMargin = $totalPrice - $businessBalancetotals['realized_cost'] - $businessBalancetotals['realized_purchase_cost'] - $businessBalancetotals['realized_stock_cost'];
 
         // Calcul des marges en pourcentage (avec gestion des divisions par zéro)
         $forecastMarginPercentage = $businessBalancetotals['total_cost'] > 0
@@ -225,6 +226,7 @@ class OrdersController extends Controller
             'forecastMarginPercentageFormatted' => $forecastMarginPercentageFormatted,
             'currentMarginPercentageFormatted' => $currentMarginPercentageFormatted,
             'leadTime' => $leadTime,
+            'stockConsumptions' => $stockConsumptions,
             'OrderSite' => $id->OrderSite,
             'OrderSiteImplantations' => $id->OrderSite ? $id->OrderSite->OrderSiteImplantations : collect(),
         ]);

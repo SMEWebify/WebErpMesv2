@@ -398,7 +398,7 @@
                 <tr class="business-balance-table__group-row">
                     <th></th>
                     <th colspan="3" class="business-balance-table__group business-balance-table__subhead--info">{{ __('general_content.planned_trans_key') }}</th>
-                    <th colspan="2" class="business-balance-table__group business-balance-table__subhead--info">{{ __('general_content.accomplished_trans_key') }}</th>
+                    <th colspan="5" class="business-balance-table__group business-balance-table__subhead--info">{{ __('general_content.accomplished_trans_key') }}</th>
                     <th colspan="2" class="business-balance-table__group business-balance-table__subhead--info">{{ __('general_content.gap_trans_key') }}</th>
                 </tr>
                   <tr class="business-balance-table__subhead-row">
@@ -407,7 +407,10 @@
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.selling_price_trans_key') }} ({{ $Factory->curency }})</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.hours_trans_key') }}</th>
-                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.cost_trans_key') }} MO ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.purchase_list_trans_key') }} ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.stock_trans_key') }} ({{ $Factory->curency }})</th>
+                      <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.amount_of_invoice_trans_key') }} ({{ $Factory->curency }})</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.hours_trans_key') }}</th>
                       <th class="business-balance-table__subhead business-balance-table__subhead--info">{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
                   </tr>
@@ -421,29 +424,81 @@
                           <td class="business-balance-table__cell business-balance-table__cell--info">{{ $data['total_display_price'] }}</td>
                           <td class="business-balance-table__cell business-balance-table__cell--neutral">{{ $data['realized_hours'] }} h</td>
                           <td class="business-balance-table__cell business-balance-table__cell--neutral">{{ $data['realized_display_cost'] }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--neutral">{{ $data['realized_display_purchase_cost'] }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--neutral">{{ $data['realized_display_stock_cost'] }}</td>
+                          <td class="business-balance-table__cell business-balance-table__cell--neutral">{{ $data['realized_display_price'] }}</td>
                           <td class="business-balance-table__cell {{ $data['difference_hours'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}">{{ $data['difference_hours'] }} h</td>
                           <td class="business-balance-table__cell {{ $data['difference_cost'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}">{{ $data['difference_display_cost'] }}</td>
                       </tr>
                   @empty
-                  <x-EmptyDataLine col="14" text="{{ __('general_content.no_data_trans_key') }}"  />
+                  <x-EmptyDataLine col="10" text="{{ __('general_content.no_data_trans_key') }}"  />
                   @endforelse
               </tbody>
               <tfoot>
                 <tr class="business-balance-table__total-row">
                   <td><strong>{{ __('general_content.total_trans_key') }}</strong></td>
                   <td><strong>{{ $businessBalancetotals['total_hours'] }} h</strong></td>
-                  <td><strong>{{ $businessBalancetotals['total_display_cost'] }} </strong></td>
-                  <td><strong>{{ $businessBalancetotals['total_display_price'] }} </strong></td>
+                  <td><strong>{{ $businessBalancetotals['total_display_cost'] }}</strong></td>
+                  <td><strong>{{ $businessBalancetotals['total_display_price'] }}</strong></td>
                   <td><strong>{{ $businessBalancetotals['realized_hours'] }} h</strong></td>
-                  <td><strong>{{ $businessBalancetotals['realized_display_cost'] }} </strong></td>
+                  <td><strong>{{ $businessBalancetotals['realized_display_cost'] }}</strong></td>
+                  <td><strong>{{ $businessBalancetotals['realized_display_purchase_cost'] }}</strong></td>
+                  <td><strong>{{ $businessBalancetotals['realized_display_stock_cost'] }}</strong></td>
+                  <td><strong>{{ $businessBalancetotals['realized_display_price'] }}</strong></td>
                   <td class="business-balance-table__cell {{ $businessBalancetotals['difference_hours'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}"><strong>{{ $businessBalancetotals['difference_hours'] }} h</strong></td>
-                  <td class="business-balance-table__cell {{ $businessBalancetotals['difference_cost'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}"><strong>{{ $businessBalancetotals['difference_display_cost'] }} </strong></td>
+                  <td class="business-balance-table__cell {{ $businessBalancetotals['difference_cost'] >= 0 ? 'business-balance-table__cell--gap-positive' : 'business-balance-table__cell--gap-negative' }}"><strong>{{ $businessBalancetotals['difference_display_cost'] }}</strong></td>
                 </tr>
               </tfoot>
             </table>
           </div>
         </x-adminlte-card>
         
+        <x-adminlte-card title="{{ __('general_content.stock_consumption_trans_key') }}" theme="secondary" collapsible="collapsed" maximizable>
+          @if(count($stockConsumptions) > 0)
+          <div class="table-responsive">
+            <table class="table table-sm table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th>{{ __('general_content.service_trans_key') }}</th>
+                  <th>{{ __('general_content.task_trans_key') }}</th>
+                  <th>{{ __('general_content.external_id_trans_key') }}</th>
+                  <th>{{ __('general_content.product_trans_key') }}</th>
+                  <th>{{ __('general_content.qty_trans_key') }}</th>
+                  <th>{{ __('general_content.cost_trans_key') }} ({{ $Factory->curency }})</th>
+                  <th>{{ __('general_content.total_trans_key') }} ({{ $Factory->curency }})</th>
+                  <th>{{ __('general_content.tracability_trans_key') }}</th>
+                  <th>{{ __('general_content.date_trans_key') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($stockConsumptions as $row)
+                <tr>
+                  <td>{{ $row['service'] }}</td>
+                  <td>{{ $row['task_label'] }}</td>
+                  <td>{{ $row['product_code'] }}</td>
+                  <td>{{ $row['product_label'] }}</td>
+                  <td>{{ $row['qty'] }}</td>
+                  <td>{{ $row['display_unit'] }}</td>
+                  <td>{{ $row['display_total'] }}</td>
+                  <td>{{ $row['tracability'] }}</td>
+                  <td>{{ $row['date'] ? \Carbon\Carbon::parse($row['date'])->format('d/m/Y H:i') : '—' }}</td>
+                </tr>
+                @endforeach
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="6"><strong>{{ __('general_content.total_trans_key') }}</strong></td>
+                  <td><strong>{{ $businessBalancetotals['realized_display_stock_cost'] }}</strong></td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          @else
+          <p class="text-muted mb-0">{{ __('general_content.no_data_trans_key') }}</p>
+          @endif
+        </x-adminlte-card>
+
         @if($Order->type == 1)
 
         <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="warning" maximizable>

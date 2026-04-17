@@ -1026,6 +1026,7 @@ return [
     'purchased_trans_key'                      => 'Acheté',
     'sold_trans_key'                           => 'Vendu',
     'tracability_trans_key'                    => 'Tracabilité',
+    'stock_consumption_trans_key'              => 'Consommations de stock',
     'proprieties_trans_key'                    => 'Propriétés',
     'quantite_eco_min_trans_key'               => 'Quantité eco min',
     'quantite_min_trans_key'                   => 'Quantité min',
