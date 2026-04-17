@@ -5,9 +5,9 @@
     $dashboardUrl = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home');
 
     if (config('adminlte.use_route_url', false)) {
-        $dashboardUrl = $dashboardUrl ? route($dashboardUrl, [], false) : '';
+        $dashboardUrl = $dashboardUrl ? ltrim(route($dashboardUrl, [], false), '/') : '';
     } else {
-        $dashboardUrl = $dashboardUrl ? '/' . ltrim($dashboardUrl, '/') : '';
+        $dashboardUrl = $dashboardUrl ? ltrim($dashboardUrl, '/') : '';
     }
 
     $bodyClasses = "{$authType}-page";
@@ -30,7 +30,7 @@
         <div class="{{ $authType }}-logo">
             <a href="{{ $dashboardUrl }}">
                 @if (config('adminlte.auth_logo.enabled', false))
-                    <img src="/{{ ltrim(config('adminlte.auth_logo.img.path'), '/') }}"
+                    <img src="{{ ltrim(config('adminlte.auth_logo.img.path'), '/') }}"
                          alt="{{ config('adminlte.auth_logo.img.alt') }}"
                          @if (config('adminlte.auth_logo.img.class', null))
                             class="{{ config('adminlte.auth_logo.img.class') }}"
@@ -42,7 +42,7 @@
                             height="{{ config('adminlte.auth_logo.img.height') }}"
                          @endif>
                 @else
-                    <img src="/{{ ltrim(config('adminlte.logo_img'), '/') }}"
+                    <img src="{{ ltrim(config('adminlte.logo_img'), '/') }}"
                          alt="{{ config('adminlte.logo_img_alt') }}" height="50">
                 @endif
 

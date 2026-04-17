@@ -27,9 +27,9 @@
                 @vite(config('adminlte.laravel_js_path', 'resources/js/app.js'))
             @break
             @default
-                <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
-                <link rel="stylesheet" href="/vendor/overlayScrollbars/css/OverlayScrollbars.min.css">
-                <link rel="stylesheet" href="/vendor/adminlte/dist/css/adminlte.min.css">
+                <link rel="stylesheet" href="vendor/fontawesome-free/css/all.min.css">
+                <link rel="stylesheet" href="vendor/overlayScrollbars/css/OverlayScrollbars.min.css">
+                <link rel="stylesheet" href="vendor/adminlte/dist/css/adminlte.min.css">
                 @if(config('adminlte.google_fonts.allowed', true))
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
                 @endif
@@ -49,25 +49,25 @@
     @yield('adminlte_css')
 
     @if(config('adminlte.use_ico_only'))
-        <link rel="shortcut icon" href="/favicons/favicon.ico" />
+        <link rel="shortcut icon" href="favicons/favicon.ico" />
     @elseif(config('adminlte.use_full_favicon'))
-        <link rel="shortcut icon" href="/favicons/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
-        <link rel="icon" type="image/png" sizes="192x192" href="/favicons/android-icon-192x192.png">
-        <link rel="manifest" crossorigin="use-credentials" href="/favicons/manifest.json">
+        <link rel="shortcut icon" href="favicons/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="57x57" href="favicons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="favicons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="favicons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="favicons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="favicons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="favicons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="favicons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="favicons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="favicons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="favicons/android-icon-192x192.png">
+        <link rel="manifest" crossorigin="use-credentials" href="favicons/manifest.json">
         <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png">
+        <meta name="msapplication-TileImage" content="favicons/ms-icon-144x144.png">
     @endif
 </head>
 <body class="@yield('classes_body')" @yield('body_data')>
@@ -84,10 +84,10 @@
             @case('vite_js_only')
             @break
             @default
-                <script src="/vendor/jquery/jquery.min.js"></script>
-                <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-                <script src="/vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-                <script src="/vendor/adminlte/dist/js/adminlte.min.js"></script>
+                <script src="vendor/jquery/jquery.min.js"></script>
+                <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+                <script src="vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+                <script src="vendor/adminlte/dist/js/adminlte.min.js"></script>
         @endswitch
     @endif
 

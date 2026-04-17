@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créer un compte - Nest2Prod ERP</title>
-    <link rel="stylesheet" href="/vendor/adminlte/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="vendor/adminlte/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome-free/css/all.min.css">
     <style>
         * { box-sizing: border-box; }
         body {

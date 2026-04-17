@@ -10,7 +10,7 @@
         @foreach($plugin['files'] as $file)
             @php
                 if (! empty($file['asset'])) {
-                    $file['location'] = '/' . ltrim($file['location'], '/');
+                    $file['location'] = ltrim($file['location'], '/');
                 }
             @endphp
 
