@@ -307,6 +307,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/address/store',        'App\Http\Controllers\Workflow\OrdersController@storeAddressJson')->name('orders.json.address.store');
         Route::post('/json/contact/store',        'App\Http\Controllers\Workflow\OrdersController@storeContactJson')->name('orders.json.contact.store');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->name('orders.show');
+        Route::get('/{id}/json/purchase-history', 'App\Http\Controllers\Workflow\OrdersController@purchaseHistoryJson')->name('orders.json.purchase-history');
         Route::post('/{order}/calculate-task-dates', 'App\Http\Controllers\Workflow\OrdersController@calculateTaskDates')->name('orders.calculate.task.dates');
         //order line
         Route::post('/{idOrder}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\OrderLinesController@update')->name('orders.update.detail.line');

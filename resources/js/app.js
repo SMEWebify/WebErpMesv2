@@ -468,6 +468,20 @@ async function mountProductHistory() {
     );
 }
 
+async function mountOrderPurchaseHistory() {
+    const element = document.getElementById('order-purchase-history-app');
+    if (!element) return;
+
+    const { default: ProductHistory } = await import('./components/ProductHistory.jsx');
+
+    createRoot(element).render(
+        React.createElement(ProductHistory, {
+            endpoint:     element.dataset.endpoint ?? '',
+            canPurchases: true,
+        })
+    );
+}
+
 async function mountCompaniesIndex() {
     const element = document.getElementById('companies-index-app');
     if (!element) return;
@@ -1281,6 +1295,7 @@ mountAuditPlannerApp();
 mountEstimatedBudgetsIndex();
 mountChatWidget();
 mountProductHistory();
+mountOrderPurchaseHistory();
 mountStockDetailPage();
 mountReturnsIndex();
 mountDeliveryLinesTab();

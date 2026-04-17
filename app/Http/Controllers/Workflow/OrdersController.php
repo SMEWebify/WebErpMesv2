@@ -20,6 +20,7 @@ use App\Services\OrderCalculatorService;
 use App\Services\OrderInvoiceDataService;
 use App\Services\OrderBusinessBalanceService;
 use App\Models\Workflow\OrderLines;
+use App\Models\Purchases\PurchaseLines;
 use App\Models\Companies\CompaniesAddresses;
 use App\Models\Companies\CompaniesContacts;
 use App\Models\Accounting\AccountingDelivery;
@@ -473,5 +474,44 @@ class OrdersController extends Controller
             'id'   => $contact->id,
             'name' => trim($contact->first_name.' '.$contact->name),
         ], 201);
+    }
+
+    /**
+     * JSON endpoint — timeline of unique purchase documents linked to this order.
+     * Traverses: Order → OrderLines → Tasks → PurchaseLines → Purchases.
+     */
+    public function purchaseHistoryJson(int $id)
+    {
+        $order = Orders::findOrFail($id);
+
+        $this->authorize('purchases-menu');
+
+        $orderLineIds = $order->OrderLines()->pluck('id');
+
+        $purchases = PurchaseLines::whereHas('tasks', function ($q) use ($orderLineIds) {
+                $q->whereIn('order_lines_id', $orderLineIds);
+            })
+            ->with(['purchase:id,code,statu,created_at'])
+            ->get()
+            ->groupBy('purchases_id')
+            ->map(function ($lines) {
+                $purchase = $lines->first()->purchase;
+                $count    = $lines->count();
+                return [
+                    'type'  => 'purchase',
+                    'id'    => $purchase?->id,
+                    'code'  => $purchase?->code,
+                    'label' => $count === 1
+                        ? $lines->first()->label
+                        : $count . ' ligne' . ($count > 1 ? 's' : ''),
+                    'statu' => $purchase?->statu,
+                    'date'  => $purchase?->created_at?->format('Y-m-d'),
+                    'url'   => $purchase ? route('purchases.show', ['id' => $purchase->id]) : '#',
+                ];
+            })
+            ->sortByDesc('date')
+            ->values();
+
+        return response()->json($purchases);
     }
 }
