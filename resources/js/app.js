@@ -1315,4 +1315,16 @@ async function mountKanbanSetting() {
 
 mountReturnsIndex();
 mountDeliveryLinesTab();
+
+async function mountInvoiceExportLines() {
+    const el = document.getElementById('invoice-export-lines-app');
+    if (!el) return;
+    const { default: InvoiceExportLines } = await import('./components/InvoiceExportLines.jsx');
+    const endpoints = JSON.parse(el.dataset.endpoints);
+    const trans     = JSON.parse(el.dataset.trans);
+    createRoot(el).render(
+        React.createElement(InvoiceExportLines, { endpoints, trans })
+    );
+}
 mountKanbanSetting();
+mountInvoiceExportLines();

@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Services\ImportCsvService;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
+use App\Models\Workflow\InvoiceLines;
+use App\Exports\InvoiceLinesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImportsExportsController extends Controller
 {
@@ -81,10 +85,47 @@ class ImportsExportsController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function importProducts (Request $request, ImportCsvService $importCsvService)
-    {   
+    {
         $importCsvService->importProducts($request);
         return redirect()->back();
     }
-    
-    
+
+    public function invoiceExportJsonList()
+    {
+        $lines = InvoiceLines::with([
+            'invoice.companie',
+            'orderLine.order',
+            'orderLine.Unit',
+            'orderLine.VAT',
+        ])->where('exported', false)->get();
+
+        return response()->json($lines->map(fn($l) => [
+            'id'              => $l->id,
+            'invoice_code'    => $l->invoice?->code,
+            'order_id'        => $l->orderLine?->order?->id,
+            'order_code'      => $l->orderLine?->order?->code,
+            'companie_id'     => $l->invoice?->companies_id,
+            'companie_label'  => $l->invoice?->companie?->label,
+            'line_code'       => $l->orderLine?->code,
+            'line_label'      => $l->orderLine?->label,
+            'qty'             => $l->qty,
+            'unit'            => $l->orderLine?->Unit?->label,
+            'formatted_price' => $l->formatted_selling_price,
+            'discount'        => $l->orderLine?->discount,
+            'vat_rate'        => $l->orderLine?->VAT?->rate,
+        ]));
+    }
+
+    public function invoiceExport(Request $request, $ext)
+    {
+        if (!in_array($ext, ['csv', 'xlsx'])) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        $ids = array_filter((array) $request->input('ids', []));
+
+        InvoiceLines::whereIn('id', $ids)->update(['exported' => true]);
+
+        return Excel::download(new InvoiceLinesExport(collect($ids)), 'invoiceLines.' . $ext);
+    }
 }

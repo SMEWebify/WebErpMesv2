@@ -776,6 +776,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::delete('/kanban-settings/json/{id}',        'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonDestroy')->middleware(['auth'])->name('admin.kanban.settings.json.destroy');
 
         Route::get('/imports-exports', 'App\Http\Controllers\Admin\ImportsExportsController@index')->middleware(['auth'])->name('admin.imports.exports');
+        Route::get('/invoice-export/json/list',        'App\Http\Controllers\Admin\ImportsExportsController@invoiceExportJsonList')->middleware(['auth'])->name('admin.invoice.export.json.list');
+        Route::post('/invoice-export/export/{ext}',    'App\Http\Controllers\Admin\ImportsExportsController@invoiceExport')->middleware(['auth'])->name('admin.invoice.export');
 
         Route::get('/logs-view', 'App\Http\Controllers\Admin\FactoryController@logsView')->middleware(['auth'])->name('admin.logs.view');
     

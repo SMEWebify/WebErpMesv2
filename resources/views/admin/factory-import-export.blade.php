@@ -27,7 +27,36 @@
                 @livewire('fec-export-lines')
             </div>
             <div class="tab-pane" id="InvoicesExport">
-                @livewire('invoice-export-lines')
+                @php
+                $invoiceExportProps = [
+                    'endpoints' => [
+                        'list'     => route('admin.invoice.export.json.list'),
+                        'export'   => route('admin.invoice.export', ['ext' => '__EXT__']),
+                        'order'    => route('orders.show', ['id' => '__ID__']),
+                        'companie' => route('companies.show', ['id' => '__ID__']),
+                    ],
+                    'trans' => [
+                        'order'          => __('general_content.order_trans_key'),
+                        'invoice'        => __('general_content.invoice_trans_key'),
+                        'customer'       => __('general_content.customer_trans_key'),
+                        'external_id'    => __('general_content.external_id_trans_key'),
+                        'description'    => __('general_content.description_trans_key'),
+                        'qty'            => __('general_content.qty_trans_key'),
+                        'unit'           => __('general_content.unit_trans_key'),
+                        'price'          => __('general_content.price_trans_key'),
+                        'discount'       => __('general_content.discount_trans_key'),
+                        'vat'            => __('general_content.vat_trans_key'),
+                        'select_to_export' => __('general_content.select_to_export_trans_key'),
+                        'add_export'     => __('general_content.add_export_trans_key'),
+                        'no_data'        => __('general_content.no_data_trans_key'),
+                    ],
+                ];
+                @endphp
+                <div
+                    id="invoice-export-lines-app"
+                    data-endpoints="{{ json_encode($invoiceExportProps['endpoints']) }}"
+                    data-trans="{{ json_encode($invoiceExportProps['trans']) }}"
+                ></div>
             </div>
             <div class="tab-pane" id="CustomerImport">
                 <form method="POST" action="{{ route('companies.import') }}" enctype="multipart/form-data">
@@ -395,6 +424,8 @@
 @section('plugins.BootstrapSwitch', true)
 
 @section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')
