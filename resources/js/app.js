@@ -1190,11 +1190,15 @@ async function mountChatWidget() {
     const localeMatch = window.location.pathname.match(/^\/([a-z]{2})\//);
     const locale = localeMatch ? localeMatch[1] : 'fr';
 
+    // Lit les permissions depuis la meta tag injectée par le backend
+    const permMeta = document.querySelector('meta[name="user-permissions"]');
+    const permissions = permMeta ? JSON.parse(permMeta.content) : [];
+
     const { default: ChatWidget } = await import('./components/ai/ChatWidget.jsx');
     const container = document.createElement('div');
     container.id = 'ai-chat-widget-root';
     document.body.appendChild(container);
-    createRoot(container).render(React.createElement(ChatWidget, { locale }));
+    createRoot(container).render(React.createElement(ChatWidget, { locale, permissions }));
 }
 
 async function mountDeliveryLinesTab() {

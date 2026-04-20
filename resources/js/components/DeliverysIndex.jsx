@@ -16,7 +16,7 @@ const INVOICE_STATUS = {
     4: { badge: 'badge-success', label: 'invoiced' },
 };
 
-const MONTHS_SHORT = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+const MONTHS_SHORT_ALL = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 
 const LS_COL_ORDER   = 'deliverys_col_order';
 const LS_HIDDEN_COLS = 'deliverys_hidden_cols';
@@ -129,9 +129,13 @@ function DonutChart({ data, colors, labels }) {
 // BarChart — pure SVG (monthly revenue)
 // ---------------------------------------------------------------------------
 
-function BarChart({ monthlyData, currency, locale }) {
+function BarChart({ monthlyData, currency, locale, startMonth = 1 }) {
+    const monthsLabels = Array.from({ length: 12 }, (_, i) =>
+        MONTHS_SHORT_ALL[((startMonth - 1) + i) % 12]
+    );
     const months = Array.from({ length: 12 }, (_, i) => {
-        const found = monthlyData.find(d => Number(d.month) === i + 1);
+        const calMonth = ((startMonth - 1 + i) % 12) + 1;
+        const found = monthlyData.find(d => Number(d.month) === calMonth);
         return found ? Number(found.orderSum) : 0;
     });
 
@@ -164,11 +168,11 @@ function BarChart({ monthlyData, currency, locale }) {
                     <g key={i}>
                         <rect x={x} y={y} width={barW} height={h}
                             fill="rgba(60,141,188,0.85)" rx="2">
-                            <title>{MONTHS_SHORT[i]}: {formatCurrency(val, currency, locale)}</title>
+                            <title>{monthsLabels[i]}: {formatCurrency(val, currency, locale)}</title>
                         </rect>
                         <text x={x + barW / 2} y={H - 6}
                             textAnchor="middle" fill="#888" fontSize="7.5">
-                            {MONTHS_SHORT[i]}
+                            {monthsLabels[i]}
                         </text>
                     </g>
                 );
@@ -530,9 +534,10 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
     }
 
     // ---- Chart data ----
-    const monthlyData = chartData?.deliveryMonthlyRecap ?? [];
-    const currency    = trans.currency ?? 'EUR';
-    const locale      = trans.locale   ?? 'fr-FR';
+    const monthlyData    = chartData?.deliveryMonthlyRecap ?? [];
+    const currency       = trans.currency ?? 'EUR';
+    const locale         = trans.locale   ?? 'fr-FR';
+    const fiscalStartMth = chartData?.fiscalYearStartMonth ?? 1;
 
     const pieData   = [deliveryKpi.in_progress, deliveryKpi.send];
     const pieColors = ['#17a2b8', '#28a745'];
@@ -571,7 +576,7 @@ export default function DeliverysIndex({ kpi, chartData, endpoints, trans, compa
                             </h3>
                         </div>
                         <div className="card-body p-2">
-                            <BarChart monthlyData={monthlyData} currency={currency} locale={locale} />
+                            <BarChart monthlyData={monthlyData} currency={currency} locale={locale} startMonth={fiscalStartMth} />
                             {monthlyData.length === 0 && (
                                 <p className="text-center text-muted mt-1 mb-0" style={{ fontSize: 12 }}>
                                     {trans.no_data ?? 'Aucune donnée'}

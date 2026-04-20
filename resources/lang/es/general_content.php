@@ -166,7 +166,7 @@ return [
     'status_client_trans_key'                  => 'Estado del cliente',
     'status_supplier_trans_key'                => 'Estado del proveedor',
     'color_trans_key'                          => 'Color',
-    'picture_trans_key'                        => 'Imagen',
+    'picture_trans_key'                        => 'Logo',
     'ressource_trans_key'                      => 'Recurso',
     'ressources_trans_key'                     => 'Recursos',
     'section_trans_key'                        => 'Sección',
@@ -546,6 +546,7 @@ return [
     'section_size_trans_key'                   => 'Tamaño de la sección',
 
     'delivery_note_number_trans_key'           => 'Número de albarán',
+    'reference_trans_key'                      => 'Referencia',
     'customer_reference_trans_key'             => 'Referencia del cliente',
     
     'absence_type_day_trans_key'               => 'Tipo de ausencia por día',
@@ -570,6 +571,8 @@ return [
     'siren_trans_key'                          => 'SIREN',
     'nat_regis_number_trans_key'               => 'Número de registro nacional',
     'share_capital_trans_key'                  => 'Capital social',
+    'iban_trans_key'                           => 'IBAN',
+    'bic_trans_key'                            => 'BIC / SWIFT',
     'custom_trans_key'                         => 'Personalizado',
     'custom_section_trans_key'                 => 'Sección personalizada',
     'personnal_mail_trans_key'                 => 'Correo electrónico personal',

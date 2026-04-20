@@ -62,10 +62,15 @@ class InvoicesController extends Controller
     {
         $factory = app('Factory');
         $currency = $factory->curency ?? 'EUR';
-        $currentYear = Carbon::now()->format('Y');
+        $currentYear     = Carbon::now()->format('Y');
+        $fiscal          = $factory->getCurrentFiscalYear();
+        $fiscalStart     = $fiscal['start'];
+        $fiscalEnd       = $fiscal['end'];
+        $prevFiscalStart = $fiscalStart->copy()->subYear();
+        $prevFiscalEnd   = $fiscalEnd->copy()->subYear();
 
-        $invoiceMonthlyRecap         = $this->invoiceKPIService->getInvoiceMonthlyRecap($currentYear);
-        $invoiceMonthlyRecapPrevYear = $this->invoiceKPIService->getInvoiceMonthlyRecapPreviousYear($currentYear);
+        $invoiceMonthlyRecap         = $this->invoiceKPIService->getInvoiceMonthlyRecap($currentYear, $fiscalStart, $fiscalEnd);
+        $invoiceMonthlyRecapPrevYear = $this->invoiceKPIService->getInvoiceMonthlyRecap((int)$currentYear - 1, $prevFiscalStart, $prevFiscalEnd);
         $invoicesDataRate            = $this->invoiceKPIService->getInvoicesDataRate();
 
         $totalCount            = $this->invoiceKPIService->getTotalInvoicesCount();
@@ -88,9 +93,10 @@ class InvoicesController extends Controller
         ];
 
         $reactChart = [
-            'invoicesDataRate'              => $invoicesDataRate,
-            'invoiceMonthlyRecap'           => $invoiceMonthlyRecap,
-            'invoiceMonthlyRecapPreviousYear' => $invoiceMonthlyRecapPrevYear,
+            'invoicesDataRate'               => $invoicesDataRate,
+            'invoiceMonthlyRecap'            => $invoiceMonthlyRecap,
+            'invoiceMonthlyRecapPreviousYear'=> $invoiceMonthlyRecapPrevYear,
+            'fiscalYearStartMonth'           => (int) ($factory->fiscal_year_start_month ?? 1),
         ];
 
         $reactTopClients = $topClients->map(fn($c) => [
@@ -189,13 +195,10 @@ class InvoicesController extends Controller
      */
     public function request()
     {
-        $lastInvoice = Invoices::latest()->first();
-        $invoiceId   = $lastInvoice ? $lastInvoice->id : 0;
-
         $companyIds = $this->invoiceDataService->getUniqueCompanyIdsWithOpenInvoiceLines();
 
         $reactProps = [
-            'code'      => $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId),
+            'code'      => $this->documentCodeGenerator->peekNextCode('invoice'),
             'userId'    => Auth::id(),
             'users'     => $this->selectDataService->getUsers(),
             'companies' => $this->selectDataService->getCompanies($companyIds),

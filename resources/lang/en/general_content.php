@@ -201,7 +201,7 @@ return [
     'status_client_trans_key'                  => 'Status client',
     'status_supplier_trans_key'                => 'Status supplier',
     'color_trans_key'                          => 'Color',
-    'picture_trans_key'                        => 'Picture',
+    'picture_trans_key'                        => 'Logo',
     'ressource_trans_key'                      => 'Resource',
     'ressources_trans_key'                     => 'Resources',
     'section_trans_key'                        => 'Section',
@@ -622,6 +622,7 @@ return [
 
     'delivery_note_number_trans_key'           => 'Delivery note number',
     'delivery_simulation_trans_key'            => 'Delivery lead-time simulation',
+    'reference_trans_key'                      => 'Reference',
     'customer_reference_trans_key'             => 'Customer reference',
     
     'absence_type_day_trans_key'               => 'Absence type day',
@@ -647,6 +648,8 @@ return [
     'siren_trans_key'                          => 'Siren',
     'nat_regis_number_trans_key'               => 'Nat regis number',
     'share_capital_trans_key'                  => 'Share capital',
+    'iban_trans_key'                           => 'IBAN',
+    'bic_trans_key'                            => 'BIC / SWIFT',
     'custom_trans_key'                         => 'Custom',
     'custom_section_trans_key'                 => 'Custom section',
     'personnal_mail_trans_key'                 => 'Personal E-mail',

@@ -124,7 +124,7 @@ function colDefs(t) {
                             <span
                                 data-bs-toggle="tooltip"
                                 data-bs-html="true"
-                                title={`<img alt='Service' class='profile-user-img img-fluid img-circle' src='/images/methods/${task.service.picture}'>`}
+                                title={`<img alt='Service' class='profile-user-img img-fluid img-circle' src='/storage/images/methods/${task.service.picture}'>`}
                             >
                                 {task.service.label}
                             </span>

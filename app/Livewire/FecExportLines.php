@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Accounting\AccountingEntry;
+use App\Models\Admin\Factory;
 use App\Exports\AccountingEntryLinesExport;
 
 class FecExportLines extends Component
@@ -22,9 +23,16 @@ class FecExportLines extends Component
     public $start_date;
     public $end_date;
 
-    public function mount() 
+    public function mount()
     {
         $this->selectedFecLine = collect();
+
+        $factory = Factory::first();
+        if ($factory) {
+            $fiscal = $factory->getCurrentFiscalYear();
+            $this->start_date = $fiscal['start']->format('Y-m-d');
+            $this->end_date   = $fiscal['end']->format('Y-m-d');
+        }
     }
 
     public function render()

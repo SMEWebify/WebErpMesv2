@@ -31,19 +31,27 @@ class DeliveryKPIService
      * @param int $year The year for which to retrieve the delivery monthly recap.
      * @return \Illuminate\Support\Collection The collection containing the monthly recap of deliveries.
      */
-    public function getDeliveryMonthlyRecap($year)
+    public function getDeliveryMonthlyRecap($year, ?\Carbon\Carbon $start = null, ?\Carbon\Carbon $end = null)
     {
-        $cacheKey = 'delivery_monthly_recap_' . now()->year;
-        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year) {
-            return DB::table('delivery_lines')
+        $cacheKey = $start
+            ? 'delivery_monthly_recap_fiscal_' . $start->format('Ymd')
+            : 'delivery_monthly_recap_' . $year;
+
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year, $start, $end) {
+            $query = DB::table('delivery_lines')
                         ->join('order_lines', 'delivery_lines.order_line_id', '=', 'order_lines.id')
                         ->selectRaw('
                             MONTH(delivery_lines.created_at) AS month,
                             SUM((order_lines.selling_price * delivery_lines.qty)-(order_lines.selling_price * delivery_lines.qty)*(order_lines.discount/100)) AS orderSum
-                        ')
-                        ->whereYear('delivery_lines.created_at', $year)
-                        ->groupByRaw('MONTH(delivery_lines.created_at)')
-                        ->get();
+                        ');
+
+            if ($start && $end) {
+                $query->whereBetween('delivery_lines.created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()]);
+            } else {
+                $query->whereYear('delivery_lines.created_at', $year);
+            }
+
+            return $query->groupByRaw('MONTH(delivery_lines.created_at)')->get();
         });
     }
 

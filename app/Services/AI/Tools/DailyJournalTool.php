@@ -141,7 +141,7 @@ class DailyJournalTool
     {
         return [
             'name'        => 'get_daily_journal',
-            'description' => 'Génère le journal quotidien de l\'ERP : nouvelles commandes clients reçues, bons de livraison créés, et réceptions d\'achat enregistrées. Par défaut retourne les données de la veille.',
+            'description' => 'Génère le journal quotidien de l\'ERP : nouvelles commandes clients reçues, bons de livraison créés, et réceptions d\'achat enregistrées. Si `date` est fourni, retourne les données de ce jour ; sinon retourne les données de la veille.',
             'input_schema' => [
                 'type'       => 'object',
                 'properties' => [

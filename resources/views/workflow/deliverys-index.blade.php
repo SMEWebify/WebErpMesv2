@@ -10,6 +10,7 @@
     $reactChart = [
         'deliverysDataRate'    => $data['deliverysDataRate'],
         'deliveryMonthlyRecap' => $data['deliveryMonthlyRecap'],
+        'fiscalYearStartMonth' => $data['fiscalYearStartMonth'] ?? 1,
     ];
 
     $reactEndpoints = [

@@ -10,4 +10,5 @@ return [
     'python_executable' => env('PRE_ORDERS_PYTHON_EXECUTABLE'),
     'python_script' => env('PRE_ORDERS_PYTHON_SCRIPT'),
     'python_timeout' => env('PRE_ORDERS_PYTHON_TIMEOUT', 120),
+    'java_home' => env('PRE_ORDERS_JAVA_HOME'),
 ];

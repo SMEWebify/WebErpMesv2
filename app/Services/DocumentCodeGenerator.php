@@ -22,7 +22,37 @@ class DocumentCodeGenerator
      * @param int|null $lastId The last used ID for the document type, used to increment the new ID. Defaults to null.
      * @return string The generated document code.
      */
-    public function generateDocumentCode(string $documentType, int $lastId = null)
+    public function peekNextCode(string $documentType): string
+    {
+        $templateModel = DocumentCodeTemplate::getTemplateForDocument($documentType);
+        $template      = $templateModel?->template ?? $this->defaultTemplate;
+        $resetPeriod   = $templateModel?->reset_period ?? 'none';
+        $resetMonth    = (int) ($templateModel?->yearly_reset_month ?? 1);
+        $resetDay      = (int) ($templateModel?->yearly_reset_day ?? 1);
+        $idPadding     = (int) ($templateModel?->id_padding ?? 0);
+
+        $periodKey = $this->buildPeriodKey($resetPeriod, $resetMonth, $resetDay);
+
+        $counter = DB::table('document_code_counters')
+            ->where('document_type', $documentType)
+            ->where('period_key', $periodKey)
+            ->first();
+
+        $nextId = $counter ? (int) $counter->current_value + 1 : 1;
+
+        $formattedId = $idPadding > 0 ? str_pad((string) $nextId, $idPadding, '0', STR_PAD_LEFT) : (string) $nextId;
+
+        $code = str_replace('{year}',  Carbon::now()->format('Y'), $template);
+        $code = str_replace('{month}', Carbon::now()->format('m'), $code);
+        $code = str_replace('{day}',   Carbon::now()->format('d'), $code);
+        $code = str_replace('{week}',  Carbon::now()->format('W'), $code);
+        $code = str_replace('{id}',    $formattedId,               $code);
+        $code = str_replace('{type}',  strtoupper($documentType),  $code);
+
+        return $code;
+    }
+
+    public function generateDocumentCode(string $documentType, ?int $lastId = null)
     {
         // Retrieve the code template for the given document type
         $templateModel = DocumentCodeTemplate::getTemplateForDocument($documentType);
@@ -41,13 +71,14 @@ class DocumentCodeGenerator
         $code = str_replace('{year}', Carbon::now()->format('Y'), $template);
         $code = str_replace('{month}', Carbon::now()->format('m'), $code);
         $code = str_replace('{day}', Carbon::now()->format('d'), $code);
+        $code = str_replace('{week}', Carbon::now()->format('W'), $code);
         $code = str_replace('{id}', $formattedId, $code);
         $code = str_replace('{type}', strtoupper($documentType), $code);
 
         return $code;
     }
 
-    protected function resolveNextSequence(string $documentType, string $resetPeriod, ?int $lastId, int $resetMonth = 1, int $resetDay = 1): int
+    protected function resolveNextSequence(string $documentType, string $resetPeriod, ?int $lastId = null, int $resetMonth = 1, int $resetDay = 1): int
     {
         if (!\in_array($resetPeriod, ['daily', 'weekly', 'monthly', 'yearly', 'none'], true)) {
             $resetPeriod = 'none';
@@ -67,6 +98,15 @@ class DocumentCodeGenerator
 
                 if ($resetPeriod === 'none' && $lastId !== null) {
                     $initialValue = $lastId + 1;
+                } elseif ($resetPeriod !== 'none') {
+                    $globalCounter = DB::table('document_code_counters')
+                        ->where('document_type', $documentType)
+                        ->where('period_key', 'global')
+                        ->lockForUpdate()
+                        ->first();
+                    if ($globalCounter) {
+                        $initialValue = (int) $globalCounter->current_value + 1;
+                    }
                 }
 
                 DB::table('document_code_counters')->insert([

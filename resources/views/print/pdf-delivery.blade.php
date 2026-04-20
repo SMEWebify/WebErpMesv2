@@ -79,7 +79,8 @@
 {{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
 {{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
 <br />
-{{ __('general_content.identifier_trans_key') }}: {{ $Document->customer_reference }}
+{{ __('general_content.identifier_trans_key') }}: {{ $Document->Lines->first()?->OrderLine?->order?->customer_reference ?? '' }}
+{{ __('general_content.order_trans_key') }}: {{ $Document->Lines->first()?->OrderLine?->order?->label ?? '' }}
                             </pre>
                         @else
 <h1>{{ __('general_content.internal_order_trans_key') }}</h1>
@@ -109,6 +110,7 @@
                 <thead>
                     <tr>
                         <th align="center">{{ __('general_content.order_trans_key') }}</th>
+                        <th align="center">{{ __('general_content.reference_trans_key') }}</th>
                         <th align="center">{{ __('general_content.description_trans_key') }}</th>
                         <th align="center">{{ __('general_content.qty_trans_key') }}</th>
                         <th align="center">{{ __('general_content.unit_trans_key') }}</th>
@@ -120,10 +122,8 @@
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
                         <td align="center">{{ $DocumentLine->OrderLine->order['code'] }}</td>
-                        <td align="center">
-                            {{ $DocumentLine->OrderLine['label'] }}<br>
-                            <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>
-                        </td>
+                        <td align="center">{{ $DocumentLine->OrderLine['code'] }}</td>
+                        <td align="center">{{ $DocumentLine->OrderLine['label'] }}</td>
                         <td align="center">{{ $DocumentLine->OrderLine['qty'] }}</td>
                         <td align="center">{{ $DocumentLine->OrderLine->Unit['label'] }}</td>
                         <td align="center">{{ $DocumentLine->qty }}</td>

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Admin\Factory;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\View;
 use InvalidArgumentException;
 
 class PdfThemeResolver
@@ -22,6 +23,11 @@ class PdfThemeResolver
 
     public function resolve(string $baseViewKey, ?Factory $factory = null): string
     {
+        $customView = $this->resolveCustomOverride($baseViewKey);
+        if ($customView) {
+            return $customView;
+        }
+
         $theme = $this->determineTheme($factory);
         $themes = $this->config->get('pdf.themes', []);
 
@@ -35,6 +41,15 @@ class PdfThemeResolver
         }
 
         return $baseViewKey;
+    }
+
+    private function resolveCustomOverride(string $baseViewKey): ?string
+    {
+        $parts = explode('/', $baseViewKey);
+        $filename = array_pop($parts);
+        $customViewKey = implode('/', $parts) . '/custom/' . $filename;
+
+        return View::exists($customViewKey) ? $customViewKey : null;
     }
 
     public function determineTheme(?Factory $factory = null): string

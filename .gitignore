@@ -17,6 +17,7 @@
 /public/sgv
 /public/stl
 /public/build
+/resources/views/print/custom
 /storage/*.key
 /output/done
 /vendor

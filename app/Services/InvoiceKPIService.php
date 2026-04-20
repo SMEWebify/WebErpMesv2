@@ -27,17 +27,22 @@ class InvoiceKPIService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getInvoiceMonthlyRecap($year)
+    public function getInvoiceMonthlyRecap($year, ?Carbon $start = null, ?Carbon $end = null)
     {
-        return DB::table('invoice_lines')
+        $query = DB::table('invoice_lines')
                     ->join('order_lines', 'invoice_lines.order_line_id', '=', 'order_lines.id')
                     ->selectRaw('
                         MONTH(invoice_lines.created_at) AS month,
                         SUM((order_lines.selling_price * invoice_lines.qty) - (order_lines.selling_price * invoice_lines.qty)*(order_lines.discount/100)) AS orderSum
-                    ')
-                    ->whereYear('invoice_lines.created_at', $year)
-                    ->groupByRaw('MONTH(invoice_lines.created_at)')
-                    ->get();
+                    ');
+
+        if ($start && $end) {
+            $query->whereBetween('invoice_lines.created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()]);
+        } else {
+            $query->whereYear('invoice_lines.created_at', $year);
+        }
+
+        return $query->groupByRaw('MONTH(invoice_lines.created_at)')->get();
     }
 
     /**

@@ -201,7 +201,7 @@ return [
     'status_client_trans_key'                  => 'Etat client',
     'status_supplier_trans_key'                => 'Etat fournisseur',
     'color_trans_key'                          => 'Couleur',
-    'picture_trans_key'                        => 'Image',
+    'picture_trans_key'                        => 'Logo',
     'ressource_trans_key'                      => 'Ressource',
     'ressources_trans_key'                     => 'Ressources',
     'section_trans_key'                        => 'Section',
@@ -215,7 +215,7 @@ return [
     'cost_trans_key'                           => 'Coût',
     'due_date_trans_key'                       => 'Date d\'échéance',
 
-    'order_trans_key'                          => 'Commmande',
+    'order_trans_key'                          => 'Commande',
     'external_id_trans_key'                    => 'ID externe',
     'description_trans_key'                    => 'Description',
     'price_trans_key'                          => 'Prix U',
@@ -338,7 +338,7 @@ return [
     'lines_import_trans_key'                   => 'Importation de lignes',
 
     'order_info_trans_key'                     => 'Information de commande',
-    'order_line_trans_key'                     => 'Ligne de la commande',
+    'order_line_trans_key'                     => 'nb lignes',
     'business_Review_trans_key'                => 'Bilan d\'affaire',
 
     'delivery_info_trans_key'                  => 'Bon de livraison info',
@@ -622,6 +622,7 @@ return [
 
     'delivery_note_number_trans_key'           => 'Nom du bon de livraison',
     'delivery_simulation_trans_key'            => 'Simulation de délai de livraison',
+    'reference_trans_key'                      => 'Référence',
     'customer_reference_trans_key'             => 'Référence client',
 
     'absence_type_day_trans_key'               => 'Type de jour d\'absence',
@@ -647,6 +648,8 @@ return [
     'siren_trans_key'                          => 'Siren',
     'nat_regis_number_trans_key'               => 'Numéro de registre national',
     'share_capital_trans_key'                  => 'Partage le capital',
+    'iban_trans_key'                           => 'IBAN',
+    'bic_trans_key'                            => 'BIC / SWIFT',
     'custom_trans_key'                         => 'Custom',
     'custom_section_trans_key'                 => 'Custom section',
     'personnal_mail_trans_key'                 => 'E-mail personnel',
@@ -980,7 +983,7 @@ return [
     'user_choise_trans_key'                    => 'Choix de l\'utilisateur',
     
     //DELIVERY
-    'delivery_notes_trans_key'                 => 'Bons de livraisons',
+    'delivery_notes_trans_key'                 => 'Bon de livraison',
     'current_month_trans_key'                  => 'Mois en cours',
     'deliverys_notes_request_trans_key'        => 'Attente de bons de livraison',
     'deliverys_notes_list_trans_key'           => 'Liste des bons de livraisons',

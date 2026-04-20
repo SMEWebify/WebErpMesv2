@@ -201,7 +201,7 @@ function TaskInfoPanel({ task, trans }) {
 
             {task.service?.picture && (
                 <div className="row mb-2">
-                    <img alt="Service" className="profile-user-img img-fluid img-circle" src={`/images/methods/${task.service.picture}`} />
+                    <img alt="Service" className="profile-user-img img-fluid img-circle" src={`/storage/images/methods/${task.service.picture}`} />
                 </div>
             )}
 

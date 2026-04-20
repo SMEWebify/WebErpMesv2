@@ -37,7 +37,7 @@
             </div>
 
             <div class="mt-3">
-                <button type="submit" class="btn btn-success btn-sm">Envoyer vers le storage</button>
+                <button type="submit" class="btn btn-success btn-sm">Analyser</button>
             </div>
         </form>
     </x-adminlte-card>
@@ -97,7 +97,7 @@
     <x-adminlte-card title="Log d'import" theme="secondary" maximizable>
         @if(!empty($invoiceReportReadError))
             <x-adminlte-alert theme="warning" title="Rapport indisponible" dismissable>
-                {{ $invoiceReportReadError }}
+                Le fichier de rapport n'est pas disponible pour le moment.
             </x-adminlte-alert>
         @elseif($invoiceErrorRows->isEmpty())
             <p class="mb-0 text-muted">Aucune erreur d'import disponible pour aujourd'hui.</p>

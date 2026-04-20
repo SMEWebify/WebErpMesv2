@@ -35,7 +35,7 @@
               <tr>
                 <td>
                   @if($MethodsService->picture )
-                  <img alt="Service" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'.$MethodsService->picture) }}">
+                  <img alt="Service" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/images/methods/'.$MethodsService->picture) }}">
                   @endif
                 </td>
                 <td>{{ $MethodsService->ordre }}</td>

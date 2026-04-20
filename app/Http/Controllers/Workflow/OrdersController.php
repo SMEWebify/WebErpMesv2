@@ -59,23 +59,28 @@ class OrdersController extends Controller
      */
     public function index()
     { 
-        $factory = app('Factory');   
+        $factory = app('Factory');
         $CurentYear = now()->year;
         $currency = $factory->curency ?? 'EUR';
+        $fiscal          = $factory->getCurrentFiscalYear();
+        $fiscalStart     = $fiscal['start'];
+        $fiscalEnd       = $fiscal['end'];
+        $prevFiscalStart = $fiscalStart->copy()->subYear();
+        $prevFiscalEnd   = $fiscalEnd->copy()->subYear();
 
         // Récupérer les KPI
         $deliveredOrdersPercentage = $this->orderKPIService->getDeliveredOrdersPercentage();
         $invoicedOrdersPercentage = $this->orderKPIService->getInvoicedOrdersPercentage();
         $pendingDeliveries = $this->orderKPIService->getPendingDeliveries();
         $lateOrdersCount = $this->orderKPIService->getLateOrdersCount();
-        $remainingDeliveryOrder =   $this->orderKPIService->getOrderMonthlyRemainingToDelivery(now()->month, $CurentYear);
-        $remainingInvoiceOrder =   $this->orderKPIService->getOrderMonthlyRemainingToInvoice();
-        $serviceRate =   $this->orderKPIService->getServiceRate();
+        $remainingDeliveryOrder = $this->orderKPIService->getOrderMonthlyRemainingToDelivery(now()->month, $CurentYear);
+        $remainingInvoiceOrder  = $this->orderKPIService->getOrderMonthlyRemainingToInvoice();
+        $serviceRate = $this->orderKPIService->getServiceRate();
         $topCustomers = $this->orderKPIService->getTopCustomersByOrderVolume(3);
         $averageProcessingTime = $this->orderKPIService->getAverageOrderProcessingTime();
-        $data['ordersDataRate']= $this->orderKPIService->getOrdersDataRate();
-        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear);
-        $data['orderMonthlyRecapPreviousYear'] = $this->orderKPIService->getOrderMonthlyRecapPreviousYear($CurentYear);
+        $data['ordersDataRate'] = $this->orderKPIService->getOrdersDataRate();
+        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, null, $fiscalStart, $fiscalEnd);
+        $data['orderMonthlyRecapPreviousYear'] = $this->orderKPIService->getOrderMonthlyRecapPreviousYear($CurentYear, $prevFiscalStart, $prevFiscalEnd);
 
         
         $remainingDeliveryOrder = Number::currency($remainingDeliveryOrder->orderSum ?? 0, $currency, config('app.locale'));
@@ -390,12 +395,11 @@ class OrdersController extends Controller
 
     public function selectDataJson()
     {
-        $lastOrder = Orders::orderBy('id', 'desc')->first();
-        $docGen    = app(DocumentCodeGenerator::class);
+        $docGen = app(DocumentCodeGenerator::class);
 
         return response()->json([
-            'next_code_external'  => $docGen->generateDocumentCode('order',          $lastOrder?->id ?? 0),
-            'next_code_internal'  => $docGen->generateDocumentCode('internal-order',  $lastOrder?->id ?? 0),
+            'next_code_external'  => $docGen->peekNextCode('order'),
+            'next_code_internal'  => $docGen->peekNextCode('internal-order'),
             'companies'           => $this->SelectDataService->getCompanies()->map(fn ($c) => [
                 'id'    => $c->id,
                 'label' => $c->label ?? $c->last_name,

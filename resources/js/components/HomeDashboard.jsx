@@ -8,8 +8,7 @@ function csrfToken() {
 
 const sideBtn = {
     base: {
-        writingMode: 'vertical-rl',
-        transform: 'rotate(180deg)',
+        writingMode: 'vertical-lr',
         padding: '14px 8px',
         border: 'none',
         borderRadius: '6px 0 0 6px',
@@ -34,6 +33,7 @@ const sideBtn = {
 
 export default function HomeDashboard({
     year,
+    fiscalYearStartMonth = 1,
     currency,
     locale,
     canPurchases,
@@ -79,7 +79,7 @@ export default function HomeDashboard({
     }
 
     const dashProps = {
-        year, currency, locale, canPurchases,
+        year, fiscalYearStartMonth, currency, locale, canPurchases,
         kpi, charts, delivery, recentOrders, recentQuotes,
         announcement, trans: trans ?? {}, urls: urls ?? {}, endpoints,
     };

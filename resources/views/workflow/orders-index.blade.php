@@ -23,6 +23,7 @@
     'ordersDataRate'                => $data['ordersDataRate'],
     'orderMonthlyRecap'             => $data['orderMonthlyRecap'],
     'orderMonthlyRecapPreviousYear' => $data['orderMonthlyRecapPreviousYear'],
+    'fiscalYearStartMonth'          => (int) (app('Factory')->fiscal_year_start_month ?? 1),
   ];
 
   $reactTopCustomers = $topCustomers->map(fn($c) => [
@@ -73,7 +74,7 @@
     'company'                => __('general_content.name_company_trans_key'),
     'contact'                => __('general_content.contact_trans_key'),
     'address'                => __('general_content.new_address_trans_key'),
-    'validity_date'          => __('general_content.validity_date_trans_key'),
+    'validity_date'          => __('general_content.delivery_date_trans_key'),
     'status'                 => __('general_content.status_trans_key'),
     'lines'                  => __('general_content.order_line_trans_key'),
     'created_at'             => __('general_content.created_at_trans_key'),

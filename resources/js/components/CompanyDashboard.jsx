@@ -45,7 +45,7 @@ const QUOTE_STATUS_CONFIG = {
 // Main component
 // ---------------------------------------------------------------------------
 
-export default function CompanyDashboard({ kpi, charts, trans }) {
+export default function CompanyDashboard({ kpi, charts, trans, fiscalYearStartMonth = 1 }) {
     return (
         <div>
             {/* KPIs */}
@@ -91,6 +91,7 @@ export default function CompanyDashboard({ kpi, charts, trans }) {
                             purchaseMonthlyRecap: charts.purchaseMonthlyRecap,
                             estimatedBudget:      charts.estimatedBudget,
                         }}
+                        fiscalYearStartMonth={charts.fiscalYearStartMonth ?? fiscalYearStartMonth}
                         trans={{
                             ...trans,
                             monthly_recap_title: trans.monthly_recap,

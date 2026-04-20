@@ -5,7 +5,7 @@
         <title>{{ $typeDocumentName}} - #{{ $Document->code }}</title>
         <style type="text/css">
             @page {
-                margin: 350px 25px 50px 25px;
+                margin: 390px 25px 50px 25px;
             }
             body {
                 margin: 0px; 
@@ -31,7 +31,7 @@
                 padding: 10px;
                 margin-top:30px;
             }
-            header { position: fixed; top: -350px; left: 0px; right: 0px; ; height: 350px; }
+            header { position: fixed; top: -390px; left: 0px; right: 0px; height: 390px; }
             footer { position: fixed; bottom: -50px; left: 0px; right: 0px; background-color: {{ $Factory->pdf_header_font_color }}; height: 50px; }
             footer .pagenum:before {
                 content: counter(page);
@@ -77,7 +77,8 @@
 {{ __('general_content.phone_trans_key') }} : {{ $Document->contact['number'] }}
 {{ __('general_content.email_trans_key') }} : {{ $Document->contact['mail'] }}
 <br />
-{{ __('general_content.identifier_trans_key') }}: {{ $Document->customer_reference }}
+{{ __('general_content.identifier_trans_key') }}: {{ $Document->Lines->first()?->OrderLine?->order?->customer_reference ?? '' }}
+{{ __('general_content.delivery_notes_trans_key') }}: {{ $Document->Lines->first()?->deliveryLine?->delivery?->code ?? '' }}
                             </pre>
                         @else
 <h1>{{ __('general_content.internal_order_trans_key') }}</h1>
@@ -118,7 +119,7 @@
                 <tbody>
                     @forelse($Document->Lines as $DocumentLine)
                     <tr>
-                        <td align="center">{{ $DocumentLine->OrderLine->order['code'] }}</td>
+                        <td align="center">{{ $DocumentLine->deliveryLine?->delivery?->code ?? $DocumentLine->OrderLine->order['code'] }}</td>
                         <td>
                             {{ $DocumentLine->OrderLine['label'] }}<br>
                             <span style="color: #6c757d">{{ $DocumentLine->OrderLine['code'] }}</span>

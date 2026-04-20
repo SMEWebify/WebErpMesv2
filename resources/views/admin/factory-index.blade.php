@@ -373,6 +373,14 @@
                                 <input type="text" class="form-control" name="share_capital" id="share_capital" value="{{ $Factory->share_capital }}" placeholder="{{ __('general_content.share_capital_trans_key') }}">
                             </div>
                         </div>
+                        <div class="row mt-2">
+                            <div class="col-8">
+                                <input type="text" class="form-control" name="iban" id="iban" value="{{ $Factory->iban }}" placeholder="{{ __('general_content.iban_trans_key') }}">
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control" name="bic" id="bic" value="{{ $Factory->bic }}" placeholder="{{ __('general_content.bic_trans_key') }}">
+                            </div>
+                        </div>
                     </x-adminlte-card>
 
                     <x-adminlte-card title="{{ __('general_content.default_value_trans_key') }}" theme="info" collapsible maximizable>
@@ -431,6 +439,28 @@
                                         <option value="GBP" @if('GBP' == $Factory->curency ) Selected @endif>United Kingdom Pounds</option>
                                     </select>
                                 </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="fiscal_year_start_month">Mois de début d'exercice comptable</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    </div>
+                                    <select class="form-control" name="fiscal_year_start_month" id="fiscal_year_start_month">
+                                        @php
+                                            $months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+                                        @endphp
+                                        @foreach($months as $i => $label)
+                                            <option value="{{ $i + 1 }}" @if(($Factory->fiscal_year_start_month ?? 1) == $i + 1) selected @endif>
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <small class="form-text text-muted">Définit le premier mois de l'exercice (ex : Février = exercice du 01/02 au 31/01).</small>
                             </div>
                         </div>
                     </x-adminlte-card>
@@ -508,7 +538,7 @@
                     <x-adminlte-card title="{{ __('general_content.picture_trans_key') }}" theme="warning" collapsible maximizable>
                         @if($Factory->picture)
                         <div class="row">
-                            <img src="{{ asset('/images/factory/'. $Factory->picture) }}" style="width:100%;height: auto;" alt="Factory Image" >
+                            <img src="{{ asset('/images/factory/'. $Factory->picture) }}" style="width:100%;height: auto;" alt="Factory Logo" >
                         </div>
                         @endif
                         <div class="row">
@@ -795,7 +825,7 @@
                                                                         <div class="input-group-prepend">
                                                                             <span class="input-group-text"><i class="fas fa-code"></i></span>
                                                                         </div>
-                                                                        <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{day}-{id}" value="{{ $template->template }}" required>
+                                                                        <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{week}-{id}" value="{{ $template->template }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group" x-data="{ period: '{{ $template->reset_period ?? 'none' }}' }">
@@ -888,7 +918,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-code"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{day}-{id}" required>
+                                        <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{week}-{id}" required>
                                     </div>
                                 </div>
                                 <div class="form-group" x-data="{ period: 'none' }">

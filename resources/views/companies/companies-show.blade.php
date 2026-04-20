@@ -319,8 +319,9 @@
   ];
 
   $dashboardCharts = [
-    'quotesDataRate'    => $data['quotesDataRate'],
-    'orderMonthlyRecap' => $data['orderMonthlyRecap'],
+    'quotesDataRate'       => $data['quotesDataRate'],
+    'orderMonthlyRecap'    => $data['orderMonthlyRecap'],
+    'fiscalYearStartMonth' => app('Factory')->fiscal_year_start_month ?? 1,
   ];
 
   $dashboardTrans = [

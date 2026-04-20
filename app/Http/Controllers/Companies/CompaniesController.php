@@ -244,9 +244,12 @@ class CompaniesController extends Controller
      */
     public function show(Companies $id)
     {
-        $factory = app('Factory'); 
+        $factory = app('Factory');
         $currency = $factory->curency ?? 'EUR';
         $CurentYear = now()->year;
+        $fiscal      = $factory->getCurrentFiscalYear();
+        $fiscalStart = $fiscal['start'];
+        $fiscalEnd   = $fiscal['end'];
         $userSelect = $this->SelectDataService->getUsers();
         list($previousUrl, $nextUrl) = $this->getNextPrevious(new Companies(), $id->id);
         $remainingInvoiceOrder =  $this->orderKPIService->getOrderMonthlyRemainingToInvoice($id->id);
@@ -255,7 +258,7 @@ class CompaniesController extends Controller
         $unpaidInvoices = $this->invoiceKPIService->getUnpaidInvoicesCount($id->id);
         $serviceRate = $this->orderKPIService->getServiceRate($id->id);
         $data['quotesDataRate'] = $this->quoteKPIService->getQuotesDataRate($CurentYear, $id->id);
-        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, $id->id);
+        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, $id->id, $fiscalStart, $fiscalEnd);
         $data['orderAverage'] = $this->orderKPIService->getAverageOrderPriceAttribute($id->id);
         $data['orderAverage'] = Number::currency($data['orderAverage'], $currency, config('app.locale'));
         $remainingInvoiceOrder = Number::currency($remainingInvoiceOrder->orderSum ?? 0, $currency, config('app.locale'));

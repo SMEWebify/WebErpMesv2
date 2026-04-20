@@ -166,7 +166,7 @@ return [
     'status_client_trans_key'                  => 'حالة العميل',
     'status_supplier_trans_key'                => 'حالة المورد',
     'color_trans_key'                          => 'اللون',
-    'picture_trans_key'                        => 'الصورة',
+    'picture_trans_key'                        => 'الشعار',
     'ressource_trans_key'                      => 'المورد',
     'ressources_trans_key'                     => 'الموارد',
     'section_trans_key'                        => 'القسم',
@@ -546,6 +546,7 @@ return [
     'section_size_trans_key'                => 'حجم القسم',
 
     'delivery_note_number_trans_key'      => 'رقم مذكرة التسليم',
+    'reference_trans_key'                 => 'المرجع',
     'customer_reference_trans_key'        => 'الإشارة الخاصة بالعميل',
 
     'absence_type_day_trans_key'          => 'نوع يوم الغياب',
@@ -570,6 +571,8 @@ return [
     'siren_trans_key'                         => 'رقم SIREN',
     'nat_regis_number_trans_key'              => 'الرقم الوطني للتسجيل',
     'share_capital_trans_key'                 => 'رأس المال',
+    'iban_trans_key'                          => 'IBAN',
+    'bic_trans_key'                           => 'BIC / SWIFT',
     'custom_trans_key'                        => 'مخصص',
     'custom_section_trans_key'                => 'قسم مخصص',
     'personnal_mail_trans_key'                => 'البريد الإلكتروني الشخصي',

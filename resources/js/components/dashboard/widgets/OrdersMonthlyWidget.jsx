@@ -7,21 +7,28 @@ import WidgetCard from '../WidgetCard.jsx';
 const MONTH_KEYS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 
 /**
- * Convertit [{month, orderSum}] → tableau de 12 valeurs (index 0 = jan)
- * valueKey : nom du champ numérique ('orderSum' ou 'purchaseSum')
+ * Convertit [{month, orderSum}] → tableau de 12 valeurs
+ * commençant au mois fiscal (startMonth 1=jan…12=dec).
  */
-function toMonthlyArray(rows, valueKey = 'orderSum') {
+function toMonthlyArray(rows, valueKey = 'orderSum', startMonth = 1) {
     const byMonth = {};
     (rows ?? []).forEach(r => { byMonth[r.month] = parseFloat(r[valueKey]) || 0; });
-    return MONTH_KEYS.map((_, i) => byMonth[i + 1] ?? 0);
+    return Array.from({ length: 12 }, (_, i) => {
+        const calMonth = ((startMonth - 1 + i) % 12) + 1;
+        return byMonth[calMonth] ?? 0;
+    });
 }
 
 /**
  * Convertit {amount1..amount12} → tableau de 12 valeurs
+ * commençant au mois fiscal.
  */
-function targetToArray(target) {
+function targetToArray(target, startMonth = 1) {
     if (!target) return null;
-    return MONTH_KEYS.map((_, i) => parseFloat(target[`amount${i + 1}`]) || 0);
+    return Array.from({ length: 12 }, (_, i) => {
+        const calMonth = ((startMonth - 1 + i) % 12) + 1;
+        return parseFloat(target[`amount${calMonth}`]) || 0;
+    });
 }
 
 /**
@@ -33,18 +40,19 @@ function targetToArray(target) {
  *       invoiceMonthlyRecap, purchaseMonthlyRecap,
  *       estimatedBudget }                                   (prop Blade)
  */
-function normalize(raw, trans) {
+function normalize(raw, trans, startMonth = 1) {
     if (!raw) return [];
 
     // Détecter le format : API vs Blade
     const isApi = 'orders' in raw;
 
-    const ordersRows    = isApi ? raw.orders    : raw.orderMonthlyRecap;
-    const deliveryRows  = isApi ? raw.deliveries : raw.deliveryMonthlyRecap;
-    const invoiceRows   = isApi ? raw.invoices   : raw.invoiceMonthlyRecap;
-    const purchaseRows  = isApi ? raw.purchases  : raw.purchaseMonthlyRecap;
-    // estimatedBudget Blade = collection, premier élément
-    const targetRaw     = isApi
+    const ordersRows   = isApi ? raw.orders    : raw.orderMonthlyRecap;
+    const deliveryRows = isApi ? raw.deliveries : raw.deliveryMonthlyRecap;
+    const invoiceRows  = isApi ? raw.invoices   : raw.invoiceMonthlyRecap;
+    const purchaseRows = isApi ? raw.purchases  : raw.purchaseMonthlyRecap;
+    const fiscalMonth  = isApi ? (raw.fiscalYearStartMonth ?? startMonth) : startMonth;
+
+    const targetRaw = isApi
         ? raw.target
         : (Array.isArray(raw.estimatedBudget) ? raw.estimatedBudget[0] : raw.estimatedBudget);
 
@@ -53,31 +61,29 @@ function normalize(raw, trans) {
             label:  trans.orders_forecast    ?? 'Prévision commandes',
             color:  'rgba(60,141,188,0.9)',
             area:   true,
-            values: toMonthlyArray(ordersRows, 'orderSum'),
+            values: toMonthlyArray(ordersRows, 'orderSum', fiscalMonth),
         },
         {
             label:  trans.delivered_revenues ?? 'CA livré',
             color:  'rgba(240,173,78,0.85)',
-            values: toMonthlyArray(deliveryRows, 'orderSum'),
+            values: toMonthlyArray(deliveryRows, 'orderSum', fiscalMonth),
         },
         {
             label:  trans.invoiced_revenues  ?? 'CA facturé',
             color:  'rgba(217,83,79,0.85)',
-            values: toMonthlyArray(invoiceRows, 'orderSum'),
+            values: toMonthlyArray(invoiceRows, 'orderSum', fiscalMonth),
         },
     ];
 
-    // Achats (négatifs — coûts) — seulement si la série est présente
     if (purchaseRows && purchaseRows.length > 0) {
         series.push({
             label:  trans.purchase_revenues ?? 'Achats',
             color:  'rgba(21,83,79,0.8)',
-            values: toMonthlyArray(purchaseRows, 'purchaseSum').map(v => -v),
+            values: toMonthlyArray(purchaseRows, 'purchaseSum', fiscalMonth).map(v => -v),
         });
     }
 
-    // Objectif — ligne pointillée verte
-    const targetValues = targetToArray(targetRaw);
+    const targetValues = targetToArray(targetRaw, fiscalMonth);
     if (targetValues) {
         series.push({
             label:  trans.order_targets ?? 'Objectif',
@@ -208,6 +214,7 @@ export default function OrdersMonthlyWidget({
     data: initialData,
     endpoint,
     year,
+    fiscalYearStartMonth = 1,
     trans = {},
     currency = 'EUR',
     locale   = 'fr-FR',
@@ -216,7 +223,7 @@ export default function OrdersMonthlyWidget({
     onRemove,
     onTypeChange,
 }) {
-    const [series, setSeries]   = useState(() => initialData ? normalize(initialData, trans) : null);
+    const [series, setSeries]   = useState(() => initialData ? normalize(initialData, trans, fiscalYearStartMonth) : null);
     const [loading, setLoading] = useState(!initialData && !!endpoint);
     const [error, setError]     = useState(null);
 
@@ -243,7 +250,7 @@ export default function OrdersMonthlyWidget({
                 return res.json();
             })
             .then(json => {
-                setSeries(normalize(json, trans));
+                setSeries(normalize(json, trans, json.fiscalYearStartMonth ?? fiscalYearStartMonth));
                 setLoading(false);
             })
             .catch(err => {
@@ -254,11 +261,15 @@ export default function OrdersMonthlyWidget({
 
     // Ré-normaliser si les données Blade changent
     useEffect(() => {
-        if (initialData) setSeries(normalize(initialData, trans));
-    }, [initialData]);
+        if (initialData) setSeries(normalize(initialData, trans, fiscalYearStartMonth));
+    }, [initialData, fiscalYearStartMonth]);
 
     const currentYear = year ?? new Date().getFullYear();
-    const labels      = MONTH_KEYS.map(k => trans[k] ?? k);
+    // Labels pivotés selon le mois de début d'exercice
+    const labels = Array.from({ length: 12 }, (_, i) => {
+        const key = MONTH_KEYS[((fiscalYearStartMonth - 1) + i) % 12];
+        return trans[key] ?? key;
+    });
     const isEmpty     = !loading && !error && (!series || series.length === 0);
 
     const totalsFooter = showTotals && series && series.length > 0 && !loading && !error

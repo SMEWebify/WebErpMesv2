@@ -64,11 +64,14 @@ class DeliverysController extends Controller
      */
     public function index()
     {    
-        $CurentYear = Carbon::now()->format('Y');
-        $data['deliverysDataRate'] = $this->deliveryKPIService->getDeliveriesDataRate();
-        $data['deliveryMonthlyRecap'] = $this->deliveryKPIService->getDeliveryMonthlyRecap( $CurentYear);
+        $CurentYear  = Carbon::now()->format('Y');
+        $factory     = app('Factory');
+        $fiscal      = $factory->getCurrentFiscalYear();
+        $data['deliverysDataRate']    = $this->deliveryKPIService->getDeliveriesDataRate();
+        $data['deliveryMonthlyRecap'] = $this->deliveryKPIService->getDeliveryMonthlyRecap($CurentYear, $fiscal['start'], $fiscal['end']);
+        $data['fiscalYearStartMonth'] = (int) ($factory->fiscal_year_start_month ?? 1);
 
-        return view('workflow/deliverys-index')->with('data',$data);
+        return view('workflow/deliverys-index')->with('data', $data);
     }
 
     /**
@@ -76,13 +79,10 @@ class DeliverysController extends Controller
      */
     public function request()
     {
-        $lastDelivery = Deliverys::latest()->first();
-        $deliveryId   = $lastDelivery ? $lastDelivery->id : 0;
-
         $companyIds = $this->deliveryDataService->getUniqueCompanyIdsWithOpenOrderLines();
 
         $reactProps = [
-            'code'           => $this->documentCodeGenerator->generateDocumentCode('delivery', $deliveryId),
+            'code'           => $this->documentCodeGenerator->peekNextCode('delivery'),
             'userId'         => Auth::id(),
             'users'          => $this->SelectDataService->getUsers(),
             'companies'      => $this->SelectDataService->getCompanies($companyIds),

@@ -37,7 +37,24 @@ class Factory extends Model
                             'public_link_cgv',
                             'add_cgv_to_pdf',
                             'cgv_file',
-                            'enable_construction_site'];
+                            'enable_construction_site',
+                            'fiscal_year_start_month',
+                            'iban',
+                            'bic'];
+
+    public function getCurrentFiscalYear(): array
+    {
+        $month = (int) ($this->fiscal_year_start_month ?? 1);
+        $now   = \Carbon\Carbon::now();
+
+        $start = \Carbon\Carbon::create($now->year, $month, 1, 0, 0, 0);
+        if ($now->lt($start)) {
+            $start->subYear();
+        }
+        $end = $start->copy()->addYear()->subDay()->endOfDay();
+
+        return ['start' => $start, 'end' => $end];
+    }
 
 
     public function VAT()

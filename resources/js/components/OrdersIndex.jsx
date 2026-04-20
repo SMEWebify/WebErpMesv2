@@ -295,23 +295,27 @@ function niceMax(value) {
     return Math.ceil(value / exp) * exp;
 }
 
-function buildMonthlyData(items, key = 'orderSum') {
+const MONTH_KEYS_ORDERED = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+
+function buildMonthlyData(items, key = 'orderSum', startMonth = 1) {
     return Array.from({ length: 12 }, (_, i) => {
-        const found = (items ?? []).find(d => d.month === i + 1);
+        const calMonth = ((startMonth - 1 + i) % 12) + 1;
+        const found = (items ?? []).find(d => d.month === calMonth);
         return found ? parseFloat(found[key]) || 0 : 0;
     });
 }
 
 function LineChart({ data, trans }) {
     const [hovered, setHovered] = useState(null);
+    const startMonth = data.fiscalYearStartMonth ?? 1;
 
-    const MONTHS = [
-        trans.jan, trans.feb, trans.mar, trans.apr, trans.may, trans.jun,
-        trans.jul, trans.aug, trans.sep, trans.oct, trans.nov, trans.dec,
-    ];
+    const MONTHS = Array.from({ length: 12 }, (_, i) => {
+        const key = MONTH_KEYS_ORDERED[((startMonth - 1) + i) % 12];
+        return trans[key] ?? key;
+    });
 
-    const current  = buildMonthlyData(data.orderMonthlyRecap);
-    const previous = buildMonthlyData(data.orderMonthlyRecapPreviousYear);
+    const current  = buildMonthlyData(data.orderMonthlyRecap, 'orderSum', startMonth);
+    const previous = buildMonthlyData(data.orderMonthlyRecapPreviousYear, 'orderSum', startMonth);
 
     const W = 560, H = 260;
     const PAD = { top: 16, right: 16, bottom: 36, left: 52 };

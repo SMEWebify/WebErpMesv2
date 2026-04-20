@@ -142,7 +142,7 @@
                             <td @if($PurchasesRequestsLines->methods_services_id ) style="background-color: {{ $PurchasesRequestsLines->service['color'] }};" @endif >
                                 @if($PurchasesRequestsLines->methods_services_id )
                                     @if( $PurchasesRequestsLines->service['picture'])
-                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $PurchasesRequestsLines->service['picture']) }}'>">
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('storage/images/methods/'. $PurchasesRequestsLines->service['picture']) }}'>">
                                             <span>{{ $PurchasesRequestsLines->service['label'] }}</span>
                                         </p>
                                     @else

@@ -149,7 +149,7 @@
 
                                 @if($Task->methods_services_id )
                                     @if( $Task->service['picture'])
-                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $Task->service['picture']) }}'>">
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('storage/images/methods/'. $Task->service['picture']) }}'>">
                                             <span>{{ $Task->service['label'] }}</span>
                                         </p>
                                     @else

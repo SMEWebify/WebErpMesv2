@@ -52,7 +52,7 @@ function TaskCard({ task }) {
                         <div className="col-4">
                             {task.service.picture && (
                                 <img
-                                    src={`/images/methods/${task.service.picture}`}
+                                    src={`/storage/images/methods/${task.service.picture}`}
                                     className="profile-user-img img-fluid img-circle"
                                     alt=""
                                 />

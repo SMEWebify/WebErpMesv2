@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Methods;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Services\SelectDataService;
 use App\Models\Methods\MethodsServices;
 use App\Http\Requests\Methods\StoreServicesRequest;
@@ -50,7 +51,8 @@ class ServicesController extends Controller
         $serviceData['companies_id'] = $supplierIds->first();
         $Service = MethodsServices::create($serviceData);
         $Service->Suppliers()->sync($supplierIds);
-        
+        Cache::forget('select_data_services');
+
         if($request->hasFile('picture')){
             $Service = MethodsServices::findOrFail($Service->id);
             $path = $request->file('picture')->store('images/methods', 'public');
@@ -101,6 +103,7 @@ class ServicesController extends Controller
         $serviceData['companies_id'] = $supplierIds->first();
         $service->update($serviceData);
         $service->Suppliers()->sync($supplierIds);
+        Cache::forget('select_data_services');
         return redirect()->route('methods.service')->with('success', __('general_content.service_updated_success_trans_key'));
     }
 
@@ -119,6 +122,7 @@ class ServicesController extends Controller
             $path = $request->file('picture')->store('images/methods', 'public');
             $Service->update(['picture' => basename($path)]);
             $Service->save();
+            Cache::forget('select_data_services');
             return redirect()->route('methods.service')->with('success', __('general_content.service_updated_success_trans_key'));
         }
         else{

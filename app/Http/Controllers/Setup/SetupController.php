@@ -67,19 +67,20 @@ class SetupController extends Controller
 
         $userPermissions = $userRole
             ? $userRole->permissions->pluck('name')->toArray()
-            : array_keys(self::DEFAULT_PERMISSIONS);
+            : array_column($permissions, 'name');
 
         $initial = [
             'firstStep' => $this->firstIncompleteStep(),
             'company'   => $factory ? [
-                'name'    => $factory->name         ?? '',
-                'address' => $factory->address      ?? '',
-                'city'    => $factory->city         ?? '',
-                'zipcode' => $factory->zipcode      ?? '',
-                'phone'   => $factory->phone_number ?? '',
-                'mail'    => $factory->mail         ?? '',
-                'siren'   => $factory->siren        ?? '',
-                'vat_num' => $factory->vat_num      ?? '',
+                'name'     => $factory->name         ?? '',
+                'address'  => $factory->address      ?? '',
+                'city'     => $factory->city         ?? '',
+                'zipcode'  => $factory->zipcode      ?? '',
+                'phone'    => $factory->phone_number ?? '',
+                'mail'     => $factory->mail         ?? '',
+                'siren'    => $factory->siren        ?? '',
+                'vat_num'  => $factory->vat_num      ?? '',
+                'logo_url' => $factory->picture ? asset('images/factory/' . $factory->picture) : null,
             ] : [],
             'vat' => $vat ? [
                 'code'  => $vat->code,
@@ -148,9 +149,10 @@ class SetupController extends Controller
             'mail'    => 'nullable|email|max:255',
             'siren'   => 'nullable|string|max:20',
             'vat_num' => 'nullable|string|max:50',
+            'logo'    => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
-        Factory::updateOrCreate(['id' => 1], [
+        $update = [
             'name'         => $data['name'],
             'address'      => $data['address'] ?? null,
             'city'         => $data['city']    ?? null,
@@ -159,7 +161,26 @@ class SetupController extends Controller
             'mail'         => $data['mail']    ?? null,
             'siren'        => $data['siren']   ?? null,
             'vat_num'      => $data['vat_num'] ?? null,
-        ]);
+        ];
+
+        if ($request->hasFile('logo')) {
+            $dir = public_path('images/factory');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $file     = $request->file('logo');
+            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+            $file->move($dir, $filename);
+
+            $existing = Factory::first();
+            if ($existing?->picture && file_exists($dir . '/' . $existing->picture)) {
+                @unlink($dir . '/' . $existing->picture);
+            }
+
+            $update['picture'] = $filename;
+        }
+
+        Factory::updateOrCreate(['id' => 1], $update);
 
         return response()->json(['ok' => true]);
     }

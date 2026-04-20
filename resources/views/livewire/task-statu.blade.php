@@ -140,7 +140,7 @@
               </div>
               @if($Task->service->picture )
               <div class="row">
-                  <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('/images/methods/'. $Task->service->picture) }}">
+                  <img alt="Avatar" class="profile-user-img img-fluid img-circle" src="{{ asset('storage/images/methods/'. $Task->service->picture) }}">
               </div>
               @endif
               @if($Task->service->type == 1)

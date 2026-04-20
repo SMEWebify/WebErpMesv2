@@ -284,7 +284,7 @@
                             <td @if($TechLine->methods_services_id ) style="background-color: {{ $TechLine->service['color'] }};" @endif >
                                 @if($TechLine->methods_services_id )
                                     @if( $TechLine->service['picture'])
-                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $TechLine->service['picture']) }}'>">
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('storage/images/methods/'. $TechLine->service['picture']) }}'>">
                                             <span>{{ $TechLine->service['label'] }}</span>
                                         </p>
                                     @else
@@ -406,7 +406,7 @@
                             <td @if($BOMline->methods_services_id ) style="background-color: {{ $BOMline->service['color'] }};" @endif >
                                 @if($BOMline->methods_services_id )
                                     @if( $BOMline->service['picture'])
-                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('/images/methods/'. $BOMline->service['picture']) }}'>">
+                                        <p data-toggle="tooltip" data-html="true" title="<img alt='Service' class='profile-user-img img-fluid img-circle' src='{{ asset('storage/images/methods/'. $BOMline->service['picture']) }}'>">
                                             <span>{{ $BOMline->service['label'] }}</span>
                                         </p>
                                     @else

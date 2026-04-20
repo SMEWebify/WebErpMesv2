@@ -57,6 +57,8 @@ class PreOrdersController extends Controller
     
     public function upload(Request $request)
     {
+        set_time_limit((int) config('pre_orders.python_timeout', 120) + 30);
+
         $data = $request->validate([
             'pdfs' => 'required|array|min:1',
             'pdfs.*' => [
@@ -89,13 +91,20 @@ class PreOrdersController extends Controller
         if ($pythonPath && $scriptPath) {
     
             $systemRoot = getenv('SystemRoot') ?: getenv('SYSTEMROOT') ?: 'C:\Windows';
-    
+            $javaHome   = config('pre_orders.java_home') ?: getenv('JAVA_HOME') ?: 'C:\Java\jdk-26';
+            $javaBin    = rtrim($javaHome, '\\/') . '\bin';
+
+            // Les services Windows n'héritent pas du PATH utilisateur → on injecte Java explicitement
+            $currentPath = (string) getenv('PATH');
+            if (! str_contains($currentPath, $javaBin)) {
+                $currentPath = $javaBin . ';' . $currentPath;
+            }
+
             $env = [
                 'PYTHONHASHSEED'   => '0',
                 'PYTHONIOENCODING' => 'utf-8',
-    
-                // Important sur Windows
-                'PATH'        => (string) getenv('PATH'),
+                'JAVA_HOME'   => $javaHome,
+                'PATH'        => $currentPath,
                 'SystemRoot'  => (string) $systemRoot,
                 'WINDIR'      => (string) (getenv('WINDIR') ?: $systemRoot),
                 'SystemDrive' => (string) (getenv('SystemDrive') ?: 'C:'),
@@ -108,15 +117,15 @@ class PreOrdersController extends Controller
             $result = Process::env($env)
                 ->timeout((int) config('pre_orders.python_timeout', 120))
                 ->path(dirname($scriptPath))
-                ->run([$pythonPath, $scriptPath]); // ✅ plus safe que sprintf
-    
+                ->run([$pythonPath, $scriptPath]);
+
             if (! $result->successful()) {
                 return redirect()->route('pre-orders.index')->withErrors(
                     'PDF(s) envoyé(s), mais le traitement Python a échoué : ' .
                     trim($result->errorOutput() ?: $result->output())
                 );
             }
-    
+
             $scanExitCode = Artisan::call('preorders:scan-output', [
                 '--path' => config('pre_orders.output_path', 'output'),
                 '--pattern' => config('pre_orders.file_pattern', '*.csv'),
@@ -184,8 +193,11 @@ class PreOrdersController extends Controller
             ? route('pre-orders.source-pdf', $preOrder)
             : null;
 
+        $defaultLabel = 'Pré-commande du ' . $preOrder->created_at->format('d/m/Y');
+
         return view('workflow.pre-orders-show', [
             'preOrder' => $preOrder,
+            'defaultLabel' => $defaultLabel,
             'companies' => Companies::orderBy('code')->get(),
             'users' => User::orderBy('name')->get(),
             'paymentConditions' => AccountingPaymentConditions::orderBy('code')->get(),

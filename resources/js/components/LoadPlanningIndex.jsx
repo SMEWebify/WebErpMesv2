@@ -343,7 +343,7 @@ function CustomCapacityFooter({ services, customCapacities, onCustomCapacityChan
                                 <span className="input-group-text bg-white">
                                     {service.picture && (
                                         <img
-                                            src={`/images/methods/${service.picture}`}
+                                            src={`/storage/images/methods/${service.picture}`}
                                             alt={service.label}
                                             width="16" height="16"
                                             className="rounded-circle mr-1"
@@ -417,7 +417,7 @@ function LoadTable({ data, displayHoursDiff, customCapacities, onCustomCapacityC
                                                 <img
                                                     alt={service.label}
                                                     className="rounded-circle border shadow-sm"
-                                                    src={`/images/methods/${service.picture}`}
+                                                    src={`/storage/images/methods/${service.picture}`}
                                                     width="36" height="36"
                                                 />
                                             )}

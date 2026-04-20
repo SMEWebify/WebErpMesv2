@@ -105,11 +105,13 @@ class OrderKPIService
      * @param int|null $companyId
      * @return \Illuminate\Support\Collection
      */
-    public function getOrderMonthlyRecap($year, $companyId = null)
+    public function getOrderMonthlyRecap($year, $companyId = null, ?Carbon $start = null, ?Carbon $end = null)
     {
-        $cacheKey = 'order_monthly_recap_' . $year . '_company_' . ($companyId ?? 'all');
-        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year, $companyId) {
-            // Commence la requête avec une jointure et un filtrage éventuel par compagnie
+        $cacheKey = $start
+            ? 'order_monthly_recap_fiscal_' . $start->format('Ymd') . '_company_' . ($companyId ?? 'all')
+            : 'order_monthly_recap_' . $year . '_company_' . ($companyId ?? 'all');
+
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($year, $companyId, $start, $end) {
             $query = DB::table('order_lines')
                 ->selectRaw('
                     MONTH(delivery_date) AS month,
@@ -118,17 +120,21 @@ class OrderKPIService
                 ->leftJoin('orders', function ($join) {
                     $join->on('order_lines.orders_id', '=', 'orders.id')
                         ->where('orders.type', '=', 1)
-                        ->where('orders.statu', '!=', 6); // Filtre par le type de commande
-                })
-                ->whereYear('order_lines.created_at', $year)
-                ->groupByRaw('MONTH(order_lines.delivery_date)');
+                        ->where('orders.statu', '!=', 6);
+                });
 
-            // If a company ID is provided, add the filter
+            if ($start && $end) {
+                $query->whereBetween('order_lines.created_at', [$start->startOfDay(), $end->endOfDay()]);
+            } else {
+                $query->whereYear('order_lines.created_at', $year);
+            }
+
+            $query->groupByRaw('MONTH(order_lines.delivery_date)');
+
             if ($companyId) {
                 $query->where('orders.companies_id', $companyId);
             }
 
-            // Execute and return results
             return $query->get();
         });
     }
@@ -138,24 +144,32 @@ class OrderKPIService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getOrderMonthlyRecapPreviousYear($year)
+    public function getOrderMonthlyRecapPreviousYear($year, ?Carbon $start = null, ?Carbon $end = null)
     {
-        $lastyear = $year-1;
-        $cacheKey = 'order_monthly_recap_lastyear_' . $lastyear;
-        return Cache::remember($cacheKey, now()->addHours(1), function () use ($lastyear) {
-            return DB::table('order_lines')
+        $lastyear = $year - 1;
+        $cacheKey = $start
+            ? 'order_monthly_recap_fiscal_prev_' . $start->format('Ymd')
+            : 'order_monthly_recap_lastyear_' . $lastyear;
+
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($lastyear, $start, $end) {
+            $query = DB::table('order_lines')
                         ->selectRaw('
                             MONTH(delivery_date) AS month,
                             SUM((selling_price * qty)-(selling_price * qty)*(discount/100)) AS orderSum
                         ')
-                        ->leftJoin('orders', function($join) {
+                        ->leftJoin('orders', function ($join) {
                             $join->on('order_lines.orders_id', '=', 'orders.id')
                                 ->where('orders.type', '=', 1)
                                 ->where('orders.statu', '!=', 6);
-                        })
-                        ->whereYear('order_lines.created_at', $lastyear)
-                        ->groupByRaw('MONTH(order_lines.delivery_date)')
-                        ->get();
+                        });
+
+            if ($start && $end) {
+                $query->whereBetween('order_lines.created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()]);
+            } else {
+                $query->whereYear('order_lines.created_at', $lastyear);
+            }
+
+            return $query->groupByRaw('MONTH(order_lines.delivery_date)')->get();
         });
     }
 

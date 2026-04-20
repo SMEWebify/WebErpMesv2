@@ -55,8 +55,7 @@ class PurchasesInvoiceController extends Controller
      */
     public function waintingInvoice()
     {
-        $lastInvoice  = PurchaseInvoice::latest()->first();
-        $initialCode  = $this->documentCodeGenerator->generateDocumentCode('purchase-invoice', $lastInvoice?->id ?? 0);
+        $initialCode  = $this->documentCodeGenerator->peekNextCode('purchase-invoice');
 
         $reactEndpoints = [
             'init'  => route('purchases.waiting.invoice.json.init'),
@@ -100,8 +99,7 @@ class PurchasesInvoiceController extends Controller
         $companies  = $this->SelectDataService->getSupplier($companyIds);
         $users      = $this->SelectDataService->getUsers();
 
-        $lastInvoice = PurchaseInvoice::latest()->first();
-        $initialCode = $this->documentCodeGenerator->generateDocumentCode('purchase-invoice', $lastInvoice?->id ?? 0);
+        $initialCode = $this->documentCodeGenerator->peekNextCode('purchase-invoice');
 
         $lines = $this->purchaseInvoiceService->getPurchasesWaintingInvoiceLines($companiesId);
 

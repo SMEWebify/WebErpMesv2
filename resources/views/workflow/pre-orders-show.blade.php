@@ -132,7 +132,7 @@
                     <form method="POST" action="{{ route('pre-orders.convert', $preOrder) }}">
                         @csrf
                         <x-adminlte-input name="code" label="Code commande" value="{{ old('code', $generatedOrderCode) }}" required />
-                        <x-adminlte-input name="label" label="Libellé" value="Pré-commande issue de {{ $preOrder->source_pdf }}" required />
+                        <x-adminlte-input name="label" label="Libellé" value="{{ $defaultLabel }}" required />
                         <x-adminlte-input name="customer_reference" label="Référence client" />
 
                         <x-adminlte-select name="companies_id" label="Client">
@@ -148,7 +148,7 @@
                             @endforeach
                         </x-adminlte-select>
 
-                        <x-adminlte-input name="validity_date" type="date" label="Date validité" />
+                        <x-adminlte-input name="validity_date" type="date" label="Date de livraison" />
 
                         <x-adminlte-select name="accounting_payment_conditions_id" label="Condition de paiement">
                             <option value="">--</option>

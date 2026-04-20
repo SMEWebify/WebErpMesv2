@@ -13,6 +13,7 @@ use App\Services\OrderLinesService;
 use App\Services\QualityKPIService;
 use App\Models\Workflow\OrderLines;
 use App\Models\Admin\EstimatedBudgets;
+use App\Models\Admin\Factory;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Models\Workflow\Invoices;
@@ -163,17 +164,23 @@ class KpiController extends Controller
         InvoiceKPIService  $invoices,
         PurchaseKPIService $purchases,
     ) {
-        $year = $request->integer('year', Carbon::now()->year);
+        $factory  = Factory::first();
+        $fiscal   = $factory?->getCurrentFiscalYear();
+        $fiscalStart = $fiscal['start'] ?? Carbon::now()->startOfYear();
+        $fiscalEnd   = $fiscal['end']   ?? Carbon::now()->endOfYear();
+        $fiscalYearStartMonth = (int) ($factory?->fiscal_year_start_month ?? 1);
 
-        $target = EstimatedBudgets::where('year', $year)->first();
+        $year   = (int) $fiscalStart->format('Y');
+        $target = EstimatedBudgets::where('year', $request->integer('year', $year))->first();
 
         return response()->json([
-            'year'       => $year,
-            'orders'     => $orders->getOrderMonthlyRecap($year),
-            'deliveries' => $deliveries->getDeliveryMonthlyRecap($year),
-            'invoices'   => $invoices->getInvoiceMonthlyRecap($year),
+            'year'                 => $year,
+            'fiscalYearStartMonth' => $fiscalYearStartMonth,
+            'orders'     => $orders->getOrderMonthlyRecap($year, null, $fiscalStart, $fiscalEnd),
+            'deliveries' => $deliveries->getDeliveryMonthlyRecap($year, $fiscalStart, $fiscalEnd),
+            'invoices'   => $invoices->getInvoiceMonthlyRecap($year, $fiscalStart, $fiscalEnd),
             'purchases'  => Gate::allows('purchases-menu')
-                                ? $purchases->getPurchaseMonthlyRecap($year)
+                                ? $purchases->getPurchaseMonthlyRecap($year, $fiscalStart, $fiscalEnd)
                                 : null,
             'target'     => $target,
         ]);

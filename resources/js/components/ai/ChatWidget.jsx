@@ -124,31 +124,37 @@ function t(locale, key) {
 }
 
 // ─── Catalogue de suggestions à 2 niveaux ─────────────────────────────────────
+// permission: null = toujours visible, sinon doit figurer dans la liste Spatie
 
 const SUGGESTION_CATEGORIES = {
     fr: [
         {
             id: 'journal',
+            permission: null,
             label: '📰 Journal',
             suggestions: ['Journal de la veille', 'Journal du jour', 'Journal du 2025-01-15'],
         },
         {
             id: 'commande',
+            permission: 'orders-menu',
             label: '📦 Commande',
             suggestions: ['Commandes en cours', 'Dernières commandes', 'Commandes en retard', 'Commandes terminées ce mois'],
         },
         {
             id: 'devis',
+            permission: 'quotes-menu',
             label: '📄 Devis',
             suggestions: ['Devis en cours', 'Devis envoyés en attente', 'Devis acceptés', 'Devis expirés'],
         },
         {
             id: 'facture',
+            permission: 'invoices-menu',
             label: '💶 Facture',
             suggestions: ['Factures impayées', 'Factures en retard', 'Factures envoyées ce mois'],
         },
         {
             id: 'stock',
+            permission: 'products-menu',
             label: '🏭 Stock',
             suggestions: ['Stock tôle inox', 'Stock aluminium', 'Stock acier', 'Produits en rupture de stock'],
         },
@@ -156,26 +162,31 @@ const SUGGESTION_CATEGORIES = {
     en: [
         {
             id: 'journal',
+            permission: null,
             label: '📰 Journal',
             suggestions: ["Yesterday's journal", "Today's journal", 'Journal for 2025-01-15'],
         },
         {
             id: 'order',
+            permission: 'orders-menu',
             label: '📦 Orders',
             suggestions: ['Current orders', 'Latest orders', 'Late orders', 'Orders completed this month'],
         },
         {
             id: 'quote',
+            permission: 'quotes-menu',
             label: '📄 Quotes',
             suggestions: ['Ongoing quotes', 'Sent quotes pending', 'Accepted quotes', 'Expired quotes'],
         },
         {
             id: 'invoice',
+            permission: 'invoices-menu',
             label: '💶 Invoices',
             suggestions: ['Unpaid invoices', 'Overdue invoices', 'Invoices sent this month'],
         },
         {
             id: 'stock',
+            permission: 'products-menu',
             label: '🏭 Stock',
             suggestions: ['Stainless steel sheet stock', 'Aluminium stock', 'Steel stock', 'Out of stock products'],
         },
@@ -184,10 +195,13 @@ const SUGGESTION_CATEGORIES = {
 
 // ─── Composant SuggestionPanel ─────────────────────────────────────────────────
 
-function SuggestionPanel({ onSelect, locale }) {
+function SuggestionPanel({ onSelect, locale, permissions }) {
     const [activeCategory, setActiveCategory] = useState(null);
 
-    const categories = SUGGESTION_CATEGORIES[locale] ?? SUGGESTION_CATEGORIES.fr;
+    const allCategories = SUGGESTION_CATEGORIES[locale] ?? SUGGESTION_CATEGORIES.fr;
+    const categories = allCategories.filter(c =>
+        c.permission === null || permissions.includes(c.permission)
+    );
     const cat = categories.find(c => c.id === activeCategory);
 
     const btnBase = {
@@ -244,7 +258,7 @@ function SuggestionPanel({ onSelect, locale }) {
 
 // ─── Composant principal ───────────────────────────────────────────────────────
 
-export default function ChatWidget({ locale = 'fr' }) {
+export default function ChatWidget({ locale = 'fr', permissions = [] }) {
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([
@@ -446,7 +460,7 @@ export default function ChatWidget({ locale = 'fr' }) {
 
                         {/* Suggestions à 2 niveaux — toujours visible */}
                         {!loading && (
-                            <SuggestionPanel onSelect={(s) => submit(s)} locale={locale} />
+                            <SuggestionPanel onSelect={(s) => submit(s)} locale={locale} permissions={permissions} />
                         )}
 
                         {/* Input */}

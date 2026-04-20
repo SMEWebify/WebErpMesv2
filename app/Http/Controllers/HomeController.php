@@ -53,6 +53,11 @@ class HomeController extends Controller
     public function index()
     {
         $factory = app('Factory');
+        $fiscal  = $factory->getCurrentFiscalYear();
+        $fiscalStart = $fiscal['start'];
+        $fiscalEnd   = $fiscal['end'];
+        $fiscalStartMonth = (int) ($factory->fiscal_year_start_month ?? 1);
+
         $CurentYear = Carbon::now()->format('Y');
         $CurentMonth = Carbon::now()->format('m');
 
@@ -108,16 +113,16 @@ class HomeController extends Controller
                             +$data['estimatedBudget'][0]->amount12;
 
         //Order data for chart
-        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear);
+        $data['orderMonthlyRecap'] = $this->orderKPIService->getOrderMonthlyRecap($CurentYear, null, $fiscalStart, $fiscalEnd);
 
         //Delivery data for chart
-        $data['deliveryMonthlyRecap'] = $this->deliveryKPIService->getDeliveryMonthlyRecap($CurentYear);
+        $data['deliveryMonthlyRecap'] = $this->deliveryKPIService->getDeliveryMonthlyRecap($CurentYear, $fiscalStart, $fiscalEnd);
 
         //Invoices data for chart
-        $data['invoiceMonthlyRecap'] = $this->invoiceKPIService->getInvoiceMonthlyRecap($CurentYear);
+        $data['invoiceMonthlyRecap'] = $this->invoiceKPIService->getInvoiceMonthlyRecap($CurentYear, $fiscalStart, $fiscalEnd);
 
         //Total Purchase data for chart
-        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap($CurentYear);
+        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap($CurentYear, $fiscalStart, $fiscalEnd);
         
         //Total ForCast
         $orderTotalForCast = $this->orderKPIService->getOrderTotalForCast($CurentYear);
@@ -184,10 +189,11 @@ class HomeController extends Controller
         ];
 
         $reactProps = [
-            'year'     => (int) $CurentYear,
-            'currency' => $currency,
-            'locale'   => $intlLocale,
-            'canPurchases' => Gate::allows('purchases-menu'),
+            'year'                 => (int) $fiscalStart->format('Y'),
+            'fiscalYearStartMonth' => $fiscalStartMonth,
+            'currency'             => $currency,
+            'locale'               => $intlLocale,
+            'canPurchases'         => Gate::allows('purchases-menu'),
 
             'kpi' => [
                 'customers_count'          => $data['customers_count'],

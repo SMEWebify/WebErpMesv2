@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -17,6 +17,24 @@ async function apiFetch(url, body) {
             'X-CSRF-TOKEN': csrfToken(),
         },
         body: JSON.stringify(body),
+    });
+    const json = await res.json();
+    if (!res.ok) {
+        const msg = json.message
+            ?? (json.errors ? Object.values(json.errors).flat().join(' ') : 'Erreur serveur');
+        throw new Error(msg);
+    }
+    return json;
+}
+
+async function apiFetchForm(url, formData) {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Accept':       'application/json',
+            'X-CSRF-TOKEN': csrfToken(),
+        },
+        body: formData,
     });
     const json = await res.json();
     if (!res.ok) {
@@ -75,10 +93,91 @@ function Input({ value, onChange, placeholder, type = 'text', min }) {
 // Step forms
 // ---------------------------------------------------------------------------
 
-function StepCompany({ data, onChange }) {
+function LogoUpload({ preview, onFile, onRemove }) {
+    const inputRef = useRef(null);
+    const [drag, setDrag]  = useState(false);
+
+    function handleChange(e) {
+        const file = e.target.files?.[0];
+        if (file) onFile(file);
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        setDrag(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file && file.type.startsWith('image/')) onFile(file);
+    }
+
+    return (
+        <div className="form-group mb-4">
+            <label className="font-weight-bold mb-2">
+                Logo de l&apos;entreprise <small className="text-muted font-weight-normal">(optionnel — PNG, JPG, SVG, max 2 Mo)</small>
+            </label>
+            <div
+                onClick={() => !preview && inputRef.current?.click()}
+                onDragOver={e => { e.preventDefault(); setDrag(true); }}
+                onDragLeave={() => setDrag(false)}
+                onDrop={handleDrop}
+                className={`border rounded d-flex align-items-center justify-content-center ${drag ? 'border-primary bg-light' : 'border-dashed'}`}
+                style={{
+                    minHeight: 110,
+                    cursor: preview ? 'default' : 'pointer',
+                    borderStyle: drag ? 'solid' : 'dashed',
+                    borderColor: drag ? '#007bff' : '#ced4da',
+                    background: drag ? '#e8f0fe' : '#f8f9fa',
+                    transition: 'all 0.2s',
+                    position: 'relative',
+                }}
+            >
+                {preview ? (
+                    <>
+                        <img
+                            src={preview}
+                            alt="Logo"
+                            style={{ maxHeight: 90, maxWidth: '100%', objectFit: 'contain', padding: 8 }}
+                        />
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-danger"
+                            style={{ position: 'absolute', top: 6, right: 6 }}
+                            onClick={e => { e.stopPropagation(); onRemove(); }}
+                            title="Supprimer le logo"
+                        >
+                            <i className="fas fa-times" />
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-outline-secondary"
+                            style={{ position: 'absolute', bottom: 6, right: 6, fontSize: '0.75rem' }}
+                            onClick={e => { e.stopPropagation(); inputRef.current?.click(); }}
+                        >
+                            Changer
+                        </button>
+                    </>
+                ) : (
+                    <div className="text-center text-muted py-2">
+                        <i className="fas fa-image fa-2x mb-2 d-block" style={{ color: '#adb5bd' }} />
+                        <span style={{ fontSize: '0.85rem' }}>Cliquez ou déposez votre logo ici</span>
+                    </div>
+                )}
+            </div>
+            <input
+                ref={inputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/svg+xml,image/webp"
+                style={{ display: 'none' }}
+                onChange={handleChange}
+            />
+        </div>
+    );
+}
+
+function StepCompany({ data, onChange, logoPreview, onLogoFile, onLogoRemove }) {
     const f = key => val => onChange({ ...data, [key]: val });
     return (
         <>
+            <LogoUpload preview={logoPreview} onFile={onLogoFile} onRemove={onLogoRemove} />
             <Field label="Nom de la société" required>
                 <Input value={data.name}    onChange={f('name')}    placeholder="Ex : Dupont Industrie" />
             </Field>
@@ -563,6 +662,19 @@ export default function SetupWizard({ endpoints, initial }) {
 
     const availablePermissions = initial.availablePermissions ?? [];
 
+    const [logoFile,    setLogoFile]    = useState(null);
+    const [logoPreview, setLogoPreview] = useState(initial.company?.logo_url ?? null);
+
+    function handleLogoFile(file) {
+        setLogoFile(file);
+        setLogoPreview(URL.createObjectURL(file));
+    }
+
+    function handleLogoRemove() {
+        setLogoFile(null);
+        setLogoPreview(null);
+    }
+
     const [company, setCompany] = useState({ ...DEFAULT_COMPANY,  ...initial.company });
     const [vat,     setVat]     = useState({ ...DEFAULT_VAT,      ...initial.vat });
     const [pc,      setPc]      = useState({ ...DEFAULT_PC,       ...initial.paymentCondition });
@@ -633,7 +745,16 @@ export default function SetupWizard({ endpoints, initial }) {
         setLoading(true);
         setError(null);
         try {
-            await apiFetch(endpoints[`step${step}`], getPayload());
+            if (step === 1) {
+                const fd = new FormData();
+                Object.entries(company).forEach(([k, v]) => {
+                    if (k !== 'logo_url') fd.append(k, v ?? '');
+                });
+                if (logoFile) fd.append('logo', logoFile);
+                await apiFetchForm(endpoints.step1, fd);
+            } else {
+                await apiFetch(endpoints[`step${step}`], getPayload());
+            }
             if (step >= STEPS.length) {
                 window.location.href = initial.dashboardUrl;
             } else {
@@ -692,7 +813,15 @@ export default function SetupWizard({ endpoints, initial }) {
                         )}
 
                         {/* Step content */}
-                        {step === 1 && <StepCompany          data={company} onChange={setCompany} />}
+                        {step === 1 && (
+                            <StepCompany
+                                data={company}
+                                onChange={setCompany}
+                                logoPreview={logoPreview}
+                                onLogoFile={handleLogoFile}
+                                onLogoRemove={handleLogoRemove}
+                            />
+                        )}
                         {step === 2 && <StepVat              data={vat}     onChange={setVat} />}
                         {step === 3 && <StepPaymentCondition data={pc}      onChange={setPc} />}
                         {step === 4 && <StepPaymentMethod    data={pm}      onChange={setPm} />}

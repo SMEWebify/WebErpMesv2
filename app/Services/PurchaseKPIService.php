@@ -55,19 +55,21 @@ class PurchaseKPIService
      *
      * @return \Illuminate\Support\Collection The monthly recap of purchases, including the month and the total purchase sum.
      */
-    public function getPurchaseMonthlyRecap($Year)
+    public function getPurchaseMonthlyRecap($Year, ?\Carbon\Carbon $start = null, ?\Carbon\Carbon $end = null)
     {
-        $cacheKey = 'purchase_monthly_recap_11' . $Year;
-        //return Cache::remember($cacheKey, now()->addHours(1), function () use ($Year) {
-            return DB::table('purchase_lines')
-                ->selectRaw(expression: '
-                    MONTH(purchase_lines.created_at) AS month,
-                    SUM((purchase_lines.selling_price * purchase_lines.qty)-(purchase_lines.selling_price * purchase_lines.qty)*(purchase_lines.discount/100)) AS purchaseSum
-                ')
-                ->whereYear('purchase_lines.created_at', $Year)
-                ->groupByRaw('MONTH(purchase_lines.created_at)')
-                ->get();
-        //});
+        $query = DB::table('purchase_lines')
+            ->selectRaw('
+                MONTH(purchase_lines.created_at) AS month,
+                SUM((purchase_lines.selling_price * purchase_lines.qty)-(purchase_lines.selling_price * purchase_lines.qty)*(purchase_lines.discount/100)) AS purchaseSum
+            ');
+
+        if ($start && $end) {
+            $query->whereBetween('purchase_lines.created_at', [$start->copy()->startOfDay(), $end->copy()->endOfDay()]);
+        } else {
+            $query->whereYear('purchase_lines.created_at', $Year);
+        }
+
+        return $query->groupByRaw('MONTH(purchase_lines.created_at)')->get();
     }
 
     /**

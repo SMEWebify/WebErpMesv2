@@ -39,6 +39,9 @@ class UpdateFactoryRequest extends FormRequest
             'add_delivery_delay_order'  => 'required',
             'pdf_theme' => ['required', Rule::in($pdfThemes)],
             'pdf_custom_css' => ['nullable', 'string', 'max:65535'],
+            'fiscal_year_start_month' => ['required', 'integer', 'min:1', 'max:12'],
+            'iban' => ['nullable', 'string', 'max:34'],
+            'bic'  => ['nullable', 'string', 'max:11'],
         ];
     }
 }

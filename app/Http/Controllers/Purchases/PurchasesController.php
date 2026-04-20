@@ -59,10 +59,11 @@ class PurchasesController extends Controller
     public function purchase()
     {   
         $currentYear = Carbon::now()->format('Y');
-        $factory = app('Factory');
-        $currency = $factory->curency ?? 'EUR';
-        $data['purchasesDataRate'] = $this->purchaseKPIService->getPurchasesDataRate();
-        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap($currentYear);
+        $factory     = app('Factory');
+        $currency    = $factory->curency ?? 'EUR';
+        $fiscal      = $factory->getCurrentFiscalYear();
+        $data['purchasesDataRate']    = $this->purchaseKPIService->getPurchasesDataRate();
+        $data['purchaseMonthlyRecap'] = $this->purchaseKPIService->getPurchaseMonthlyRecap($currentYear, $fiscal['start'], $fiscal['end']);
 
         $topRatedSuppliers = $this->purchaseKPIService->getTopRatedSuppliers();
         $sortedByAvgReceptionDelay = $this->purchaseKPIService->getAverageReceptionDelayBySupplier();
@@ -89,6 +90,7 @@ class PurchasesController extends Controller
         $reactChart = [
             'purchasesDataRate'    => $data['purchasesDataRate'],
             'purchaseMonthlyRecap' => $data['purchaseMonthlyRecap'],
+            'fiscalYearStartMonth' => (int) ($factory->fiscal_year_start_month ?? 1),
         ];
 
         $reactTopSuppliers = $topRatedSuppliers->map(fn ($s) => [
