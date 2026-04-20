@@ -7,6 +7,8 @@ use App\Models\Planning\Task;
 use App\Services\TaskService;
 use App\Events\TaskChangeStatu;
 use App\Models\Planning\Status;
+use App\Models\Planning\TaskActivities;
+use App\Models\User;
 use App\Models\Workflow\Orders;
 use App\Models\Workflow\Quotes;
 use App\Services\TaskKPIService;
@@ -140,7 +142,177 @@ class TaskController extends Controller
 
     public function gtd()
     {
-        return view('workflow/task-gtd');
+        $props = [
+            'endpoints' => [
+                'board'    => route('production.gtd.json.board'),
+                'move'     => route('production.gtd.json.move'),
+                'assign'   => route('production.gtd.json.assign'),
+                'priority' => route('production.gtd.json.priority'),
+                'comment'  => route('production.gtd.json.comment'),
+            ],
+        ];
+        return view('workflow/task-gtd', compact('props'));
+    }
+
+    public function gtdBoard()
+    {
+        $statuses   = Status::orderBy('order')->get();
+        $statusMap  = $this->resolveGtdStatusMap($statuses);
+
+        $tasks = Task::query()
+            ->with([
+                'user:id,name',
+                'secondaryAssignee:id,name',
+                'status:id,title',
+                'taskActivities' => fn($q) => $q
+                    ->where('type', TaskActivities::TYPE_COMMENT)
+                    ->with('user:id,name')
+                    ->latest()
+                    ->take(5),
+            ])
+            ->whereNull('quote_lines_id')
+            ->whereNull('order_lines_id')
+            ->whereNull('products_id')
+            ->whereNull('sub_assembly_id')
+            ->orderBy('priority')
+            ->orderByRaw('due_date IS NULL, due_date')
+            ->orderBy('label')
+            ->get();
+
+        $columns = [];
+        foreach (['backlog', 'in_progress', 'done'] as $col) {
+            $ids = $statusMap[$col] ?? [];
+            $colTasks = $tasks->filter(function ($t) use ($col, $ids) {
+                if ($col === 'backlog') {
+                    return is_null($t->status_id) || in_array($t->status_id, $ids);
+                }
+                return in_array($t->status_id, $ids);
+            });
+
+            $columns[$col] = [
+                'title'          => match($col) {
+                    'backlog'     => __('Backlog'),
+                    'in_progress' => __('In progress'),
+                    'done'        => __('Done'),
+                },
+                'default_status' => $ids[0] ?? null,
+                'tasks'          => $colTasks->map(fn($t) => $this->serializeGtdTask($t))->values(),
+            ];
+        }
+
+        return response()->json([
+            'columns'    => $columns,
+            'users'      => User::select('id', 'name')->orderBy('name')->get(),
+            'priorities' => Task::priorityLabels(),
+        ]);
+    }
+
+    public function gtdMove(Request $request)
+    {
+        $request->validate(['task_id' => 'required|integer', 'status_id' => 'required|integer']);
+
+        $task = Task::findOrFail($request->task_id);
+
+        if ($task->status_id === $request->status_id) {
+            return response()->json(['ok' => true]);
+        }
+
+        $statuses  = Status::orderBy('order')->get();
+        $statusMap = $this->resolveGtdStatusMap($statuses);
+
+        $task->status_id = $request->status_id;
+        $task->save();
+
+        if (in_array($request->status_id, $statusMap['in_progress'] ?? [], true)) {
+            $this->taskService->recordTaskActivity($task->id, TaskActivities::TYPE_START);
+        } elseif (in_array($request->status_id, $statusMap['done'] ?? [], true)) {
+            $this->taskService->recordTaskActivity($task->id, TaskActivities::TYPE_FINISH);
+        }
+
+        event(new TaskChangeStatu($task->id));
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function gtdAssign(Request $request)
+    {
+        $request->validate(['task_id' => 'required|integer']);
+
+        $task = Task::findOrFail($request->task_id);
+        $task->user_id           = $request->filled('user_id') ? (int) $request->user_id : null;
+        $task->secondary_user_id = $request->filled('secondary_user_id') ? (int) $request->secondary_user_id : null;
+        $task->save();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function gtdPriority(Request $request)
+    {
+        $request->validate(['task_id' => 'required|integer', 'priority' => 'required|integer']);
+
+        $valid = array_keys(Task::priorityLabels());
+        $priority = in_array($request->priority, $valid) ? $request->priority : Task::PRIORITY_MEDIUM;
+
+        Task::findOrFail($request->task_id)->update(['priority' => $priority]);
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function gtdComment(Request $request)
+    {
+        $request->validate(['task_id' => 'required|integer', 'comment' => 'required|string|max:2000']);
+
+        $this->taskService->recordTaskActivity($request->task_id, TaskActivities::TYPE_COMMENT, 0, 0, $request->comment);
+
+        return response()->json(['ok' => true]);
+    }
+
+    protected function resolveGtdStatusMap($statuses): array
+    {
+        $match = fn($labels) => $statuses
+            ->filter(fn($s) => collect($labels)->contains(mb_strtolower($s->title)))
+            ->pluck('id')->all();
+
+        $map = [
+            'backlog'     => $match(['open', 'pending', 'to do']),
+            'in_progress' => $match(['in progress', 'started', 'ongoing']),
+            'done'        => $match(['finished', 'done', 'completed']),
+        ];
+
+        if (empty($map['backlog']) && $statuses->isNotEmpty()) {
+            $map['backlog'] = [$statuses->first()->id];
+        }
+        if (empty($map['in_progress']) && $statuses->count() > 1) {
+            $map['in_progress'] = [$statuses->get(1)->id ?? $statuses->first()->id];
+        }
+        if (empty($map['done']) && $statuses->isNotEmpty()) {
+            $map['done'] = [$statuses->last()->id];
+        }
+
+        return $map;
+    }
+
+    protected function serializeGtdTask(Task $task): array
+    {
+        return [
+            'id'                  => $task->id,
+            'label'               => $task->label,
+            'priority'            => $task->priority,
+            'priority_label'      => $task->priority_label,
+            'status_title'        => $task->status?->title,
+            'user_id'             => $task->user_id,
+            'user_name'           => $task->user?->name,
+            'secondary_user_id'   => $task->secondary_user_id,
+            'secondary_user_name' => $task->secondaryAssignee?->name,
+            'due_date'            => $task->due_date?->format('Y-m-d'),
+            'is_overdue'          => $task->due_date?->isPast() && !$task->due_date->isToday(),
+            'is_today'            => $task->due_date?->isToday(),
+            'comments'            => $task->taskActivities->map(fn($a) => [
+                'user'       => $a->user?->name ?? __('System'),
+                'created_at' => $a->created_at->format('d/m/Y H:i'),
+                'comment'    => $a->comment,
+            ])->values()->toArray(),
+        ];
     }
 
     /**

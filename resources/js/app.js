@@ -1316,6 +1316,15 @@ async function mountKanbanSetting() {
 mountReturnsIndex();
 mountDeliveryLinesTab();
 
+async function mountGtdBoard() {
+    const el = document.getElementById('gtd-board-app');
+    if (!el) return;
+    const { default: GtdBoard } = await import('./components/GtdBoard.jsx');
+    createRoot(el).render(
+        React.createElement(GtdBoard, { endpoints: JSON.parse(el.dataset.endpoints) })
+    );
+}
+
 async function mountFecExportLines() {
     const el = document.getElementById('fec-export-lines-app');
     if (!el) return;
@@ -1343,3 +1352,4 @@ async function mountInvoiceExportLines() {
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
+mountGtdBoard();

@@ -7,13 +7,19 @@
 @stop
 
 @section('content')
-    @livewire('gtd-board')
+    <div
+        id="gtd-board-app"
+        data-endpoints="{{ json_encode($props['endpoints']) }}"
+    ></div>
 @stop
 
 @section('css')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 <style>
-    .card .card {
-        border-color: #dee2e6;
-    }
+    .card .card { border-color: #dee2e6; }
 </style>
+@stop
+
+@section('js')
 @stop

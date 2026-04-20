@@ -698,7 +698,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Planning\TaskController@statu')->name('production.task.statu');
         Route::get('/Task', 'App\Http\Controllers\Planning\TaskController@index')->name('production.task');
-        Route::get('/Task/gtd', 'App\Http\Controllers\Planning\TaskController@gtd')->name('production.task.gtd');
+        Route::get('/Task/gtd',                    'App\Http\Controllers\Planning\TaskController@gtd')->name('production.task.gtd');
+        Route::get('/gtd/json/board',              'App\Http\Controllers\Planning\TaskController@gtdBoard')->name('production.gtd.json.board');
+        Route::patch('/gtd/json/move',             'App\Http\Controllers\Planning\TaskController@gtdMove')->name('production.gtd.json.move');
+        Route::patch('/gtd/json/assign',           'App\Http\Controllers\Planning\TaskController@gtdAssign')->name('production.gtd.json.assign');
+        Route::patch('/gtd/json/priority',         'App\Http\Controllers\Planning\TaskController@gtdPriority')->name('production.gtd.json.priority');
+        Route::post('/gtd/json/comment',           'App\Http\Controllers\Planning\TaskController@gtdComment')->name('production.gtd.json.comment');
         Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->name('production.kanban');
         Route::get('/calendar/orders', 'App\Http\Controllers\Planning\CalendarController@calendarOders')->name('production.calendar.orders');
         Route::get('/calendar/tasks', 'App\Http\Controllers\Planning\CalendarController@calendarTasks')->name('production.calendar.tasks');
