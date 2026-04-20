@@ -1301,5 +1301,18 @@ mountChatWidget();
 mountProductHistory();
 mountOrderPurchaseHistory();
 mountStockDetailPage();
+
+async function mountKanbanSetting() {
+    const el = document.getElementById('kanban-setting-app');
+    if (!el) return;
+    const { default: KanbanSetting } = await import('./components/KanbanSetting.jsx');
+    const endpoints = JSON.parse(el.dataset.endpoints);
+    const trans     = JSON.parse(el.dataset.trans);
+    createRoot(el).render(
+        React.createElement(KanbanSetting, { endpoints, trans })
+    );
+}
+
 mountReturnsIndex();
 mountDeliveryLinesTab();
+mountKanbanSetting();

@@ -768,7 +768,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::put('/estimated-budgets/json/update/{id}',  'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonUpdate')->middleware(['auth'])->name('admin.estimated.budgets.json.update');
         Route::delete('/estimated-budgets/json/{id}',      'App\Http\Controllers\Admin\FactoryController@estimatedBudgetsJsonDestroy')->middleware(['auth'])->name('admin.estimated.budgets.json.destroy');
 
-        Route::get('/kanban-settings', 'App\Http\Controllers\Admin\FactoryController@kanbanSettingView')->middleware(['auth'])->name('admin.kanban.settings');
+        Route::get('/kanban-settings',                    'App\Http\Controllers\Admin\FactoryController@kanbanSettingView')->middleware(['auth'])->name('admin.kanban.settings');
+        Route::get('/kanban-settings/json/list',           'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonList')->middleware(['auth'])->name('admin.kanban.settings.json.list');
+        Route::post('/kanban-settings/json/store',         'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonStore')->middleware(['auth'])->name('admin.kanban.settings.json.store');
+        Route::patch('/kanban-settings/json/{id}/up',      'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonUp')->middleware(['auth'])->name('admin.kanban.settings.json.up');
+        Route::patch('/kanban-settings/json/{id}/down',    'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonDown')->middleware(['auth'])->name('admin.kanban.settings.json.down');
+        Route::delete('/kanban-settings/json/{id}',        'App\Http\Controllers\Admin\FactoryController@kanbanSettingJsonDestroy')->middleware(['auth'])->name('admin.kanban.settings.json.destroy');
 
         Route::get('/imports-exports', 'App\Http\Controllers\Admin\ImportsExportsController@index')->middleware(['auth'])->name('admin.imports.exports');
 

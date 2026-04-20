@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\DocumentCodeTemplate;
+use App\Models\Planning\Status;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Admin\Factory;
@@ -379,7 +380,59 @@ class FactoryController extends Controller
      */
     public function kanbanSettingView()
     {
-        return view('admin/factory-kanban-settings');
+        $props = [
+            'endpoints' => [
+                'list'    => route('admin.kanban.settings.json.list'),
+                'store'   => route('admin.kanban.settings.json.store'),
+                'up'      => route('admin.kanban.settings.json.up', ['id' => '__ID__']),
+                'down'    => route('admin.kanban.settings.json.down', ['id' => '__ID__']),
+                'destroy' => route('admin.kanban.settings.json.destroy', ['id' => '__ID__']),
+            ],
+        ];
+        return view('admin/factory-kanban-settings', compact('props'));
+    }
+
+    public function kanbanSettingJsonList()
+    {
+        $statuses = Status::withCount('tasks')->orderBy('order')->get(['id', 'title', 'order']);
+        return response()->json($statuses->map(fn($s) => [
+            'id'        => $s->id,
+            'title'     => $s->title,
+            'order'     => $s->order,
+            'has_tasks' => $s->tasks_count > 0,
+        ]));
+    }
+
+    public function kanbanSettingJsonStore(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|unique:statuses,title',
+            'order' => 'required|integer',
+        ]);
+        $status = Status::create(['title' => $request->title, 'order' => $request->order]);
+        return response()->json(['id' => $status->id, 'title' => $status->title, 'order' => $status->order, 'has_tasks' => false], 201);
+    }
+
+    public function kanbanSettingJsonUp(Request $request, $id)
+    {
+        Status::findOrFail($id)->increment('order');
+        return response()->json(['ok' => true]);
+    }
+
+    public function kanbanSettingJsonDown(Request $request, $id)
+    {
+        Status::findOrFail($id)->decrement('order');
+        return response()->json(['ok' => true]);
+    }
+
+    public function kanbanSettingJsonDestroy(Request $request, $id)
+    {
+        $status = Status::withCount('tasks')->findOrFail($id);
+        if ($status->tasks_count > 0) {
+            return response()->json(['error' => 'Status has tasks'], 422);
+        }
+        $status->delete();
+        return response()->json(['ok' => true]);
     }
 
     /**

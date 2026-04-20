@@ -7,19 +7,22 @@
 @stop
 
 @section('content')
-  @livewire('stock-detail', ['id' =>$StockDetailId])
+  <div
+    id="stock-detail-app"
+    data-initial="{{ json_encode($props['initial']) }}"
+    data-endpoints="{{ json_encode($props['endpoints']) }}"
+  ></div>
 @stop
 
 @section('css')
-
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function(){
-        // Ajoute la classe sidebar-hidden à la balise body dès que la page est chargée
-        $("body").addClass("sidebar-hidden");
-        });
-    </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.classList.add('sidebar-hidden');
+    });
+  </script>
 @stop
