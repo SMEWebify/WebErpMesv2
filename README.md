@@ -13,7 +13,8 @@
   <a href="https://github.com/SMEWebify/WebErpMesv2"><img src="https://img.shields.io/github/downloads/SMEWebify/WebErpMesv2/total" alt="License"></a>
 </p>
 
-![image](https://github.com/SMEWebify/WebErpMesv2/assets/75578469/bcc022c1-465e-44fb-a7ce-011f9096eba7)
+<img width="1904" height="952" alt="image" src="https://github.com/user-attachments/assets/90853ec1-59dd-4a9c-9d90-3477103fa8cc" />
+
 
 ## 🎯 Why ΣEM for your workshop?
 
@@ -170,7 +171,8 @@ php artisan serve
 
 Without these settings, you cannot add lines to quotes.
 
-<img width="831" alt="Configuration screenshot" src="https://github.com/user-attachments/assets/f527881c-a7c4-460a-9b06-f647c91402d8" />
+<img width="1903" height="947" alt="image" src="https://github.com/user-attachments/assets/8a51c3da-1dc8-4c55-91dc-f86a23f4b9d8" />
+
 
 ## 🏗️ Technical architecture
 
