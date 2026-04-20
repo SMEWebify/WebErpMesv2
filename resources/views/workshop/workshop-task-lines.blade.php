@@ -7,19 +7,34 @@
 @stop
 
 @section('content')
-    @livewire('task-lines')
+    @php
+    $taskLinesProps = [
+        'endpoints'          => $props['endpoints'],
+        'services'           => $props['services'],
+        'statuses'           => $props['statuses'],
+        'resources'          => $props['resources'],
+        'default_status_ids' => $props['default_status_ids'],
+    ];
+    @endphp
+    <div
+        id="task-lines-app"
+        data-endpoints="{{ json_encode($taskLinesProps['endpoints']) }}"
+        data-services="{{ json_encode($taskLinesProps['services']) }}"
+        data-statuses="{{ json_encode($taskLinesProps['statuses']) }}"
+        data-resources="{{ json_encode($taskLinesProps['resources']) }}"
+        data-default-status-ids="{{ json_encode($taskLinesProps['default_status_ids']) }}"
+    ></div>
 @stop
 
 @section('css')
-
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function(){
-        // Ajoute la classe sidebar-hidden à la balise body dès que la page est chargée
-        $("body").addClass("sidebar-hidden");
-        });
-    </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.classList.add('sidebar-hidden');
+    });
+  </script>
 @stop

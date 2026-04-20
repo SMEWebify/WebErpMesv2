@@ -269,8 +269,14 @@ class PrintController extends Controller
         $customCss = $Factory->pdf_custom_css;
         $pdf = PDF::loadView($resolvedView, compact('typeDocumentName', 'Document', 'Factory', 'formattedTotalPrice', 'formattedSubPrice', 'vatPrice', 'image', 'customCss', 'normalizeCurrency'));
 
+        // Render first so all pages exist, then add page numbers on every page
+        $pdf->render();
+        $canvas = $pdf->getDomPDF()->getCanvas();
+        $font   = $pdf->getDomPDF()->getFontMetrics()->getFont('helvetica', 'normal');
+        $canvas->page_text(470, 818, 'Page {PAGE_NUM} / {PAGE_COUNT}', $font, 7, [0.3, 0.3, 0.3]);
+
         return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream();
+            echo $pdf->output();
         }, $Document->code . '.pdf');
     }
 

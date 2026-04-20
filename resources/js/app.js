@@ -1316,6 +1316,21 @@ async function mountKanbanSetting() {
 mountReturnsIndex();
 mountDeliveryLinesTab();
 
+async function mountTaskLines() {
+    const el = document.getElementById('task-lines-app');
+    if (!el) return;
+    const { default: TaskLines } = await import('./components/TaskLines.jsx');
+    createRoot(el).render(
+        React.createElement(TaskLines, {
+            endpoints:        JSON.parse(el.dataset.endpoints),
+            services:         JSON.parse(el.dataset.services),
+            statuses:         JSON.parse(el.dataset.statuses),
+            resources:        JSON.parse(el.dataset.resources),
+            defaultStatusIds: JSON.parse(el.dataset.defaultStatusIds),
+        })
+    );
+}
+
 async function mountReturnShow() {
     const el = document.getElementById('return-show-app');
     if (!el) return;
@@ -1367,3 +1382,4 @@ mountInvoiceExportLines();
 mountFecExportLines();
 mountGtdBoard();
 mountReturnShow();
+mountTaskLines();

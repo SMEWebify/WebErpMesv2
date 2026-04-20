@@ -139,6 +139,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     Route::group(['prefix' => 'workshop', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
         Route::get('/', 'App\Http\Controllers\Workshop\WorkshopController@index')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop');
         Route::get('/Task/Lines', 'App\Http\Controllers\Workshop\WorkshopController@taskLines')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop.task.lines');
+        Route::get('/Task/Lines/json/list', 'App\Http\Controllers\Workshop\WorkshopController@taskLinesJson')->middleware(['auth', 'verified', 'has.role', 'check.factory'])->name('workshop.task.lines.json');
         Route::get('/Task/Statu/Id/{id}', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu.id');
         Route::get('/Task/Statu', 'App\Http\Controllers\Workshop\WorkshopController@statu')->name('workshop.task.statu');
         Route::get('/Stock/Detail/{id}', 'App\Http\Controllers\Workshop\WorkshopController@stockDetail')->name('workshop.stock.detail.id');
