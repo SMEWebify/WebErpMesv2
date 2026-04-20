@@ -1316,6 +1316,20 @@ async function mountKanbanSetting() {
 mountReturnsIndex();
 mountDeliveryLinesTab();
 
+async function mountFecExportLines() {
+    const el = document.getElementById('fec-export-lines-app');
+    if (!el) return;
+    const { default: FecExportLines } = await import('./components/FecExportLines.jsx');
+    createRoot(el).render(
+        React.createElement(FecExportLines, {
+            endpoints:        JSON.parse(el.dataset.endpoints),
+            trans:            JSON.parse(el.dataset.trans),
+            initialStartDate: el.dataset.startDate,
+            initialEndDate:   el.dataset.endDate,
+        })
+    );
+}
+
 async function mountInvoiceExportLines() {
     const el = document.getElementById('invoice-export-lines-app');
     if (!el) return;
@@ -1328,3 +1342,4 @@ async function mountInvoiceExportLines() {
 }
 mountKanbanSetting();
 mountInvoiceExportLines();
+mountFecExportLines();

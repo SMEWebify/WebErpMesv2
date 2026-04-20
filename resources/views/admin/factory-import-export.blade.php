@@ -24,7 +24,28 @@
             @include('include.alert-result')
 
             <div class="tab-pane active" id="FECExport">
-                @livewire('fec-export-lines')
+                @php
+                $fecProps = [
+                    'endpoints' => [
+                        'list'   => route('admin.fec.export.json.list'),
+                        'export' => route('admin.fec.export', ['ext' => '__EXT__']),
+                    ],
+                    'trans' => [
+                        'start_date' => __('general_content.start_date_trans_key'),
+                        'end_date'   => __('general_content.end_date_trans_key'),
+                        'submit'     => __('general_content.submit_trans_key'),
+                        'add_export' => __('general_content.add_export_trans_key'),
+                        'no_data'    => __('general_content.no_data_trans_key'),
+                    ],
+                ];
+                @endphp
+                <div
+                    id="fec-export-lines-app"
+                    data-endpoints="{{ json_encode($fecProps['endpoints']) }}"
+                    data-trans="{{ json_encode($fecProps['trans']) }}"
+                    data-start-date="{{ $fecStartDate }}"
+                    data-end-date="{{ $fecEndDate }}"
+                ></div>
             </div>
             <div class="tab-pane" id="InvoicesExport">
                 @php

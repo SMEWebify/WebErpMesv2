@@ -8,7 +8,10 @@ use App\Services\ImportCsvService;
 use App\Services\SelectDataService;
 use App\Http\Controllers\Controller;
 use App\Models\Workflow\InvoiceLines;
+use App\Models\Accounting\AccountingEntry;
+use App\Models\Admin\Factory;
 use App\Exports\InvoiceLinesExport;
+use App\Exports\AccountingEntryLinesExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ImportsExportsController extends Controller
@@ -27,14 +30,19 @@ class ImportsExportsController extends Controller
      */
     public function index()
     {
-        
         $ServicesSelect = $this->SelectDataService->getServices();
-        $UnitsSelect = $this->SelectDataService->getUnitsSelect();
+        $UnitsSelect    = $this->SelectDataService->getUnitsSelect();
         $FamiliesSelect = $this->SelectDataService->getFamilies();
+
+        $factory = Factory::first();
+        $fiscal  = $factory ? $factory->getCurrentFiscalYear() : null;
+
         return view('admin/factory-import-export', [
             'FamiliesSelect' => $FamiliesSelect,
-            'UnitsSelect' => $UnitsSelect,
+            'UnitsSelect'    => $UnitsSelect,
             'ServicesSelect' => $ServicesSelect,
+            'fecStartDate'   => $fiscal ? $fiscal['start']->format('Y-m-d') : now()->startOfYear()->format('Y-m-d'),
+            'fecEndDate'     => $fiscal ? $fiscal['end']->format('Y-m-d')   : now()->endOfYear()->format('Y-m-d'),
         ]);
     }
 
@@ -126,6 +134,59 @@ class ImportsExportsController extends Controller
 
         InvoiceLines::whereIn('id', $ids)->update(['exported' => true]);
 
-        return Excel::download(new InvoiceLinesExport(collect($ids)), 'invoiceLines.' . $ext);
+        return Excel::download(new InvoiceLinesExport(collect($ids)), "invoiceLines.{$ext}");
+    }
+
+    public function fecExportJsonList(Request $request)
+    {
+        $journalCodes = $request->input('journal_codes', ['ACHAT', 'VENT']);
+        $startDate    = $request->input('start_date');
+        $endDate      = $request->input('end_date');
+
+        $query = AccountingEntry::where('exported', false);
+
+        if (!empty($journalCodes)) {
+            $query->whereIn('journal_code', $journalCodes);
+        }
+        if ($startDate) {
+            $query->where('accounting_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->where('accounting_date', '<=', $endDate);
+        }
+
+        return response()->json($query->get()->map(fn($e) => [
+            'id'                        => $e->id,
+            'journal_code'              => $e->journal_code,
+            'journal_label'             => $e->journal_label,
+            'sequence_number'           => $e->sequence_number,
+            'accounting_date'           => $e->accounting_date,
+            'account_number'            => $e->account_number,
+            'account_label'             => $e->account_label,
+            'justification_reference'   => $e->justification_reference,
+            'justification_date'        => $e->justification_date,
+            'auxiliary_account_number'  => $e->auxiliary_account_number,
+            'auxiliary_account_label'   => $e->auxiliary_account_label,
+            'document_reference'        => $e->document_reference,
+            'document_date'             => $e->document_date,
+            'entry_label'               => $e->entry_label,
+            'formatted_debit'           => $e->formatted_debit_amount,
+            'formatted_credit'          => $e->formatted_credit_amount,
+            'entry_lettering'           => $e->entry_lettering,
+            'currency_code'             => $e->currency_code,
+        ]));
+    }
+
+    public function fecExport(Request $request, $ext)
+    {
+        if (!in_array($ext, ['csv', 'xlsx', 'pdf'])) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        $ids = array_filter((array) $request->input('ids', []));
+
+        AccountingEntry::whereIn('id', $ids)->update(['exported' => true]);
+
+        return Excel::download(new AccountingEntryLinesExport(collect($ids)), "FecLines.{$ext}");
     }
 }
