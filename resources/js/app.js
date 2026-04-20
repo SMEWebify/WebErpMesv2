@@ -1316,6 +1316,19 @@ async function mountKanbanSetting() {
 mountReturnsIndex();
 mountDeliveryLinesTab();
 
+async function mountReturnShow() {
+    const el = document.getElementById('return-show-app');
+    if (!el) return;
+    const { default: ReturnShow } = await import('./components/ReturnShow.jsx');
+    createRoot(el).render(
+        React.createElement(ReturnShow, {
+            initial:   JSON.parse(el.dataset.initial),
+            endpoints: JSON.parse(el.dataset.endpoints),
+            trans:     JSON.parse(el.dataset.trans),
+        })
+    );
+}
+
 async function mountGtdBoard() {
     const el = document.getElementById('gtd-board-app');
     if (!el) return;
@@ -1353,3 +1366,4 @@ mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
 mountGtdBoard();
+mountReturnShow();

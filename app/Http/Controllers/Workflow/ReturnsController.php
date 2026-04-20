@@ -80,10 +80,72 @@ class ReturnsController extends Controller
 
     public function show(int $id)
     {
-        $return = ReturnModel::findOrFail($id);
-        return view('workflow.returns-show', [
-            'return' => $return,
-        ]);
+        $return = ReturnModel::with([
+            'delivery',
+            'qualityNonConformity',
+            'lines.deliveryLine',
+            'lines.originalTask',
+            'lines.reworkTask',
+        ])->findOrFail($id);
+
+        $initial = [
+            'id'               => $return->id,
+            'code'             => $return->code,
+            'label'            => $return->label,
+            'statu'            => $return->statu,
+            'status_label'     => $return->status_label,
+            'created_at'       => $return->created_at?->format('d/m/Y H:i'),
+            'diagnosis'        => $return->diagnosis ?? '',
+            'customer_report'  => $return->customer_report ?? '',
+            'resolution_notes' => $return->resolution_notes ?? '',
+            'delivery'         => $return->delivery ? ['id' => $return->delivery->id, 'code' => $return->delivery->code] : null,
+            'non_conformity'   => $return->qualityNonConformity ? ['id' => $return->qualityNonConformity->id, 'code' => $return->qualityNonConformity->code] : null,
+            'lines'            => $return->lines->map(fn($l) => [
+                'id'                  => $l->id,
+                'delivery_line_label' => $l->deliveryLine?->label,
+                'original_task_id'    => $l->original_task_id,
+                'rework_task_id'      => $l->rework_task_id,
+                'issue_description'   => $l->issue_description,
+                'rework_instructions' => $l->rework_instructions,
+                'qty'                 => $l->qty,
+            ])->values()->toArray(),
+        ];
+
+        $props = [
+            'initial'   => $initial,
+            'endpoints' => [
+                'diagnose' => route('returns.json.diagnose', ['id' => $id]),
+                'reopen'   => route('returns.json.reopen', ['id' => $id]),
+                'close'    => route('returns.json.close', ['id' => $id]),
+                'delivery' => route('deliverys.show', ['id' => '__ID__']),
+                'nc'       => route('quality.nonConformitie'),
+            ],
+            'trans' => [
+                'label'           => __('returns.fields.label'),
+                'delivery'        => __('returns.fields.delivery'),
+                'non_conformity'  => __('returns.fields.non_conformity'),
+                'status'          => __('returns.fields.status'),
+                'created_at'      => __('returns.fields.created_at'),
+                'lines'           => __('returns.fields.lines'),
+                'delivery_line'   => __('returns.fields.delivery_line'),
+                'task'            => __('returns.fields.task'),
+                'issue'           => __('returns.fields.issue'),
+                'action'          => __('returns.fields.action'),
+                'qty'             => __('general_content.qty_trans_key'),
+                'diagnosis'       => __('returns.fields.diagnosis'),
+                'customer_report' => __('returns.fields.customer_report'),
+                'closure_comment' => __('returns.fields.closure_comment'),
+                'actions'         => __('returns.fields.actions'),
+                'save'            => __('returns.fields.save'),
+                'reopen_tasks'    => __('returns.fields.reopen_tasks'),
+                'close_return'    => __('returns.fields.close_return'),
+                'no_data'         => __('general_content.no_data_trans_key'),
+                'in_rework'       => __('returns.status.in_rework'),
+                'received'        => __('returns.status.received'),
+            ],
+        ];
+
+        return view('workflow.returns-show', compact('props', 'return'));
     }
 
     // -------------------------------------------------------------------------
