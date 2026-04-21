@@ -22,6 +22,8 @@ use App\Events\OrderLineUpdated;
 use App\Models\Companies\CompanyDocumentDefault;
 use App\Models\Products\StockLocationProducts;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use App\Http\Requests\Workflow\StorePackagingRequest;
 use App\Http\Requests\Workflow\UpdateDeliveryRequest;
 use App\Http\Requests\Workflow\UpdatePackagingRequest;
@@ -220,26 +222,32 @@ class DeliverysController extends Controller
             'create_serial_number'   => 'boolean',
         ]);
 
-        $delivery = $this->deliveryService->createDelivery(
-            $validated['code'],
-            $validated['label'],
-            $validated['companies_id'],
-            $validated['companies_addresses_id'],
-            $validated['companies_contacts_id'],
-            $validated['user_id'],
-        );
+        $removeFromStock = $validated['remove_from_stock'] ?? false;
 
-        $ordre = 10;
-        foreach ($validated['lines'] as $line) {
-            $orderLineId = $line['order_line_id'];
-            $qty         = $line['qty'];
+        $delivery = DB::transaction(function () use ($validated, $removeFromStock) {
+            $delivery = $this->deliveryService->createDelivery(
+                $validated['code'],
+                $validated['label'],
+                $validated['companies_id'],
+                $validated['companies_addresses_id'],
+                $validated['companies_contacts_id'],
+                $validated['user_id'],
+            );
 
-            $this->deliveryLineService->createDeliveryLine($delivery, $orderLineId, $ordre, $qty);
-            $this->updateOrderLineAfterDelivery($orderLineId, $qty);
-            $this->applyStockMovement($orderLineId, $qty, $validated['remove_from_stock'] ?? false);
+            $ordre = 10;
+            foreach ($validated['lines'] as $line) {
+                $orderLineId = $line['order_line_id'];
+                $qty         = $line['qty'];
 
-            $ordre += 10;
-        }
+                $this->deliveryLineService->createDeliveryLine($delivery, $orderLineId, $ordre, $qty);
+                $this->updateOrderLineAfterDelivery($orderLineId, $qty);
+                $this->applyStockMovement($orderLineId, $qty, $removeFromStock);
+
+                $ordre += 10;
+            }
+
+            return $delivery;
+        });
 
         if ($validated['create_serial_number'] ?? false) {
             CreateDeliverySerialNumbersJob::dispatch($delivery->id);
@@ -252,7 +260,14 @@ class DeliverysController extends Controller
 
     private function updateOrderLineAfterDelivery(int $orderLineId, float $qty): void
     {
-        $orderLine = OrderLines::find($orderLineId);
+        $orderLine = OrderLines::lockForUpdate()->find($orderLineId);
+
+        if ($qty > $orderLine->delivered_remaining_qty) {
+            throw ValidationException::withMessages([
+                'lines' => "Quantité livrée ({$qty}) dépasse le restant à livrer ({$orderLine->delivered_remaining_qty}) pour la ligne #{$orderLineId}.",
+            ]);
+        }
+
         $orderLine->delivered_qty           += $qty;
         $orderLine->delivered_remaining_qty -= $qty;
         $orderLine->delivery_status          = ($orderLine->delivered_remaining_qty <= 0) ? 3 : 2;
@@ -286,6 +301,12 @@ class DeliverysController extends Controller
 
             $quantityRemaining -= $quantityToWithdraw;
             if ($quantityRemaining <= 0) break;
+        }
+
+        if ($quantityRemaining > 0) {
+            throw ValidationException::withMessages([
+                'stock' => "Stock insuffisant pour la ligne #{$orderLineId} : {$quantityRemaining} unité(s) manquante(s). Livraison annulée.",
+            ]);
         }
     }
 
