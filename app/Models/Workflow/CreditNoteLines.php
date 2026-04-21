@@ -72,7 +72,6 @@ class CreditNoteLines extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly(['invoices_id', 'invoice_status']);
-        // Chain fluent methods for configuration options
+        return LogOptions::defaults()->logOnly(['credit_note_id', 'qty', 'unit_price']);
     }
 }
