@@ -19,12 +19,15 @@ class InvoiceLines extends Model
 
     // Fillable attributes for mass assignment
     protected $fillable= ['invoices_id',
-                            'order_line_id', 
+                            'order_line_id',
                             'delivery_line_id',
                             'ordre',
                             'qty',
+                            'unit_price',
+                            'discount',
+                            'vat_rate',
                             'accounting_allocation_id',
-                            'invoice_status'
+                            'invoice_status',
                         ];
 
     public function invoice()
@@ -59,9 +62,10 @@ class InvoiceLines extends Model
      */
     public function getFormattedSellingPriceAttribute()
     {
-        $factory = app('Factory'); 
+        $factory  = app('Factory');
         $currency = $factory->curency ?? 'EUR';
-        return Number::currency($this->orderLine->selling_price, $currency, config('app.locale'));
+        $price    = $this->unit_price ?? $this->orderLine->selling_price;
+        return Number::currency($price, $currency, config('app.locale'));
     }
 
     /**

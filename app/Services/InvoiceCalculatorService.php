@@ -5,9 +5,6 @@ use App\Models\Workflow\Invoices;
 
 class InvoiceCalculatorService
 {
-    /**
-     * @var invoices
-     */
     private $invoices;
 
     public $TotalPrice;
@@ -20,76 +17,68 @@ class InvoiceCalculatorService
     }
 
     /**
-     * Calculate the total VAT for all invoice lines.
-     *
-     * This method iterates through all invoice lines, calculates the VAT for each line,
-     * and aggregates the VAT amounts by their respective VAT rates. The result is an
-     * associative array where the keys are the accounting VAT IDs and the values are
-     * arrays containing the VAT rate and the total VAT amount for that rate.
-     *
-     * @return array An associative array where the keys are the accounting VAT IDs and
-     *               the values are arrays containing the VAT rate and the total VAT amount.
+     * Résout le prix unitaire, remise et taux TVA pour une ligne.
+     * Utilise le snapshot stocké sur invoice_lines en priorité ;
+     * repli sur orderLine pour les lignes antérieures à la migration.
      */
+    private function lineSnapshot($invoicesLine): array
+    {
+        $unitPrice = $invoicesLine->unit_price ?? $invoicesLine->orderLine->selling_price;
+        $discount  = $invoicesLine->discount  ?? $invoicesLine->orderLine->discount;
+        $vatRate   = $invoicesLine->vat_rate  ?? ($invoicesLine->orderLine->VAT['rate'] ?? 0);
+        $vatId     = $invoicesLine->orderLine->accounting_vats_id;
+
+        return [$unitPrice, $discount, $vatRate, $vatId];
+    }
+
     public function getVatTotal()
     {
-        $tableauTVA = array();
+        $tableauTVA    = [];
         $invoicesLines = $this->invoices->invoiceLines;
+
         foreach ($invoicesLines as $invoicesLine) {
-            $TotalCurentLine = ($invoicesLine->qty*$invoicesLine->orderLine->selling_price)-($invoicesLine->qty*$invoicesLine->orderLine->selling_price)*($invoicesLine->orderLine->discount/100);
-			$TotalVATCurentLine =  $TotalCurentLine*($invoicesLine->orderLine->VAT['rate']/100) ;
-            if(array_key_exists($invoicesLine->orderLine->accounting_vats_id, $tableauTVA)){
-                $tableauTVA[$invoicesLine->orderLine->accounting_vats_id][1] += $TotalVATCurentLine;
-            }
-            else{
-                $tableauTVA[$invoicesLine->orderLine->accounting_vats_id] = array($invoicesLine->orderLine->VAT['rate'], $TotalVATCurentLine);
+            [$unitPrice, $discount, $vatRate, $vatId] = $this->lineSnapshot($invoicesLine);
+
+            $subtotalLine  = $invoicesLine->qty * $unitPrice * (1 - $discount / 100);
+            $vatAmountLine = $subtotalLine * ($vatRate / 100);
+
+            if (array_key_exists($vatId, $tableauTVA)) {
+                $tableauTVA[$vatId][1] += $vatAmountLine;
+            } else {
+                $tableauTVA[$vatId] = [$vatRate, $vatAmountLine];
             }
         }
+
         asort($tableauTVA);
         return $tableauTVA;
     }
 
-
-    /**
-     * Calculate the total price of all invoice lines including VAT and discounts.
-     *
-     * This method iterates through all invoice lines, calculates the total price for each line
-     * by considering the quantity, selling price, discount, and VAT rate, and sums them up to get
-     * the total price.
-     *
-     * @return float The total price of all invoice lines including VAT and discounts.
-     */
     public function getTotalPrice()
     {
-        $TotalPrice = 0;
+        $TotalPrice    = 0;
         $invoicesLines = $this->invoices->invoiceLines;
-        
-        foreach ($invoicesLines as $invoicesLine) {
-            $TotalPriceLine = ($invoicesLine->qty * $invoicesLine->orderLine->selling_price)-($invoicesLine->qty * $invoicesLine->orderLine->selling_price)*($invoicesLine->orderLine->discount/100);
-            $TotalVATPrice = $TotalPriceLine*($invoicesLine->orderLine->VAT['rate']/100);
-            $TotalPrice += $TotalPriceLine+$TotalVATPrice;
 
-            
+        foreach ($invoicesLines as $invoicesLine) {
+            [$unitPrice, $discount, $vatRate] = $this->lineSnapshot($invoicesLine);
+
+            $subtotalLine = $invoicesLine->qty * $unitPrice * (1 - $discount / 100);
+            $TotalPrice  += $subtotalLine + $subtotalLine * ($vatRate / 100);
         }
+
         return $TotalPrice;
     }
 
-    /**
-     * Calculate the subtotal for the invoice.
-     *
-     * This method iterates through all invoice lines and calculates the subtotal
-     * by multiplying the quantity of each line item by its selling price, then
-     * applying any discounts.
-     *
-     * @return float The calculated subtotal for the invoice.
-     */
     public function getSubTotal()
     {
-        $SubTotal = 0;
+        $SubTotal      = 0;
         $invoicesLines = $this->invoices->invoiceLines;
+
         foreach ($invoicesLines as $invoicesLine) {
-            $SubTotal += ($invoicesLine->qty * $invoicesLine->orderLine->selling_price)-($invoicesLine->qty * $invoicesLine->orderLine->selling_price)*($invoicesLine->orderLine->discount/100);
+            [$unitPrice, $discount] = $this->lineSnapshot($invoicesLine);
+
+            $SubTotal += $invoicesLine->qty * $unitPrice * (1 - $discount / 100);
         }
+
         return $SubTotal;
     }
-
 }

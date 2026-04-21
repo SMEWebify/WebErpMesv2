@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Services\TaskService;
 use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\OrderLines;
 
 class InvoiceLineService
 {
@@ -36,16 +37,20 @@ class InvoiceLineService
 
         $allocationId = $this->accountingEntryService->getAllocationId(1, $VatID);
 
-        // Créer la ligne de facturation
+        $orderLine = OrderLines::with('VAT')->find($key);
+
         $invoiceLines = InvoiceLines::create([
-            'invoices_id' => $invoiceCreated->id,
-            'order_line_id' => $key, 
-            'delivery_line_id' => $deliveryId, 
-            'ordre' => $ordre,
-            'qty' => $qty,
+            'invoices_id'              => $invoiceCreated->id,
+            'order_line_id'            => $key,
+            'delivery_line_id'         => $deliveryId,
+            'ordre'                    => $ordre,
+            'qty'                      => $qty,
+            'unit_price'               => $orderLine->selling_price,
+            'discount'                 => $orderLine->discount,
+            'vat_rate'                 => $orderLine->VAT?->rate ?? 0,
             'accounting_allocation_id' => $allocationId,
-            'statu' => 1
-        ]); 
+            'statu'                    => 1,
+        ]);
 
         if($allocationId != null){
             // Créer une entrée comptable pour cette ligne de facture
