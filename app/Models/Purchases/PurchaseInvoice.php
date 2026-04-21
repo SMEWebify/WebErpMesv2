@@ -19,12 +19,13 @@ class PurchaseInvoice extends Model
     use HasFactory, SoftDeletes, LogsActivity;
     
     // Fillable attributes for mass assignment
-    protected $fillable= ['code', 
-                            'label', 
-                            'companies_id', 
-                            'statu',  
+    protected $fillable= ['code',
+                            'label',
+                            'supplier_reference',
+                            'companies_id',
+                            'statu',
                             'user_id',
-                            'comment', 
+                            'comment',
                         ];
 
     // Only log changes

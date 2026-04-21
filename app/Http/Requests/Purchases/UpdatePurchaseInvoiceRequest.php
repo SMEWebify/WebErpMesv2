@@ -24,8 +24,8 @@ class UpdatePurchaseInvoiceRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'label'=>'required',
+            'label'              => 'required',
+            'supplier_reference' => 'nullable|string|max:100',
         ];
     }
 }

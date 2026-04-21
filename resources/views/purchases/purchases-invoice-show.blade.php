@@ -50,6 +50,14 @@
                   <div class="col-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_purchase_invoice_trans_key'), 'Value' =>  $PurchaseInvoice->label])
                   </div>
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label class="text-success">{{ __('general_content.supplier_reference_trans_key', [], null) ?? 'Référence facture fournisseur' }}</label>
+                      <input type="text" name="supplier_reference" class="form-control form-control-sm"
+                             value="{{ old('supplier_reference', $PurchaseInvoice->supplier_reference) }}"
+                             maxlength="100" placeholder="N° facture fournisseur">
+                    </div>
+                  </div>
                 </div>
                 <div class="row">
                   <x-FormTextareaComment  comment="{{ $PurchaseInvoice->comment }}" />

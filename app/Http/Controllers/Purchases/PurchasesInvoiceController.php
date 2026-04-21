@@ -18,6 +18,7 @@ use App\Models\Purchases\PurchaseInvoice;
 use App\Models\Purchases\PurchaseInvoiceLines;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceiptLines;
+use Illuminate\Validation\Rule;
 use App\Http\Requests\Purchases\UpdatePurchaseInvoiceRequest;
 
 class PurchasesInvoiceController extends Controller
@@ -151,18 +152,25 @@ class PurchasesInvoiceController extends Controller
     public function storeInvoiceJson(Request $request)
     {
         $validated = $request->validate([
-            'code'        => 'required|unique:purchase_invoices',
-            'companies_id' => 'required|exists:companies,id',
-            'user_id'     => 'required|exists:users,id',
-            'line_ids'    => 'required|array|min:1',
-            'line_ids.*'  => 'integer|exists:purchase_receipt_lines,id',
+            'code'               => 'required|unique:purchase_invoices',
+            'companies_id'       => 'required|exists:companies,id',
+            'user_id'            => 'required|exists:users,id',
+            'line_ids'           => 'required|array|min:1',
+            'line_ids.*'         => 'integer|exists:purchase_receipt_lines,id',
+            'supplier_reference' => [
+                'nullable', 'string', 'max:100',
+                Rule::unique('purchase_invoices')->where(
+                    fn ($q) => $q->where('companies_id', $request->companies_id)
+                ),
+            ],
         ]);
 
         $invoice = PurchaseInvoice::create([
-            'code'         => $validated['code'],
-            'label'        => $validated['code'],
-            'companies_id' => $validated['companies_id'],
-            'user_id'      => $validated['user_id'],
+            'code'               => $validated['code'],
+            'label'              => $validated['code'],
+            'companies_id'       => $validated['companies_id'],
+            'user_id'            => $validated['user_id'],
+            'supplier_reference' => $validated['supplier_reference'] ?? null,
         ]);
 
         foreach ($validated['line_ids'] as $receiptLineId) {
@@ -218,9 +226,10 @@ class PurchasesInvoiceController extends Controller
     public function updatePurchaseInvoice(UpdatePurchaseInvoiceRequest $request)
     {
         $PurchaseInvoice = PurchaseInvoice::find($request->id);
-        $PurchaseInvoice->label   = $request->label;
-        $PurchaseInvoice->statu   = $request->statu;
-        $PurchaseInvoice->comment = $request->comment;
+        $PurchaseInvoice->label              = $request->label;
+        $PurchaseInvoice->statu              = $request->statu;
+        $PurchaseInvoice->comment            = $request->comment;
+        $PurchaseInvoice->supplier_reference = $request->supplier_reference ?: null;
         $PurchaseInvoice->save();
 
         return redirect()->route('purchase.invoices.show', ['id' => $PurchaseInvoice->id])
