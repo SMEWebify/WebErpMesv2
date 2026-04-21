@@ -266,6 +266,12 @@ class LeadsController extends Controller
         return redirect()->route('opportunities.show', ['id' => $OpportunityCreated->id])->with('success', 'Successfully created new opportunity');
     }
 
+    public function changePriorityJson(Request $request, $id)
+    {
+        Leads::where('id', $id)->update(['priority' => (int) $request->input('statu')]);
+        return response()->json(['ok' => true]);
+    }
+
     public function changeStatusJson(Request $request, $id)
     {
         try {

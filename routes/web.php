@@ -217,6 +217,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\LeadsController@changeStatusJson')->name('leads.json.statu');
+        Route::post('/{id}/json/priority', 'App\Http\Controllers\Workflow\LeadsController@changePriorityJson')->name('leads.json.priority');
     });
 
     Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -367,6 +368,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/request/company-data', 'App\Http\Controllers\Workflow\DeliverysController@requestCompanyData')->name('deliverys-request.company-data');
         Route::post('/request/store', 'App\Http\Controllers\Workflow\DeliverysController@storeDeliveryNoteApi')->name('deliverys-request.store');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
+        Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\DeliverysController@changeStatusJson')->name('deliverys.json.statu');
         // JSON API for React DeliverysIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
         Route::get('/json/{id}/lines', 'App\Http\Controllers\Workflow\DeliverysController@linesJson')->name('deliverys.json.lines');
@@ -394,6 +396,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/request/store', 'App\Http\Controllers\Workflow\InvoicesController@storeInvoiceApi')->name('invoices-request.store');
         Route::post('/request/generate-all', 'App\Http\Controllers\Workflow\InvoicesController@generateInvoicesForCompanyApi')->name('invoices-request.generate-all');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\InvoicesController@update')->name('invoices.update');
+        Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\InvoicesController@changeStatusJson')->name('invoices.json.statu');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
@@ -646,6 +649,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Products\StockController@store')->name('products.stock.store');
             Route::post('/edit/{id}', 'App\Http\Controllers\Products\StockController@update')->name('products.stock.update');
             Route::get('/{id}', 'App\Http\Controllers\Products\StockController@show')->name('products.stock.show');
+
+            // Stock current (React)
+            Route::get('/json/current', 'App\Http\Controllers\Products\StockController@stockCurrentJson')->name('products.stock.json.current');
+            Route::post('/json/store-order', 'App\Http\Controllers\Products\StockController@storeOrderJson')->name('products.stock.json.store-order');
 
             // Stock detail
             Route::get('/detail/{id}', 'App\Http\Controllers\Products\StockController@detail')->name('products.stock.detail.show');

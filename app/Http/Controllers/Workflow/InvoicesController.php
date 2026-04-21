@@ -524,6 +524,22 @@ class InvoicesController extends Controller
         ]);
     }
 
+    public function changeStatusJson(Request $request, $id)
+    {
+        $invoice = Invoices::findOrFail($id);
+        $statu   = (int) $request->input('statu');
+
+        $invoice->statu = $statu;
+        $invoice->save();
+
+        foreach ($invoice->InvoiceLines as $line) {
+            $line->invoice_status = $statu;
+            $line->save();
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse

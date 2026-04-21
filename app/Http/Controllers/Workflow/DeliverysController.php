@@ -317,6 +317,16 @@ class DeliverysController extends Controller
     }
     
     /**
+    public function changeStatusJson(Request $request, $id)
+    {
+        $delivery = Deliverys::findOrFail($id);
+        $delivery->statu = (int) $request->input('statu');
+        $delivery->save();
+
+        return response()->json(['ok' => true]);
+    }
+
+    /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
