@@ -39,7 +39,30 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane" id="Order">
-        @livewire('arrow-steps.arrow-order', ['OrderId' => $Order->id, 'OrderType' => $Order->type, 'OrderStatu' => $Order->statu])
+        @php
+        $orderSteps = [
+            ['value' => 1, 'label' => __('general_content.open_trans_key')],
+            ['value' => 2, 'label' => __('general_content.in_progress_trans_key')],
+        ];
+        if ($Order->type == 1) {
+            $orderSteps[] = ['value' => 4, 'label' => __('general_content.partly_delivered_trans_key')];
+            $orderSteps[] = ['value' => 3, 'label' => __('general_content.delivered_trans_key')];
+        } else {
+            $orderSteps[] = ['value' => 4, 'label' => __('general_content.partly_stored_trans_key')];
+            $orderSteps[] = ['value' => 3, 'label' => __('general_content.stock_trans_key')];
+        }
+        if ($Order->statu != 3) {
+            $orderSteps[] = ['value' => 5, 'label' => __('general_content.stopped_trans_key')];
+        }
+        if ($Order->statu != 3 && $Order->statu != 4) {
+            $orderSteps[] = ['value' => 6, 'label' => __('general_content.canceled_trans_key')];
+        }
+        @endphp
+        <div data-react="arrow-steps"
+             data-steps="{{ json_encode($orderSteps) }}"
+             data-statu="{{ $Order->statu }}"
+             data-endpoint="{{ route('orders.json.statu', $Order->id) }}"
+             data-redirect="{{ route('orders.show', $Order->id) }}"></div>
         <x-relational-breadcrumb :entity="$Order" />
         <div class="row">
           <div class="col-md-9">

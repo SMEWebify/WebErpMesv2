@@ -1390,6 +1390,23 @@ async function mountLogsViewer() {
     );
 }
 
+async function mountArrowSteps() {
+    const els = document.querySelectorAll('[data-react="arrow-steps"]');
+    if (!els.length) return;
+    const { default: ArrowSteps } = await import('./components/ArrowSteps.jsx');
+    els.forEach(el => {
+        const parse = (k) => { try { return JSON.parse(el.dataset[k] ?? 'null'); } catch { return null; } };
+        createRoot(el).render(
+            React.createElement(ArrowSteps, {
+                steps:        parse('steps')   ?? [],
+                currentStatu: parseInt(el.dataset.statu ?? '0', 10),
+                endpoint:     el.dataset.endpoint ?? '',
+                redirectUrl:  el.dataset.redirect  ?? '',
+            })
+        );
+    });
+}
+
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
@@ -1397,3 +1414,4 @@ mountGtdBoard();
 mountReturnShow();
 mountTaskLines();
 mountLogsViewer();
+mountArrowSteps();

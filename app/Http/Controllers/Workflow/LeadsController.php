@@ -265,4 +265,14 @@ class LeadsController extends Controller
         
         return redirect()->route('opportunities.show', ['id' => $OpportunityCreated->id])->with('success', 'Successfully created new opportunity');
     }
+
+    public function changeStatusJson(Request $request, $id)
+    {
+        try {
+            Leads::where('id', $id)->update(['statu' => (int) $request->input('statu')]);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Update failed'], 500);
+        }
+    }
 }

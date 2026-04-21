@@ -477,5 +477,15 @@ class OpportunitiesController extends Controller
         return redirect()->route('quotes.show', ['id' => $quotesCreated->id])
                         ->with('success', 'Successfully created new quote');
     }
+
+    public function changeStatusJson(Request $request, $id)
+    {
+        try {
+            Opportunities::where('id', $id)->update(['statu' => (int) $request->input('statu')]);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Update failed'], 500);
+        }
+    }
 }
 

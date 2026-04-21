@@ -10,7 +10,20 @@
 @section('right-sidebar')
 
 @section('content')
-@livewire('arrow-steps.arrow-lead', ['LeadId' => $Lead->id, 'LeadStatu' => $Lead->statu])
+@php
+$leadSteps = json_encode([
+    ['value' => 1, 'label' => __('general_content.new_trans_key')],
+    ['value' => 2, 'label' => __('general_content.assigned_trans_key')],
+    ['value' => 3, 'label' => __('general_content.in_progress_trans_key')],
+    ['value' => 4, 'label' => __('general_content.converted_trans_key')],
+    ['value' => 5, 'label' => __('general_content.lost_trans_key')],
+]);
+@endphp
+<div data-react="arrow-steps"
+     data-steps="{{ $leadSteps }}"
+     data-statu="{{ $Lead->statu }}"
+     data-endpoint="{{ route('leads.json.statu', $Lead->id) }}"
+     data-redirect="{{ route('leads.show', $Lead->id) }}"></div>
 <x-relational-breadcrumb :entity="$Lead" />
 <div class="row">
   <div class="col-md-9">

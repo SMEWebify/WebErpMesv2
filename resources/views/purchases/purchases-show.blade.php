@@ -28,7 +28,19 @@
     <div class="tab-content">
       <div class="tab-pane active" id="Purchase">
         
-        @livewire('arrow-steps.arrow-purchase', ['PurchaseId' => $Purchase->id, 'PurchaseStatu' => $Purchase->statu])
+        @php
+        $purchaseSteps = json_encode([
+            ['value' => 1, 'label' => __('general_content.in_progress_trans_key')],
+            ['value' => 2, 'label' => __('general_content.ordered_trans_key')],
+            ['value' => 3, 'label' => __('general_content.partly_received_trans_key')],
+            ['value' => 4, 'label' => __('general_content.rceived_trans_key')],
+        ]);
+        @endphp
+        <div data-react="arrow-steps"
+             data-steps="{{ $purchaseSteps }}"
+             data-statu="{{ $Purchase->statu }}"
+             data-endpoint="{{ route('purchases.json.statu', $Purchase->id) }}"
+             data-redirect="{{ route('purchases.show', $Purchase->id) }}"></div>
         <div class="row">
           <div class="col-md-9">
             @include('include.alert-result')

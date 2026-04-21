@@ -27,7 +27,21 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Opportunity">
-        @livewire('arrow-steps.arrow-opportunity', ['OpportunityId' => $Opportunity->id, 'OpportunityStatu' => $Opportunity->statu])
+        @php
+        $oppSteps = json_encode([
+            ['value' => 1, 'label' => __('general_content.new_trans_key')],
+            ['value' => 2, 'label' => __('general_content.quote_made_trans_key')],
+            ['value' => 3, 'label' => __('general_content.negotiation_trans_key')],
+            ['value' => 4, 'label' => __('general_content.closed_won_trans_key')],
+            ['value' => 5, 'label' => __('general_content.closed_lost_trans_key')],
+            ['value' => 6, 'label' => __('general_content.informational_trans_key')],
+        ]);
+        @endphp
+        <div data-react="arrow-steps"
+             data-steps="{{ $oppSteps }}"
+             data-statu="{{ $Opportunity->statu }}"
+             data-endpoint="{{ route('opportunities.json.statu', $Opportunity->id) }}"
+             data-redirect="{{ route('opportunities.show', $Opportunity->id) }}"></div>
         <x-relational-breadcrumb :entity="$Opportunity" />
         <div class="row">
           <div class="col-md-9">

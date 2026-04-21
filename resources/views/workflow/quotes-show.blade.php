@@ -35,7 +35,21 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane " id="Quote">
-        @livewire('arrow-steps.arrow-quote', ['QuoteId' => $Quote->id, 'QuoteStatu' => $Quote->statu])
+        @php
+        $arrowSteps = json_encode([
+            ['value' => 1, 'label' => __('general_content.open_trans_key')],
+            ['value' => 2, 'label' => __('general_content.send_trans_key')],
+            ['value' => 3, 'label' => __('general_content.win_trans_key')],
+            ['value' => 4, 'label' => __('general_content.lost_trans_key')],
+            ['value' => 5, 'label' => __('general_content.closed_trans_key')],
+            ['value' => 6, 'label' => __('general_content.obsolete_trans_key')],
+        ]);
+        @endphp
+        <div data-react="arrow-steps"
+             data-steps="{{ $arrowSteps }}"
+             data-statu="{{ $Quote->statu }}"
+             data-endpoint="{{ route('quotes.json.statu', $Quote->id) }}"
+             data-redirect="{{ route('quotes.show', $Quote->id) }}"></div>
         <x-relational-breadcrumb :entity="$Quote" />
         <div class="row">
           <div class="col-md-9">

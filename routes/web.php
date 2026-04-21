@@ -216,6 +216,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\LeadsController@contactsJson')->name('leads.json.contacts');
 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\LeadsController@show')->name('leads.show');
+        Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\LeadsController@changeStatusJson')->name('leads.json.statu');
     });
 
     Route::group(['prefix' => 'opportunities', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -233,6 +234,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/contacts/{companyId}',  'App\Http\Controllers\Workflow\OpportunitiesController@contactsJson')->name('opportunities.json.contacts');
 
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OpportunitiesController@show')->name('opportunities.show');
+        Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OpportunitiesController@changeStatusJson')->name('opportunities.json.statu');
 
         // store routes
         Route::group(['prefix' => 'store'], function () {
@@ -262,6 +264,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/address', 'App\Http\Controllers\Workflow\QuotesController@storeAddressJson')->name('quotes.json.address.store');
         Route::post('/json/contact', 'App\Http\Controllers\Workflow\QuotesController@storeContactJson')->name('quotes.json.contact.store');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\QuotesController@show')->name('quotes.show');
+        Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\QuotesController@changeStatusJson')->name('quotes.json.statu');
         //quote line
         Route::post('/{idQuote}/edit-detail-lines/{id}', 'App\Http\Controllers\Workflow\QuoteLinesController@update')->name('quotes.update.detail.line');
         Route::post('/{idQuote}/edit-detail-lines/{id}/image', 'App\Http\Controllers\Workflow\QuoteLinesController@StoreImage')->name('quotes.update.detail.picture');
@@ -308,6 +311,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/json/address/store',        'App\Http\Controllers\Workflow\OrdersController@storeAddressJson')->name('orders.json.address.store');
         Route::post('/json/contact/store',        'App\Http\Controllers\Workflow\OrdersController@storeContactJson')->name('orders.json.contact.store');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\OrdersController@show')->name('orders.show');
+        Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\OrdersController@changeStatusJson')->name('orders.json.statu');
         Route::get('/{id}/json/purchase-history', 'App\Http\Controllers\Workflow\OrdersController@purchaseHistoryJson')->name('orders.json.purchase-history');
         Route::post('/{order}/calculate-task-dates', 'App\Http\Controllers\Workflow\OrdersController@calculateTaskDates')->name('orders.calculate.task.dates');
         //order line
@@ -471,6 +475,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{purchaseId}/lines/json/store-receipt',     'App\Http\Controllers\Purchases\PurchaseLinesController@storeReceiptJson')->name('purchases.lines.json.store-receipt');
 
         Route::get('/{id}', 'App\Http\Controllers\Purchases\PurchasesController@showPurchase')->middleware(['auth'])->name('purchases.show');
+        Route::post('/{id}/json/statu', 'App\Http\Controllers\Purchases\PurchasesController@changeStatusJson')->middleware(['auth'])->name('purchases.json.statu');
         Route::get('/quotation/{id}', 'App\Http\Controllers\Purchases\PurchasesRFQController@showQuotation')->middleware(['auth'])->name('purchases.quotations.show');
         Route::get('/quotation/group/{group}/compare', 'App\Http\Controllers\Purchases\PurchasesRFQController@compareQuotationGroup')->middleware(['auth'])->name('purchases.quotations.compare');
         Route::get('/receipt/{id}', 'App\Http\Controllers\Purchases\PurchasesReceiptController@showReceipt')->middleware(['auth'])->name('purchase.receipts.show');

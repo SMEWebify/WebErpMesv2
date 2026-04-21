@@ -502,7 +502,17 @@ class PurchasesController extends Controller
         $Purchases->companies_addresses_id=$request->companies_addresses_id;
         $Purchases->comment=$request->comment;
         $Purchases->save();
-        
+
         return redirect()->route('purchases.show', ['id' =>  $Purchases->id])->with('success', __('general_content.purchase_order_updated_success_trans_key'));
+    }
+
+    public function changeStatusJson(Request $request, $id)
+    {
+        try {
+            Purchases::where('id', $id)->update(['statu' => (int) $request->input('statu')]);
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Update failed'], 500);
+        }
     }
 }

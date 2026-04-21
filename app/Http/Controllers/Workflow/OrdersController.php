@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Number;
 use App\Models\User;
 use App\Models\Workflow\Orders;
+use App\Models\Planning\Task;
+use App\Models\Planning\Status;
 use App\Jobs\CalculateTaskDates;
 use App\Services\OrderKPIService;
 use App\Services\OrderService;
@@ -517,5 +519,37 @@ class OrdersController extends Controller
             ->values();
 
         return response()->json($purchases);
+    }
+
+    public function changeStatusJson(Request $request, $id)
+    {
+        try {
+            $statu = (int) $request->input('statu');
+            $order = Orders::findOrFail($id);
+            $order->statu = $statu;
+            $order->save();
+
+            $tasks = Task::whereHas('OrderLines', fn($q) => $q->where('orders_id', $id))->get();
+            $statusStarted    = Status::where('title', 'Started')->first();
+            $statusInProgress = Status::where('title', 'In progress')->first();
+            $statusSuspended  = Status::where('title', 'Suspended')->first();
+            $statusFinished   = Status::where('title', 'Finished')->first();
+
+            foreach ($tasks as $task) {
+                if ($statu === 2) {
+                    $s = $statusStarted ?? $statusInProgress;
+                    if ($s) $task->update(['status_id' => $s->id]);
+                } elseif ($statu === 5) {
+                    $s = $statusSuspended ?? $statusFinished;
+                    if ($s) $task->update(['status_id' => $s->id]);
+                } elseif ($statu === 6 && $statusFinished) {
+                    $task->update(['status_id' => $statusFinished->id]);
+                }
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Update failed'], 500);
+        }
     }
 }

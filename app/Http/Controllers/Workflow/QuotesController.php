@@ -8,6 +8,8 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Workflow\Quotes;
+use App\Models\Workflow\QuoteLines;
+use App\Events\QuoteStatusChanged;
 use App\Models\Planning\Task;
 use App\Models\Methods\MethodsServices;
 use App\Models\Times\TimesBanckHoliday;
@@ -634,5 +636,20 @@ class QuotesController extends Controller
             'id'   => $contact->id,
             'name' => trim($contact->first_name.' '.$contact->name),
         ], 201);
+    }
+
+    public function changeStatusJson(Request $request, $id)
+    {
+        try {
+            $statu = (int) $request->input('statu');
+            Quotes::where('id', $id)->update(['statu' => $statu]);
+            QuoteLines::where('quotes_id', $id)
+                ->where('statu', '<', $statu)
+                ->update(['statu' => $statu]);
+            event(new QuoteStatusChanged($id, $statu));
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Update failed'], 500);
+        }
     }
 }
