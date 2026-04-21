@@ -28,6 +28,20 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Invoice">
+        @php
+        $invoiceSteps = [
+            ['value' => 1, 'label' => __('general_content.in_progress_trans_key')],
+            ['value' => 2, 'label' => __('general_content.send_trans_key')],
+            ['value' => 3, 'label' => __('general_content.pending_trans_key')],
+            ['value' => 4, 'label' => __('general_content.unpaid_trans_key')],
+            ['value' => 5, 'label' => __('general_content.paid_trans_key')],
+        ];
+        @endphp
+        <div data-react="arrow-steps"
+             data-steps="{{ json_encode($invoiceSteps) }}"
+             data-statu="{{ $Invoice->statu }}"
+             data-endpoint="{{ route('invoices.json.statu', $Invoice->id) }}"
+             data-redirect="{{ route('invoices.show', $Invoice->id) }}"></div>
         <x-relational-breadcrumb :entity="$Invoice" />
         <div class="row">
           <div class="col-md-9">
@@ -36,25 +50,11 @@
               <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="primary" maximizable>
                 @csrf
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-6">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Invoice->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Invoice->GetshortCreatedAttribute() }}</p>
                   </div>
-                  <div class="form-group col-md-4">
-                    <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
-                      <x-slot name="prependSlot">
-                          <div class="input-group-text bg-gradient-success">
-                              <i class="fas fa-exclamation"></i>
-                          </div>
-                      </x-slot>
-                      <option value="1" @if(1 == $Invoice->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
-                      <option value="2" @if(2 == $Invoice->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
-                      <option value="3" @if(3 == $Invoice->statu ) Selected @endif >{{ __('general_content.pending_trans_key') }}</option>
-                      <option value="4" @if(4 == $Invoice->statu ) Selected @endif >{{ __('general_content.unpaid_trans_key') }}</option>
-                      <option value="5" @if(5 == $Invoice->statu ) Selected @endif >{{ __('general_content.paid_trans_key') }}</option>
-                    </x-adminlte-select>
-                  </div>
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-6">
                     @include('include.form.form-input-label',['label' => __('general_content.label_trans_key'), 'Value' =>  $Invoice->label])
                   </div>
                 </div>

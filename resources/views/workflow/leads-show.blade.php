@@ -24,6 +24,11 @@ $leadSteps = json_encode([
      data-statu="{{ $Lead->statu }}"
      data-endpoint="{{ route('leads.json.statu', $Lead->id) }}"
      data-redirect="{{ route('leads.show', $Lead->id) }}"></div>
+<div data-react="arrow-steps"
+     data-steps="{{ json_encode([['value' => 1, 'label' => __('general_content.burning_trans_key')], ['value' => 2, 'label' => __('general_content.hot_trans_key')], ['value' => 3, 'label' => __('general_content.lukewarm_trans_key')], ['value' => 4, 'label' => __('general_content.cold_trans_key')]]) }}"
+     data-statu="{{ $Lead->priority }}"
+     data-endpoint="{{ route('leads.json.priority', $Lead->id) }}"
+     data-redirect="{{ route('leads.show', $Lead->id) }}"></div>
 <x-relational-breadcrumb :entity="$Lead" />
 <div class="row">
   <div class="col-md-9">
@@ -84,21 +89,6 @@ $leadSteps = json_encode([
             <div class="form-group col-md-6">
               @include('include.form.form-select-user',['userId' =>   $Lead->user_id])
             </div>
-            <div class="form-group col-md-6">
-                <label for="priority">{{ __('general_content.priority_trans_key') }}</label>
-                <div class="input-group">
-                    <div class="input-group-text bg-gradient-success">
-                        <i class="fas fa-exclamation"></i>
-                    </div>
-                    <select class="form-control"  name="priority" id="priority">
-                        <option value="1" >{{ __('general_content.burning_trans_key') }}</option>
-                        <option value="2" >{{ __('general_content.hot_trans_key') }}</option>
-                        <option value="3" >{{ __('general_content.lukewarm_trans_key') }}</option>
-                        <option value="4" >{{ __('general_content.cold_trans_key') }}</option>
-                    </select>
-                </div>
-                @error('priority') <span class="text-danger">{{ $message }}<br/></span>@enderror
-            </div>
         </div>
         <div class="row">
           <div class="col-12">
@@ -150,6 +140,8 @@ $leadSteps = json_encode([
 @stop
 
 @section('css')
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

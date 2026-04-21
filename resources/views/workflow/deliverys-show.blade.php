@@ -31,6 +31,11 @@
   <div class="card-body">
     <div class="tab-content">
       <div class="tab-pane active" id="Delivery">
+        <div data-react="arrow-steps"
+             data-steps="{{ json_encode([['value' => 1, 'label' => __('general_content.in_progress_trans_key')], ['value' => 2, 'label' => __('general_content.send_trans_key')]]) }}"
+             data-statu="{{ $Delivery->statu }}"
+             data-endpoint="{{ route('deliverys.json.statu', $Delivery->id) }}"
+             data-redirect="{{ route('deliverys.show', $Delivery->id) }}"></div>
         <x-relational-breadcrumb :entity="$Delivery" />
         <div class="row">
           <div class="col-md-9">
@@ -42,21 +47,6 @@
                   <div class="form-group col-md-6">
                     <p><label for="code" class="text-success">{{ __('general_content.external_id_trans_key') }}</label>  {{  $Delivery->code }}</p>
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Delivery->GetshortCreatedAttribute() }}</p>
-                  </div>
-                  <div class="form-group col-md-6">
-                    <x-adminlte-select name="statu" label="{{ __('general_content.status_trans_key') }}" label-class="text-success" igroup-size="sm">
-                      <x-slot name="prependSlot">
-                          <div class="input-group-text bg-gradient-success">
-                              <i class="fas fa-exclamation"></i>
-                          </div>
-                      </x-slot>
-                      <option value="1" @if(1 == $Delivery->statu ) Selected @endif >{{ __('general_content.in_progress_trans_key') }}</option>
-                      <option value="2" @if(2 == $Delivery->statu ) Selected @endif >{{ __('general_content.send_trans_key') }}</option>
-                    </x-adminlte-select>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
                   </div>
                   <div class="form-group col-md-6">
                     @include('include.form.form-input-label',['label' =>__('general_content.name_of_deliverys_notes_trans_key'), 'Value' =>  $Delivery->label])
