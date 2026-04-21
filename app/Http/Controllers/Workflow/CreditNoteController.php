@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Number;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\CreditNotes;
+use App\Models\Workflow\OrderLines;
 use App\Services\CustomFieldService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Workflow\InvoiceLines;
 use App\Services\CreditNoteKPIService;
 use App\Services\DocumentCodeGenerator;
@@ -53,48 +55,62 @@ class CreditNoteController extends Controller
      */
     public function CreateCreditNotes(Request $request)
     {
-        // Récupérer les IDs des lignes de factures sélectionnées
         $selectedInvoiceLineIds = $request->input('selected_invoice_lines');
-        
-        // Vérifier qu'au moins une ligne a été sélectionnée
+
         if (empty($selectedInvoiceLineIds)) {
             return redirect()->back()->with('error', 'Veuillez sélectionner au moins une ligne de facture.');
         }
-        
-        // Récupérer les lignes de factures sélectionnées
-        $invoiceLines = InvoiceLines::whereIn('id', $selectedInvoiceLineIds)->get();
-        $LastCreditNote = CreditNotes::orderBy('id', 'desc')->first();
-        $codeCreditNote = $LastCreditNote ? $LastCreditNote->id : 0;
-        $codeCreditNote = $this->documentCodeGenerator->generateDocumentCode('credit-note', $codeCreditNote);
 
-        // Créer un nouvel avoir
-        $creditNote = CreditNotes::create([
-            'code' => $codeCreditNote, 
-            'label' => $codeCreditNote,
-            'invoices_id' => $invoiceLines->first()->invoices_id, 
-            'companies_id' => $invoiceLines->first()->invoice->companies_id, 
-            'companies_contacts_id' => $invoiceLines->first()->invoice->companies_contacts_id, 
-            'companies_addresses_id' => $invoiceLines->first()->invoice->companies_addresses_id, 
-            'statu' => '1',
-            'user_id' => Auth::id(), 
-            'reason' => '', 
-            'validated_by' => null, 
-            'validated_at' => null, 
-        ]);
-        
-        // Créer les lignes d'avoir
-        foreach ($invoiceLines as $invoiceLine) {
-            CreditNoteLines::create([
-                'credit_note_id' => $creditNote->id,
-                'order_line_id' => $invoiceLine->order_line_id,
-                'invoice_line_id' => $invoiceLine->id,
-                'product_id' => $invoiceLine->orderLine->product_id,
-                'qty' => $invoiceLine->qty,
-                'unit_price' => $invoiceLine->orderLine->selling_price,
+        $invoiceLines = InvoiceLines::with(['invoice', 'orderLine'])->whereIn('id', $selectedInvoiceLineIds)->get();
+
+        $creditNote = DB::transaction(function () use ($invoiceLines) {
+            $lastCreditNote = CreditNotes::orderBy('id', 'desc')->first();
+            $codeCreditNote = $this->documentCodeGenerator->generateDocumentCode('credit-note', $lastCreditNote?->id ?? 0);
+
+            $firstLine = $invoiceLines->first();
+            $creditNote = CreditNotes::create([
+                'code'                    => $codeCreditNote,
+                'label'                   => $codeCreditNote,
+                'invoices_id'             => $firstLine->invoices_id,
+                'companies_id'            => $firstLine->invoice->companies_id,
+                'companies_contacts_id'   => $firstLine->invoice->companies_contacts_id,
+                'companies_addresses_id'  => $firstLine->invoice->companies_addresses_id,
+                'statu'                   => 1,
+                'user_id'                 => Auth::id(),
+                'reason'                  => '',
+                'validated_by'            => null,
+                'validated_at'            => null,
             ]);
-        }
-        
-        return redirect()->route('credit.notes.show', ['id' =>  $creditNote->id])->with('success', 'Successfully created credit note');
+
+            foreach ($invoiceLines as $invoiceLine) {
+                CreditNoteLines::create([
+                    'credit_note_id'  => $creditNote->id,
+                    'order_line_id'   => $invoiceLine->order_line_id,
+                    'invoice_line_id' => $invoiceLine->id,
+                    'product_id'      => $invoiceLine->orderLine->product_id,
+                    'qty'             => $invoiceLine->qty,
+                    // Utilise le snapshot stocké sur la ligne de facture (fix immutabilité)
+                    'unit_price'      => $invoiceLine->unit_price ?? $invoiceLine->orderLine->selling_price,
+                ]);
+
+                // Inverse les quantités facturées sur la ligne de commande
+                $orderLine = OrderLines::lockForUpdate()->find($invoiceLine->order_line_id);
+                $orderLine->invoiced_qty            = max(0, $orderLine->invoiced_qty - $invoiceLine->qty);
+                $orderLine->invoiced_remaining_qty += $invoiceLine->qty;
+
+                if ($orderLine->invoiced_qty <= 0) {
+                    $orderLine->invoice_status = 1;
+                } elseif ($orderLine->invoiced_remaining_qty > 0) {
+                    $orderLine->invoice_status = 2;
+                }
+
+                $orderLine->save();
+            }
+
+            return $creditNote;
+        });
+
+        return redirect()->route('credit.notes.show', ['id' => $creditNote->id])->with('success', 'Successfully created credit note');
     }
 
     /**
