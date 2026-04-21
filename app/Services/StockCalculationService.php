@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
-use App\Models\Products\StockMove;
+use Illuminate\Support\Facades\DB;
 use App\Models\Products\StockLocationProducts;
 
 class StockCalculationService
 {
+    // Mouvements entrants (augmentent le stock)
+    private const INCOMING = [1, 3, 5, 12, 14];
+
     protected $stockLocationProduct;
 
     public function __construct(StockLocationProducts $stockLocationProduct)
@@ -15,58 +18,52 @@ class StockCalculationService
     }
 
     /**
-     * Calculate the weighted average cost of a product in a stock location.
-     *
-     * This function calculates the weighted average cost of a product based on its stock movements
-     * in a specific stock location. It considers only the input movements (types 1, 3, 5, and 12)
-     * to compute the total quantity and total value, and then calculates the average cost.
-     *
-     * @param int $stockLocationProductId The ID of the stock location product.
-     * @return float The weighted average cost of the product. Returns 0 if there is no quantity.
+     * Calcule le CUMP historique complet via SQL pour un emplacement donné.
+     * Utilisé pour l'initialisation ou la vérification.
      */
     public function calculateWeightedAverageCost(int $stockLocationProductId): float
     {
-        $stockLocationProduct = StockLocationProducts::find($stockLocationProductId);
+        $row = DB::table('stock_moves')
+            ->where('stock_location_products_id', $stockLocationProductId)
+            ->whereIn('typ_move', self::INCOMING)
+            ->selectRaw('
+                COALESCE(SUM(qty), 0)                   as total_qty,
+                COALESCE(SUM(qty * component_price), 0) as total_value
+            ')
+            ->first();
 
-        if (! $stockLocationProduct) {
+        if (!$row || $row->total_qty <= 0) {
             return 0.0;
         }
 
-        $stockMoves = $stockLocationProduct->StockMove;
-
-        $totalQuantity = 0;
-        $totalValue = 0;
-
-        foreach ($stockMoves as $move) {
-            // Only consider inputs (according to 'typ_move')
-            if (in_array($move->typ_move, [1, 3, 5, 12, 14])) {
-                $totalQuantity += $move->qty;
-                $totalValue += $move->qty * $move->component_price;
-            }
-        }
-
-        // Calculate the average weighted cost
-        if ($totalQuantity > 0) {
-            return $totalValue / $totalQuantity;
-        }
-
-        return 0.0; // If no quantity, return zero or other default behavior
+        return (float) ($row->total_value / $row->total_qty);
     }
 
-    public function canDispatch($tracabilityId, $quantityRequested, $stockLocationProductId)
+    /**
+     * Recalcule le CUMP incrémentalement après un mouvement entrant et le persiste.
+     * Formule : (qty_actuelle × coût_actuel + qty_entrante × prix) / (qty_actuelle + qty_entrante)
+     */
+    public function recalculateAndPersist(int $stockLocationProductId, float $incomingQty, float $incomingPrice): void
     {
-        // Récupérer l'objet StockLocationProducts correspondant
-        $stockLocationProduct = StockLocationProducts::find($stockLocationProductId);
-    
-        // Utiliser la méthode getCurrentStockMove avec la traçabilité pour obtenir le stock disponible
-        $stockAvailable = $stockLocationProduct->getCurrentStockMove($tracabilityId);
-    
-        // Vérifier si la quantité demandée est disponible
-        if ($stockAvailable >= $quantityRequested) {
-            return true;
-        }
-    
-        return false;
+        $slp = StockLocationProducts::lockForUpdate()->find($stockLocationProductId);
+        if (!$slp) return;
+
+        $currentQty  = (float) $slp->getCurrentStockMove();
+        $currentCost = (float) $slp->unit_cost;
+        $newTotalQty = $currentQty + $incomingQty;
+
+        if ($newTotalQty <= 0) return;
+
+        $newUnitCost = (($currentQty * $currentCost) + ($incomingQty * $incomingPrice)) / $newTotalQty;
+
+        $slp->unit_cost = round($newUnitCost, 4);
+        $slp->save();
     }
-    
+
+    public function canDispatch($tracabilityId, $quantityRequested, $stockLocationProductId): bool
+    {
+        $slp = StockLocationProducts::find($stockLocationProductId);
+
+        return $slp && $slp->getCurrentStockMove($tracabilityId) >= $quantityRequested;
+    }
 }

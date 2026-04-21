@@ -16,12 +16,13 @@ class StockLocationProducts extends Model
 
     // Fillable attributes for mass assignment
     protected $fillable= ['code',
-                            'user_id', 
+                            'user_id',
                             'stock_locations_id',
-                            'products_id', 
+                            'products_id',
                             'mini_qty',
                             'end_date',
                             'addressing',
+                            'unit_cost',
                         ];
 
     public function UserManagement()

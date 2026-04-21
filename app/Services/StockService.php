@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Events\OrderLineUpdated;
 use App\Models\Products\StockMove;
+use App\Services\StockCalculationService;
 use App\Models\Products\StockLocation;
 use App\Models\Products\StockLocationProducts;
 use App\Models\Workflow\OrderLines;
@@ -22,9 +23,26 @@ class StockService
      * @param array $data The data to create the stock move record.
      * @return \App\Models\Products\StockMove The created stock move record.
      */
-    public function createStockMove(array $data)
+    // Mouvements entrants : recalcul CUMP déclenché après création
+    private const INCOMING_TYPES = [1, 3, 5, 12, 14];
+
+    public function createStockMove(array $data): StockMove
     {
-        return StockMove::create($data);
+        $move = StockMove::create($data);
+
+        if (
+            in_array($data['typ_move'] ?? null, self::INCOMING_TYPES, true)
+            && isset($data['stock_location_products_id'])
+            && ($data['qty'] ?? 0) > 0
+        ) {
+            app(StockCalculationService::class)->recalculateAndPersist(
+                (int) $data['stock_location_products_id'],
+                (float) $data['qty'],
+                (float) ($data['component_price'] ?? 0),
+            );
+        }
+
+        return $move;
     }
 
     /**

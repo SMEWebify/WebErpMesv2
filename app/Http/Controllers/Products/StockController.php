@@ -19,6 +19,7 @@ use App\Models\Planning\Task;
 use App\Models\Planning\SubAssembly;
 use App\Models\Accounting\AccountingVat;
 use App\Services\OrderService;
+use App\Services\StockValuationService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\OrderLineDetails;
 
@@ -344,6 +345,21 @@ class StockController extends Controller
 
         return response()->json([
             'redirect_url' => route('orders.show', ['id' => $order->id]),
+        ]);
+    }
+
+    /**
+     * JSON — total inventory value + per-line breakdown (CUMP-based).
+     */
+    public function valuationJson(): \Illuminate\Http\JsonResponse
+    {
+        $service   = app(StockValuationService::class);
+        $total     = $service->getTotalInventoryValue();
+        $breakdown = $service->getValuationBreakdown();
+
+        return response()->json([
+            'total'     => $total,
+            'breakdown' => $breakdown,
         ]);
     }
 
