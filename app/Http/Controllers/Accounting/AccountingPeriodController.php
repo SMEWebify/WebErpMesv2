@@ -13,14 +13,14 @@ class AccountingPeriodController extends Controller
     public function listJson(): \Illuminate\Http\JsonResponse
     {
         $periods = $this->periodService->all()->map(fn ($p) => [
-            'year'       => $p->year,
-            'month'      => $p->month,
-            'label'      => $p->getLabel(),
-            'locked_by'  => $p->lockedBy?->name,
-            'locked_at'  => $p->locked_at?->format('d/m/Y H:i'),
+            'year'           => $p->year,
+            'month'          => $p->month,
+            'label'          => $p->getLabel(),
+            'locked_by_name' => $p->lockedBy?->name,
+            'locked_at'      => $p->locked_at?->format('d/m/Y H:i'),
         ]);
 
-        return response()->json(['data' => $periods]);
+        return response()->json($periods);
     }
 
     public function lock(Request $request): \Illuminate\Http\JsonResponse

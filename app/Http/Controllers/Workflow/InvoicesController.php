@@ -529,8 +529,9 @@ class InvoicesController extends Controller
     {
         $invoice = Invoices::findOrFail($id);
 
+        // Période verrouillée : on bloque uniquement si la facture est déjà postée en compta
         if ($invoice->accounting_status === 3 && app(AccountingPeriodService::class)->isLocked($invoice->created_at)) {
-            return response()->json(['error' => "Période {$invoice->created_at->format('m/Y')} verrouillée."], 422);
+            return response()->json(['error' => "Période {$invoice->created_at->format('m/Y')} verrouillée — statut comptable non modifiable."], 422);
         }
 
         $statu   = (int) $request->input('statu');
@@ -554,8 +555,8 @@ class InvoicesController extends Controller
     {
         $Invoice = Invoices::find($request->id);
 
-        if ($Invoice->accounting_status === 3 && app(AccountingPeriodService::class)->isLocked($Invoice->created_at)) {
-            return redirect()->back()->withErrors(['period' => "Période {$Invoice->created_at->format('m/Y')} verrouillée — cette facture postée ne peut plus être modifiée."]);
+        if (app(AccountingPeriodService::class)->isLocked($Invoice->created_at)) {
+            return redirect()->back()->withErrors(['period' => "Période {$Invoice->created_at->format('m/Y')} verrouillée — cette facture ne peut plus être modifiée."]);
         }
         $Invoice->label=$request->label;
         $Invoice->statu=$request->statu;

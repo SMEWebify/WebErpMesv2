@@ -228,8 +228,8 @@ class PurchasesInvoiceController extends Controller
     {
         $PurchaseInvoice = PurchaseInvoice::find($request->id);
 
-        if ($PurchaseInvoice->statu === 3 && app(AccountingPeriodService::class)->isLocked($PurchaseInvoice->created_at)) {
-            return redirect()->back()->withErrors(['period' => "Période {$PurchaseInvoice->created_at->format('m/Y')} verrouillée — cette facture clôturée ne peut plus être modifiée."]);
+        if (app(AccountingPeriodService::class)->isLocked($PurchaseInvoice->created_at)) {
+            return redirect()->back()->withErrors(['period' => "Période {$PurchaseInvoice->created_at->format('m/Y')} verrouillée — cette facture ne peut plus être modifiée."]);
         }
 
         $PurchaseInvoice->label              = $request->label;

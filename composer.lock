@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "564c0eb75a0ce0d41f924a7f689887b4",
+    "content-hash": "f6fffec35a952e0da1add08ee734fcaa",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -631,16 +631,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.10.4",
+            "version": "3.10.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "63a46cb5aa6f60991186cc98c1d1b50c09311868"
+                "reference": "95d84866bf3c04b2ddca1df7c049714660959aef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/63a46cb5aa6f60991186cc98c1d1b50c09311868",
-                "reference": "63a46cb5aa6f60991186cc98c1d1b50c09311868",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/95d84866bf3c04b2ddca1df7c049714660959aef",
+                "reference": "95d84866bf3c04b2ddca1df7c049714660959aef",
                 "shasum": ""
             },
             "require": {
@@ -661,9 +661,9 @@
                 "jetbrains/phpstorm-stubs": "2023.1",
                 "phpstan/phpstan": "2.1.30",
                 "phpstan/phpstan-strict-rules": "^2",
-                "phpunit/phpunit": "9.6.29",
-                "slevomat/coding-standard": "8.24.0",
-                "squizlabs/php_codesniffer": "4.0.0",
+                "phpunit/phpunit": "9.6.34",
+                "slevomat/coding-standard": "8.27.1",
+                "squizlabs/php_codesniffer": "4.0.1",
                 "symfony/cache": "^5.4|^6.0|^7.0|^8.0",
                 "symfony/console": "^4.4|^5.4|^6.0|^7.0|^8.0"
             },
@@ -725,7 +725,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.10.4"
+                "source": "https://github.com/doctrine/dbal/tree/3.10.5"
             },
             "funding": [
                 {
@@ -741,7 +741,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-29T10:46:08+00:00"
+            "time": "2026-02-24T08:03:57+00:00"
         },
         {
             "name": "doctrine/deprecations",

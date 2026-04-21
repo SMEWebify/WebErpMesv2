@@ -21,6 +21,9 @@
             @can('asset-menu')
             <li class="nav-item"><a class="nav-link {{ $activeTab === 'assets' ? 'active' : '' }}" href="{{ route('accounting.assets') }}">{{ __('general_content.assets_trans_key') }}</a></li>
             @endcan
+            @can('accounting-manage')
+            <li class="nav-item"><a class="nav-link {{ $activeTab === 'periods' ? 'active' : '' }}" href="{{ route('accounting.periods.ui') }}"><i class="fas fa-lock mr-1"></i>Périodes</a></li>
+            @endcan
         </ul>
     </div>
     <div class="p-3">
@@ -30,6 +33,10 @@
 @stop
 
 @section('css')
+@if($activeTab === 'periods')
+@viteReactRefresh
+@vite(['resources/sass/app.scss', 'resources/js/app.js'])
+@endif
 @stop
 
 @section('js')

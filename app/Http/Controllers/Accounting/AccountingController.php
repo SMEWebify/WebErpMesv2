@@ -9,6 +9,7 @@ use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingVat;
 use App\Models\Assets\Asset;
 use App\Services\SelectDataService;
+use App\Services\AccountingPeriodService;
 
 class AccountingController extends Controller
 {
@@ -97,6 +98,21 @@ class AccountingController extends Controller
             'activeTab' => 'assets',
             'partial' => 'accounting.partials.assets',
             'Assets' => Asset::paginate(10),
+        ]);
+    }
+
+    public function periods()
+    {
+        $unlockUrlTemplate = route('accounting.periods.unlock', ['year' => '__year__', 'month' => '__month__']);
+
+        return view('accounting.accounting-page', [
+            'activeTab'   => 'periods',
+            'partial'     => 'accounting.partials.periods',
+            'endpoints'   => [
+                'list'   => route('accounting.periods.json'),
+                'lock'   => route('accounting.periods.lock'),
+                'unlock' => $unlockUrlTemplate,
+            ],
         ]);
     }
 }
