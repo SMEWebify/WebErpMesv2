@@ -25,6 +25,20 @@
     </div>
 </div>
 <div class="mt-4">
-    @livewire('fec-export-lines')
+    <div
+        id="fec-export-lines-app"
+        data-endpoints="{{ json_encode([
+            'list'   => route('admin.fec.export.json.list'),
+            'export' => route('admin.fec.export', ['ext' => '__EXT__']),
+        ]) }}"
+        data-trans="{{ json_encode(['no_data' => __('general_content.no_data_trans_key')]) }}"
+        data-start-date="{{ now()->startOfYear()->format('Y-m-d') }}"
+        data-end-date="{{ now()->format('Y-m-d') }}"
+    ></div>
 </div>
+@stop
+
+@section('css')
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop

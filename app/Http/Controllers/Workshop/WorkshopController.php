@@ -12,6 +12,7 @@ use App\Models\Planning\TaskResources;
 use App\Models\Products\StockMove;
 use App\Models\Methods\MethodsServices;
 use App\Models\Methods\MethodsRessources;
+use App\Services\TaskKPIService;
 
 class WorkshopController extends Controller
 {
@@ -173,77 +174,79 @@ class WorkshopController extends Controller
      * - Total number of resources allocated to tasks
      * - Total hours allocated to each resource
      */
-    public function statu(Request $request)
+    public function statu(Request $request, TaskKPIService $taskKPIService)
     {
-        // Number of current OFs
-        $tasksOpen = Task::whereHas('status', function($query) {
-            $query->where('title', 'Open');
-        })->count();
+        $rawResourceHours = $taskKPIService->getResourceHours();
 
-        $tasksInProgress = Task::whereHas('status', function($query) {
-            $query->where('title', 'In Progress');
-        })->count();
+        $kpi = [
+            'tasksOpen'             => $taskKPIService->getOpenTasksCount(),
+            'tasksInProgress'       => $taskKPIService->getInProgressTasksCount(),
+            'tasksPending'          => $taskKPIService->getPendingTasksCount(),
+            'tasksOngoing'          => $taskKPIService->getSuppliedTasksCount(),
+            'tasksCompleted'        => $taskKPIService->getFinishedTasksCount(),
+            'averageProcessingTime' => $taskKPIService->getAverageProcessingTime(),
+            'totalProducedHours'    => $taskKPIService->getTotalProducedHoursCurrentMonth(),
+            'averageTRS'            => $taskKPIService->getMonthlyAverageTRS(),
+        ];
 
-        // État des OF
-        $tasksPending = Task::whereHas('status', function($query) {
-            $query->where('title', 'Pending');
-        })->count();
+        $userProductivity = $taskKPIService->getUserProductivity()->values();
 
-        $tasksOngoing = Task::whereHas('status', function($query) {
-            $query->where('title', 'Supplied');
-        })->count();
+        $resourceHours = collect($rawResourceHours)
+            ->map(fn ($hours, $name) => ['name' => $name, 'hours' => round($hours, 2)])
+            ->values();
 
-        $tasksCompleted = Task::whereHas('status', function($query) {
-            $query->where('title', 'Finished');
-        })->count();
+        $trans = [
+            'search_task_trans_key'              => __('general_content.search_task_trans_key'),
+            'current_count_task_trans_key'       => __('general_content.current_count_task_trans_key'),
+            'total_hours_per_month_trans_key'    => __('general_content.total_hours_per_month_trans_key'),
+            'goal_task_trans_key'                => __('general_content.goal_task_trans_key'),
+            'open_trans_key'                     => __('general_content.open_trans_key'),
+            'suspended_trans_key'                => __('general_content.suspended_trans_key'),
+            'supplied_trans_key'                 => __('general_content.supplied_trans_key'),
+            'finished_trans_key'                 => __('general_content.finished_trans_key'),
+            'average_time_task_trans_key'        => __('general_content.average_time_task_trans_key'),
+            'trs_per_month_trans_key'            => __('general_content.trs_per_month_trans_key'),
+            'user_productivity_trans_key'        => __('general_content.user_productivity_trans_key'),
+            'user_trans_key'                     => __('general_content.user_trans_key'),
+            'task_count_trans_key'               => __('general_content.task_count_trans_key'),
+            'total_hours_per_resource_trans_key' => __('general_content.total_hours_per_resource_trans_key'),
+            'ressource_trans_key'                => __('general_content.ressource_trans_key'),
+            'total_time_trans_key'               => __('general_content.total_time_trans_key'),
+            'quote_task_trans_key'               => __('general_content.quote_task_trans_key'),
+            'task_detail_trans_key'              => __('general_content.task_detail_trans_key'),
+            'informations_trans_key'             => __('general_content.informations_trans_key'),
+            'line_trans_key'                     => __('general_content.line_trans_key'),
+            'finish_part_qty_trans_key'          => __('general_content.finish_part_qty_trans_key'),
+            'bad_part_qty_trans_key'             => __('general_content.bad_part_qty_trans_key'),
+            'net_production_qty_trans_key'       => __('general_content.net_production_qty_trans_key'),
+            'statu_trans_key'                    => __('general_content.statu_trans_key'),
+            'qty_trans_key'                      => __('general_content.qty_trans_key'),
+            'cost_trans_key'                     => __('general_content.cost_trans_key'),
+            'margin_trans_key'                   => __('general_content.margin_trans_key'),
+            'price_trans_key'                    => __('general_content.price_trans_key'),
+            'setting_time_trans_key'             => __('general_content.setting_time_trans_key'),
+            'unit_time_trans_key'                => __('general_content.unit_time_trans_key'),
+            'trs_trans_key'                      => __('general_content.trs_trans_key'),
+            'progress_trans_key'                 => __('general_content.progress_trans_key'),
+            'logs_activity_trans_key'            => __('general_content.logs_activity_trans_key'),
+            'task_trans_key'                     => __('general_content.task_trans_key'),
+            'component_trans_key'                => __('general_content.component_trans_key'),
+            'play_trans_key'                     => __('general_content.play_trans_key'),
+            'pause_trans_key'                    => __('general_content.pause_trans_key'),
+            'end_trans_key'                      => __('general_content.end_trans_key'),
+            'new_purchase_document_trans_key'    => __('general_content.new_purchase_document_trans_key'),
+            'remove_from_stock_trans_key'        => __('general_content.remove_from_stock_trans_key'),
+            'good_rejected_trans_key'            => __('general_content.good_rejected_trans_key'),
+            'quantity_rejected_trans_key'        => __('general_content.quantity_rejected_trans_key'),
+            'end_date_trans_key'                 => __('general_content.end_date_trans_key'),
+            'select_ressource_trans_key'         => __('general_content.select_ressource_trans_key'),
+            'user_choise_trans_key'              => __('general_content.user_choise_trans_key'),
+            'new_non_conformitie_trans_key'      => __('general_content.new_non_conformitie_trans_key'),
+        ];
 
-        // Calculation of the average OF processing time
-        $averageProcessingTime = 0;
-        $tasksWithEndDate = Task::whereNotNull('end_date')->get();
-        if($tasksWithEndDate->count() > 0){
-            $totalTime = $tasksWithEndDate->sum(function ($task) {
-                return $task->getTotalLogTime() * 3600; //in second time
-            });
-            $averageProcessingTime = $totalTime / $tasksWithEndDate->count();
-        }
-
-        // User productivity
-        $userProductivity = DB::table('task_activities')
-            ->join('users', 'task_activities.user_id', '=', 'users.id')
-            ->select('users.name', DB::raw('count(task_activities.id) as tasks_count'))
-            ->groupBy('users.name')
-            ->get();
-
-        //Ressources Time
-        $totalResourcesAllocated = TaskResources::count();
-        $tasks = Task::with('resources')->get();
-
-        $resourceHours = [];
-        
-        foreach ($tasks as $task) {
-            foreach ($task->resources as $resource) {
-                $resourceName = $resource->label;
-                $totalTime = $task->TotalTime();
-        
-                if (array_key_exists($resourceName, $resourceHours)) {
-                    $resourceHours[$resourceName] += $totalTime;
-                } else {
-                    $resourceHours[$resourceName] = $totalTime;
-                }
-            }
-        }
-
-        return view('workshop/workshop-task-statu', compact(
-                                                    'tasksOpen',
-                                                    'tasksInProgress',
-                                                    'tasksPending',
-                                                    'tasksOngoing',
-                                                    'tasksCompleted',
-                                                    'averageProcessingTime',
-                                                    'userProductivity',
-                                                    'totalResourcesAllocated',
-                                                    'resourceHours'
-                                                    ), ['TaskId' => $request->id]);
+        return view('workshop/workshop-task-statu', compact('kpi', 'userProductivity', 'resourceHours', 'trans'), [
+            'taskId' => $request->id,
+        ]);
     }
 
     /**

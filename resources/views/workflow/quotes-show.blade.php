@@ -399,7 +399,19 @@
           <p>{{ __('general_content.no_data_trans_key') }}</p>
           @endforelse
         </x-adminlte-card>
-        @livewire('ChatLive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
+        <div
+          data-react="chat-live"
+          data-endpoints="{{ json_encode([
+            'list'        => route('chats.index', ['related_id' => $Quote->id, 'related_type' => 'Quotes']),
+            'store'       => route('chats.store'),
+            'relatedId'   => $Quote->id,
+            'relatedType' => 'Quotes',
+          ]) }}"
+          data-trans="{{ json_encode([
+            'add_trans_key'     => __('general_content.add_trans_key'),
+            'no_data_trans_key' => __('general_content.no_data_trans_key'),
+          ]) }}"
+        ></div>
       </div>
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">

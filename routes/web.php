@@ -8,7 +8,6 @@ use App\Http\Controllers\ProductionTraceController;
 use App\Http\Controllers\SpreadsheetController;
 use App\Http\Controllers\SpreadsheetDataController;
 use Illuminate\Support\Facades\Route;
-use Livewire\Livewire;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
@@ -31,6 +30,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/guest/delivery/{uuid}', 'App\Http\Controllers\GuestController@ShowDeliveryDocument')->name('guest.delivery.show');
         Route::get('/guest/nonConformitie/{uuid}/{id}', 'App\Http\Controllers\Quality\QualityNonConformityController@createNCFromDelivery')->name('guest.nonConformitie.create');
         Route::get('/guest/', 'App\Http\Controllers\GuestController@index')->name('guest');
+        // Chat pour page guest (sans auth, sécurisé via UUID du devis)
+        Route::get('/guest/quote/{uuid}/chats', [\App\Http\Controllers\GuestChatController::class, 'index'])->name('guest.chats.index');
+        Route::post('/guest/quote/{uuid}/chats', [\App\Http\Controllers\GuestChatController::class, 'store'])->name('guest.chats.store');
     });
     Route::get('/integrations/qonto/callback', [\App\Http\Controllers\Integrations\QontoSettingsController::class, 'callback'])->name('admin.integrations.qonto.callback');
 
@@ -93,6 +95,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
     // Assistant IA ERP
     Route::middleware(['auth', 'verified', 'has.role'])->prefix('ai')->name('ai.')->group(function () {
         Route::post('/chat', [\App\Http\Controllers\AI\AssistantChatController::class, 'chat'])->name('chat');
+    });
+
+    // Chat direct (commentaires sur devis, commandes, etc.)
+    Route::middleware(['auth', 'verified', 'has.role'])->group(function () {
+        Route::get('/chats', [\App\Http\Controllers\ChatController::class, 'index'])->name('chats.index');
+        Route::post('/chats', [\App\Http\Controllers\ChatController::class, 'store'])->name('chats.store');
     });
 
     // Dashboard config (personnalisation par utilisateur)
@@ -720,6 +728,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/kanban', 'App\Http\Controllers\Planning\TaskController@kanban')->name('production.kanban');
         Route::get('/calendar/orders', 'App\Http\Controllers\Planning\CalendarController@calendarOders')->name('production.calendar.orders');
         Route::get('/calendar/tasks', 'App\Http\Controllers\Planning\CalendarController@calendarTasks')->name('production.calendar.tasks');
+        Route::get('/calendar/orders/events', 'App\Http\Controllers\Planning\CalendarController@eventsOrders')->name('production.calendar.orders.events');
+        Route::get('/calendar/tasks/events', 'App\Http\Controllers\Planning\CalendarController@eventsTasks')->name('production.calendar.tasks.events');
         Route::get('/gantt', 'App\Http\Controllers\Planning\GanttController@index')->name('production.gantt');
         Route::get('/gantt/order/{order_id}', 'App\Http\Controllers\Planning\GanttController@getTasksByOrder')->name('production.gantt.order');
         
@@ -1123,11 +1133,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
     Route::get('/home', 'App\Http\Controllers\HomeController@index')->middleware(['auth'])->name('home');
 
-    Livewire::setUpdateRoute(function ($handle) {
-        return Route::post('/livewire/update', $handle);
-    });
-
 });
+
 
     // ─── AUDITS INTERNES ISO 9001 ──────────────────────────────────────────────
     Route::group(['prefix' => 'audit', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory', 'permission:audit-menu']], function () {

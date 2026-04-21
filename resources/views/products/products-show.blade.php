@@ -526,7 +526,31 @@
           </x-adminlte-card>
         </div>
         <div class="tab-pane " id="TechnicalInfo">
-          @livewire('task-manage', ['idType' => 'products_id', 'idPage' => $Product->id, 'idLine' => $Product->id, 'statu' => 1])
+          @php
+          $taskManageEndpoints = [
+              'initial_data'          => route('task.manage.json.initial',      ['products_id', $Product->id, $Product->id]),
+              'select_data'           => route('task.manage.json.select-data',  ['products_id', $Product->id, $Product->id]),
+              'task_store'            => route('task.manage.json.task.store',   ['products_id', $Product->id, $Product->id]),
+              'task_update'           => route('task.manage.json.task.update',  ['products_id', $Product->id, '__ID__']),
+              'task_destroy'          => route('task.manage.json.task.destroy', ['products_id', $Product->id, '__ID__']),
+              'task_duplicate'        => route('task.manage.json.task.duplicate', ['products_id', $Product->id, '__ID__']),
+              'subassembly_store'     => route('task.manage.json.subassembly.store',     ['products_id', $Product->id, $Product->id]),
+              'subassembly_update'    => route('task.manage.json.subassembly.update',    ['products_id', $Product->id, '__ID__']),
+              'subassembly_destroy'   => route('task.manage.json.subassembly.destroy',   ['products_id', $Product->id, '__ID__']),
+              'subassembly_duplicate' => route('task.manage.json.subassembly.duplicate', ['products_id', $Product->id, '__ID__']),
+              'import_csv'            => route('task.manage.json.import-csv',            ['products_id', $Product->id, $Product->id]),
+              'apply_nomenclature'    => route('task.manage.json.apply-nomenclature',    ['products_id', $Product->id, $Product->id, '__TPL_ID__']),
+          ];
+          @endphp
+          <div
+            id="task-manage-app"
+            data-id-type="products_id"
+            data-id-page="{{ $Product->id }}"
+            data-id-line="{{ $Product->id }}"
+            data-statu="1"
+            data-currency="{{ app('Factory')->curency ?? '€' }}"
+            data-endpoints="{{ json_encode($taskManageEndpoints) }}"
+          ></div>
         </div>
         @can('stock-lot-serial-management')
         <div class="tab-pane " id="Stock">

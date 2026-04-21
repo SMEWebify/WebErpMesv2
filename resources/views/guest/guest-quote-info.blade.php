@@ -212,7 +212,19 @@
                 {{-- Chat --}}
                 <div class="card guest-card mb-4">
                     <div class="card-body">
-                        @livewire('ChatLive', ['idItem' => $Quote->id, 'Class' => 'Quotes'])
+                        <div
+                          data-react="chat-live"
+                          data-endpoints="{{ json_encode([
+                            'list'        => route('guest.chats.index', ['uuid' => $Quote->uuid]),
+                            'store'       => route('guest.chats.store', ['uuid' => $Quote->uuid]),
+                            'relatedId'   => $Quote->id,
+                            'relatedType' => 'Quotes',
+                          ]) }}"
+                          data-trans="{{ json_encode([
+                            'add_trans_key'     => __('general_content.add_trans_key'),
+                            'no_data_trans_key' => __('general_content.no_data_trans_key'),
+                          ]) }}"
+                        ></div>
                     </div>
                 </div>
 
@@ -220,7 +232,7 @@
         </div>{{-- /row --}}
     </div>{{-- /container --}}
 
+    @viteReactRefresh
     @vite('resources/js/guest.js')
-    @livewireScripts
 </body>
 </html>

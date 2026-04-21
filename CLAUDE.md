@@ -2,8 +2,9 @@
 
 ## Stack technique actuelle
 - **Backend** : Laravel 12 (PHP 8.2+), architecture MVC classique
-- **Frontend** : React (dominant — composants riches migrés), Blade (layout/shell), Livewire (résiduel), Alpine.js (micro-interactions)
+- **Frontend** : React (dominant — composants riches migrés), Blade (layout/shell), Alpine.js (micro-interactions)
 - **Vue.js** : SUPPRIMÉ
+- **Livewire** : SUPPRIMÉ ✅ (reste en vendor uniquement comme dépendance transitive de laravel/pulse)
 - **CSS** : Bootstrap 4 via AdminLTE (Tailwind supprimé)
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
@@ -12,7 +13,6 @@
 
 ## Structure clé
 - `app/Http/Controllers` — Contrôleurs web et API
-- `app/Livewire` — Composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 - `app/Models` — Modèles Eloquent
 - `resources/js/components` — Composants React (80+ fichiers .jsx)
 - `resources/views` — Templates Blade + shell pages montant les composants React
@@ -23,7 +23,7 @@
 ### Règle de décision
 - **React** : tous les composants riches (index, show, lignes, tableaux, dashboards)
 - **Blade** : layout, shell, formulaires simples sans interaction
-- **Livewire** : à supprimer progressivement (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
+- **Livewire** : SUPPRIMÉ ✅
 - **Alpine.js** : micro-interactions uniquement
 - **Vue.js** : SUPPRIMÉ ✅
 
@@ -33,7 +33,7 @@
 3. ✅ Migrer Vue.js → React (Prompt 4)
 4. ✅ Migrer QuoteLine vers React
 5. ✅ Migrer OrderLine vers React
-6. Supprimer les derniers composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
+6. ✅ Supprimer les derniers composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 
 ## Architecture de déploiement
 

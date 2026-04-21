@@ -306,5 +306,6 @@
     @endforeach
 
     @vite('resources/js/guest.js')
+      @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </body>
 </html>

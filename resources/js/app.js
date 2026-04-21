@@ -2,11 +2,6 @@ import './bootstrap';
 import { createRoot } from 'react-dom/client';
 import React from 'react';
 
-// livewire-sortable ne doit être chargé que sur les pages qui embarquent Livewire
-document.addEventListener('livewire:init', () => {
-    import('livewire-sortable');
-});
-
 function parseJsonAttribute(value) {
     if (!value) return null;
     try {
@@ -1420,6 +1415,23 @@ async function mountStockCurrentApp() {
     );
 }
 
+async function mountChatLive() {
+    const elements = document.querySelectorAll('[data-react="chat-live"]');
+    if (!elements.length) return;
+
+    const { default: ChatLive } = await import('./components/ChatLive.jsx');
+
+    elements.forEach((el) => {
+        const parse = (k) => { try { return JSON.parse(el.dataset[k] ?? 'null'); } catch { return null; } };
+        createRoot(el).render(
+            React.createElement(ChatLive, {
+                endpoints: parse('endpoints') ?? {},
+                trans:     parse('trans')     ?? {},
+            })
+        );
+    });
+}
+
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
@@ -1429,3 +1441,4 @@ mountTaskLines();
 mountLogsViewer();
 mountArrowSteps();
 mountStockCurrentApp();
+mountChatLive();

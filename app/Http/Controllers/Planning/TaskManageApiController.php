@@ -33,7 +33,7 @@ class TaskManageApiController extends Controller
         return match ($idType) {
             'quote_lines_id'       => QuoteLines::findOrFail($idLine),
             'order_lines_id'       => OrderLines::findOrFail($idLine),
-            'products_id'          => SubAssembly::findOrFail($idLine),   // issue #334
+            'products_id'          => Products::findOrFail($idPage),
             'sub_assembly_id'      => SubAssembly::findOrFail($idLine),
             'nomenclature_lines_id'=> MethodsStandardNomenclature::findOrFail($idPage),
             default                => abort(404),
