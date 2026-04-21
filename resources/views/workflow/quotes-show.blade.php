@@ -555,7 +555,7 @@
             </div>
           @endif
         </x-adminlte-card>
-        @livewire('logs-viewer', ['subjectType' => 'App\Models\Workflow\Quotes', 'subjectId' => $Quote->id])
+        @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Quotes', 'logsSubjectId' => $Quote->id])
       </div>
   </div>
   <!-- /.card-body -->

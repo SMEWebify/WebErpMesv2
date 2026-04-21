@@ -183,7 +183,7 @@
             <!-- /.row -->
         </div>
         <div class="tab-pane " id="Logs">
-            @livewire('logs-viewer', ['subjectType' => 'App\Models\Workflow\CreditNotes', 'subjectId' => $CreditNotes->id])
+            @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\CreditNotes', 'logsSubjectId' => $CreditNotes->id])
         </div>
     </div>
     <!-- /.card-body -->
@@ -192,6 +192,8 @@
 @stop
 
 @section('css')
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

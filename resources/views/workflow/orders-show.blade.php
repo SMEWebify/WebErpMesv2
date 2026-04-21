@@ -746,7 +746,7 @@
             </div>
           @endif
         </x-adminlte-card>
-        @livewire('logs-viewer', ['subjectType' => 'App\Models\Workflow\Orders', 'subjectId' => $Order->id])
+        @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Orders', 'logsSubjectId' => $Order->id])
       </div>
 
   </div>

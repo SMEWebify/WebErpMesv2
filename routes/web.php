@@ -788,6 +788,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/fec-export/export/{ext}',        'App\Http\Controllers\Admin\ImportsExportsController@fecExport')->middleware(['auth'])->name('admin.fec.export');
 
         Route::get('/logs-view', 'App\Http\Controllers\Admin\FactoryController@logsView')->middleware(['auth'])->name('admin.logs.view');
+        Route::get('/logs-viewer/json/meta', 'App\Http\Controllers\Admin\LogsViewerController@meta')->middleware(['auth'])->name('admin.logs-viewer.json.meta');
+        Route::get('/logs-viewer/json/list', 'App\Http\Controllers\Admin\LogsViewerController@list')->middleware(['auth'])->name('admin.logs-viewer.json.list');
     
         Route::get('/emails/templates', 'App\Http\Controllers\Admin\EmailTemplateController@index')->name('admin.emails.templates.index');
         Route::post('/emails/templates/store', 'App\Http\Controllers\Admin\EmailTemplateController@store')->name('admin.emails.templates.store');

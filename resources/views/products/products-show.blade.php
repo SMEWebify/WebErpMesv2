@@ -781,7 +781,7 @@
         </div>
         @endif
         <div class="tab-pane " id="Logs">
-          @livewire('logs-viewer', ['subjectType' => 'App\Models\Products\Products', 'subjectId' => $Product->id])
+          @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Products\Products', 'logsSubjectId' => $Product->id])
         </div>
       </div>
     </x-adminlte-card>

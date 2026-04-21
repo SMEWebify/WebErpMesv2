@@ -8,11 +8,13 @@
 
 @section('content')
     <x-adminlte-card theme="lime" theme-mode="outline">
-        @livewire('logs-viewer')
+        @include('include.logs-viewer-mount')
     </x-adminlte-card>
 @stop
 
 @section('css')
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

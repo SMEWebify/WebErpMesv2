@@ -215,7 +215,7 @@
         @include('include.custom-fields-form', ['id' => $Invoice->id, 'type' => 'invoice'])
       </div>
       <div class="tab-pane " id="Logs">
-        @livewire('logs-viewer', ['subjectType' => 'App\Models\Workflow\Invoices', 'subjectId' => $Invoice->id])
+        @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Invoices', 'logsSubjectId' => $Invoice->id])
       </div>
       @endif
   </div>
@@ -225,6 +225,8 @@
 @stop
 
 @section('css')
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 @stop
 
 @section('js')

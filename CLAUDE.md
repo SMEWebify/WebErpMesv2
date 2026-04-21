@@ -2,10 +2,9 @@
 
 ## Stack technique actuelle
 - **Backend** : Laravel 12 (PHP 8.2+), architecture MVC classique
-- **Frontend** : Blade (rendu serveur dominant), Livewire (composants interactifs),
-  Vue.js (1.2% — déprécié), React (composants riches : spreadsheet, NikoNiko, ChartJS, SerialNumber, UserProfile, Notifications)
+- **Frontend** : React (dominant — composants riches migrés), Blade (layout/shell), Livewire (résiduel), Alpine.js (micro-interactions)
+- **Vue.js** : SUPPRIMÉ
 - **CSS** : Bootstrap 4 via AdminLTE (Tailwind supprimé)
-- **JS utilitaire** : Alpine.js (micro-interactions)
 - **Bundler** : Vite
 - **Temps réel** : Laravel Echo + Redis
 - **Tests** : PHPUnit (backend), aucun test frontend
@@ -13,26 +12,28 @@
 
 ## Structure clé
 - `app/Http/Controllers` — Contrôleurs web et API
-- `app/Livewire` — Composants Livewire (QuoteLine, OrderLine, etc.)
+- `app/Livewire` — Composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 - `app/Models` — Modèles Eloquent
-- `resources/js` — Vue (déprécié) + React (composants riches en migration progressive depuis Livewire)
-- `resources/views` — Templates Blade + vues Livewire
+- `resources/js/components` — Composants React (80+ fichiers .jsx)
+- `resources/views` — Templates Blade + shell pages montant les composants React
 - `database/migrations` — Schéma ERP/MES
 
 ## Stratégie frontend cible (open source)
 
 ### Règle de décision
-- **Blade + Livewire** : CRUD simple, formulaires standard → conserver
-- **React** : composants riches (QuoteLine, OrderLine, spreadsheet)
+- **React** : tous les composants riches (index, show, lignes, tableaux, dashboards)
+- **Blade** : layout, shell, formulaires simples sans interaction
+- **Livewire** : à supprimer progressivement (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 - **Alpine.js** : micro-interactions uniquement
-- **Vue.js** : DÉPRÉCIÉ — suppression progressive
+- **Vue.js** : SUPPRIMÉ ✅
 
 ### Roadmap de migration
 1. ✅ Migrer Laravel Mix → Vite
 2. ✅ Résoudre le conflit CSS Bootstrap/Tailwind
-3. Migrer Vue.js → React (Prompt 4)
-4. Créer API REST QuoteLines → Migrer QuoteLine vers React (Prompt 5)
-5. Créer API REST OrderLines → Migrer OrderLine vers React
+3. ✅ Migrer Vue.js → React (Prompt 4)
+4. ✅ Migrer QuoteLine vers React
+5. ✅ Migrer OrderLine vers React
+6. Supprimer les derniers composants Livewire résiduels (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 
 ## Architecture de déploiement
 
@@ -72,10 +73,8 @@
 - spatie/laravel-backup → backup base + fichiers
 
 ### 📋 Roadmap post-prod
-- Prompt 4 : Migration Vue.js → React
-- Prompt 5 : API REST QuoteLine → migration React
+- Supprimer Livewire résiduel (ArrowSteps, Calendar, ChatLive, LogsViewer, StockCurrent)
 - Sélects dynamiques précommande (client/adresse/contact)
-- Refonte UX écrans Task et QuoteLine
 - Accessors Eloquent sans cache (formatted_price, TotalTime, Margin)
 - Try/catch sans logging
 - Tests métier manquants
@@ -119,15 +118,27 @@
 - MenuServiceProvider extrait de AppServiceProvider
 - Orders::find()->update() → observers déclenchés
 
-### Frontend
+### Frontend — Migration React (complète)
 - Vite migré (Laravel Mix supprimé)
 - Bootstrap/Tailwind conflit résolu (Tailwind supprimé)
-- 50 fichiers audités, 16 corrigés
-- @vite() partout
-- wire:model.lazy sur formulaires
-- wire:model.live restauré sur chat et filtres
-- event(OrderCreated) hors transaction
-- Migration Livewire → React : NikoNiko, ChartJS, SerialNumber, UserProfile, NotificationLine, UserAutoEmailReports
+- Vue.js entièrement supprimé
+- 80+ composants React dans `resources/js/components/`
+- Migration Livewire → React :
+  - **CRM** : LeadsIndex, OpportunitiesIndex, CompaniesIndex, CompanyForm, CompanyContacts, CompanyAddresses, CompanyTimeline, CompanyDashboard
+  - **Devis** : QuotesIndex, QuoteLinesIndex, QuoteLinesPage, QuoteChartsTab
+  - **Commandes** : OrdersIndex, OrderLinesIndex, OrderLinesPage
+  - **Achats** : PurchasesIndex, PurchaseLinesPage, PurchasesQuotationIndex, PurchasesQuotationShow, PurchasesRequest, PurchaseReceiptIndex, PurchaseReceiptLinesPage, PurchasesWaitingReceipt, PurchasesWaitingInvoice, PurchaseInvoicesIndex
+  - **Livraisons** : DeliverysIndex, DeliverysRequest, DeliveryLinesTab
+  - **Facturation** : InvoicesIndex, InvoicesRequest, InvoiceExportLines, FecExportLines
+  - **Avoirs** : CreditNotesIndex, ReturnsIndex, ReturnShow
+  - **Stocks** : StockDetailPage, ProductHistory, ProductsIndex
+  - **Tasks** : TasksIndex, TaskManagePage, TaskStatuApp, TaskLines, GtdBoard, TodayView
+  - **Planning** : LoadPlanningIndex, KanbanBoard, KanbanSetting
+  - **GMAO** : GmaoDashboard
+  - **Qualité** : QualityIndex, NonConformitiesIndex, AuditPlannerApp, InspectionProjectsApp
+  - **Dashboard** : HomeDashboard, DashboardGrid + widgets (KPI, OTD, NcStats, MoodTracker, TopClients, SupplierDelay, MonthlyStats, RecentItems, Goal, Announcement, OrdersMonthly, DeliveryBoard, QuoteRate)
+  - **Autres** : SerialNumbersIndex, MethodsOverview, EstimatedBudgetsIndex, NestingPage, ConstructionSitePage, GanttChart, DocumentTable, SetupWizard, ProcessDiagramApp, NotificationLinePage, UserProfilePage, UserAutoEmailReportsPage
+  - NikoNiko (MoodTrackerWidget), ChartJS, SerialNumber
 
 ### RGPD
 - SoftDeletes : companies, contacts, addresses, users
@@ -136,16 +147,3 @@
 - Commandes : rgpd:erase-contact, rgpd:export-contact, rgpd:purge
 - Rétention activity_log : 365 jours
 - Purge hebdomadaire automatique
-```
-
----
-
-**Ce qui reste vraiment à faire :**
-```
-Avant prod (infra uniquement) :
-→ Queue worker Supervisor
-→ spatie/laravel-backup
-
-Post-prod (code) :
-→ Prompt 4 Vue → React
-→ Prompt 5 API REST QuoteLine

@@ -510,7 +510,7 @@
         </div>
       </div>
       <div class="tab-pane " id="Logs">
-        @livewire('logs-viewer', ['subjectType' => 'App\Models\Workflow\Opportunities', 'subjectId' => $Opportunity->id])
+        @include('include.logs-viewer-mount', ['logsSubjectType' => 'App\Models\Workflow\Opportunities', 'logsSubjectId' => $Opportunity->id])
       </div>
     </div>
   <!-- /.card-body -->

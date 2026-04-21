@@ -1377,9 +1377,23 @@ async function mountInvoiceExportLines() {
         React.createElement(InvoiceExportLines, { endpoints, trans })
     );
 }
+async function mountLogsViewer() {
+    const el = document.getElementById('logs-viewer-app');
+    if (!el) return;
+    const { default: LogsViewer } = await import('./components/LogsViewer.jsx');
+    const endpoints    = JSON.parse(el.dataset.endpoints);
+    const trans        = JSON.parse(el.dataset.trans);
+    const subjectType  = el.dataset.subjectType || null;
+    const subjectId    = el.dataset.subjectId   ? Number(el.dataset.subjectId) : null;
+    createRoot(el).render(
+        React.createElement(LogsViewer, { endpoints, trans, subjectType, subjectId })
+    );
+}
+
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
 mountGtdBoard();
 mountReturnShow();
 mountTaskLines();
+mountLogsViewer();
