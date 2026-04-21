@@ -1432,6 +1432,31 @@ async function mountChatLive() {
     });
 }
 
+async function mountStockValuationApp() {
+    const el = document.getElementById('stock-valuation-app');
+    if (!el) return;
+    const { default: StockValuationApp } = await import('./components/StockValuationApp.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(StockValuationApp, {
+            endpoints: parse('endpoints') ?? {},
+            trans:     parse('trans')     ?? {},
+        })
+    );
+}
+
+async function mountAccountingPeriodsApp() {
+    const el = document.getElementById('accounting-periods-app');
+    if (!el) return;
+    const { default: AccountingPeriodsApp } = await import('./components/AccountingPeriodsApp.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(AccountingPeriodsApp, {
+            endpoints: parse('endpoints') ?? {},
+        })
+    );
+}
+
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
@@ -1442,3 +1467,5 @@ mountLogsViewer();
 mountArrowSteps();
 mountStockCurrentApp();
 mountChatLive();
+mountStockValuationApp();
+mountAccountingPeriodsApp();

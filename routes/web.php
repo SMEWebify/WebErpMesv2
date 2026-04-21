@@ -520,6 +520,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/allocations', 'App\Http\Controllers\Accounting\AccountingController@allocations')->name('accounting.allocations');
         Route::get('/deliveries', 'App\Http\Controllers\Accounting\AccountingController@deliveries')->name('accounting.deliveries');
         Route::get('/assets', 'App\Http\Controllers\Accounting\AccountingController@assets')->name('accounting.assets');
+        Route::get('/periods-ui', 'App\Http\Controllers\Accounting\AccountingController@periods')->middleware(['permission:accounting-manage'])->name('accounting.periods.ui');
         
         // Routes for Allocation
         Route::prefix('allocation')->group(function () {

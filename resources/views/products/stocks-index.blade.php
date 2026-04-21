@@ -275,6 +275,14 @@
           ]) }}"
       ></div>
   </x-adminlte-card>
+
+  @can('stock-lot-serial-management')
+  <x-adminlte-card title="Valorisation du stock (CUMP)" theme="info" collapsible="collapsed" removable maximizable>
+      <div id="stock-valuation-app"
+          data-endpoints="{{ json_encode(['valuation' => route('products.stock.json.valuation')]) }}"
+      ></div>
+  </x-adminlte-card>
+  @endcan
 @stop
 
 @section('css')
