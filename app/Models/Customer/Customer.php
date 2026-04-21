@@ -40,7 +40,18 @@ class Customer extends Authenticatable
         'default',
         'password',
         'last_login_at',
+        'is_customer_portal_user',
     ];
+
+    /**
+     * Restreint toutes les requêtes Customer aux contacts explicitement
+     * activés comme utilisateurs du portail.
+     * Sans ce scope, tout contact ayant un mot de passe pourrait s'authentifier.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('portal_users', fn ($q) => $q->where('is_customer_portal_user', true));
+    }
 
     /**
      * The attributes that should be hidden for serialization.
