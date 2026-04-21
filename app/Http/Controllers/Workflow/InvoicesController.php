@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
 use App\Services\InvoiceCalculatorService;
+use App\Services\AccountingPeriodService;
 use App\Http\Requests\Workflow\UpdateInvoiceRequest;
 
 class InvoicesController extends Controller
@@ -527,6 +528,11 @@ class InvoicesController extends Controller
     public function changeStatusJson(Request $request, $id)
     {
         $invoice = Invoices::findOrFail($id);
+
+        if ($invoice->accounting_status === 3 && app(AccountingPeriodService::class)->isLocked($invoice->created_at)) {
+            return response()->json(['error' => "Période {$invoice->created_at->format('m/Y')} verrouillée."], 422);
+        }
+
         $statu   = (int) $request->input('statu');
 
         $invoice->statu = $statu;
@@ -547,6 +553,10 @@ class InvoicesController extends Controller
     public function update(UpdateInvoiceRequest $request)
     {
         $Invoice = Invoices::find($request->id);
+
+        if ($Invoice->accounting_status === 3 && app(AccountingPeriodService::class)->isLocked($Invoice->created_at)) {
+            return redirect()->back()->withErrors(['period' => "Période {$Invoice->created_at->format('m/Y')} verrouillée — cette facture postée ne peut plus être modifiée."]);
+        }
         $Invoice->label=$request->label;
         $Invoice->statu=$request->statu;
         $Invoice->due_date=$request->due_date;

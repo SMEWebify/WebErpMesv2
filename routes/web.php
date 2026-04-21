@@ -550,6 +550,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::post('/create', 'App\Http\Controllers\Accounting\VatController@store')->name('accounting.vat.create');
             Route::post('/edit/{id}', 'App\Http\Controllers\Accounting\VatController@update')->name('accounting.vat.update');
         });
+
+        // Verrouillage de périodes comptables
+        Route::prefix('periods')->middleware(['permission:accounting-manage'])->group(function () {
+            Route::get('/json', [\App\Http\Controllers\Accounting\AccountingPeriodController::class, 'listJson'])->name('accounting.periods.json');
+            Route::post('/lock', [\App\Http\Controllers\Accounting\AccountingPeriodController::class, 'lock'])->name('accounting.periods.lock');
+            Route::delete('/{year}/{month}', [\App\Http\Controllers\Accounting\AccountingPeriodController::class, 'unlock'])->name('accounting.periods.unlock');
+        });
     });
 
     Route::group(['prefix' => 'assets', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
@@ -666,6 +673,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
             Route::get('/detail/{id}', 'App\Http\Controllers\Products\StockController@detail')->name('products.stock.detail.show');
             Route::post('/detail/edit/{id}', 'App\Http\Controllers\Products\StockController@detailUpdate')->name('products.stock.detail.update');
             Route::patch('/detail/update/{id}', 'App\Http\Controllers\Products\StockController@detailUpdateJson')->name('products.stock.detail.update.json');
+
+            // Valuation (CUMP)
+            Route::get('/json/valuation', 'App\Http\Controllers\Products\StockController@valuationJson')->name('products.stock.json.valuation');
         });
 
         // Stock Location routes

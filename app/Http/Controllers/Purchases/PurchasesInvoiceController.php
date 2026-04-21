@@ -19,6 +19,7 @@ use App\Models\Purchases\PurchaseInvoiceLines;
 use App\Models\Purchases\PurchaseLines;
 use App\Models\Purchases\PurchaseReceiptLines;
 use Illuminate\Validation\Rule;
+use App\Services\AccountingPeriodService;
 use App\Http\Requests\Purchases\UpdatePurchaseInvoiceRequest;
 
 class PurchasesInvoiceController extends Controller
@@ -226,6 +227,11 @@ class PurchasesInvoiceController extends Controller
     public function updatePurchaseInvoice(UpdatePurchaseInvoiceRequest $request)
     {
         $PurchaseInvoice = PurchaseInvoice::find($request->id);
+
+        if ($PurchaseInvoice->statu === 3 && app(AccountingPeriodService::class)->isLocked($PurchaseInvoice->created_at)) {
+            return redirect()->back()->withErrors(['period' => "Période {$PurchaseInvoice->created_at->format('m/Y')} verrouillée — cette facture clôturée ne peut plus être modifiée."]);
+        }
+
         $PurchaseInvoice->label              = $request->label;
         $PurchaseInvoice->statu              = $request->statu;
         $PurchaseInvoice->comment            = $request->comment;
