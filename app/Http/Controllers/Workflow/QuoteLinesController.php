@@ -589,6 +589,10 @@ class QuoteLinesController extends Controller
         $quote = Quotes::findOrFail($quoteId);
         abort_unless($quote->user_id === Auth::id() || Auth::user()->hasRole(['admin','manager']), 403);
 
+        if (!in_array($quote->statu, [1, 2])) {
+            return response()->json(['error' => 'Ce devis ne peut plus être converti en commande (statut invalide).'], 422);
+        }
+
         $factory = Factory::first();
 
         $order = DB::transaction(function () use ($quote, $lineIds, $factory) {
