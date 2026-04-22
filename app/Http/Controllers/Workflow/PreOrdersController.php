@@ -82,7 +82,8 @@ class PreOrdersController extends Controller
             $originalName = pathinfo($pdfFile->getClientOriginalName(), PATHINFO_FILENAME);
             $safeBaseName = Str::slug($originalName, '_') ?: 'pre_order';
             $fileName = $safeBaseName . '_' . now()->format('Ymd_His_u') . '.pdf';
-            Storage::disk($disk)->putFileAs($inputPath, $pdfFile, $fileName);
+            $tmpPath = $pdfFile->getRealPath() ?: $pdfFile->getPathname();
+            Storage::disk($disk)->put($inputPath . '/' . $fileName, fopen($tmpPath, 'r'));
         }
     
         $pythonPath = config('pre_orders.python_executable');
@@ -154,7 +155,8 @@ class PreOrdersController extends Controller
         }
 
         if (preg_match('/^[A-Za-z]:\//', $normalizedPath) === 1 || str_starts_with($normalizedPath, '/')) {
-            return ltrim(str_replace('\\', '/', basename($normalizedPath)), '/');
+            $base = ltrim(str_replace('\\', '/', basename(rtrim($normalizedPath, '/'))), '/');
+            return $base !== '' ? $base : 'pre-orders/input';
         }
 
         $normalizedPath = ltrim($normalizedPath, '/');
@@ -396,6 +398,17 @@ class PreOrdersController extends Controller
         });
 
         return redirect()->route('pre-orders.show', $preOrder)->with('success', 'Pré-commande convertie en commande.');
+    }
+
+    public function destroy(PreOrder $preOrder)
+    {
+        if ($preOrder->status !== PreOrder::STATUS_PENDING) {
+            return redirect()->route('pre-orders.index')->withErrors('Seules les pré-commandes "À traiter" peuvent être supprimées.');
+        }
+
+        $preOrder->delete();
+
+        return redirect()->route('pre-orders.index')->with('success', 'Pré-commande supprimée.');
     }
 
     private function generateOrderCodeByType(int $type): string

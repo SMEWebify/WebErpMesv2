@@ -75,6 +75,16 @@
                                 <a href="{{ route('pre-orders.show', $preOrder) }}" class="btn btn-xs btn-default text-primary">
                                     <i class="fa fa-lg fa-fw fa-eye"></i>
                                 </a>
+                                @if($preOrder->status === \App\Models\Workflow\PreOrder::STATUS_PENDING)
+                                    <form method="POST" action="{{ route('pre-orders.destroy', $preOrder) }}" class="d-inline"
+                                          onsubmit="return confirm('Supprimer cette pré-commande ?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-xs btn-default text-danger">
+                                            <i class="fa fa-lg fa-fw fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty

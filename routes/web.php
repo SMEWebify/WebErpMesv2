@@ -367,6 +367,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{preOrder}/lines/{line}/accept-matching', 'App\Http\Controllers\Workflow\PreOrdersController@acceptMatching')->name('pre-orders.accept-matching');
         Route::post('/{preOrder}/accept-all-matching', 'App\Http\Controllers\Workflow\PreOrdersController@acceptAllMatching')->name('pre-orders.accept-all-matching');
         Route::post('/{preOrder}/convert', 'App\Http\Controllers\Workflow\PreOrdersController@convert')->name('pre-orders.convert');
+        Route::delete('/{preOrder}', 'App\Http\Controllers\Workflow\PreOrdersController@destroy')->name('pre-orders.destroy');
     });
 
     Route::group(['prefix' => 'deliverys', 'middleware' => ['auth', 'verified', 'has.role', 'check.factory']], function () {
