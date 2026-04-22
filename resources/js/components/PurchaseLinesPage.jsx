@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -113,7 +114,7 @@ function ReceiptPopover({ items, badgeClass, badgeLabel }) {
                                     target="_blank" rel="noreferrer">
                                     {item.receipt_code}
                                 </a>
-                                {' — '}<small className="text-muted">{item.qty}</small>
+                                {' — '}<small className="text-muted">{formatQty(item.qty)}</small>
                             </li>
                         ))}
                     </ul>
@@ -600,21 +601,21 @@ function LineRow({
             </td>
 
             {/* Qté commandée */}
-            <td className="text-right">{line.qty}</td>
+            <td className="text-right">{formatQty(line.qty)}</td>
 
             {/* Reçu */}
             <td className="text-right">
                 <ReceiptPopover
                     items={line.receipt_lines ?? []}
                     badgeClass={receiptCfg.badge}
-                    badgeLabel={`${line.receipt_qty > 0 ? line.receipt_qty : receiptCfg.label}`}
+                    badgeLabel={`${line.receipt_qty > 0 ? formatQty(line.receipt_qty) : receiptCfg.label}`}
                 />
             </td>
 
             {/* Facturé */}
             <td className="text-right">
                 <span className={`badge ${invoiceCfg.badge}`}>
-                    {line.invoiced_qty > 0 ? line.invoiced_qty : invoiceCfg.label}
+                    {line.invoiced_qty > 0 ? formatQty(line.invoiced_qty) : invoiceCfg.label}
                 </span>
             </td>
 

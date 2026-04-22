@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { formatQty } from '../utils';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -117,7 +118,7 @@ export default function InvoiceExportLines({ endpoints, trans }) {
                                     </td>
                                     <td>{row.line_code}</td>
                                     <td>{row.line_label}</td>
-                                    <td>{row.qty}</td>
+                                    <td>{formatQty(row.qty)}</td>
                                     <td>{row.unit}</td>
                                     <td>{row.formatted_price}</td>
                                     <td>{row.discount} %</td>

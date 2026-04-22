@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 // ─── Palette de couleurs ────────────────────────────────────────────────────
 const COLORS = [
@@ -249,7 +250,7 @@ function GroupResult({ group }) {
                                     </td>
                                     <td className="text-right">{p.x}</td>
                                     <td className="text-right">{p.y}</td>
-                                    <td className="text-right">{p.qty}</td>
+                                    <td className="text-right">{formatQty(p.qty)}</td>
                                     <td className="text-center">
                                         {p.thickness_warn ? (
                                             <span className="text-warning" style={{ cursor: 'help', fontWeight: 'bold' }}

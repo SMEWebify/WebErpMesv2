@@ -500,7 +500,7 @@
                   <td>{{ $row['task_label'] }}</td>
                   <td>{{ $row['product_code'] }}</td>
                   <td>{{ $row['product_label'] }}</td>
-                  <td>{{ $row['qty'] }}</td>
+                  <td>{{ format_qty($row['qty']) }}</td>
                   <td>{{ $row['display_unit'] }}</td>
                   <td>{{ $row['display_total'] }}</td>
                   <td>{{ $row['tracability'] }}</td>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -129,7 +130,7 @@ function LinesPopover({ items, badgeClass, badgeLabel }) {
                         {items.map(item => (
                             <li key={item.id} className="mb-1">
                                 <a href={item.url} className="text-primary font-weight-bold">{item.code}</a>
-                                {' — '}<small>{item.qty}</small>
+                                {' — '}<small>{formatQty(item.qty)}</small>
                             </li>
                         ))}
                     </ul>
@@ -210,7 +211,7 @@ function OrderLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSo
             case 'label':
                 return line.label;
             case 'qty':
-                return line.qty;
+                return formatQty(line.qty);
             case 'unit_label':
                 return line.unit_label ?? '—';
             case 'selling_price':
@@ -234,7 +235,7 @@ function OrderLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSo
             case 'delivery_status': {
                 const cfg = DELIVERY_STATUS_CONFIG[line.delivery_status];
                 if (!cfg) return '—';
-                const label = `${trans[cfg.label] ?? cfg.label}${line.delivered_qty > 0 ? ` (${line.delivered_qty})` : ''}`;
+                const label = `${trans[cfg.label] ?? cfg.label}${line.delivered_qty > 0 ? ` (${formatQty(line.delivered_qty)})` : ''}`;
                 if (line.delivery_status === 1 || line.delivery_status === 4) {
                     return <span className={`badge ${cfg.badge}`}>{label}</span>;
                 }
@@ -253,7 +254,7 @@ function OrderLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSo
                 if (line.order_type === 2) return <span className="text-muted">—</span>;
                 const cfg = INVOICE_STATUS_CONFIG[line.invoice_status];
                 if (!cfg) return '—';
-                const label = `${trans[cfg.label] ?? cfg.label}${line.invoiced_qty > 0 ? ` (${line.invoiced_qty})` : ''}`;
+                const label = `${trans[cfg.label] ?? cfg.label}${line.invoiced_qty > 0 ? ` (${formatQty(line.invoiced_qty)})` : ''}`;
                 if (line.invoice_status === 1) {
                     return <span className={`badge ${cfg.badge}`}>{label}</span>;
                 }

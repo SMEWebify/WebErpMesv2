@@ -70,7 +70,7 @@
                                     <td>{{ $line->row_index }}</td>
                                     <td>{{ $line->reference }}</td>
                                     <td>{{ $line->product }}</td>
-                                    <td>{{ $line->quantity }}</td>
+                                    <td>{{ format_qty($line->quantity) }}</td>
                                     <td>{{ $line->formatted_selling_price }}</td>
                                     <td>{{ $line->formatted_total_price }}</td>
                                     <td>

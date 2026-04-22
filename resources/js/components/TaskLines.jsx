@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 export default function TaskLines({ endpoints, services, statuses, resources, defaultStatusIds }) {
     const [rows, setRows]               = useState([]);
@@ -169,7 +170,7 @@ export default function TaskLines({ endpoints, services, statuses, resources, de
                                             <a href={endpoints.order.replace('__ID__', task.order.id)} className="btn btn-sm btn-primary">{task.order.code}</a>
                                         ) : <span className="text-muted">Générique</span>}
                                     </td>
-                                    <td>{task.qty}</td>
+                                    <td>{formatQty(task.qty)}</td>
                                     <td>{task.order_label}</td>
                                     <td>
                                         <a href={endpoints.task.replace('__ID__', task.id)} className="btn btn-sm btn-success">Voir</a>

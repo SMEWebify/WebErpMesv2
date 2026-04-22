@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { formatQty } from '../utils';
 import {
     DndContext,
     DragOverlay,
@@ -44,7 +45,7 @@ function TaskCard({ task }) {
                 {` - ${task.label} - ${task.order_lines.delivery_date}`}
                 <br />
                 <span className="font-weight-bold">
-                    {task.order_lines.label} || qty {task.order_lines.qty}
+                    {task.order_lines.label} || qty {formatQty(task.order_lines.qty)}
                 </span>
                 <br />
                 <div className="float-right">

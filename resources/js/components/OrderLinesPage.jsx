@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // SymDropzone — RADAN .sym drag-and-drop import
@@ -317,7 +318,7 @@ function TaskModal({ lineId, lineLabel, endpoints, isReadOnly, useCalculatedPric
                                             {t.service?.label ?? '—'}
                                         </td>
                                         <td className="text-right">{t.total_time} h</td>
-                                        <td className="text-right">{t.qty}</td>
+                                        <td className="text-right">{formatQty(t.qty)}</td>
                                         <td className="text-right">{t.unit_cost}</td>
                                         <td className="text-right">{t.margin != null ? `${t.margin} %` : '—'}</td>
                                         <td className="text-right">{t.unit_price}</td>
@@ -778,7 +779,7 @@ function LinesPopover({ items, badgeClass, badgeLabel }) {
                                 <a href={item.url} className="text-primary font-weight-bold" target="_blank" rel="noreferrer">
                                     {item.code}
                                 </a>
-                                {' — '}<small className="text-muted">{item.qty}</small>
+                                {' — '}<small className="text-muted">{formatQty(item.qty)}</small>
                             </li>
                         ))}
                     </ul>
@@ -883,7 +884,7 @@ function LineRow({
             </td>
 
             {/* Qty */}
-            <td className="text-right">{line.qty}</td>
+            <td className="text-right">{formatQty(line.qty)}</td>
 
             {/* Unit */}
             <td className="small">{line.unit_label ?? '—'}</td>
@@ -913,7 +914,7 @@ function LineRow({
                         id: dl.id, qty: dl.qty, code: dl.delivery_code, url: dl.delivery_url,
                     }))}
                     badgeClass={deliveryCfg.badge}
-                    badgeLabel={`${deliveryCfg.label}${line.delivered_qty > 0 ? ` (${line.delivered_qty})` : ''}`}
+                    badgeLabel={`${deliveryCfg.label}${line.delivered_qty > 0 ? ` (${formatQty(line.delivered_qty)})` : ''}`}
                 />
             </td>
 
@@ -924,7 +925,7 @@ function LineRow({
                         id: il.id, qty: il.qty, code: il.invoice_code, url: il.invoice_url,
                     }))}
                     badgeClass={invoiceCfg.badge}
-                    badgeLabel={`${invoiceCfg.label}${line.invoiced_qty > 0 ? ` (${line.invoiced_qty})` : ''}`}
+                    badgeLabel={`${invoiceCfg.label}${line.invoiced_qty > 0 ? ` (${formatQty(line.invoiced_qty)})` : ''}`}
                 />
             </td>
 

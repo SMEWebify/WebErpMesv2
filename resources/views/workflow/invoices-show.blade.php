@@ -191,7 +191,7 @@
                         </td>
                       <td>{{ $InvoiceLine->orderLine['code'] }}</td>
                       <td>{{ $InvoiceLine->orderLine['label'] }}</td>
-                      <td>{{ $InvoiceLine->qty }}</td>
+                      <td>{{ format_qty($InvoiceLine->qty) }}</td>
                       <td>{{ $InvoiceLine->OrderLine->Unit['label'] }}</td>
                       <td>{{ $InvoiceLine->formatted_selling_price }}</td>
                       <td>{{ $InvoiceLine->OrderLine['discount'] }} %</td>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -279,10 +280,10 @@ export default function DeliveryLinesTab({ lines, deliveryId, nonConformities, e
                                     </td>
                                     <td><small>{line.code}</small></td>
                                     <td>{line.label}</td>
-                                    <td>{line.qty}</td>
+                                    <td>{formatQty(line.qty)}</td>
                                     <td><small>{line.unit}</small></td>
-                                    <td>{line.delivered_qty}</td>
-                                    <td>{line.remaining_qty}</td>
+                                    <td>{formatQty(line.delivered_qty)}</td>
+                                    <td>{formatQty(line.remaining_qty)}</td>
                                     <td>
                                         {inv && (
                                             <span className={`badge ${inv.badge}`}>{inv.label}</span>

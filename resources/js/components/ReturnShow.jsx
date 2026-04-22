@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatQty } from '../utils';
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
@@ -136,7 +137,7 @@ export default function ReturnShow({ initial, endpoints, trans }) {
                                         </td>
                                         <td>{line.issue_description}</td>
                                         <td>{line.rework_instructions}</td>
-                                        <td>{line.qty}</td>
+                                        <td>{formatQty(line.qty)}</td>
                                         <td>
                                             {line.rework_task_id
                                                 ? <span className="badge badge-success">{trans.in_rework}</span>

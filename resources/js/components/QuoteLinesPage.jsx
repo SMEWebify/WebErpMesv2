@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // SymDropzone — RADAN .sym drag-and-drop import
@@ -324,7 +325,7 @@ function TaskModal({ lineId, lineLabel, endpoints, quoteStatu, useCalculatedPric
                                             {t.service?.label ?? '—'}
                                         </td>
                                         <td className="text-right">{t.total_time} h</td>
-                                        <td className="text-right">{t.qty}</td>
+                                        <td className="text-right">{formatQty(t.qty)}</td>
                                         <td className="text-right">{t.unit_cost}</td>
                                         <td className="text-right">{t.margin != null ? `${t.margin} %` : '—'}</td>
                                         <td className="text-right">{t.unit_price}</td>
@@ -862,7 +863,7 @@ function LineRow({
             </td>
 
             {/* Qty */}
-            <td className="text-right">{line.qty}</td>
+            <td className="text-right">{formatQty(line.qty)}</td>
 
             {/* Unit */}
             <td className="small">{line.unit_label ?? '—'}</td>

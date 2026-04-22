@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -466,7 +467,7 @@ export default function InvoicesRequest({
                                         </td>
                                         <td>{line.line_code}</td>
                                         <td>{line.line_label}</td>
-                                        <td>{line.qty}</td>
+                                        <td>{formatQty(line.qty)}</td>
                                         <td>{line.unit_label}</td>
                                         <td>{line.selling_price}</td>
                                         <td>{line.discount} %</td>

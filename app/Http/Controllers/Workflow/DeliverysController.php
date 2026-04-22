@@ -345,7 +345,6 @@ class DeliverysController extends Controller
         ]);
     }
     
-    /**
     public function changeStatusJson(Request $request, $id)
     {
         $delivery = Deliverys::findOrFail($id);
@@ -355,10 +354,6 @@ class DeliverysController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(UpdateDeliveryRequest $request)
     {
         $Delivery = Deliverys::find($request->id);

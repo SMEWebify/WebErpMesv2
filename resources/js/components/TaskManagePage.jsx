@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { formatQty } from '../utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -730,7 +731,7 @@ function TaskRow({ task, canEdit, onEdit, onDelete, onDuplicate, currency, isBOM
             {isBOM ? (
                 <>
                     <td>{task.component ? <code style={{ fontSize: 11 }}>{task.component.code}</code> : '—'}</td>
-                    <td style={{ textAlign: 'right' }}>{task.qty}</td>
+                    <td style={{ textAlign: 'right' }}>{formatQty(task.qty)}</td>
                 </>
             ) : (
                 <>
@@ -803,7 +804,7 @@ function SubAssemblyRow({ sa, canEdit, onEdit, onDelete, onDuplicate, currency }
                     {sa.child?.label ?? '—'}
                 </span>
             </td>
-            <td style={{ textAlign: 'right' }}>{sa.qty}</td>
+            <td style={{ textAlign: 'right' }}>{formatQty(sa.qty)}</td>
             <td style={{ textAlign: 'right', fontSize: 12 }}>{sa.unit_price?.toFixed(2)} {currency}</td>
             <td style={{ textAlign: 'right', fontSize: 12, fontWeight: 500 }}>
                 {((sa.qty ?? 0) * (sa.unit_price ?? 0)).toFixed(2)} {currency}

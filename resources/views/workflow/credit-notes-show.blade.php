@@ -149,7 +149,7 @@
                                 </td>
                                 <td>{{ $CreditNotesLine->orderLine['code'] }}</td>
                                 <td>{{ $CreditNotesLine->orderLine['label'] }}</td>
-                                <td>{{ $CreditNotesLine->qty }}</td>
+                                <td>{{ format_qty($CreditNotesLine->qty) }}</td>
                                 <td>{{ $CreditNotesLine->OrderLine->Unit['label'] }}</td>
                                 <td>{{ $CreditNotesLine->formatted_selling_price }}</td>
                                 <td>{{ $CreditNotesLine->OrderLine->VAT['rate'] }} %</td>

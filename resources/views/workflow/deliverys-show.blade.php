@@ -594,7 +594,7 @@
                   <td><small>{{ $nc->code }}</small></td>
                   <td>{{ $nc->label }}</td>
                   <td><small>{{ $nc->type }}</small></td>
-                  <td>{{ $nc->qty }}</td>
+                  <td>{{ format_qty($nc->qty) }}</td>
                   <td>
                     @php
                       $ncBadge = match($nc->statu) { 1 => 'badge-danger', 3 => 'badge-success', default => 'badge-secondary' };

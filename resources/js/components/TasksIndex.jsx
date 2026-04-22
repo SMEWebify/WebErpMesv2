@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Tooltip } from 'bootstrap';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -70,8 +71,8 @@ function colDefs(t) {
             sortField: null,
             align:     '',
             render:    (task) => {
-                if (task.sub_assembly) return `${task.sub_assembly.qty} ×`;
-                if (task.order_lines)  return `${task.order_lines.qty} × ${task.qty}`;
+                if (task.sub_assembly) return `${formatQty(task.sub_assembly.qty)} ×`;
+                if (task.order_lines)  return `${formatQty(task.order_lines.qty)} × ${formatQty(task.qty)}`;
                 return '';
             },
         },

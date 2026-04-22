@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatQty } from '../utils';
 
 const TYP_MOVE_LABELS = {
     1:  'Inventaire',
@@ -120,7 +121,7 @@ export default function StockDetailPage({ initial, endpoints }) {
                             <tr>
                                 <td>{stockMove.user_name}</td>
                                 <td>{stockMove.date}</td>
-                                <td>{stockMove.qty}</td>
+                                <td>{formatQty(stockMove.qty)}</td>
                                 <td>
                                     {stockMove.order?.url ? (
                                         <a href={stockMove.order.url} className="btn btn-primary btn-sm">

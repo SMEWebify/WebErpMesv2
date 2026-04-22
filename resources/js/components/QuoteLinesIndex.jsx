@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { formatQty } from '../utils';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -146,7 +147,7 @@ function QuoteLinesTable({ lines, colOrder, hiddenCols, sortField, sortAsc, onSo
             case 'label':
                 return line.label;
             case 'qty':
-                return line.qty;
+                return formatQty(line.qty);
             case 'unit_label':
                 return line.unit_label ?? '—';
             case 'selling_price': {
