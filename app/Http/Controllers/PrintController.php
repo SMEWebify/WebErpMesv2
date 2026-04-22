@@ -273,7 +273,7 @@ class PrintController extends Controller
         $pdf->render();
         $canvas = $pdf->getDomPDF()->getCanvas();
         $font   = $pdf->getDomPDF()->getFontMetrics()->getFont('helvetica', 'normal');
-        $canvas->page_text(470, 818, 'Page {PAGE_NUM} / {PAGE_COUNT}', $font, 7, [0.3, 0.3, 0.3]);
+        $canvas->page_text(470, 778, 'Page {PAGE_NUM} / {PAGE_COUNT}', $font, 7, [0.3, 0.3, 0.3]);
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
