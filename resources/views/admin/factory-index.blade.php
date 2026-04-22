@@ -785,7 +785,6 @@
                                             <th>{{ __('general_content.template_trans_key') }}</th>
                                             <th>Reset</th>
                                             <th>Début exercice</th>
-                                            <th>Padding ID</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -799,14 +798,6 @@
                                                     @if(($template->reset_period ?? 'none') === 'yearly')
                                                         {{ \Carbon\Carbon::create()->month($template->yearly_reset_month ?? 1)->translatedFormat('F') }}
                                                         {{ $template->yearly_reset_day ?? 1 }}
-                                                    @else
-                                                        —
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if(($template->id_padding ?? 0) > 0)
-                                                        {{ $template->id_padding }} digits
-                                                        <small class="text-muted">(ex: {{ str_pad('1', $template->id_padding, '0', STR_PAD_LEFT) }})</small>
                                                     @else
                                                         —
                                                     @endif
@@ -825,8 +816,12 @@
                                                                         <div class="input-group-prepend">
                                                                             <span class="input-group-text"><i class="fas fa-code"></i></span>
                                                                         </div>
-                                                                        <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{week}-{id}" value="{{ $template->template }}" required>
+                                                                        <input type="text" class="form-control" id="template" name="template" placeholder="{dd}{mm}{yy}{id(2)}" value="{{ $template->template }}" required>
                                                                     </div>
+                                                                    <small class="text-muted">
+                                                                        Date : <code>{d}</code> <code>{dd}</code> <code>{m}</code> <code>{mm}</code> <code>{yy}</code> <code>{yyyy}</code> <code>{w}</code> <code>{ww}</code> —
+                                                                        ID : <code>{id}</code> <code>{id(2)}</code> <code>{id(3)}</code> …
+                                                                    </small>
                                                                 </div>
                                                                 <div class="form-group" x-data="{ period: '{{ $template->reset_period ?? 'none' }}' }">
                                                                     <label for="reset_period_{{ $template->id }}">Reset :</label>
@@ -853,10 +848,6 @@
                                                                             <input type="number" class="form-control" name="yearly_reset_day" min="1" max="31" value="{{ $template->yearly_reset_day ?? 1 }}">
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="form-group mt-2">
-                                                                    <label>Nombre de digits pour l'ID (0 = sans padding)</label>
-                                                                    <input type="number" class="form-control" name="id_padding" min="0" max="10" value="{{ $template->id_padding ?? 0 }}" placeholder="ex: 4 → 0001">
                                                                 </div>
                                                             </div>
                                                             <div class="card-footer">
@@ -918,8 +909,12 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-code"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="template" name="template" placeholder="{type}-{year}-{week}-{id}" required>
+                                        <input type="text" class="form-control" id="template" name="template" placeholder="{dd}{mm}{yy}{id(2)}" required>
                                     </div>
+                                    <small class="text-muted">
+                                        Date : <code>{d}</code> <code>{dd}</code> <code>{m}</code> <code>{mm}</code> <code>{yy}</code> <code>{yyyy}</code> <code>{w}</code> <code>{ww}</code> —
+                                        ID : <code>{id}</code> <code>{id(2)}</code> <code>{id(3)}</code> …
+                                    </small>
                                 </div>
                                 <div class="form-group" x-data="{ period: 'none' }">
                                     <label for="reset_period">Reset :</label>
@@ -951,10 +946,6 @@
                                             <input type="number" class="form-control" name="yearly_reset_day" min="1" max="31" value="1">
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Nombre de digits pour l'ID (0 = sans padding)</label>
-                                    <input type="number" class="form-control" name="id_padding" min="0" max="10" value="0" placeholder="ex: 4 → 0001">
                                 </div>
 
                                 <div class="card-footer">
