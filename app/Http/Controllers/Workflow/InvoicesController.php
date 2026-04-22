@@ -11,6 +11,7 @@ use App\Services\DocumentCodeGenerator;
 use App\Models\Workflow\Invoices;
 use App\Models\Workflow\InvoicePayment;
 use App\Models\Accounting\AccountingPaymentMethod;
+use App\Services\AccountingEntryService;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use App\Events\DeliveryLineUpdated;
@@ -626,6 +627,9 @@ class InvoicesController extends Controller
             'invoice_id' => $invoice->id,
             'user_id'    => Auth::id(),
         ]);
+
+        $payment->load('invoice.companie', 'paymentMethod');
+        app(AccountingEntryService::class)->createPaymentEntry($payment);
 
         // Mise à jour automatique du statut facture
         $total     = $invoice->getTotalPriceAttribute();

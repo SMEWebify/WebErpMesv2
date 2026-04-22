@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const JOURNAL_CODES = ['ACHAT', 'VENT'];
+const JOURNAL_CODES = ['ACHAT', 'VENT', 'ENCAIS'];
 
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content ?? '';

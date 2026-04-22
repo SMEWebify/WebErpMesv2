@@ -7,73 +7,66 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
-class AccountingEntryLinesExport implements FromCollection , WithHeadings, WithMapping
+class AccountingEntryLinesExport implements FromCollection, WithHeadings, WithMapping
 {
-    
-    private $AccountingEntryId;
+    private $ids;
 
-    Public function __construct($AccountingEntryId)
+    public function __construct($ids)
     {
-        $this->AccountingEntryId = $AccountingEntryId;
+        $this->ids = $ids;
     }
 
+    // En-têtes officiels DGFiP (arrêté du 29 juillet 2013)
     public function headings(): array
     {
         return [
-            'JOURNAL_CODE',
-            'JOURNAL_LABEL',
-            'SEQUENCE_NUMBER',
-            'ACCOUNTING_DATE',
-            'ACCOUNT_NUMBER',
-            'ACCOUNT_LABEL',
-            'JUSTIFICATION_REFERENCE',
-            'JUSTIFICATION_DATE',
-            'AUXILIARY_ACCOUNT_NUMBER',
-            'AUXILIARY_ACCOUNT_LABEL',
-            'DOCUMENT_REFERENCE',
-            'DOCUMENT_DATE',
-            'ENTRY_LABEL',
-            'DEBIT_AMOUNT',
-            'CREDIT_AMOUNT',
-            'ENTRY_LETTERING',
-            'LETTERING_DATE',
-            'VALIDATION_DATE',
-            'CURRENCY_CODE',
-            'INVOICE_LINE_ID',
-            'PURCHASE_INVOICE_LINE_ID',
+            'JournalCode',
+            'JournalLib',
+            'EcritureNum',
+            'EcritureDate',
+            'CompteNum',
+            'CompteLib',
+            'CompAuxNum',
+            'CompAuxLib',
+            'PieceRef',
+            'PieceDate',
+            'EcritureLib',
+            'Debit',
+            'Credit',
+            'EcritureLet',
+            'DateLet',
+            'ValidDate',
+            'Montantdevise',
+            'Idevise',
         ];
     }
 
-    public function map($AccountingEntry): array
+    public function map($e): array
     {
         return [
-            $AccountingEntry->journal_code,
-            $AccountingEntry->journal_label,
-            $AccountingEntry->sequence_number,
-            $AccountingEntry->accounting_date->format('Y-m-d'), // Format de date
-            $AccountingEntry->account_number,
-            $AccountingEntry->account_label,
-            $AccountingEntry->justification_reference,
-            $AccountingEntry->justification_date->format('Y-m-d'), // Format de date
-            $AccountingEntry->auxiliary_account_number,
-            $AccountingEntry->auxiliary_account_label,
-            $AccountingEntry->document_reference,
-            $AccountingEntry->document_date->format('Y-m-d'), // Format de date
-            $AccountingEntry->entry_label,
-            $AccountingEntry->debit_amount,
-            $AccountingEntry->credit_amount,
-            $AccountingEntry->entry_lettering,
-            optional($AccountingEntry->lettering_date)->format('Y-m-d'), // Peut être null, on utilise `optional()`
-            $AccountingEntry->validation_date->format('Y-m-d'), // Format de date
-            $AccountingEntry->currency_code,
-            $AccountingEntry->invoice_line_id,
-            $AccountingEntry->purchase_invoice_line_id,
+            $e->journal_code,
+            $e->journal_label,
+            $e->sequence_number,
+            $e->accounting_date->format('Ymd'),
+            $e->account_number,
+            $e->account_label,
+            $e->auxiliary_account_number ?? '',
+            $e->auxiliary_account_label  ?? '',
+            $e->justification_reference  ?? '',
+            $e->justification_date?->format('Ymd') ?? '',
+            $e->entry_label,
+            number_format((float) $e->debit_amount,  2, ',', ''),
+            number_format((float) $e->credit_amount, 2, ',', ''),
+            $e->entry_lettering  ?? '',
+            $e->lettering_date?->format('Ymd') ?? '',
+            $e->validation_date->format('Ymd'),
+            '', // Montantdevise — vide si monnaie fonctionnelle
+            '', // Idevise
         ];
     }
 
     public function collection()
     {
-        return AccountingEntry::whereIn('id', $this->AccountingEntryId)->get();
-        
+        return AccountingEntry::whereIn('id', $this->ids)->get();
     }
 }
