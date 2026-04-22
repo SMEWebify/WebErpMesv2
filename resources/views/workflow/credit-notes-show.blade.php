@@ -25,6 +25,7 @@
     <div class="card-body">
         <div class="tab-content">
         <div class="tab-pane active" id="CreditNotes">
+            <x-relational-breadcrumb :entity="$CreditNotes" />
             <div class="row">
                 <div class="col-md-9">
                     @include('include.alert-result')

@@ -25,6 +25,7 @@ class RelationalBreadcrumb extends Component
             'Orders'        => $this->buildForOrder($entity),
             'Deliverys'     => $this->buildForDelivery($entity),
             'Invoices'      => $this->buildForInvoice($entity),
+            'CreditNotes'   => $this->buildForCreditNote($entity),
             default         => null,
         };
     }
@@ -88,6 +89,16 @@ class RelationalBreadcrumb extends Component
             'url'   => route('invoices.show', ['id' => $invoice->id]),
             'color' => 'danger',
             'icon'  => 'fas fa-receipt',
+        ];
+    }
+
+    private function creditNoteNode($creditNote): array
+    {
+        return [
+            'label' => $creditNote->code,
+            'url'   => route('credit.notes.show', ['id' => $creditNote->id]),
+            'color' => 'dark',
+            'icon'  => 'fas fa-file-minus',
         ];
     }
 
@@ -229,6 +240,35 @@ class RelationalBreadcrumb extends Component
                 $this->ancestors[] = $this->quoteNode($quote);
             }
             $this->ancestors[] = $this->orderNode($order);
+        }
+    }
+
+    private function buildForCreditNote($creditNote): void
+    {
+        $this->current = [
+            'label' => $creditNote->code,
+            'color' => 'dark',
+            'icon'  => 'fas fa-file-minus',
+        ];
+
+        if ($creditNote->invoices_id && $creditNote->invoice) {
+            $invoice = $creditNote->invoice;
+            $order = $invoice->invoiceLines->first()?->orderLine?->order;
+            if ($order) {
+                if ($order->quotes_id && $order->Quote) {
+                    $quote = $order->Quote;
+                    if ($quote->opportunities_id && $quote->opportunities) {
+                        $opp = $quote->opportunities;
+                        if ($opp->leads_id && $opp->lead) {
+                            $this->ancestors[] = $this->leadNode($opp->lead);
+                        }
+                        $this->ancestors[] = $this->opportunityNode($opp);
+                    }
+                    $this->ancestors[] = $this->quoteNode($quote);
+                }
+                $this->ancestors[] = $this->orderNode($order);
+            }
+            $this->ancestors[] = $this->invoiceNode($invoice);
         }
     }
 
