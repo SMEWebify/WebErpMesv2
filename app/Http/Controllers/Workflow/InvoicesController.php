@@ -25,6 +25,7 @@ use App\Services\InvoiceLineService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workflow\DeliveryLines;
+use App\Models\Companies\Companies;
 use App\Services\InvoiceCalculatorService;
 use App\Services\AccountingPeriodService;
 use App\Http\Requests\Workflow\UpdateInvoiceRequest;
@@ -521,7 +522,7 @@ class InvoicesController extends Controller
             ? QontoInvoiceMapping::where('invoice_id', $id->id)->first()
             : null;
 
-        $companies = $this->selectDataService->getCompanies();
+        $companies = Companies::where('active', 1)->orderBy('code')->get(['id', 'code', 'label']);
         $addresses = $this->selectDataService->getAddress($id->companies_id);
         $contacts  = $this->selectDataService->getContact($id->companies_id);
 
