@@ -153,21 +153,21 @@
                         <x-adminlte-select name="accounting_payment_conditions_id" label="Condition de paiement">
                             <option value="">--</option>
                             @foreach($paymentConditions as $item)
-                                <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @selected(optional($defaultPaymentCondition)->id === $item->id)>{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 
                         <x-adminlte-select name="accounting_payment_methods_id" label="Mode de paiement">
                             <option value="">--</option>
                             @foreach($paymentMethods as $item)
-                                <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @selected(optional($defaultPaymentMethod)->id === $item->id)>{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 
                         <x-adminlte-select name="accounting_deliveries_id" label="Mode de livraison">
                             <option value="">--</option>
                             @foreach($deliveries as $item)
-                                <option value="{{ $item->id }}">{{ $item->code }} - {{ $item->label }}</option>
+                                <option value="{{ $item->id }}" @selected(optional($defaultDelivery)->id === $item->id)>{{ $item->code }} - {{ $item->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 

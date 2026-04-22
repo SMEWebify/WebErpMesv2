@@ -207,6 +207,9 @@ class PreOrdersController extends Controller
             'vats' => AccountingVat::orderBy('code')->get(),
             'defaultUnit' => MethodsUnits::where('default', 1)->first(),
             'defaultVat' => AccountingVat::where('default', 1)->first(),
+            'defaultPaymentCondition' => AccountingPaymentConditions::where('default', 1)->first(),
+            'defaultPaymentMethod' => AccountingPaymentMethod::where('default', 1)->first(),
+            'defaultDelivery' => AccountingDelivery::where('default', 1)->first(),
             'generatedOrderCode' => $this->generateOrderCodeByType(1),
             'sourcePdfUrl' => $sourcePdfUrl,
         ]);
