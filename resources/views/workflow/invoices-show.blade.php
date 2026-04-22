@@ -79,6 +79,38 @@
                   </div>
                 </div>
                 <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="invoice_company_id">{{ __('general_content.companie_name_trans_key') }}</label>
+                    <select name="companies_id" id="invoice_company_id" class="form-control">
+                      @foreach($companies as $company)
+                        <option value="{{ $company->id }}" {{ $company->id == $Invoice->companies_id ? 'selected' : '' }}>
+                          {{ $company->code }} — {{ $company->label }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="invoice_address_id">{{ __('general_content.adress_name_trans_key') }}</label>
+                    <select name="companies_addresses_id" id="invoice_address_id" class="form-control">
+                      @foreach($addresses as $address)
+                        <option value="{{ $address->id }}" {{ $address->id == $Invoice->companies_addresses_id ? 'selected' : '' }}>
+                          {{ $address->label }}{{ $address->adress ? ' — ' . $address->adress : '' }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="invoice_contact_id">{{ __('general_content.contact_name_trans_key') }}</label>
+                    <select name="companies_contacts_id" id="invoice_contact_id" class="form-control">
+                      @foreach($contacts as $contact)
+                        <option value="{{ $contact->id }}" {{ $contact->id == $Invoice->companies_contacts_id ? 'selected' : '' }}>
+                          {{ $contact->first_name }} {{ $contact->name }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
                   <x-FormTextareaComment  comment="{{ $Invoice->comment }}" />
                 </div>
                 <x-slot name="footerSlot">
@@ -94,22 +126,13 @@
                 <div class="card-body">
                   {{ __('general_content.created_at_trans_key') }} : {{ $Invoice->GetPrettyCreatedAttribute() }}
                 </div>
-                <div class="card-body">
-                  {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $Invoice->companie['id'] }}" label="{{ $Invoice->companie['label'] }}"  />
-                </div>
-                <div class="card-body">
-                  {{ __('general_content.adress_name_trans_key') }} :   {{ $Invoice->adresse['label'] }} - {{ $Invoice->adresse['adress'] }}
-                </div>
-                <div class="card-body">
-                  {{ __('general_content.contact_name_trans_key') }} :  {{ $Invoice->contact['first_name'] }} - {{ $Invoice->contact['name'] }}
-                </div>
               </div>
               <div class="card-body">
                 @include('include.sub-total-price')
               </div>
             </x-adminlte-card>
 
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
                     <tr>
@@ -248,4 +271,24 @@
 @stop
 
 @section('js')
+<script>
+(function ($) {
+    var acUrl = '{{ $companyAcUrl }}';
+
+    $('#invoice_company_id').on('change', function () {
+        var companyId = $(this).val();
+        $.getJSON(acUrl, { company_id: companyId }, function (data) {
+            var $addr = $('#invoice_address_id').empty();
+            $.each(data.addresses, function (_, a) {
+                $addr.append($('<option>', { value: a.id, text: a.label }));
+            });
+
+            var $contact = $('#invoice_contact_id').empty();
+            $.each(data.contacts, function (_, c) {
+                $contact.append($('<option>', { value: c.id, text: c.label }));
+            });
+        });
+    });
+}(jQuery));
+</script>
 @stop

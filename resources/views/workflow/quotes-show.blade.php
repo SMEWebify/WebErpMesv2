@@ -284,7 +284,7 @@
             @endcan
 
 
-            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible="collapsed" maximizable>
+            <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible maximizable>
               <table class="table table-hover">
                 <tr>
                   <td style="width:50%">{{ __('general_content.quote_trans_key') }}</td>

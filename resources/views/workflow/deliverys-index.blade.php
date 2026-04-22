@@ -30,7 +30,7 @@
         // KPI labels
         'total'           => __('general_content.total_trans_key'),
         // colonnes
-        'code'            => __('general_content.id_trans_key'),
+        'code'            => 'Code',
         'label'           => __('general_content.label_trans_key'),
         'company'         => __('general_content.customer_trans_key'),
         'lines'           => __('general_content.lines_count_trans_key'),
