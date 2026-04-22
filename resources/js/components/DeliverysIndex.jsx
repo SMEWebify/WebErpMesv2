@@ -23,6 +23,8 @@ const LS_HIDDEN_COLS = 'deliverys_hidden_cols';
 const LS_FILTERS     = 'deliverys_filters';
 
 const DEFAULT_COL_ORDER = ['code', 'label', 'company', 'lines_count', 'statu', 'invoice_status', 'user', 'created_at'];
+const TEXT_FILTER_COLS  = new Set(['code', 'label', 'company']);
+const DATE_RANGE_COLS   = new Set(['created_at']);
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -247,6 +249,31 @@ function colDefs(trans) {
     };
 }
 
+function dmyToISO(str) {
+    if (!str || !str.includes('/')) return str ?? '';
+    const [d, m, y] = str.split('/');
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+}
+
+function matchesColFilter(row, colId, value) {
+    if (DATE_RANGE_COLS.has(colId)) {
+        const { from, to } = value ?? {};
+        const iso = dmyToISO(row.created_at ?? '');
+        if (!iso) return true;
+        if (from && iso < from) return false;
+        if (to   && iso > to)   return false;
+        return true;
+    }
+    const v = (value ?? '').toLowerCase().trim();
+    if (!v) return true;
+    switch (colId) {
+        case 'code':    return (row.code ?? '').toLowerCase().includes(v);
+        case 'label':   return (row.label ?? '').toLowerCase().includes(v);
+        case 'company': return (row.companie?.label ?? '').toLowerCase().includes(v);
+        default:        return true;
+    }
+}
+
 function readSavedColOrder() {
     try {
         const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
@@ -270,11 +297,16 @@ function readSavedHiddenCols() {
 function DeliverysTable({ rows, loading, sort, onSort, trans }) {
     const [colOrder,   setColOrder]   = useState(readSavedColOrder);
     const [hiddenCols, setHiddenCols] = useState(readSavedHiddenCols);
+    const [colFilters, setColFilters] = useState({});
     const [dragOver,   setDragOver]   = useState(null);
     const dragCol = useRef(null);
 
     const COLS        = colDefs(trans);
     const visibleCols = colOrder.filter(c => !hiddenCols.has(c));
+    const filtered    = loading ? [] : rows.filter(row =>
+        visibleCols.every(colId => matchesColFilter(row, colId, colFilters[colId] ?? ''))
+    );
+    const inputStyle  = { fontSize: '0.72rem', height: '24px', padding: '1px 4px' };
 
     const hideCol = (colId) => {
         const next = new Set(hiddenCols);
@@ -369,6 +401,34 @@ function DeliverysTable({ rows, loading, sort, onSort, trans }) {
                             })}
                             <th style={{ width: 36 }} />
                         </tr>
+                        <tr>
+                            {visibleCols.map(colId => (
+                                <th key={colId} style={{ padding: '2px 4px', fontWeight: 'normal' }}>
+                                    {TEXT_FILTER_COLS.has(colId) && (
+                                        <input type="text" className="form-control form-control-sm"
+                                            style={inputStyle} placeholder="⌕"
+                                            value={colFilters[colId] ?? ''}
+                                            onChange={e => setColFilters(prev => ({ ...prev, [colId]: e.target.value }))}
+                                        />
+                                    )}
+                                    {DATE_RANGE_COLS.has(colId) && (
+                                        <div style={{ display: 'flex', gap: '2px', minWidth: '200px' }}>
+                                            <input type="date" className="form-control form-control-sm"
+                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }} title="Du"
+                                                value={(colFilters[colId] ?? {}).from ?? ''}
+                                                onChange={e => setColFilters(prev => ({ ...prev, [colId]: { ...(prev[colId] ?? {}), from: e.target.value } }))}
+                                            />
+                                            <input type="date" className="form-control form-control-sm"
+                                                style={{ ...inputStyle, flex: 1, minWidth: 0 }} title="Au"
+                                                value={(colFilters[colId] ?? {}).to ?? ''}
+                                                onChange={e => setColFilters(prev => ({ ...prev, [colId]: { ...(prev[colId] ?? {}), to: e.target.value } }))}
+                                            />
+                                        </div>
+                                    )}
+                                </th>
+                            ))}
+                            <th />
+                        </tr>
                     </thead>
                     <tbody>
                         {loading ? (
@@ -377,13 +437,13 @@ function DeliverysTable({ rows, loading, sort, onSort, trans }) {
                                     <i className="fas fa-spinner fa-spin" /> {trans.loading ?? 'Chargement…'}
                                 </td>
                             </tr>
-                        ) : rows.length === 0 ? (
+                        ) : filtered.length === 0 ? (
                             <tr>
                                 <td colSpan={visibleCols.length + 1} className="text-center py-4 text-muted">
                                     {trans.no_results ?? 'Aucun résultat'}
                                 </td>
                             </tr>
-                        ) : rows.map(row => (
+                        ) : filtered.map(row => (
                             <tr key={row.id}>
                                 {visibleCols.map(colId => (
                                     <td key={colId}>{COLS[colId]?.render(row)}</td>
