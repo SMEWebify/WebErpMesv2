@@ -34,8 +34,9 @@ class CreditNotes extends Model
         'statu', 
         'user_id', 
         'reason', 
-        'validated_by', 
-        'validated_at'
+        'validated_by',
+        'validated_at',
+        'customer_reference',
     ];
 
     // Only log changes

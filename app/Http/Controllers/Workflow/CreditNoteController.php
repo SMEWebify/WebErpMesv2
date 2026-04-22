@@ -206,9 +206,10 @@ class CreditNoteController extends Controller
     public function update(UpdateCreditNoteRequest $request)
     {
         $CreditNote = CreditNotes::find($request->id);
-        $CreditNote->label=$request->label;
-        $CreditNote->statu=$request->statu;
-        $CreditNote->reason=$request->reason;
+        $CreditNote->label              = $request->label;
+        $CreditNote->statu              = $request->statu;
+        $CreditNote->reason             = $request->reason;
+        $CreditNote->customer_reference = $request->customer_reference;
         $CreditNote->save();
 
         return redirect()->route('credit.notes.show', ['id' =>  $CreditNote->id])->with('success', 'Successfully updated credit note');

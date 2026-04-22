@@ -24,10 +24,13 @@ class UpdateDeliveryRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'label'=>'required',
-            'tracking_number'=>'nullable|string',
-            'comment'=>'nullable|string',
+            'label'                  => 'required',
+            'tracking_number'        => 'nullable|string',
+            'comment'                => 'nullable|string',
+            'customer_reference'     => 'nullable|string|max:255',
+            'companies_id'           => 'nullable|integer|exists:companies,id',
+            'companies_addresses_id' => 'nullable|integer|exists:companies_addresses,id',
+            'companies_contacts_id'  => 'nullable|integer|exists:companies_contacts,id',
         ];
     }
 }

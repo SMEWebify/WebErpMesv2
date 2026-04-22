@@ -464,12 +464,18 @@ class InvoicesController extends Controller
         $LastInvoice = Invoices::latest()->first();
         $invoiceId = $LastInvoice ? $LastInvoice->id : 0;
         $code = $this->documentCodeGenerator->generateDocumentCode('invoice', $invoiceId);
-        $label = $code;
-
         $DeliveryData = Deliverys::find($id);
 
         $user = Auth::user();
-        $InvoiceCreated = $this->invoiceService->createInvoice($code, $label, $DeliveryData->companies_id, $DeliveryData->companies_addresses_id, $DeliveryData->companies_contacts_id, $user->id);
+        $InvoiceCreated = $this->invoiceService->createInvoice(
+            $code,
+            $DeliveryData->label,
+            $DeliveryData->companies_id,
+            $DeliveryData->companies_addresses_id,
+            $DeliveryData->companies_contacts_id,
+            $user->id,
+            $DeliveryData->customer_reference
+        );
 
         $DeliveryLines = DeliveryLines::where('deliverys_id', $id)->get();
         foreach ($DeliveryLines as $DeliveryLine) {
@@ -601,6 +607,7 @@ class InvoicesController extends Controller
         $Invoice->companies_id           = $request->companies_id;
         $Invoice->companies_addresses_id = $request->companies_addresses_id;
         $Invoice->companies_contacts_id  = $request->companies_contacts_id;
+        $Invoice->customer_reference     = $request->customer_reference;
         $Invoice->save();
 
         // For each invoice line associated with this invoice

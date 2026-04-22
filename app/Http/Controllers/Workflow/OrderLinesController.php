@@ -694,11 +694,12 @@ class OrderLinesController extends Controller
 
         $delivery = $deliveryService->createDelivery(
             $deliveryCode,
-            $deliveryCode,
+            $order->label,
             $order->companies_id,
             $order->companies_addresses_id,
             $order->companies_contacts_id,
-            Auth::id()
+            Auth::id(),
+            $order->customer_reference
         );
 
         if (! $delivery) {

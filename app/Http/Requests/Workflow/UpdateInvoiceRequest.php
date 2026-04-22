@@ -28,6 +28,7 @@ class UpdateInvoiceRequest extends FormRequest
             'companies_id'           => 'required|exists:companies,id',
             'companies_addresses_id' => 'nullable|exists:companies_addresses,id',
             'companies_contacts_id'  => 'nullable|exists:companies_contacts,id',
+            'customer_reference'     => 'nullable|string|max:255',
         ];
     }
 }

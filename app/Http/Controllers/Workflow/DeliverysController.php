@@ -326,13 +326,21 @@ class DeliverysController extends Controller
             return $line->invoice_status == 4;
         });
 
+        $companies = $this->SelectDataService->getCompanies();
+        $addresses = $this->SelectDataService->getAddress($id->companies_id);
+        $contacts  = $this->SelectDataService->getContact($id->companies_id);
+
         return view('workflow/deliverys-show', [
-            'Delivery' => $id,
-            'previousUrl' =>  $previousUrl,
-            'nextUrl' =>  $nextUrl,
-            'CustomFields' => $CustomFields,
-            'allDelivered' => $allDelivered,
+            'Delivery'        => $id,
+            'previousUrl'     => $previousUrl,
+            'nextUrl'         => $nextUrl,
+            'CustomFields'    => $CustomFields,
+            'allDelivered'    => $allDelivered,
             'PruchasesSelect' => $PruchasesSelect,
+            'companies'       => $companies,
+            'addresses'       => $addresses,
+            'contacts'        => $contacts,
+            'companyAcUrl'    => route('deliverys.company-ac'),
             'nonConformities' => \App\Models\Quality\QualityNonConformity::select('id', 'code')->orderBy('code')->get(),
         ]);
     }
@@ -354,11 +362,15 @@ class DeliverysController extends Controller
     public function update(UpdateDeliveryRequest $request)
     {
         $Delivery = Deliverys::find($request->id);
-        $Delivery->label=$request->label;
-        $Delivery->statu=$request->statu;
-        $Delivery->purchases_id=$request->purchases_id;
-        $Delivery->tracking_number=$request->tracking_number;
-        $Delivery->comment=$request->comment;
+        $Delivery->label                  = $request->label;
+        $Delivery->statu                  = $request->statu;
+        $Delivery->purchases_id           = $request->purchases_id;
+        $Delivery->tracking_number        = $request->tracking_number;
+        $Delivery->comment                = $request->comment;
+        $Delivery->customer_reference     = $request->customer_reference;
+        $Delivery->companies_id           = $request->companies_id;
+        $Delivery->companies_addresses_id = $request->companies_addresses_id;
+        $Delivery->companies_contacts_id  = $request->companies_contacts_id;
         $Delivery->save();
 
         return redirect()->route('deliverys.show', ['id' =>  $Delivery->id])->with('success', 'Successfully updated Delivery');
@@ -474,6 +486,24 @@ class DeliverysController extends Controller
         ]);
 
         return redirect()->route('deliverys.show', ['id' =>  $packaging->deliverys_id])->with('success', 'Successfully update packaging');
+    }
+
+    public function companyAc(Request $request)
+    {
+        $companyId = (int) $request->get('company_id');
+        $addresses = $this->SelectDataService->getAddress($companyId);
+        $contacts  = $this->SelectDataService->getContact($companyId);
+
+        return response()->json([
+            'addresses' => $addresses->map(fn($a) => [
+                'id'    => $a->id,
+                'label' => trim($a->label . ($a->adress ? ' — ' . $a->adress : '')),
+            ])->values(),
+            'contacts' => $contacts->map(fn($c) => [
+                'id'    => $c->id,
+                'label' => trim($c->first_name . ' ' . $c->name),
+            ])->values(),
+        ]);
     }
 
     public function linesJson(Deliverys $id)

@@ -25,7 +25,8 @@ class UpdateCreditNoteRequest extends FormRequest
     {
         return [
              //
-            'label'=>'required',
+            'label'              => 'required',
+            'customer_reference' => 'nullable|string|max:255',
         ];
     }
 }

@@ -42,6 +42,7 @@ class Invoices extends Model
                             'due_date',
                             'export_date',
                             'incoterm',
+                            'customer_reference',
                             ];
 
     // Only log changes

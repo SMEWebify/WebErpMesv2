@@ -49,7 +49,40 @@
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Delivery->GetshortCreatedAttribute() }}</p>
                   </div>
                   <div class="form-group col-md-6">
-                    @include('include.form.form-input-label',['label' =>__('general_content.name_of_deliverys_notes_trans_key'), 'Value' =>  $Delivery->label])
+                    @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Delivery->label])
+                    @include('include.form.form-input-customerInfo',['customerReference' =>  $Delivery->customer_reference])
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label for="delivery_company_id">{{ __('general_content.companie_name_trans_key') }}</label>
+                    <select name="companies_id" id="delivery_company_id" class="form-control">
+                      @foreach($companies as $company)
+                        <option value="{{ $company->id }}" {{ $company->id == $Delivery->companies_id ? 'selected' : '' }}>
+                          {{ $company->label }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="delivery_address_id">{{ __('general_content.adress_name_trans_key') }}</label>
+                    <select name="companies_addresses_id" id="delivery_address_id" class="form-control">
+                      @foreach($addresses as $address)
+                        <option value="{{ $address->id }}" {{ $address->id == $Delivery->companies_addresses_id ? 'selected' : '' }}>
+                          {{ $address->label }}{{ $address->adress ? ' — ' . $address->adress : '' }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label for="delivery_contact_id">{{ __('general_content.contact_name_trans_key') }}</label>
+                    <select name="companies_contacts_id" id="delivery_contact_id" class="form-control">
+                      @foreach($contacts as $contact)
+                        <option value="{{ $contact->id }}" {{ $contact->id == $Delivery->companies_contacts_id ? 'selected' : '' }}>
+                          {{ $contact->first_name }} {{ $contact->name }}
+                        </option>
+                      @endforeach
+                    </select>
                   </div>
                 </div>
                 <div class="row">
@@ -82,35 +115,6 @@
             </form>
           </div>
           <div class="col-md-3">
-            <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
-              <div class="table-responsive">
-                <div class="card-body">
-                  {{ __('general_content.created_at_trans_key') }} :  {{ $Delivery->GetPrettyCreatedAttribute() }}
-                </div>
-                <div class="card-body">
-                  {{ __('general_content.companie_name_trans_key') }} :  <x-CompanieButton id="{{ $Delivery->companie['id'] }}" label="{{ $Delivery->companie['label'] }}"  />
-                </div>
-                <div class="card-body">
-                  {{ __('general_content.adress_name_trans_key') }} :   {{ $Delivery->adresse['label'] }} - {{ $Delivery->adresse['adress'] }}
-                </div>
-                <div class="card-body">
-                  {{ __('general_content.contact_name_trans_key') }} :  {{ $Delivery->contact['first_name'] }} - {{ $Delivery->contact['name'] }}
-                </div>
-                @if($Delivery->purchases_id)
-                <div class="card-body">
-                  {{ __('general_content.name_purchase_trans_key') }} : 
-                  <a class="btn btn-primary btn-sm" href="{{ route('purchases.show', ['id' => $Delivery->purchases_id])}}">
-                    <i class="fas fa-folder"></i>
-                    {{ $Delivery->purchase->code }}
-                  </a>
-                </div>
-                <div class="card-body">
-                  {{ __('general_content.suppliers_trans_key') }} : <x-CompanieButton id="{{ $Delivery->purchase->companies_id }}" label="{{ $Delivery->purchase->companie['label'] }}"  />
-                </div>
-                @endif
-              </div>
-            </x-adminlte-card>
-
             <x-adminlte-card title="{{ __('general_content.options_trans_key') }}" theme="warning" collapsible maximizable>
               <div class="table-responsive p-0">
                 <table class="table table-hover">
@@ -675,5 +679,24 @@
       // Optionally, you can show a message indicating that the text has been copied
       // alert("Lien copié dans le presse-papier !");
   }
+
+  (function ($) {
+      var acUrl = '{{ $companyAcUrl }}';
+
+      $('#delivery_company_id').on('change', function () {
+          var companyId = $(this).val();
+          $.getJSON(acUrl, { company_id: companyId }, function (data) {
+              var $addr = $('#delivery_address_id').empty();
+              $.each(data.addresses, function (_, a) {
+                  $addr.append($('<option>', { value: a.id, text: a.label }));
+              });
+
+              var $contact = $('#delivery_contact_id').empty();
+              $.each(data.contacts, function (_, c) {
+                  $contact.append($('<option>', { value: c.id, text: c.label }));
+              });
+          });
+      });
+  }(jQuery));
 </script>
 @stop

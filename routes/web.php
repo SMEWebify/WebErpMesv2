@@ -376,6 +376,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/request/company-data', 'App\Http\Controllers\Workflow\DeliverysController@requestCompanyData')->name('deliverys-request.company-data');
         Route::post('/request/store', 'App\Http\Controllers\Workflow\DeliverysController@storeDeliveryNoteApi')->name('deliverys-request.store');
         Route::post('/edit/{id}', 'App\Http\Controllers\Workflow\DeliverysController@update')->name('deliverys.update');
+        Route::get('/company-ac', 'App\Http\Controllers\Workflow\DeliverysController@companyAc')->name('deliverys.company-ac');
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\DeliverysController@changeStatusJson')->name('deliverys.json.statu');
         // JSON API for React DeliverysIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\DeliverysController@listJson')->name('deliverys.json.list');
@@ -407,6 +408,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\InvoicesController@changeStatusJson')->name('invoices.json.statu');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
+        // JSON endpoint for company address/contact selects on invoice show page
+        Route::get('/company-ac', 'App\Http\Controllers\Workflow\InvoicesController@companyAddressContact')->name('invoices.company-ac');
         // Règlements
         Route::get('/{invoice}/payments', [\App\Http\Controllers\Workflow\InvoicesController::class, 'paymentsIndex'])->name('invoices.payments.index');
         Route::post('/{invoice}/payments', [\App\Http\Controllers\Workflow\InvoicesController::class, 'paymentsStore'])->name('invoices.payments.store');

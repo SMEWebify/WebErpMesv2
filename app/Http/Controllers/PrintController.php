@@ -249,7 +249,7 @@ class PrintController extends Controller
      * @param string $view
      * @return \Illuminate\Http\Response
      */
-    private function generatePdf($Document, $typeDocumentName, $calculatorService, $viewKey)
+    private function generatePdf($Document, $typeDocumentName, $calculatorService, $viewKey): \Symfony\Component\HttpFoundation\Response
     {
         $factory = app('Factory');
         $currency = $factory->curency ?? 'EUR';
@@ -277,7 +277,7 @@ class PrintController extends Controller
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
-        }, $Document->code . '.pdf');
+        }, str_replace(['/', '\\'], '-', $Document->code) . '.pdf');
     }
 
     /**

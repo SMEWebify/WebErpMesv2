@@ -63,7 +63,7 @@
                     <p><label for="date" class="text-success">{{ __('general_content.date_trans_key') }}</label>  {{  $Quote->GetshortCreatedAttribute() }}</p>
                   </div>
                   <div class="form-group col-md-6">
-                    @include('include.form.form-input-label',['label' =>__('general_content.name_quote_trans_key'), 'Value' =>  $Quote->label])
+                    @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Quote->label])
                   </div>
                 </div>
                   @if($Quote->companie['active'] == 1)

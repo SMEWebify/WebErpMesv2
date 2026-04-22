@@ -38,6 +38,7 @@ class Deliverys extends Model
                             'order_id',
                             'purchases_id',
                             'tracking_number',
+                            'customer_reference',
                         ];
 
     // Only log changes

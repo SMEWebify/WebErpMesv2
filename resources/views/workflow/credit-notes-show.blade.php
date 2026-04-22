@@ -50,12 +50,7 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     @include('include.form.form-input-label',['label' => __('general_content.label_trans_key'), 'Value' =>  $CreditNotes->label])
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                </div>
-                                <div class="form-group col-md-6">
+                                    @include('include.form.form-input-customerInfo',['customerReference' =>  $CreditNotes->customer_reference])
                                 </div>
                             </div>
                             <div class="row">

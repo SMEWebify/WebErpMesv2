@@ -66,6 +66,7 @@
                   </div>
                   <div class="form-group col-md-6">
                     @include('include.form.form-input-label',['label' => __('general_content.label_trans_key'), 'Value' =>  $Invoice->label])
+                    @include('include.form.form-input-customerInfo',['customerReference' =>  $Invoice->customer_reference])
                   </div>
                 </div>
                 <div class="row">
@@ -122,11 +123,6 @@
 
           <div class="col-md-3">
             <x-adminlte-card title="{{ __('general_content.informations_trans_key') }}" theme="secondary" maximizable>
-              <div class="table-responsive">
-                <div class="card-body">
-                  {{ __('general_content.created_at_trans_key') }} : {{ $Invoice->GetPrettyCreatedAttribute() }}
-                </div>
-              </div>
               <div class="card-body">
                 @include('include.sub-total-price')
               </div>

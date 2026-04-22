@@ -78,7 +78,7 @@
                     <p><label class="text-success">{{ __('general_content.total_weight_trans_key') }}</label>  {{ number_format($Order->total_weight, 3, '.', ' ') }} kg</p>
                   </div>
                   <div class="form-group col-md-6">
-                    @include('include.form.form-input-label',['label' =>__('general_content.name_order_trans_key'), 'Value' =>  $Order->label])
+                    @include('include.form.form-input-label',['label' =>__('general_content.label_trans_key'), 'Value' =>  $Order->label])
                   </div>
                 </div>
                 @if($Order->type == 1)
