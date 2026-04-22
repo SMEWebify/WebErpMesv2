@@ -1457,6 +1457,20 @@ async function mountAccountingPeriodsApp() {
     );
 }
 
+async function mountInvoicePaymentsTab() {
+    const el = document.getElementById('invoice-payments-tab-app');
+    if (!el) return;
+    const { default: InvoicePaymentsTab } = await import('./components/InvoicePaymentsTab.jsx');
+    const parse = (attr) => { try { return JSON.parse(el.dataset[attr] ?? 'null'); } catch { return null; } };
+    createRoot(el).render(
+        React.createElement(InvoicePaymentsTab, {
+            endpoints:      parse('endpoints')      ?? {},
+            paymentMethods: parse('paymentMethods') ?? [],
+            invoiceId:      Number(el.dataset.invoiceId),
+        })
+    );
+}
+
 mountKanbanSetting();
 mountInvoiceExportLines();
 mountFecExportLines();
@@ -1469,3 +1483,4 @@ mountStockCurrentApp();
 mountChatLive();
 mountStockValuationApp();
 mountAccountingPeriodsApp();
+mountInvoicePaymentsTab();

@@ -9,6 +9,8 @@ use App\Services\InvoiceDataService;
 use App\Services\SelectDataService;
 use App\Services\DocumentCodeGenerator;
 use App\Models\Workflow\Invoices;
+use App\Models\Workflow\InvoicePayment;
+use App\Models\Accounting\AccountingPaymentMethod;
 use App\Traits\NextPreviousTrait;
 use App\Models\Workflow\Deliverys;
 use App\Events\DeliveryLineUpdated;
@@ -520,8 +522,14 @@ class InvoicesController extends Controller
             'previousUrl'  => $previousUrl,
             'nextUrl'      => $nextUrl,
             'CustomFields' => $CustomFields,
-            'qontoEnabled' => $qontoEnabled,
-            'qontoMapping' => $qontoMapping,
+            'qontoEnabled'     => $qontoEnabled,
+            'qontoMapping'     => $qontoMapping,
+            'paymentMethods'   => AccountingPaymentMethod::orderBy('label')->get(['id', 'label']),
+            'paymentEndpoints' => [
+                'index'   => route('invoices.payments.index', $id->id),
+                'store'   => route('invoices.payments.store', $id->id),
+                'destroy' => route('invoices.payments.destroy', [$id->id, '__payment__']),
+            ],
         ]);
     }
 
@@ -575,5 +583,86 @@ class InvoicesController extends Controller
         }
 
         return redirect()->route('invoices.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
+    }
+
+    public function paymentsIndex(Invoices $invoice): \Illuminate\Http\JsonResponse
+    {
+        $payments = $invoice->payments()->with('paymentMethod:id,label', 'user:id,name')->get()
+            ->map(fn ($p) => [
+                'id'             => $p->id,
+                'amount'         => (float) $p->amount,
+                'payment_date'   => $p->payment_date->format('Y-m-d'),
+                'payment_method' => $p->paymentMethod?->label,
+                'reference'      => $p->reference,
+                'note'           => $p->note,
+                'user'           => $p->user?->name,
+                'created_at'     => $p->created_at->format('d/m/Y'),
+            ]);
+
+        $total        = $invoice->getTotalPriceAttribute();
+        $paid         = $payments->sum('amount');
+        $remaining    = round($total - $paid, 2);
+
+        return response()->json([
+            'payments'  => $payments,
+            'total'     => $total,
+            'paid'      => $paid,
+            'remaining' => $remaining,
+        ]);
+    }
+
+    public function paymentsStore(Request $request, Invoices $invoice): \Illuminate\Http\JsonResponse
+    {
+        $validated = $request->validate([
+            'amount'            => 'required|numeric|min:0.01',
+            'payment_date'      => 'required|date',
+            'payment_method_id' => 'nullable|exists:accounting_payment_methods,id',
+            'reference'         => 'nullable|string|max:100',
+            'note'              => 'nullable|string|max:500',
+        ]);
+
+        $payment = InvoicePayment::create([
+            ...$validated,
+            'invoice_id' => $invoice->id,
+            'user_id'    => Auth::id(),
+        ]);
+
+        // Mise à jour automatique du statut facture
+        $total     = $invoice->getTotalPriceAttribute();
+        $paid      = (float) InvoicePayment::where('invoice_id', $invoice->id)->sum('amount');
+        $remaining = round($total - $paid, 2);
+
+        if ($remaining <= 0) {
+            $invoice->statu = 5; // Payée
+            $invoice->InvoiceLines->each(fn ($l) => $l->update(['invoice_status' => 5]));
+        } elseif ($paid > 0) {
+            $invoice->statu = 3; // Partiellement réglée (en attente)
+        }
+        $invoice->save();
+
+        return response()->json(['ok' => true, 'remaining' => max(0, $remaining)]);
+    }
+
+    public function paymentsDestroy(Invoices $invoice, InvoicePayment $payment): \Illuminate\Http\JsonResponse
+    {
+        abort_if($payment->invoice_id !== $invoice->id, 404);
+
+        $payment->delete();
+
+        // Recalcul du statut
+        $total     = $invoice->getTotalPriceAttribute();
+        $paid      = (float) InvoicePayment::where('invoice_id', $invoice->id)->sum('amount');
+        $remaining = round($total - $paid, 2);
+
+        if ($remaining <= 0) {
+            $invoice->statu = 5;
+        } elseif ($paid > 0) {
+            $invoice->statu = 3;
+        } else {
+            $invoice->statu = 2; // Envoyée — plus de règlement
+        }
+        $invoice->save();
+
+        return response()->json(['ok' => true, 'remaining' => max(0, $remaining)]);
     }
 }

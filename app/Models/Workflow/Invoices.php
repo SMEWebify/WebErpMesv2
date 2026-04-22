@@ -10,6 +10,7 @@ use Illuminate\Support\Number;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Companies\Companies;
 use App\Models\Workflow\InvoiceLines;
+use App\Models\Workflow\InvoicePayment;
 use App\Models\Workflow\Orders;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\InvoiceCalculatorService;
@@ -86,6 +87,21 @@ class Invoices extends Model
     public function invoiceLines()
     {
         return $this->hasMany(InvoiceLines::class)->orderBy('ordre');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(InvoicePayment::class, 'invoice_id')->orderBy('payment_date');
+    }
+
+    public function getPaidAmountAttribute(): float
+    {
+        return (float) $this->payments()->sum('amount');
+    }
+
+    public function getRemainingAmountAttribute(): float
+    {
+        return round($this->getTotalPriceAttribute() - $this->getPaidAmountAttribute(), 2);
     }
 
     public function GetshortCreatedAttribute()

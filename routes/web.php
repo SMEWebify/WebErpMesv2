@@ -407,6 +407,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::post('/{id}/json/statu', 'App\Http\Controllers\Workflow\InvoicesController@changeStatusJson')->name('invoices.json.statu');
         // JSON endpoint for React InvoicesIndex
         Route::get('/json/list', 'App\Http\Controllers\Workflow\InvoicesController@listJson')->name('invoices.json.list');
+        // Règlements
+        Route::get('/{invoice}/payments', [\App\Http\Controllers\Workflow\InvoicesController::class, 'paymentsIndex'])->name('invoices.payments.index');
+        Route::post('/{invoice}/payments', [\App\Http\Controllers\Workflow\InvoicesController::class, 'paymentsStore'])->name('invoices.payments.store');
+        Route::delete('/{invoice}/payments/{payment}', [\App\Http\Controllers\Workflow\InvoicesController::class, 'paymentsDestroy'])->name('invoices.payments.destroy');
         Route::get('/{id}', 'App\Http\Controllers\Workflow\InvoicesController@show')->name('invoices.show');
     });
 

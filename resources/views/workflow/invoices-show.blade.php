@@ -21,6 +21,16 @@
       @if(count($CustomFields)> 0)
       <li class="nav-item"><a class="nav-link" href="#CustomFields" data-toggle="tab">{{ __('general_content.custom_fields_trans_key') }}  ({{ count($CustomFields) }})</a></li>
       @endif
+      <li class="nav-item">
+        <a class="nav-link" href="#Payments" data-toggle="tab">
+          <i class="fas fa-euro-sign mr-1"></i>Règlements
+          @if($Invoice->paid_amount > 0)
+            <span class="badge badge-{{ $Invoice->remaining_amount <= 0 ? 'success' : 'warning' }} ml-1">
+              {{ $Invoice->remaining_amount <= 0 ? 'Soldée' : 'Partiel' }}
+            </span>
+          @endif
+        </a>
+      </li>
       <li class="nav-item"><a class="nav-link" href="#Logs" data-toggle="tab">Logs</a></li>
     </ul>
   </div>
@@ -209,6 +219,14 @@
           <!-- /.col -->
         </div>
         <!-- /.row -->
+      </div>
+      <div class="tab-pane" id="Payments">
+        <div
+          id="invoice-payments-tab-app"
+          data-invoice-id="{{ $Invoice->id }}"
+          data-endpoints="{{ json_encode($paymentEndpoints) }}"
+          data-payment-methods="{{ json_encode($paymentMethods) }}"
+        ></div>
       </div>
       @if($CustomFields)
       <div class="tab-pane " id="CustomFields">
