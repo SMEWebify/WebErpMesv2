@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.purchase_trans_key'))
+@section('title', __('general_content.purchase_trans_key')   . ' - ' . $Purchase->code)
 
 @section('content_header')
   <link rel="stylesheet" href="{{ asset('css/custom.css') }}">

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.invoices_trans_key'))
+@section('title', __('general_content.invoices_trans_key') . ' - ' . $Invoice->code)
 
 @section('content_header')
   <x-Content-header-previous-button  h1="{{ __('general_content.invoices_trans_key') }} : {{  $Invoice->code }}" previous="{{ $previousUrl }}" list="{{ route('invoices') }}" next="{{ $nextUrl }}"/>

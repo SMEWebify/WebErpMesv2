@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.credit_note_trans_key'))
+@section('title', __('general_content.credit_note_trans_key')  . ' - ' . $CreditNotes->code)
 
 @section('content_header')
   <x-Content-header-previous-button  h1="{{ __('general_content.credit_note_trans_key') }} : {{  $CreditNotes->code }}" previous="{{ $previousUrl }}" list="{{ route('credit-notes') }}" next="{{ $nextUrl }}"/>

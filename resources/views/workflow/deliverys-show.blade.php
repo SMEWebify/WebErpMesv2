@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('general_content.delivery_notes_trans_key'))
+@section('title', __('general_content.delivery_notes_trans_key')  . ' - ' . $Delivery->code)
 
 @section('content_header')
   <x-Content-header-previous-button  h1="{{ __('general_content.delivery_notes_trans_key') }} : {{  $Delivery->code }}" previous="{{ $previousUrl }}" list="{{ route('deliverys') }}" next="{{ $nextUrl }}"/>
