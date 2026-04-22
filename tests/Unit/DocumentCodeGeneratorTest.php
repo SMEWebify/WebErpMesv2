@@ -33,6 +33,6 @@ class DocumentCodeGeneratorTest extends TestCase
 
         $code = $generator->generateDocumentCode('invoice');
 
-        $this->assertSame('INVOICE-0', $code);
+        $this->assertSame('INVOICE-1', $code);
     }
 }

@@ -27,7 +27,6 @@ class StoreDocumentCodeTemplateRequest extends FormRequest
             'reset_period'        => 'required|in:none,daily,weekly,monthly,yearly',
             'yearly_reset_month'  => 'required_if:reset_period,yearly|integer|between:1,12',
             'yearly_reset_day'    => 'required_if:reset_period,yearly|integer|between:1,31',
-            'id_padding'          => 'nullable|integer|between:0,10',
         ];
     }
 }
