@@ -128,13 +128,13 @@ class QontoIntegrationApiTest extends TestCase
         $response->assertOk();
         $this->assertDatabaseHas('qonto_client_mappings', [
             'tenant_id' => $user->id,
-            'wem_client_id' => $contact->id,
+            'wem_client_id' => $company->id,
             'sync_status' => 'review_required',
         ]);
         $this->assertDatabaseCount('qonto_sync_reviews', 1);
         $this->assertDatabaseMissing('qonto_client_mappings', [
             'tenant_id' => $user->id,
-            'wem_client_id' => $contact->id,
+            'wem_client_id' => $company->id,
             'sync_status' => 'created_in_qonto',
         ]);
     }

@@ -78,7 +78,7 @@ class HumanResourcesControllerTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->post(route('human.resources.lock.user', $user->id), [
-            'banned_until' => now()->addDays(10),
+            'banned_until' => now()->addDays(10)->toDateTimeString(),
         ]);
 
         $response->assertRedirect(route('human.resources.show.user', ['id' => $user->id]));
@@ -97,7 +97,7 @@ class HumanResourcesControllerTest extends TestCase
             'user_id' => $user->id,
             'statu' => 'Active',
             'type_of_contract' => 'Permanent',
-            'start_date' => now(),
+            'start_date' => now()->toDateString(),
         ]);
 
         $response->assertRedirect(route('human.resources.show.user', ['id' => $user->id]));
@@ -158,7 +158,7 @@ class HumanResourcesControllerTest extends TestCase
     public function it_creates_a_user_expense_report()
     {
         $response = $this->post(route('human.resources.store.user.expense.report'), [
-            'date' => now(),
+            'date' => now()->toDateString(),
             'label' => 'Expense Report 1',
         ]);
 
