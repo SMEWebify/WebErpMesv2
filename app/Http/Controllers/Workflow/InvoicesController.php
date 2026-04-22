@@ -515,6 +515,10 @@ class InvoicesController extends Controller
             ? QontoInvoiceMapping::where('invoice_id', $id->id)->first()
             : null;
 
+        $companies = $this->selectDataService->getCompanies();
+        $addresses = $this->selectDataService->getAddress($id->companies_id);
+        $contacts  = $this->selectDataService->getContact($id->companies_id);
+
         return view('workflow/invoices-show', [
             'Invoice'      => $id,
             'totalPrices'  => $totalPrice,
@@ -525,12 +529,34 @@ class InvoicesController extends Controller
             'CustomFields' => $CustomFields,
             'qontoEnabled'     => $qontoEnabled,
             'qontoMapping'     => $qontoMapping,
+            'companies'        => $companies,
+            'addresses'        => $addresses,
+            'contacts'         => $contacts,
+            'companyAcUrl'     => route('invoices.company-ac'),
             'paymentMethods'   => AccountingPaymentMethod::orderBy('label')->get(['id', 'label']),
             'paymentEndpoints' => [
                 'index'   => route('invoices.payments.index', $id->id),
                 'store'   => route('invoices.payments.store', $id->id),
                 'destroy' => route('invoices.payments.destroy', [$id->id, '__payment__']),
             ],
+        ]);
+    }
+
+    public function companyAddressContact(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $companyId = (int) $request->get('company_id');
+        $addresses = $this->selectDataService->getAddress($companyId);
+        $contacts  = $this->selectDataService->getContact($companyId);
+
+        return response()->json([
+            'addresses' => $addresses->map(fn($a) => [
+                'id'    => $a->id,
+                'label' => trim($a->label . ($a->adress ? ' — ' . $a->adress : '')),
+            ])->values(),
+            'contacts' => $contacts->map(fn($c) => [
+                'id'    => $c->id,
+                'label' => trim($c->first_name . ' ' . $c->name),
+            ])->values(),
         ]);
     }
 
@@ -567,11 +593,14 @@ class InvoicesController extends Controller
         if (app(AccountingPeriodService::class)->isLocked($Invoice->created_at)) {
             return redirect()->back()->withErrors(['period' => "Période {$Invoice->created_at->format('m/Y')} verrouillée — cette facture ne peut plus être modifiée."]);
         }
-        $Invoice->label=$request->label;
-        $Invoice->statu=$request->statu;
-        $Invoice->due_date=$request->due_date;
-        $Invoice->incoterm=$request->incoterm;
-        $Invoice->comment=$request->comment;
+        $Invoice->label                  = $request->label;
+        $Invoice->statu                  = $request->statu;
+        $Invoice->due_date               = $request->due_date;
+        $Invoice->incoterm               = $request->incoterm;
+        $Invoice->comment                = $request->comment;
+        $Invoice->companies_id           = $request->companies_id;
+        $Invoice->companies_addresses_id = $request->companies_addresses_id;
+        $Invoice->companies_contacts_id  = $request->companies_contacts_id;
         $Invoice->save();
 
         // For each invoice line associated with this invoice

@@ -24,8 +24,10 @@ class UpdateInvoiceRequest extends FormRequest
     public function rules()
     {
         return [
-             //
-            'label'=>'required',
+            'label'                  => 'required',
+            'companies_id'           => 'required|exists:companies,id',
+            'companies_addresses_id' => 'nullable|exists:companies_addresses,id',
+            'companies_contacts_id'  => 'nullable|exists:companies_contacts,id',
         ];
     }
 }
