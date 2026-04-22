@@ -98,15 +98,6 @@ class DocumentCodeGenerator
 
                 if ($resetPeriod === 'none' && $lastId !== null) {
                     $initialValue = $lastId + 1;
-                } elseif ($resetPeriod !== 'none') {
-                    $globalCounter = DB::table('document_code_counters')
-                        ->where('document_type', $documentType)
-                        ->where('period_key', 'global')
-                        ->lockForUpdate()
-                        ->first();
-                    if ($globalCounter) {
-                        $initialValue = (int) $globalCounter->current_value + 1;
-                    }
                 }
 
                 DB::table('document_code_counters')->insert([
