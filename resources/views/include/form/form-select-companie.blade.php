@@ -8,6 +8,6 @@
     </x-slot>
     <option value="">{{ __('general_content.select_company_trans_key') }}</option>
     @foreach ($CompanieSelect as $item)
-    <option value="{{ $item->id }}" @if($item->id == $companiesId ) Selected @endif>{{ $item->code }} - {{ $item->label }}</option>
+    <option value="{{ $item->id }}" @if($item->id == $companiesId ) Selected @endif>{{ $item->label }}</option>
     @endforeach
 </x-adminlte-select2>

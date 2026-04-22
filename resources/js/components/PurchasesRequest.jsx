@@ -229,7 +229,7 @@ export default function PurchasesRequest({
                                 >
                                     <option value="">{suppliers.length ? trans.select_company : trans.no_company}</option>
                                     {suppliers.map(c => (
-                                        <option key={c.id} value={c.id}>{c.code} - {c.label}</option>
+                                        <option key={c.id} value={c.id}>{c.label}</option>
                                     ))}
                                 </select>
                             </div>
@@ -250,7 +250,7 @@ export default function PurchasesRequest({
                                     >
                                         <option value="">{suppliers.length ? trans.select_company : trans.no_company}</option>
                                         {suppliers.map(c => (
-                                            <option key={c.id} value={c.id}>{c.code} - {c.label}</option>
+                                            <option key={c.id} value={c.id}>{c.label}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -273,7 +273,7 @@ export default function PurchasesRequest({
                                         style={{ minHeight: '80px' }}
                                     >
                                         {suppliers.map(c => (
-                                            <option key={c.id} value={c.id}>{c.code} - {c.label}</option>
+                                            <option key={c.id} value={c.id}>{c.label}</option>
                                         ))}
                                     </select>
                                 </div>

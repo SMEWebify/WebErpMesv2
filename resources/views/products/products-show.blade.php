@@ -357,7 +357,7 @@
                   <select class="form-control" name="companies_id" id="price_list_companies_id">
                     <option value="">{{ __('general_content.all_customers_trans_key') }}</option>
                     @foreach($CustomerSelect as $customer)
-                    <option value="{{ $customer->id }}" @if((string) old('companies_id', '') === (string) $customer->id) selected @endif>{{ $customer->code }} - {{ $customer->label }}</option>
+                    <option value="{{ $customer->id }}" @if((string) old('companies_id', '') === (string) $customer->id) selected @endif>{{ $customer->label }}</option>
                     @endforeach
                   </select>
                   @error('companies_id', 'customerPriceList')
@@ -469,7 +469,7 @@
                               <select class="form-control" name="companies_id" id="price_list_companies_id_{{ $priceList->id }}">
                                 <option value="">{{ __('general_content.all_customers_trans_key') }}</option>
                                 @foreach($CustomerSelect as $customer)
-                                <option value="{{ $customer->id }}" @if($priceList->companies_id === $customer->id) selected @endif>{{ $customer->code }} - {{ $customer->label }}</option>
+                                <option value="{{ $customer->id }}" @if($priceList->companies_id === $customer->id) selected @endif>{{ $customer->label }}</option>
                                 @endforeach
                               </select>
                             </div>

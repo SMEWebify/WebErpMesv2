@@ -230,7 +230,7 @@ export default function InvoicesRequest({
                                 >
                                     <option value="">{companies.length ? trans.select_company : trans.no_company}</option>
                                     {companies.map(c => (
-                                        <option key={c.id} value={c.id}>{c.code} - {c.label}</option>
+                                        <option key={c.id} value={c.id}>{c.label}</option>
                                     ))}
                                 </select>
                             </div>

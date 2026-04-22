@@ -128,7 +128,7 @@ function WaitingLinesTable({ lines, selectedIds, onToggle, trans }) {
                 ) : '—'}
             </td>
             {/* Supplier */}
-            <td>{line.supplier_code} - {line.supplier_label}</td>
+            <td>{line.supplier_label}</td>
             {/* Description */}
             <td>{line.code} {line.label}</td>
             {/* Qty */}
@@ -301,7 +301,7 @@ export default function PurchasesWaitingReceipt({ endpoints, trans, initialCode 
                                         <option disabled>{trans.no_select_company ?? 'Aucun tiers'}</option>
                                     )}
                                     {companies.map(c => (
-                                        <option key={c.id} value={c.id}>{c.code} - {c.label}</option>
+                                        <option key={c.id} value={c.id}>{c.label}</option>
                                     ))}
                                 </select>
                             </div>

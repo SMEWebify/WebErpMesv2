@@ -138,7 +138,7 @@
                         <x-adminlte-select name="companies_id" label="Client">
                             <option value="">-- Sélectionner --</option>
                             @foreach($companies as $company)
-                                <option value="{{ $company->id }}">{{ $company->code }} - {{ $company->label }}</option>
+                                <option value="{{ $company->id }}">{{ $company->label }}</option>
                             @endforeach
                         </x-adminlte-select>
 
