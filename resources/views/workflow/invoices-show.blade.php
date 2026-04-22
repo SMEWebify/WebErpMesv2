@@ -81,34 +81,43 @@
                 </div>
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label for="invoice_company_id">{{ __('general_content.companie_name_trans_key') }}</label>
-                    <select name="companies_id" id="invoice_company_id" class="form-control">
-                      @foreach($companies as $company)
-                        <option value="{{ $company->id }}" {{ $company->id == $Invoice->companies_id ? 'selected' : '' }}>
-                          {{ $company->label }}
-                        </option>
-                      @endforeach
-                    </select>
+                    <x-adminlte-select2 name="companies_id" id="invoice_company_id" label="{{ __('general_content.companie_name_trans_key') }}" label-class="text-info"
+                        igroup-size="s" data-placeholder="{{ __('general_content.companie_name_trans_key') }}">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-gradient-info">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </x-slot>
+                        @foreach($companies as $company)
+                            <option value="{{ $company->id }}" {{ $company->id == $Invoice->companies_id ? 'selected' : '' }}>{{ $company->label }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
                   </div>
                   <div class="form-group col-md-4">
-                    <label for="invoice_address_id">{{ __('general_content.adress_name_trans_key') }}</label>
-                    <select name="companies_addresses_id" id="invoice_address_id" class="form-control">
-                      @foreach($addresses as $address)
-                        <option value="{{ $address->id }}" {{ $address->id == $Invoice->companies_addresses_id ? 'selected' : '' }}>
-                          {{ $address->label }}{{ $address->adress ? ' — ' . $address->adress : '' }}
-                        </option>
-                      @endforeach
-                    </select>
+                    <x-adminlte-select2 name="companies_addresses_id" id="invoice_address_id" label="{{ __('general_content.adress_name_trans_key') }}" label-class="text-info"
+                        igroup-size="s" data-placeholder="{{ __('general_content.adress_name_trans_key') }}">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-gradient-info">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                        </x-slot>
+                        @foreach($addresses as $address)
+                            <option value="{{ $address->id }}" {{ $address->id == $Invoice->companies_addresses_id ? 'selected' : '' }}>{{ $address->label }}{{ $address->adress ? ' — ' . $address->adress : '' }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
                   </div>
                   <div class="form-group col-md-4">
-                    <label for="invoice_contact_id">{{ __('general_content.contact_name_trans_key') }}</label>
-                    <select name="companies_contacts_id" id="invoice_contact_id" class="form-control">
-                      @foreach($contacts as $contact)
-                        <option value="{{ $contact->id }}" {{ $contact->id == $Invoice->companies_contacts_id ? 'selected' : '' }}>
-                          {{ $contact->first_name }} {{ $contact->name }}
-                        </option>
-                      @endforeach
-                    </select>
+                    <x-adminlte-select2 name="companies_contacts_id" id="invoice_contact_id" label="{{ __('general_content.contact_name_trans_key') }}" label-class="text-info"
+                        igroup-size="s" data-placeholder="{{ __('general_content.contact_name_trans_key') }}">
+                        <x-slot name="prependSlot">
+                            <div class="input-group-text bg-gradient-info">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </x-slot>
+                        @foreach($contacts as $contact)
+                            <option value="{{ $contact->id }}" {{ $contact->id == $Invoice->companies_contacts_id ? 'selected' : '' }}>{{ $contact->first_name }} {{ $contact->name }}</option>
+                        @endforeach
+                    </x-adminlte-select2>
                   </div>
                 </div>
                 <div class="row">
@@ -278,11 +287,13 @@
             $.each(data.addresses, function (_, a) {
                 $addr.append($('<option>', { value: a.id, text: a.label }));
             });
+            $addr.trigger('change');
 
             var $contact = $('#invoice_contact_id').empty();
             $.each(data.contacts, function (_, c) {
                 $contact.append($('<option>', { value: c.id, text: c.label }));
             });
+            $contact.trigger('change');
         });
     });
 }(jQuery));
