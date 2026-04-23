@@ -601,7 +601,6 @@ class InvoicesController extends Controller
             return redirect()->back()->withErrors(['period' => "Période {$Invoice->created_at->format('m/Y')} verrouillée — cette facture ne peut plus être modifiée."]);
         }
         $Invoice->label                  = $request->label;
-        $Invoice->statu                  = $request->statu;
         $Invoice->due_date               = $request->due_date;
         $Invoice->incoterm               = $request->incoterm;
         $Invoice->comment                = $request->comment;
@@ -610,15 +609,6 @@ class InvoicesController extends Controller
         $Invoice->companies_contacts_id  = $request->companies_contacts_id;
         $Invoice->customer_reference     = $request->customer_reference;
         $Invoice->save();
-
-        // For each invoice line associated with this invoice
-        foreach ($Invoice->InvoiceLines as $line) {
-            // Update the invoice line status with the new invoice status
-            $line->invoice_status = $Invoice->statu;
-
-            // Save each updated invoice line
-            $line->save();
-        }
 
         return redirect()->route('invoices.show', ['id' =>  $Invoice->id])->with('success', 'Successfully updated Invoice');
     }
