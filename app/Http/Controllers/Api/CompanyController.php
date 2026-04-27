@@ -28,6 +28,39 @@ class CompanyController extends Controller
     }
 
     /**
+     * Active clients (statu_customer = 2) with name and addresses.
+     */
+    public function clients(Request $request)
+    {
+        $query = Companies::with('Addresses')
+            ->where('statu_customer', 2)
+            ->orderBy('label');
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->search . '%';
+            $query->where(function ($q) use ($search) {
+                $q->where('label', 'like', $search)
+                  ->orWhere('code', 'like', $search);
+            });
+        }
+
+        return $query->get()->map(fn($c) => [
+            'id'        => $c->id,
+            'code'      => $c->code,
+            'label'     => $c->label,
+            'addresses' => $c->Addresses->map(fn($a) => [
+                'id'       => $a->id,
+                'label'    => $a->label,
+                'adress'   => $a->adress,
+                'zipcode'  => $a->zipcode,
+                'city'     => $a->city,
+                'country'  => $a->country,
+                'default'  => (bool) $a->default,
+            ]),
+        ]);
+    }
+
+    /**
      * Create new company
      */
     public function store(Request $request)

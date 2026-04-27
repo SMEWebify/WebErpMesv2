@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\Collaboration\WhiteboardSnapshotController;
 use App\Http\Controllers\Api\Collaboration\WhiteboardFileController;
 use App\Http\Controllers\Api\Integrations\QontoIntegrationController;
 use App\Http\Controllers\Integrations\QontoWebhookController;
-use App\Http\Controllers\SpreadsheetDataController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +38,7 @@ Route::prefix('integrations/qonto')->name('api.integrations.qonto.')->withoutMid
 Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('companies', CompanyController::class)->names('api.companies');
+    Route::get('clients', [CompanyController::class, 'clients'])->name('api.clients.index');
 
     Route::apiResource('quote', QuoteController::class);
     Route::apiResource('order', OrderController::class);
