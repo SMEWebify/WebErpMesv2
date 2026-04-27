@@ -33,7 +33,7 @@ class QontoIntegrationController extends Controller
 
     public function connect(Request $request): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $state = Str::random(40);
 
         Cache::put("qonto.oauth.state.{$state}", $tenantId, now()->addMinutes(10));
@@ -54,7 +54,7 @@ class QontoIntegrationController extends Controller
 
     public function status(Request $request): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $connection = QontoConnection::where('tenant_id', $tenantId)->first();
 
         $clientId = (string) config('services.qonto.client_id', '');
@@ -105,7 +105,7 @@ class QontoIntegrationController extends Controller
 
     public function sync(Request $request): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $connection = $this->getValidConnection($tenantId);
         $importBidirectional = $request->has('import_bidirectionnel')
             ? (bool) $request->boolean('import_bidirectionnel')
@@ -163,7 +163,7 @@ class QontoIntegrationController extends Controller
 
     public function reconcile(Request $request): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $connection = $this->getValidConnection($tenantId);
 
         $result = $this->syncService->reconcile(
@@ -178,7 +178,7 @@ class QontoIntegrationController extends Controller
 
     public function push(Request $request, int $wemClientId): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $connection = $this->getValidConnection($tenantId);
         $wemClient = collect($this->fetchWemClients($tenantId))->firstWhere('id', $wemClientId);
 
@@ -201,7 +201,7 @@ class QontoIntegrationController extends Controller
 
     public function resolve(Request $request, int $reviewId): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $validated = $request->validate([
             'action' => ['required', 'in:link,ignore'],
             'qonto_client_id' => ['nullable', 'string'],
@@ -228,7 +228,7 @@ class QontoIntegrationController extends Controller
         }
 
         $review->resolved_at = now();
-        $review->resolved_by = $request->user()->id;
+        $review->resolved_by = auth('api')->id();
         $review->save();
 
         return response()->json(['review' => $review]);
@@ -237,7 +237,7 @@ class QontoIntegrationController extends Controller
 
     public function settings(Request $request): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $validated = $request->validate([
             'import_bidirectionnel' => ['required', 'boolean'],
         ]);
@@ -253,7 +253,7 @@ class QontoIntegrationController extends Controller
 
     public function disconnect(Request $request): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
 
         QontoConnection::where('tenant_id', $tenantId)->delete();
 
@@ -262,7 +262,7 @@ class QontoIntegrationController extends Controller
 
     public function submitInvoice(Request $request, int $invoiceId): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $invoice  = Invoices::where('user_id', $tenantId)->findOrFail($invoiceId);
 
         abort_if(
@@ -278,7 +278,7 @@ class QontoIntegrationController extends Controller
 
     public function pollInvoice(Request $request, int $invoiceId): JsonResponse
     {
-        $tenantId = $request->user()->id;
+        $tenantId = auth('api')->id();
         $mapping  = QontoInvoiceMapping::where('tenant_id', $tenantId)
             ->where('invoice_id', $invoiceId)
             ->firstOrFail();
