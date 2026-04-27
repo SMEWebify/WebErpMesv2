@@ -830,6 +830,12 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
 
         Route::get('/logs-view', 'App\Http\Controllers\Admin\FactoryController@logsView')->middleware(['auth'])->name('admin.logs.view');
         Route::get('/logs-viewer/json/meta', 'App\Http\Controllers\Admin\LogsViewerController@meta')->middleware(['auth'])->name('admin.logs-viewer.json.meta');
+
+        Route::middleware(['auth'])->prefix('api-tokens')->name('admin.api-tokens.')->group(function () {
+            Route::get('/',           [\App\Http\Controllers\Admin\ApiTokenController::class, 'index'])->name('index');
+            Route::post('/',          [\App\Http\Controllers\Admin\ApiTokenController::class, 'store'])->name('store');
+            Route::delete('/{token}', [\App\Http\Controllers\Admin\ApiTokenController::class, 'destroy'])->name('destroy');
+        });
         Route::get('/logs-viewer/json/list', 'App\Http\Controllers\Admin\LogsViewerController@list')->middleware(['auth'])->name('admin.logs-viewer.json.list');
     
         Route::get('/emails/templates', 'App\Http\Controllers\Admin\EmailTemplateController@index')->name('admin.emails.templates.index');

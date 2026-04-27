@@ -27,24 +27,39 @@
 
 ## Authentification
 
-Toutes les routes (sauf exceptions) requièrent le middleware `auth:api`.
+Deux systèmes d'authentification coexistent selon l'origine de l'appel.
+
+### Routes externes — Bearer Token (Sanctum)
+
+Utilisé pour les intégrations tierces (ERP externe, scripts, automatisations).  
+Token créé dans **Admin → Votre société → Tokens API**.
 
 ```http
 Authorization: Bearer {token}
 ```
 
-Les routes publiques (sans token) sont :
-- `GET /api/integrations/qonto/callback`
-- `POST /api/integrations/qonto/webhook/invoice`
+Routes concernées :
+- `GET /api/clients`
+- `POST /api/quote`
+- `PUT /api/quote/{id}`
+
+### Routes internes — `auth:api`
+
+Utilisé historiquement pour les autres endpoints. Le guard `token` attend une colonne `api_token` sur les utilisateurs — actuellement non provisionnée, ces routes retournent 401 si appelées sans session active.
+
+### Routes publiques (sans authentification)
+
+- `GET /api/integrations/qonto/callback` — callback OAuth (state token vérifié)
+- `POST /api/integrations/qonto/webhook/invoice` — webhook Qonto (signature HMAC vérifiée)
 
 ---
 
 ## Clients
 
-### `GET /api/clients`
+### `GET /api/clients` `🔑 Bearer`
 
 Retourne les clients actifs (`statu_customer = 2`) avec leur nom et leurs adresses.  
-Utile pour les selects React (devis, commandes, livraisons).
+Utile pour les selects d'une intégration externe (devis, commandes).
 
 **Query params**
 
@@ -135,6 +150,62 @@ Liste paginée des devis avec lignes, company, contact, adresse.
 ### `GET /api/quote/{id}`
 
 Détail d'un devis.
+
+**Réponse `200`** → [QuoteResource](#quoteresource)
+
+---
+
+### `POST /api/quote` `🔑 Bearer`
+
+Crée un devis avec ses lignes et tâches associées (full sync).
+
+**Body JSON**
+
+| Champ                                  | Type    | Requis |
+|----------------------------------------|---------|--------|
+| `code`                                 | string  | Oui    |
+| `label`                                | string  | Non    |
+| `customer_reference`                   | string  | Non    |
+| `companies_id`                         | integer | Oui    |
+| `companies_contacts_id`                | integer | Non    |
+| `companies_addresses_id`               | integer | Non    |
+| `validity_date`                        | date    | Non    |
+| `statu`                                | integer | Non    |
+| `opportunities_id`                     | integer | Non    |
+| `accounting_payment_conditions_id`     | integer | Non    |
+| `accounting_payment_methods_id`        | integer | Non    |
+| `accounting_deliveries_id`             | integer | Non    |
+| `comment`                              | string  | Non    |
+| `lines`                                | array   | Non    | voir structure ci-dessous |
+
+**Structure d'une ligne (`lines[]`)**
+
+| Champ               | Type    | Description                        |
+|---------------------|---------|------------------------------------|
+| `id`                | integer | Si présent : mise à jour           |
+| `ordre`             | integer |                                    |
+| `code`              | string  |                                    |
+| `product_id`        | integer |                                    |
+| `label`             | string  |                                    |
+| `qty`               | numeric |                                    |
+| `methods_units_id`  | integer |                                    |
+| `selling_price`     | numeric |                                    |
+| `discount`          | numeric |                                    |
+| `accounting_vats_id`| integer |                                    |
+| `delivery_date`     | date    |                                    |
+| `statu`             | integer |                                    |
+| `detail`            | object  | Détails techniques (dimensions…)   |
+| `tasks`             | array   | Tâches liées à la ligne            |
+
+> Les lignes absentes du payload sont supprimées (soft-delete).
+
+**Réponse `200`** → [QuoteResource](#quoteresource) avec lignes et tâches chargées
+
+---
+
+### `PUT /api/quote/{id}` `🔑 Bearer`
+
+Met à jour un devis existant (full sync — même payload que POST).
 
 **Réponse `200`** → [QuoteResource](#quoteresource)
 
