@@ -17,8 +17,8 @@ class ExportSalesOrderRequest extends FormRequest
             'from' => ['nullable', 'date'],
             'to' => ['nullable', 'date', 'after_or_equal:from'],
             'status' => ['nullable', 'integer'],
-            'date_format' => ['nullable', 'string', 'max:30'],
-            'datetime_format' => ['nullable', 'string', 'max:30'],
+            'date_format'     => ['nullable', 'string', 'in:Y-m-d,d/m/Y,m/d/Y,d.m.Y'],
+            'datetime_format' => ['nullable', 'string', 'in:Y-m-d H:i:s,Y-m-d H:i,d/m/Y H:i:s,d/m/Y H:i'],
             'include_lines' => ['nullable', 'boolean'],
         ];
     }

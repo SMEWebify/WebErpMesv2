@@ -67,19 +67,19 @@ class CompanyController extends Controller
     {
         // validate the request
         $validatedData = $request->validate([
-            'code' => 'required|string|unique:companies,code|max:50',
-            'label' => 'required|string|max:255',
-            'siren' => 'nullable|string|max:14',
-            'naf_code' => 'nullable|string|max:10',
+            'code'                => 'required|string|unique:companies,code|max:50',
+            'label'               => 'required|string|max:255',
+            'siren'               => 'nullable|string|max:14',
+            'naf_code'            => 'nullable|string|max:10',
             'intra_community_vat' => 'nullable|string|max:20',
-            'website' => 'nullable|url|max:255',
-            'longitude' => 'nullable|string|max:50',
-            'latitude' => 'nullable|string|max:50',
-            'user_id' => 'nullable|exists:users,id',
+            'website'             => 'nullable|url|max:255',
+            'longitude'           => 'nullable|string|max:50',
+            'latitude'            => 'nullable|string|max:50',
         ]);
 
-        // create new company
-        $company = Companies::create($validatedData);
+        $company = Companies::create(array_merge($validatedData, [
+            'user_id' => auth()->id(),
+        ]));
 
         // return the company
         return new CompanieResource($company);

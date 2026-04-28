@@ -90,7 +90,7 @@ class QuoteController extends Controller
             $linePayload['quotes_id'] = $quote->id;
 
             if ($lineId) {
-                $line = QuoteLines::findOrFail($lineId);
+                $line = QuoteLines::where('quotes_id', $quote->id)->findOrFail($lineId);
                 $line->update($linePayload);
             } else {
                 $line = QuoteLines::create($linePayload);
@@ -144,7 +144,7 @@ class QuoteController extends Controller
             $taskPayload['quote_lines_id'] = $line->id;
 
             if ($taskId) {
-                $task = Task::findOrFail($taskId);
+                $task = Task::where('quote_lines_id', $line->id)->findOrFail($taskId);
                 $task->update($taskPayload);
             } else {
                 $task = Task::create($taskPayload);
