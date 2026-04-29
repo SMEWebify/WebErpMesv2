@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Services\DocumentCodeGenerator;
 use App\Models\Workflow\Quotes;
+use App\Models\Accounting\AccountingPaymentConditions;
+use App\Models\Accounting\AccountingPaymentMethod;
+use App\Models\Accounting\AccountingDelivery;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\QuoteLineDetails;
 use App\Models\Planning\Task;
@@ -29,19 +33,37 @@ class QuoteController extends Controller
         return new QuoteResource($quote);
     }
 
-    public function store(UpsertQuoteRequest $request)
+    public function store(UpsertQuoteRequest $request, DocumentCodeGenerator $codeGenerator)
     {
-        return DB::transaction(function () use ($request) {
-            $quote = Quotes::create(array_merge(
-                $request->only([
-                    'code', 'label', 'customer_reference',
-                    'companies_id', 'companies_contacts_id', 'companies_addresses_id',
-                    'validity_date', 'statu', 'opportunities_id',
-                    'accounting_payment_conditions_id', 'accounting_payment_methods_id',
-                    'accounting_deliveries_id', 'comment',
-                ]),
-                ['user_id' => auth()->id(), 'uuid' => Str::uuid()]
-            ));
+        return DB::transaction(function () use ($request, $codeGenerator) {
+            $data = $request->only([
+                'code', 'label', 'customer_reference',
+                'companies_id', 'companies_contacts_id', 'companies_addresses_id',
+                'validity_date', 'statu', 'opportunities_id',
+                'accounting_payment_conditions_id', 'accounting_payment_methods_id',
+                'accounting_deliveries_id', 'comment',
+            ]);
+
+            if (empty($data['code'])) {
+                $data['code'] = $codeGenerator->generateDocumentCode('quote');
+            }
+
+            if (empty($data['accounting_payment_conditions_id'])) {
+                $data['accounting_payment_conditions_id'] = AccountingPaymentConditions::where('default', 1)->value('id');
+            }
+
+            if (empty($data['accounting_payment_methods_id'])) {
+                $data['accounting_payment_methods_id'] = AccountingPaymentMethod::where('default', 1)->value('id');
+            }
+
+            if (empty($data['accounting_deliveries_id'])) {
+                $data['accounting_deliveries_id'] = AccountingDelivery::where('default', 1)->value('id');
+            }
+
+            $data['uuid']    = (string) Str::uuid();
+            $data['user_id'] = Auth::id();
+
+            $quote = Quotes::create($data);
 
             if ($request->has('lines')) {
                 $this->syncLines($quote, $request->input('lines', []));
@@ -98,7 +120,7 @@ class QuoteController extends Controller
 
             $submittedLineIds[] = $line->id;
 
-            if (array_key_exists('detail', $lineData) && $lineData['detail'] !== null) {
+            if (\array_key_exists('detail', $lineData) && $lineData['detail'] !== null) {
                 $detailPayload = collect($lineData['detail'])->only([
                     'x_size', 'y_size', 'z_size', 'x_oversize', 'y_oversize', 'z_oversize',
                     'diameter', 'diameter_oversize', 'material', 'thickness', 'finishing',
@@ -112,16 +134,15 @@ class QuoteController extends Controller
                 );
             }
 
-            if (array_key_exists('tasks', $lineData)) {
+            if (\array_key_exists('tasks', $lineData)) {
                 $this->syncTasks($line, $lineData['tasks'] ?? []);
             }
         }
 
         // Soft-delete lines not present in the submitted payload
         $quote->QuoteLines()
-            ->when(!empty($submittedLineIds), fn($q) => $q->whereNotIn('id', $submittedLineIds))
-            ->when(empty($submittedLineIds), fn($q) => $q)
-            ->each(fn(QuoteLines $line) => $line->delete());
+            ->when(!empty($submittedLineIds), fn ($q) => $q->whereNotIn('id', $submittedLineIds))
+            ->each(fn (QuoteLines $line) => $line->delete());
     }
 
     private function syncTasks(QuoteLines $line, array $tasks): void
@@ -155,8 +176,7 @@ class QuoteController extends Controller
 
         // Soft-delete tasks not present in the submitted payload
         $line->Task()
-            ->when(!empty($submittedTaskIds), fn($q) => $q->whereNotIn('id', $submittedTaskIds))
-            ->when(empty($submittedTaskIds), fn($q) => $q)
-            ->each(fn(Task $task) => $task->delete());
+            ->when(!empty($submittedTaskIds), fn ($q) => $q->whereNotIn('id', $submittedTaskIds))
+            ->each(fn (Task $task) => $task->delete());
     }
 }

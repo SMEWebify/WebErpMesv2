@@ -12,7 +12,7 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Companies\Companies  $id
+     * @param  \App\Models\Companies\Companies  $company
      */
     public function show(Companies $company)
     {
@@ -32,7 +32,7 @@ class CompanyController extends Controller
      */
     public function clients(Request $request)
     {
-        $query = Companies::with('Addresses')
+        $query = Companies::with(['Addresses', 'Contacts'])
             ->where('statu_customer', 2)
             ->orderBy('label');
 
@@ -48,6 +48,15 @@ class CompanyController extends Controller
             'id'        => $c->id,
             'code'      => $c->code,
             'label'     => $c->label,
+            'contacts'  => $c->Contacts->map(fn($ct) => [
+                'id'         => $ct->id,
+                'first_name' => $ct->first_name,
+                'name'       => $ct->name,
+                'mail'       => $ct->mail,
+                'number'     => $ct->number,
+                'mobile'     => $ct->mobile,
+                'default'    => (bool) $ct->default,
+            ]),
             'addresses' => $c->Addresses->map(fn($a) => [
                 'id'       => $a->id,
                 'label'    => $a->label,

@@ -58,7 +58,7 @@ Utilisé historiquement pour les autres endpoints. Le guard `token` attend une c
 
 ### `GET /api/clients` `🔑 Bearer`
 
-Retourne les clients actifs (`statu_customer = 2`) avec leur nom et leurs adresses.  
+Retourne les clients actifs (`statu_customer = 2`) avec leurs contacts et adresses.  
 Utile pour les selects d'une intégration externe (devis, commandes).
 
 **Query params**
@@ -75,6 +75,17 @@ Utile pour les selects d'une intégration externe (devis, commandes).
     "id": 12,
     "code": "CLI001",
     "label": "Acier Dupont SA",
+    "contacts": [
+      {
+        "id": 3,
+        "first_name": "Jean",
+        "name": "Martin",
+        "mail": "j.martin@example.com",
+        "number": "0387000000",
+        "mobile": "0612345678",
+        "default": true
+      }
+    ],
     "addresses": [
       {
         "id": 5,
@@ -149,65 +160,195 @@ Liste paginée des devis avec lignes, company, contact, adresse.
 
 ### `GET /api/quote/{id}`
 
-Détail d'un devis.
+Détail complet d'un devis avec lignes, détails techniques et tâches.
 
-**Réponse `200`** → [QuoteResource](#quoteresource)
+**Réponse `200`** → [QuoteResource](#quoteresource) (avec `detail` et `tasks` dans chaque ligne)
 
 ---
 
 ### `POST /api/quote` `🔑 Bearer`
 
-Crée un devis avec ses lignes et tâches associées (full sync).
+Crée un devis avec ses lignes, détails techniques et tâches.
 
-**Body JSON**
+**Body JSON — entête**
 
-| Champ                                  | Type    | Requis |
-|----------------------------------------|---------|--------|
-| `code`                                 | string  | Oui    |
-| `label`                                | string  | Non    |
-| `customer_reference`                   | string  | Non    |
-| `companies_id`                         | integer | Oui    |
-| `companies_contacts_id`                | integer | Non    |
-| `companies_addresses_id`               | integer | Non    |
-| `validity_date`                        | date    | Non    |
-| `statu`                                | integer | Non    |
-| `opportunities_id`                     | integer | Non    |
-| `accounting_payment_conditions_id`     | integer | Non    |
-| `accounting_payment_methods_id`        | integer | Non    |
-| `accounting_deliveries_id`             | integer | Non    |
-| `comment`                              | string  | Non    |
-| `lines`                                | array   | Non    | voir structure ci-dessous |
+| Champ                              | Type    | Requis | Notes                                              |
+|------------------------------------|---------|--------|----------------------------------------------------|
+| `code`                             | string  | Non    | Auto-généré via la codification interne si absent  |
+| `label`                            | string  | Oui    |                                                    |
+| `companies_id`                     | integer | Oui    | doit exister dans `companies`                      |
+| `companies_contacts_id`            | integer | Non    | doit exister dans `companies_contacts`             |
+| `companies_addresses_id`           | integer | Non    | doit exister dans `companies_addresses`            |
+| `accounting_payment_conditions_id` | integer | Non    | doit exister dans `accounting_payment_conditions`  |
+| `accounting_payment_methods_id`    | integer | Non    | doit exister dans `accounting_payment_methods`     |
+| `accounting_deliveries_id`         | integer | Non    | doit exister dans `accounting_deliveries`          |
+| `customer_reference`               | string  | Non    |                                                    |
+| `validity_date`                    | date    | Non    |                                                    |
+| `statu`                            | integer | Non    | 1=Ouvert 2=Envoyé 3=Gagné 4=Perdu 5=Clôturé       |
+| `opportunities_id`                 | integer | Non    |                                                    |
+| `comment`                          | string  | Non    |                                                    |
+| `lines`                            | array   | Non    | Si absent : aucune ligne créée                     |
 
 **Structure d'une ligne (`lines[]`)**
 
-| Champ               | Type    | Description                        |
-|---------------------|---------|------------------------------------|
-| `id`                | integer | Si présent : mise à jour           |
-| `ordre`             | integer |                                    |
-| `code`              | string  |                                    |
-| `product_id`        | integer |                                    |
-| `label`             | string  |                                    |
-| `qty`               | numeric |                                    |
-| `methods_units_id`  | integer |                                    |
-| `selling_price`     | numeric |                                    |
-| `discount`          | numeric |                                    |
-| `accounting_vats_id`| integer |                                    |
-| `delivery_date`     | date    |                                    |
-| `statu`             | integer |                                    |
-| `detail`            | object  | Détails techniques (dimensions…)   |
-| `tasks`             | array   | Tâches liées à la ligne            |
+| Champ                 | Type    | Requis si `lines` | Notes                          |
+|-----------------------|---------|-------------------|--------------------------------|
+| `id`                  | integer | Non               | Absent → création              |
+| `ordre`               | integer | Oui               |                                |
+| `label`               | string  | Oui               |                                |
+| `qty`                 | numeric | Oui               |                                |
+| `code`                | string  | Non               |                                |
+| `product_id`          | integer | Non               |                                |
+| `methods_units_id`    | integer | Non               |                                |
+| `selling_price`       | numeric | Non               |                                |
+| `discount`            | numeric | Non               | 0–100                          |
+| `accounting_vats_id`  | integer | Non               |                                |
+| `delivery_date`       | date    | Non               |                                |
+| `statu`               | integer | Non               |                                |
+| `use_calculated_price`| boolean | Non               |                                |
+| `detail`              | object  | Non               | Voir structure ci-dessous      |
+| `tasks`               | array   | Non               | Voir structure ci-dessous      |
 
-> Les lignes absentes du payload sont supprimées (soft-delete).
+**Structure du détail technique (`lines[].detail`)**
 
-**Réponse `200`** → [QuoteResource](#quoteresource) avec lignes et tâches chargées
+| Champ                | Type    | Notes                        |
+|----------------------|---------|------------------------------|
+| `x_size`             | numeric | mm                           |
+| `y_size`             | numeric | mm                           |
+| `z_size`             | numeric | mm                           |
+| `x_oversize`         | numeric |                              |
+| `y_oversize`         | numeric |                              |
+| `z_oversize`         | numeric |                              |
+| `diameter`           | numeric |                              |
+| `diameter_oversize`  | numeric |                              |
+| `material`           | string  |                              |
+| `thickness`          | numeric | mm                           |
+| `finishing`          | string  |                              |
+| `weight`             | numeric | kg                           |
+| `bend_count`         | integer |                              |
+| `material_loss_rate` | numeric | %                            |
+| `internal_comment`   | string  |                              |
+| `external_comment`   | string  |                              |
+| `custom_requirements`| object  | JSON libre                   |
+
+**Structure d'une tâche (`lines[].tasks[]`)**
+
+| Champ                 | Type    | Requis si `tasks` | Notes                                    |
+|-----------------------|---------|-------------------|------------------------------------------|
+| `id`                  | integer | Non               | Absent → création                        |
+| `label`               | string  | Oui               |                                          |
+| `ordre`               | integer | Non               |                                          |
+| `code`                | string  | Non               |                                          |
+| `type`                | integer | Non               | 1=Prod 2=MP 3=Tôle 4=Profil 5=Bloc 6=Fournitures 7=Sous-traitance 8=Composé |
+| `qty`                 | numeric | Non               |                                          |
+| `qty_init`            | numeric | Non               |                                          |
+| `methods_services_id` | integer | Non               |                                          |
+| `methods_units_id`    | integer | Non               |                                          |
+| `methods_tools_id`    | integer | Non               |                                          |
+| `products_id`         | integer | Non               |                                          |
+| `seting_time`         | numeric | Non               | Temps de réglage (h)                     |
+| `unit_time`           | numeric | Non               | Temps unitaire (h)                       |
+| `unit_cost`           | numeric | Non               |                                          |
+| `unit_price`          | numeric | Non               |                                          |
+| `status_id`           | integer | Non               |                                          |
+| `priority`            | integer | Non               | 1=Haute 2=Moyenne 3=Basse                |
+| `delay`               | date    | Non               |                                          |
+| `due_date`            | date    | Non               |                                          |
+| `material`            | string  | Non               |                                          |
+| `thickness`           | numeric | Non               |                                          |
+| `x_size`…`z_oversize` | numeric | Non              |                                          |
+| `to_schedule`         | boolean | Non               |                                          |
+| `not_recalculate`     | boolean | Non               |                                          |
+
+**Exemple de payload complet**
+
+```json
+{
+  "label": "Châssis tôle A",
+  "companies_id": 1,
+  "companies_contacts_id": 2,
+  "companies_addresses_id": 3,
+  "accounting_payment_conditions_id": 1,
+  "accounting_payment_methods_id": 1,
+  "accounting_deliveries_id": 1,
+  "validity_date": "2026-06-30",
+  "lines": [
+    {
+      "ordre": 1,
+      "label": "Flanc latéral",
+      "qty": 4,
+      "selling_price": 85.00,
+      "detail": {
+        "material": "Acier S235",
+        "thickness": 3.0,
+        "x_size": 500,
+        "y_size": 300,
+        "finishing": "Galvanisé"
+      },
+      "tasks": [
+        {
+          "label": "Découpe laser",
+          "type": 1,
+          "ordre": 1,
+          "qty": 4,
+          "seting_time": 0.25,
+          "unit_time": 0.1,
+          "unit_cost": 12.00,
+          "unit_price": 20.00
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Réponse `201`**
+
+```json
+{
+  "id": 42,
+  "uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "code": "DEV-2026-042",
+  "label": "Châssis tôle A",
+  "...": "...",
+  "quote_lines": [
+    {
+      "id": 101,
+      "ordre": 1,
+      "label": "Flanc latéral",
+      "qty": 4,
+      "selling_price": "85.000",
+      "detail": { "material": "Acier S235", "thickness": "3.000", "x_size": "500.000", "...": "..." },
+      "tasks": [
+        { "id": 55, "label": "Découpe laser", "type": 1, "qty": 4, "unit_cost": "12.000", "...": "..." }
+      ]
+    }
+  ]
+}
+```
+
+> `code` et `uuid` sont toujours présents dans la réponse, qu'ils aient été fournis ou auto-générés.
 
 ---
 
 ### `PUT /api/quote/{id}` `🔑 Bearer`
 
-Met à jour un devis existant (full sync — même payload que POST).
+Met à jour un devis existant. Même payload que `POST`.
 
-**Réponse `200`** → [QuoteResource](#quoteresource)
+**Comportement du sync sur les lignes et tâches**
+
+| Cas                                        | Résultat                               |
+|--------------------------------------------|----------------------------------------|
+| Clé `lines` absente du payload             | Lignes existantes non modifiées        |
+| `lines` présent, ligne avec `id`           | Mise à jour de la ligne                |
+| `lines` présent, ligne sans `id`           | Création d'une nouvelle ligne          |
+| Ligne existante absente du payload         | Soft-delete                            |
+| `detail` fourni pour une ligne             | `updateOrCreate` sur `quote_lines_id`  |
+| Tâche avec `id`                            | Mise à jour                            |
+| Tâche sans `id`                            | Création                               |
+| Tâche existante absente de `tasks[]`       | Soft-delete                            |
+
+**Réponse `200`** → même structure que `POST`
 
 ---
 
@@ -898,12 +1039,12 @@ Reçoit les mises à jour de statut de facture depuis Qonto.
 { "adress": "12 rue de la Forge", "zipcode": "57000", "city": "Metz", "province": null, "country": "France", "number": "0387000000", "mail": "contact@example.com" }
 ```
 
-### `QuoteResource` / `OrderResource`
+### `QuoteResource`
 
 ```json
 {
   "id": 7,
-  "uuid": "550e8400-...",
+  "uuid": "550e8400-e29b-41d4-a716-446655440000",
   "code": "DEV-2026-007",
   "label": "Châssis acier",
   "customer_reference": "REF-CLIENT-42",
@@ -916,9 +1057,86 @@ Reçoit les mises à jour de statut de facture depuis Qonto.
   "validity_date": "2026-05-31",
   "statu": 1,
   "comment": "Urgent",
-  "created_at": "01/04/2026",
-  "updated_at": "15/04/2026",
-  "quote_lines": [],
+  "created_at": "2026-04-01T08:00:00.000000Z",
+  "updated_at": "2026-04-15T10:30:00.000000Z",
+  "quote_lines": [
+    {
+      "id": 101,
+      "quotes_id": 7,
+      "ordre": 1,
+      "code": "L001",
+      "product_id": null,
+      "label": "Flanc latéral",
+      "qty": "4.000",
+      "methods_units_id": 1,
+      "selling_price": "85.000",
+      "discount": "0.000",
+      "accounting_vats_id": 1,
+      "delivery_date": "2026-06-15",
+      "statu": 1,
+      "use_calculated_price": false,
+      "detail": {
+        "id": 88,
+        "quote_lines_id": 101,
+        "x_size": "500.000",
+        "y_size": "300.000",
+        "z_size": null,
+        "material": "Acier S235",
+        "thickness": "3.000",
+        "finishing": "Galvanisé",
+        "weight": "4.500",
+        "internal_comment": null,
+        "external_comment": null,
+        "custom_requirements": null
+      },
+      "tasks": [
+        {
+          "id": 55,
+          "label": "Découpe laser",
+          "ordre": 1,
+          "type": 1,
+          "qty": 4,
+          "quote_lines_id": 101,
+          "methods_services_id": 3,
+          "seting_time": "0.250",
+          "unit_time": "0.100",
+          "unit_cost": "12.000",
+          "unit_price": "20.000",
+          "status_id": 1,
+          "to_schedule": false,
+          "not_recalculate": false
+        }
+      ],
+      "created_at": "2026-04-01T08:00:00.000000Z",
+      "updated_at": "2026-04-15T10:30:00.000000Z"
+    }
+  ]
+}
+```
+
+> `detail` et `tasks` ne sont présents que sur `GET /api/quote/{id}`, `POST /api/quote` et `PUT /api/quote/{id}`.  
+> `GET /api/quote` (liste) ne charge pas ces relations.
+
+### `OrderResource`
+
+```json
+{
+  "id": 5,
+  "uuid": "...",
+  "code": "CMD-2026-005",
+  "label": "Châssis acier",
+  "customer_reference": "REF-CLIENT-42",
+  "companies_id": { "...": "CompanieResource" },
+  "companies_contacts_id": { "...": "ContactResource" },
+  "companies_addresses_id": { "...": "AdresseResource" },
+  "accounting_payment_conditions_id": { "label": "30 jours net" },
+  "accounting_payment_methods_id": { "label": "Virement" },
+  "accounting_deliveries_id": { "label": "Franco" },
+  "validity_date": "2026-05-31",
+  "statu": 2,
+  "comment": null,
+  "created_at": "2026-04-01T08:00:00.000000Z",
+  "updated_at": "2026-04-15T10:30:00.000000Z",
   "order_lines": []
 }
 ```
@@ -945,4 +1163,4 @@ Reçoit les mises à jour de statut de facture depuis Qonto.
 
 ---
 
-*Dernière mise à jour : 2026-04-27*
+*Dernière mise à jour : 2026-04-29 — Section Devis mise à jour (POST/PUT full sync, code auto-généré, QuoteResource avec detail et tasks)*

@@ -14,15 +14,15 @@ class UpsertQuoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Quote header
-            'code'                               => 'required|string|max:255',
+            // Quote header — code est optionnel : généré automatiquement si absent
+            'code'                               => 'nullable|string|max:255',
             'label'                              => 'required|string|max:255',
             'companies_id'                       => 'required|exists:companies,id',
-            'companies_contacts_id'              => 'required|exists:companies_contacts,id',
-            'companies_addresses_id'             => 'required|exists:companies_addresses,id',
-            'accounting_payment_conditions_id'   => 'required|exists:accounting_payment_conditions,id',
-            'accounting_payment_methods_id'      => 'required|exists:accounting_payment_methods,id',
-            'accounting_deliveries_id'           => 'required|exists:accounting_deliveries,id',
+            'companies_contacts_id'              => 'nullable|exists:companies_contacts,id',
+            'companies_addresses_id'             => 'nullable|exists:companies_addresses,id',
+            'accounting_payment_conditions_id'   => 'nullable|exists:accounting_payment_conditions,id',
+            'accounting_payment_methods_id'      => 'nullable|exists:accounting_payment_methods,id',
+            'accounting_deliveries_id'           => 'nullable|exists:accounting_deliveries,id',
             'customer_reference'                 => 'nullable|string|max:255',
             'validity_date'                      => 'nullable|date',
             'statu'                              => 'nullable|integer',
