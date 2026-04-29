@@ -69,6 +69,7 @@ class UpsertQuoteRequest extends FormRequest
             'lines.*.tasks'                      => 'nullable|array',
             'lines.*.tasks.*.id'                 => 'nullable|integer|exists:tasks,id',
             'lines.*.tasks.*.code'               => 'nullable|string|max:255',
+            'lines.*.tasks.*.operation_code'     => 'nullable|string|max:255',
             'lines.*.tasks.*.label'              => 'required_with:lines.*.tasks|string|max:255',
             'lines.*.tasks.*.ordre'              => 'nullable|integer',
             'lines.*.tasks.*.type'               => 'nullable|integer',

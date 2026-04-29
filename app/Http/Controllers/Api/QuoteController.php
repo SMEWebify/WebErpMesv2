@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Services\DocumentCodeGenerator;
 use App\Models\Workflow\Quotes;
 use App\Models\Accounting\AccountingPaymentConditions;
 use App\Models\Accounting\AccountingPaymentMethod;
 use App\Models\Accounting\AccountingDelivery;
+use App\Models\Accounting\AccountingVat;
+use App\Models\Methods\MethodsUnits;
+use App\Models\Methods\MethodsServices;
 use App\Models\Workflow\QuoteLines;
 use App\Models\Workflow\QuoteLineDetails;
 use App\Models\Planning\Task;
@@ -35,70 +39,138 @@ class QuoteController extends Controller
 
     public function store(UpsertQuoteRequest $request, DocumentCodeGenerator $codeGenerator)
     {
-        return DB::transaction(function () use ($request, $codeGenerator) {
-            $data = $request->only([
-                'code', 'label', 'customer_reference',
-                'companies_id', 'companies_contacts_id', 'companies_addresses_id',
-                'validity_date', 'statu', 'opportunities_id',
-                'accounting_payment_conditions_id', 'accounting_payment_methods_id',
-                'accounting_deliveries_id', 'comment',
+        $logger = Log::channel('quote_import');
+
+        $logger->info('STORE — payload reçu', [
+            'user_id'    => Auth::id(),
+            'ip'         => $request->ip(),
+            'payload'    => $request->except(['password']),
+        ]);
+
+        try {
+            $result = DB::transaction(function () use ($request, $codeGenerator) {
+                $data = $request->only([
+                    'code', 'label', 'customer_reference',
+                    'companies_id', 'companies_contacts_id', 'companies_addresses_id',
+                    'validity_date', 'statu', 'opportunities_id',
+                    'accounting_payment_conditions_id', 'accounting_payment_methods_id',
+                    'accounting_deliveries_id', 'comment',
+                ]);
+
+                if (empty($data['code'])) {
+                    $data['code'] = $codeGenerator->generateDocumentCode('quote');
+                }
+
+                if (empty($data['accounting_payment_conditions_id'])) {
+                    $data['accounting_payment_conditions_id'] = AccountingPaymentConditions::where('default', 1)->value('id');
+                }
+
+                if (empty($data['accounting_payment_methods_id'])) {
+                    $data['accounting_payment_methods_id'] = AccountingPaymentMethod::where('default', 1)->value('id');
+                }
+
+                if (empty($data['accounting_deliveries_id'])) {
+                    $data['accounting_deliveries_id'] = AccountingDelivery::where('default', 1)->value('id');
+                }
+
+                $data['uuid']    = (string) Str::uuid();
+                $data['user_id'] = Auth::id();
+
+                $quote = Quotes::create($data);
+
+                $lines = $request->input('lines', []);
+                if ($request->has('lines')) {
+                    $this->syncLines($quote, $lines);
+                }
+
+                $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task']);
+
+                return [$quote, count($lines)];
+            });
+
+            [$quote, $lineCount] = $result;
+
+            $logger->info('STORE — devis créé', [
+                'quote_id'   => $quote->id,
+                'uuid'       => $quote->uuid,
+                'code'       => $quote->code,
+                'lines'      => $lineCount,
+                'tasks'      => $quote->QuoteLines->sum(fn ($l) => $l->Task->count()),
             ]);
 
-            if (empty($data['code'])) {
-                $data['code'] = $codeGenerator->generateDocumentCode('quote');
-            }
-
-            if (empty($data['accounting_payment_conditions_id'])) {
-                $data['accounting_payment_conditions_id'] = AccountingPaymentConditions::where('default', 1)->value('id');
-            }
-
-            if (empty($data['accounting_payment_methods_id'])) {
-                $data['accounting_payment_methods_id'] = AccountingPaymentMethod::where('default', 1)->value('id');
-            }
-
-            if (empty($data['accounting_deliveries_id'])) {
-                $data['accounting_deliveries_id'] = AccountingDelivery::where('default', 1)->value('id');
-            }
-
-            $data['uuid']    = (string) Str::uuid();
-            $data['user_id'] = Auth::id();
-
-            $quote = Quotes::create($data);
-
-            if ($request->has('lines')) {
-                $this->syncLines($quote, $request->input('lines', []));
-            }
-
-            $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task']);
-
             return new QuoteResource($quote);
-        });
+
+        } catch (\Throwable $e) {
+            $logger->error('STORE — échec', [
+                'user_id' => Auth::id(),
+                'error'   => $e->getMessage(),
+                'payload' => $request->except(['password']),
+            ]);
+            throw $e;
+        }
     }
 
     public function update(UpsertQuoteRequest $request, Quotes $quote)
     {
-        return DB::transaction(function () use ($request, $quote) {
-            $quote->update($request->only([
-                'code', 'label', 'customer_reference',
-                'companies_id', 'companies_contacts_id', 'companies_addresses_id',
-                'validity_date', 'statu', 'opportunities_id',
-                'accounting_payment_conditions_id', 'accounting_payment_methods_id',
-                'accounting_deliveries_id', 'comment',
-            ]));
+        $logger = Log::channel('quote_import');
 
-            if ($request->has('lines')) {
-                $this->syncLines($quote, $request->input('lines', []));
-            }
+        $logger->info('UPDATE — payload reçu', [
+            'quote_id' => $quote->id,
+            'uuid'     => $quote->uuid,
+            'code'     => $quote->code,
+            'user_id'  => Auth::id(),
+            'ip'       => $request->ip(),
+            'payload'  => $request->except(['password']),
+        ]);
 
-            $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task']);
+        try {
+            $result = DB::transaction(function () use ($request, $quote) {
+                $quote->update($request->only([
+                    'code', 'label', 'customer_reference',
+                    'companies_id', 'companies_contacts_id', 'companies_addresses_id',
+                    'validity_date', 'statu', 'opportunities_id',
+                    'accounting_payment_conditions_id', 'accounting_payment_methods_id',
+                    'accounting_deliveries_id', 'comment',
+                ]));
+
+                $lines = $request->input('lines', []);
+                if ($request->has('lines')) {
+                    $this->syncLines($quote, $lines);
+                }
+
+                $quote->load(['companie', 'contact', 'adresse', 'QuoteLines.QuoteLineDetails', 'QuoteLines.Task']);
+
+                return [$quote, count($lines)];
+            });
+
+            [$quote, $lineCount] = $result;
+
+            $logger->info('UPDATE — devis mis à jour', [
+                'quote_id' => $quote->id,
+                'uuid'     => $quote->uuid,
+                'code'     => $quote->code,
+                'lines'    => $lineCount,
+                'tasks'    => $quote->QuoteLines->sum(fn ($l) => $l->Task->count()),
+            ]);
 
             return new QuoteResource($quote);
-        });
+
+        } catch (\Throwable $e) {
+            $logger->error('UPDATE — échec', [
+                'quote_id' => $quote->id,
+                'user_id'  => Auth::id(),
+                'error'    => $e->getMessage(),
+                'payload'  => $request->except(['password']),
+            ]);
+            throw $e;
+        }
     }
 
     private function syncLines(Quotes $quote, array $lines): void
     {
         $submittedLineIds = [];
+        $defaultUnitId = MethodsUnits::getDefault()?->id;
+        $defaultVatId  = AccountingVat::getDefault()?->id;
 
         foreach ($lines as $lineData) {
             $lineId = $lineData['id'] ?? null;
@@ -109,7 +181,9 @@ class QuoteController extends Controller
                 'accounting_vats_id', 'delivery_date', 'statu', 'use_calculated_price',
             ])->all();
 
-            $linePayload['quotes_id'] = $quote->id;
+            $linePayload['quotes_id']        = $quote->id;
+            $linePayload['methods_units_id'] = $linePayload['methods_units_id'] ?? $defaultUnitId;
+            $linePayload['accounting_vats_id'] = $linePayload['accounting_vats_id'] ?? $defaultVatId;
 
             if ($lineId) {
                 $line = QuoteLines::where('quotes_id', $quote->id)->findOrFail($lineId);
@@ -145,9 +219,34 @@ class QuoteController extends Controller
             ->each(fn (QuoteLines $line) => $line->delete());
     }
 
+    private function resolveServicesMap(array $tasks): array
+    {
+        // Collecte operation_code en priorité, sinon code
+        $codes = collect($tasks)
+            ->map(fn ($t) => $t['operation_code'] ?? $t['code'] ?? null)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        if (empty($codes)) {
+            return [];
+        }
+
+        // Retourne id ET type par code pour peupler les deux champs sur la tâche
+        return MethodsServices::whereIn('code', $codes)
+            ->get(['code', 'id', 'type'])
+            ->keyBy('code')
+            ->map(fn ($s) => ['id' => $s->id, 'type' => $s->type])
+            ->all();
+    }
+
     private function syncTasks(QuoteLines $line, array $tasks): void
     {
         $submittedTaskIds = [];
+        $logger           = Log::channel('quote_import');
+        $servicesMap      = $this->resolveServicesMap($tasks);
+        $nextOrdre        = 1;
 
         foreach ($tasks as $taskData) {
             $taskId = $taskData['id'] ?? null;
@@ -161,6 +260,33 @@ class QuoteController extends Controller
                 'x_size', 'y_size', 'z_size', 'x_oversize', 'y_oversize', 'z_oversize',
                 'diameter', 'diameter_oversize', 'to_schedule', 'not_recalculate',
             ])->all();
+
+            // 1. Résolution du service : operation_code prioritaire, sinon code
+            if (empty($taskPayload['methods_services_id'])) {
+                $lookupCode = $taskData['operation_code'] ?? $taskData['code'] ?? null;
+                if ($lookupCode) {
+                    if (isset($servicesMap[$lookupCode])) {
+                        $taskPayload['methods_services_id'] = $servicesMap[$lookupCode]['id'];
+                        // Copie le type du service si non fourni explicitement
+                        $taskPayload['type'] ??= $servicesMap[$lookupCode]['type'];
+                    } else {
+                        $logger->warning('operation_code non trouvé dans methods_services — methods_services_id laissé vide', [
+                            'lookup_code'    => $lookupCode,
+                            'task_label'     => $taskData['label'] ?? null,
+                            'quote_lines_id' => $line->id,
+                        ]);
+                    }
+                }
+            }
+
+            // 2. Origine import (8 = Nest4Quote interface)
+            $taskPayload['origin'] ??= '8';
+
+            // 3. Ordre auto-incrémenté si absent
+            if (empty($taskPayload['ordre'])) {
+                $taskPayload['ordre'] = $nextOrdre;
+            }
+            $nextOrdre = $taskPayload['ordre'] + 1;
 
             $taskPayload['quote_lines_id'] = $line->id;
 
