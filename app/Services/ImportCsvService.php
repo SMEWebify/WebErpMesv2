@@ -277,38 +277,51 @@ class ImportCsvService
      * @param string $filename
      * @return void
      */
-    private function createProduct($data, $request,  $filename)
+    private function createProduct($data, $request, $filename)
     {
-        Products::create([
-            'uuid' => Str::uuid(),  // Génération d'un UUID unique pour chaque produit
-            'code' => utf8_encode($data[$request->code]),  // Champ obligatoire
-            'label' => $data[$request->label] ?? null,  // Champ obligatoire
-            'ind' => $data[$request->ind] ?? null,
+        $code    = utf8_encode($data[$request->code]);
+        $product = Products::firstOrNew(['code' => $code]);
+
+        if (!$product->exists) {
+            $product->uuid = Str::uuid();
+        }
+
+        $product->fill([
+            'label'               => $data[$request->label] ?? null,
+            'ind'                 => $data[$request->ind] ?? null,
             'methods_services_id' => $request->methods_services_id,
             'methods_families_id' => $request->methods_families_id,
-            'purchased' => $request->input('purchased', 2),
-            'purchased_price' => $data[$request->purchased_price] ?? null,
-            'sold' => $request->input('sold', 2),
-            'selling_price' => $data[$request->selling_price] ?? null,
-            'methods_units_id' => $request->methods_units_id,
-            'material' => $data[$request->material] ?? null,
-            'thickness' => $data[$request->thickness] ?? null,
-            'weight' => $data[$request->weight] ?? null,
-            'x_size' => $data[$request->x_size] ?? null,
-            'y_size' => $data[$request->y_size] ?? null,
-            'z_size' => $data[$request->z_size] ?? null,
-            'x_oversize' => $data[$request->x_oversize] ?? null,
-            'y_oversize' => $data[$request->y_oversize] ?? null,
-            'z_oversize' => $data[$request->z_oversize] ?? null,
-            'comment' => $data[$request->comment] ?? null,
-            'qty_eco_min' => $data[$request->qty_eco_min] ?? null,
-            'qty_eco_max' => $data[$request->qty_eco_max] ?? null,
-            'diameter' => $data[$request->diameter] ?? null,
-            'diameter_oversize' => $data[$request->diameter_oversize] ?? null,
-            'section_size' => $data[$request->section_size] ?? null,
-            'finishing' => $data[$request->finishing] ?? null,
-            'csv_file_name' => $filename,  // Stockage du nom du fichier CSV importé
+            'purchased'           => $request->input('purchased', 2),
+            'purchased_price'     => $this->parseDecimal($data[$request->purchased_price] ?? null),
+            'sold'                => $request->input('sold', 2),
+            'selling_price'       => $this->parseDecimal($data[$request->selling_price] ?? null),
+            'methods_units_id'    => $request->methods_units_id,
+            'material'            => $data[$request->material] ?? null,
+            'thickness'           => $this->parseDecimal($data[$request->thickness] ?? null),
+            'weight'              => $this->parseDecimal($data[$request->weight] ?? null),
+            'x_size'              => $this->parseDecimal($data[$request->x_size] ?? null),
+            'y_size'              => $this->parseDecimal($data[$request->y_size] ?? null),
+            'z_size'              => $this->parseDecimal($data[$request->z_size] ?? null),
+            'x_oversize'          => $this->parseDecimal($data[$request->x_oversize] ?? null),
+            'y_oversize'          => $this->parseDecimal($data[$request->y_oversize] ?? null),
+            'z_oversize'          => $this->parseDecimal($data[$request->z_oversize] ?? null),
+            'comment'             => $data[$request->comment] ?? null,
+            'qty_eco_min'         => $this->parseDecimal($data[$request->qty_eco_min] ?? null),
+            'qty_eco_max'         => $this->parseDecimal($data[$request->qty_eco_max] ?? null),
+            'diameter'            => $this->parseDecimal($data[$request->diameter] ?? null),
+            'diameter_oversize'   => $this->parseDecimal($data[$request->diameter_oversize] ?? null),
+            'section_size'        => $this->parseDecimal($data[$request->section_size] ?? null),
+            'finishing'           => $data[$request->finishing] ?? null,
+            'csv_file_name'       => $filename,
         ]);
+
+        $product->save();
+    }
+
+    private function parseDecimal(?string $value): ?string
+    {
+        if ($value === null || $value === '') return null;
+        return str_replace(',', '.', $value);
     }
 
     /**
