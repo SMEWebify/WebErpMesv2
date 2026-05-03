@@ -101,7 +101,7 @@ class ProductsController extends Controller
         $sold      = $request->get('sold');
         $purchased = $request->get('purchased');
 
-        $allowed = ['code', 'label', 'created_at', 'sold', 'purchased'];
+        $allowed = ['code', 'label', 'created_at', 'sold', 'purchased', 'selling_price', 'purchased_price'];
         if (!in_array($sortField, $allowed)) {
             $sortField = 'created_at';
         }
@@ -131,6 +131,8 @@ class ProductsController extends Controller
                 'service'    => $p->service?->label,
                 'family'     => $p->family?->label,
                 'task_count' => $p->task_count,
+                'selling_price'   => $p->selling_price,
+                'purchased_price' => $p->purchased_price,
                 'url'        => route('products.show', ['id' => $p->id]),
             ]),
             'meta' => [

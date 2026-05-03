@@ -253,9 +253,14 @@ function DashboardTab({ kpi, chartData, trans }) {
 
 const LS_COL_ORDER    = 'products_table_col_order';
 const LS_HIDDEN_COLS  = 'products_table_hidden_cols';
-const DEFAULT_COL_ORDER = ['code', 'label', 'service', 'family', 'sold', 'purchased', 'tasks', 'created_at'];
+const DEFAULT_COL_ORDER = ['code', 'label', 'service', 'family', 'sold', 'selling_price', 'purchased', 'purchased_price', 'tasks', 'created_at'];
 const TEXT_FILTER_COLS  = new Set(['code', 'label', 'service', 'family']);
 const DATE_RANGE_COLS   = new Set(['created_at']);
+
+function formatPrice(value, locale) {
+    if (value === null || value === undefined || value === '') return '—';
+    return new Intl.NumberFormat(locale ?? 'fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
+}
 
 function dmyToISO(str) {
     if (!str || !str.includes('/')) return str ?? '';
@@ -279,8 +284,10 @@ function colDefs(trans) {
         label:      { label: trans.label,      sortField: 'label',      align: '',       render: p => p.label },
         service:    { label: trans.service,    sortField: null,         align: '',       render: p => p.service ?? '—' },
         family:     { label: trans.family,     sortField: null,         align: '',       render: p => p.family ?? '—' },
-        sold:       { label: trans.sold,       sortField: 'sold',       align: 'center', render: p => <BoolBadge value={p.sold} /> },
-        purchased:  { label: trans.purchased,  sortField: 'purchased',  align: 'center', render: p => <BoolBadge value={p.purchased} /> },
+        sold:           { label: trans.sold,           sortField: 'sold',           align: 'center', render: p => <BoolBadge value={p.sold} /> },
+        selling_price:  { label: trans.selling_price,  sortField: 'selling_price',  align: 'right',  render: p => p.sold === 1 ? formatPrice(p.selling_price, trans.locale) : <span className="text-muted">—</span> },
+        purchased:      { label: trans.purchased,      sortField: 'purchased',      align: 'center', render: p => <BoolBadge value={p.purchased} /> },
+        purchased_price:{ label: trans.purchased_price,sortField: 'purchased_price',align: 'right',  render: p => p.purchased === 1 ? formatPrice(p.purchased_price, trans.locale) : <span className="text-muted">—</span> },
         tasks:      { label: trans.tasks,      sortField: null,         align: 'center', render: p => <span className="badge badge-secondary">{p.task_count}</span> },
         created_at: { label: trans.created_at, sortField: 'created_at', align: '',       render: p => p.created_at },
     };
@@ -309,7 +316,11 @@ function matchesColFilter(product, colId, value) {
 function readSavedColOrder() {
     try {
         const saved = JSON.parse(localStorage.getItem(LS_COL_ORDER));
-        if (Array.isArray(saved) && saved.every(c => DEFAULT_COL_ORDER.includes(c))) return saved;
+        if (Array.isArray(saved)) {
+            const valid   = saved.filter(c => DEFAULT_COL_ORDER.includes(c));
+            const missing = DEFAULT_COL_ORDER.filter(c => !valid.includes(c));
+            return [...valid, ...missing];
+        }
     } catch {}
     return DEFAULT_COL_ORDER;
 }
