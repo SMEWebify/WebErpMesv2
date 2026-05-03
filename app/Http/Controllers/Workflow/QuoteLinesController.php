@@ -845,6 +845,94 @@ class QuoteLinesController extends Controller
         ]);
     }
 
+    public function createProductsFromLinesJson(int $quoteId, Request $request)
+    {
+        abort_unless(auth()->check(), 403);
+
+        $request->validate([
+            'line_ids'   => 'required|array|min:1',
+            'line_ids.*' => 'integer',
+        ]);
+
+        $lineIds = $request->input('line_ids');
+
+        $service = MethodsServices::where('type', 8)->first();
+        $family  = $service ? MethodsFamilies::where('methods_services_id', $service->id)->first() : null;
+
+        if (! $service || ! $family) {
+            return response()->json(['error' => 'Service composant (type 8) ou famille introuvable.'], 422);
+        }
+
+        $created = [];
+        foreach ($lineIds as $lineId) {
+            $line = QuoteLines::with(['QuoteLineDetails', 'Task', 'SubAssembly'])
+                ->where('id', $lineId)
+                ->where('quotes_id', $quoteId)
+                ->first();
+
+            if (! $line || ! $line->code || ! $line->label) continue;
+
+            $product = Products::create([
+                'code'                => $line->code,
+                'label'               => $line->label,
+                'methods_services_id' => $service->id,
+                'methods_families_id' => $family->id,
+                'purchased'           => 2,
+                'purchased_price'     => 1,
+                'sold'                => 1,
+                'selling_price'       => $line->selling_price,
+                'methods_units_id'    => $line->methods_units_id,
+                'tracability_type'    => 1,
+            ]);
+
+            $detail = $line->QuoteLineDetails;
+            if ($detail) {
+                $product->material          = $detail->material;
+                $product->thickness         = $detail->thickness;
+                $product->finishing         = $detail->finishing;
+                $product->weight            = $detail->weight;
+                $product->bend_count        = $detail->bend_count;
+                $product->x_size            = $detail->x_size;
+                $product->y_size            = $detail->y_size;
+                $product->z_size            = $detail->z_size;
+                $product->x_oversize        = $detail->x_oversize;
+                $product->y_oversize        = $detail->y_oversize;
+                $product->z_oversize        = $detail->z_oversize;
+                $product->diameter          = $detail->diameter;
+                $product->diameter_oversize = $detail->diameter_oversize;
+                $product->cad_file_path     = $detail->cad_file_path;
+                $product->cam_file_path     = $detail->cam_file_path;
+                $product->save();
+            }
+
+            foreach ($line->Task as $task) {
+                $newTask                  = $task->replicate();
+                $newTask->products_id     = $product->id;
+                $newTask->quote_lines_id  = null;
+                $newTask->origin          = '5';
+                $newTask->save();
+            }
+
+            foreach ($line->SubAssembly as $sub) {
+                $newSub                 = $sub->replicate();
+                $newSub->products_id    = $product->id;
+                $newSub->quote_lines_id = null;
+                $newSub->save();
+            }
+
+            $line->product_id = $product->id;
+            $line->save();
+
+            $created[] = [
+                'line_id'     => $line->id,
+                'product_id'  => $product->id,
+                'product_url' => route('products.show', ['id' => $product->id]),
+            ];
+        }
+
+        return response()->json(['created' => $created]);
+    }
+
     private function buildDetailDataFromProduct(Products $product): array
     {
         return [

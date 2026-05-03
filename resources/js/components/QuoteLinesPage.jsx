@@ -1137,6 +1137,30 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
         }
     };
 
+    const handleCreateProducts = async () => {
+        const ids = [...selected];
+        if (ids.length === 0) return;
+        if (!confirm(`Créer des produits à partir des ${ids.length} ligne(s) sélectionnée(s) ?`)) return;
+        try {
+            const res  = await apiFetch(endpoints.createProducts, {
+                method: 'POST',
+                body: JSON.stringify({ line_ids: ids }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setLines((prev) => prev.map((l) => {
+                    const match = (data.created ?? []).find((c) => c.line_id === l.id);
+                    return match ? { ...l, product_id: match.product_id, product_url: match.product_url } : l;
+                }));
+                showFlash('success', `${data.created?.length ?? 0} produit(s) créé(s)`);
+            } else {
+                showFlash('danger', data.error ?? 'Erreur lors de la création des produits');
+            }
+        } catch {
+            showFlash('danger', 'Erreur réseau');
+        }
+    };
+
     const handleCreateProduct = async (id) => {
         if (!endpoints.createProduct) {
             showFlash('danger', 'Endpoint manquant — rechargez la page.');
@@ -1214,6 +1238,12 @@ export default function QuoteLinesPage({ quoteId, quoteStatu: initialStatu, endp
 
             {/* Toolbar */}
             <div className="d-flex flex-wrap align-items-center mb-3" style={{ gap: '0.5rem' }}>
+                {quoteStatu === 1 && selected.size > 0 && (
+                    <button className="btn btn-success btn-sm" onClick={handleCreateProducts}>
+                        <i className="fas fa-barcode mr-1" />
+                        Créer produits ({selected.size})
+                    </button>
+                )}
                 {(quoteStatu === 1 || quoteStatu === 2) && selected.size > 0 && (
                     <button className="btn btn-primary btn-sm" onClick={handleStoreOrder}>
                         <i className="fas fa-folder mr-1" />

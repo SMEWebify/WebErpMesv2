@@ -340,6 +340,7 @@
             'move'            => route('quotes.lines.json.move',            ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'reorder'         => route('quotes.lines.json.reorder',         ['quoteId' => $Quote->id]),
             'createProduct'   => route('quotes.lines.json.create-product',  ['quoteId' => $Quote->id, 'id' => '__ID__']),
+            'createProducts'  => route('quotes.lines.json.create-products', ['quoteId' => $Quote->id]),
             'tasks'           => route('quotes.lines.json.tasks',           ['quoteId' => $Quote->id, 'id' => '__ID__']),
             'calculatedPrice' => route('quotes.lines.json.calculated-price',['quoteId' => $Quote->id, 'id' => '__ID__']),
             'storeOrder'      => route('quotes.lines.json.store-order',     ['quoteId' => $Quote->id]),
