@@ -202,6 +202,13 @@ class QuoteController extends Controller
                     'internal_comment', 'external_comment', 'custom_requirements',
                 ])->all();
 
+                if (!empty($lineData['detail']['picture_base64'])) {
+                    $filename = $this->savePictureFromBase64($lineData['detail']['picture_base64']);
+                    if ($filename) {
+                        $detailPayload['picture'] = $filename;
+                    }
+                }
+
                 QuoteLineDetails::updateOrCreate(
                     ['quote_lines_id' => $line->id],
                     $detailPayload
@@ -217,6 +224,57 @@ class QuoteController extends Controller
         $quote->QuoteLines()
             ->when(!empty($submittedLineIds), fn ($q) => $q->whereNotIn('id', $submittedLineIds))
             ->each(fn (QuoteLines $line) => $line->delete());
+    }
+
+    private function savePictureFromBase64(string $raw): ?string
+    {
+        // Retire le préfixe data URI si présent (data:image/png;base64,...)
+        $base64 = preg_replace('/^data:[^;]+;base64,/', '', $raw);
+        $binary = base64_decode(preg_replace('/\s+/', '', $base64), true);
+
+        if ($binary === false || strlen($binary) < 10) {
+            return null;
+        }
+
+        $dir = public_path('images/quote-lines');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        if (function_exists('imagecreatefromstring')) {
+            $image = @imagecreatefromstring($binary);
+            if ($image !== false) {
+                $filename = time() . '_' . uniqid() . '.png';
+                imagepng($image, $dir . '/' . $filename);
+                imagedestroy($image);
+                return $filename;
+            }
+        }
+
+        // Fallback : sauvegarde brute avec extension détectée
+        $ext      = $this->detectImageExtension($binary);
+        $filename = time() . '_' . uniqid() . '.' . $ext;
+        file_put_contents($dir . '/' . $filename, $binary);
+        return $filename;
+    }
+
+    private function detectImageExtension(string $binary): string
+    {
+        $signatures = [
+            'png'  => "\x89PNG",
+            'jpg'  => "\xFF\xD8\xFF",
+            'gif'  => 'GIF8',
+            'bmp'  => 'BM',
+            'webp' => 'RIFF',
+        ];
+
+        foreach ($signatures as $ext => $sig) {
+            if (str_starts_with($binary, $sig)) {
+                return $ext;
+            }
+        }
+
+        return 'bin';
     }
 
     private function resolveServicesMap(array $tasks): array

@@ -64,6 +64,7 @@ class UpsertQuoteRequest extends FormRequest
             'lines.*.detail.internal_comment'    => 'nullable|string',
             'lines.*.detail.external_comment'    => 'nullable|string',
             'lines.*.detail.custom_requirements' => 'nullable|array',
+            'lines.*.detail.picture_base64'      => 'nullable|string',
 
             // Tasks
             'lines.*.tasks'                      => 'nullable|array',
