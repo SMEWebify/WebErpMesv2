@@ -1227,12 +1227,17 @@ export default function OrderLinesPage({ orderId, orderStatu: initialStatu, orde
             });
             const data = await res.json();
             if (res.ok) {
-                // Update product_id on the affected lines
+                const created = data.created ?? [];
+                const skipped = data.skipped ?? [];
                 setLines((prev) => prev.map((l) => {
-                    const match = (data.created ?? []).find((c) => c.line_id === l.id);
+                    const match = created.find((c) => c.line_id === l.id);
                     return match ? { ...l, product_id: match.product_id, product_url: match.product_url } : l;
                 }));
-                showFlash('success', `${data.created?.length ?? 0} produit(s) créé(s)`);
+                let msg = `${created.length} produit(s) créé(s)`;
+                if (skipped.length > 0) {
+                    msg += ` — ${skipped.length} ignorée(s) (code déjà existant) : ${skipped.map((s) => s.code).join(', ')}`;
+                }
+                showFlash(created.length > 0 ? 'success' : 'warning', msg);
             } else {
                 showFlash('danger', data.error ?? 'Erreur lors de la création des produits');
             }

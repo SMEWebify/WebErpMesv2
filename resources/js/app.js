@@ -441,6 +441,7 @@ async function mountProductsIndex() {
             chartData: parse('chart')     ?? {},
             endpoints: parse('endpoints') ?? {},
             trans:     parse('trans')     ?? {},
+            canMerge:  element.dataset.canMerge === 'true',
         })
     );
 }

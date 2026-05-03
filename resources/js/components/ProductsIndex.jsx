@@ -900,10 +900,294 @@ function ListTab({ endpoints, trans }) {
 }
 
 // ---------------------------------------------------------------------------
+// Merge Modal
+// ---------------------------------------------------------------------------
+
+function MergeModal({ group, endpoints, onClose, onMerged }) {
+    const [masterId, setMasterId]   = useState(group.products[0].id);
+    const [preview, setPreview]     = useState(null);
+    const [loading, setLoading]     = useState(false);
+    const [merging, setMerging]     = useState(false);
+    const [error, setError]         = useState(null);
+
+    const duplicateId = group.products.find(p => p.id !== masterId)?.id;
+
+    const loadPreview = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await apiFetch(
+                `${endpoints.mergeBaseUrl}/${masterId}/${duplicateId}/preview`
+            );
+            setPreview(data);
+        } catch {
+            setError('Erreur lors du chargement de l\'aperçu.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleMerge = async () => {
+        setMerging(true);
+        setError(null);
+        try {
+            await apiFetch(`${endpoints.mergeBaseUrl}/${masterId}/${duplicateId}`, { method: 'POST' });
+            onMerged();
+        } catch {
+            setError('Erreur lors de la fusion.');
+            setMerging(false);
+        }
+    };
+
+    const impactRow = (label, count) => count > 0 ? (
+        <div className="d-flex justify-content-between py-1 border-bottom">
+            <span className="text-muted" style={{ fontSize: '0.85rem' }}>{label}</span>
+            <span className="badge badge-warning">{count}</span>
+        </div>
+    ) : null;
+
+    return (
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={e => e.target === e.currentTarget && onClose()}>
+            <div className="modal-dialog modal-lg" onClick={e => e.stopPropagation()}>
+                <div className="modal-content">
+                    <div className="modal-header bg-warning">
+                        <h5 className="modal-title">
+                            <i className="fas fa-code-branch mr-2" />
+                            Fusionner les doublons — code <code>{group.code}</code>
+                        </h5>
+                        <button type="button" className="close" onClick={onClose}><span>×</span></button>
+                    </div>
+
+                    <div className="modal-body">
+                        {/* Choix du master */}
+                        <p className="mb-2" style={{ fontSize: '0.85rem' }}>
+                            <strong>Choisissez le produit maître</strong> à conserver.
+                            L'autre sera supprimé et toutes ses références seront transférées.
+                        </p>
+                        <div className="row mb-3">
+                            {group.products.map(p => (
+                                <div key={p.id} className="col-md-6">
+                                    <div
+                                        className={`card mb-0 ${masterId === p.id ? 'border-success' : 'border-secondary'}`}
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => { setMasterId(p.id); setPreview(null); }}
+                                    >
+                                        <div className="card-body py-2 px-3">
+                                            <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                                                <input type="radio" readOnly checked={masterId === p.id} />
+                                                <div>
+                                                    <div style={{ fontWeight: 600 }}>{p.label}</div>
+                                                    <div style={{ fontSize: '0.78rem', color: '#888' }}>
+                                                        {p.service && <span className="mr-2">{p.service}</span>}
+                                                        {p.family && <span>{p.family}</span>}
+                                                    </div>
+                                                </div>
+                                                {masterId === p.id && (
+                                                    <span className="badge badge-success ml-auto">Maître</span>
+                                                )}
+                                                {masterId !== p.id && (
+                                                    <span className="badge badge-danger ml-auto">Doublon</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Bouton aperçu */}
+                        {!preview && (
+                            <div className="text-center mb-3">
+                                <button className="btn btn-outline-info btn-sm" onClick={loadPreview} disabled={loading}>
+                                    {loading
+                                        ? <><i className="fas fa-spinner fa-spin mr-1" />Chargement…</>
+                                        : <><i className="fas fa-eye mr-1" />Voir l'impact</>
+                                    }
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Aperçu */}
+                        {preview && (
+                            <div className="card card-body bg-light mb-3" style={{ fontSize: '0.85rem' }}>
+                                <h6 className="mb-2">Impact du transfert</h6>
+
+                                {impactRow('Lignes de devis', preview.impact.quote_lines)}
+                                {impactRow('Lignes de commande', preview.impact.order_lines)}
+                                {impactRow('Lignes d\'achat', preview.impact.purchase_lines)}
+                                {impactRow('Lignes devis fournisseur', preview.impact.purchase_quotation_lines)}
+                                {impactRow('Lignes avoir', preview.impact.credit_note_lines)}
+                                {impactRow('Tâches', preview.impact.tasks)}
+                                {impactRow('Sous-assemblages', preview.impact.sub_assemblies)}
+                                {impactRow('Numéros de série', preview.impact.serial_numbers)}
+                                {impactRow('Lots', preview.impact.batches)}
+                                {impactRow('AMDEC qualité', preview.impact.quality_amdecs)}
+                                {impactRow('Lignes pré-commande', preview.impact.pre_order_lines)}
+
+                                {/* Stock */}
+                                {preview.impact.stock.length > 0 && (
+                                    <div className="mt-2">
+                                        <div className="font-weight-bold mb-1">Stock</div>
+                                        {preview.impact.stock.map((s, i) => (
+                                            <div key={i} className="d-flex justify-content-between py-1 border-bottom">
+                                                <span className="text-muted">Emplacement #{s.location_id}</span>
+                                                <span>
+                                                    {s.master_qty} + {s.dup_qty}
+                                                    {' → '}
+                                                    <strong>{s.merged_qty}</strong>
+                                                    {s.conflict && <span className="badge badge-info ml-1">fusion</span>}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Prix clients */}
+                                <div className="alert alert-warning mt-2 mb-0 py-2 px-3" style={{ fontSize: '0.8rem' }}>
+                                    <i className="fas fa-exclamation-triangle mr-1" />
+                                    <strong>Tarifs clients :</strong>{' '}
+                                    {preview.impact.customer_price_lists.duplicate_count > 0
+                                        ? `Les ${preview.impact.customer_price_lists.duplicate_count} tarif(s) du doublon seront supprimés. `
+                                        : 'Aucun tarif sur le doublon. '}
+                                    {preview.impact.customer_price_lists.master_count > 0
+                                        ? `Les ${preview.impact.customer_price_lists.master_count} tarif(s) du maître sont conservés.`
+                                        : 'Aucun tarif sur le maître.'}
+                                </div>
+
+                                {preview.impact.quantity_prices.duplicate_count > 0 && (
+                                    <div className="alert alert-warning mt-1 mb-0 py-2 px-3" style={{ fontSize: '0.8rem' }}>
+                                        <i className="fas fa-exclamation-triangle mr-1" />
+                                        <strong>Tarifs quantité :</strong>{' '}
+                                        {`Les ${preview.impact.quantity_prices.duplicate_count} tarif(s) quantité du doublon seront supprimés. `}
+                                        {preview.impact.quantity_prices.master_count > 0
+                                            ? `Les ${preview.impact.quantity_prices.master_count} tarif(s) quantité du maître sont conservés.`
+                                            : 'Aucun tarif quantité sur le maître.'}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="alert alert-danger py-2">{error}</div>
+                        )}
+                    </div>
+
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" onClick={onClose}>Annuler</button>
+                        {preview && (
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={handleMerge}
+                                disabled={merging}
+                            >
+                                {merging
+                                    ? <><i className="fas fa-spinner fa-spin mr-1" />Fusion en cours…</>
+                                    : <><i className="fas fa-code-branch mr-1" />Confirmer la fusion</>
+                                }
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Duplicates Tab
+// ---------------------------------------------------------------------------
+
+function DuplicatesTab({ endpoints }) {
+    const [groups, setGroups]     = useState(null);
+    const [loading, setLoading]   = useState(true);
+    const [mergeGroup, setMergeGroup] = useState(null);
+
+    const load = () => {
+        setLoading(true);
+        apiFetch(endpoints.duplicates)
+            .then(setGroups)
+            .finally(() => setLoading(false));
+    };
+
+    useEffect(() => { load(); }, []);
+
+    if (loading) {
+        return <div className="text-center py-5"><i className="fas fa-spinner fa-spin fa-2x text-muted" /></div>;
+    }
+
+    if (!groups || groups.length === 0) {
+        return (
+            <div className="text-center py-5 text-muted">
+                <i className="fas fa-check-circle fa-3x mb-3 text-success" />
+                <p>Aucun doublon détecté.</p>
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            <div className="alert alert-warning py-2 mb-3">
+                <i className="fas fa-exclamation-triangle mr-1" />
+                <strong>{groups.length} groupe(s) de doublons</strong> détectés sur le code produit.
+            </div>
+
+            <table className="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Produits concernés</th>
+                        <th style={{ width: 100 }} />
+                    </tr>
+                </thead>
+                <tbody>
+                    {groups.map(group => (
+                        <tr key={group.code}>
+                            <td><code>{group.code}</code></td>
+                            <td>
+                                {group.products.map(p => (
+                                    <div key={p.id}>
+                                        <a href={p.url} target="_blank" rel="noreferrer" className="text-info">
+                                            #{p.id}
+                                        </a>
+                                        <span className="ml-1 text-muted" style={{ fontSize: '0.85rem' }}>
+                                            {p.label}
+                                            {p.service && <span className="ml-1 badge badge-light">{p.service}</span>}
+                                        </span>
+                                    </div>
+                                ))}
+                            </td>
+                            <td>
+                                <button
+                                    className="btn btn-sm btn-warning"
+                                    onClick={() => setMergeGroup(group)}
+                                >
+                                    <i className="fas fa-code-branch mr-1" />Fusionner
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {mergeGroup && (
+                <MergeModal
+                    group={mergeGroup}
+                    endpoints={endpoints}
+                    onClose={() => setMergeGroup(null)}
+                    onMerged={() => { setMergeGroup(null); load(); }}
+                />
+            )}
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Root component
 // ---------------------------------------------------------------------------
 
-export default function ProductsIndex({ kpi, chartData, endpoints, trans }) {
+export default function ProductsIndex({ kpi, chartData, endpoints, trans, canMerge }) {
     const [activeTab, setActiveTab] = useState('dashboard');
 
     return (
@@ -928,6 +1212,17 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans }) {
                             <i className="fas fa-list mr-1" />{trans.products_list}
                         </a>
                     </li>
+                    {canMerge && (
+                        <li className="nav-item">
+                            <a
+                                className={`nav-link ${activeTab === 'duplicates' ? 'active' : ''}`}
+                                href="#"
+                                onClick={e => { e.preventDefault(); setActiveTab('duplicates'); }}
+                            >
+                                <i className="fas fa-code-branch mr-1" />Doublons
+                            </a>
+                        </li>
+                    )}
                 </ul>
             </div>
 
@@ -937,6 +1232,9 @@ export default function ProductsIndex({ kpi, chartData, endpoints, trans }) {
                 )}
                 {activeTab === 'list' && (
                     <ListTab endpoints={endpoints} trans={trans} />
+                )}
+                {activeTab === 'duplicates' && canMerge && (
+                    <DuplicatesTab endpoints={endpoints} />
                 )}
             </div>
         </div>

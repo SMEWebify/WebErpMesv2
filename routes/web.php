@@ -649,6 +649,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(),
         Route::get('/json/select-data', 'App\Http\Controllers\Products\ProductsController@selectDataJson')->name('products.json.select-data');
         Route::get('/{id}/json/history', 'App\Http\Controllers\Products\ProductsController@historyJson')->name('products.json.history');
 
+        // Merge duplicates (permission réservée)
+        Route::group(['middleware' => ['permission:products-merge']], function () {
+            Route::get('/json/duplicates', 'App\Http\Controllers\Products\ProductsController@duplicatesJson')->name('products.json.duplicates');
+            Route::get('/json/merge/{master}/{duplicate}/preview', 'App\Http\Controllers\Products\ProductsController@mergePreviewJson')->name('products.json.merge.preview');
+            Route::post('/json/merge/{master}/{duplicate}', 'App\Http\Controllers\Products\ProductsController@mergeJson')->name('products.json.merge');
+        });
+
         Route::group(['prefix' => '{product}/customer-price-list'], function () {
             Route::post('/', 'App\Http\Controllers\Products\CustomerPriceListController@store')->name('products.customer-price-list.store');
             Route::put('/{priceList}', 'App\Http\Controllers\Products\CustomerPriceListController@update')->name('products.customer-price-list.update');

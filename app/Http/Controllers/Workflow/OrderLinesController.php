@@ -823,6 +823,7 @@ class OrderLinesController extends Controller
         }
 
         $created = [];
+        $skipped = [];
         foreach ($lineIds as $lineId) {
             $line = OrderLines::with(['OrderLineDetails', 'Task', 'SubAssembly'])
                 ->where('id', $lineId)
@@ -830,6 +831,11 @@ class OrderLinesController extends Controller
                 ->first();
 
             if (! $line || ! $line->code || ! $line->label) continue;
+
+            if (Products::where('code', $line->code)->exists()) {
+                $skipped[] = ['line_id' => $line->id, 'code' => $line->code, 'label' => $line->label];
+                continue;
+            }
 
             $product = Products::create([
                 'code'                => $line->code,
@@ -889,7 +895,7 @@ class OrderLinesController extends Controller
             ];
         }
 
-        return response()->json(['created' => $created]);
+        return response()->json(['created' => $created, 'skipped' => $skipped]);
     }
 
     // -------------------------------------------------------------------------
