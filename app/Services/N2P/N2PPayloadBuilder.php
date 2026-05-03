@@ -56,14 +56,7 @@ class N2PPayloadBuilder
             'plannedStart_raw' => $plannedStartAt,
             'plannedEnd_raw' => $plannedEndAt,
             'task_first_start' => optional($tasks->first())->start_date,
-          ]);
-
-          Log::info('N2P dates debug', [
-            'dueDate_raw' => $dueDate,
-            'plannedStart_raw' => $plannedStartAt,
-            'plannedEnd_raw' => $plannedEndAt,
-            'task_first_start' => optional($tasks->first())->start_date,
-          ]);
+        ]);
 
         $job = [
             'of_code' => "OF" . $orderLine->id,
@@ -78,11 +71,17 @@ class N2PPayloadBuilder
             "label"=> $orderLine->label,
             "cad_file_path"=> $details?->cad_file_path ?? $product?->cad_file_path,
             "cam_file_path"=> $details?->cam_file_path ?? $product?->cam_file_path,
+            'picture_base64' => $this->pictureBase64($details?->picture, $product?->picture),
             'required_qty' => (float) $orderLine->qty,
             'product_ref' => $product?->code ?? $orderLine->code,
             'material' => $details?->material ?? $product?->material,
             'thickness' => $this->nullableNumber($details?->thickness ?? $product?->thickness),
             'bend_count' => $details?->bend_count ?? $product?->bend_count,
+            'part_type' => $this->resolvePartType($details, $product),
+            'dimension_x' => $this->nullableNumber($details?->x_size ?? $product?->x_size),
+            'dimension_y' => $this->nullableNumber($details?->y_size ?? $product?->y_size),
+            'dimension_z' => $this->nullableNumber($details?->z_size ?? $product?->z_size),
+            'weight' => $this->nullableNumber($details?->weight ?? $product?->weight),
             'notes' => $orderLine->comment ?? $order->comment,
             'planned_start_at' => $this->nullableDateTime($plannedStartAt),
             'planned_end_at' => $this->nullableDateTime($plannedEndAt),
@@ -120,7 +119,8 @@ class N2PPayloadBuilder
 
             $plannedTimeMinutes = null;
             if ($task->seting_time !== null || $task->unit_time !== null) {
-                $plannedTimeMinutes = (int) max(0, round($task->TotalTime() * 60));
+                $calculated = (int) max(0, round($task->TotalTime() * 60));
+                $plannedTimeMinutes = $calculated > 0 ? $calculated : null;
             }
 
             $workcenterCode = $task->MethodsTools?->code ?? $task->service?->code;
@@ -185,5 +185,30 @@ class N2PPayloadBuilder
         }
 
         return (float) $number;
+    }
+
+    private function resolvePartType($details, $products): string
+    {
+        return $details?->part_type ?? $products?->part_type ?? 'SymbolPart';
+    }
+
+    private function pictureBase64(?string $detailPicture, ?string $productPicture): ?string
+    {
+        $candidates = array_filter([
+            $detailPicture  ? public_path('images/order-lines/' . $detailPicture) : null,
+            $detailPicture  ? public_path('images/quote-lines/' . $detailPicture) : null,
+            $productPicture ? public_path('images/products/' . $productPicture)   : null,
+        ]);
+
+        foreach ($candidates as $path) {
+            if (is_file($path)) {
+                $data = @file_get_contents($path);
+                if ($data !== false) {
+                    return base64_encode($data);
+                }
+            }
+        }
+
+        return null;
     }
 }
